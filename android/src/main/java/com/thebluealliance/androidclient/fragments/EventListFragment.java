@@ -93,7 +93,7 @@ public class EventListFragment extends ListViewFragment<List<Event>, EventListSu
     }
 
     public void bind() {
-        if(mSubscriber != null) {
+        if (mSubscriber != null) {
             mSubscriber.bindData();
         }
     }

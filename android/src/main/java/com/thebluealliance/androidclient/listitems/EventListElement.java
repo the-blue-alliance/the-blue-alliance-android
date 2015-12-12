@@ -51,9 +51,9 @@ public class EventListElement extends ListElement implements Serializable {
         }
         EventListElement element = ((EventListElement) o);
         return eventName.equals(element.eventName) &&
-          eventDates.equals(element.eventDates) &&
-          eventLocation.equals(element.eventLocation) &&
-          eventKey.equals(element.eventKey);
+                eventDates.equals(element.eventDates) &&
+                eventLocation.equals(element.eventLocation) &&
+                eventKey.equals(element.eventKey);
     }
 
     public String getEventKey() {

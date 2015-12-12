@@ -31,9 +31,9 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     }
 
     public ExpandableListViewAdapter(
-      Activity activity,
-      ModelRendererSupplier supplier,
-      List<ListGroup> groups) {
+            Activity activity,
+            ModelRendererSupplier supplier,
+            List<ListGroup> groups) {
         mActivity = activity;
         mRendererSupplier = supplier;
         this.groups = groups;
@@ -118,7 +118,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         return groups.get(groupPosition).children.get(childPosition)
-          .render(mRendererSupplier).getView(mActivity, inflater, convertView);
+                .render(mRendererSupplier).getView(mActivity, inflater, convertView);
     }
 }
 

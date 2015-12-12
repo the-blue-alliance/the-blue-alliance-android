@@ -17,8 +17,6 @@ import com.thebluealliance.androidclient.views.NoDataView;
  * A class that takes in input data model and updates views accordingly
  * For now, declare views as public members and set them elsewhere where the view is created
  * (like {@link Fragment#onCreateView(LayoutInflater, ViewGroup, Bundle)}).
- *
- * @param <T>
  */
 public abstract class AbstractDataBinder<T> implements DataConsumer<T> {
     Activity mActivity;
@@ -38,9 +36,8 @@ public abstract class AbstractDataBinder<T> implements DataConsumer<T> {
 
     /**
      * Call this in {@link Fragment#onCreateView(LayoutInflater, ViewGroup, Bundle)}
-     * @param view
      */
-    public void setRootView(View view){
+    public void setRootView(View view) {
         mRootView = view;
     }
 

@@ -9,8 +9,7 @@ public class StatListElementComparator implements Comparator<ListItem> {
 
     private String mStatToSortBy;
 
-    public
-    StatListElementComparator(String statToSortBy) {
+    public StatListElementComparator(String statToSortBy) {
         mStatToSortBy = statToSortBy;
     }
 

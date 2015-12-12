@@ -15,9 +15,9 @@ import java.util.List;
 public class EventListSubscriber extends BaseAPISubscriber<List<Event>, List<ListItem>> {
 
     public static final int
-      MODE_WEEK = 0,
-      MODE_TEAM = 1,
-      MODE_DISTRICT = 2;
+            MODE_WEEK = 0,
+            MODE_TEAM = 1,
+            MODE_DISTRICT = 2;
 
     private int mRenderMode;
     private ModelRenderer<Event, ?> mRenderer;

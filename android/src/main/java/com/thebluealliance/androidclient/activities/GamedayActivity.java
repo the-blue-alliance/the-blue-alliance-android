@@ -31,7 +31,7 @@ import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 public class GamedayActivity extends BaseActivity
-  implements ViewPager.OnPageChangeListener, HasFragmentComponent {
+        implements ViewPager.OnPageChangeListener, HasFragmentComponent {
 
     public static final String TAB = "tab";
 
@@ -210,13 +210,13 @@ public class GamedayActivity extends BaseActivity
         if (mComponent == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .binderModule(application.getBinderModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .subscriberModule(new SubscriberModule(this))
-              .clickListenerModule(new ClickListenerModule(this))
-              .build();
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .binderModule(application.getBinderModule())
+                    .databaseWriterModule(application.getDatabaseWriterModule())
+                    .subscriberModule(new SubscriberModule(this))
+                    .clickListenerModule(new ClickListenerModule(this))
+                    .build();
         }
         return mComponent;
     }

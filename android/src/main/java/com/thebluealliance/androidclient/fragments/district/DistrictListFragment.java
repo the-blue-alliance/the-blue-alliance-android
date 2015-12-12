@@ -14,7 +14,7 @@ import java.util.List;
 import rx.Observable;
 
 public class DistrictListFragment
-  extends ListViewFragment<List<District>, DistrictListSubscriber> {
+        extends ListViewFragment<List<District>, DistrictListSubscriber> {
 
     public static final String YEAR = "year";
 

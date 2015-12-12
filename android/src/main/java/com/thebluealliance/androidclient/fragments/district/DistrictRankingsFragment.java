@@ -14,7 +14,7 @@ import java.util.List;
 import rx.Observable;
 
 public class DistrictRankingsFragment
-  extends ListViewFragment<List<DistrictTeam>, DistrictRankingsSubscriber> {
+        extends ListViewFragment<List<DistrictTeam>, DistrictRankingsSubscriber> {
 
     public static final String KEY = "districtKey";
 

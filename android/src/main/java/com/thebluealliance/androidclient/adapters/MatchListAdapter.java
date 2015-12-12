@@ -21,10 +21,10 @@ public class MatchListAdapter extends ExpandableListViewAdapter {
     private String mTeamKey;
 
     public MatchListAdapter(
-      Activity a,
-      ModelRendererSupplier supplier,
-      List<ListGroup> groups,
-      String selectedTeam) {
+            Activity a,
+            ModelRendererSupplier supplier,
+            List<ListGroup> groups,
+            String selectedTeam) {
         super(a, supplier, groups);
         mTeamKey = selectedTeam;
     }

@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.database.writers.YearsParticipatedWriter.YearsParticipatedInfo;
 
 import rx.functions.Func1;

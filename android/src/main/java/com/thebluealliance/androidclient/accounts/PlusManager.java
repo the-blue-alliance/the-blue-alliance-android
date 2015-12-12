@@ -125,7 +125,8 @@ public class PlusManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     /**
      * Users should proxy calls to onActivityResult through to this class
      *
-     * An earlier connection failed, and we're now receiving the result of the resolution attempt by
+     * An earlier connection failed, and we're now receiving the result of the resolution attempt
+     * by
      * PlusClient.
      *
      * @see #onConnectionFailed(ConnectionResult)
@@ -170,7 +171,8 @@ public class PlusManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
     /**
-     * Connection failed for some reason (called by PlusClient) Try and resolve the result.  Failure
+     * Connection failed for some reason (called by PlusClient) Try and resolve the result.
+     * Failure
      * here is usually not an indication of a serious error, just that the user's input is needed.
      *
      * @see #onActivityResult(int, int)
@@ -210,8 +212,10 @@ public class PlusManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         void onPlusClientBlockingUI(boolean show);
 
         /**
-         * Called when there is a change in connection state.  If you have "Sign in"/ "Connect", "Sign
-         * out"/ "Disconnect", or "Revoke access" buttons, this lets you know when their states need to
+         * Called when there is a change in connection state.  If you have "Sign in"/ "Connect",
+         * "Sign
+         * out"/ "Disconnect", or "Revoke access" buttons, this lets you know when their states need
+         * to
          * be updated.
          */
         void updateConnectButtonState();

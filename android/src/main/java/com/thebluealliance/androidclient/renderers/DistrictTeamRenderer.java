@@ -32,10 +32,10 @@ public class DistrictTeamRenderer implements ModelRenderer<DistrictTeam, Void> {
     public DistrictTeamListElement renderFromModel(DistrictTeam districtTeam, Void aVoid) {
         try {
             return new DistrictTeamListElement(
-              districtTeam.getTeamKey(),
-              districtTeam.getDistrictKey(),
-              districtTeam.getRank(),
-              districtTeam.getTotalPoints());
+                    districtTeam.getTeamKey(),
+                    districtTeam.getDistrictKey(),
+                    districtTeam.getRank(),
+                    districtTeam.getTotalPoints());
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Unable to render districtTeam. Missing fields");
             e.printStackTrace();

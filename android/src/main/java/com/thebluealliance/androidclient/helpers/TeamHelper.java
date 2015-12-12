@@ -25,7 +25,8 @@ public class TeamHelper {
      * Checks if a multi-team key is valid.
      * <p>
      * In this context, a multi-team key is for a team that has two or more robots competing,
-     * usually in an offseason event, and thus needs one (and ONLY one) extra letter attached to the
+     * usually in an offseason event, and thus needs one (and ONLY one) extra letter attached to
+     * the
      * end to differentiate one from the others (e.g. 904 & 904B, 1973 & 1973D)
      *
      * @param key the team key to check
@@ -37,6 +38,7 @@ public class TeamHelper {
 
     /**
      * Extract the team number from a given key
+     *
      * @param key A team key. Assumed to be valid
      * @return the team number in the key, -1 if error
      */

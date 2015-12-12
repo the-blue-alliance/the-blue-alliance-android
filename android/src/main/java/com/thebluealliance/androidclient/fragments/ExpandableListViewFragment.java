@@ -21,7 +21,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 
 public abstract class ExpandableListViewFragment<T, S extends BaseAPISubscriber<T, List<ListGroup>>>
-  extends DatafeedFragment<T, List<ListGroup>, S, ExpandableListViewBinder> {
+        extends DatafeedFragment<T, List<ListGroup>, S, ExpandableListViewBinder> {
 
     private Parcelable mListState;
     private ExpandableListViewAdapter mAdapter;
@@ -30,7 +30,9 @@ public abstract class ExpandableListViewFragment<T, S extends BaseAPISubscriber<
     protected ExpandableListView mExpandableListView;
 
     @Override
-    public @Nullable View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public
+    @Nullable
+    View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.expandable_list_view_with_spinner, null);
         mBinder.setRootView(v);
         mExpandableListView = (ExpandableListView) v.findViewById(R.id.expandable_list);

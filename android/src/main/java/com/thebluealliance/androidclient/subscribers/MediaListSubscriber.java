@@ -22,14 +22,14 @@ public class MediaListSubscriber extends BaseAPISubscriber<List<Media>, List<Lis
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException{
+    public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
         mCdPhotos.clear();
         mYtVideos.clear();
         if (mAPIData == null) {
             return;
         }
-        for (int i=0; i < mAPIData.size(); i++) {
+        for (int i = 0; i < mAPIData.size(); i++) {
             Media media = mAPIData.get(i);
             switch (media.getMediaType()) {
                 case CD_PHOTO_THREAD:

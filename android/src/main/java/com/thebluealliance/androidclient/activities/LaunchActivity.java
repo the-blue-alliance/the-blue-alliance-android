@@ -32,7 +32,8 @@ import javax.inject.Inject;
 
 public class LaunchActivity extends AppCompatActivity {
 
-    @Inject TBAStatusController mStatusController;
+    @Inject
+    TBAStatusController mStatusController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +95,8 @@ public class LaunchActivity extends AppCompatActivity {
         if (lastVersion == -1 && !prefs.getBoolean(Constants.ALL_DATA_LOADED_KEY, false)) {
             // on a clean install, don't think we're updating
             prefs.edit()
-              .putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE)
-              .putInt(Constants.LAST_YEAR_KEY, maxYear).apply();
+                    .putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE)
+                    .putInt(Constants.LAST_YEAR_KEY, maxYear).apply();
             return false;
         }
 
@@ -136,7 +137,7 @@ public class LaunchActivity extends AppCompatActivity {
         }
 
         // If the max year is increased, redownload all data for updates
-        if (prefs.contains(Constants.LAST_YEAR_KEY) && lastYear < maxYear){
+        if (prefs.contains(Constants.LAST_YEAR_KEY) && lastYear < maxYear) {
             redownload = true;
             intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_TEAMS, LoadTBAData.LOAD_DISTRICTS});
         }
@@ -144,8 +145,8 @@ public class LaunchActivity extends AppCompatActivity {
         // If we don't have to redownload, store the version code here. Otherwise, let the
         // RedownloadActivity store the version code upon completion
         prefs.edit()
-          .putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE)
-          .putInt(Constants.LAST_YEAR_KEY, maxYear).apply();
+                .putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE)
+                .putInt(Constants.LAST_YEAR_KEY, maxYear).apply();
         return redownload;
     }
 
@@ -219,8 +220,8 @@ public class LaunchActivity extends AppCompatActivity {
     private DatafeedComponent getComponenet() {
         TBAAndroid application = ((TBAAndroid) getApplication());
         return DaggerDatafeedComponent.builder()
-          .applicationComponent(application.getComponent())
-          .datafeedModule(application.getDatafeedModule())
-          .build();
+                .applicationComponent(application.getComponent())
+                .datafeedModule(application.getDatafeedModule())
+                .build();
     }
 }

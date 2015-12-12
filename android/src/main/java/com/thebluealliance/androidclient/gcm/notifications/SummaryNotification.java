@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RecentNotificationsActivity;
 import com.thebluealliance.androidclient.database.Database;

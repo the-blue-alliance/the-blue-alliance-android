@@ -18,7 +18,8 @@ import javax.inject.Inject;
 
 public class TBAAndroid extends MultiDexApplication {
 
-    @Inject TBAStatusController mStatusController;
+    @Inject
+    TBAStatusController mStatusController;
 
     private ApplicationComponent mComponent;
     private TBAAndroidModule mModule;
@@ -73,16 +74,16 @@ public class TBAAndroid extends MultiDexApplication {
     public ApplicationComponent getComponent() {
         if (mComponent == null) {
             mComponent = DaggerApplicationComponent.builder()
-              .tBAAndroidModule(getModule())
-              .build();
+                    .tBAAndroidModule(getModule())
+                    .build();
         }
         return mComponent;
     }
 
     private DatafeedComponent getDatafeedComponenet() {
         return DaggerDatafeedComponent.builder()
-          .applicationComponent(getComponent())
-          .datafeedModule(getDatafeedModule())
-          .build();
+                .applicationComponent(getComponent())
+                .datafeedModule(getDatafeedModule())
+                .build();
     }
 }

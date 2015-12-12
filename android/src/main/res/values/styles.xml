@@ -152,7 +152,7 @@
         <item name="android:paddingTop">16dp</item>
     </style>
 
-    <style name="DropDownNavStyle" parent="@android:style/Widget.Holo.Light.Spinner"/>
+    <style name="DropDownNavStyle" parent="@android:style/Widget.Holo.Light.Spinner" />
 
     <style name="ListItemButtonStyle">
         <item name="android:background">?android:attr/selectableItemBackground</item>
@@ -207,11 +207,11 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="normalText" >
+    <style name="normalText">
         <item name="android:textStyle">normal</item>
     </style>
 

@@ -14,10 +14,12 @@ import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class RecentNotificationsFragment
-  extends ListViewFragment<List<StoredNotification>, RecentNotificationsSubscriber> {
+        extends ListViewFragment<List<StoredNotification>, RecentNotificationsSubscriber> {
 
-    @Inject Database mDb;
-    @Inject EventBus mEventBus;
+    @Inject
+    Database mDb;
+    @Inject
+    EventBus mEventBus;
 
     @Override
     protected void inject() {

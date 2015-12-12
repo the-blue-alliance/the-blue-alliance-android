@@ -17,7 +17,7 @@ public class EventInfoContainerClickListener implements View.OnClickListener {
     public EventInfoContainerClickListener(Context context) {
         if (!(context instanceof ViewEventActivity)) {
             throw new IllegalArgumentException("EventInfoContainerClickListener must be used" +
-              "with a ViewEventActivity");
+                    "with a ViewEventActivity");
         }
         mActivity = (ViewEventActivity) context;
     }

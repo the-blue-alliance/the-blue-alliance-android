@@ -10,8 +10,8 @@ import dagger.Component;
 
 @Singleton
 @Component(
-  modules = {DatafeedModule.class, DatabaseWriterModule.class},
-  dependencies = ApplicationComponent.class)
+        modules = {DatafeedModule.class, DatabaseWriterModule.class},
+        dependencies = ApplicationComponent.class)
 public interface NotificationComponent {
-  void inject(GCMMessageHandler gcmMessageHandler);
+    void inject(GCMMessageHandler gcmMessageHandler);
 }

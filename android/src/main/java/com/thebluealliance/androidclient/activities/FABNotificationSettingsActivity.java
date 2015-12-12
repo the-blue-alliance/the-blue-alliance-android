@@ -35,7 +35,7 @@ import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
-public abstract class  FABNotificationSettingsActivity extends DatafeedActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
+public abstract class FABNotificationSettingsActivity extends DatafeedActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
     private CoordinatorLayout mCoordinatorLayout;
     private RelativeLayout mNotificationSettings;
@@ -366,7 +366,7 @@ public abstract class  FABNotificationSettingsActivity extends DatafeedActivity 
         if (mFabVisible) {
             return;
         }
-        if(!mIsMyTBAEnabled) {
+        if (!mIsMyTBAEnabled) {
             hideFab(false);
             return;
         }
@@ -529,11 +529,11 @@ public abstract class  FABNotificationSettingsActivity extends DatafeedActivity 
     }
 
     /**
-     * Used to defer an operation until after the notifications setting panel has finished animating closed.
+     * Used to defer an operation until after the notifications setting panel has finished animating
+     * closed.
      * <p>
-     * If the panel has already finished animating when this is called, the Runnable will be run immediately.
-     *
-     * @param runnable
+     * If the panel has already finished animating when this is called, the Runnable will be run
+     * immediately.
      */
     private void runAfterNotificationSettingsPanelIsClosed(Runnable runnable) {
         if (mRunningPanelAnimation == null) {

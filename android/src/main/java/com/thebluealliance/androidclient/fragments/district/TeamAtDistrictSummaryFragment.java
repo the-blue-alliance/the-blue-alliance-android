@@ -15,7 +15,7 @@ import com.thebluealliance.androidclient.subscribers.TeamAtDistrictSummarySubscr
 import rx.Observable;
 
 public class TeamAtDistrictSummaryFragment
-  extends ListViewFragment<DistrictTeam, TeamAtDistrictSummarySubscriber> {
+        extends ListViewFragment<DistrictTeam, TeamAtDistrictSummarySubscriber> {
 
     public static final String DISTRICT = "districtKey", TEAM = "teamKey";
 

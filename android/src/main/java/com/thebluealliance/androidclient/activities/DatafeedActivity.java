@@ -25,11 +25,14 @@ import de.greenrobot.event.EventBus;
  * An activity that serves as a host to datafeed fragments
  */
 public abstract class DatafeedActivity extends BaseActivity
-  implements HasFragmentComponent, InvalidateHost {
+        implements HasFragmentComponent, InvalidateHost {
 
-    @Inject RefreshController mRefreshController;
-    @Inject TBAStatusController mStatusController;
-    @Inject EventBus mEventBus;
+    @Inject
+    RefreshController mRefreshController;
+    @Inject
+    TBAStatusController mStatusController;
+    @Inject
+    EventBus mEventBus;
 
     protected FragmentComponent mComponent;
     protected Menu mOptionsMenu;
@@ -101,6 +104,7 @@ public abstract class DatafeedActivity extends BaseActivity
 
     /**
      * Extending activities can override this method to respond to TBA status updates
+     *
      * @param newStatus The new API Status
      */
     protected void onTbaStatusUpdate(APIStatus newStatus) {
@@ -132,12 +136,12 @@ public abstract class DatafeedActivity extends BaseActivity
         if (mComponent == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .binderModule(application.getBinderModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .subscriberModule(new SubscriberModule(this))
-              .build();
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .binderModule(application.getBinderModule())
+                    .databaseWriterModule(application.getDatabaseWriterModule())
+                    .subscriberModule(new SubscriberModule(this))
+                    .build();
         }
         return mComponent;
     }

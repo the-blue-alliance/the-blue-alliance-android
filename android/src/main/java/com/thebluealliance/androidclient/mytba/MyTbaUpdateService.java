@@ -34,7 +34,8 @@ import rx.schedulers.Schedulers;
 
 public class MyTbaUpdateService extends IntentService {
 
-    @Inject Database mDb;
+    @Inject
+    Database mDb;
 
     public MyTbaUpdateService() {
         super("Update myTBA");
@@ -67,8 +68,8 @@ public class MyTbaUpdateService extends IntentService {
             Log.e(Constants.LOG_TAG, "Couldn't get TBA Mobile Service");
             Handler mainHandler = new Handler(this.getMainLooper());
             mainHandler.post(() -> Toast.makeText(
-              MyTbaUpdateService.this,
-              getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show());
+                    MyTbaUpdateService.this,
+                    getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show());
             return;
         }
         ModelsMobileApiMessagesFavoriteCollection favoriteCollection;
@@ -90,7 +91,7 @@ public class MyTbaUpdateService extends IntentService {
         for (int i = 0; i < favoriteList.size(); i++) {
             ModelsMobileApiMessagesFavoriteMessage f = favoriteList.get(i);
             favoriteModels.add(
-              new Favorite(currentUser, f.getModelKey(), f.getModelType().intValue()));
+                    new Favorite(currentUser, f.getModelKey(), f.getModelType().intValue()));
         }
         favorites.add(favoriteModels);
         Log.d(Constants.LOG_TAG, "Added " + favoriteModels.size() + " favorites");
@@ -114,11 +115,11 @@ public class MyTbaUpdateService extends IntentService {
         for (int i = 0; i < subscriptionList.size(); i++) {
             ModelsMobileApiMessagesSubscriptionMessage s = subscriptionList.get(i);
             subscriptionModels.add(
-              new Subscription(
-                currentUser,
-                s.getModelKey(),
-                s.getNotifications(),
-                s.getModelType().intValue()));
+                    new Subscription(
+                            currentUser,
+                            s.getModelKey(),
+                            s.getNotifications(),
+                            s.getModelType().intValue()));
         }
         subscriptions.add(subscriptionModels);
         Log.d(Constants.LOG_TAG, "Added " + subscriptionModels.size() + " subscriptions");
@@ -127,8 +128,8 @@ public class MyTbaUpdateService extends IntentService {
     private DatafeedComponent getComponenet() {
         TBAAndroid application = ((TBAAndroid) getApplication());
         return DaggerDatafeedComponent.builder()
-          .applicationComponent(application.getComponent())
-          .datafeedModule(application.getDatafeedModule())
-          .build();
+                .applicationComponent(application.getComponent())
+                .datafeedModule(application.getDatafeedModule())
+                .build();
     }
 }

@@ -5,6 +5,7 @@ import android.support.annotation.UiThread;
 
 /**
  * An interface implemented by a fragment to provide the right callbacks
+ *
  * @param <T> Datatype expected to be bound to views
  */
 public interface DataConsumer<T> {
@@ -12,6 +13,7 @@ public interface DataConsumer<T> {
     /**
      * Tells the consumer to re-bind new data to the views
      * TO BE RUN ON THE UI THREAD - keep it light
+     *
      * @param data content to update
      */
     @UiThread
@@ -19,7 +21,6 @@ public interface DataConsumer<T> {
 
     /**
      * A hook for binders to clean up their views
-     * @param unbindViews
      */
     @UiThread
     void unbind(boolean unbindViews);

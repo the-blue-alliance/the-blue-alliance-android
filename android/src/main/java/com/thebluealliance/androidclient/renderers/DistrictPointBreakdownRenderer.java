@@ -19,20 +19,24 @@ public class DistrictPointBreakdownRenderer implements ModelRenderer<DistrictPoi
     }
 
     @Override
-    public @Nullable ListElement renderFromKey(String key, ModelType type, Void args) {
+    public
+    @Nullable
+    ListElement renderFromKey(String key, ModelType type, Void args) {
         /* Not used */
         return null;
     }
 
     @Override
-    public @Nullable DistrictTeamListElement renderFromModel(
-      DistrictPointBreakdown breakdown,
-      Void aVoid) {
+    public
+    @Nullable
+    DistrictTeamListElement renderFromModel(
+            DistrictPointBreakdown breakdown,
+            Void aVoid) {
         return new DistrictTeamListElement(
-          breakdown.getTeamKey(),
-          breakdown.getDistrictKey(),
-          breakdown.getTeamName(),
-          breakdown.getRank(),
-          breakdown.getTotalPoints());
+                breakdown.getTeamKey(),
+                breakdown.getDistrictKey(),
+                breakdown.getTeamName(),
+                breakdown.getRank(),
+                breakdown.getTotalPoints());
     }
 }

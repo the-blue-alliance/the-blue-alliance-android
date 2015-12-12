@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
@@ -73,7 +74,7 @@ public class DevSettingsActivity extends AppCompatActivity {
                 Intent serviceIntent = new Intent(getActivity(), StatusRefreshService.class);
                 getActivity().startService(serviceIntent);
                 Toast.makeText(getActivity(), R.string.update_status_launched, Toast.LENGTH_SHORT)
-                  .show();
+                        .show();
                 return true;
             });
 

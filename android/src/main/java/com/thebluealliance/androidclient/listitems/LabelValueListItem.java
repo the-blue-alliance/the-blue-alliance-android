@@ -21,10 +21,10 @@ public class LabelValueListItem extends ListElement {
         }
         LabelValueListItem element = (LabelValueListItem) o;
         return label.equals(element.label) &&
-          value.equals(element.value) &&
-          intent.equals(element.intent) &&
-          (listItem == null || listItem.equals(element.listItem)) &&
-          layout == element.layout;
+                value.equals(element.value) &&
+                intent.equals(element.intent) &&
+                (listItem == null || listItem.equals(element.listItem)) &&
+                layout == element.layout;
     }
 
     public LabelValueListItem(String label, String value, String intent, int layout) {

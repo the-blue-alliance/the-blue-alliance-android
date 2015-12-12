@@ -52,63 +52,92 @@ import dagger.Component;
 
 @Singleton
 @Component(
-  modules= {
-    SubscriberModule.class,
-    BinderModule.class,
-    DatafeedModule.class,
-    DatabaseWriterModule.class,
-    ClickListenerModule.class},
-  dependencies = {ApplicationComponent.class})
+        modules = {
+                SubscriberModule.class,
+                BinderModule.class,
+                DatafeedModule.class,
+                DatabaseWriterModule.class,
+                ClickListenerModule.class},
+        dependencies = {ApplicationComponent.class})
 public interface FragmentComponent {
 
     CacheableDatafeed datafeed();
+
     EventBusSubscriber eventBusSubscriber();
+
     RefreshController refreshController();
 
     void inject(TeamInfoFragment fragment);
+
     void inject(TeamEventsFragment fragment);
+
     void inject(TeamMediaFragment fragment);
 
     void inject(EventInfoFragment fragment);
+
     void inject(EventTeamsFragment fragment);
+
     void inject(EventRankingsFragment fragment);
+
     void inject(EventMatchesFragment fragment);
+
     void inject(EventAlliancesFragment fragment);
+
     void inject(EventDistrictPointsFragment fragment);
+
     void inject(EventStatsFragment fragment);
+
     void inject(EventAwardsFragment fragment);
 
     void inject(TeamAtEventStatsFragment fragment);
+
     void inject(TeamAtEventSummaryFragment fragment);
 
     void inject(EventsByWeekFragment fragment);
+
     void inject(EventListFragment fragment);
+
     void inject(TeamListFragment teamListFragment);
+
     void inject(DistrictListFragment districtListFragment);
 
     void inject(DistrictEventsFragment districtEventsFragment);
+
     void inject(DistrictRankingsFragment districtRankingsFragment);
 
     void inject(TeamAtDistrictSummaryFragment teamAtDistrictSummaryFragment);
+
     void inject(TeamAtDistrictBreakdownFragment teamAtDistrictBreakdownFragment);
+
     void inject(MatchInfoFragment matchInfoFragment);
 
     void inject(GamedayWebcastsFragment gamedayWebcastsFragment);
+
     void inject(RecentNotificationsFragment recentNotificationsFragment);
+
     void inject(GamedayTickerFragment gamedayTickerFragment);
 
     void inject(MySubscriptionsFragment mySubscriptionsFragment);
+
     void inject(MyFavoritesFragment myFavoritesFragment);
 
     void inject(HomeActivity activity);
+
     void inject(TeamAtDistrictActivity activity);
+
     void inject(TeamAtEventActivity activity);
+
     void inject(ViewDistrictActivity activity);
+
     void inject(ViewMatchActivity activity);
+
     void inject(ViewTeamActivity activity);
+
     void inject(ViewEventActivity activity);
+
     void inject(ContributorsActivity contributorsActivity);
 
     void inject(LoadTBADataTaskFragment loadTBADataTaskFragment);
+
     void inject(AllTeamsListFragment allTeamsListFragment);
 }

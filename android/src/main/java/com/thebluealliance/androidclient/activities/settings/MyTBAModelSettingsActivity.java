@@ -213,7 +213,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         Integer colorFrom = getResources().getColor(R.color.accent_dark);
         Integer colorTo = getResources().getColor(R.color.green);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.addUpdateListener(animator -> saveModelPreferencesFab.setBackgroundTintList(ColorStateList.valueOf((Integer)animator.getAnimatedValue())));
+        colorAnimation.addUpdateListener(animator -> saveModelPreferencesFab.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
         colorAnimation.setDuration(500);
         colorAnimation.start();
 

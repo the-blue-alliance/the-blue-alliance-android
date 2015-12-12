@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.JsonElement;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.NoDataViewParams;

@@ -32,9 +32,9 @@ public class LabelValueDetailListItem extends ListElement {
         }
         LabelValueDetailListItem element = (LabelValueDetailListItem) o;
         return label.equals(element.label) &&
-          value.equals(element.value) &&
-          key.equals(element.key) &&
-          (listItem == null || listItem.equals(element.listItem));
+                value.equals(element.value) &&
+                key.equals(element.key) &&
+                (listItem == null || listItem.equals(element.listItem));
     }
 
     @Override

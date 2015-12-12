@@ -36,34 +36,56 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     private MatchRenderer mMatchRenderer;
     private boolean mIsLive;
 
-    @Inject SocialClickListener mSocialClickListener;
-    @Inject EventInfoContainerClickListener mInfoClickListener;
+    @Inject
+    SocialClickListener mSocialClickListener;
+    @Inject
+    EventInfoContainerClickListener mInfoClickListener;
 
-    @Bind(R.id.content) View content;
-    @Bind(R.id.event_name) TextView eventName;
-    @Bind(R.id.event_date) TextView eventDate;
-    @Bind(R.id.event_venue) TextView eventVenue;
-    @Bind(R.id.top_teams) TextView topTeams;
-    @Bind(R.id.top_oprs) TextView topOprs;
-    @Bind(R.id.top_teams_container) View topTeamsContainer;
-    @Bind(R.id.top_oprs_container) View topOprsContainer;
-    @Bind(R.id.progress) ProgressBar progressBar;
-    @Bind(R.id.event_date_container) View eventDateContainer;
-    @Bind(R.id.event_venue_container) View eventVenueContainer;
-    @Bind(R.id.event_website_container) View eventWebsiteContainer;
-    @Bind(R.id.event_website_title) TextView eventWebsiteTitle;
-    @Bind(R.id.event_twitter_container) View eventTwitterContainer;
-    @Bind(R.id.event_twitter_title) TextView eventTwitterTitle;
-    @Bind(R.id.event_youtube_container) View eventYoutubeContainer;
-    @Bind(R.id.event_youtube_title) TextView eventYoutubeTitle;
-    @Bind(R.id.event_cd_container) View eventCdContainer;
-    @Bind(R.id.last_match_view) FrameLayout lastMatchView;
-    @Bind(R.id.next_match_view) FrameLayout nextMatchView;
+    @Bind(R.id.content)
+    View content;
+    @Bind(R.id.event_name)
+    TextView eventName;
+    @Bind(R.id.event_date)
+    TextView eventDate;
+    @Bind(R.id.event_venue)
+    TextView eventVenue;
+    @Bind(R.id.top_teams)
+    TextView topTeams;
+    @Bind(R.id.top_oprs)
+    TextView topOprs;
+    @Bind(R.id.top_teams_container)
+    View topTeamsContainer;
+    @Bind(R.id.top_oprs_container)
+    View topOprsContainer;
+    @Bind(R.id.progress)
+    ProgressBar progressBar;
+    @Bind(R.id.event_date_container)
+    View eventDateContainer;
+    @Bind(R.id.event_venue_container)
+    View eventVenueContainer;
+    @Bind(R.id.event_website_container)
+    View eventWebsiteContainer;
+    @Bind(R.id.event_website_title)
+    TextView eventWebsiteTitle;
+    @Bind(R.id.event_twitter_container)
+    View eventTwitterContainer;
+    @Bind(R.id.event_twitter_title)
+    TextView eventTwitterTitle;
+    @Bind(R.id.event_youtube_container)
+    View eventYoutubeContainer;
+    @Bind(R.id.event_youtube_title)
+    TextView eventYoutubeTitle;
+    @Bind(R.id.event_cd_container)
+    View eventCdContainer;
+    @Bind(R.id.last_match_view)
+    FrameLayout lastMatchView;
+    @Bind(R.id.next_match_view)
+    FrameLayout nextMatchView;
 
     @Inject
     public EventInfoBinder(MatchRenderer renderer,
-      SocialClickListener socialClickListener,
-      EventInfoContainerClickListener eventInfoContainerClickListener) {
+                           SocialClickListener socialClickListener,
+                           EventInfoContainerClickListener eventInfoContainerClickListener) {
         mSocialClickListener = socialClickListener;
         mInfoClickListener = eventInfoContainerClickListener;
         mMatchRenderer = renderer;

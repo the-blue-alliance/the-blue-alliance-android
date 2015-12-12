@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.types.ModelType;
@@ -25,7 +26,9 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({RENDER_DEFAULT, RENDER_MATCH_INFO, RENDER_NOTIFICATION})
-    public @interface RenderType{}
+    public @interface RenderType {
+    }
+
     public static final int RENDER_DEFAULT = 0;
     public static final int RENDER_MATCH_INFO = 1;
     public static final int RENDER_NOTIFICATION = 2;
@@ -38,7 +41,9 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
 
     @WorkerThread
     @Override
-    public @Nullable MatchListElement renderFromKey(String key, ModelType type, Integer args) {
+    public
+    @Nullable
+    MatchListElement renderFromKey(String key, ModelType type, Integer args) {
         Match match = mDatafeed.fetchMatch(key).toBlocking().first();
         if (match == null) {
             return null;
@@ -53,7 +58,9 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
      */
     @WorkerThread
     @Override
-    public @Nullable MatchListElement renderFromModel(Match match, Integer renderMode) {
+    public
+    @Nullable
+    MatchListElement renderFromModel(Match match, Integer renderMode) {
         RenderArgs args = argsFromMode(renderMode);
         JsonObject alliances;
         try {
@@ -75,9 +82,9 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
         }
 
         JsonArray redTeams = Match.getRedTeams(alliances),
-          blueTeams = Match.getBlueTeams(alliances);
+                blueTeams = Match.getBlueTeams(alliances);
         String redScore = Match.getRedAlliance(alliances).get("score").getAsString(),
-          blueScore = Match.getBlueAlliance(alliances).get("score").getAsString();
+                blueScore = Match.getBlueAlliance(alliances).get("score").getAsString();
 
         if (Integer.parseInt(redScore) < 0) redScore = "?";
         if (Integer.parseInt(blueScore) < 0) blueScore = "?";
@@ -94,26 +101,26 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
         // Add teams based on alliance size (or none if there isn't for some reason)
         if (redTeams.size() == 3) {
             redAlliance = new String[]{
-              redTeams.get(0).getAsString().substring(3),
-              redTeams.get(1).getAsString().substring(3),
-              redTeams.get(2).getAsString().substring(3)};
+                    redTeams.get(0).getAsString().substring(3),
+                    redTeams.get(1).getAsString().substring(3),
+                    redTeams.get(2).getAsString().substring(3)};
         } else if (redTeams.size() == 2) {
             redAlliance = new String[]{
-              redTeams.get(0).getAsString().substring(3),
-              redTeams.get(1).getAsString().substring(3)};
+                    redTeams.get(0).getAsString().substring(3),
+                    redTeams.get(1).getAsString().substring(3)};
         } else {
             redAlliance = new String[]{"", "", ""};
         }
 
         if (blueTeams.size() == 3) {
             blueAlliance = new String[]{
-              blueTeams.get(0).getAsString().substring(3),
-              blueTeams.get(1).getAsString().substring(3),
-              blueTeams.get(2).getAsString().substring(3)};
+                    blueTeams.get(0).getAsString().substring(3),
+                    blueTeams.get(1).getAsString().substring(3),
+                    blueTeams.get(2).getAsString().substring(3)};
         } else if (blueTeams.size() == 2) {
             blueAlliance = new String[]{
-              blueTeams.get(0).getAsString().substring(3),
-              blueTeams.get(1).getAsString().substring(3)};
+                    blueTeams.get(0).getAsString().substring(3),
+                    blueTeams.get(1).getAsString().substring(3)};
         } else {
             blueAlliance = new String[]{"", "", ""};
         }
@@ -126,10 +133,10 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
         }
 
         return new MatchListElement(youTubeVideoKey, match.getTitle(true),
-          redAlliance, blueAlliance,
-          redScore, blueScore,
-          key, matchTime, match.getSelectedTeam(),
-          args.showVideo, args.showHeaders, args.showMatchTitle, args.clickable);
+                redAlliance, blueAlliance,
+                redScore, blueScore,
+                key, matchTime, match.getSelectedTeam(),
+                args.showVideo, args.showHeaders, args.showMatchTitle, args.clickable);
     }
 
     @VisibleForTesting
@@ -156,10 +163,10 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
         public final boolean clickable;
 
         public RenderArgs(
-          boolean showVideo,
-          boolean showHeaders,
-          boolean showMatchTitle,
-          boolean clickable) {
+                boolean showVideo,
+                boolean showHeaders,
+                boolean showMatchTitle,
+                boolean clickable) {
             this.showVideo = showVideo;
             this.showHeaders = showHeaders;
             this.showMatchTitle = showMatchTitle;

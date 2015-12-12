@@ -24,14 +24,14 @@ public class ModelRendererSupplier {
 
     @Inject
     public ModelRendererSupplier(
-      AwardRenderer mAwardRenderer,
-      DistrictPointBreakdownRenderer mDistrictPointBreakdownRenderer,
-      DistrictTeamRenderer mDistrictTeamRenderer,
-      DistrictRenderer mDistrictRenderer,
-      EventRenderer mEventRenderer,
-      MatchRenderer mMatchRenderer,
-      MediaRenderer mMediaRenderer,
-      TeamRenderer mTeamRenderer) {
+            AwardRenderer mAwardRenderer,
+            DistrictPointBreakdownRenderer mDistrictPointBreakdownRenderer,
+            DistrictTeamRenderer mDistrictTeamRenderer,
+            DistrictRenderer mDistrictRenderer,
+            EventRenderer mEventRenderer,
+            MatchRenderer mMatchRenderer,
+            MediaRenderer mMediaRenderer,
+            TeamRenderer mTeamRenderer) {
         this.mAwardRenderer = mAwardRenderer;
         this.mDistrictPointBreakdownRenderer = mDistrictPointBreakdownRenderer;
         this.mDistrictTeamRenderer = mDistrictTeamRenderer;
@@ -42,7 +42,9 @@ public class ModelRendererSupplier {
         this.mTeamRenderer = mTeamRenderer;
     }
 
-    public @Nullable ModelRenderer getRendererForType(ModelType type) {
+    public
+    @Nullable
+    ModelRenderer getRendererForType(ModelType type) {
         switch (type) {
             default:
                 return null;

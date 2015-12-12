@@ -49,7 +49,8 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     private static final String FIREBASE_URL_DEFAULT = "https://thebluealliance.firebaseio.com/";
     private static final int FIREBASE_LOAD_DEPTH_DEFAULT = 25;
 
-    @Inject DatabaseWriter mWriter;
+    @Inject
+    DatabaseWriter mWriter;
 
     private ListView mListView;
     private ListView mFilterListView;
@@ -66,7 +67,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     private String mFirebaseUrl;
     private int mFirebaseLoadDepth;
 
-    protected  FragmentComponent mComponent;
+    protected FragmentComponent mComponent;
 
     protected abstract void inject();
 
@@ -84,12 +85,12 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         // Delivery will be resumed once the view hierarchy is created
         mFirebaseSubscriber.pauseDelivery();
         mFirebaseSubscriber.getObservable()
-          .filter(childEvent -> childEvent != null && childEvent.eventType == FirebaseChildType.CHILD_ADDED)
-          .map(childEvent1 -> childEvent1.snapshot.getValue(FirebaseNotification.class))
-          .buffer(5)
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(this);
+                .filter(childEvent -> childEvent != null && childEvent.eventType == FirebaseChildType.CHILD_ADDED)
+                .map(childEvent1 -> childEvent1.snapshot.getValue(FirebaseNotification.class))
+                .buffer(5)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this);
         Firebase.setAndroidContext(getActivity());
         Firebase ticker = new Firebase(mFirebaseUrl);
         ticker.limitToLast(mFirebaseLoadDepth).addChildEventListener(mFirebaseSubscriber);

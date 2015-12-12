@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -102,7 +103,8 @@ public abstract class BaseNotification extends ListElement {
     }
 
     /**
-     * Adds a Category to activityIntent to mark it as "triggered by tapping a system notification",
+     * Adds a Category to activityIntent to mark it as "triggered by tapping a system
+     * notification",
      * then builds a PendingIntent with it.
      */
     protected PendingIntent makeNotificationIntent(Context context, Intent activityIntent) {

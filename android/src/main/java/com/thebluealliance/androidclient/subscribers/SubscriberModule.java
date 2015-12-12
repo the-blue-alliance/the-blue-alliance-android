@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.subscribers;
 import android.app.Activity;
 
 import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
@@ -76,9 +77,9 @@ public class SubscriberModule {
 
     @Provides
     public DistrictPointsListSubscriber provideDistrictPointsListSubscriber(
-      Database db,
-      Gson gson,
-      DistrictPointBreakdownRenderer renderer) {
+            Database db,
+            Gson gson,
+            DistrictPointBreakdownRenderer renderer) {
         return new DistrictPointsListSubscriber(db, gson, renderer);
     }
 
@@ -92,7 +93,8 @@ public class SubscriberModule {
         return new AwardsListSubscriber(db, renderer);
     }
 
-    @Provides TeamStatsSubscriber provideTeamStatsSubscriber() {
+    @Provides
+    TeamStatsSubscriber provideTeamStatsSubscriber() {
         return new TeamStatsSubscriber(mActivity.getResources());
     }
 
@@ -101,7 +103,8 @@ public class SubscriberModule {
         return new TeamAtEventSummarySubscriber(mActivity.getResources(), renderer);
     }
 
-    @Provides EventTabSubscriber provideEventTabsSubscriber() {
+    @Provides
+    EventTabSubscriber provideEventTabsSubscriber() {
         return new EventTabSubscriber();
     }
 
@@ -110,36 +113,41 @@ public class SubscriberModule {
         return new DistrictListSubscriber(db, renderer);
     }
 
-    @Provides DistrictRankingsSubscriber provideDistrictRankingsSubscriber(Database db) {
+    @Provides
+    DistrictRankingsSubscriber provideDistrictRankingsSubscriber(Database db) {
         return new DistrictRankingsSubscriber(db);
     }
 
-    @Provides TeamAtDistrictSummarySubscriber provideTeamAtDistrictSummarySubscriber(
-      Database db,
-      EventBus eventBus) {
+    @Provides
+    TeamAtDistrictSummarySubscriber provideTeamAtDistrictSummarySubscriber(
+            Database db,
+            EventBus eventBus) {
         return new TeamAtDistrictSummarySubscriber(db, mActivity.getResources(), eventBus);
     }
 
-    @Provides TeamAtDistrictBreakdownSubscriber provideTeamAtDistrictBreakdownSubscriber(
-      Database db,
-      Gson gson) {
+    @Provides
+    TeamAtDistrictBreakdownSubscriber provideTeamAtDistrictBreakdownSubscriber(
+            Database db,
+            Gson gson) {
         return new TeamAtDistrictBreakdownSubscriber(mActivity.getResources(), db, gson);
     }
 
     @Provides
     MatchInfoSubscriber provideMatchInfoSubscriber(
-      Gson gson,
-      EventBus eventBus,
-      MatchRenderer renderer,
-      MediaRenderer mediaRenderer) {
+            Gson gson,
+            EventBus eventBus,
+            MatchRenderer renderer,
+            MediaRenderer mediaRenderer) {
         return new MatchInfoSubscriber(gson, eventBus, renderer, mediaRenderer);
     }
 
-    @Provides WebcastListSubscriber provideWebcastListSubscriber(EventRenderer renderer) {
+    @Provides
+    WebcastListSubscriber provideWebcastListSubscriber(EventRenderer renderer) {
         return new WebcastListSubscriber(renderer);
     }
 
-    @Provides RecentNotificationsSubscriber provideRecentNotificationsSubscriber(DatabaseWriter writer) {
+    @Provides
+    RecentNotificationsSubscriber provideRecentNotificationsSubscriber(DatabaseWriter writer) {
         return new RecentNotificationsSubscriber(writer);
     }
 

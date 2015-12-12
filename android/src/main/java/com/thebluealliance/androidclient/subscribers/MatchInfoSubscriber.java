@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.subscribers;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.types.MediaType;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -65,7 +66,7 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
         for (int i = 0; i < matchVideos.size(); i++) {
             JsonElement video = matchVideos.get(i);
             if (MediaType.fromString(video.getAsJsonObject().get("type").getAsString()) !=
-              MediaType.NONE) {
+                    MediaType.NONE) {
                 Media media = mGson.fromJson(video, Media.class);
                 mDataToBind.add(mMediaRenderer.renderFromModel(media, null));
             }

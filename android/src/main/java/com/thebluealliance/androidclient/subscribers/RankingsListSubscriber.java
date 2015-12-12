@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
@@ -55,9 +56,9 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonElement, List<
                 Set<String> keys = rankingElements.keySet();
                 if (keys.contains("wins") && keys.contains("losses") && keys.contains("ties")) {
                     record = String.format("(%1$s-%2$s-%3$s",
-                      rankingElements.get("wins"),
-                      rankingElements.get("losses"),
-                      rankingElements.get("ties"));
+                            rankingElements.get("wins"),
+                            rankingElements.get("losses"),
+                            rankingElements.get("ties"));
                     rankingElements.remove("wins");
                     rankingElements.remove("losses");
                     rankingElements.remove("ties");
@@ -77,13 +78,13 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonElement, List<
                 nickname = "Team " + teamKey.substring(3);
             }
             mDataToBind.add(
-              new RankingListElement(
-                teamKey,
-                row.get(1).getAsInt(), // team number
-                nickname,
-                row.get(0).getAsInt(), // rank
-                record,
-                rankingString));
+                    new RankingListElement(
+                            teamKey,
+                            row.get(1).getAsInt(), // team number
+                            nickname,
+                            row.get(0).getAsInt(), // rank
+                            record,
+                            rankingString));
         }
         mEventBus.post(new EventRankingsEvent(generateTopRanksString(rankingsData)));
     }

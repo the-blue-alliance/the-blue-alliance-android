@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+
 import com.thebluealliance.androidclient.Analytics;
 
 import java.util.Map;
@@ -43,10 +44,10 @@ public class AnalyticsHelper {
 
     public static Map<String, String> getRefreshHit(String key) {
         return new HitBuilders.EventBuilder()
-          .setCategory("refresh")
-          .setAction("toolbar-button")
-          .setLabel(key)
-          .build();
+                .setCategory("refresh")
+                .setAction("toolbar-button")
+                .setLabel(key)
+                .build();
     }
 
     public static void sendClickUpdate(Context c, String category, String action, String key) {
@@ -73,8 +74,8 @@ public class AnalyticsHelper {
 
     public static Map<String, String> getErrorHit(Throwable throwable) {
         return new HitBuilders.ExceptionBuilder()
-          .setDescription(Log.getStackTraceString(throwable))
-          .setFatal(false)
-          .build();
+                .setDescription(Log.getStackTraceString(throwable))
+                .setFatal(false)
+                .build();
     }
 }

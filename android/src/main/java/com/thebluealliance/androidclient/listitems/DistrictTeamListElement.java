@@ -67,15 +67,15 @@ public class DistrictTeamListElement extends ListElement {
 
     @Override
     public boolean equals(Object o) {
-        if (! (o  instanceof DistrictTeamListElement)) {
+        if (!(o instanceof DistrictTeamListElement)) {
             return false;
         }
         DistrictTeamListElement element = (DistrictTeamListElement) o;
         return teamKey.equals(element.teamKey) &&
-          districtKey.equals(element.districtKey) &&
-          teamName.equals(element.teamName) &&
-          totalPoints == element.totalPoints &&
-          teamRank == element.teamRank;
+                districtKey.equals(element.districtKey) &&
+                teamName.equals(element.teamName) &&
+                totalPoints == element.totalPoints &&
+                teamRank == element.teamRank;
     }
 
     private static class ViewHolder {

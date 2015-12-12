@@ -17,6 +17,7 @@ package com.thebluealliance.androidclient.datafeed.retrofit;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.ResponseBody;
@@ -44,7 +45,8 @@ final class LenientGsonConverter<T> implements Converter<T> {
         this.typeAdapter = typeAdapter;
     }
 
-    @Override public T fromBody(ResponseBody body) throws IOException {
+    @Override
+    public T fromBody(ResponseBody body) throws IOException {
         Reader in = body.charStream();
 
         try {
@@ -59,7 +61,8 @@ final class LenientGsonConverter<T> implements Converter<T> {
         }
     }
 
-    @Override public RequestBody toBody(T value) {
+    @Override
+    public RequestBody toBody(T value) {
         Buffer buffer = new Buffer();
         Writer writer = new OutputStreamWriter(buffer.outputStream(), UTF_8);
         try {

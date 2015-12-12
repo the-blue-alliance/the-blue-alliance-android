@@ -77,19 +77,19 @@ public class MatchListElement extends ListElement implements Serializable {
         MatchListElement element = (MatchListElement) o;
 
         return videoKey.equals(element.videoKey) &&
-          matchTitle.equals(element.matchTitle) &&
-          Arrays.equals(redTeams, element.redTeams) &&
-          Arrays.equals(blueTeams, element.blueTeams) &&
-          redScore.equals(element.redScore) &&
-          blueScore.equals(element.blueScore) &&
-          matchKey.equals(element.matchKey) &&
-          selectedTeamKey == null
-            ? element.selectedTeamKey == null
-            : selectedTeamKey.equals(element.selectedTeamKey) &&
-          time == element.time &&
-          showVideoIcon == element.showVideoIcon &&
-          showColumnHeaders == element.showColumnHeaders &&
-          showMatchTitle == element.showMatchTitle &&
-          clickable == element.clickable;
+                matchTitle.equals(element.matchTitle) &&
+                Arrays.equals(redTeams, element.redTeams) &&
+                Arrays.equals(blueTeams, element.blueTeams) &&
+                redScore.equals(element.redScore) &&
+                blueScore.equals(element.blueScore) &&
+                matchKey.equals(element.matchKey) &&
+                selectedTeamKey == null
+                ? element.selectedTeamKey == null
+                : selectedTeamKey.equals(element.selectedTeamKey) &&
+                time == element.time &&
+                showVideoIcon == element.showVideoIcon &&
+                showColumnHeaders == element.showColumnHeaders &&
+                showMatchTitle == element.showMatchTitle &&
+                clickable == element.clickable;
     }
 }

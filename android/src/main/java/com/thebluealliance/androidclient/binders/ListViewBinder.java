@@ -19,8 +19,10 @@ import butterknife.ButterKnife;
 
 public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
-    @Bind(R.id.list) ListView listView;
-    @Bind(R.id.progress) ProgressBar progressBar;
+    @Bind(R.id.list)
+    ListView listView;
+    @Bind(R.id.progress)
+    ProgressBar progressBar;
 
     @Override
     public void bindViews() {

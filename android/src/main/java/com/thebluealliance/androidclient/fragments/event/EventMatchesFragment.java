@@ -24,7 +24,7 @@ import java.util.List;
 import rx.Observable;
 
 public class EventMatchesFragment
-  extends DatafeedFragment<List<Match>, List<ListGroup>, MatchListSubscriber, MatchListBinder> {
+        extends DatafeedFragment<List<Match>, List<ListGroup>, MatchListSubscriber, MatchListBinder> {
 
     private static final String KEY = "eventKey", TEAM = "teamKey";
 

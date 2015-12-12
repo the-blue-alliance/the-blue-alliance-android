@@ -34,7 +34,9 @@ public class Database extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 29;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database";
-    public static final @Deprecated String TABLE_API = "api";
+    public static final
+    @Deprecated
+    String TABLE_API = "api";
     public static final String TABLE_TEAMS = "teams",
             TABLE_EVENTS = "events",
             TABLE_AWARDS = "awards",

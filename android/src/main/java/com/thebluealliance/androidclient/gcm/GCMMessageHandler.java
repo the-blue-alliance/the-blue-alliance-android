@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
@@ -44,10 +45,14 @@ public class GCMMessageHandler extends IntentService {
 
     public static final String GROUP_KEY = "tba-android";
 
-    @Inject MyTbaDatafeed mMyTbaDatafeed;
-    @Inject DatabaseWriter mWriter;
-    @Inject SharedPreferences mPrefs;
-    @Inject EventBus mEventBus;
+    @Inject
+    MyTbaDatafeed mMyTbaDatafeed;
+    @Inject
+    DatabaseWriter mWriter;
+    @Inject
+    SharedPreferences mPrefs;
+    @Inject
+    EventBus mEventBus;
 
     private NotificationComponent mComponenet;
 
@@ -70,10 +75,10 @@ public class GCMMessageHandler extends IntentService {
         if (mComponenet == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponenet = DaggerNotificationComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .build();
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .databaseWriterModule(application.getDatabaseWriterModule())
+                    .build();
         }
     }
 

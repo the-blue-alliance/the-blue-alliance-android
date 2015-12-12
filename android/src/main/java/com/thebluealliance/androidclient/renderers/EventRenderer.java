@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.types.ModelType;
@@ -32,7 +33,9 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
 
     @WorkerThread
     @Override
-    public @Nullable EventListElement renderFromKey(String key, ModelType type, Boolean args) {
+    public
+    @Nullable
+    EventListElement renderFromKey(String key, ModelType type, Boolean args) {
         Event event = mDatafeed.fetchEvent(key).toBlocking().first();
         if (event == null) {
             return null;
@@ -43,20 +46,22 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
 
     @WorkerThread
     @Override
-    public @Nullable EventListElement renderFromModel(Event event, Boolean showMyTbaSettings) {
+    public
+    @Nullable
+    EventListElement renderFromModel(Event event, Boolean showMyTbaSettings) {
         boolean safeMyTba = showMyTbaSettings == null ? false : showMyTbaSettings;
         try {
             return new EventListElement(
-              event.getKey(),
-              event.getEventYear(),
-              event.getEventShortName(),
-              event.getDateString(),
-              event.getLocation(),
-              safeMyTba);
+                    event.getKey(),
+                    event.getEventYear(),
+                    event.getEventShortName(),
+                    event.getDateString(),
+                    event.getLocation(),
+                    safeMyTba);
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
             Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n" +
-              "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
+                    "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
             return null;
         }
     }
@@ -99,7 +104,7 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
             }
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for rendering alliances.\n" +
-              "Required field: Database.Events.ALLIANCES");
+                    "Required field: Database.Events.ALLIANCES");
         } catch (IllegalArgumentException e) {
             Log.w(Constants.LOG_TAG, "Invalid alliance size. Can't render");
         }

@@ -6,6 +6,7 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.google.android.gms.analytics.Tracker;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APISubscriber;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
@@ -134,7 +135,9 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     }
 
     @Override
-    public @Nullable BindType getBoundData() {
+    public
+    @Nullable
+    BindType getBoundData() {
         return mDataToBind;
     }
 
@@ -143,7 +146,9 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         mAPIData = data;
     }
 
-    public @Nullable APIType getApiData() {
+    public
+    @Nullable
+    APIType getApiData() {
         return mAPIData;
     }
 
@@ -171,6 +176,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
             hasBinderBoundViews = true;
         }
     }
+
     /**
      * Post {@link #mAPIData} to the given {@link EventBus}
      */

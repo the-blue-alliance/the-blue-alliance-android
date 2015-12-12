@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.google.gson.JsonElement;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
@@ -39,7 +40,7 @@ import rx.Observable;
  * @author Nathan Walters
  */
 public class EventStatsFragment
-  extends DatafeedFragment<JsonElement, List<ListItem>, StatsListSubscriber, StatsListBinder> {
+        extends DatafeedFragment<JsonElement, List<ListItem>, StatsListSubscriber, StatsListBinder> {
 
     private static final String KEY = "eventKey", SORT = "sort";
 
@@ -80,7 +81,7 @@ public class EventStatsFragment
         if (mSelectedStatSort == -1) {
             /* Sort has not yet been set. Default to OPR */
             mSelectedStatSort = Arrays.binarySearch(getResources().getStringArray(R.array.statsDialogArray),
-              getString(R.string.dialog_stats_sort_opr));
+                    getString(R.string.dialog_stats_sort_opr));
         }
 
         // Setup stats sort dialog box
@@ -88,17 +89,17 @@ public class EventStatsFragment
         mStatSortCategory = getSortTypeFromPosition(mSelectedStatSort);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.dialog_stats_title)
-          .setSingleChoiceItems(mItems, mSelectedStatSort, (dialogInterface, i) -> {
-              mSelectedStatSort = i;
-              mStatSortCategory = getSortTypeFromPosition(mSelectedStatSort);
+                .setSingleChoiceItems(mItems, mSelectedStatSort, (dialogInterface, i) -> {
+                    mSelectedStatSort = i;
+                    mStatSortCategory = getSortTypeFromPosition(mSelectedStatSort);
 
-              dialogInterface.dismiss();
+                    dialogInterface.dismiss();
 
-              mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
-              if (mAdapter != null && mStatSortCategory != null) {
-                  mAdapter.sortStats(mStatSortCategory);
-              }
-          }).setNegativeButton(R.string.dialog_cancel, (dialog, id) -> {
+                    mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
+                    if (mAdapter != null && mStatSortCategory != null) {
+                        mAdapter.sortStats(mStatSortCategory);
+                    }
+                }).setNegativeButton(R.string.dialog_cancel, (dialog, id) -> {
             dialog.cancel();
         });
 

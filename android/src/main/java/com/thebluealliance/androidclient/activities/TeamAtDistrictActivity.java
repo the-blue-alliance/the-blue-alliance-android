@@ -34,7 +34,7 @@ import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 public class TeamAtDistrictActivity extends DatafeedActivity
-  implements HasFragmentComponent {
+        implements HasFragmentComponent {
 
     public static final String DISTRICT_KEY = "districtKey";
     public static final String TEAM_KEY = "teamKey";
@@ -176,13 +176,13 @@ public class TeamAtDistrictActivity extends DatafeedActivity
         if (mComponent == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .binderModule(application.getBinderModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .subscriberModule(new SubscriberModule(this))
-              .clickListenerModule(new ClickListenerModule(this))
-              .build();
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .binderModule(application.getBinderModule())
+                    .databaseWriterModule(application.getDatabaseWriterModule())
+                    .subscriberModule(new SubscriberModule(this))
+                    .clickListenerModule(new ClickListenerModule(this))
+                    .build();
         }
         return mComponent;
     }

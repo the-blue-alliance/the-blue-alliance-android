@@ -15,6 +15,7 @@ import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
@@ -139,7 +140,8 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     }
 
     /**
-     * Connection failed for some reason (called by PlusClient) Try and resolve the result.  Failure
+     * Connection failed for some reason (called by PlusClient) Try and resolve the result.
+     * Failure
      * here is usually not an indication of a serious error, just that the user's input is needed.
      */
     @Override

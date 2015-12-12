@@ -15,7 +15,9 @@ public class TeamListSubscriber extends BaseAPISubscriber<List<Team>, List<ListI
 
     private TeamSortByNumberComparator mComparator;
     private TeamRenderer mRenderer;
-    private @RenderType int mRenderMode;
+    private
+    @RenderType
+    int mRenderMode;
 
     public TeamListSubscriber(TeamRenderer renderer) {
         super();
@@ -36,7 +38,7 @@ public class TeamListSubscriber extends BaseAPISubscriber<List<Team>, List<ListI
             return;
         }
         Collections.sort(mAPIData, mComparator);
-        for (int i=0; i < mAPIData.size(); i++) {
+        for (int i = 0; i < mAPIData.size(); i++) {
             Team team = mAPIData.get(i);
             if (team == null) {
                 continue;

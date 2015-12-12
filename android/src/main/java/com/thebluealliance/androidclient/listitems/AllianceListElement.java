@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
@@ -103,7 +104,7 @@ public class AllianceListElement extends ListElement implements RenderableModel 
         }
         AllianceListElement other = (AllianceListElement) o;
         return number == other.number
-          && teams.equals(other.teams)
-          && eventKey.equals(other.eventKey);
+                && teams.equals(other.teams)
+                && eventKey.equals(other.eventKey);
     }
 }

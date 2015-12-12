@@ -11,113 +11,134 @@ import dagger.Provides;
 @Module(includes = TBAAndroidModule.class)
 public class DatabaseWriterModule {
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public AwardListWriter awardListWriter(Database db) {
         return new AwardListWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public AwardWriter awardWriter(Database db) {
         return new AwardWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public DistrictListWriter districtListWriter(Database db) {
         return new DistrictListWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public DistrictTeamListWriter districtTeamListWriter(Database db) {
         return new DistrictTeamListWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public DistrictTeamWriter districtTeamWriter(Database db) {
         return new DistrictTeamWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public DistrictWriter districtWriter(Database db) {
         return new DistrictWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public EventListWriter eventListWriter(Database db) {
         return new EventListWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public EventTeamListWriter eventTeamListWriter(Database db) {
         return new EventTeamListWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public EventTeamWriter eventTeamWriter(Database db) {
         return new EventTeamWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public EventWriter eventWriter(Database db) {
         return new EventWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public MatchListWriter matchListWriter(Database db) {
         return new MatchListWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public MatchWriter matchWriter(Database db) {
         return new MatchWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public MediaListWriter mediaListWriter(Database db) {
         return new MediaListWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public MediaWriter mediaWriter(Database db) {
         return new MediaWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public TeamListWriter teamListWriter(Database db) {
         return new TeamListWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public TeamWriter teamWriter(Database db) {
         return new TeamWriter(db);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public YearsParticipatedWriter yearsParticipatedWriter(Database db, TeamWriter teamWriter) {
         return new YearsParticipatedWriter(db, teamWriter);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public EventTeamAndTeamListWriter provideEventTeamAndTeamListWriter(
-      Database database,
-      EventTeamListWriter eventTeamListWriter,
-      TeamListWriter teamListWriter) {
+            Database database,
+            EventTeamListWriter eventTeamListWriter,
+            TeamListWriter teamListWriter) {
         return new EventTeamAndTeamListWriter(database, eventTeamListWriter, teamListWriter);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public EventRankingsWriter provideEventRankingsWriter(Database db, EventWriter eventWriter) {
         return new EventRankingsWriter(db, eventWriter);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public EventStatsWriter provideEventStatsWriter(Database db, EventWriter eventWriter) {
         return new EventStatsWriter(db, eventWriter);
     }
 
-    @Provides @Singleton
+    @Provides
+    @Singleton
     public EventDistrictPointsWriter provideEventDistrictPointsWriter(
-      Database db,
-      EventWriter eventWriter) {
+            Database db,
+            EventWriter eventWriter) {
         return new EventDistrictPointsWriter(db, eventWriter);
     }
 }

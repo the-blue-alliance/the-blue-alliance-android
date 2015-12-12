@@ -124,9 +124,12 @@ public class StoredNotification {
     /**
      * Gets the related renderable notification
      * You can immediately call {@link BaseNotification#getView(Context, LayoutInflater, View)}
+     *
      * @return Appropriate BaseNotification
      */
-    public @Nullable BaseNotification getNotification(DatabaseWriter writer) {
+    public
+    @Nullable
+    BaseNotification getNotification(DatabaseWriter writer) {
         BaseNotification notification;
         String data = getMessageData();
         switch (getType()) {

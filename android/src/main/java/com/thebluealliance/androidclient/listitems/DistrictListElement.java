@@ -23,7 +23,7 @@ public class DistrictListElement extends ListElement {
     public final boolean showMyTba;
 
     public DistrictListElement(District district, int numEvents, boolean showMyTba)
-      throws BasicModel.FieldNotDefinedException {
+            throws BasicModel.FieldNotDefinedException {
         super(district.getKey());
         type = DistrictType.fromEnum(district.getEnum());
         key = district.getKey();
@@ -78,8 +78,8 @@ public class DistrictListElement extends ListElement {
         }
         DistrictListElement element = (DistrictListElement) o;
         return type == element.type
-          && numEvents == element.numEvents
-          && key.equals(element.key);
+                && numEvents == element.numEvents
+                && key.equals(element.key);
     }
 
     private static class ViewHolder {

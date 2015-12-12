@@ -14,7 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class SubscriptionListSubscriber
-  extends BaseAPISubscriber<List<Subscription>, List<ListItem>> {
+        extends BaseAPISubscriber<List<Subscription>, List<ListItem>> {
 
     private ModelRenderer mRenderer;
     private Comparator<Subscription> mComparator;
@@ -37,7 +37,7 @@ public class SubscriptionListSubscriber
         for (int i = 0; i < mAPIData.size(); i++) {
             Subscription subscription = mAPIData.get(i);
             ListItem item = mRenderer
-              .renderFromKey(subscription.getModelKey(), subscription.getModelType(), null);
+                    .renderFromKey(subscription.getModelKey(), subscription.getModelType(), null);
             if (item != null) {
                 if (lastModel != subscription.getModelEnum()) {
                     mDataToBind.add(new EventTypeHeader(subscription.getModelType().getTitle()));

@@ -8,5 +8,6 @@ import dagger.Component;
 @Component(modules = {TBAAndroidModule.class})
 public interface ApplicationComponent {
     void inject(SubscriberModule module);
+
     void inject(TBAAndroidModule module);
 }

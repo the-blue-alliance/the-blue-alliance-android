@@ -31,7 +31,9 @@ public class DistrictRenderer implements ModelRenderer<District, DistrictRendere
      */
     @WorkerThread
     @Override
-    public @Nullable DistrictListElement renderFromKey(String key, ModelType type, RenderArgs args) {
+    public
+    @Nullable
+    DistrictListElement renderFromKey(String key, ModelType type, RenderArgs args) {
         District district = mDatafeed.fetchDistrict(key).toBlocking().first();
         if (district == null) {
             return null;
@@ -45,12 +47,14 @@ public class DistrictRenderer implements ModelRenderer<District, DistrictRendere
 
     @WorkerThread
     @Override
-    public @Nullable DistrictListElement renderFromModel(District district, RenderArgs args) {
+    public
+    @Nullable
+    DistrictListElement renderFromModel(District district, RenderArgs args) {
         try {
             return new DistrictListElement(
-              district,
-              args != null ? args.numEvents : 0,
-              args != null && args.showMyTba);
+                    district,
+                    args != null ? args.numEvents : 0,
+                    args != null && args.showMyTba);
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
             return null;

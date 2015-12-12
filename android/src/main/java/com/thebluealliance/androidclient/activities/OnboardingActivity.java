@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -35,8 +36,8 @@ import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 
 public class OnboardingActivity extends AppCompatActivity
-  implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks, PlusManager.Callbacks,
-  MyTBAOnboardingViewPager.Callbacks, HasDatafeedComponent {
+        implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks, PlusManager.Callbacks,
+        MyTBAOnboardingViewPager.Callbacks, HasDatafeedComponent {
 
     private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";
     private static final String LOADING_COMPLETE = "loading_complete";
@@ -373,9 +374,9 @@ public class OnboardingActivity extends AppCompatActivity
         if (mComponent == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponent = DaggerDatafeedComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .build();
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .build();
         }
         return mComponent;
     }
