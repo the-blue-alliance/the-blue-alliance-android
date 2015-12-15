@@ -16,6 +16,10 @@ Want to add features, fix bugs, or just poke around the code? No problem!
  - Read through the [planning documents](https://drive.google.com/#folders/0B5RO2Yzh2z01MDBOVXYwM1lXdFk) so you know what's going on.
  - Watch our [Trello board](https://trello.com/b/x42paPe3/tba-android) for updates on our long-term plans
 
+### Learning
+ - Read through the [Project Wiki](https://github.com/the-blue-alliance/the-blue-alliance-android/wiki) to get comfortable with some of the technologies we use
+ - Learn some basics of [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection), specifically [Dagger](http://google.github.io/dagger/), to understand one the core components of our app.
+
 ### Make Commits!
 1. Set up your development environment if you haven't used Android Studio before ([see below](#setup))
 2. Fork this repository, import the project to your IDE, and create a branch for your changes
@@ -24,7 +28,7 @@ Want to add features, fix bugs, or just poke around the code? No problem!
 
 For more detailed instructions, checkout [GitHub's Guide to Contributing](https://guides.github.com/activities/contributing-to-open-source/)
 
-### <a name="style"></a>
+<a name="style"></a>
 Code Style
 ----------
 
