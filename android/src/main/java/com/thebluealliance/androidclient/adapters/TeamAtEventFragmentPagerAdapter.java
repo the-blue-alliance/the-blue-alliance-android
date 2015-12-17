@@ -9,9 +9,6 @@ import com.thebluealliance.androidclient.fragments.event.EventMatchesFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventStatsFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
 
-/**
- * Created by phil on 7/16/14.
- */
 public class TeamAtEventFragmentPagerAdapter extends FragmentPagerAdapter {
 
     public final String[] TITLES = {"Summary", "Matches", "Stats", "Awards"};

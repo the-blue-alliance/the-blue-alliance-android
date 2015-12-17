@@ -9,9 +9,6 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.R;
 
-/**
- * Created by Nathan on 6/20/2014.
- */
 public class ContributorListElement extends ListElement {
 
     private String login;

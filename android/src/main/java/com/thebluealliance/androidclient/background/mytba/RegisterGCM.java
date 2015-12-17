@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.background.mytba;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -12,9 +11,6 @@ import com.thebluealliance.androidclient.gcm.GCMHelper;
 
 import java.io.IOException;
 
-/**
- * Created by phil on 2/5/15.
- */
 public class RegisterGCM extends AsyncTask<Void, Void, Void> {
 
     private Context context;

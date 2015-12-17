@@ -6,9 +6,6 @@ import android.view.View;
 
 import com.thebluealliance.androidclient.R;
 
-/**
- * Created by Nathan on 5/19/2015.
- */
 public class DividerListItem implements ListItem {
     @Override
     public int getViewType() {

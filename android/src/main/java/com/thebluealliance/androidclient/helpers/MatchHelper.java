@@ -26,8 +26,6 @@ import java.util.regex.Pattern;
  * @author Bryce Matsuda
  * @author Nathan Walters
  * @author Phil Lopreiato
- *         <p>
- *         Created by Nathan on 6/6/2014.
  */
 public class MatchHelper {
 

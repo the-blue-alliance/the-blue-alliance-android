@@ -1,8 +1,5 @@
 package com.thebluealliance.androidclient.eventbus;
 
-/**
- * Created by Nathan on 8/15/2014.
- */
 public class ConnectivityChangeEvent {
 
     public static final int CONNECTION_FOUND = 0;

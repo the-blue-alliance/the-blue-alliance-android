@@ -10,9 +10,6 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.ListElement;
 
-/**
- * Created by Nathan on 3/28/2015.
- */
 public class GamedayTickerFilterCheckbox extends ListElement {
 
     private int layout;

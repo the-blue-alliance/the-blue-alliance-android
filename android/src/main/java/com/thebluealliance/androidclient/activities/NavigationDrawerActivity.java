@@ -26,8 +26,6 @@ import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
  * Activity that provides a navigation drawer.
  * <p>
  * This allows for the easy reuse of a single navigation drawer throughout the app.
- * <p>
- * Created by Nathan on 5/15/2014.
  */
 
 public abstract class NavigationDrawerActivity extends AppCompatActivity

@@ -36,9 +36,6 @@ import com.thebluealliance.androidclient.models.Team;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * Created by Nathan on 6/14/2014.
- */
 public class SearchResultsActivity extends NavigationDrawerActivity implements SearchView.OnQueryTextListener {
 
     private static final int MAX_RESULTS_PER_CATEGORY = 5;

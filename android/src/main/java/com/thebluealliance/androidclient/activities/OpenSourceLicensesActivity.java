@@ -11,9 +11,6 @@ import com.thebluealliance.androidclient.R;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-/**
- * Created by Nathan on 5/11/2014.
- */
 public class OpenSourceLicensesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

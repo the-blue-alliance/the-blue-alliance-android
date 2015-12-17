@@ -17,9 +17,6 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.List;
 
-/**
- * Created by phil on 2/5/15.
- */
 public class SummaryNotification extends BaseNotification {
     /**
      * Limit the summary's list to avoid taking up the whole notification shade and to work around

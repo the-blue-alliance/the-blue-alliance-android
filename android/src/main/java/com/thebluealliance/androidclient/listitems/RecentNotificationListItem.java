@@ -9,9 +9,6 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 
-/**
- * Created by phil on 7/16/14.
- */
 public class RecentNotificationListItem extends ListElement {
 
     String label, value, intent;

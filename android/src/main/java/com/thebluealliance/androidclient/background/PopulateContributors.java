@@ -14,9 +14,6 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 
 import java.util.ArrayList;
 
-/**
- * Created by Nathan on 6/20/2014.
- */
 public class PopulateContributors extends AsyncTask<String, Void, Void> {
     private ContributorsActivity activity;
     private ListViewAdapter adapter;

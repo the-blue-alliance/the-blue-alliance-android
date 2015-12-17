@@ -6,9 +6,6 @@ import com.thebluealliance.androidclient.types.ModelType;
 
 import java.util.ArrayList;
 
-/**
- * Created by Nathan on 11/7/2014.
- */
 public class ModelNotificationFavoriteSettings {
     public String modelKey = "";
     public ModelType modelType = null;

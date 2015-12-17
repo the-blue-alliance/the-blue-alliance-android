@@ -8,9 +8,6 @@ import android.widget.ImageView;
 
 import com.thebluealliance.androidclient.R;
 
-/**
- * Created by Nathan on 12/4/2014.
- */
 public class RecoloredImageView extends ImageView {
 
     private int tintColor;

@@ -7,9 +7,6 @@ import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 
 import java.util.List;
 
-/**
- * Created by Nathan on 5/8/2014.
- */
 public class NavigationDrawerAdapter extends ListViewAdapter {
 
     public NavigationDrawerAdapter(Context context, List<ListItem> values) {

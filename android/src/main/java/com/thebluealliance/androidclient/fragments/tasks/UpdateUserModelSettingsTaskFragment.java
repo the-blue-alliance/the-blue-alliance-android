@@ -8,9 +8,6 @@ import com.thebluealliance.androidclient.accounts.UpdateUserModelSettings;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
-/**
- * Created by Nathan on 11/7/2014.
- */
 public class UpdateUserModelSettingsTaskFragment extends Fragment {
 
     private UpdateUserModelSettings task;
