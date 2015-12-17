@@ -10,9 +10,6 @@ import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 
-/**
- * Created by phil on 7/8/14.
- */
 public class TeamAtEventClickListener implements View.OnClickListener {
 
     private Context c;

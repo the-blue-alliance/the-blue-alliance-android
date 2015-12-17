@@ -4,9 +4,6 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
 
-/**
- * Created by phil on 7/1/14.
- */
 public class EventTeamHelper {
     public static EventTeam fromEvent(String teamKey, Event in) throws BasicModel.FieldNotDefinedException {
         EventTeam eventTeam = new EventTeam();

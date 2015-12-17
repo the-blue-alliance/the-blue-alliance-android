@@ -7,9 +7,6 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 
-/**
- * Created by Nathan on 6/14/2014.
- */
 public class EmptyListElement extends ListElement {
 
     private String text;

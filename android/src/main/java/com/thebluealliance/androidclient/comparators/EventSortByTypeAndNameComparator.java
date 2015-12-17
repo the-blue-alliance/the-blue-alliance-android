@@ -9,9 +9,6 @@ import com.thebluealliance.androidclient.models.Event;
 
 import java.util.Comparator;
 
-/**
- * Created by Nathan on 4/30/2014.
- */
 public class EventSortByTypeAndNameComparator implements Comparator<Event> {
     @Override
     public int compare(Event event, Event event2) {

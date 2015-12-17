@@ -6,9 +6,6 @@ import android.view.View;
 
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 
-/**
- * Created by phil on 4/16/15.
- */
 public class GamedayTickerClickListener implements View.OnClickListener {
 
     private Context context;

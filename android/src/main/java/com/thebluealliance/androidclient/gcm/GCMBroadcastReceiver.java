@@ -9,9 +9,6 @@ import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
 
-/**
- * Created by Nathan on 7/25/2014.
- */
 public class GCMBroadcastReceiver extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {

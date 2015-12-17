@@ -5,8 +5,6 @@ import com.thebluealliance.androidclient.datafeed.refresh.RefreshController.Refr
 /**
  * An interface for an object that can be considered refreshable (it can be signaled to start
  * refreshing its content).
- * <p>
- * Created by Nathan on 6/4/2015.
  */
 public interface Refreshable {
 

@@ -19,9 +19,6 @@ import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
-/**
- * Created by phil on 2/3/15.
- */
 public class RecentNotificationsActivity extends BaseActivity implements HasFragmentComponent {
 
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";

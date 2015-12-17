@@ -1,13 +1,9 @@
 package com.thebluealliance.androidclient.background;
 
-
 import android.app.Activity;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 
-/**
- * Created by phil on 1/16/15.
- */
 public class AnalyticsActions {
 
     public static class ReportActivityStart implements Runnable {

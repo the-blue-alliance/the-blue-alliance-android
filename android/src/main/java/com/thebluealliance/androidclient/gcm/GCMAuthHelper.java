@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.gcm;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -19,9 +18,6 @@ import com.thebluealliance.androidclient.background.mytba.RegisterGCM;
 
 import java.io.IOException;
 
-/**
- * Created by phil on 7/31/14.
- */
 public class GCMAuthHelper {
 
     public static final String OS_ANDROID = "android";

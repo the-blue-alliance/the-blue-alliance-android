@@ -20,9 +20,6 @@ import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
-/**
- * Created by Nathan on 6/20/2014.
- */
 public class ContributorsActivity extends DatafeedActivity {
 
     Toolbar toolbar;

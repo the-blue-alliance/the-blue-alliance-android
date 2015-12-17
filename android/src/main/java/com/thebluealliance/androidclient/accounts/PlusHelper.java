@@ -10,9 +10,6 @@ import com.google.android.gms.plus.model.people.Person;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 
-/**
- * Created by phil on 11/16/14.
- */
 public class PlusHelper {
 
     // This is the helper object that connects to Google Play Services.

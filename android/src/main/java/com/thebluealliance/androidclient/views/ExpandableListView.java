@@ -7,8 +7,6 @@ import android.util.AttributeSet;
 import com.thebluealliance.androidclient.Utilities;
 
 /**
- * Created by Nathan on 7/4/2014.
- * <p>
  * This class puts the expand/collapse indicators on the right side of the group headers instead of
  * the left. Besides that, it functions just as the normal ExpandableListView does.
  */

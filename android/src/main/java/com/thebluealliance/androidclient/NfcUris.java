@@ -1,8 +1,5 @@
 package com.thebluealliance.androidclient;
 
-/**
- * Created by Nathan on 6/17/2014.
- */
 public class NfcUris {
 
     // Formatted as event/EVENT_KEY

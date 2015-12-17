@@ -1,8 +1,5 @@
 package com.thebluealliance.androidclient.datafeed;
 
-/**
- * Created by phil on 12/1/14.
- */
 public class RequestParams {
     public boolean cacheLocally;
     public boolean forceFromCache;

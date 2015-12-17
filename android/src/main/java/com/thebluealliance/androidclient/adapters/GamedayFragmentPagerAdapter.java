@@ -7,9 +7,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.thebluealliance.androidclient.fragments.gameday.GamedayTickerFragment;
 import com.thebluealliance.androidclient.fragments.gameday.GamedayWebcastsFragment;
 
-/**
- * Created by phil on 3/26/15.
- */
 public class GamedayFragmentPagerAdapter extends FragmentPagerAdapter {
 
     public final String[] TITLES = {"Live Ticker", "Webcasts"};
