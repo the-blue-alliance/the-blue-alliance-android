@@ -1,107 +1,39 @@
 package com.thebluealliance.androidclient.fragments.mytba;
 
-import android.app.Activity;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.mytba.PopulateUserSubscriptions;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
+import com.thebluealliance.androidclient.models.Subscription;
+import com.thebluealliance.androidclient.subscribers.SubscriptionListSubscriber;
 
-/**
- * File created by phil on 8/2/14.
- */
-public class MySubscriptionsFragment extends Fragment implements RefreshListener {
+import java.util.List;
 
-    private Activity parent;
+import rx.Observable;
 
-    private Parcelable mListState;
-    private ListViewAdapter mAdapter;
-    private ListView mListView;
-
-    private PopulateUserSubscriptions mTask;
+public class MySubscriptionsFragment
+  extends ListViewFragment<List<Subscription>, SubscriptionListSubscriber> {
 
     public static MySubscriptionsFragment newInstance() {
         return new MySubscriptionsFragment();
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        parent = getActivity();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshListener(this);
-        }
+    protected void inject() {
+        mComponent.inject(this);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
-        mListView = (ListView) view.findViewById(R.id.list);
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
-
-        if (mAdapter != null) {
-            mListView.setAdapter(mAdapter);
-            mListView.onRestoreInstanceState(mListState);
-            progressBar.setVisibility(View.GONE);
-        }
-        return view;
+    protected Observable<List<Subscription>> getObservable(String tbaCacheHeader) {
+        return mDatafeed.getCache().fetchUserSubscriptions(getActivity());
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).restartRefresh(true);
-        }
+    protected String getRefreshTag() {
+        return "mySubscriptions";
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-        if (mListView != null) {
-            mAdapter = (ListViewAdapter) mListView.getAdapter();
-            mListState = mListView.onSaveInstanceState();
-        }
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_notifications_black_48dp, R.string.no_subscription_data);
     }
-    
-    @Override
-    public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading user subscriptions");
-        mTask = new PopulateUserSubscriptions(this, new RequestParams(true, actionIconPressed));
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    @Override
-    public void onRefreshStop() {
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-    }
-
-    public void updateTask(PopulateUserSubscriptions newTask) {
-        mTask = newTask;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
-    }
-
 }

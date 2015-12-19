@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.lang.reflect.Type;
 
-import static com.thebluealliance.androidclient.datafeed.JSONManager.isNull;
+import static com.thebluealliance.androidclient.helpers.JSONHelper.isNull;
 
 
 public class TeamDeserializer implements JsonDeserializer<Team> {
@@ -45,6 +45,10 @@ public class TeamDeserializer implements JsonDeserializer<Team> {
         // Some teams don't have websites
         if (!isNull(object.get("website"))) {
             team.setWebsite(object.get("website").getAsString());
+        }
+
+        if (!isNull(object.get("motto"))) {
+            team.setMotto(object.get("motto").getAsString());
         }
 
         return team;

@@ -2,17 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeightSmall" >
+    android:minHeight="?android:attr/listPreferredItemHeightSmall">
 
     <TextView
         android:id="@+id/group_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:paddingLeft="16dp"
         android:paddingRight="48dp"
-        android:ellipsize="end"
         android:singleLine="true"
-        android:maxLines="1"
         android:textSize="16sp" />
 </RelativeLayout>

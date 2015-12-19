@@ -3,11 +3,11 @@ package com.thebluealliance.androidclient.activities;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -18,47 +18,56 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
-import com.thebluealliance.androidclient.background.team.MakeActionBarDropdownForTeam;
-import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
-import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
+import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.androidclient.interfaces.YearsParticipatedUpdate;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
+import com.thebluealliance.androidclient.subscribers.YearsParticipatedDropdownSubscriber;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
-import java.util.Calendar;
+import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+import rx.schedulers.Schedulers;
 
-/**
- * File created by nathan on 4/21/14.
- */
-public class ViewTeamActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener, View.OnClickListener {
+public class ViewTeamActivity extends FABNotificationSettingsActivity implements
+        ViewPager.OnPageChangeListener,
+        View.OnClickListener,
+        HasFragmentComponent,
+        YearsParticipatedUpdate {
 
     public static final String TEAM_KEY = "team_key",
             TEAM_YEAR = "team_year",
             SELECTED_YEAR = "year",
             SELECTED_TAB = "tab";
 
-    private TextView warningMessage;
-
+    private FragmentComponent mComponent;
+    private static Object mModule;
+    private TextView mWarningMessage;
     private int mCurrentSelectedYearPosition = -1,
             mSelectedTab = -1;
 
-    private String[] yearsParticipated;
+    private int[] mYearsParticipated;
+
+    @Inject TBAStatusController mStatusController;
 
     // Should come in the format frc####
     private String mTeamKey;
 
     private int mYear;
-
-    private ViewPager pager;
-
-    private Toolbar toolbar;
-    private View yearSelectorContainer;
-    private View yearSelectorSubtitleContainer;
-    private TextView yearSelectorTitle;
-    private TextView yearSelectorSubtitle;
+    private View mYearSelectorContainer;
+    private View mYearSelectorSubtitleContainer;
+    private TextView mYearSelectorTitle;
+    private TextView mYearSelectorSubtitle;
+    private ViewPager mPager;
+    private ViewTeamFragmentPagerAdapter mAdapter;
 
     public static Intent newInstance(Context context, String teamKey) {
         System.out.println("making intent for " + teamKey);
@@ -83,18 +92,18 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
 
-        setModelKey(mTeamKey, ModelHelper.MODELS.TEAM);
+        setModelKey(mTeamKey, ModelType.TEAM);
         setContentView(R.layout.activity_view_team);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        yearSelectorContainer = findViewById(R.id.year_selector_container);
-        yearSelectorSubtitleContainer = findViewById(R.id.year_selector_subtitle_container);
-        yearSelectorTitle = (TextView) findViewById(R.id.year_selector_title);
-        yearSelectorSubtitle = (TextView) findViewById(R.id.year_selector_subtitle);
+        mYearSelectorContainer = findViewById(R.id.year_selector_container);
+        mYearSelectorSubtitleContainer = findViewById(R.id.year_selector_subtitle_container);
+        mYearSelectorTitle = (TextView) findViewById(R.id.year_selector_title);
+        mYearSelectorSubtitle = (TextView) findViewById(R.id.year_selector_subtitle);
 
-        warningMessage = (TextView) findViewById(R.id.warning_container);
+        mWarningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
         if (savedInstanceState != null) {
@@ -105,64 +114,39 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
                 mYear = savedInstanceState.getInt(SELECTED_YEAR);
             }
         } else {
+            int maxYear = mStatusController.getMaxCompYear();
             if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(TEAM_YEAR)) {
-                mYear = getIntent().getIntExtra(TEAM_YEAR, Calendar.getInstance().get(Calendar.YEAR));
+                mYear = getIntent().getIntExtra(TEAM_YEAR, maxYear);
             } else {
-                mYear = Calendar.getInstance().get(Calendar.YEAR);
+                mYear = maxYear;
             }
-            mCurrentSelectedYearPosition = 0;
             mSelectedTab = 0;
         }
 
-        pager = (ViewPager) findViewById(R.id.view_pager);
-        pager.setOffscreenPageLimit(3);
-        pager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
+        mPager = (ViewPager) findViewById(R.id.view_pager);
+        mPager.setOffscreenPageLimit(3);
+        mPager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
         // We will notify the fragments of the year later
-        final ViewTeamFragmentPagerAdapter adapter = new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey);
-        pager.setAdapter(adapter);
+        mAdapter = new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, mYear);
+        mPager.setAdapter(mAdapter);
 
         SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
-        tabs.setViewPager(pager);
+        tabs.setViewPager(mPager);
         tabs.setOnPageChangeListener(this);
+        ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
 
-        new MakeActionBarDropdownForTeam(this).execute(mTeamKey);
+        getComponent().datafeed().fetchTeamYearsParticipated(mTeamKey, null)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation())
+                .subscribe(new YearsParticipatedDropdownSubscriber(this));
 
-        // We can call this even though the years particiapted haven't been loaded yet.
+        // We can call this even though the years participated haven't been loaded yet.
         // The years won't be shown yet; this just shows the team number in the toolbar.
         setupActionBar();
-        
-        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                /*Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, ViewTeamActivity.this);
-                t.send(new HitBuilders.EventBuilder()
-                        .setCategory("event_by_week-tabs")
-                        .setAction("tab_change")
-                        .setLabel(mTeamKey + " " + adapter.getPageTitle(position))
-                        .build());
-                        */
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        getSupportFragmentManager().getFragments().clear();
     }
 
     @Override
@@ -192,67 +176,65 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
             bar.setDisplayHomeAsUpEnabled(true);
             bar.setDisplayShowTitleEnabled(false);
             String teamNumber = mTeamKey.replace("frc", "");
-            yearSelectorTitle.setText(String.format(getString(R.string.team_actionbar_title), teamNumber));
+            mYearSelectorTitle.setText(String.format(getString(R.string.team_actionbar_title),
+                    teamNumber));
 
             // If we call this and the years participated haven't been loaded yet, don't try to use them
-            if (yearsParticipated != null) {
+            if (mYearsParticipated != null && mYearsParticipated.length > 0) {
 
-                yearSelectorSubtitleContainer.setVisibility(View.VISIBLE);
+                mYearSelectorSubtitleContainer.setVisibility(View.VISIBLE);
 
-                final Dialog dialog = makeDialogForYearSelection(R.string.select_year, yearsParticipated);
+                final Dialog dialog = makeDialogForYearSelection(R.string.select_year, mYearsParticipated);
 
-                yearSelectorContainer.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.show();
-                    }
-                });
-
-                if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < yearsParticipated.length) {
-                    onYearSelected(mCurrentSelectedYearPosition);
-                    updateTeamYearSelector(mCurrentSelectedYearPosition);
-                } else {
-                    onYearSelected(0);
-                    updateTeamYearSelector(0);
-                }
+                mYearSelectorContainer.setOnClickListener(v -> dialog.show());
+            } else {
+                // If there are no valid years, hide the subtitle and disable clicking
+                mYearSelectorSubtitleContainer.setVisibility(View.GONE);
+                mYearSelectorContainer.setOnClickListener(null);
             }
         }
     }
 
-    private Dialog makeDialogForYearSelection(@StringRes int titleResId, String[] dropdownItems) {
+    private Dialog makeDialogForYearSelection(@StringRes int titleResId, int[] dropdownItems) {
+        // Create an array of strings from the int years
+        String[] years = new String[dropdownItems.length];
+        for (int i = 0; i < years.length; i++) {
+            years[i] = String.valueOf(dropdownItems[i]);
+        }
+
         Resources res = getResources();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(res.getString(titleResId));
-        builder.setItems(dropdownItems, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onYearSelected(which);
-            }
+        builder.setItems(years, (dialog, which) -> {
+            onYearSelected(which);
         });
 
         return builder.create();
     }
 
     private void updateTeamYearSelector(int selectedPosition) {
-        yearSelectorSubtitle.setText(yearsParticipated[selectedPosition]);
+        if (selectedPosition < 0 || selectedPosition >= mYearsParticipated.length) {
+            return;
+        }
+        mYearSelectorSubtitle.setText(String.valueOf(mYearsParticipated[selectedPosition]));
     }
 
-    public void onYearsParticipatedLoaded(int[] years) {
-        String[] dropdownItems = new String[years.length];
+    @Override
+    public void updateYearsParticipated(int[] years) {
+        mYearsParticipated = years;
+
+        // If we received a desired year in the intent, find the index of that year if it exists
         int requestedYearIndex = 0;
         for (int i = 0; i < years.length; i++) {
             if (years[i] == mYear) {
                 requestedYearIndex = i;
             }
-            dropdownItems[i] = String.valueOf(years[i]);
         }
-        yearsParticipated = dropdownItems;
-        mCurrentSelectedYearPosition = requestedYearIndex;
 
+        // Refresh action bar; this will the year subtitle if there are no valid ones
         setupActionBar();
 
-        // Notify anyone that cares that the year changed
-        EventBus.getDefault().post(new YearChangedEvent(Integer.parseInt(yearsParticipated[mCurrentSelectedYearPosition])));
+        onYearSelected(requestedYearIndex);
     }
 
     private void onYearSelected(int position) {
@@ -260,14 +242,22 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         if (position == mCurrentSelectedYearPosition) {
             return;
         }
+
+        // Bounds checking!
+        if (position < 0 || position >= mYearsParticipated.length) {
+            return;
+        }
+
         mCurrentSelectedYearPosition = position;
-        mYear = Integer.valueOf(yearsParticipated[mCurrentSelectedYearPosition]);
-
         updateTeamYearSelector(position);
-
-        EventBus.getDefault().post(new YearChangedEvent(mYear));
-
+        int newYear = mYearsParticipated[mCurrentSelectedYearPosition];
+        if (newYear == mYear) {
+            return;
+        }
+        mYear = newYear;
         setBeamUri(String.format(NfcUris.URI_TEAM_IN_YEAR, mTeamKey, mYear));
+        mAdapter.updateYear(mYear);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -288,14 +278,14 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
     }
 
     @Override
-    public void showWarningMessage(String message) {
-        warningMessage.setText(message);
-        warningMessage.setVisibility(View.VISIBLE);
+    public void showWarningMessage(CharSequence warningMessage) {
+        mWarningMessage.setText(warningMessage);
+        mWarningMessage.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideWarningMessage() {
-        warningMessage.setVisibility(View.GONE);
+        mWarningMessage.setVisibility(View.GONE);
     }
 
     @Override
@@ -319,7 +309,23 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
 
     }
 
-    public int getCurrentSelectedYearPosition() {
-        return mCurrentSelectedYearPosition;
+    public FragmentComponent getComponent() {
+        if (mComponent == null) {
+            TBAAndroid application = ((TBAAndroid) getApplication());
+            mComponent = DaggerFragmentComponent.builder()
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .binderModule(application.getBinderModule())
+                    .databaseWriterModule(application.getDatabaseWriterModule())
+                    .subscriberModule(new SubscriberModule(this))
+                    .clickListenerModule(new ClickListenerModule(this))
+                    .build();
+        }
+        return mComponent;
+    }
+
+    @Override
+    public void inject() {
+        getComponent().inject(this);
     }
 }

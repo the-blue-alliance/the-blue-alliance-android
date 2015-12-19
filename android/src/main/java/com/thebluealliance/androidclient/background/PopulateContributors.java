@@ -9,16 +9,11 @@ import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.datafeed.HTTP;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
 import com.thebluealliance.androidclient.listitems.ContributorListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
 import java.util.ArrayList;
 
-/**
- * Created by Nathan on 6/20/2014.
- */
 public class PopulateContributors extends AsyncTask<String, Void, Void> {
     private ContributorsActivity activity;
     private ListViewAdapter adapter;
@@ -30,7 +25,7 @@ public class PopulateContributors extends AsyncTask<String, Void, Void> {
     @Override
     protected Void doInBackground(String... params) {
         ArrayList<ListItem> list = new ArrayList<>();
-        JsonArray data = JSONManager.getasJsonArray(HTTP.GET("https://api.github.com/repos/the-blue-alliance/the-blue-alliance-android/contributors"));
+        JsonArray data = new JsonArray();//JSONHelper.getasJsonArray(HTTP.GET("https://api.github.com/repos/the-blue-alliance/the-blue-alliance-android/contributors"));
 
         for (int i = 0; i < data.size(); i++) {
             list.add(new ContributorListElement(data.get(i).getAsJsonObject().get("login").getAsString(), data.get(i).getAsJsonObject().get("avatar_url").getAsString()));
@@ -50,7 +45,6 @@ public class PopulateContributors extends AsyncTask<String, Void, Void> {
         Parcelable state = contributors.onSaveInstanceState();
         contributors.setAdapter(adapter);
         contributors.onRestoreInstanceState(state);
-        activity.notifyRefreshComplete(activity);
     }
 
 }

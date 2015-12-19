@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -14,39 +17,60 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.database.writers.MatchWriter;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.views.MatchView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Created by Nathan on 7/24/2014.
- */
 public class ScoreNotification extends BaseNotification {
 
-    private String eventName, matchKey;
+    private final MatchWriter mWriter;
+    private String eventName, eventKey, matchKey;
     private Match match;
 
-    public ScoreNotification(String messageData) {
-        super("score", messageData);
+    public ScoreNotification(String messageData, MatchWriter writer) {
+        super(NotificationTypes.MATCH_SCORE, messageData);
+        mWriter = writer;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public String getEventKey() {
+        return eventKey;
+    }
+
+    public String getMatchKey() {
+        return matchKey;
+    }
+
+    public Match getMatch() {
+        return match;
     }
 
     @Override
-    public void parseMessageData() throws JsonParseException{
-        JsonObject jsonData = jsonData = JSONManager.getasJsonObject(messageData);
-        if(!jsonData.has("match")){
+    public void parseMessageData() throws JsonParseException {
+        JsonObject jsonData = JSONHelper.getasJsonObject(messageData);
+        if (!jsonData.has("match")) {
             throw new JsonParseException("Notification data does not contain 'match");
         }
         JsonObject match = jsonData.get("match").getAsJsonObject();
         this.match = gson.fromJson(match, Match.class);
-        if(!jsonData.has("event_name")){
+        this.matchKey = this.match.getKey();
+        this.eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
+        if (!jsonData.has("event_name")) {
             throw new JsonParseException("Notification data does not contain 'event_name");
         }
         eventName = jsonData.get("event_name").getAsString();
@@ -57,14 +81,8 @@ public class ScoreNotification extends BaseNotification {
         Resources r = context.getResources();
 
         String matchKey;
-        try {
-            matchKey = match.getKey();
-            this.matchKey = matchKey;
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(getLogTag(), "Incoming Match object does not have a key. Can't post score update");
-            e.printStackTrace();
-            return null;
-        }
+        matchKey = match.getKey();
+        this.matchKey = matchKey;
 
         String matchTitle = MatchHelper.getMatchTitleFromMatchKey(context, matchKey);
         String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);
@@ -77,20 +95,18 @@ public class ScoreNotification extends BaseNotification {
             e.printStackTrace();
             return null;
         }
-        JsonObject redAlliance = alliances.get("red").getAsJsonObject();
-        int redScore = redAlliance.get("score").getAsInt();
+        int redScore = Match.getRedScore(alliances);
 
         ArrayList<String> redTeamKeys = new ArrayList<>();
-        JsonArray redTeamsJson = redAlliance.getAsJsonArray("teams");
+        JsonArray redTeamsJson = Match.getRedTeams(alliances);
         for (int i = 0; i < redTeamsJson.size(); i++) {
             redTeamKeys.add(redTeamsJson.get(i).getAsString());
         }
 
-        JsonObject blueAlliance = alliances.get("blue").getAsJsonObject();
-        int blueScore = blueAlliance.get("score").getAsInt();
+        int blueScore = Match.getBlueScore(alliances);
 
         ArrayList<String> blueTeamKeys = new ArrayList<>();
-        JsonArray blueTeamsJson = blueAlliance.getAsJsonArray("teams");
+        JsonArray blueTeamsJson = Match.getBlueTeams(alliances);
         for (int i = 0; i < blueTeamsJson.size(); i++) {
             blueTeamKeys.add(blueTeamsJson.get(i).getAsString());
         }
@@ -110,7 +126,7 @@ public class ScoreNotification extends BaseNotification {
         }
 
         // Make sure the score string is formatted properly with the winning score first
-        String scoreString = "";
+        String scoreString;
         if (redScore > blueScore) {
             scoreString = redScore + "-" + blueScore;
         } else if (redScore < blueScore) {
@@ -118,27 +134,27 @@ public class ScoreNotification extends BaseNotification {
         } else {
             scoreString = redScore + "-" + redScore;
         }
-        
+
         String redTeamString = Utilities.stringifyListOfStrings(context, redTeams);
-        String blueTeamString =  Utilities.stringifyListOfStrings(context, blueTeams);
+        String blueTeamString = Utilities.stringifyListOfStrings(context, blueTeams);
 
         boolean useSpecial2015Format;
         try {
-            useSpecial2015Format = match.getYear() == 2015 && match.getType() != MatchHelper.TYPE.FINAL;
+            useSpecial2015Format = match.getYear() == 2015 && match.getType() != MatchType.FINAL;
         } catch (BasicModel.FieldNotDefinedException e) {
             useSpecial2015Format = false;
             Log.w(Constants.LOG_TAG, "Couldn't determine if we should use 2015 score format. Defaulting to no");
         }
 
         String eventShortName = EventHelper.shortName(eventName);
-        String notificationString = "";
+        String notificationString;
         if (redTeams.size() == 0 && blueTeams.size() == 0) {
             // We must have gotten this GCM message by mistake
             return null;
-        } else if(useSpecial2015Format) {
+        } else if (useSpecial2015Format) {
             /* Only for 2015 non-finals matches. Ugh */
             notificationString = context.getString(R.string.notification_score_2015_no_winner, eventShortName, matchTitle, redTeamString, redScore, blueTeamString, blueScore);
-        }else if((redTeams.size() > 0 && blueTeams.size() == 0)) {
+        } else if ((redTeams.size() > 0 && blueTeams.size() == 0)) {
             // The user only cares about some teams on the red alliance
             if (redScore > blueScore) {
                 // Red won
@@ -180,7 +196,7 @@ public class ScoreNotification extends BaseNotification {
         }
 
         // We can finally build the notification!
-        Intent instance = ViewMatchActivity.newInstance(context, matchKey);
+        Intent instance = getIntent(context);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -190,7 +206,8 @@ public class ScoreNotification extends BaseNotification {
         stored.setBody(notificationString);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
-        
+        stored.setMessageData(messageData);
+
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationString)
@@ -202,14 +219,54 @@ public class ScoreNotification extends BaseNotification {
     }
 
     @Override
-    public void updateDataLocally(Context c) {
-        if(match != null){
-            match.write(c);
+    public void updateDataLocally() {
+        if (match != null) {
+            mWriter.write(match);
         }
+    }
+
+    @Override
+    public Intent getIntent(Context c) {
+        return ViewMatchActivity.newInstance(c, matchKey);
     }
 
     @Override
     public int getNotificationId() {
         return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
+    }
+
+    @Override
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_notification_score, null, false);
+
+            holder = new ViewHolder();
+            holder.header = (TextView) convertView.findViewById(R.id.card_header);
+            holder.title = (TextView) convertView.findViewById(R.id.title);
+            holder.matchView = (MatchView) convertView.findViewById(R.id.match_details);
+            holder.time = (TextView) convertView.findViewById(R.id.notification_time);
+            holder.summaryContainer = convertView.findViewById(R.id.summary_container);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(eventName), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
+        holder.title.setText(c.getString(R.string.notification_score_gameday_title, MatchHelper.getMatchTitleFromMatchKey(c, matchKey)));
+        holder.time.setText(getNotificationTimeString(c));
+        holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
+        /** TODO Move to {@link com.thebluealliance.androidclient.renderers.MatchRenderer} */
+        match.render(false, false, false, true).getView(c, inflater, holder.matchView);
+
+        return convertView;
+    }
+
+    private class ViewHolder {
+        public TextView header;
+        public TextView title;
+        public MatchView matchView;
+        public TextView time;
+        private View summaryContainer;
     }
 }

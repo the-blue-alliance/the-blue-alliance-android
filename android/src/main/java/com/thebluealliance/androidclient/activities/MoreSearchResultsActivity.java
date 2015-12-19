@@ -6,7 +6,8 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,22 +15,16 @@ import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventCursorAdapter;
 import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
 import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 
-/**
- * Created by Nathan on 6/15/2014.
- */
-public class MoreSearchResultsActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MoreSearchResultsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final int TEAM_RESULTS = 1;
     public static final int EVENT_RESULTS = 2;
@@ -39,6 +34,7 @@ public class MoreSearchResultsActivity extends ActionBarActivity implements Load
     private static final String PREPARED_QUERY = "preparedQuery";
 
     private ListView resultsList;
+    private Toolbar toolbar;
     private String query;
 
     private int resultsType;
@@ -55,7 +51,9 @@ public class MoreSearchResultsActivity extends ActionBarActivity implements Load
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
+        setSupportActionBar(toolbar);
 
         /* Report activity start to Analytics */
         new AnalyticsActions.ReportActivityStart(this).run();
@@ -138,14 +136,14 @@ public class MoreSearchResultsActivity extends ActionBarActivity implements Load
                 return new SimpleCursorLoader(MoreSearchResultsActivity.this) {
                     @Override
                     public Cursor loadInBackground() {
-                        return Database.getInstance(MoreSearchResultsActivity.this).getTeamsForTeamQuery(preparedQuery);
+                        return Database.getInstance(MoreSearchResultsActivity.this).getTeamsTable().getForSearchQuery(preparedQuery);
                     }
                 };
             case EVENT_RESULTS:
                 return new SimpleCursorLoader(MoreSearchResultsActivity.this) {
                     @Override
                     public Cursor loadInBackground() {
-                        return Database.getInstance(MoreSearchResultsActivity.this).getEventsForQuery(preparedQuery);
+                        return Database.getInstance(MoreSearchResultsActivity.this).getEventsTable().getForSearchQuery(preparedQuery);
                     }
                 };
         }

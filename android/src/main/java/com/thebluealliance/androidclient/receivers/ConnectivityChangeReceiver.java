@@ -6,20 +6,18 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by phil on 7/8/14.
- */
 public class ConnectivityChangeReceiver extends BroadcastReceiver {
 
     /**
-     * Receive the system's broadcast that internet connectivity has changed
-     * Second, send out a <a href="http://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html">Local Broadcast</a> that the current active
-     * RefreshableHostActivity can hook into and initiate a refresh
+     * Receive the system's broadcast that internet connectivity has changed Second, send out a <a
+     * href="http://developer.android.com/reference/android/support/v4/content/LocalBroadcastManager.html">Local
+     * Broadcast</a> that the current active RefreshableHostActivity can hook into and initiate a
+     * refresh
      *
      * @param context Input context
      * @param intent  Sent intent
@@ -30,7 +28,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
 
         // If we now have interwebz, send out a local broadcast telling things to refresh
         int connectionStatus;
-        if(ConnectionDetector.isConnectedToInternet(context)) {
+        if (ConnectionDetector.isConnectedToInternet(context)) {
             connectionStatus = ConnectivityChangeEvent.CONNECTION_FOUND;
         } else {
             connectionStatus = ConnectivityChangeEvent.CONNECTION_LOST;

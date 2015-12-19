@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -15,23 +16,24 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.background.match.PopulateMatchInfo;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
+import com.thebluealliance.androidclient.fragments.match.MatchInfoFragment;
+import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
-/**
- * Created by Nathan on 5/14/2014.
- */
-public class ViewMatchActivity extends FABNotificationSettingsActivity implements RefreshListener {
+public class ViewMatchActivity extends FABNotificationSettingsActivity
+  implements HasFragmentComponent {
 
     public static final String MATCH_KEY = "match_key";
 
     private String mMatchKey;
+    private TextView mWarningMessage;
 
-    private TextView warningMessage;
-
-    private PopulateMatchInfo task;
 
     public static Intent newInstance(Context context, String matchKey) {
         Intent intent = new Intent(context, ViewMatchActivity.class);
@@ -47,16 +49,19 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity implement
         if (mMatchKey == null) {
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
-        setModelKey(mMatchKey, ModelHelper.MODELS.MATCH);
+        setModelKey(mMatchKey, ModelType.MATCH);
         setContentView(R.layout.activity_view_match);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
+        setSupportActionBar(toolbar);
         setupActionBar();
-
         setSettingsToolbarTitle("Match settings");
 
-        warningMessage = (TextView) findViewById(R.id.warning_container);
+        MatchInfoFragment matchInfoFragment = MatchInfoFragment.newInstance(mMatchKey);
+        getSupportFragmentManager().beginTransaction()
+          .add(R.id.match_info_fragment_container, matchInfoFragment).commit();
 
-        registerRefreshListener(this);
+        mWarningMessage = (TextView) findViewById(R.id.warning_container);
     }
 
     @Override
@@ -67,25 +72,19 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity implement
         if (mMatchKey == null) {
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
-        setModelKey(mMatchKey, ModelHelper.MODELS.MATCH);
+        setModelKey(mMatchKey, ModelType.MATCH);
         Log.i(Constants.LOG_TAG, "New ViewMatch intent with key: " + mMatchKey);
         setupActionBar();
+
+        MatchInfoFragment matchInfoFragment = MatchInfoFragment.newInstance(mMatchKey);
+        getSupportFragmentManager().beginTransaction()
+          .replace(R.id.match_info_fragment_container, matchInfoFragment).commit();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         setBeamUri(String.format(NfcUris.URI_MATCH, mMatchKey));
-
-        startRefresh();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (task != null) {
-            task.cancel(false);
-        }
     }
 
     @Override
@@ -99,31 +98,17 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity implement
     }
 
     @Override
-    public void onRefreshStart(boolean actionItemPressed) {
-        Log.i(Constants.REFRESH_LOG, "Match " + mMatchKey + " refresh started");
-        task = new PopulateMatchInfo(this, new RequestParams(true, actionItemPressed));
-        task.execute(mMatchKey);
-        // Indicate loading; the task will hide the progressbar and show the content when loading is complete
-        findViewById(R.id.progress).setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onRefreshStop() {
-        task.cancel(false);
-    }
-
-    @Override
-    public void showWarningMessage(String message) {
-        if (warningMessage != null) {
-            warningMessage.setText(message);
-            warningMessage.setVisibility(View.VISIBLE);
+    public void showWarningMessage(CharSequence warningMessage) {
+        if (mWarningMessage != null) {
+            mWarningMessage.setText(warningMessage);
+            mWarningMessage.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void hideWarningMessage() {
-        if (warningMessage != null) {
-            warningMessage.setVisibility(View.GONE);
+        if (mWarningMessage != null) {
+            mWarningMessage.setVisibility(View.GONE);
         }
     }
 
@@ -163,5 +148,32 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity implement
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings(value = "unused")
+    public void onEventMainThread(ActionBarTitleEvent event) {
+        setActionBarTitle(event.getTitle());
+        setActionBarSubtitle(event.getSubtitle());
+    }
+
+    @Override
+    public FragmentComponent getComponent() {
+        if (mComponent == null) {
+            TBAAndroid application = ((TBAAndroid) getApplication());
+            mComponent = DaggerFragmentComponent.builder()
+              .applicationComponent(application.getComponent())
+              .datafeedModule(application.getDatafeedModule())
+              .binderModule(application.getBinderModule())
+              .databaseWriterModule(application.getDatabaseWriterModule())
+              .subscriberModule(new SubscriberModule(this))
+              .clickListenerModule(new ClickListenerModule(this))
+              .build();
+        }
+        return mComponent;
+    }
+
+    @Override
+    public void inject() {
+        getComponent().inject(this);
     }
 }

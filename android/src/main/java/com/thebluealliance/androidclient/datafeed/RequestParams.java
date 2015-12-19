@@ -1,20 +1,17 @@
 package com.thebluealliance.androidclient.datafeed;
 
-/**
- * Created by phil on 12/1/14.
- */
 public class RequestParams {
     public boolean cacheLocally;
     public boolean forceFromCache;
     public boolean forceFromWeb;
 
-    public RequestParams(){
+    public RequestParams() {
         cacheLocally = true;
         forceFromCache = false;
         forceFromWeb = false;
     }
 
-    public RequestParams(boolean forceFromCache){
+    public RequestParams(boolean forceFromCache) {
         this();
         this.forceFromCache = forceFromCache;
     }
@@ -34,6 +31,6 @@ public class RequestParams {
 
     @Override
     public String toString() {
-        return "forceFromCache:"+forceFromCache+" cacheLocally:"+cacheLocally+" forceFromWeb:"+forceFromWeb;
+        return "forceFromCache:" + forceFromCache + " cacheLocally:" + cacheLocally + " forceFromWeb:" + forceFromWeb;
     }
 }

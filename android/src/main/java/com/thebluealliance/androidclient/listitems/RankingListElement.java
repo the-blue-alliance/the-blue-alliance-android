@@ -7,24 +7,21 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 
-/**
- * File created by phil on 4/23/14.
- */
 public class RankingListElement extends ListElement {
 
-    private int mTeamNumber;
-    private String mTeamName;
-    private int mTeamRank;
-    private String mTeamRecord;
-    private String mTeamBreakdown;
+    public final int teamNumber;
+    public final String teamName;
+    public final int teamRank;
+    public final String teamRecord;
+    public final String teamBreakdown;
 
     public RankingListElement(String key, int number, String name, int ranking, String record, String breakdown) {
         super(key);
-        mTeamNumber = number;
-        mTeamName = name;
-        mTeamRank = ranking;
-        mTeamRecord = record;
-        mTeamBreakdown = breakdown;
+        teamNumber = number;
+        teamName = name;
+        teamRank = ranking;
+        teamRecord = record;
+        teamBreakdown = breakdown;
     }
 
     @Override
@@ -44,23 +41,23 @@ public class RankingListElement extends ListElement {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.teamNumber.setText("" + mTeamNumber);
+        holder.teamNumber.setText("" + teamNumber);
 
-        if (mTeamName.equals("")) {
+        if (teamName.equals("")) {
             holder.teamName.setVisibility(View.INVISIBLE);
         } else {
-            holder.teamName.setText(mTeamName);
+            holder.teamName.setText(teamName);
         }
 
-        holder.rank.setText(String.format(c.getString(R.string.team_rank), mTeamRank));
+        holder.rank.setText(String.format(c.getString(R.string.team_rank), teamRank));
 
-        if (mTeamRecord.isEmpty()) {
+        if (teamRecord.isEmpty()) {
             holder.record.setVisibility(View.GONE);
         } else {
-            holder.record.setText(mTeamRecord);
+            holder.record.setText(teamRecord);
         }
 
-        holder.breakdown.setText(mTeamBreakdown);
+        holder.breakdown.setText(teamBreakdown);
 
         return convertView;
     }
@@ -73,4 +70,16 @@ public class RankingListElement extends ListElement {
         TextView breakdown;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof RankingListElement)) {
+            return false;
+        }
+        RankingListElement element = (RankingListElement) o;
+        return teamNumber == element.teamNumber &&
+          teamName.equals(element.teamName) &&
+          teamRank == element.teamRank &&
+          teamRecord.equals(element.teamRecord) &&
+          teamBreakdown.equals(element.teamBreakdown);
+    }
 }

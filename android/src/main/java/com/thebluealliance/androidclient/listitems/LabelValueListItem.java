@@ -8,14 +8,24 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 
-/**
- * Created by phil on 7/16/14.
- */
 public class LabelValueListItem extends ListElement {
 
-    String label, value, intent;
-    ListItem listItem;
-    int layout;
+    public final String label, value, intent;
+    public final ListItem listItem;
+    public final int layout;
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof LabelValueListItem)) {
+            return false;
+        }
+        LabelValueListItem element = (LabelValueListItem) o;
+        return label.equals(element.label) &&
+          value.equals(element.value) &&
+          intent.equals(element.intent) &&
+          (listItem == null || listItem.equals(element.listItem)) &&
+          layout == element.layout;
+    }
 
     public LabelValueListItem(String label, String value, String intent, int layout) {
         this.label = label;
@@ -24,7 +34,7 @@ public class LabelValueListItem extends ListElement {
         this.intent = intent;
         this.layout = layout;
     }
-    
+
     public LabelValueListItem(String label, String value) {
         this.label = label;
         this.value = value;
@@ -77,8 +87,8 @@ public class LabelValueListItem extends ListElement {
         TextView value;
         LinearLayout container;
     }
-    
-    public String getIntent(){
+
+    public String getIntent() {
         return intent;
     }
 }

@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPanel;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 
@@ -31,12 +32,12 @@ public class NotificationSettingsFragment extends PreferenceFragment {
     private Bundle savedStateBundle;
     private Bundle initialStateBundle;
     private String modelKey;
-    private ModelHelper.MODELS modelType;
+    private ModelType modelType;
     private LoadModelSettingsCallback loadCallback;
 
     private boolean preferencesLoaded = false;
 
-    public static NotificationSettingsFragment newInstance(String modelKey, ModelHelper.MODELS modelType, Bundle savedStateBundle) {
+    public static NotificationSettingsFragment newInstance(String modelKey, ModelType modelType, Bundle savedStateBundle) {
         NotificationSettingsFragment fragment = new NotificationSettingsFragment();
         Bundle args = new Bundle();
         args.putString(MODEL_KEY, modelKey);
@@ -49,8 +50,8 @@ public class NotificationSettingsFragment extends PreferenceFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if(activity instanceof LoadModelSettingsCallback){
-            loadCallback = (LoadModelSettingsCallback)activity;
+        if (activity instanceof LoadModelSettingsCallback) {
+            loadCallback = (LoadModelSettingsCallback) activity;
         }
     }
 
@@ -77,7 +78,7 @@ public class NotificationSettingsFragment extends PreferenceFragment {
         new CreateSubscriptionPanel(getActivity(), this, savedStateBundle, modelType).execute(modelKey);
 
         // Remove padding from the list view
-        if(getView() != null) {
+        if (getView() != null) {
             View listView = getView().findViewById(android.R.id.list);
             if (listView != null) {
                 listView.setPadding(0, 0, 0, 0);
@@ -145,7 +146,7 @@ public class NotificationSettingsFragment extends PreferenceFragment {
     // Call when preferences have been loaded into the fragment
     public void setPreferencesLoaded() {
         preferencesLoaded = true;
-        if(loadCallback != null){
+        if (loadCallback != null) {
             loadCallback.onSettingsLoaded();
         }
     }

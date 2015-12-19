@@ -6,13 +6,13 @@
 
     <TextView
         android:id="@+id/event_type"
-        android:textSize="14sp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@color/primary"
+        android:paddingBottom="8dp"
         android:paddingLeft="16dp"
         android:paddingTop="8dp"
-        android:paddingBottom="8dp"
         android:text="Header"
-        android:textColor="#FFFFFF" />
+        android:textColor="#FFFFFF"
+        android:textSize="14sp" />
 </LinearLayout>

@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.activities;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.os.Handler;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,51 +20,53 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
-import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
-import com.thebluealliance.androidclient.fragments.InsightsFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
-import java.util.Calendar;
+import javax.inject.Inject;
 
-/**
- * File created by phil on 4/20/14.
- */
-
-public class HomeActivity extends RefreshableHostActivity {
+public class HomeActivity extends DatafeedActivity implements HasFragmentComponent {
 
     /**
-     * Saved instance state key representing the last select navigation drawer item
+     * Saved instance state key representing the last select navigajjjjtion drawer item
      */
     private static final String STATE_SELECTED_NAV_ID = "selected_navigation_drawer_position";
 
     private static final String REQUESTED_MODE = "requested_mode";
 
     /**
-     * The serialization (saved instance state) Bundle key representing the
-     * current dropdown position.
+     * The serialization (saved instance state) Bundle key representing the current dropdown
+     * position.
      */
     private static final String STATE_SELECTED_YEAR_SPINNER_POSITION = "selected_spinner_position";
 
     private static final String MAIN_FRAGMENT_TAG = "mainFragment";
 
-    private boolean fromSavedInstance = false;
+    @Inject TBAStatusController mStatusController;
 
+    private boolean mFromSavedInstance = false;
     private int mCurrentSelectedNavigationItemId = -1;
     private int mCurrentSelectedYearPosition = -1;
-
-    private String[] eventsDropdownItems, districtsDropdownItems;
-
-    private TextView warningMessage;
-
-    private Toolbar toolbar;
-    private View yearSelectorContainer;
-    private TextView yearSelectorTitle;
+    private String[] mEventsDropdownItems, mDistrictsDropdownItems;
+    private TextView mWarningMessage;
+    private Toolbar mToolbar;
+    private View mYearSelectorContainer;
+    private TextView mYarSelectorTitle;
+    private FragmentComponent mComponent;
+    private int mMaxCompYear;
 
     public static Intent newInstance(Context context, int requestedMode) {
         Intent i = new Intent(context, HomeActivity.class);
@@ -73,31 +75,32 @@ public class HomeActivity extends RefreshableHostActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_home);
+        inject();
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
-        yearSelectorContainer = findViewById(R.id.year_selector_container);
-        yearSelectorTitle = (TextView) findViewById(R.id.year_selector_title);
+        mYearSelectorContainer = findViewById(R.id.year_selector_container);
+        mYarSelectorTitle = (TextView) findViewById(R.id.year_selector_title);
 
-        warningMessage = (TextView) findViewById(R.id.warning_container);
+        mWarningMessage = (TextView) findViewById(R.id.warning_container);
 
         hideWarningMessage();
 
         handler = new Handler();
+        mMaxCompYear = mStatusController.getMaxCompYear();
 
-        eventsDropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_COMP_YEAR + 1];
-        for (int i = 0; i < eventsDropdownItems.length; i++) {
-            eventsDropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
+        mEventsDropdownItems = new String[mMaxCompYear - Constants.FIRST_COMP_YEAR + 1];
+        for (int i = 0; i < mEventsDropdownItems.length; i++) {
+            mEventsDropdownItems[i] = Integer.toString(mMaxCompYear - i);
         }
 
-        districtsDropdownItems = new String[Constants.MAX_COMP_YEAR - Constants.FIRST_DISTRICT_YEAR + 1];
-        for (int i = 0; i < districtsDropdownItems.length; i++) {
-            districtsDropdownItems[i] = Integer.toString(Constants.MAX_COMP_YEAR - i);
+        mDistrictsDropdownItems = new String[mMaxCompYear - Constants.FIRST_DISTRICT_YEAR + 1];
+        for (int i = 0; i < mDistrictsDropdownItems.length; i++) {
+            mDistrictsDropdownItems[i] = Integer.toString(mMaxCompYear - i);
         }
 
         int initNavId = R.id.nav_item_events;
@@ -112,33 +115,27 @@ public class HomeActivity extends RefreshableHostActivity {
         }
 
         if (savedInstanceState != null) {
-            fromSavedInstance = true;
+            mFromSavedInstance = true;
             Log.d(Constants.LOG_TAG, "StartActivity is from saved instance");
 
             if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION)) {
                 mCurrentSelectedYearPosition = savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION);
             } else {
-                if (Calendar.getInstance().get(Calendar.YEAR) == Constants.MAX_COMP_YEAR) {
-                    mCurrentSelectedYearPosition = 0;
-                } else {
-                    mCurrentSelectedYearPosition = 1;
-                }
+                mCurrentSelectedYearPosition = 0;
             }
 
             if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
                 mCurrentSelectedNavigationItemId = savedInstanceState.getInt(STATE_SELECTED_NAV_ID);
-                switchToModeForId(mCurrentSelectedNavigationItemId);
+                switchToModeForId(mCurrentSelectedNavigationItemId, savedInstanceState);
             } else {
-                switchToModeForId(R.id.nav_item_events);
+                switchToModeForId(R.id.nav_item_events, savedInstanceState);
             }
         } else {
-            if (Calendar.getInstance().get(Calendar.YEAR) == Constants.MAX_COMP_YEAR) {
-                mCurrentSelectedYearPosition = 0;
-            } else {
-                mCurrentSelectedYearPosition = 1;
-            }
-            switchToModeForId(initNavId);
+            mCurrentSelectedYearPosition = 0;
+            switchToModeForId(initNavId, savedInstanceState);
         }
+
+
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(getString(R.string.warning_unable_to_load));
@@ -150,7 +147,7 @@ public class HomeActivity extends RefreshableHostActivity {
         useActionBarToggle(true);
         // Only encourage learning on the launch of the app, not when the activity is
         // recreated from orientation changes
-        encourageLearning(!fromSavedInstance);
+        encourageLearning(!mFromSavedInstance);
     }
 
     @Override
@@ -167,23 +164,25 @@ public class HomeActivity extends RefreshableHostActivity {
         // Serialize the current dropdown position.
         outState.putInt(STATE_SELECTED_YEAR_SPINNER_POSITION, mCurrentSelectedYearPosition);
         outState.putInt(STATE_SELECTED_NAV_ID, mCurrentSelectedNavigationItemId);
+        Fragment subFragment = getSupportFragmentManager().findFragmentById(R.id.container);
+        if (subFragment != null) {
+            subFragment.onSaveInstanceState(outState);
+        }
     }
 
-    private void switchToModeForId(int id) {
+    private void switchToModeForId(int id, Bundle savedInstanceState) {
         Fragment fragment;
         switch (id) {
             default:
             case R.id.nav_item_events:
-                fragment = EventsByWeekFragment.newInstance(Constants.MAX_COMP_YEAR - mCurrentSelectedYearPosition);
+                int weekTab = savedInstanceState != null ? savedInstanceState.getInt(EventsByWeekFragment.TAB, 0) : 0;
+                fragment = EventsByWeekFragment.newInstance(mMaxCompYear - mCurrentSelectedYearPosition, weekTab);
                 break;
             case R.id.nav_item_districts:
-                fragment = DistrictListFragment.newInstance(Constants.MAX_COMP_YEAR - mCurrentSelectedYearPosition);
+                fragment = DistrictListFragment.newInstance(mMaxCompYear - mCurrentSelectedYearPosition);
                 break;
             case R.id.nav_item_teams:
                 fragment = new AllTeamsListFragment();
-                break;
-            case R.id.nav_item_insights:
-                fragment = new InsightsFragment();
                 break;
             case R.id.nav_item_my_tba:
                 fragment = new MyTBAFragment();
@@ -192,7 +191,10 @@ public class HomeActivity extends RefreshableHostActivity {
                 startActivity(new Intent(this, SettingsActivity.class));
                 return;
             case R.id.nav_item_notifications:
-                startActivity(NotificationDashboardActivity.newInstance(this));
+                startActivity(RecentNotificationsActivity.newInstance(this));
+                return;
+            case R.id.nav_item_gameday:
+                startActivity(GamedayActivity.newInstance(this));
                 return;
         }
         fragment.setRetainInstance(true);
@@ -202,12 +204,19 @@ public class HomeActivity extends RefreshableHostActivity {
 
         // Call this to make sure the toolbar has the correct contents
         invalidateOptionsMenu();
+
+        // The Districts fragment doesn't have tabs to set an elevation to, so we have to apply an elevation to the toolbar here
+        if (mCurrentSelectedNavigationItemId == R.id.nav_item_districts) {
+            ViewCompat.setElevation(mToolbar, getResources().getDimension(R.dimen.toolbar_elevation));
+        } else {
+            ViewCompat.setElevation(mToolbar, 0);
+        }
     }
 
     private void resetActionBar() {
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
-            yearSelectorContainer.setVisibility(View.GONE);
+            mYearSelectorContainer.setVisibility(View.GONE);
             //bar.setDisplayShowCustomEnabled(false);
             bar.setDisplayShowTitleEnabled(true);
         }
@@ -227,15 +236,11 @@ public class HomeActivity extends RefreshableHostActivity {
                 break;
             case R.id.nav_item_teams:
                 getSupportActionBar().setTitle("Teams");
-                toolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
-                break;
-            case R.id.nav_item_insights:
-                getSupportActionBar().setTitle("Insights");
-                toolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
+                mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
                 break;
             case R.id.nav_item_my_tba:
                 getSupportActionBar().setTitle("myTBA");
-                toolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
+                mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
                 break;
         }
 
@@ -246,18 +251,13 @@ public class HomeActivity extends RefreshableHostActivity {
         ActionBar bar = getSupportActionBar();
         bar.setDisplayShowTitleEnabled(false);
 
-        yearSelectorContainer.setVisibility(View.VISIBLE);
+        mYearSelectorContainer.setVisibility(View.VISIBLE);
 
-        final Dialog dialog = makeDialogForYearSelection(R.string.select_year, eventsDropdownItems);
+        final Dialog dialog = makeDialogForYearSelection(R.string.select_year, mEventsDropdownItems);
 
-        yearSelectorContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.show();
-            }
-        });
+        mYearSelectorContainer.setOnClickListener(v -> dialog.show());
 
-        if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < eventsDropdownItems.length) {
+        if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < mEventsDropdownItems.length) {
             onYearSelected(mCurrentSelectedYearPosition);
             updateEventsYearSelector(mCurrentSelectedYearPosition);
         } else {
@@ -268,24 +268,19 @@ public class HomeActivity extends RefreshableHostActivity {
 
     private void updateEventsYearSelector(int selectedPosition) {
         Resources res = getResources();
-        yearSelectorTitle.setText(String.format(res.getString(R.string.year_selector_title_events), eventsDropdownItems[selectedPosition]));
+        mYarSelectorTitle.setText(String.format(res.getString(R.string.year_selector_title_events), mEventsDropdownItems[selectedPosition]));
     }
 
     private void setupActionBarForDistricts() {
         ActionBar bar = getSupportActionBar();
         bar.setDisplayShowTitleEnabled(false);
 
-        yearSelectorContainer.setVisibility(View.VISIBLE);
+        mYearSelectorContainer.setVisibility(View.VISIBLE);
 
-        final Dialog dialog = makeDialogForYearSelection(R.string.select_year, districtsDropdownItems);
+        final Dialog dialog = makeDialogForYearSelection(R.string.select_year, mDistrictsDropdownItems);
 
-        yearSelectorContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.show();
-            }
-        });
-        if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < eventsDropdownItems.length) {
+        mYearSelectorContainer.setOnClickListener(v -> dialog.show());
+        if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < mEventsDropdownItems.length) {
             onYearSelected(mCurrentSelectedYearPosition);
             updateDistrictsYearSelector(mCurrentSelectedYearPosition);
         } else {
@@ -296,19 +291,17 @@ public class HomeActivity extends RefreshableHostActivity {
 
     private void updateDistrictsYearSelector(int selectedPosition) {
         Resources res = getResources();
-        yearSelectorTitle.setText(String.format(res.getString(R.string.year_selector_title_districts), districtsDropdownItems[selectedPosition]));
+        mYarSelectorTitle.setText(String.format(res.getString(R.string.year_selector_title_districts), mDistrictsDropdownItems[selectedPosition]));
     }
 
     private Dialog makeDialogForYearSelection(@StringRes int titleResId, String[] dropdownItems) {
         Resources res = getResources();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(res.getString(titleResId));
-        builder.setItems(dropdownItems, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onYearSelected(which);
-            }
+        builder.setItems(dropdownItems, (dialog, which) -> {
+            onYearSelected(which);
         });
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
 
         return builder.create();
     }
@@ -324,24 +317,19 @@ public class HomeActivity extends RefreshableHostActivity {
         final int id = item.getId();
         if (id != mCurrentSelectedNavigationItemId) {
             // Launch after a short delay to give the drawer time to close.
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    switchToModeForId(id);
-                }
-            }, DRAWER_CLOSE_ANIMATION_DURATION);
+            handler.postDelayed(() -> switchToModeForId(id, null), DRAWER_CLOSE_ANIMATION_DURATION);
         }
     }
 
     @Override
-    public void showWarningMessage(String message) {
-        warningMessage.setText(message);
-        warningMessage.setVisibility(View.VISIBLE);
+    public void showWarningMessage(CharSequence warningMessage) {
+        mWarningMessage.setText(warningMessage);
+        mWarningMessage.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideWarningMessage() {
-        warningMessage.setVisibility(View.GONE);
+        mWarningMessage.setVisibility(View.GONE);
     }
 
     @Override
@@ -353,12 +341,18 @@ public class HomeActivity extends RefreshableHostActivity {
             int requestedMode = intent.getExtras().getInt(REQUESTED_MODE, R.id.nav_item_events);
             if (requestedMode == mCurrentSelectedNavigationItemId) {
                 // We are already in the appropriate mode
+                Log.d(Constants.LOG_TAG, "Same requested mode");
                 return;
             } else {
-                switchToModeForId(requestedMode);
+                Log.d(Constants.LOG_TAG, "New requested mode");
+                switchToModeForId(requestedMode, null);
                 // Ensure that the Action Bar is properly configured for the current mode
                 invalidateOptionsMenu();
             }
+        } else {
+            /* No intent given. Switch to default mode */
+            switchToModeForId(mCurrentSelectedNavigationItemId, null);
+            invalidateOptionsMenu();
         }
     }
 
@@ -372,7 +366,7 @@ public class HomeActivity extends RefreshableHostActivity {
         if (position == mCurrentSelectedYearPosition) {
             return;
         }
-        int selectedYear = Constants.MAX_COMP_YEAR - position;
+        int selectedYear = mMaxCompYear - position;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support);
         if (mCurrentSelectedNavigationItemId == R.id.nav_item_events) {
             transaction = transaction.replace(R.id.container, EventsByWeekFragment.newInstance(selectedYear), MAIN_FRAGMENT_TAG);
@@ -383,5 +377,25 @@ public class HomeActivity extends RefreshableHostActivity {
         }
         transaction.commit();
         mCurrentSelectedYearPosition = position;
+    }
+
+    @Override
+    public void inject() {
+        getComponent().inject(this);
+    }
+
+    public FragmentComponent getComponent() {
+        if (mComponent == null) {
+            TBAAndroid application = ((TBAAndroid) getApplication());
+            mComponent = DaggerFragmentComponent.builder()
+              .applicationComponent(application.getComponent())
+              .datafeedModule(application.getDatafeedModule())
+              .binderModule(application.getBinderModule())
+              .databaseWriterModule(application.getDatabaseWriterModule())
+              .subscriberModule(new SubscriberModule(this))
+              .clickListenerModule(new ClickListenerModule(this))
+              .build();
+        }
+        return mComponent;
     }
 }

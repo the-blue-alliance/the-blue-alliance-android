@@ -2,18 +2,17 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
+        android:defaultValue="true"
         android:key="enable_notifications"
-        android:title="@string/pref_enable_notifications"
-        android:defaultValue="true" />
-    <PreferenceCategory
-        android:title="@string/pref_header_notifications">
+        android:title="@string/pref_enable_notifications" />
+    <PreferenceCategory android:title="@string/pref_header_notifications">
         <CheckBoxPreference
+            android:defaultValue="true"
             android:key="notification_tone"
-            android:title="@string/pref_notification_tone"
-            android:defaultValue="true"/>
+            android:title="@string/pref_notification_tone" />
         <CheckBoxPreference
+            android:defaultValue="true"
             android:key="notification_vibrate"
-            android:title="@string/pref_notification_vibrate"
-            android:defaultValue="true" />
+            android:title="@string/pref_notification_vibrate" />
     </PreferenceCategory>
 </PreferenceScreen>

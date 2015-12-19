@@ -6,9 +6,6 @@ import android.view.View;
 
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 
-/**
- * File created by phil on 4/20/14.
- */
 public abstract class ListHeader implements ListItem {
     private final String name;
 
@@ -27,6 +24,12 @@ public abstract class ListHeader implements ListItem {
 
     public String getText() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof ListHeader) &&
+          ((ListHeader) o).getText().equals(name);
     }
 
     @Override

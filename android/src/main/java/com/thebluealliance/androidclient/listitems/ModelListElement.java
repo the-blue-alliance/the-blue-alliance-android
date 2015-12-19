@@ -3,28 +3,36 @@ package com.thebluealliance.androidclient.listitems;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.settings.MyTBAModelSettingsActivity;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listeners.ModelClickListener;
+import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
 
-/**
- * Created by Phil on 8/13/2014.
- */
 public class ModelListElement extends ListElement {
 
     private String text;
     private String key;
-    private ModelHelper.MODELS type;
+    private ModelType type;
 
-    public ModelListElement(String text, String key, ModelHelper.MODELS type) {
+    public ModelListElement(String text, String key, ModelType type) {
         this.text = text;
         this.key = key;
         this.type = type;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public ModelType getType() {
+        return type;
     }
 
     @Override
@@ -43,14 +51,9 @@ public class ModelListElement extends ListElement {
 
         holder.text.setText(text);
 
-        holder.settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                context.startActivity(MyTBAModelSettingsActivity.newInstance(context, key, type));
-            }
-        });
+        holder.settingsButton.setOnClickListener(new ModelSettingsClickListener(context, key, type));
 
-        if(!key.isEmpty()){
+        if (!key.isEmpty()) {
             convertView.setOnClickListener(new ModelClickListener(context, key, type));
         }
 

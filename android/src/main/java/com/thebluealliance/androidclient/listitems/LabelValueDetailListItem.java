@@ -15,14 +15,26 @@ import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
  */
 public class LabelValueDetailListItem extends ListElement {
 
-    String label, value, key;
-    ListItem listItem;
+    public final String label, value, key;
+    public final ListItem listItem;
 
     public LabelValueDetailListItem(String label, String value, String key) {
         this.label = label;
         this.value = value;
         this.key = key;
         this.listItem = null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof LabelValueDetailListItem)) {
+            return false;
+        }
+        LabelValueDetailListItem element = (LabelValueDetailListItem) o;
+        return label.equals(element.label) &&
+          value.equals(element.value) &&
+          key.equals(element.key) &&
+          (listItem == null || listItem.equals(element.listItem));
     }
 
     @Override

@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">The Blue Alliance</string>
-    <string name="app_name_short">TBA</string>
     <string name="package_name">com.thebluealliance.androidclient</string>
     <string name="account_type">com.thebluealliance.androidclient.account.TBAACCOUNT</string>
     <string name="web_url_host">thebluealliance.com</string>
@@ -11,55 +10,31 @@
     <string name="action_help">Help</string>
     <string name="menuitem_refresh">Refresh</string>
     <string name="cancel">Cancel</string>
-    <string name="refresh_complete">Refresh complete</string>
     <string name="action_add_favorite">Add Favorite</string>
-    <string name="action_remove_favorite">Remove Favorite</string>
     <string name="action_add_subscription">Add Subscription</string>
-    <string name="action_remove_subscription">Remove Subscription</string>
     <string name="close">Close</string>
-    <string name="more_info">More Info</string>
     <string name="year_selector_title_events">%1$s Events</string>
     <string name="year_selector_title_districts">%1$s Districts</string>
     <string name="select_year">Select Year</string>
-    <string name="gcm_sender_permission">com.google.android.c2dm.permission.SEND</string>
 
-    <!-- Main Activity -->
-    <string-array name="event_list_year_selector">
-        <item>2014</item>
-        <item>2013</item>
-        <item>2012</item>
-    </string-array>
-
-    <!-- Nav drawer items -->
-    <string name="nav_drawer_events_label">Events</string>
-    <string name="nav_drawer_teams_label">Teams</string>
-    <string name="nav_drawer_insights_label">Insights</string>
-    <string name="nav_drawer_settings_label">Settings</string>
-    <string name="week_selector">Week </string>
-    <string name="title_main_activity">The Blue Alliance</string>
-    <string name="tab_events">Events</string>
-    <string name="tab_teams">Teams</string>
-    <string name="tab_insights">Insights</string>
-    <string name="title_activity_view_event">View Event</string>
+    <string name="title_activity_gameday">GameDay</string>
     <string name="events_label">Events</string>
     <string name="districts_label">Districts</string>
 
     <!-- View Event -->
-    <string name="tab_event_info">Info</string>
-    <string name="tab_event_results">Results</string>
-    <string name="tab_event_rankings">Rankings</string>
-    <string name="tab_event_awards">Awards</string>
-    <string name="tab_event_teams">Teams</string>
-    <string name="tab_event_stats">Stats</string>
-    <string name="last_match">Last Match:</string>
-    <string name="next_match">Next Match:</string>
-    <string name="top_teams">Top Teams:</string>
-    <string name="top_opr">Top OPRs:</string>
-    <string name="at">at</string>
+    <string name="view_event_website">View event\'s website</string>
+    <string name="find_event_on_google">Find event on Google</string>
+    <string name="view_event_twitter">View #%1$s on Twitter</string>
+    <string name="view_event_youtube">View %1$s on YouTube</string>
+    <string name="view_event_cd">View photos on Chief Delphi</string>
+    <string name="last_match">Last Match</string>
+    <string name="next_match">Next Match</string>
+    <string name="top_teams">Top Teams</string>
+    <string name="top_oprs">Top OPRs</string>
     <string name="opr">OPR:</string>
     <string name="dpr">DPR:</string>
     <string name="ccwm">CCWM:</string>
-    <string name="alliances_header">Alliances</string>
+    <string name="stats_format"> OPR: %1$s, DPR: %2$s, CCWM: %3$s</string>
     <string name="alliance_title">Alliance #%d:</string>
     <string name="team_rank">Rank %d</string>
     <string name="no_location_available">No location available</string>
@@ -76,30 +51,38 @@
     <!-- Stats Help Dialog -->
     <string name="stats_help_title">Stats Help</string>
     <string name="close_stats_help">Close</string>
-    <string name="stats_help_error">Error reading from help file.</string>
 
     <!-- No Data -->
-    <string name="no_data">No data was found for this event.</string>
-    <string name="no_team_info">No data was found for this team.</string>
-    <string name="no_alliance_data">No alliance data was found for this event.</string>
-    <string name="no_team_data">No team list was found for this event.</string>
-    <string name="no_match_data">No match results were found for this event.</string>
-    <string name="no_team_match_data">No matches found.</string>
-    <string name="no_ranking_data">No rankings were found for this event.</string>
-    <string name="no_stats_data">No stats data was found for this event.</string>
-    <string name="no_awards_data">No awards list was found for this event.</string>
-    <string name="no_team_stats_data">No stats data found.</string>
-    <string name="no_team_awards_data">No awards found.</string>
-    <string name="no_event_data">No events were found.</string>
-    <string name="no_media_data">No media was found for this team.</string>
-    <string name="no_district_points">No district points were found for this event.</string>
-    <string name="no_team_list">Unable to load team list.</string>
+    <string name="no_team_info">No team info found</string>
+    <string name="no_alliance_data">No alliance data found</string>
+    <string name="no_team_data">No team list found</string>
+    <string name="no_match_data">No match results found</string>
+    <string name="no_team_match_data">No matches found</string>
+    <string name="no_ranking_data">No rankings found</string>
+    <string name="no_stats_data">No stats found</string>
+    <string name="no_awards_data">No awards found</string>
+    <string name="no_team_stats_data">No stats data found</string>
+    <string name="no_event_data">No events found</string>
+    <string name="no_event_info">No event info found</string>
+    <string name="no_media_data">No media found</string>
+    <string name="no_district_points">No district points found</string>
+    <string name="no_team_list">Unable to load team list</string>
+    <string name="no_favorites_data">No favorites found</string>
+    <string name="no_subscription_data">No subscriptions found</string>
+    <string name="match_not_found">Match not found</string>
     <string name="no_contributors_list">Unable to load contributors list.\n\nCheck your network connection and try again.</string>
+    <string name="no_team_at_event_summary_data">No info found</string>
 
     <!-- View Team -->
-    <string name="from">from</string>
-    <string name="currently_competing">currently competing at</string>
-    <string name="team_actionbar_title">Team %s</string>
+    <string name="team_info">Team info</string>
+    <string name="social_media">Social media</string>
+    <string name="current_event">Current event</string>
+    <string name="team_actionbar_title">Team %1$s</string>
+    <string name="view_team_website">View team\'s website</string>
+    <string name="find_team_on_google">Find team on Google</string>
+    <string name="view_team_twitter">View #%1$s on Twitter</string>
+    <string name="view_team_youtube">View %1$s on YouTube</string>
+    <string name="view_team_cd">View photos on Chief Delphi</string>
 
     <!-- View Match Details -->
     <string name="teams">Teams</string>
@@ -111,7 +94,6 @@
     <string name="quarters_header">Quarterfinal Matches</string>
     <string name="semis_header">Semifinal Matches</string>
     <string name="finals_header">Finals Matches</string>
-    <string name="recent_match_header">Recent Matches</string>
     <string name="title_next_match">Next Match</string>
     <string name="title_last_match">Last Match</string>
     <string name="match_title_format">%1$s %2$s</string>
@@ -124,9 +106,6 @@
     <string name="yt_header">YouTube Videos</string>
 
     <!-- My TBA -->
-    <string name="default_user_name">MyTBA User</string>
-    <string name="no_favorite_data">No favorites found.</string>
-    <string name="no_subscription_data">No subscriptions found</string>
     <string name="mytba_error">Error code %1$d: %2$s</string>
     <string name="cannot_find_match_title">Could not find match title</string>
 
@@ -144,7 +123,6 @@
     <string name="no_teams_found">No teams found</string>
     <string name="teams_header">Teams</string>
     <string name="events_header">Events</string>
-    <string name="search_action_bar_title">Results for %1$s</string>
     <string name="more_results">%1$d MORE</string>
     <string name="teams_matching">Teams matching \"%1$s\"</string>
     <string name="events_matching">Events matching \"%1$s\"</string>
@@ -158,6 +136,8 @@
     <string name="mytba_error_io_token">IO Exception while fetching account token</string>
     <string name="mytba_error_auth">Unable to authenticate Google Account</string>
     <string name="title_activity_notification_dashboard">Notification Dashboard</string>
-    <string name="notification_dashboard_no_notifications">You do not have any recent notifications.</string>
-    <string name="notification_dashboard_title">Recent Notifications</string>
+    <string name="no_recent_notifications">No recent notifications</string>
+    <string name="recent_notifications_title">Recent Notifications</string>
+    <string name="title_activity_update_required">UpdateRequiredActivity</string>
+
 </resources>

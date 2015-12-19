@@ -2,9 +2,6 @@ package com.thebluealliance.androidclient.intents;
 
 import android.content.Intent;
 
-/**
- * Created by phil on 7/8/14.
- */
 public class ConnectionChangeBroadcast extends Intent {
 
     public static final int CONNECTION_FOUND = 0;

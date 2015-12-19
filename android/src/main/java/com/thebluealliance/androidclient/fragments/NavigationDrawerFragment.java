@@ -21,14 +21,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -44,9 +43,10 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.activities.NavigationDrawerActivity;
 import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
+import com.thebluealliance.androidclient.listitems.DividerListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
-import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
+import com.thebluealliance.androidclient.listitems.SpacerListItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,12 +55,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
- * <p/>
+ * <p>
  * Opening or closing the drawer will trigger a call to onPrepareOptionsMenu().
- * <p/>
- * Activities containing a NavigationDrawerFragment <strong>must</strong> implement
- * {@link com.thebluealliance.androidclient.fragments.NavigationDrawerFragment.NavigationDrawerListener}.
- * <p/>
+ * <p>
+ * Activities containing a NavigationDrawerFragment <strong>must</strong> implement {@link
+ * com.thebluealliance.androidclient.fragments.NavigationDrawerFragment.NavigationDrawerListener}.
+ * <p>
  * See the <a href="https://developer.android.com/design/patterns/navigation-drawer.html#Interaction">
  * design guidelines</a> for an explanation of the behaviors implemented here.
  *
@@ -77,16 +77,20 @@ public class NavigationDrawerFragment extends Fragment {
 
     private static final List<ListItem> NAVIGATION_ITEMS = new ArrayList<>();
 
-    private ScrimInsetsFrameLayout scrimLayout;
 
     static {
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, "myTBA", R.drawable.ic_grade_black_24dp, R.layout.nav_drawer_item));
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_events, "Events", R.drawable.ic_event_black_24dp, R.layout.nav_drawer_item));
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_districts, "Districts", R.drawable.ic_assignment_black_24dp, R.layout.nav_drawer_item));
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_teams, "Teams", R.drawable.ic_group_black_24dp, R.layout.nav_drawer_item));
-        //NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_insights, "Insights", R.drawable.insights_icon_selector, R.layout.nav_drawer_item));
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_notifications, "Recent Notifications", R.drawable.ic_notifications_black_24dp, R.layout.nav_drawer_item));
-        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_settings, "Settings", R.drawable.ic_settings_black_24dp, R.layout.nav_drawer_item_small));
+        NAVIGATION_ITEMS.add(new SpacerListItem());
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_my_tba, R.string.nav_drawer_mytba_title, R.drawable.ic_star_black_24dp, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_gameday, R.string.nav_drawer_gameday_title, R.drawable.ic_videocam_black_24dp, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_events, R.string.nav_drawer_events_title, R.drawable.ic_event_black_24dp, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_districts, R.string.nav_drawer_districts_title, R.drawable.ic_assignment_black_24dp, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_teams, R.string.nav_drawer_teams_title, R.drawable.ic_group_black_24dp, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_notifications, R.string.nav_drawer_recent_notifications_title, R.drawable.ic_notifications_black_24dp, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new SpacerListItem());
+        NAVIGATION_ITEMS.add(new DividerListItem());
+        NAVIGATION_ITEMS.add(new SpacerListItem());
+        NAVIGATION_ITEMS.add(new NavDrawerItem(R.id.nav_item_settings, R.string.nav_drawer_settings_title, R.drawable.ic_settings_black_24dp, R.layout.nav_drawer_item));
+        NAVIGATION_ITEMS.add(new SpacerListItem());
     }
 
     /**
@@ -138,9 +142,9 @@ public class NavigationDrawerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         mDrawerListView = (ListView) v.findViewById(R.id.left_drawer);
-        mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        mDrawerListView.setOnItemClickListener((parent, view, position, id) -> {
+            // Ignore items that represent things like spacers and dividers
+            if (mNavigationAdapter.getItem(position) instanceof NavDrawerItem) {
                 selectItem(position);
             }
         });
@@ -153,11 +157,13 @@ public class NavigationDrawerFragment extends Fragment {
         profilePicture = (CircleImageView) v.findViewById(R.id.profile_image);
         coverPhoto = (ImageView) v.findViewById(R.id.profile_cover_image);
         if (AccountHelper.isMyTBAEnabled(getActivity())) {
+            Log.d("NavDrawerFragment", "MyTBA enabled; configuring navigation drawer");
             accountDetailsContainer.setVisibility(View.VISIBLE);
             profilePicture.setVisibility(View.VISIBLE);
             profileName.setVisibility(View.VISIBLE);
             setDrawerProfileInfo();
         } else {
+            Log.d("NavDrawerFragment", "MyTBA not enabled; hiding profile in nav drawer");
             accountDetailsContainer.setVisibility(View.GONE);
         }
 
@@ -209,10 +215,10 @@ public class NavigationDrawerFragment extends Fragment {
             Log.w(Constants.LOG_TAG, "Plus is not connected. Can't show profile info. Attempting to reconnect...");
             picasso.load(R.drawable.default_cover).transform(new LinearGradientTransformation()).into(coverPhoto);
             profileName.setText("");
-            
+
             Activity activity = getActivity();
-            if(activity != null && activity instanceof NavigationDrawerActivity){
-                PlusHelper.connect(activity, (NavigationDrawerActivity)activity, (NavigationDrawerActivity)activity);
+            if (activity != null && activity instanceof NavigationDrawerActivity) {
+                PlusHelper.connect(activity, (NavigationDrawerActivity) activity, (NavigationDrawerActivity) activity);
             }
         }
     }
@@ -226,14 +232,14 @@ public class NavigationDrawerFragment extends Fragment {
      *
      * @param fragmentId         The android:id of this fragment in its activity's layout.
      * @param drawerLayout       The DrawerLayout containing this fragment's UI.
-     * @param encourageLearning  True to encourage the user learning how to use the navigation drawer
-     *                           by showing the drawer automatically when this method is called until
-     *                           the user has demonstrated knowledge of the drawer's existence by opening
-     *                           the drawer. False will disable this behavior and only show the drawer
-     *                           when manually opened.
-     * @param useActionBarToggle True if the Action Bar home button should be used to open the navigation
-     *                           drawer; false if otherwise. Some hosts may want to use up navigation so we
-     *                           provide the option to disable this.
+     * @param encourageLearning  True to encourage the user learning how to use the navigation
+     *                           drawer by showing the drawer automatically when this method is
+     *                           called until the user has demonstrated knowledge of the drawer's
+     *                           existence by opening the drawer. False will disable this behavior
+     *                           and only show the drawer when manually opened.
+     * @param useActionBarToggle True if the Action Bar home button should be used to open the
+     *                           navigation drawer; false if otherwise. Some hosts may want to use
+     *                           up navigation so we provide the option to disable this.
      */
     public void setUp(int fragmentId, DrawerLayout drawerLayout, boolean encourageLearning, boolean useActionBarToggle) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
@@ -290,12 +296,7 @@ public class NavigationDrawerFragment extends Fragment {
             };
             mDrawerLayout.setDrawerListener(mDrawerToggle);
             // Defer code dependent on restoration of previous instance state.
-            mDrawerLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    mDrawerToggle.syncState();
-                }
-            });
+            mDrawerLayout.post(() -> mDrawerToggle.syncState());
         } else {
             mDrawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
 
@@ -343,11 +344,13 @@ public class NavigationDrawerFragment extends Fragment {
     private void selectItem(int position) {
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
-            mNavigationAdapter.setItemSelected(position);
         }
 
-        NavDrawerItem item = mNavigationAdapter.getItem(position);
-        mListener.onNavDrawerItemClicked(item);
+        ListItem item = mNavigationAdapter.getItem(position);
+        if (!(item instanceof NavDrawerItem)) {
+            return;
+        }
+        mListener.onNavDrawerItemClicked((NavDrawerItem) item);
 
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
@@ -356,7 +359,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     /**
      * Set the currently selected item in the drawer
-     * <p/>
+     * <p>
      * This will NOT trigger the OnNavigationDrawerListener callbacks or close the drawer.
      *
      * @param itemId The ID of the item to select
@@ -404,7 +407,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     @Nullable
     private ActionBar getSupportActionBar() {
-        return getActivity() != null ? ((ActionBarActivity) getActivity()).getSupportActionBar() : null;
+        return getActivity() != null ? ((AppCompatActivity) getActivity()).getSupportActionBar() : null;
     }
 
     /**
@@ -437,7 +440,7 @@ public class NavigationDrawerFragment extends Fragment {
 
             // Create shaders
             Shader bitmapShader = new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-            Shader linearGradient = new LinearGradient(0, source.getHeight()/2, 0, source.getHeight(), Color.TRANSPARENT, 0xB4000000, Shader.TileMode.CLAMP);
+            Shader linearGradient = new LinearGradient(0, source.getHeight() / 2, 0, source.getHeight(), Color.TRANSPARENT, 0xB4000000, Shader.TileMode.CLAMP);
 
             // create a shader that combines both effects
             ComposeShader shader = new ComposeShader(bitmapShader, linearGradient, PorterDuff.Mode.DST_OUT);
@@ -464,8 +467,8 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     /**
-     * Called when the insets of the nav drawer are changed. This allows us to properly place the contents so
-     * that they don't flow under the status bar.
+     * Called when the insets of the nav drawer are changed. This allows us to properly place the
+     * contents so that they don't flow under the status bar.
      */
     public void onInsetsChanged(Rect insets) {
         RelativeLayout accountDetailsContainer = (RelativeLayout) getView().findViewById(R.id.account_details_container);

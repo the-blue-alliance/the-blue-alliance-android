@@ -4,13 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="88dp"
     android:padding="16dp">
+
     <CheckedTextView
         android:id="@+id/notification_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-        android:text="Notification"
-        android:textSize="16sp"
+        android:focusable="false"
         android:gravity="center_vertical"
-        android:focusable="false"/>
+        android:text="Notification"
+        android:textSize="16sp" />
 </RelativeLayout>

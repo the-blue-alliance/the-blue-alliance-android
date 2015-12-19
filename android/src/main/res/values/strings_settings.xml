@@ -8,8 +8,6 @@
 
     <!-- Account -->
     <string name="is_mytba_enabled">Enable myTBA</string>
-    <string name="mytba_enabled">myTBA is enabled</string>
-    <string name="mytba_disabled">myTBA is disabled</string>
 
     <!-- Debug Settings Screen -->
     <string name="pref_header_debug">Debug Preferences</string>
@@ -29,11 +27,14 @@
     <string name="pref_select_account">Select Account</string>
     <string name="pref_redownload_data">Redownload data</string>
     <string name="pref_redownload_data_detail">Returns to Launch Activity for data download</string>
+    <string name="pref_update_status">Update TBA API Status</string>
+    <string name="pref_update_status_detail">Update API Status, includes max season and down events</string>
+    <string name="update_status_launched">Status Update Enqueued. Restart your app in 1 minute to apply</string>
 
     <!-- Settings -->
     <string name="settings_build_info_label">Build Info</string>
-    <string name="settings_build_info_summary">App Version: %1$s\nBuild Branch: %2$s\nBuild Time: %3$s</string>
-    <string name="settings_build_info_summary_debug">App Version: %1$s\nBuild Branch: %2$s\nBuild Time: %3$s\nCommit: %4$s</string>
+    <string name="settings_build_info_summary">App Version: %1$s\nBuild Time: %2$s</string>
+    <string name="settings_build_info_summary_debug">App Version: %1$s\nBuild Time: %2$s\nCommit: %3$s</string>
     <string name="github_label">The Blue Alliance for Android is open source</string>
     <string name="github_summary">View project on GitHub</string>
     <string name="tbasite_label">The Blue Alliance website</string>
@@ -46,15 +47,11 @@
     <string name="notification_settings">Notification Settings</string>
     <string name="notification_dashboard">Notification Dashboard</string>
     <string name="notification_dashboard_summary">Recent notification you\'ve received</string>
-    
+
     <!-- Notification Settings-->
     <string name="pref_enable_notifications">Enable Notifications</string>
     <string name="pref_notification_tone">Play Sound</string>
     <string name="pref_notification_vibrate">Vibrate</string>
-    <string name="pref_system_notification_settings">System Notification Preferences</string>
-    <string name="pref_system_notification_settings_summary">These can affect how your notifications are shown</string>
-    <string name="pref_notification_lockscreen">Lock Screen Notifications</string>
-    <string name="pref_notification_lockscreen_summary">Controls what information is visible from notifications on the lockscreen</string>
 
     <string name="pref_notification_visibility_private">When Device is Unlocked</string>
     <string name="pref_notification_visibility_secret">Never</string>

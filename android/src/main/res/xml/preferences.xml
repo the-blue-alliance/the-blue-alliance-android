@@ -13,11 +13,6 @@
 
     <PreferenceCategory android:title="@string/pref_header_notifications">
         <Preference
-            android:key="notification_dashboard"
-            android:persistent="false"
-            android:title="@string/notification_dashboard"
-            android:summary="@string/notification_dashboard_summary" />
-        <Preference
             android:key="notifications"
             android:persistent="false"
             android:title="@string/notification_settings" />

@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.models.Match;
 
 import java.lang.reflect.Type;
 
-import static com.thebluealliance.androidclient.datafeed.JSONManager.isNull;
+import static com.thebluealliance.androidclient.helpers.JSONHelper.isNull;
 
 
 public class MatchDeserializer implements JsonDeserializer<Match> {

@@ -11,9 +11,11 @@ import android.os.Build;
 import android.provider.Settings;
 import android.text.Html;
 import android.text.format.DateFormat;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.util.TypedValue;
 
+import com.thebluealliance.androidclient.activities.GamedayActivity;
 import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
@@ -34,16 +36,15 @@ import java.text.Format;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import me.xuender.unidecode.Unidecode;
 
-/**
- * Created by Nathan on 5/20/2014.
- */
 public class Utilities {
 
     public static int getPixelsFromDp(Context c, int dipValue) {
@@ -59,7 +60,7 @@ public class Utilities {
         return sw.toString();
     }
 
-    public static int getFirstompWeek(Date date){
+    public static int getFirstompWeek(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return getFirstCompWeek(cal.get(Calendar.YEAR));
@@ -68,7 +69,9 @@ public class Utilities {
     public static int getFirstCompWeek(int year) {
         int offset = year - 1992;
         if (Constants.FIRST_COMP_WEEK.length > offset && year != -1) {
-            return Constants.FIRST_COMP_WEEK[offset];
+;            return offset >= Constants.FIRST_COMP_WEEK.length || offset < 0?
+              Constants.FIRST_COMP_WEEK[Constants.FIRST_COMP_WEEK.length - 1] :
+              Constants.FIRST_COMP_WEEK[offset];
         } else {
             //if no data for this year, return the most recent data
             Log.w(Constants.LOG_TAG, "No first competition week data available for " + year + ". Using most recent year.");
@@ -92,8 +95,9 @@ public class Utilities {
     }
 
     /**
-     * Replaces unicode characters with their ASCII equivalents and appends an asterisk to each term.
-     * <p/>
+     * Replaces unicode characters with their ASCII equivalents and appends an asterisk to each
+     * term.
+     * <p>
      * For example, an input of "Über" would result in the string "Uber*".
      *
      * @param query the query from the user to prepare
@@ -158,10 +162,8 @@ public class Utilities {
                         intent = ViewMatchActivity.newInstance(c, urlParts.get(1));
                     }
                     break;
-                case "insights":
-                    intent = HomeActivity.newInstance(c, R.id.nav_item_insights);
-                    break;
                 case "gameday":
+                    intent = GamedayActivity.newInstance(c);
                     break;
                 default:
                     intent = null;
@@ -250,21 +252,29 @@ public class Utilities {
     }
 
     public static String readLocalProperty(Context c, String property) {
+        return readLocalProperty(c, property, "");
+    }
+
+    public static String readLocalProperty(Context c, String property, String defaultValue) {
         Properties properties;
         properties = new Properties();
+        if (c == null) {
+            Log.w(Constants.LOG_TAG, "Null context. Can't read local properties");
+            return defaultValue;
+        }
         try {
             InputStream fileStream = c.getAssets().open("tba.properties");
             properties.load(fileStream);
             fileStream.close();
-            if(isDebuggable() && properties.containsKey(property + ".debug")){
+            if (isDebuggable() && properties.containsKey(property + ".debug")) {
                 return properties.getProperty(property + ".debug");
             }
-            return properties.getProperty(property, "");
+            return properties.getProperty(property, defaultValue);
         } catch (IOException e) {
             Log.e(Constants.LOG_TAG, "Unable to read from tba.properties");
             e.printStackTrace();
         }
-        return "";
+        return defaultValue;
     }
 
     public static boolean isDebuggable() {
@@ -272,8 +282,9 @@ public class Utilities {
     }
 
     /**
-     * Get the <a href="http://developer.android.com/reference/android/os/Build.html#SERIAL">hardware serial number</a>
-     * I hope this actually works universally, android UUIDs are irritatingly difficult
+     * Get the <a href="http://developer.android.com/reference/android/os/Build.html#SERIAL">hardware
+     * serial number</a> I hope this actually works universally, android UUIDs are irritatingly
+     * difficult
      *
      * @return UUID
      */
@@ -282,15 +293,16 @@ public class Utilities {
     }
 
     /**
-     * Utility method to create a comma separated list of strings. Useful when you have a list of things
-     * that you want to express in a human-readable list, e.g. teams in a match.
-     * <p/>
+     * Utility method to create a comma separated list of strings. Useful when you have a list of
+     * things that you want to express in a human-readable list, e.g. teams in a match.
+     * <p>
      * If the length of the list is 1, this method will return the input string verbatim.
-     * <p/>
+     * <p>
      * If the length of the list is 2, the returned string will be formatted like "XXXX and YYYY".
-     * <p/>
-     * If the length of the list is 3 or more, the returned string will be formatted like "XXXX, YYYY, and ZZZZ".
-     * <p/>
+     * <p>
+     * If the length of the list is 3 or more, the returned string will be formatted like "XXXX,
+     * YYYY, and ZZZZ".
+     * <p>
      * This uses a localized "and" string.
      */
     public static String stringifyListOfStrings(Context context, ArrayList<String> strings) {
@@ -349,16 +361,16 @@ public class Utilities {
     public static boolean hasLApis() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
-    
-    public static String getDeviceUUID(Context context){
+
+    public static String getDeviceUUID(Context context) {
         return Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
-    public static String getBuildTimestamp(Context c){
+    public static String getBuildTimestamp(Context c) {
         /* Check the last modified time of classes.dex,
          * which was when the app was last built
          */
-        try{
+        try {
             ApplicationInfo ai = c.getPackageManager().getApplicationInfo(c.getPackageName(), 0);
             ZipFile zf = new ZipFile(ai.sourceDir);
             ZipEntry ze = zf.getEntry("classes.dex");
@@ -369,18 +381,36 @@ public class Utilities {
             String s = dateFormat.format(date) + " " + timeFormat.format(date);
             zf.close();
             return s;
-        }catch(Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
-    
-    public static String getVersionNumber(){
+
+    public static String getVersionNumber() {
         /* If this changes, make sure to also change it in SettingsActivity */
-        if(BuildConfig.VERSION_NAME.contains("/")){
+        if (BuildConfig.VERSION_NAME.contains("/")) {
             return BuildConfig.VERSION_NAME.split("/")[0];
-        }else{
+        } else {
             return BuildConfig.VERSION_NAME;
         }
     }
 
+    /**
+     * {@link ArrayMap} is more memory efficient than {@link HashMap}, so prefer that if possible
+     */
+    public static <K, V> Map<K, V> getMapForPlatform(Class<K> key, Class<V> value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return new ArrayMap<>();
+        } else {
+            return new HashMap<>();
+        }
+    }
+
+    public static <K, V> Map<K, List<V>> getListMapForPlatform(Class<K> key, Class<V> value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return new ArrayMap<>();
+        } else {
+            return new HashMap<>();
+        }
+    }
 }

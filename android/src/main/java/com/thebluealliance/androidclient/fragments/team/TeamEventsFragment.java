@@ -1,48 +1,37 @@
 package com.thebluealliance.androidclient.fragments.team;
 
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
-import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.PopulateEventList;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
+import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.interfaces.HasYearParam;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
+import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
+
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
-/**
- * Created by Nathan on 6/20/2014.
- */
-public class TeamEventsFragment extends Fragment implements RefreshListener {
+public class TeamEventsFragment extends ListViewFragment<List<Event>, EventListSubscriber> implements HasYearParam {
     public static final String YEAR = "YEAR";
     public static final String TEAM_KEY = "TEAM_KEY";
 
-    private ViewTeamActivity parent;
-
     private int mYear;
     private String mTeamKey;
-
-    private Parcelable mListState;
-    private ListViewAdapter mAdapter;
-    private ListView mListView;
-    private ProgressBar mProgressBar;
-
-    private PopulateEventList mTask;
 
     public static TeamEventsFragment newInstance(String teamKey, int year) {
         TeamEventsFragment f = new TeamEventsFragment();
@@ -55,43 +44,32 @@ public class TeamEventsFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mYear = getArguments().getInt(YEAR, -1);
-        mTeamKey = getArguments().getString(TEAM_KEY);
-        if (!(getActivity() instanceof ViewTeamActivity)) {
-            throw new IllegalArgumentException("TeamEventsFragment must be hosted by a ViewTeamActivity!");
-        } else {
-            parent = (ViewTeamActivity) getActivity();
+        if (mYear == -1) {
+            // default to current year
+            mYear = Utilities.getCurrentYear();
         }
+        mTeamKey = getArguments().getString(TEAM_KEY);
+        super.onCreate(savedInstanceState);
 
-        parent.registerRefreshListener(this);
+        mSubscriber.setRenderMode(EventListSubscriber.MODE_TEAM);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.list_view_with_spinner, null);
-        mListView = (ListView) v.findViewById(R.id.list);
-        mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
-        if (mAdapter != null) {
-            mListView.setAdapter(mAdapter);
-            mListView.onRestoreInstanceState(mListState);
-            mProgressBar.setVisibility(View.GONE);
-        }
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!(parent.getAdapter() instanceof ListViewAdapter)) {
-                    //safety check. Shouldn't ever be tripped unless someone messed up in code somewhere
-                    Log.w(Constants.LOG_TAG, "Someone done goofed. A ListView adapter doesn't extend ListViewAdapter. Try again...");
-                    return;
-                }
-                Object item = ((ListViewAdapter) parent.getAdapter()).getItem(position);
-                if (item != null && item instanceof EventListElement) {
-                    String eventKey = ((ListElement) item).getKey();
-                    startActivity(TeamAtEventActivity.newInstance(getActivity(), eventKey, mTeamKey));
-                } else {
-                    Log.d(Constants.LOG_TAG, "ListHeader clicked. Ignore...");
-                }
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        mListView.setOnItemClickListener((parent, view, position, id) -> {
+            if (!(parent.getAdapter() instanceof ListViewAdapter)) {
+                //safety check. Shouldn't ever be tripped unless someone messed up in code somewhere
+                Log.w(Constants.LOG_TAG, "Someone done goofed. A ListView adapter doesn't extend ListViewAdapter. Try again...");
+                return;
+            }
+            Object item = ((ListViewAdapter) parent.getAdapter()).getItem(position);
+            if (item != null && item instanceof EventListElement) {
+                String eventKey = ((ListElement) item).getKey();
+                startActivity(TeamAtEventActivity.newInstance(getActivity(), eventKey, mTeamKey));
+            } else {
+                Log.d(Constants.LOG_TAG, "ListHeader clicked. Ignore...");
             }
         });
         return v;
@@ -100,13 +78,6 @@ public class TeamEventsFragment extends Fragment implements RefreshListener {
     @Override
     public void onPause() {
         super.onPause();
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-        if (mListView != null) {
-            mAdapter = (ListViewAdapter) mListView.getAdapter();
-            mListState = mListView.onSaveInstanceState();
-        }
         EventBus.getDefault().unregister(this);
     }
 
@@ -116,34 +87,33 @@ public class TeamEventsFragment extends Fragment implements RefreshListener {
         EventBus.getDefault().register(this);
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        parent.startRefresh(this);
-    }
-
-    @Override
-    public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading " + mTeamKey + " events in " + mYear);
-        mTask = new PopulateEventList(this, mYear, "", mTeamKey, new RequestParams(true, actionIconPressed));
-        mTask.execute();
-    }
-
-    @Override
-    public void onRefreshStop() {
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        parent.unregisterRefreshListener(this);
-    }
-
     public void onEvent(YearChangedEvent event) {
         mYear = event.getYear();
-        onRefreshStart(false);
+        onRefreshStart(RefreshController.NOT_REQUESTED_BY_USER);
+    }
+
+    @Override
+    public int getYear() {
+        return mYear;
+    }
+
+    @Override
+    protected void inject() {
+        mComponent.inject(this);
+    }
+
+    @Override
+    protected Observable<List<Event>> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchTeamEvents(mTeamKey, mYear, tbaCacheHeader);
+    }
+
+    @Override
+    protected String getRefreshTag() {
+        return String.format("teamEvents_%1$s_%2$d", mTeamKey, mYear);
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_event_black_48dp, R.string.no_event_data);
     }
 }

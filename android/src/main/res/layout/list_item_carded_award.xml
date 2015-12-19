@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -8,36 +8,36 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="4dp"
-        app:cardElevation="2dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp">
+        android:layout_marginRight="8dp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="2dp">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/award_name"
-                android:textSize="16sp"
-                android:textStyle="italic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
+                android:paddingTop="8dp"
                 android:singleLine="false"
-                android:text="Some Award Name That Can Potentially Be Quite Long" />
+                android:text="Some Award Name That Can Potentially Be Quite Long"
+                android:textSize="16sp"
+                android:textStyle="italic" />
 
             <LinearLayout
                 android:id="@+id/award_recipients"
-                android:layout_below="@id/award_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
-        </RelativeLayout>
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
-</LinearLayout>
+</FrameLayout>

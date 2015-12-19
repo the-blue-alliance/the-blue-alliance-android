@@ -13,7 +13,7 @@ import com.thebluealliance.androidclient.models.Event;
 
 import java.lang.reflect.Type;
 
-import static com.thebluealliance.androidclient.datafeed.JSONManager.isNull;
+import static com.thebluealliance.androidclient.helpers.JSONHelper.isNull;
 
 
 public class EventDeserializer implements JsonDeserializer<Event> {
@@ -22,9 +22,9 @@ public class EventDeserializer implements JsonDeserializer<Event> {
     public Event deserialize(final JsonElement json, Type typeOf, JsonDeserializationContext context) throws JsonParseException {
         final JsonObject object;
         try {
-            object= json.getAsJsonObject();   
-        }catch (JsonSyntaxException|IllegalStateException ex){
-            Log.w(Constants.LOG_TAG, "Failed to parse json: "+json.toString());
+            object = json.getAsJsonObject();
+        } catch (JsonSyntaxException | IllegalStateException ex) {
+            Log.w(Constants.LOG_TAG, "Failed to parse json: " + json.toString());
             return null;
         }
         final Event event = new Event();
@@ -57,6 +57,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setStartDate("");
         } else {
             event.setStartDate(object.get("start_date").getAsString());
+            event.setCompetitionWeekFromStartDate();
         }
 
         if (isNull(object.get("end_date"))) {

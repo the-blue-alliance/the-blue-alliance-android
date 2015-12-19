@@ -4,5 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="activity_half_vertical_margin">8dp</dimen>
     <dimen name="border_stroke">2dip</dimen>
+    <dimen name="toolbar_elevation">4dp</dimen>
+
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>

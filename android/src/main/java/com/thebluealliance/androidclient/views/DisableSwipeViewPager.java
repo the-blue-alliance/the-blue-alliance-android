@@ -5,9 +5,6 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-/**
- * Created by Nathan on 5/25/2014.
- */
 public class DisableSwipeViewPager extends ViewPager {
 
     private boolean mSwipeEnabled = true;
@@ -41,8 +38,8 @@ public class DisableSwipeViewPager extends ViewPager {
     }
 
     /**
-     * This method will advance the ViewPager to the next page if the ViewPager is not currently
-     * on the last page.
+     * This method will advance the ViewPager to the next page if the ViewPager is not currently on
+     * the last page.
      *
      * @return true if the ViewPager was able to advance to the next page, false if otherwise.
      */

@@ -2,17 +2,12 @@ package com.thebluealliance.androidclient.views;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
 import com.thebluealliance.androidclient.R;
 
-/**
- * Created by Nathan on 12/4/2014.
- */
 public class RecoloredImageView extends ImageView {
 
     private int tintColor;
@@ -37,7 +32,7 @@ public class RecoloredImageView extends ImageView {
         if (a == null) {
             return;
         }
-        tintColor = a.getColor(R.styleable.RecoloredImageView_tintColor, R.color.black);
+        tintColor = a.getColor(R.styleable.RecoloredImageView_tintColor, context.getResources().getColor(R.color.black));
         a.recycle();
 
         setColorFilter(tintColor, PorterDuff.Mode.SRC_IN);

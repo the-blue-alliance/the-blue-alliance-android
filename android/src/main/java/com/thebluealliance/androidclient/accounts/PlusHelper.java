@@ -2,18 +2,14 @@ package com.thebluealliance.androidclient.accounts;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.PlusClient;
 import com.google.android.gms.plus.model.people.Person;
-import com.thebluealliance.androidclient.background.UpdateMyTBA;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 
-/**
- * Created by phil on 11/16/14.
- */
 public class PlusHelper {
 
     // This is the helper object that connects to Google Play Services.
@@ -21,7 +17,7 @@ public class PlusHelper {
 
     private static void buildPlusClient(Context context,
                                         GoogleApiClient.ConnectionCallbacks connectionCallbacks,
-                                        GoogleApiClient.OnConnectionFailedListener connectionFailedListener){
+                                        GoogleApiClient.OnConnectionFailedListener connectionFailedListener) {
 
         // Initialize the PlusClient connection.
         // Scopes indicate the information about the user your application will be able to access.
@@ -35,9 +31,9 @@ public class PlusHelper {
     }
 
     public static GoogleApiClient getApiClient(Context context,
-                                          GoogleApiClient.ConnectionCallbacks connectionCallbacks,
-                                          GoogleApiClient.OnConnectionFailedListener connectionFailedListener) {
-        if(mApiClient == null){
+                                               GoogleApiClient.ConnectionCallbacks connectionCallbacks,
+                                               GoogleApiClient.OnConnectionFailedListener connectionFailedListener) {
+        if (mApiClient == null) {
             buildPlusClient(context, connectionCallbacks, connectionFailedListener);
         }
         return mApiClient;
@@ -47,61 +43,57 @@ public class PlusHelper {
         PlusHelper.mApiClient = mApiClient;
     }
 
-    public static boolean isConnected(){
+    public static boolean isConnected() {
         return mApiClient != null && mApiClient.isConnected();
     }
 
-    public static boolean isConnecting(){
+    public static boolean isConnecting() {
         return mApiClient != null && mApiClient.isConnecting();
     }
 
     public static void connect(Context context,
                                GoogleApiClient.ConnectionCallbacks connectionCallbacks,
-                               GoogleApiClient.OnConnectionFailedListener connectionFailedListener){
-        if(mApiClient == null){
+                               GoogleApiClient.OnConnectionFailedListener connectionFailedListener) {
+        if (mApiClient == null) {
             buildPlusClient(context, connectionCallbacks, connectionFailedListener);
         }
-        if(!mApiClient.isConnected() && !mApiClient.isConnected()) {
+        if (!mApiClient.isConnected()) {
             mApiClient.connect();
         }
     }
-    
-    public static void onConnectCommon(Activity activity){
+
+    public static void onConnectCommon(Activity activity) {
         String accountName = PlusHelper.getAccountName();
         AccountHelper.setSelectedAccount(activity, accountName);
         AccountHelper.enableMyTBA(activity, true);
         AccountHelper.setSelectedAccount(activity, PlusHelper.getAccountName());
         GCMHelper.registerGCMIfNeeded(activity);
-        new UpdateMyTBA(activity, new RequestParams(true, false)).execute();
+        activity.startService(new Intent(activity, MyTbaUpdateService.class));
 
         AccountHelper.registerSystemAccount(activity, accountName);
     }
 
-    public static void disconnect(){
-        if(mApiClient != null){
+    public static void disconnect() {
+        if (mApiClient != null) {
             mApiClient.disconnect();
         }
     }
 
-    public static void clearDefaultAccount(){
-        if(mApiClient != null){
+    public static void clearDefaultAccount() {
+        if (mApiClient != null) {
             mApiClient.clearDefaultAccountAndReconnect();
         }
     }
 
-    public static void revokeAccessAndDisconnect(PlusClient.OnAccessRevokedListener listener){
-        disconnect();
-    }
-
-    public static String getAccountName(){
-        if(mApiClient != null){
+    public static String getAccountName() {
+        if (mApiClient != null) {
             return Plus.AccountApi.getAccountName(mApiClient);
         }
         return "";
     }
 
-    public static Person getCurrentPerson(){
-        if(mApiClient != null){
+    public static Person getCurrentPerson() {
+        if (mApiClient != null) {
             return Plus.PeopleApi.getCurrentPerson(mApiClient);
         }
         return null;

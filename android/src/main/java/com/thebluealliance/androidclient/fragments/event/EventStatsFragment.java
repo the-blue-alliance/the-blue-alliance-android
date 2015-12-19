@@ -1,36 +1,35 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.thebluealliance.androidclient.Constants;
+import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RefreshableHostActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.event.PopulateEventStats;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
+import com.thebluealliance.androidclient.binders.StatsListBinder;
+import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
-import com.thebluealliance.androidclient.interfaces.RefreshListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
+import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.Arrays;
+import java.util.List;
+
+import rx.Observable;
 
 /**
  * Fragment that displays the team statistics for an FRC event.
@@ -38,26 +37,20 @@ import java.util.Arrays;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  * @author Nathan Walters
- *         <p/>
- *         File created by phil on 4/22/14.
  */
-public class EventStatsFragment extends Fragment implements RefreshListener {
+public class EventStatsFragment
+  extends DatafeedFragment<JsonElement, List<ListItem>, StatsListSubscriber, StatsListBinder> {
 
-    private AlertDialog statsDialog;
-    private String[] items;
-
-    private Activity parent;
-
-    private String mEventKey;
     private static final String KEY = "eventKey", SORT = "sort";
 
+    private AlertDialog mStatsDialog;
+    private String[] mItems;
+    private String mEventKey;
     private Parcelable mListState;
     private EventStatsFragmentAdapter mAdapter;
     private ListView mListView;
-    private String statSortCategory;
-    private int selectedStatSort = -1;
-
-    private PopulateEventStats mTask;
+    private String mStatSortCategory;
+    private int mSelectedStatSort = -1;
 
     /**
      * Creates new event stats fragment for an event.
@@ -75,53 +68,43 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         // Reload key if returning from another fragment/activity
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }
-        parent = getActivity();
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).registerRefreshListener(this);
-        }
+        super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
-            selectedStatSort = savedInstanceState.getInt(SORT, -1);
+            mSelectedStatSort = savedInstanceState.getInt(SORT, -1);
         }
-        if (selectedStatSort == -1) {
+        if (mSelectedStatSort == -1) {
             /* Sort has not yet been set. Default to OPR */
-            selectedStatSort = Arrays.binarySearch(getResources().getStringArray(R.array.statsDialogArray),
-                    getString(R.string.dialog_stats_sort_opr));
+            mSelectedStatSort = Arrays.binarySearch(getResources().getStringArray(R.array.statsDialogArray),
+              getString(R.string.dialog_stats_sort_opr));
         }
 
         // Setup stats sort dialog box
-        items = getResources().getStringArray(R.array.statsDialogArray);
-        statSortCategory = getSortTypeFromPosition(selectedStatSort);
+        mItems = getResources().getStringArray(R.array.statsDialogArray);
+        mStatSortCategory = getSortTypeFromPosition(mSelectedStatSort);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.dialog_stats_title)
-                .setSingleChoiceItems(items, selectedStatSort, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        selectedStatSort = i;
-                        statSortCategory = getSortTypeFromPosition(selectedStatSort);
+          .setSingleChoiceItems(mItems, mSelectedStatSort, (dialogInterface, i) -> {
+              mSelectedStatSort = i;
+              mStatSortCategory = getSortTypeFromPosition(mSelectedStatSort);
 
-                        dialogInterface.dismiss();
+              dialogInterface.dismiss();
 
-                        mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
-                        if (mAdapter != null && statSortCategory != null)
-
-                        {
-                            mAdapter.sortStats(statSortCategory);
-                        }
-                    }
-                }).setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
+              mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
+              if (mAdapter != null && mStatSortCategory != null) {
+                  mAdapter.sortStats(mStatSortCategory);
+              }
+          }).setNegativeButton(R.string.dialog_cancel, (dialog, id) -> {
+            dialog.cancel();
         });
 
-        statsDialog = builder.create();
+        mStatsDialog = builder.create();
         setHasOptionsMenu(true);
+        mSubscriber.setStatToSortBy(mStatSortCategory);
     }
 
     @Override
@@ -134,10 +117,10 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Setup views & listeners
         View view = inflater.inflate(R.layout.list_view_with_spinner, null);
+        mBinder.setRootView(view);
         mListView = (ListView) view.findViewById(R.id.list);
 
         ProgressBar mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
-
         // Either reload data if returning from another fragment/activity
         // Or get data if viewing fragment for the first time.
         if (mAdapter != null) {
@@ -146,19 +129,18 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
             mProgressBar.setVisibility(View.GONE);
         }
 
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-                if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
-                    if (TeamHelper.validateMultiTeamKey(teamKey)) {
-                        // Take out extra letter at end to make team key valid.
-                        teamKey = teamKey.substring(0, teamKey.length() - 1);
-                    }
-                    startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
-                } else {
-                    throw new IllegalArgumentException("OnItemClickListener must be attached to a view with a valid team key set as the tag!");
+        mBinder.setNoDataView((NoDataView) view.findViewById(R.id.no_data));
+
+        mListView.setOnItemClickListener((adapterView, view1, position, id) -> {
+            String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
+            if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
+                if (TeamHelper.validateMultiTeamKey(teamKey)) {
+                    // Take out extra letter at end to make team key valid.
+                    teamKey = teamKey.substring(0, teamKey.length() - 1);
                 }
+                startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
+            } else {
+                throw new IllegalArgumentException("OnItemClickListener must be attached to a view with a valid team key set as the tag!");
             }
         });
 
@@ -170,7 +152,7 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
         int id = item.getItemId();
 
         if (id == R.id.action_sort_by) {
-            statsDialog.show();
+            mStatsDialog.show();
             return true;
         }
 
@@ -180,16 +162,13 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(SORT, selectedStatSort);
+        outState.putInt(SORT, mSelectedStatSort);
     }
 
     @Override
     public void onPause() {
         // Save the data if moving away from fragment.
         super.onPause();
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
         if (mListView != null) {
             mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
@@ -197,45 +176,33 @@ public class EventStatsFragment extends Fragment implements RefreshListener {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (parent instanceof RefreshableHostActivity) {
-            ((RefreshableHostActivity) parent).startRefresh(this);
-        }
+    protected void inject() {
+        mComponent.inject(this);
     }
 
     @Override
-    public void onRefreshStart(boolean actionIconPressed) {
-        Log.i(Constants.REFRESH_LOG, "Loading " + mEventKey + " stats");
-        mTask = new PopulateEventStats(this, new RequestParams(true, actionIconPressed), statSortCategory);
-        mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mEventKey);
+    protected Observable<? extends JsonElement> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchEventStats(mEventKey, tbaCacheHeader);
     }
 
     @Override
-    public void onRefreshStop() {
-        if (mTask != null) {
-            mTask.cancel(false);
-        }
-    }
-
-    public void updateTask(PopulateEventStats newTask) {
-        mTask = newTask;
+    protected String getRefreshTag() {
+        return String.format("eventStats_%1$s", mEventKey);
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((RefreshableHostActivity) parent).unregisterRefreshListener(this);
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_poll_black_48dp, R.string.no_stats_data);
     }
 
     private String getSortTypeFromPosition(int position) {
-        if (items[position].equals(getString(R.string.dialog_stats_sort_opr))) {
+        if (mItems[position].equals(getString(R.string.dialog_stats_sort_opr))) {
             return "opr";
-        } else if (items[position].equals(getString(R.string.dialog_stats_sort_dpr))) {
+        } else if (mItems[position].equals(getString(R.string.dialog_stats_sort_dpr))) {
             return "dpr";
-        } else if (items[position].equals(getString(R.string.dialog_stats_sort_ccwm))) {
+        } else if (mItems[position].equals(getString(R.string.dialog_stats_sort_ccwm))) {
             return "ccwm";
-        } else if (items[position].equals(getString(R.string.dialog_stats_sort_team))) {
+        } else if (mItems[position].equals(getString(R.string.dialog_stats_sort_team))) {
             return "team";
         }
         return "";

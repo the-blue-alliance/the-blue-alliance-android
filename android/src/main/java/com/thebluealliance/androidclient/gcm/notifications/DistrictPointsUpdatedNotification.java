@@ -10,7 +10,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -18,9 +18,6 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Created by phil on 11/21/14.
- */
 public class DistrictPointsUpdatedNotification extends BaseNotification {
 
     private String districtName, districtKey;
@@ -32,18 +29,33 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
 
     @Override
     public void parseMessageData() throws JsonParseException {
-        JsonObject jsonData = JSONManager.getasJsonObject(messageData);
+        JsonObject jsonData = JSONHelper.getasJsonObject(messageData);
+        if (!jsonData.has("district_name")) {
+            throw new JsonParseException("district_name required");
+        }
         districtName = jsonData.get("district_name").getAsString();
+
+        if (!jsonData.has("district_key")) {
+            throw new JsonParseException("district_key is required");
+        }
         districtKey = jsonData.get("district_key").getAsString();
+    }
+
+    public String getDistrictName() {
+        return districtName;
+    }
+
+    public String getDistrictKey() {
+        return districtKey;
     }
 
     @Override
     public Notification buildNotification(Context context) {
         Resources r = context.getResources();
 
-        String contentText = String.format(r.getString(R.string.notification_district_points_updated), districtName);
+        String contentText = r.getString(R.string.notification_district_points_updated, districtName);
 
-        Intent instance = ViewDistrictActivity.newInstance(context, districtKey);
+        Intent instance = getIntent(context);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -51,9 +63,10 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
         String title = r.getString(R.string.notification_district_points_title, districtCode);
         stored.setTitle(title);
         stored.setBody(contentText);
+        stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
-        
+
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(title)
                 .setContentText(contentText)
@@ -65,7 +78,12 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
     }
 
     @Override
-    public void updateDataLocally(Context c) {
+    public Intent getIntent(Context c) {
+        return ViewDistrictActivity.newInstance(c, districtKey);
+    }
+
+    @Override
+    public void updateDataLocally() {
         /* This notification has no data that we can store locally */
     }
 

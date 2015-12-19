@@ -5,9 +5,9 @@ import android.content.ContentValues;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.types.ModelType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class Subscription {
     private List<String> notificationList;
     private int modelEnum;
 
-    public Subscription(){
+    public Subscription() {
         notificationList = new ArrayList<>();
     }
 
@@ -34,8 +34,8 @@ public class Subscription {
         setModelEnum(model_type);
     }
 
-    public String getKey(){
-        return userName+":"+modelKey;
+    public String getKey() {
+        return userName + ":" + modelKey;
     }
 
     public String getUserName() {
@@ -62,15 +62,15 @@ public class Subscription {
         this.notificationSettings = notificationSettings;
         // Update the ArrayList
         notificationList.clear();
-        for (JsonElement element : JSONManager.getasJsonArray(notificationSettings)) {
+        for (JsonElement element : JSONHelper.getasJsonArray(notificationSettings)) {
             notificationList.add(element.getAsString());
         }
     }
 
     public List<String> getNotificationList() {
-        if(notificationList == null){
+        if (notificationList == null) {
             notificationList = new ArrayList<>();
-            for (JsonElement element : JSONManager.getasJsonArray(notificationSettings)) {
+            for (JsonElement element : JSONHelper.getasJsonArray(notificationSettings)) {
                 notificationList.add(element.getAsString());
             }
         }
@@ -81,29 +81,29 @@ public class Subscription {
         return modelEnum;
     }
 
-    public ModelHelper.MODELS getModelType(){
-        return ModelHelper.MODELS.values()[modelEnum];
+    public ModelType getModelType() {
+        return ModelType.values()[modelEnum];
     }
 
     public void setModelEnum(int modelEnum) {
         this.modelEnum = modelEnum;
     }
 
-    private static String makeNotificationJSON(List<String> input){
+    private static String makeNotificationJSON(List<String> input) {
         JsonArray out = new JsonArray();
-        for(String s: input){
+        for (String s : input) {
             out.add(new JsonPrimitive(s));
         }
         return out.toString();
     }
 
-    public ContentValues getParams(){
+    public ContentValues getParams() {
         ContentValues cv = new ContentValues();
-        cv.put(Database.Subscriptions.KEY, getKey());
-        cv.put(Database.Subscriptions.USER_NAME, userName);
-        cv.put(Database.Subscriptions.MODEL_KEY, modelKey);
-        cv.put(Database.Subscriptions.NOTIFICATION_SETTINGS, notificationSettings);
-        cv.put(Database.Subscriptions.MODEL_ENUM, modelEnum);
+        cv.put(SubscriptionsTable.KEY, getKey());
+        cv.put(SubscriptionsTable.USER_NAME, userName);
+        cv.put(SubscriptionsTable.MODEL_KEY, modelKey);
+        cv.put(SubscriptionsTable.NOTIFICATION_SETTINGS, notificationSettings);
+        cv.put(SubscriptionsTable.MODEL_ENUM, modelEnum);
         return cv;
     }
 }

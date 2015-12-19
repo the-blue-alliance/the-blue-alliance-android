@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,12 +17,11 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.activities.AuthenticatorActivity;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
-import com.thebluealliance.androidclient.activities.NotificationDashboardActivity;
+import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
 import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
 
-public class SettingsActivity extends ActionBarActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +38,30 @@ public class SettingsActivity extends ActionBarActivity {
             addPreferencesFromResource(R.xml.preferences);
 
             Preference appVersion = findPreference("app_version");
+            int versionCode = BuildConfig.VERSION_CODE;
+            int major = versionCode / 1000000;
+            int minor = versionCode / 10000 % 100;
+            int patch = versionCode / 100 % 100;
+
             String versionInfo;
-            String[] versionData = BuildConfig.VERSION_NAME.split("/");
+            String commit = "";
+            if (BuildConfig.VERSION_NAME.contains("+")) {
+                commit = BuildConfig.VERSION_NAME.replace(".dirty", "")
+                  .substring(BuildConfig.VERSION_NAME.indexOf('+') + 2);
+            }
+            String versionName = String.format("v%1$d.%2$d.%3$d", major, minor, patch);
             String buildTime = Utilities.getBuildTimestamp(getActivity());
-            if(Utilities.isDebuggable()){
-                versionInfo = String.format(getString(R.string.settings_build_info_summary_debug), versionData[0], versionData[1], buildTime, versionData[2]);
-            }else{
-                versionInfo = String.format(getString(R.string.settings_build_info_summary), versionData[0], versionData[1], buildTime);
+            if (commit.isEmpty()) {
+                versionInfo = String.format(
+                  getString(R.string.settings_build_info_summary),
+                  versionName,
+                  buildTime);
+            } else {
+                versionInfo = String.format(
+                  getString(R.string.settings_build_info_summary_debug),
+                  versionName,
+                  buildTime,
+                  commit);
             }
             appVersion.setSummary(versionInfo);
 
@@ -60,37 +76,36 @@ public class SettingsActivity extends ActionBarActivity {
 
             Preference notifications = findPreference("notifications");
             notifications.setIntent(new Intent(getActivity(), NotificationSettingsActivity.class));
-            
-            Preference notificationDash = findPreference("notification_dashboard");
-            notificationDash.setIntent(new Intent(getActivity(), NotificationDashboardActivity.class));
 
             Preference changelog = findPreference("changelog");
-            if (Utilities.isDebuggable()) {
-                // if debug build, the version string will be like v0.1/#<sha hash>
-                // so load the page for the most recent commit
-                String sha = versionData[2];
-                sha = sha.replace("#", "");
-                changelog.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/commit/" + sha)));
+            if (commit.isEmpty()) {
+                changelog.setIntent(
+                  new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/" +
+                      "releases/tag/" + versionName)));
             } else {
-                // this is not a debug build, so link to the GitHub release page tagged with the version name
-                changelog.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/releases/tag/v" + versionData[0])));
+                changelog.setIntent(
+                  new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/" +
+                      "commit/" + commit)));
             }
 
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
 
-            final SwitchPreference enable_mytba = (SwitchPreference)findPreference("mytba_enabled");
+            final SwitchPreference enable_mytba = (SwitchPreference) findPreference("mytba_enabled");
             final Activity activity = getActivity();
             enable_mytba.setChecked(AccountHelper.isMyTBAEnabled(activity));
             enable_mytba.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     boolean enabled = AccountHelper.isMyTBAEnabled(activity);
-                    Log.d(Constants.LOG_TAG, "myTBA is: "+enabled);
-                    if(!enabled){
-                        Intent authIntent = AuthenticatorActivity.newInstance(activity, false);
-                        activity.startActivity(authIntent);
-                    }else{
+                    Log.d(Constants.LOG_TAG, "myTBA is: " + enabled);
+                    if (!enabled) {
+                        activity.startActivity(new Intent(getActivity(), MyTBAOnboardingActivity.class));
+                    } else {
                         AccountHelper.enableMyTBA(activity, false);
                     }
                     return true;
@@ -115,6 +130,15 @@ public class SettingsActivity extends ActionBarActivity {
             if (listView != null) {
                 listView.setPadding(0, 0, 0, 0);
             }
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+
+            // Enable might have failed; update the state of the switch when we resume
+            SwitchPreference enable_mytba = (SwitchPreference) findPreference("mytba_enabled");
+            enable_mytba.setChecked(AccountHelper.isMyTBAEnabled(getActivity()));
         }
     }
 

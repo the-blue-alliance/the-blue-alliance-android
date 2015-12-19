@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -13,26 +14,29 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewDistrictFragmentPagerAdapter;
-import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
-/**
- * Created by phil on 7/10/14.
- */
-public class ViewDistrictActivity extends FABNotificationSettingsActivity implements ViewPager.OnPageChangeListener {
+public class ViewDistrictActivity extends FABNotificationSettingsActivity
+  implements ViewPager.OnPageChangeListener, HasFragmentComponent {
 
     public static final String DISTRICT_ABBREV = "districtKey";
     public static final String YEAR = "year";
 
-    private String districtAbbrev, districtKey;
-    private int year;
-    private TextView warningMessage;
-    private ViewPager pager;
-    private ViewDistrictFragmentPagerAdapter adapter;
+    private String mDistrictKey;
+    private int mYear;
+    private TextView mWarningMessage;
+    private FragmentComponent mComponent;
 
     public static Intent newInstance(Context c, String districtAbbrev, int year) {
         Intent intent = new Intent(c, ViewDistrictActivity.class);
@@ -53,27 +57,27 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity implem
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        String districtAbbrev;
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(DISTRICT_ABBREV)) {
             districtAbbrev = getIntent().getExtras().getString(DISTRICT_ABBREV, "");
         } else {
             throw new IllegalArgumentException("ViewDistrictActivity must be constructed with a key");
         }
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(YEAR)) {
-            year = getIntent().getExtras().getInt(YEAR, -1);
+            mYear = getIntent().getExtras().getInt(YEAR, -1);
         } else {
             throw new IllegalArgumentException("ViewDistrictActivity must be constructed with a year");
         }
 
-        districtKey = DistrictHelper.generateKey(districtAbbrev, year);
-        setModelKey(districtKey, ModelHelper.MODELS.DISTRICT);
+        mDistrictKey = DistrictHelper.generateKey(districtAbbrev, mYear);
+        setModelKey(mDistrictKey, ModelType.DISTRICT);
         setContentView(R.layout.activity_view_district);
 
-        warningMessage = (TextView) findViewById(R.id.warning_container);
+        mWarningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
-        pager = (ViewPager) findViewById(R.id.view_pager);
-        adapter = new ViewDistrictFragmentPagerAdapter(getSupportFragmentManager(), districtKey);
+        ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
+        ViewDistrictFragmentPagerAdapter adapter = new ViewDistrictFragmentPagerAdapter(getSupportFragmentManager(), mDistrictKey);
         pager.setAdapter(adapter);
         // To support refreshing, all pages must be held in memory at once
         // This should be increased if we ever add more pages
@@ -83,6 +87,7 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity implem
         SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
         tabs.setOnPageChangeListener(this);
+        ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
@@ -106,7 +111,7 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity implem
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
-            setActionBarTitle(String.format(getString(R.string.district_title_format), year, DistrictHelper.districtTypeFromKey(districtKey).getName()));
+            setActionBarTitle(String.format(getString(R.string.district_title_format), mYear, DistrictHelper.districtTypeFromKey(mDistrictKey).getName()));
         }
     }
 
@@ -143,14 +148,14 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity implem
     }
 
     @Override
-    public void showWarningMessage(String message) {
-        warningMessage.setText(message);
-        warningMessage.setVisibility(View.VISIBLE);
+    public void showWarningMessage(CharSequence warningMessage) {
+        mWarningMessage.setText(warningMessage);
+        mWarningMessage.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideWarningMessage() {
-        warningMessage.setVisibility(View.GONE);
+        mWarningMessage.setVisibility(View.GONE);
     }
 
     @Override
@@ -180,5 +185,26 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity implem
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    @Override
+    public FragmentComponent getComponent() {
+        if (mComponent == null) {
+            TBAAndroid application = ((TBAAndroid) getApplication());
+            mComponent = DaggerFragmentComponent.builder()
+              .applicationComponent(application.getComponent())
+              .datafeedModule(application.getDatafeedModule())
+              .binderModule(application.getBinderModule())
+              .databaseWriterModule(application.getDatabaseWriterModule())
+              .subscriberModule(new SubscriberModule(this))
+              .clickListenerModule(new ClickListenerModule(this))
+              .build();
+        }
+        return mComponent;
+    }
+
+    @Override
+    public void inject() {
+        getComponent().inject(this);
     }
 }

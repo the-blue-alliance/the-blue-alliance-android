@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_required_title">App Update Required!</string>
+    <string name="update_required_text">Please go to the Play Store and update The Blue Alliance</string>
+    <string name="update_dialog_title">New Version Available!</string>
+    <string name="update_dialog_text">A new version of The Blue Alliance is available</string>
+    <string name="update_dialog_action">Update</string>
+</resources>

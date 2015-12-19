@@ -1,15 +1,13 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
 
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
+import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.renderers.ModelRenderer;
+import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 
-/**
- * File created by phil on 4/28/14.
- */
 public abstract class BasicModel<T extends BasicModel> implements RenderableModel {
 
     /* Map of the requested fields for this object
@@ -18,30 +16,39 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
      * Also, we can now only request the parts of the model that we want to use
      */
     protected ContentValues fields;
+    protected ModelType type;
 
     //database table that holds this model's information
     private String table;
 
-    public BasicModel(String table) {
+    public BasicModel(String table, ModelType type) {
         this.table = table;
+        this.type = type;
         fields = new ContentValues();
     }
 
-    public static Cursor query(Context c, String table, String[] fields, String where, String[] whereArgs) {
-        return Database.getInstance(c).safeQuery(table, fields, where, whereArgs, null, null, null, null);
-    }
-
     public void merge(T in) {
-        if(in != null) {
+        if (in != null) {
             fields.putAll(in.fields);
         }
+    }
+
+    public String getTable(){
+        return table;
     }
 
     public ContentValues getParams() {
         return fields;
     }
 
-    public abstract void write(Context c);
+    public abstract String getKey();
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public ListElement render(ModelRendererSupplier supplier) {
+        ModelRenderer<T, ?> renderer = supplier.getRendererForType(type);
+        return renderer != null ? renderer.renderFromModel((T)this, null) : null;
+    }
 
     /*
      * When we're ready for it, I can foresee wanting easy inflating/deflating with json. Uncomment whenever that is...

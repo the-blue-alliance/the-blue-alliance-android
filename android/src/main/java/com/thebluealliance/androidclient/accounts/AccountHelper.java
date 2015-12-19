@@ -36,22 +36,21 @@ public class AccountHelper {
     public static final JsonFactory JSON_FACTORY = new AndroidJsonFactory();
     public static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
 
-    public static void enableMyTBA(Activity activity, boolean enabled) {
+    public static void enableMyTBA(Context context, boolean enabled) {
         Log.d(Constants.LOG_TAG, "Enabling myTBA: " + enabled);
         if (enabled) {
             // enable myTBA
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             prefs.edit().putBoolean(PREF_MYTBA_ENABLED, true).apply();
         } else {
             //disabled myTBA.
-            String currentUser = getSelectedAccount(activity);
+            String currentUser = getSelectedAccount(context);
             if (!currentUser.isEmpty()) {
                 Log.d(Constants.LOG_TAG, "removing: " + currentUser);
                 //Remove all local content and deregister from GCM
-                new DisableMyTBA(activity).execute(currentUser);
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-                prefs.edit()
-                        .putBoolean(PREF_MYTBA_ENABLED, false).apply();
+                new DisableMyTBA(context).execute(currentUser);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                prefs.edit().putBoolean(PREF_MYTBA_ENABLED, false).apply();
             }
         }
     }
@@ -67,17 +66,17 @@ public class AccountHelper {
     }
 
     public static String getSelectedAccount(Context context) {
-        if(context == null) return "";
+        if (context == null) return "";
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(PREF_SELECTED_ACCOUNT, "");
     }
 
-    public static Account getCurrentAccount(Context context){
+    public static Account getCurrentAccount(Context context) {
         AccountManager am = AccountManager.get(context);
         Account[] accounts = am.getAccountsByType(context.getString(R.string.account_type));
         String selectedAccount = getSelectedAccount(context);
-        for(Account account: accounts){
-            if(account.name.equals(selectedAccount)) return account;
+        for (Account account : accounts) {
+            if (account.name.equals(selectedAccount)) return account;
         }
         return null;
     }
@@ -108,7 +107,7 @@ public class AccountHelper {
 
     public static TbaMobile getAuthedTbaMobile(Context context) {
         GoogleAccountCredential currentCredential = AccountHelper.getSelectedAccountCredential(context);
-        if(currentCredential == null){
+        if (currentCredential == null) {
             Log.w(Constants.LOG_TAG, "Unable to get account.");
             return null;
         }
@@ -147,10 +146,10 @@ public class AccountHelper {
         }
     }
 
-    public static boolean registerSystemAccount(Context context, String accountName){
+    public static boolean registerSystemAccount(Context context, String accountName) {
         // register the account with the system
         AccountManager accountManager = AccountManager.get(context);
-        if(accountManager.getAccountsByType(context.getString(R.string.account_type)).length == 0) {
+        if (accountManager.getAccountsByType(context.getString(R.string.account_type)).length == 0) {
             Account account = new Account(accountName, context.getString(R.string.account_type));
             return accountManager.addAccountExplicitly(account, null, null);
         }

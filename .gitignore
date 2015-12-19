@@ -1,6 +1,8 @@
 /local.properties
 .DS_Store
 
+*.txtbak
+
 # Keys
 *.jks
 
@@ -9,6 +11,7 @@ android/src/main/assets/tba.properties
 
 # Ignore debug client library
 android/libs/tbaMobile-v9-1.19.0-SNAPSHOT-debug.jar
+install_mytba_debug.sh
 
 # Built application files
 *.apk
@@ -29,6 +32,7 @@ gen/
 .gradle/
 gradle/
 build/
+out/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -43,3 +47,6 @@ proguard/
 
 # Windows thumbnail cache
 Thumbs.db
+
+# Logs captured from Device Monitor
+captures/

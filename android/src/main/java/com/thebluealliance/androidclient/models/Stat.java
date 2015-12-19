@@ -2,12 +2,10 @@ package com.thebluealliance.androidclient.models;
 
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
+import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 
 import java.text.DecimalFormat;
 
-/**
- * File created by phil on 6/3/14.
- */
 public class Stat implements RenderableModel {
 
     String teamKey, teamName, location, statString;
@@ -26,7 +24,8 @@ public class Stat implements RenderableModel {
     }
 
     @Override
-    public StatsListElement render() {
+    public StatsListElement render(ModelRendererSupplier supplier) {
+        //TODO create StatsRenderer
         String teamNumber = teamKey.substring(3);
         return new StatsListElement(teamKey, teamNumber, teamName, statString, opr, dpr, ccwm);
     }

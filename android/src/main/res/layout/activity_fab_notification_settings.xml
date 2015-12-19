@@ -5,76 +5,63 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/activity_content"
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <FrameLayout
-        android:id="@+id/activity_foreground_dim"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black"
-        android:alpha="0.0" />
-
-    <RelativeLayout
-        android:id="@+id/notification_settings"
-        android:visibility="invisible"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:clickable="true">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/notification_settings_toolbar"
-            style="@style/DefaultLightToolbarStyle"
-            android:background="@color/accent" />
+        android:layout_height="match_parent">
 
         <FrameLayout
-            android:id="@+id/settings_list"
+            android:id="@+id/activity_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <FrameLayout
+            android:id="@+id/activity_foreground_dim"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_below="@id/notification_settings_toolbar" />
+            android:alpha="0.0"
+            android:background="@color/black" />
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/notification_settings"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:clickable="true"
+            android:visibility="invisible">
 
-    <FrameLayout
-        android:id="@+id/open_notification_settings_button_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_above="@+id/warning_container">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/notification_settings_toolbar"
+                style="@style/DefaultLightToolbarStyle"
+                android:background="@color/accent" />
 
-        <com.melnykov.fab.FloatingActionButton
+            <FrameLayout
+                android:id="@+id/settings_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/notification_settings_toolbar"
+                android:orientation="vertical" />
+
+        </RelativeLayout>
+
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/open_notification_settings_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_star_white_24dp"
-            app:fab_colorNormal="@color/accent"
-            app:fab_colorPressed="@color/accent_dark"
-            app:fab_colorRipple="@color/accent_dark_ripple"
-            android:layout_margin="16dp" />
-    </FrameLayout>
+            app:fabSize="normal" />
 
-    <FrameLayout
-        android:id="@+id/close_notification_settings_button_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:visibility="invisible"
-        android:layout_above="@id/warning_container">
-
-        <com.melnykov.fab.FloatingActionButton
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/close_notification_settings_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_check_white_24dp"
-            app:fab_colorNormal="@color/accent"
-            app:fab_colorPressed="@color/accent_dark"
-            app:fab_colorRipple="@color/accent_dark_ripple"
-            android:layout_margin="16dp" />
-    </FrameLayout>
+            android:visibility="invisible"
+            app:fabSize="normal" />
+
+    </android.support.design.widget.CoordinatorLayout>
 </RelativeLayout>

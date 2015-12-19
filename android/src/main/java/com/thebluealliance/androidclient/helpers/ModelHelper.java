@@ -11,82 +11,23 @@ import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
-import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.listitems.ModelListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.types.ModelType;
 
 /**
  * File created by phil on 8/13/14.
  */
 public class ModelHelper {
-    public enum MODELS {
-        EVENT,
-        TEAM,
-        MATCH,
-        EVENTTEAM,
-        DISTRICT,
-        DISTRICTTEAM,
-        AWARD,
-        MEDIA;
 
-        public String getTitle() {
-            switch (this) {
-                case EVENT:
-                    return "Events";
-                case TEAM:
-                    return "Teams";
-                case MATCH:
-                    return "Matches";
-                case EVENTTEAM:
-                    return "Team@Event";
-                case DISTRICT:
-                    return "Districts";
-                case DISTRICTTEAM:
-                    return "Team@District";
-                case AWARD:
-                    return "Awards";
-            }
-            return "";
-        }
-
-        public String getSingularTitle() {
-            switch (this) {
-                case EVENT:
-                    return "Event";
-                case TEAM:
-                    return "Team";
-                case MATCH:
-                    return "Match";
-                case EVENTTEAM:
-                    return "Team@Event";
-                case DISTRICT:
-                    return "District";
-                case DISTRICTTEAM:
-                    return "Team@District";
-                case AWARD:
-                    return "Awards";
-            }
-            return "";
-        }
-
-        public int getEnum(){
-            return this.ordinal();
-        }
+    public static ModelType getModelFromEnum(int model_enum) {
+        return ModelType.values()[model_enum];
     }
 
-    public static MODELS getModelFromEnum(int model_enum) {
-        return MODELS.values()[model_enum];
-    }
-
-    public static String[] getNotificationTypes(MODELS type) {
+    public static String[] getNotificationTypes(ModelType type) {
         Log.d(Constants.LOG_TAG, "getting notifications for: " + type);
         switch (type) {
             case EVENT:
@@ -104,7 +45,7 @@ public class ModelHelper {
         }
     }
 
-    public static Intent getIntentFromKey(Context context, String key, MODELS type) {
+    public static Intent getIntentFromKey(Context context, String key, ModelType type) {
         if (type == null) {
             return null;
         }
@@ -124,47 +65,5 @@ public class ModelHelper {
             default:
                 return null;
         }
-    }
-
-    public static ListItem renderModelFromKey(Context context, String key, MODELS type, boolean showSettingsButton) {
-        try {
-            String text;
-            Database db = Database.getInstance(context);
-            switch (type) {
-                case EVENT:
-                    if(!db.getEventsTable().exists(key)) return null;
-                        Event event = DataManager.Events.getEvent(context, key, new RequestParams()).getData();
-                        text = event.getEventYear() + " " + event.getEventShortName();
-                    break;
-                case TEAM:
-                    if(!db.getTeamsTable().exists(key)) return null;
-                    Team team = DataManager.Teams.getTeam(context, key, new RequestParams()).getData();
-                    text = team.getNickname();
-                    break;
-                case MATCH:
-                    if(!db.getMatchesTable().exists(key)) return null;
-                    Match match = DataManager.Matches.getMatch(context, key, new RequestParams()).getData();
-                    text = match.getEventKey() + " " + match.getTitle();
-                    break;
-                case EVENTTEAM:
-                    String teamKey = EventTeamHelper.getTeamKey(key), eventKey = EventTeamHelper.getEventKey(key);
-                    if(!db.getEventsTable().exists(eventKey) || !db.getTeamsTable().exists(teamKey)) return null;
-                    Team eTeam = DataManager.Teams.getTeam(context, teamKey, new RequestParams()).getData();
-                    Event eEvent = DataManager.Events.getEvent(context, eventKey, new RequestParams()).getData();
-                    text = eTeam.getNickname() + " @ " + eEvent.getEventYear() + " " + eEvent.getEventShortName();
-                    break;
-                case DISTRICT:
-                    if(!db.getDistrictsTable().exists(key)) return null;
-                    District district = DataManager.Districts.getDistrict(context, key).getData();
-                    text = district.getYear() + " " + DistrictHelper.DISTRICTS.fromAbbreviation(district.getAbbreviation()).getName();
-                    break;
-                default:
-                    return null;
-            }
-            return new ModelListElement(text, key, type);
-        } catch (BasicModel.FieldNotDefinedException | DataManager.NoDataException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

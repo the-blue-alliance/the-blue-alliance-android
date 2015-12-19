@@ -1,19 +1,22 @@
 package com.thebluealliance.androidclient.helpers;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.types.MatchType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,96 +26,38 @@ import java.util.regex.Pattern;
  * @author Bryce Matsuda
  * @author Nathan Walters
  * @author Phil Lopreiato
- *         <p/>
- *         Created by Nathan on 6/6/2014.
  */
 public class MatchHelper {
 
-    public static enum TYPE {
-        NONE,
-        QUAL {
-            @Override
-            public TYPE previous() {
-                return null; // see below for options for this line
-            }
-        },
-        QUARTER,
-        SEMI,
-        FINAL {
-            @Override
-            public TYPE next() {
-                return null; // see below for options for this line
-            }
-        };
-
-        public TYPE next() {
-            // No bounds checking required here, because the last instance overrides
-            return values()[ordinal() + 1];
-        }
-
-        public TYPE previous() {
-            // No bounds checking required here, because the last instance overrides
-            return values()[ordinal() - 1];
-        }
-
-        public TYPE get(String str) {
-            return valueOf(str);
-        }
-
-        public static TYPE fromShortType(String str) {
-            switch (str) {
-                case "qm":
-                    return QUAL;
-                case "ef":
-                case "qf":
-                    return QUARTER;
-                case "sf":
-                    return SEMI;
-                case "f":
-                    return FINAL;
-                default:
-                    throw new IllegalArgumentException("Invalid short type");
-            }
-        }
-
-        public static TYPE fromKey(String key) {
-            if (key.contains("_qm")) return QUAL;
-            if (key.contains("_ef") || key.contains("_qf")) return QUARTER;
-            if (key.contains("_sf")) return SEMI;
-            if (key.contains("_f")) return FINAL;
-            return NONE;
-        }
-    }
-
-    public static final HashMap<TYPE, String> SHORT_TYPES;
-    public static final HashMap<TYPE, String> LONG_TYPES;
-    public static final HashMap<TYPE, String> ABBREV_TYPES;
-    public static final HashMap<TYPE, Integer> PLAY_ORDER;
+    public static final HashMap<MatchType, String> SHORT_TYPES;
+    public static final HashMap<MatchType, String> LONG_TYPES;
+    public static final HashMap<MatchType, String> ABBREV_TYPES;
+    public static final HashMap<MatchType, Integer> PLAY_ORDER;
 
     static {
         SHORT_TYPES = new HashMap<>();
-        SHORT_TYPES.put(MatchHelper.TYPE.QUAL, "qm");
-        SHORT_TYPES.put(MatchHelper.TYPE.QUARTER, "qf");
-        SHORT_TYPES.put(MatchHelper.TYPE.SEMI, "sf");
-        SHORT_TYPES.put(MatchHelper.TYPE.FINAL, "f");
+        SHORT_TYPES.put(MatchType.QUAL, "qm");
+        SHORT_TYPES.put(MatchType.QUARTER, "qf");
+        SHORT_TYPES.put(MatchType.SEMI, "sf");
+        SHORT_TYPES.put(MatchType.FINAL, "f");
 
         LONG_TYPES = new HashMap<>(); // TODO: I18N
-        LONG_TYPES.put(MatchHelper.TYPE.QUAL, "Quals");
-        LONG_TYPES.put(MatchHelper.TYPE.QUARTER, "Quarters");
-        LONG_TYPES.put(MatchHelper.TYPE.SEMI, "Semis");
-        LONG_TYPES.put(MatchHelper.TYPE.FINAL, "Finals");
+        LONG_TYPES.put(MatchType.QUAL, "Quals");
+        LONG_TYPES.put(MatchType.QUARTER, "Quarters");
+        LONG_TYPES.put(MatchType.SEMI, "Semis");
+        LONG_TYPES.put(MatchType.FINAL, "Finals");
 
         PLAY_ORDER = new HashMap<>();
-        PLAY_ORDER.put(MatchHelper.TYPE.QUAL, 1);
-        PLAY_ORDER.put(MatchHelper.TYPE.QUARTER, 2);
-        PLAY_ORDER.put(MatchHelper.TYPE.SEMI, 3);
-        PLAY_ORDER.put(MatchHelper.TYPE.FINAL, 4);
+        PLAY_ORDER.put(MatchType.QUAL, 1);
+        PLAY_ORDER.put(MatchType.QUARTER, 2);
+        PLAY_ORDER.put(MatchType.SEMI, 3);
+        PLAY_ORDER.put(MatchType.FINAL, 4);
 
         ABBREV_TYPES = new HashMap<>(); // TODO: I18N
-        ABBREV_TYPES.put(MatchHelper.TYPE.QUAL, "Q");
-        ABBREV_TYPES.put(MatchHelper.TYPE.QUARTER, "QF");
-        ABBREV_TYPES.put(MatchHelper.TYPE.SEMI, "SF");
-        ABBREV_TYPES.put(MatchHelper.TYPE.FINAL, "F");
+        ABBREV_TYPES.put(MatchType.QUAL, "Q");
+        ABBREV_TYPES.put(MatchType.QUARTER, "QF");
+        ABBREV_TYPES.put(MatchType.SEMI, "SF");
+        ABBREV_TYPES.put(MatchType.FINAL, "F");
     }
 
     public static boolean validateMatchKey(String key) {
@@ -121,41 +66,55 @@ public class MatchHelper {
         return key.matches("^[1-9]\\d{3}[a-z,0-9]+_(?:qm|ef\\dm|qf\\dm|sf\\dm|f\\dm)\\d+$");
     }
 
+    public static String getEventKeyFromMatchKey(String matchKey) {
+        if (validateMatchKey(matchKey)) {
+            return matchKey.replaceAll("_.+", "");
+        } else {
+            return matchKey;
+        }
+    }
+
     /**
      * Returns the match object of the match next to be played
+     * Iterate backwards to account for data gaps
      *
      * @param matches ArrayList of matches. Assumes the list is sorted by play order
      * @return Next match
      */
-    public static Match getNextMatchPlayed(ArrayList<Match> matches) throws BasicModel.FieldNotDefinedException {
-        for (Match m : matches) {
-            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() <= -1 &&
-                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() <= -1) {
-                //match is unplayed
-                return m;
+    public static @Nullable Match getNextMatchPlayed(List<Match> matches)
+      throws BasicModel.FieldNotDefinedException {
+        if (matches == null || matches.isEmpty()) return null;
+
+        Match last = null;
+        for (int i = matches.size() - 1; i >= 0; i--) {
+            Match m = matches.get(i);
+            if (m.hasBeenPlayed()) {
+                return last;
             }
+            last = m;
         }
-        //all matches have been played
-        return null;
+
+        // no matches played
+        return matches.get(0);
     }
 
     /**
      * Returns the match object of the last match played
+     * Iterate backwards to account for data gaps
      *
      * @param matches ArrayList of matches. Assumes the list is sorted by play order
      * @return Last match played
      */
-    public static Match getLastMatchPlayed(ArrayList<Match> matches) throws BasicModel.FieldNotDefinedException {
-        Match last = null;
-        for (Match m : matches) {
-            if (m.getAlliances().get("red").getAsJsonObject().get("score").getAsInt() <= -1 &&
-                    m.getAlliances().get("blue").getAsJsonObject().get("score").getAsInt() <= -1) {
-                break;
-            } else {
-                last = m;
+    public static @Nullable Match getLastMatchPlayed(List<Match> matches)
+      throws BasicModel.FieldNotDefinedException {
+        if (matches == null || matches.isEmpty()) return null;
+        for (int i = matches.size() - 1; i >= 0; i--) {
+            Match m = matches.get(i);
+            if (m.hasBeenPlayed()) {
+                return m;
             }
         }
-        return last;
+        return null;
     }
 
     /**
@@ -179,102 +138,32 @@ public class MatchHelper {
             this.descriptionId = descriptionId;
         }
 
-        public String getDescriptionString(Context c) {
-            return c.getResources().getString(descriptionId);
+        public String getDescriptionString(Resources resources) {
+            return resources.getString(descriptionId);
         }
     }
 
     /**
-     * Constructs a match list for a team competing at an event
-     *
-     * @param c       activity
-     * @param matches list of matches
-     * @return match list
-     */
-    public static ArrayList<ListGroup> constructMatchList(Context c, ArrayList<Match> matches) throws BasicModel.FieldNotDefinedException {
-
-        ArrayList<ListGroup> groups = new ArrayList<>();
-        ListGroup qualMatches = new ListGroup(c.getString(R.string.quals_header));
-        ListGroup quarterMatches = new ListGroup(c.getString(R.string.quarters_header));
-        ListGroup semiMatches = new ListGroup(c.getString(R.string.semis_header));
-        ListGroup finalMatches = new ListGroup(c.getString(R.string.finals_header));
-
-        ListGroup currentGroup = qualMatches;
-        TYPE lastType = null;
-        for (Match match : matches) {
-
-            if (lastType != match.getType()) {
-                switch (match.getType()) {
-                    case QUAL:
-                        currentGroup = qualMatches;
-                        break;
-                    case QUARTER:
-                        currentGroup = quarterMatches;
-                        break;
-                    case SEMI:
-                        currentGroup = semiMatches;
-                        break;
-                    case FINAL:
-                        currentGroup = finalMatches;
-                        break;
-                }
-            }
-
-            currentGroup.children.add(match);
-        }
-
-        if (!qualMatches.children.isEmpty()) {
-            groups.add(qualMatches);
-        }
-
-        if (!quarterMatches.children.isEmpty()) {
-            groups.add(quarterMatches);
-        }
-        if (!semiMatches.children.isEmpty()) {
-            groups.add(semiMatches);
-        }
-        if (!finalMatches.children.isEmpty()) {
-            groups.add(finalMatches);
-        }
-        return groups;
-    }
-
-    public static ArrayList<Match> getMatchesForTeam(ArrayList<Match> matches, String teamKey) {
-        ArrayList<Match> teamMatches = new ArrayList<>();
-        for (Match match : matches) {
-            try {
-                if (match.getAlliances().toString().contains(teamKey + "\"")) {
-                    teamMatches.add(match);
-                }
-            } catch (BasicModel.FieldNotDefinedException e) {
-                e.printStackTrace();
-                continue;
-            }
-        }
-        return teamMatches;
-    }
-
-    /**
-     * Gets the alliance for a team competing at an event by looking at QF matches
-     * Used if no alliance data available
+     * Gets the alliance for a team competing at an event by looking at QF matches Used if no
+     * alliance data available
      *
      * @param teamMatches team's match list for an event
      * @param teamKey     key associated with team
      * @return alliance number for team, or -1 if not on an alliance
      */
-    public static int getAllianceForTeam(ArrayList<Match> teamMatches, String teamKey) {
+    public static int getAllianceForTeam(List<Match> teamMatches, String teamKey) {
         int alliance = -1;
         if (teamMatches == null) {
             return alliance;
         }
         for (Match match : teamMatches) {
             try {
-                if (match.getType() == TYPE.QUARTER) {
+                if (match.getType() == MatchType.QUARTER) {
                     JsonObject matchAlliances = match.getAlliances();
-                    JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray();
-                    Boolean isRed = redTeams.toString().contains(teamKey);
+                    JsonArray redTeams = Match.getRedTeams(matchAlliances);
+                    Boolean isRed = Match.hasTeam(redTeams, teamKey);
 
-                    if(match.getYear() != 2015) {
+                    if (match.getYear() != 2015) {
                         switch (match.getSetNumber()) {
                             case 1:
                                 alliance = isRed ? 1 : 8;
@@ -289,17 +178,21 @@ public class MatchHelper {
                                 alliance = isRed ? 3 : 6;
                                 break;
                         }
-                    }else{
+                    } else {
                         /* Special format for 2015 */
-                        switch(match.getMatchNumber()){
+                        switch (match.getMatchNumber()) {
                             case 1:
-                                alliance = isRed ? 4 : 5; break;
-                            case 2: 
-                                alliance = isRed ? 3 : 6; break;
-                            case 3: 
-                                alliance = isRed ? 2 : 7; break;
+                                alliance = isRed ? 4 : 5;
+                                break;
+                            case 2:
+                                alliance = isRed ? 3 : 6;
+                                break;
+                            case 3:
+                                alliance = isRed ? 2 : 7;
+                                break;
                             case 4:
-                                alliance = isRed ? 1 : 8; break;
+                                alliance = isRed ? 1 : 8;
+                                break;
                         }
                     }
 
@@ -319,7 +212,7 @@ public class MatchHelper {
      * @param teamKey key associated with team
      * @return team record for that event
      */
-    public static int[] getRecordForTeam(ArrayList<Match> matches, String teamKey) {
+    public static int[] getRecordForTeam(List<Match> matches, String teamKey) {
         int[] record = new int[3];
         for (Match match : matches) {
             match.addToRecord(teamKey, record);
@@ -335,7 +228,7 @@ public class MatchHelper {
      * @param teamKey     key associated with team
      * @return team's past/current event status
      */
-    public static EventStatus evaluateStatusOfTeam(Event e, ArrayList<Match> teamMatches, String teamKey) throws BasicModel.FieldNotDefinedException {
+    public static EventStatus evaluateStatusOfTeam(Event e, List<Match> teamMatches, String teamKey) throws BasicModel.FieldNotDefinedException {
 
         // There might be match info available,
         // but no alliance selection data (for old events)
@@ -343,7 +236,7 @@ public class MatchHelper {
         int year = 2014;
 
         boolean inAlliance = false;
-        if (alliances.size() == 0) {
+        if (alliances == null || alliances.size() == 0) {
             // We don't have alliance data. Try to determine from matches.
             inAlliance = MatchHelper.getAllianceForTeam(teamMatches, teamKey) != -1;
         } else {
@@ -362,7 +255,7 @@ public class MatchHelper {
         ArrayList<Match> finalMatches = new ArrayList<>();
 
         ArrayList<Match> currentGroup = qualMatches;
-        TYPE lastType = null;
+        MatchType lastType = null;
 
         // Team might be a no-show/drop out last minute at an event,
         // and might not play any matches as a result.
@@ -377,15 +270,14 @@ public class MatchHelper {
             year = match.getYear();
 
             JsonObject matchAlliances = match.getAlliances();
-            JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
-                    blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
+            JsonArray redTeams = Match.getRedTeams(matchAlliances),
+                    blueTeams = Match.getBlueTeams(matchAlliances);
 
-            if (redTeams.toString().contains(teamKey) ||
-                    blueTeams.toString().contains(teamKey)) {
+            if (Match.hasTeam(redTeams, teamKey) || Match.hasTeam(blueTeams, teamKey)) {
                 teamIsHere = true;
             }
-            
-            if(match.hasBeenPlayed()) {
+
+            if (match.hasBeenPlayed()) {
                 switch (match.getType()) {
                     case QUARTER:
                         elimMatchPlayed = true;
@@ -454,45 +346,45 @@ public class MatchHelper {
             return EventStatus.NOT_PICKED;
         }
 
-        if(year == 2015){
+        if (year == 2015) {
             /* Special elim logic for 2015 season */
-            if(!finalMatches.isEmpty() && sfPlayed > 0){
+            if (!finalMatches.isEmpty() && sfPlayed > 0) {
                 int finalsWon = 0;
-                for(Match match: finalMatches){
-                    if(match.didSelectedTeamWin()){
+                for (Match match : finalMatches) {
+                    if (match.didSelectedTeamWin()) {
                         finalsWon++;
                     }
                 }
-                if(finalsWon >= 2){
+                if (finalsWon >= 2) {
                     return EventStatus.WON_EVENT;
-                } else if((fPlayed == 2  && finalsWon == 0) || (fPlayed == 3 && finalsWon == 1)){
+                } else if ((fPlayed == 2 && finalsWon == 0) || (fPlayed == 3 && finalsWon == 1)) {
                     return EventStatus.ELIMINATED_IN_FINALS;
-                }else{
+                } else {
                     return EventStatus.PLAYING_IN_FINALS;
                 }
-            }else if(!semiMatches.isEmpty() && qfPlayed > 0){
-                if(sfPlayed < 3){
+            } else if (!semiMatches.isEmpty() && qfPlayed > 0) {
+                if (sfPlayed < 3) {
                     return EventStatus.PLAYING_IN_SEMIS;
-                }else{
+                } else {
                     return EventStatus.ELIMINATED_IN_SEMIS;
                 }
-            }else{
-                if(qfPlayed < 2){
+            } else {
+                if (qfPlayed < 2) {
                     return EventStatus.PLAYING_IN_QUARTERS;
-                }else{
+                } else {
                     return EventStatus.ELIMINATED_IN_QUARTERS;
                 }
             }
         }
-        
+
         if (!quarterMatches.isEmpty()) {
             int countPlayed = 0, countWon = 0;
             for (Match match : quarterMatches) {
                 if (match.hasBeenPlayed()) {
                     JsonObject matchAlliances = match.getAlliances();
-                    JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
-                            blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-                    if (!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
+                    JsonArray redTeams = Match.getRedTeams(matchAlliances),
+                            blueTeams = Match.getBlueTeams(matchAlliances);
+                    if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
                         continue;
                     }
                     countPlayed++;
@@ -521,9 +413,9 @@ public class MatchHelper {
             for (Match match : semiMatches) {
                 if (match.hasBeenPlayed()) {
                     JsonObject matchAlliances = match.getAlliances();
-                    JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
-                            blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-                    if (!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
+                    JsonArray redTeams = Match.getRedTeams(matchAlliances),
+                            blueTeams = Match.getBlueTeams(matchAlliances);
+                    if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
                         continue;
                     }
                     countPlayed++;
@@ -550,9 +442,9 @@ public class MatchHelper {
             for (Match match : finalMatches) {
                 if (match.hasBeenPlayed()) {
                     JsonObject matchAlliances = match.getAlliances();
-                    JsonArray redTeams = matchAlliances.get("red").getAsJsonObject().get("teams").getAsJsonArray(),
-                            blueTeams = matchAlliances.get("blue").getAsJsonObject().get("teams").getAsJsonArray();
-                    if (!redTeams.toString().contains(teamKey + "\"") && !blueTeams.toString().contains(teamKey + "\"")) {
+                    JsonArray redTeams = Match.getRedTeams(matchAlliances),
+                            blueTeams = Match.getBlueTeams(matchAlliances);
+                    if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
                         continue;
                     }
                     countPlayed++;
@@ -578,7 +470,7 @@ public class MatchHelper {
 
     /**
      * Returns a title like "Quals 10" or "Finals 1 Match 2", or abbreviated "Q10" or "F1-2".
-     *
+     * <p>
      * <p/>NOTE: For people following more than one event at a time, the abbreviated form could
      * include the event code, e.g. "ILCH Q10".
      */
@@ -593,9 +485,9 @@ public class MatchHelper {
         Matcher m = regexPattern.matcher(keyWithoutEvent);
         if (m.matches()) {
 
-            String set = null, number = null;
+            String set = null, number;
             String typeCode = m.group(1);
-            TYPE type = TYPE.fromShortType(typeCode);
+            MatchType type = MatchType.fromShortType(typeCode);
             String typeName = (abbrev ? ABBREV_TYPES : LONG_TYPES).get(type);
 
             // If the match key looks like AA##, then the numbers correspond to the match number.
@@ -608,7 +500,7 @@ public class MatchHelper {
                 number = m.group(3);
             }
 
-            if(set == null) {
+            if (set == null) {
                 // No set specified; this is a match like "Quals 10" (abbrev "Q10")
                 String format = context.getString(abbrev ? R.string.match_title_abbrev_format
                         : R.string.match_title_format);
@@ -630,5 +522,17 @@ public class MatchHelper {
 
     public static String getAbbrevMatchTitleFromMatchKey(Context context, String matchKey) {
         return getMatchTitleFromMatchKey(context, matchKey, true);
+    }
+
+    public static MatchType getMatchTypeFromKey(String matchKey) {
+        String keyWithoutEvent = matchKey.replaceAll(".*_", "");
+        Pattern regexPattern = Pattern.compile("([a-z]+)([0-9]+)m?([0-9]*)");
+        Matcher m = regexPattern.matcher(keyWithoutEvent);
+        if (m.matches()) {
+            String typeCode = m.group(1);
+            return MatchType.fromShortType(typeCode);
+        } else {
+            return MatchType.NONE;
+        }
     }
 }

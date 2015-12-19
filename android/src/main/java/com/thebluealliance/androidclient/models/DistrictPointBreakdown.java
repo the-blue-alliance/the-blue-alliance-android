@@ -1,16 +1,16 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
+import android.content.res.Resources;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
+import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 
-/**
- * File created by phil on 7/26/14.
- */
 public class DistrictPointBreakdown implements RenderableModel {
 
     private int qualPoints, elimPoints, alliancePoints, awardPoints, totalPoints;
@@ -61,24 +61,33 @@ public class DistrictPointBreakdown implements RenderableModel {
         this.totalPoints = totalPoints;
     }
 
-    public RenderableModel renderQualPoints(Context c) {
-        return new BreakdownItem(c.getString(R.string.district_qual_points), String.format(c.getString(R.string.district_points_format), qualPoints));
+    public RenderableModel renderQualPoints(Resources resources) {
+        return new BreakdownItem(
+          resources.getString(R.string.district_qual_points),
+          String.format(resources.getString(R.string.district_points_format), qualPoints));
     }
 
-    public RenderableModel renderElimPoints(Context c) {
-        return new BreakdownItem(c.getString(R.string.district_elim_points), String.format(c.getString(R.string.district_points_format), elimPoints));
+    public RenderableModel renderElimPoints(Resources resources) {
+        return new BreakdownItem(
+          resources.getString(R.string.district_elim_points),
+          String.format(resources.getString(R.string.district_points_format), elimPoints));
     }
 
-    public RenderableModel renderAlliancePoints(Context c) {
-        return new BreakdownItem(c.getString(R.string.district_alliance_points), String.format(c.getString(R.string.district_points_format), alliancePoints));
+    public RenderableModel renderAlliancePoints(Resources resources) {
+        return new BreakdownItem(
+          resources.getString(R.string.district_alliance_points),
+          String.format(resources.getString(R.string.district_points_format), alliancePoints));
     }
 
-    public RenderableModel renderAwardPoints(Context c) {
-        return new BreakdownItem(c.getString(R.string.district_award_points), String.format(c.getString(R.string.district_points_format), awardPoints));
+    public RenderableModel renderAwardPoints(Resources resources) {
+        return new BreakdownItem(
+          resources.getString(R.string.district_award_points),
+          String.format(resources.getString(R.string.district_points_format), awardPoints));
     }
 
-    public RenderableModel renderTotalPoints(Context c) {
-        return new BreakdownItem(c.getString(R.string.total_district_points), String.format(c.getString(R.string.district_points_format), totalPoints));
+    public RenderableModel renderTotalPoints(Resources resources) {
+        return new BreakdownItem(resources.getString(R.string.total_district_points),
+          String.format(resources.getString(R.string.district_points_format), totalPoints));
     }
 
     public String getTeamKey() {
@@ -114,8 +123,10 @@ public class DistrictPointBreakdown implements RenderableModel {
     }
 
     @Override
-    public DistrictTeamListElement render() {
-        return new DistrictTeamListElement(teamKey, districtKey, teamName, rank, totalPoints);
+    public DistrictTeamListElement render(ModelRendererSupplier supplier) {
+        DistrictPointBreakdownRenderer renderer =
+          (DistrictPointBreakdownRenderer)supplier.getRendererForType(ModelType.DISTRICTPOINTS);
+        return renderer != null ? renderer.renderFromModel(this, null) : null;
     }
 
     private class BreakdownItem implements RenderableModel {
@@ -128,7 +139,7 @@ public class DistrictPointBreakdown implements RenderableModel {
         }
 
         @Override
-        public ListElement render() {
+        public ListElement render(ModelRendererSupplier supplier) {
             return new LabelValueListItem(key, value);
         }
     }

@@ -6,13 +6,17 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.database.writers.EventWriter;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -22,31 +26,39 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Created by phil on 11/21/14.
- */
-public class AllianceSelectionNotification extends BaseNotification{
+public class AllianceSelectionNotification extends BaseNotification {
 
+    private final EventWriter mWriter;
     private Event event;
     private String eventKey;
 
-    public AllianceSelectionNotification(String messageData){
+    public AllianceSelectionNotification(String messageData, EventWriter writer) {
         super(NotificationTypes.ALLIANCE_SELECTION, messageData);
+        mWriter = writer;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public String getEventKey() {
+        return eventKey;
     }
 
     @Override
-    public void parseMessageData() throws JsonParseException{
-        JsonObject jsonData = JSONManager.getasJsonObject(messageData);
-        if(!jsonData.has("event")){
+    public void parseMessageData() throws JsonParseException {
+        JsonObject jsonData = JSONHelper.getasJsonObject(messageData);
+        if (!jsonData.has("event")) {
             throw new JsonParseException("Notification data does not have an 'event' object");
         }
         event = gson.fromJson(jsonData.get("event"), Event.class);
+        eventKey = event.getKey();
     }
 
     @Override
     public Notification buildNotification(Context context) {
         Resources r = context.getResources();
-        String eventName = null;
+        String eventName;
         try {
             eventName = event.getEventShortName();
         } catch (BasicModel.FieldNotDefinedException e) {
@@ -55,17 +67,8 @@ public class AllianceSelectionNotification extends BaseNotification{
             return null;
         }
 
-        try {
-            eventKey = event.getEventKey();
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(getLogTag(), "Event data passed in this notification does not contain an event short name. Can't post this notification.");
-            e.printStackTrace();
-            return null;
-        }
-
-        String contentText = String.format(r.getString(R.string.notification_alliances_updated), eventName);
-
-        Intent instance = ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_ALLIANCES);
+        String contentText = r.getString(R.string.notification_alliances_updated, eventName);
+        Intent instance = getIntent(context);
 
         stored = new StoredNotification();
         stored.setType(getNotificationType());
@@ -73,6 +76,7 @@ public class AllianceSelectionNotification extends BaseNotification{
         String title = r.getString(R.string.notification_alliances_updated_title, eventCode);
         stored.setTitle(title);
         stored.setBody(contentText);
+        stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
 
@@ -87,15 +91,56 @@ public class AllianceSelectionNotification extends BaseNotification{
     }
 
     @Override
-    public void updateDataLocally(Context c) {
-        if(event != null) {
-            event.write(c);
+    public Intent getIntent(Context context) {
+        return ViewEventActivity.newInstance(context, eventKey, ViewEventFragmentPagerAdapter.TAB_ALLIANCES);
+    }
+
+    @Override
+    public void updateDataLocally() {
+        if (event != null) {
+            mWriter.write(event);
         }
     }
 
     @Override
     public int getNotificationId() {
         return (new Date().getTime() + ":" + getNotificationType() + ":" + eventKey).hashCode();
+    }
+
+    @Override
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_notification_awards_posted, null, false);
+
+            holder = new ViewHolder();
+            holder.header = (TextView) convertView.findViewById(R.id.card_header);
+            holder.details = (TextView) convertView.findViewById(R.id.details);
+            holder.time = (TextView) convertView.findViewById(R.id.notification_time);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        String titleString, shortName, shortCode;
+        try {
+            shortName = event.getEventShortName();
+            shortCode = EventHelper.getShortCodeForEventKey(event.getKey()).toUpperCase();
+            titleString = c.getString(R.string.gameday_ticker_event_title_format, shortName, shortCode);
+        } catch (BasicModel.FieldNotDefinedException e) {
+            titleString = eventKey;
+        }
+        holder.header.setText(titleString);
+        holder.details.setText(c.getString(R.string.notification_alliances_updated_gameday_details));
+        holder.time.setText(getNotificationTimeString(c));
+
+        return convertView;
+    }
+
+    private class ViewHolder {
+        public TextView header;
+        public TextView details;
+        public TextView time;
     }
 
 }

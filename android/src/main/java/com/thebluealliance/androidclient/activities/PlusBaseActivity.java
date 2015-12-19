@@ -1,31 +1,20 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.plus.PlusClient;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
-import com.thebluealliance.androidclient.background.UpdateMyTBA;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.gcm.GCMHelper;
 
 /**
  * A base class to wrap communication with the Google Play Services PlusClient.
  */
 public abstract class PlusBaseActivity extends Activity
-        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = PlusBaseActivity.class.getSimpleName();
 
@@ -45,30 +34,17 @@ public abstract class PlusBaseActivity extends Activity
 
 
     /**
-     * Called when the {@link PlusClient} revokes access to this app.
-     */
-    protected abstract void onPlusClientRevokeAccess();
-
-    /**
      * Called when the PlusClient is successfully connected.
      */
     protected abstract void onPlusClientSignIn();
 
-    /**
-     * Called when the {@link PlusClient} is disconnected.
-     */
-    protected abstract void onPlusClientSignOut();
 
-    /**
-     * Called when the {@link PlusClient} is blocking the UI.  If you have a progress bar widget,
-     * this tells you when to show or hide it.
-     */
     protected abstract void onPlusClientBlockingUI(boolean show);
 
     /**
-     * Called when there is a change in connection state.  If you have "Sign in"/ "Connect",
-     * "Sign out"/ "Disconnect", or "Revoke access" buttons, this lets you know when their states
-     * need to be updated.
+     * Called when there is a change in connection state.  If you have "Sign in"/ "Connect", "Sign
+     * out"/ "Disconnect", or "Revoke access" buttons, this lets you know when their states need to
+     * be updated.
      */
     protected abstract void updateConnectButtonState();
 
@@ -76,39 +52,32 @@ public abstract class PlusBaseActivity extends Activity
      * Try to sign in the user.
      */
     public void signIn() {
-            // Show the dialog as we are now signing in.
-            setProgressBarVisible(true);
-            // Make sure that we will start the resolution (e.g. fire the intent and pop up a
-            // dialog for the user) for any errors that come in.
-            mAutoResolveOnFail = true;
-            // We should always have a connection result ready to resolve,
-            // so we can start that process.
-            if (mConnectionResult != null) {
-                startResolution();
-            } else {
-                // If we don't have one though, we can start connect in
-                // order to retrieve one.
-                initiatePlusClientConnect();
-            }
+        // Show the dialog as we are now signing in.
+        setProgressBarVisible(true);
+        // Make sure that we will start the resolution (e.g. fire the intent and pop up a
+        // dialog for the user) for any errors that come in.
+        mAutoResolveOnFail = true;
+        // We should always have a connection result ready to resolve,
+        // so we can start that process.
+        if (mConnectionResult != null) {
+            startResolution();
+        } else {
+            // If we don't have one though, we can start connect in
+            // order to retrieve one.
+            initiatePlusClientConnect();
+        }
 
         updateConnectButtonState();
     }
 
-    /**
-     * Connect the {@link PlusClient} only if a connection isn't already in progress.  This will
-     * call back to {@link #onConnected(android.os.Bundle)} or
-     * {@link #onConnectionFailed(com.google.android.gms.common.ConnectionResult)}.
-     */
+
     private void initiatePlusClientConnect() {
         if (!PlusHelper.isConnected() && !PlusHelper.isConnecting()) {
             PlusHelper.connect(this, this, this);
         }
     }
 
-    /**
-     * Disconnect the {@link PlusClient} only if it is connected (otherwise, it can throw an error.)
-     * This will call back to {@link #onDisconnected()}.
-     */
+
     private void initiatePlusClientDisconnect() {
         if (PlusHelper.isConnected()) {
             PlusHelper.disconnect();
@@ -141,21 +110,6 @@ public abstract class PlusBaseActivity extends Activity
      */
     public void revokeAccess() {
 
-        if (PlusHelper.isConnected()) {
-            // Clear the default account as in the Sign Out.
-            PlusHelper.clearDefaultAccount();
-
-            // Revoke access to this entire application. This will call back to
-            // onAccessRevoked when it is complete, as it needs to reach the Google
-            // authentication servers to revoke all tokens.
-            PlusHelper.revokeAccessAndDisconnect(new PlusClient.OnAccessRevokedListener() {
-                public void onAccessRevoked(ConnectionResult result) {
-                    updateConnectButtonState();
-                    onPlusClientRevokeAccess();
-                }
-            });
-        }
-
     }
 
     public boolean isPlusClientConnecting() {
@@ -168,8 +122,8 @@ public abstract class PlusBaseActivity extends Activity
     }
 
     /**
-     * A helper method to flip the mResolveOnFail flag and start the resolution
-     * of the ConnectionResult from the failed connect() call.
+     * A helper method to flip the mResolveOnFail flag and start the resolution of the
+     * ConnectionResult from the failed connect() call.
      */
     private void startResolution() {
         try {
@@ -189,8 +143,8 @@ public abstract class PlusBaseActivity extends Activity
     }
 
     /**
-     * An earlier connection failed, and we're now receiving the result of the resolution attempt
-     * by PlusClient.
+     * An earlier connection failed, and we're now receiving the result of the resolution attempt by
+     * PlusClient.
      *
      * @see #onConnectionFailed(ConnectionResult)
      */
@@ -232,9 +186,8 @@ public abstract class PlusBaseActivity extends Activity
     }
 
     /**
-     * Connection failed for some reason (called by PlusClient)
-     * Try and resolve the result.  Failure here is usually not an indication of a serious error,
-     * just that the user's input is needed.
+     * Connection failed for some reason (called by PlusClient) Try and resolve the result.  Failure
+     * here is usually not an indication of a serious error, just that the user's input is needed.
      *
      * @see #onActivityResult(int, int, Intent)
      */

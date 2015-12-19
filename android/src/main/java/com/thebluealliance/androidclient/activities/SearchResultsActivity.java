@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,7 +21,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.listitems.EmptyListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
@@ -35,16 +36,13 @@ import com.thebluealliance.androidclient.models.Team;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * Created by Nathan on 6/14/2014.
- */
 public class SearchResultsActivity extends NavigationDrawerActivity implements SearchView.OnQueryTextListener {
 
     private static final int MAX_RESULTS_PER_CATEGORY = 5;
 
     ListView resultsList;
-
     SearchView searchView;
+    Toolbar toolbar;
 
     int closeButtonId;
 
@@ -56,7 +54,9 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
+        setSupportActionBar(toolbar);
 
         /* Report activity start to Analytics */
         new AnalyticsActions.ReportActivityStart(this).run();
@@ -107,7 +107,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     }
 
     private void handleIntent(Intent intent) {
-        if(intent.getAction() == null) {
+        if (intent.getAction() == null) {
             return;
         }
         if (Intent.ACTION_SEARCH.equals(intent.getAction()) || intent.getAction().equals("com.google.android.gms.actions.SEARCH_ACTION")) {
@@ -166,8 +166,15 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 if (teamQueryResults.getPosition() >= MAX_RESULTS_PER_CATEGORY) {
                     break;
                 }
-                String key = teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.KEY));
+                String key = teamQueryResults.getString(teamQueryResults.getColumnIndex("_id"));
                 Team team = Database.getInstance(this).getTeamsTable().get(key);
+                if (team == null) {
+                    // Don't display models that don't exist anymore and delete them from search indexes
+                    team = new Team();
+                    team.setTeamKey(key);
+                    Database.getInstance(this).getTeamsTable().deleteSearchIndex(team);
+                    continue;
+                }
                 try {
                     TeamListElement element;
                     element = new TeamListElement(team);
@@ -206,8 +213,15 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 if (eventQueryResults.getPosition() >= MAX_RESULTS_PER_CATEGORY) {
                     break;
                 }
-                String key = eventQueryResults.getString(eventQueryResults.getColumnIndex(Database.SearchEvent.KEY));
+                String key = eventQueryResults.getString(eventQueryResults.getColumnIndex("_id"));
                 Event event = Database.getInstance(this).getEventsTable().get(key);
+                if (event == null) {
+                    // Don't display models that don't exist anymore and delete them from search indexes
+                    event = new Event();
+                    event.setEventKey(key);
+                    Database.getInstance(this).getEventsTable().deleteSearchIndex(event);
+                    continue;
+                }
                 try {
                     EventListElement element;
                     element = new EventListElement(event);

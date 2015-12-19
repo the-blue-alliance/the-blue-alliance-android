@@ -10,10 +10,13 @@ import android.preference.PreferenceScreen;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.datafeed.Database;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.FavoritesTable;
+import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 
 /**
@@ -25,10 +28,10 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
     private boolean favExists;
     private NotificationSettingsFragment fragment;
     private Bundle savedState;
-    private ModelHelper.MODELS type;
+    private ModelType type;
     private String currentSettings;
 
-    public CreateSubscriptionPanel(Context context, NotificationSettingsFragment preferenceFragment, Bundle savedState, ModelHelper.MODELS type) {
+    public CreateSubscriptionPanel(Context context, NotificationSettingsFragment preferenceFragment, Bundle savedState, ModelType type) {
         this.context = context;
         this.fragment = preferenceFragment;
         this.savedState = savedState;
@@ -39,8 +42,8 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
     protected Void doInBackground(String... params) {
         String modelKey = params[0];
 
-        Database.Favorites favTable = Database.getInstance(context).getFavoritesTable();
-        Database.Subscriptions subTable = Database.getInstance(context).getSubscriptionsTable();
+        FavoritesTable favTable = Database.getInstance(context).getFavoritesTable();
+        SubscriptionsTable subTable = Database.getInstance(context).getSubscriptionsTable();
 
         String currentUser = AccountHelper.getSelectedAccount(context);
         String myKey = MyTBAHelper.createKey(currentUser, modelKey);
@@ -57,7 +60,7 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        if(fragment == null || context == null || fragment.getActivity() == null) {
+        if (fragment == null || context == null || fragment.getActivity() == null) {
             // Uh oh, stuff was destroyed while we were working.
             return;
         }
@@ -93,7 +96,7 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
             for (String notificationKey : notificationTypes) {
                 boolean enabled;
                 if (savedState != null) {
-                    if(savedState.containsKey(notificationKey)) {
+                    if (savedState.containsKey(notificationKey)) {
                         enabled = savedState.getBoolean(notificationKey);
                     } else {
                         enabled = false;
@@ -109,7 +112,7 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
                 preference.setPersistent(false);
                 notificationSettingsCategory.addPreference(preference);
             }
-            
+
             Preference buffer = new Preference(context);
             buffer.setLayoutResource(R.layout.buffer_preference);
             notificationSettingsCategory.addPreference(buffer);
@@ -119,7 +122,7 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
         // Tell the fragment about its initial state. That way if the user checks some boxes and then unchecks them,
         // they can be restored to their proper initial state.
         Bundle initialStateBundle = new Bundle();
-        for(String notificationKey : notificationTypes) {
+        for (String notificationKey : notificationTypes) {
             initialStateBundle.putBoolean(notificationKey, currentSettings.contains(notificationKey));
         }
         initialStateBundle.putBoolean(MyTBAHelper.getFavoritePreferenceKey(), favorite.isChecked());

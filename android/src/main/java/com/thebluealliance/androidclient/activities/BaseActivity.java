@@ -18,16 +18,15 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
-import com.thebluealliance.androidclient.background.AnalyticsActions;
-import com.thebluealliance.androidclient.background.UpdateMyTBA;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
+import com.thebluealliance.androidclient.types.ModelType;
 
 /**
- * Provides the features that should be in every activity in the app: a navigation drawer,
- * a search button, and the ability to show and hide warning messages. Also provides Android Beam functionality.
+ * Provides the features that should be in every activity in the app: a navigation drawer, a search
+ * button, and the ability to show and hide warning messages. Also provides Android Beam
+ * functionality.
  */
 public abstract class BaseActivity extends NavigationDrawerActivity
         implements NfcAdapter.CreateNdefMessageCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -35,7 +34,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     String beamUri;
     boolean searchEnabled = true;
     String modelKey = "";
-    ModelHelper.MODELS modelType;
+    ModelType modelType;
 
     /**
      * If this Activity was triggered by tapping a system notification, dismiss the "active" stored
@@ -50,7 +49,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new AnalyticsActions.ReportActivityStart(this).run();
 
         NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter != null) {
@@ -71,15 +69,9 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Hide the shadow below the Action Bar
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setElevation(0);
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        new AnalyticsActions.ReportActivityStop(this).run();
     }
 
     @Override
@@ -100,9 +92,13 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public abstract void showWarningMessage(String message);
+    public void showWarningMessage(CharSequence warningMessage) {
+        // Do nothing by default
+    }
 
-    public abstract void hideWarningMessage();
+    public void hideWarningMessage() {
+        // Do nothing by default
+    }
 
     public void setBeamUri(String uri) {
         beamUri = uri;
@@ -123,7 +119,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         invalidateOptionsMenu();
     }
 
-    protected void setModelKey(String key, ModelHelper.MODELS type){
+    protected void setModelKey(String key, ModelType type) {
         modelKey = key;
         modelType = type;
     }
@@ -138,14 +134,13 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit().putBoolean(AccountHelper.PREF_MYTBA_ENABLED, true).apply();
         GCMHelper.registerGCMIfNeeded(this);
-        new UpdateMyTBA(this, new RequestParams(true, false)).execute();
         setDrawerProfileInfo();
+        startService(new Intent(this, MyTbaUpdateService.class));
     }
 
     /**
-     * Connection failed for some reason (called by PlusClient)
-     * Try and resolve the result.  Failure here is usually not an indication of a serious error,
-     * just that the user's input is needed.
+     * Connection failed for some reason (called by PlusClient) Try and resolve the result.  Failure
+     * here is usually not an indication of a serious error, just that the user's input is needed.
      */
     @Override
     public void onConnectionFailed(ConnectionResult result) {

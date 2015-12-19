@@ -8,9 +8,6 @@ import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 
-/**
- * Created by phil on 7/24/14.
- */
 public class DistrictClickListener implements View.OnClickListener {
 
     private Context context;

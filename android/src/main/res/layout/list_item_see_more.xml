@@ -19,13 +19,13 @@
         android:id="@+id/more_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:background="@drawable/more_button_background"
-        android:visibility="gone"
-        android:padding="6dp"
-        android:textStyle="bold"
-        android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:textSize="12sp" />
+        android:layout_centerVertical="true"
+        android:background="@drawable/more_button_background"
+        android:padding="6dp"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
 </RelativeLayout>

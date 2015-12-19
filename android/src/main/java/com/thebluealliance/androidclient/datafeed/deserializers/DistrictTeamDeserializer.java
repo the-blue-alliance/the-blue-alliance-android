@@ -11,11 +11,8 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Set;
 
-import static com.thebluealliance.androidclient.datafeed.JSONManager.isNull;
+import static com.thebluealliance.androidclient.helpers.JSONHelper.isNull;
 
-/**
- * Created by phil on 7/24/14.
- */
 public class DistrictTeamDeserializer implements JsonDeserializer<DistrictTeam> {
     @Override
     public DistrictTeam deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

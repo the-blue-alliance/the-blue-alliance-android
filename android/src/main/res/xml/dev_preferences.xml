@@ -7,12 +7,18 @@
             android:key="redownload_data"
             android:persistent="false"
             android:selectable="true"
-            android:title="@string/pref_redownload_data"
-            android:summary="@string/pref_redownload_data_detail" />
+            android:summary="@string/pref_redownload_data_detail"
+            android:title="@string/pref_redownload_data" />
         <EditTextPreference
             android:key="tba_host"
             android:summary="@string/pref_tba_host_detail"
             android:title="@string/pref_tba_host" />
+        <Preference
+            android:key="update_api_status"
+            android:persistent="false"
+            android:selectable="true"
+            android:summary="@string/pref_update_status_detail"
+            android:title="@string/pref_update_status" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="analytics_debug_key"
@@ -21,7 +27,7 @@
         <Preference
             android:key="add_mytba_item"
             android:selectable="true"
-            android:title="Add sample item to myTBA"/>
+            android:title="Add sample item to myTBA" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="analytics_dry_run"

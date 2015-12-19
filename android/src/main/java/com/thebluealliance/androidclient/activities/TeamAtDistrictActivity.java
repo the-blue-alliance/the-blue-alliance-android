@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -17,28 +18,33 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtDistrictFragmentPagerAdapter;
-import com.thebluealliance.androidclient.datafeed.ConnectionDetector;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
-/**
- * File created by phil on 7/26/14.
- */
-public class TeamAtDistrictActivity extends RefreshableHostActivity {
+public class TeamAtDistrictActivity extends DatafeedActivity
+  implements HasFragmentComponent {
 
-    public static final String DISTRICT_KEY = "districtKey",
-            TEAM_KEY = "teamKey";
+    public static final String DISTRICT_KEY = "districtKey";
+    public static final String TEAM_KEY = "teamKey";
 
-    private String districtKey, teamKey;
-    private TextView warningMessage;
-    private ViewPager pager;
-    private TeamAtDistrictFragmentPagerAdapter adapter;
+    private String mDistrictKey;
+    private String mTeamKey;
+    private TextView mWarningMessage;
+    private FragmentComponent mComponent;
 
-    public static Intent newInstance(Context c, String teamAtDistrictKey){
+    public static Intent newInstance(Context c, String teamAtDistrictKey) {
         return newInstance(c, DistrictTeamHelper.getTeamKey(teamAtDistrictKey), DistrictTeamHelper.getDistrictKey(teamAtDistrictKey));
     }
 
@@ -53,18 +59,17 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_at_district);
-
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(DISTRICT_KEY)) {
-            districtKey = getIntent().getExtras().getString(DISTRICT_KEY, "");
-            if (!DistrictHelper.validateDistrictKey(districtKey)) {
+            mDistrictKey = getIntent().getExtras().getString(DISTRICT_KEY, "");
+            if (!DistrictHelper.validateDistrictKey(mDistrictKey)) {
                 throw new IllegalArgumentException("Invalid district key");
             }
         } else {
             throw new IllegalArgumentException("TeamAtDistrictActivity must be constructed with a district key");
         }
         if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(TEAM_KEY)) {
-            teamKey = getIntent().getExtras().getString(TEAM_KEY, "");
-            if (!TeamHelper.validateTeamKey(teamKey)) {
+            mTeamKey = getIntent().getExtras().getString(TEAM_KEY, "");
+            if (!TeamHelper.validateTeamKey(mTeamKey)) {
                 throw new IllegalArgumentException("Invalid team key");
             }
         } else {
@@ -74,11 +79,11 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        warningMessage = (TextView) findViewById(R.id.warning_container);
+        mWarningMessage = (TextView) findViewById(R.id.warning_container);
         hideWarningMessage();
 
-        pager = (ViewPager) findViewById(R.id.view_pager);
-        adapter = new TeamAtDistrictFragmentPagerAdapter(getSupportFragmentManager(), teamKey, districtKey);
+        ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
+        TeamAtDistrictFragmentPagerAdapter adapter = new TeamAtDistrictFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, mDistrictKey);
         pager.setAdapter(adapter);
         // To support refreshing, all pages must be held in memory at once
         // This should be increased if we ever add more pages
@@ -87,6 +92,7 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
 
         SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
+        ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
 
         setupActionBar();
 
@@ -94,7 +100,7 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
             showWarningMessage(getString(R.string.warning_unable_to_load));
         }
 
-        setBeamUri(String.format(NfcUris.URI_TEAM_DISTRICT, districtKey, teamKey));
+        setBeamUri(String.format(NfcUris.URI_TEAM_DISTRICT, mDistrictKey, mTeamKey));
     }
 
     @Override
@@ -125,18 +131,18 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_view_district:
-                startActivity(ViewDistrictActivity.newInstance(this, districtKey));
+                startActivity(ViewDistrictActivity.newInstance(this, mDistrictKey));
                 return true;
             case R.id.action_view_team:
-                int year = Integer.parseInt(districtKey.substring(0, 4));
-                startActivity(ViewTeamActivity.newInstance(this, teamKey, year));
+                int year = Integer.parseInt(mDistrictKey.substring(0, 4));
+                startActivity(ViewTeamActivity.newInstance(this, mTeamKey, year));
                 return true;
             case android.R.id.home:
                 if (isDrawerOpen()) {
                     closeDrawer();
                     return true;
                 }
-                Intent upIntent = ViewDistrictActivity.newInstance(this, districtKey);
+                Intent upIntent = ViewDistrictActivity.newInstance(this, mDistrictKey);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
                 } else {
@@ -149,13 +155,39 @@ public class TeamAtDistrictActivity extends RefreshableHostActivity {
     }
 
     @Override
-    public void showWarningMessage(String message) {
-        warningMessage.setText(message);
-        warningMessage.setVisibility(View.VISIBLE);
+    public void showWarningMessage(CharSequence warningMessage) {
+        mWarningMessage.setText(warningMessage);
+        mWarningMessage.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideWarningMessage() {
-        warningMessage.setVisibility(View.GONE);
+        mWarningMessage.setVisibility(View.GONE);
+    }
+
+    @SuppressWarnings(value = "unused")
+    public void onEventMainThread(ActionBarTitleEvent event) {
+        setActionBarTitle(event.getTitle());
+        setActionBarSubtitle(event.getSubtitle());
+    }
+
+    @Override
+    public FragmentComponent getComponent() {
+        if (mComponent == null) {
+            TBAAndroid application = ((TBAAndroid) getApplication());
+            mComponent = DaggerFragmentComponent.builder()
+              .applicationComponent(application.getComponent())
+              .datafeedModule(application.getDatafeedModule())
+              .binderModule(application.getBinderModule())
+              .databaseWriterModule(application.getDatabaseWriterModule())
+              .subscriberModule(new SubscriberModule(this))
+              .clickListenerModule(new ClickListenerModule(this))
+              .build();
+        }
+        return mComponent;
+    }
+
+    public void inject() {
+        getComponent().inject(this);
     }
 }

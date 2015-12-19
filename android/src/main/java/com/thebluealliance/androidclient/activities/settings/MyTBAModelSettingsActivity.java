@@ -3,31 +3,29 @@ package com.thebluealliance.androidclient.activities.settings;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
-import com.melnykov.fab.FloatingActionButton;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
 import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
-/**
- * Created by Nathan on 12/22/2014.
- */
 public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
     private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
@@ -41,7 +39,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     private FloatingActionButton saveModelPreferencesFab;
 
     private String modelKey;
-    private ModelHelper.MODELS modelType;
+    private ModelType modelType;
 
     private NotificationSettingsFragment settings;
     private UpdateUserModelSettingsTaskFragment saveSettingsTaskFragment;
@@ -51,10 +49,9 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     private TransitionDrawable fabDrawable;
 
     private View settingsListContainer;
-    private View fabContainer;
     private View greenContainer;
 
-    public static Intent newInstance(Context context, String modelKey, ModelHelper.MODELS modelType) {
+    public static Intent newInstance(Context context, String modelKey, ModelType modelType) {
         Intent intent = new Intent(context, MyTBAModelSettingsActivity.class);
         intent.putExtra(EXTRA_MODEL_KEY, modelKey);
         intent.putExtra(EXTRA_MODEL_TYPE, modelType.getEnum());
@@ -68,7 +65,6 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         setContentView(R.layout.activity_mytba_model_settings);
 
         settingsListContainer = findViewById(R.id.settings_list);
-        fabContainer = findViewById(R.id.close_notification_settings_button_container);
         greenContainer = findViewById(R.id.green_container);
 
         setSearchEnabled(false);
@@ -116,7 +112,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
 
         // Create drawable for the FAB
         Resources res = getResources();
-        Drawable backgrounds[] = new Drawable[] {res.getDrawable(R.drawable.ic_check_white_24dp), res.getDrawable(R.drawable.ic_error_white_24dp)};
+        Drawable backgrounds[] = new Drawable[]{res.getDrawable(R.drawable.ic_check_white_24dp), res.getDrawable(R.drawable.ic_error_white_24dp)};
         fabDrawable = new TransitionDrawable(backgrounds);
         fabDrawable.setCrossFadeEnabled(true);
         saveModelPreferencesFab.setImageDrawable(fabDrawable);
@@ -146,7 +142,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     }
 
     @Override
-    public void showWarningMessage(String message) {
+    public void showWarningMessage(CharSequence warningMessage) {
         // Nope.
     }
 
@@ -214,25 +210,12 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         Integer colorFrom = getResources().getColor(R.color.accent_dark);
         Integer colorTo = getResources().getColor(R.color.green);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
-            }
-
-        });
+        colorAnimation.addUpdateListener(animator -> saveModelPreferencesFab.setBackgroundTintList(ColorStateList.valueOf((Integer)animator.getAnimatedValue())));
         colorAnimation.setDuration(500);
         colorAnimation.start();
 
         // Close the activity in the future
-        handler.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                MyTBAModelSettingsActivity.this.finish();
-            }
-        }, 1000);
+        handler.postDelayed(() -> MyTBAModelSettingsActivity.this.finish(), 1000);
     }
 
     @Override
@@ -250,28 +233,17 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         Integer colorFrom = getResources().getColor(R.color.accent_dark);
         Integer colorTo = getResources().getColor(R.color.red);
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                fabDrawable.startTransition(500);
-                saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
-            }
-
+        colorAnimation.addUpdateListener(animator -> {
+            fabDrawable.startTransition(500);
+            saveModelPreferencesFab.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue()));
         });
         colorAnimation.setDuration(500);
 
         Integer reverseColorFrom = getResources().getColor(R.color.red);
         Integer reverseColorTo = getResources().getColor(R.color.accent_dark);
-        final Activity activity = this;
         ValueAnimator reverseColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), reverseColorFrom, reverseColorTo);
-        reverseColorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                //saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
-            }
-
+        reverseColorAnimation.addUpdateListener(animator -> {
+            //saveModelPreferencesFab.setColorNormal((Integer) animator.getAnimatedValue());
         });
         reverseColorAnimation.setDuration(500);
 
@@ -281,12 +253,6 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         animatorSet.start();
 
         // Close the activity in the future
-        handler.postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                MyTBAModelSettingsActivity.this.finish();
-            }
-        }, 3000);
+        handler.postDelayed(() -> MyTBAModelSettingsActivity.this.finish(), 3000);
     }
 }

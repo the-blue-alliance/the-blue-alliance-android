@@ -11,15 +11,16 @@ import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
+import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 
 /**
  * File created by phil on 6/4/14.
  */
 public class AllianceListElement extends ListElement implements RenderableModel {
 
-    private int number;
-    private JsonArray teams;
-    private String eventKey;
+    public final int number;
+    public final JsonArray teams;
+    public final String eventKey;
 
     public AllianceListElement(String eventKey, int number, JsonArray teams) {
         if (teams.size() < 2) throw new IllegalArgumentException("Alliances have >= 2 members");
@@ -91,7 +92,18 @@ public class AllianceListElement extends ListElement implements RenderableModel 
     }
 
     @Override
-    public ListElement render() {
+    public ListElement render(ModelRendererSupplier supplier) {
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AllianceListElement)) {
+            return false;
+        }
+        AllianceListElement other = (AllianceListElement) o;
+        return number == other.number
+          && teams.equals(other.teams)
+          && eventKey.equals(other.eventKey);
     }
 }

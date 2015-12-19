@@ -6,9 +6,6 @@ import android.util.AttributeSet;
 
 import com.thebluealliance.androidclient.R;
 
-/**
- * Created by Nathan on 10/25/2014.
- */
 public class SlidingTabs extends SlidingTabLayout {
     public SlidingTabs(Context context) {
         super(context);

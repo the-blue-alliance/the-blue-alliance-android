@@ -1,48 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="@style/DefaultLightToolbarStyle"
-        app:contentInsetStart="72dp"
-        app:navigationIcon="@drawable/ic_close_black_24dp"
-        app:navigationContentDescription="@string/close"
-        android:background="@color/accent" />
-
-    <FrameLayout
-        android:id="@+id/settings_list"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_below="@id/toolbar" />
+        android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/close_notification_settings_button_container"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/DefaultLightToolbarStyle"
+            android:background="@color/accent"
+            app:contentInsetStart="72dp"
+            app:navigationContentDescription="@string/close"
+            app:navigationIcon="@drawable/ic_close_black_24dp" />
+
+        <FrameLayout
+            android:id="@+id/settings_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar"
+            android:orientation="vertical" />
+
+        <FrameLayout
+            android:id="@+id/green_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/accent"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/close_notification_settings_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true">
-
-        <com.melnykov.fab.FloatingActionButton
-            android:id="@+id/close_notification_settings_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_check_white_24dp"
-            app:fab_colorNormal="@color/accent"
-            app:fab_colorPressed="@color/accent_dark"
-            app:fab_colorRipple="@color/accent_dark_ripple"
-            android:layout_margin="16dp" />
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/green_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/accent"
-        android:visibility="invisible" />
-
-</RelativeLayout>
+        android:layout_gravity="bottom|right"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_check_white_24dp"
+        app:fabSize="normal" />
+</android.support.design.widget.CoordinatorLayout>

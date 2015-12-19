@@ -4,25 +4,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.activities.LaunchActivity;
-import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
-import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.activities.RedownloadActivity;
+import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.models.Favorite;
 
-public class DevSettingsActivity extends ActionBarActivity {
+public class DevSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +31,7 @@ public class DevSettingsActivity extends ActionBarActivity {
                 .commit();
     }
 
-    public static class DevSettingsFragment extends PreferenceFragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    public static class DevSettingsFragment extends PreferenceFragment {
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -56,25 +54,42 @@ public class DevSettingsActivity extends ActionBarActivity {
                     Favorite fav = new Favorite();
                     fav.setUserName(AccountHelper.getSelectedAccount(getActivity()));
                     fav.setModelKey("frc111");
-                    fav.setModelEnum(ModelHelper.MODELS.TEAM.getEnum());
+                    fav.setModelEnum(ModelType.TEAM.getEnum());
                     Database.getInstance(getActivity()).getFavoritesTable().add(fav);
                     return true;
                 }
             });
 
+            Preference redownload = findPreference("redownload_data");
+            redownload.setOnPreferenceClickListener(preference -> {
+                Intent redownloadIntent = new Intent(getActivity(), RedownloadActivity.class);
+                redownloadIntent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_TEAMS, LoadTBAData.LOAD_DISTRICTS});
+                startActivity(redownloadIntent);
+                return true;
+            });
+
+            Preference updateStatus = findPreference("update_api_status");
+            updateStatus.setOnPreferenceClickListener(preference -> {
+                Intent serviceIntent = new Intent(getActivity(), StatusRefreshService.class);
+                getActivity().startService(serviceIntent);
+                Toast.makeText(getActivity(), R.string.update_status_launched, Toast.LENGTH_SHORT)
+                  .show();
+                return true;
+            });
+
             Preference testUpcomingMatchNotification = findPreference("test_upcoming_match_notification");
-            testUpcomingMatchNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            /*testUpcomingMatchNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     String data = "{\"match_key\":\"2014ilch_f1m2\",\"event_name\":\"Midwest Regional\",\"team_keys\":[\"frc111\",\"frc118\",\"frc254\",\"frc496\",\"frc1114\",\"frc2056\"],\"scheduled_time\":12345,\"predicted_time\":123456}";
                     GCMMessageHandler.handleMessage(getActivity(), "upcoming_match", data);
                     return true;
                 }
-            });
+            });*/
 
 
             Preference testScoreNotification = findPreference("test_score_notification");
-            testScoreNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            /*testScoreNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     // Comment out different strings to see different types of notifications.
@@ -95,7 +110,7 @@ public class DevSettingsActivity extends ActionBarActivity {
                     GCMMessageHandler.handleMessage(getActivity(), "score", data);
                     return true;
                 }
-            });
+            });*/
 
             Preference gcmRegister = findPreference("select_account");
             gcmRegister.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -106,26 +121,6 @@ public class DevSettingsActivity extends ActionBarActivity {
                     return false;
                 }
             });
-        }
-
-        @Override
-        public void onConnected(Bundle bundle) {
-            GCMAuthHelper.registerInBackground(getActivity());
-        }
-
-        @Override
-        public void onConnectionSuspended(int i) {
-
-        }
-
-        @Override
-        public void onConnectionFailed(ConnectionResult connectionResult) {
-            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), getActivity(), 0).show();
-            Preference redownload = findPreference("redownload_data");
-            Intent redownloadIntent = new Intent(getActivity(), LaunchActivity.class);
-            redownloadIntent.putExtra(LaunchActivity.REDOWNLOAD, true);
-            redownload.setIntent(redownloadIntent);
-
         }
 
         @Override

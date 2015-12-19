@@ -6,8 +6,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 /**
- * Created by Nathan on 11/11/2014.
- *
  * An implementation of RelativeLayout that constrains itself to a 16:9 aspect ratio.
  */
 public class SixteenNineAspectRatioLayout extends RelativeLayout {

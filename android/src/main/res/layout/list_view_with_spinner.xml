@@ -24,11 +24,11 @@
             android:layout_centerVertical="true"
             android:visibility="visible" />
 
-        <TextView
-            style="@style/NoDataFoundStyle"
+        <com.thebluealliance.androidclient.views.NoDataView
             android:id="@+id/no_data"
-            android:visibility="gone"
-            android:singleLine="false" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <TextView

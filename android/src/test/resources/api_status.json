@@ -1,0 +1,15 @@
+{
+  "max_season": 2015,
+  "is_datafeed_down": false,
+  "android": {
+    "min_app_version": 123456,
+    "latest_app_version": 123488
+  },
+  "ios": {
+    "min_app_version": 1243
+  },
+  "down_events": [
+    "2015test",
+    "2015down"
+  ]
+}

@@ -11,21 +11,25 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.v4.app.NotificationCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
+import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
-/**
- * Created by Nathan on 7/24/2014.
- */
-public abstract class BaseNotification {
+import java.text.DateFormat;
+import java.util.Date;
+
+public abstract class BaseNotification extends ListElement {
 
     String messageData;
     String messageType;
@@ -33,17 +37,25 @@ public abstract class BaseNotification {
     private String logTag;
     protected boolean display;
     StoredNotification stored;
+    protected Date notificationTime;
 
+    /**
+     * Constructor to create from incoming gcm/firebase (json blob of data)
+     */
     public BaseNotification(String messageType, String messageData) {
         this.messageType = messageType;
         this.messageData = messageData;
-        this.gson = JSONManager.getGson();
+        this.gson = DatafeedModule.getGson();
         this.logTag = null;
         this.display = true;
         this.stored = null;
     }
 
-    public boolean shouldShow(){
+    public void setDate(Date date) {
+        notificationTime = date;
+    }
+
+    public boolean shouldShow() {
         return display;
     }
 
@@ -55,11 +67,30 @@ public abstract class BaseNotification {
 
     public abstract void parseMessageData() throws JsonParseException;
 
-    public abstract void updateDataLocally(Context c);
+    public abstract void updateDataLocally();
 
     public abstract int getNotificationId();
 
-    public StoredNotification getStoredNotification(){
+    /**
+     * Get the intent to open whatever this notification's click action is Precondition:
+     * parseMessageData has been called
+     *
+     * @param c Context to use while creating the intent
+     * @return This notification's intent (may be null if none)
+     */
+    public abstract Intent getIntent(Context c);
+
+    @Override
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        convertView = inflater.inflate(R.layout.list_item_carded_summary, null);
+        TextView label = (TextView) convertView.findViewById(R.id.label);
+        TextView value = (TextView) convertView.findViewById(R.id.value);
+        label.setText(messageType);
+        value.setText(messageData);
+        return convertView;
+    }
+
+    public StoredNotification getStoredNotification() {
         return stored;
     }
 
@@ -96,7 +127,7 @@ public abstract class BaseNotification {
 
     /**
      * Creates a builder with the important defaults and an Activity content intent.
-     *
+     * <p>
      * <p/>SIDE EFFECTS: Adds a Category to activityIntent so the launched Activity can tell it was
      * triggered by a notification. (Note: Just adding an Extra won't work because Android will
      * retrieve the existing intent, ignoring the new Extra.)
@@ -128,4 +159,10 @@ public abstract class BaseNotification {
         return finalBitmap;
     }
 
+    protected String getNotificationTimeString(Context c) {
+        DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(c);
+        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(c);
+        if (notificationTime == null) return "";
+        return dateFormat.format(notificationTime) + " " + timeFormat.format(notificationTime);
+    }
 }

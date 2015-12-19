@@ -10,8 +10,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.datafeed.APICache;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -25,21 +25,14 @@ public class AwardListElement extends ListElement {
     private String mAwardName, mEventKey, mSelectedTeamNum;
     private JsonArray mAwardWinners;
     private HashMap<String, Team> mAwardTeams;
+    private final APICache mDatafeed;
 
-    public AwardListElement(String name, JsonArray winners) {
+    public AwardListElement(APICache datafeed, String name, JsonArray winners) {
         super();
+        mDatafeed = datafeed;
         mAwardName = name;
         mAwardWinners = winners;
         mAwardTeams = null;
-    }
-
-    public AwardListElement(String name, String eventKey, JsonArray winners, HashMap<String, Team> teams, String selectedTeamKey) {
-        super();
-        mAwardName = name;
-        mEventKey = eventKey;
-        mAwardWinners = winners;
-        mAwardTeams = teams;
-        mSelectedTeamNum = (selectedTeamKey == null || selectedTeamKey.length() < 4) ? "" : selectedTeamKey.substring(3);
     }
 
     @Override
@@ -65,7 +58,7 @@ public class AwardListElement extends ListElement {
 
             String teamNumber = "";
             String awardee = "";
-            if (JSONManager.isNull(winner.get("team_number"))) {
+            if (JSONHelper.isNull(winner.get("team_number"))) {
                 teamNumber = "";
             } else {
                 teamNumber = winner.get("team_number").getAsString();
@@ -76,7 +69,7 @@ public class AwardListElement extends ListElement {
                 }
                 winnerView.setTag("frc" + teamNumber + "@" + mEventKey);
             }
-            if (JSONManager.isNull(winner.get("awardee"))) {
+            if (JSONHelper.isNull(winner.get("awardee"))) {
                 awardee = "";
             } else {
                 awardee = winner.get("awardee").getAsString();
@@ -92,15 +85,15 @@ public class AwardListElement extends ListElement {
             } else {
                 Team team;
                 if (mAwardTeams == null) {
-                    team = DataManager.Teams.getTeamFromDB(context, "frc" + teamNumber);
+                    team = mDatafeed.fetchTeam("frc" + teamNumber).toBlocking().first();
                 } else {
                     team = mAwardTeams.get("frc" + teamNumber);
                 }
 
                 String nickname;
-                if(team == null){
-                    nickname = "Team "+teamNumber;
-                }else{
+                if (team == null) {
+                    nickname = "Team " + teamNumber;
+                } else {
                     nickname = team.getNickname();
                 }
 

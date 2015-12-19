@@ -1,22 +1,14 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.APIResponse;
-import com.thebluealliance.androidclient.datafeed.DataManager;
-import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
-import com.thebluealliance.androidclient.datafeed.RequestParams;
-import com.thebluealliance.androidclient.datafeed.TBAv2;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
-import com.thebluealliance.androidclient.helpers.ModelInflater;
-import com.thebluealliance.androidclient.listitems.TeamListElement;
-
-import java.util.Arrays;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.types.ModelType;
 
 public class Team extends BasicModel<Team> {
 
@@ -31,7 +23,7 @@ public class Team extends BasicModel<Team> {
     private JsonArray yearsParticipated;
 
     public Team() {
-        super(Database.TABLE_TEAMS);
+        super(Database.TABLE_TEAMS, ModelType.TEAM);
         yearsParticipated = null;
     }
 
@@ -44,87 +36,88 @@ public class Team extends BasicModel<Team> {
     }
 
     public String getFullName() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Teams.NAME) && fields.get(Database.Teams.NAME) instanceof String) {
-            return (String) fields.get(Database.Teams.NAME);
+        if (fields.containsKey(TeamsTable.NAME) && fields.get(TeamsTable.NAME) instanceof String) {
+            return (String) fields.get(TeamsTable.NAME);
         }
         return getNickname();
     }
 
     public void setFullName(String fullName) {
-        fields.put(Database.Teams.NAME, fullName);
+        fields.put(TeamsTable.NAME, fullName);
     }
 
     public String getWebsite() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Teams.WEBSITE) && fields.get(Database.Teams.WEBSITE) instanceof String) {
-            return (String) fields.get(Database.Teams.WEBSITE);
+        if (fields.containsKey(TeamsTable.WEBSITE) && fields.get(TeamsTable.WEBSITE) instanceof String) {
+            return (String) fields.get(TeamsTable.WEBSITE);
         }
         throw new FieldNotDefinedException("Field Database.Teams.WEBSITE is not defined");
     }
 
     public void setWebsite(String website) {
-        fields.put(Database.Teams.WEBSITE, website);
+        fields.put(TeamsTable.WEBSITE, website);
     }
 
-    public String getTeamKey() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Teams.KEY) && fields.get(Database.Teams.KEY) instanceof String) {
-            return (String) fields.get(Database.Teams.KEY);
+    @Override
+    public String getKey() {
+        if (fields.containsKey(TeamsTable.KEY) && fields.get(TeamsTable.KEY) instanceof String) {
+            return (String) fields.get(TeamsTable.KEY);
         }
-        throw new FieldNotDefinedException("Field Database.Teams.KEY is not defined");
+        return "";
     }
 
     public void setTeamKey(String teamKey) {
-        fields.put(Database.Teams.KEY, teamKey);
+        fields.put(TeamsTable.KEY, teamKey);
     }
 
     public String getNickname() {
-        if (fields.containsKey(Database.Teams.SHORTNAME) && fields.get(Database.Teams.SHORTNAME) instanceof String) {
-            return (String) fields.get(Database.Teams.SHORTNAME);
+        if (fields.containsKey(TeamsTable.SHORTNAME) && fields.get(TeamsTable.SHORTNAME) instanceof String) {
+            return (String) fields.get(TeamsTable.SHORTNAME);
         } else {
             return "";
         }
     }
 
     public void setNickname(String nickname) {
-        fields.put(Database.Teams.SHORTNAME, nickname);
+        fields.put(TeamsTable.SHORTNAME, nickname);
     }
 
     public String getLocation() {
-        if (fields.containsKey(Database.Teams.LOCATION) && fields.get(Database.Teams.LOCATION) instanceof String) {
-            return (String) fields.get(Database.Teams.LOCATION);
+        if (fields.containsKey(TeamsTable.LOCATION) && fields.get(TeamsTable.LOCATION) instanceof String) {
+            return (String) fields.get(TeamsTable.LOCATION);
         }
         return "";
     }
 
     public void setLocation(String location) {
-        fields.put(Database.Teams.LOCATION, location);
+        fields.put(TeamsTable.LOCATION, location);
     }
 
     public Integer getTeamNumber() throws FieldNotDefinedException {
-        if (fields.containsKey(Database.Teams.NUMBER) && fields.get(Database.Teams.NUMBER) instanceof Integer) {
-            return (Integer) fields.get(Database.Teams.NUMBER);
+        if (fields.containsKey(TeamsTable.NUMBER) && fields.get(TeamsTable.NUMBER) instanceof Integer) {
+            return (Integer) fields.get(TeamsTable.NUMBER);
         }
         throw new FieldNotDefinedException("Field Database.Teams.NUMBER is not defined");
     }
 
     public void setTeamNumber(int teamNumber) {
-        fields.put(Database.Teams.NUMBER, teamNumber);
+        fields.put(TeamsTable.NUMBER, teamNumber);
     }
 
     public void setYearsParticipated(JsonArray years) {
-        fields.put(Database.Teams.YEARS_PARTICIPATED, years.toString());
+        fields.put(TeamsTable.YEARS_PARTICIPATED, years.toString());
         this.yearsParticipated = years;
     }
 
     public void setYearsParticipated(String yearsJson) {
-        fields.put(Database.Teams.YEARS_PARTICIPATED, yearsJson);
+        fields.put(TeamsTable.YEARS_PARTICIPATED, yearsJson);
     }
 
     public JsonArray getYearsParticipated() throws FieldNotDefinedException {
         if (yearsParticipated != null) {
             return yearsParticipated;
         }
-        if (fields.containsKey(Database.Teams.YEARS_PARTICIPATED) && fields.get(Database.Teams.YEARS_PARTICIPATED) instanceof String) {
-            yearsParticipated = JSONManager.getasJsonArray((String) fields.get(Database.Teams.YEARS_PARTICIPATED));
+        if (fields.containsKey(TeamsTable.YEARS_PARTICIPATED) && fields.get(TeamsTable.YEARS_PARTICIPATED) instanceof String) {
+            yearsParticipated = JSONHelper.getasJsonArray((String) fields.get(TeamsTable.YEARS_PARTICIPATED));
             return yearsParticipated;
         }
         throw new FieldNotDefinedException("Field Database.Teams.YEARS_PARTICIPATED is not defined");
@@ -132,7 +125,7 @@ public class Team extends BasicModel<Team> {
 
     public String getSearchTitles() {
         try {
-            return getTeamKey() + "," + getNickname() + "," + getTeamNumber();
+            return getKey() + "," + getNickname() + "," + getTeamNumber();
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for creating search titles\n" +
                     "Required: Database.Teams.KEY, Database.Teams.SHORTNAME, Database.Teams.NUMBER");
@@ -140,66 +133,15 @@ public class Team extends BasicModel<Team> {
         }
     }
 
-    @Override
-    public TeamListElement render() {
-        try {
-            return new TeamListElement(getTeamKey(), getTeamNumber(), getNickname(), getLocation());
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
-                    "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");
-            return null;
+    public String getMotto() throws FieldNotDefinedException {
+        if (fields.containsKey(TeamsTable.MOTTO) && fields.get(TeamsTable.MOTTO) instanceof String) {
+            return (String) fields.get(TeamsTable.MOTTO);
         }
+        throw new FieldNotDefinedException("Field Database.Teams.MOTTO is not defined");
     }
 
-    public TeamListElement render(boolean showTeamInfoButton) {
-        try {
-            return new TeamListElement(getTeamKey(), getTeamNumber(), getNickname(), getLocation(), showTeamInfoButton);
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n" +
-                    "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, Database.Teams.LOCATION");
-            return null;
-        }
+    public void setMotto(String motto) {
+        fields.put(TeamsTable.MOTTO, motto);
     }
 
-    public static synchronized APIResponse<Team> query(Context c, RequestParams requestParams, String[] fields, String whereClause, String[] whereArgs, String[] apiUrls) throws DataManager.NoDataException {
-        Log.d(Constants.DATAMANAGER_LOG, "Querying teams table: " + whereClause + Arrays.toString(whereArgs));
-        Cursor cursor = Database.getInstance(c).safeQuery(Database.TABLE_TEAMS, fields, whereClause, whereArgs, null, null, null, null);
-        Team team;
-        if (cursor != null && cursor.moveToFirst()) {
-            team = ModelInflater.inflateTeam(cursor);
-            cursor.close();
-        } else {
-            team = new Team();
-        }
-
-        APIResponse.CODE code = requestParams.forceFromCache ? APIResponse.CODE.LOCAL : APIResponse.CODE.CACHED304;
-        boolean changed = false;
-        for (String url : apiUrls) {
-            APIResponse<String> response = TBAv2.getResponseFromURLOrThrow(c, url, requestParams);
-            if (response.getCode() == APIResponse.CODE.WEBLOAD || response.getCode() == APIResponse.CODE.UPDATED) {
-                Team updatedTeam;
-                if (url.contains("years_participated")) {
-                    Log.w(Constants.DATAMANAGER_LOG, "Fetching years participated");
-                    updatedTeam = new Team();
-                    team.setYearsParticipated(response.getData());
-                } else {
-                    updatedTeam = JSONManager.getGson().fromJson(response.getData(), Team.class);
-                }
-                team.merge(updatedTeam);
-                changed = true;
-            }
-            code = APIResponse.mergeCodes(code, response.getCode());
-        }
-
-        if (changed) {
-            team.write(c);
-        }
-        Log.d(Constants.DATAMANAGER_LOG, "updated in db? " + changed);
-        return new APIResponse<>(team, code);
-    }
-
-    @Override
-    public void write(Context c) {
-        Database.getInstance(c).getTeamsTable().add(this);
-    }
 }

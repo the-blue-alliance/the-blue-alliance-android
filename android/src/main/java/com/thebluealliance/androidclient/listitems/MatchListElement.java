@@ -8,15 +8,21 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.views.MatchView;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * File created by phil on 4/20/14.
  */
 public class MatchListElement extends ListElement implements Serializable {
 
-    private String videoKey, matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore, selectedTeamKey;
-    long time;
-    private boolean showVideoIcon, showColumnHeaders, showMatchTitle, clickable;
+    public final String videoKey, matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore, selectedTeamKey;
+    public final long time;
+    public final boolean showVideoIcon, showColumnHeaders, showMatchTitle, clickable;
+
+    // utility constructor for rendering UpcomingMatchNotification
+    public MatchListElement(String[] redTeams, String[] blueTeams, String matchKey, long time, String selectedTeamKey) {
+        this("", "", redTeams, blueTeams, "?", "?", matchKey, time, selectedTeamKey, false, false, false, true);
+    }
 
     public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey, long time, String selectedTeamKey, boolean showVideoIcon, boolean showColumnHeaders, boolean showMatchTitle, boolean clickable) {
         super(matchKey);
@@ -55,11 +61,35 @@ public class MatchListElement extends ListElement implements Serializable {
             match.showTime(true);
             match.showScores(false);
         }
-        if(time == -1){
+        if (time == -1) {
             match.showTime(false);
         }
         match.setClickToShowDetails(clickable);
         match.showMatchTitle(showMatchTitle);
         return match;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof MatchListElement)) {
+            return false;
+        }
+        MatchListElement element = (MatchListElement) o;
+
+        return videoKey.equals(element.videoKey) &&
+          matchTitle.equals(element.matchTitle) &&
+          Arrays.equals(redTeams, element.redTeams) &&
+          Arrays.equals(blueTeams, element.blueTeams) &&
+          redScore.equals(element.redScore) &&
+          blueScore.equals(element.blueScore) &&
+          matchKey.equals(element.matchKey) &&
+          selectedTeamKey == null
+            ? element.selectedTeamKey == null
+            : selectedTeamKey.equals(element.selectedTeamKey) &&
+          time == element.time &&
+          showVideoIcon == element.showVideoIcon &&
+          showColumnHeaders == element.showColumnHeaders &&
+          showMatchTitle == element.showMatchTitle &&
+          clickable == element.clickable;
     }
 }

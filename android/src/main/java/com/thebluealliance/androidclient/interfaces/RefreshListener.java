@@ -1,8 +1,5 @@
 package com.thebluealliance.androidclient.interfaces;
 
-/**
- * Created by Nathan on 4/29/2014.
- */
 public interface RefreshListener {
 
     /*

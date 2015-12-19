@@ -34,3 +34,49 @@ public static *** d(...);
 -keepclassmembers class ** {
     public void onEvent*(**);
 }
+
+# ButterKnife
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewBinder { *; }
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <fields>;
+}
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <methods>;
+}
+
+-dontwarn com.google.api.client.extensions.android.**
+-dontwarn com.google.api.client.googleapis.extensions.android.**
+-dontwarn com.google.android.gms.**
+-dontwarn com.facebook.stetho.**
+-dontwarn com.google.api.client.**
+
+-keep class android.support.design.** { *; }
+-keep interface android.support.design.** { *; }
+-keepclassmembers class android.support.design.widget.FloatingActionButton$Behavior { public <init>(); }
+
+-keep class com.firebase.** { *; }
+-keepnames class com.fasterxml.jackson.** { *; }
+-keep class com.thebluealliance.androidclient.** { *; }
+-keepnames class com.thebluealliance.androidclient.** { *; }
+-keep public class com.thebluealliance.androidclient.models.FirebaseNotification {
+    public void set(*);
+    public ** get*();
+}
+-keepattributes *Annotation*,EnclosingMethod
+
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn org.w3c.dom.bootstrap.DOMImplementationRegistry
+-dontwarn java.nio.**
+-dontwarn android.support.**
+-dontwarn sun.misc.Unsafe
+-dontwarn java.lang.invoke**
+-dontwarn java.lang.invoke.*
+-dontwarn retrofit.**
+-keep class retrofit.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
+-keepattributes *Annotation*

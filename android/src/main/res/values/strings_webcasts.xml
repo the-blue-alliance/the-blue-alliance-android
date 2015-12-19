@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- YouTube format (with channel ID)-->
+    <string name="webcast_youtube_embed_pattern">http://www.youtube.com/embed/%1$s</string>
+
+    <!-- UStream format (with channel ID) -->
+    <string name="webcast_ustream_embed_pattern">http://www.ustream.tv/channel/%1$s</string>
+
+    <!-- Twitch format (with channel ID) -->
+    <string name="webcast_twitch_embed_pattern">http://www.twitch.tv/%1$s</string>
+
+    <!-- Livestream format (with channel ID, event ID) -->
+    <string name="webcast_livestream_embed_pattern">http://new.livestream.com/accounts/%1$s/events/%2$s</string>
+
+    <!-- Web GameDay format (with eventKey, number) -->
+    <string name="webcast_gameday_pattern">http://www.thebluealliance.com/gameday#layout=0&amp;view_0=%1$s-%2$d</string>
+
+    <!-- STEMtv format (with channel ID, event ID) -->
+    <string name="webcast_stemtv_embed_pattern">http://player.cloud.wowza.com/playlist/%1$s.m3u8</string>
+
+    <string name="no_webcast_data_found">No webcasts found this week</string>
+
+    <string name="webcast_type_youtube">Watch on YouTube</string>
+    <string name="webcast_type_ustream">Watch on Ustream</string>
+    <string name="webcast_type_livestream">Watch on Livestream</string>
+    <string name="webcast_type_twitch">Watch on Twitch</string>
+    <string name="webcast_type_gameday">Watch on GameDay</string>
+    <string name="webcast_type_html5">Watch</string>
+    <string name="webcast_type_stemtv">Watch</string>
+
+    <string name="webcast_event_format">%1$s #%2$d</string>
+
+</resources>

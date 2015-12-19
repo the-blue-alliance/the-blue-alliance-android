@@ -55,7 +55,7 @@ public class GCMHelper {
         return senderId;
     }
 
-    public static void registerGCMIfNeeded(Activity activity){
+    public static void registerGCMIfNeeded(Activity activity) {
         if (!AccountHelper.checkGooglePlayServicesAvailable(activity)) {
             Log.w(Constants.LOG_TAG, "Google Play Services unavailable. Can't register with GCM");
             return;

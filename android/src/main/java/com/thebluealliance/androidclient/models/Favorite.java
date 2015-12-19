@@ -2,8 +2,8 @@ package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
 
-import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.database.tables.FavoritesTable;
+import com.thebluealliance.androidclient.types.ModelType;
 
 /**
  * File created by phil on 8/13/14.
@@ -14,7 +14,7 @@ public class Favorite {
     private String modelKey;
     private int modelEnum;
 
-    public Favorite(){
+    public Favorite() {
 
     }
 
@@ -24,8 +24,8 @@ public class Favorite {
         setModelEnum(model_type);
     }
 
-    public String getKey(){
-        return userName+":"+modelKey;
+    public String getKey() {
+        return userName + ":" + modelKey;
     }
 
     public String getUserName() {
@@ -48,20 +48,20 @@ public class Favorite {
         return modelEnum;
     }
 
-    public ModelHelper.MODELS getModelType(){
-        return ModelHelper.MODELS.values()[modelEnum];
+    public ModelType getModelType() {
+        return ModelType.values()[modelEnum];
     }
 
     public void setModelEnum(int modelEnum) {
         this.modelEnum = modelEnum;
     }
 
-    public ContentValues getParams(){
+    public ContentValues getParams() {
         ContentValues cv = new ContentValues();
-        cv.put(Database.Favorites.KEY, getKey());
-        cv.put(Database.Favorites.USER_NAME, userName);
-        cv.put(Database.Favorites.MODEL_KEY, modelKey);
-        cv.put(Database.Favorites.MODEL_ENUM, modelEnum);
+        cv.put(FavoritesTable.KEY, getKey());
+        cv.put(FavoritesTable.USER_NAME, userName);
+        cv.put(FavoritesTable.MODEL_KEY, modelKey);
+        cv.put(FavoritesTable.MODEL_ENUM, modelEnum);
         return cv;
     }
 }

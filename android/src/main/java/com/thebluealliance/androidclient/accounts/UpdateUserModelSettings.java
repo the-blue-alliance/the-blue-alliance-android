@@ -12,11 +12,13 @@ import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesModelPr
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datafeed.Database;
-import com.thebluealliance.androidclient.datafeed.JSONManager;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.FavoritesTable;
+import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 import com.thebluealliance.androidclient.models.Favorite;
@@ -60,7 +62,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
 
         String user = AccountHelper.getSelectedAccount(context);
         String key = MyTBAHelper.createKey(user, modelKey);
-        ModelHelper.MODELS modelType = settings.modelType;
+        ModelType modelType = settings.modelType;
 
         ModelsMobileApiMessagesModelPreferenceMessage request = new ModelsMobileApiMessagesModelPreferenceMessage();
         request.setModelKey(modelKey);
@@ -69,8 +71,8 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
         request.setFavorite(isFavorite);
         request.setModelType(Long.valueOf(settings.modelType.getEnum()));
 
-        Database.Subscriptions subscriptionsTable = Database.getInstance(context).getSubscriptionsTable();
-        Database.Favorites favoritesTable = Database.getInstance(context).getFavoritesTable();
+        SubscriptionsTable subscriptionsTable = Database.getInstance(context).getSubscriptionsTable();
+        FavoritesTable favoritesTable = Database.getInstance(context).getFavoritesTable();
 
         // Determine if we have to do anything
         List<String> existingNotificationsList = new ArrayList<>();
@@ -96,7 +98,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
         } else {
             try {
                 TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
-                if(service == null){
+                if (service == null) {
                     Log.e(Constants.LOG_TAG, "Couldn't get TBA Mobile Service");
                     Handler mainHandler = new Handler(context.getMainLooper());
                     mainHandler.post(new Runnable() {
@@ -108,12 +110,12 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
                     return Result.ERROR;
                 }
                 ModelsMobileApiMessagesBaseResponse response = service.model().setPreferences(request).execute();
-                Log.d(Constants.LOG_TAG, "Result: "+response.getCode()+"/"+response.getMessage());
-                if(response.getCode() == 401){
+                Log.d(Constants.LOG_TAG, "Result: " + response.getCode() + "/" + response.getMessage());
+                if (response.getCode() == 401) {
                     Log.e(Constants.LOG_TAG, response.getMessage());
                     return Result.ERROR;
                 }
-                JsonObject responseJson = JSONManager.getasJsonObject(response.getMessage());
+                JsonObject responseJson = JSONHelper.getasJsonObject(response.getMessage());
                 JsonObject fav = responseJson.get("favorite").getAsJsonObject(),
                         sub = responseJson.get("subscription").getAsJsonObject();
                 int favCode = fav.get("code").getAsInt(),
