@@ -1,6 +1,18 @@
 package com.thebluealliance.androidclient.activities;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.PlusHelper;
+import com.thebluealliance.androidclient.gcm.GCMHelper;
+import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
+import com.thebluealliance.androidclient.types.ModelType;
+
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
@@ -12,16 +24,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.accounts.PlusHelper;
-import com.thebluealliance.androidclient.gcm.GCMHelper;
-import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
-import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
-import com.thebluealliance.androidclient.types.ModelType;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer, a search
@@ -30,6 +37,25 @@ import com.thebluealliance.androidclient.types.ModelType;
  */
 public abstract class BaseActivity extends NavigationDrawerActivity
         implements NfcAdapter.CreateNdefMessageCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+    public enum WarningMessageType {
+        OFFLINE(3),
+        FIRST_API_DOWN(2),
+        EVENT_DOWN(1);
+
+        // Higher numbers correspond to higher priorities
+        private int priority;
+
+        WarningMessageType(int priority) {
+            this.priority = priority;
+        }
+
+        public int getPriority() {
+            return priority;
+        }
+    }
+
+    public Set<WarningMessageType> activeMessages = new HashSet<>();
 
     String beamUri;
     boolean searchEnabled = true;
@@ -92,12 +118,114 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void showWarningMessage(CharSequence warningMessage) {
-        // Do nothing by default
+    /**
+     * By default, all activities that extend BaseActivity will show global warning messages. If
+     * you don't want a subclass to show warning messages, override this and return false;
+     *
+     * @return true if this activity should show warning messages, false if otherwise
+     */
+    public boolean shouldShowWarningMessages() {
+        return true;
     }
 
-    public void hideWarningMessage() {
-        // Do nothing by default
+    public void showWarningMessage(WarningMessageType messageType) {
+        if (!shouldShowWarningMessages()) {
+            return;
+        }
+        activeMessages.add(messageType);
+
+        // The latest message to be shown might not be the highest priority
+        // Find the highest priority active message and show that one
+        displayMessageForMessageType(getHighestPriorityMessage());
+
+    }
+
+    private void displayMessageForMessageType(WarningMessageType type) {
+        View container = findViewById(R.id.root_snackbar_container);
+        TextView message = (TextView) findViewById(R.id.root_snackbar_message);
+        TextView action = (TextView) findViewById(R.id.root_snackbar_action);
+
+        // Set default visibilities
+        container.setVisibility(View.VISIBLE);
+        message.setVisibility(View.VISIBLE);
+        action.setVisibility(View.GONE);
+
+        switch (type) {
+            case OFFLINE:
+                message.setText(R.string.warning_offline_message);
+                action.setVisibility(View.VISIBLE);
+                action.setText(R.string.warning_more);
+                action.setOnClickListener(v -> {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle(R.string.warning_more_info);
+                    builder.setMessage(R.string.warning_offline_explanation);
+                    builder.setCancelable(true);
+                    builder.setNeutralButton(getString(R.string.warning_close),
+                            (dialog, which) -> dialog.cancel()
+                    );
+                    builder.create().show();
+                });
+                break;
+            case EVENT_DOWN:
+                message.setText(R.string.warning_event_down_message);
+                action.setVisibility(View.VISIBLE);
+                action.setText(R.string.warning_more);
+                action.setOnClickListener(v -> {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle(R.string.warning_more_info);
+                    builder.setMessage(R.string.warning_event_down_explanation);
+                    builder.setCancelable(true);
+                    builder.setNeutralButton(getString(R.string.warning_close),
+                            (dialog, which) -> dialog.cancel()
+                    );
+                    builder.create().show();
+                });
+                break;
+            case FIRST_API_DOWN:
+                message.setText(R.string.warning_first_down_message);
+                action.setVisibility(View.VISIBLE);
+                action.setText(R.string.warning_more);
+                action.setOnClickListener(v -> {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle(R.string.warning_more_info);
+                    builder.setMessage(R.string.warning_first_down_explanation);
+                    builder.setCancelable(true);
+                    builder.setNeutralButton(getString(R.string.warning_close),
+                            (dialog, which) -> dialog.cancel()
+                    );
+                    builder.create().show();
+                });
+                break;
+        }
+    }
+
+    public void dismissWarningMessage(WarningMessageType messageType) {
+        activeMessages.remove(messageType);
+        if (activeMessages.isEmpty()) {
+            // There are no more active messages; hide the container
+            findViewById(R.id.root_snackbar_container).setVisibility(View.GONE);
+        } else {
+            // There are more active messages; find the highest priority one and display it
+            displayMessageForMessageType(getHighestPriorityMessage());
+        }
+    }
+
+    public void dismissAllWarningMessages() {
+        activeMessages.clear();
+        findViewById(R.id.root_snackbar_container).setVisibility(View.GONE);
+    }
+
+    private WarningMessageType getHighestPriorityMessage() {
+        int highestPriority = Integer.MIN_VALUE;
+        WarningMessageType highestPriorityType = null;
+        for (WarningMessageType type : activeMessages) {
+            if (type.getPriority() > highestPriority) {
+                highestPriority = type.getPriority();
+                highestPriorityType = type;
+            }
+        }
+
+        return highestPriorityType;
     }
 
     public void setBeamUri(String uri) {
@@ -139,8 +267,9 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     }
 
     /**
-     * Connection failed for some reason (called by PlusClient) Try and resolve the result.  Failure
-     * here is usually not an indication of a serious error, just that the user's input is needed.
+     * Connection failed for some reason (called by PlusClient) Try and resolve the result.
+     * Failure here is usually not an indication of a serious error, just that the user's input
+     * is needed.
      */
     @Override
     public void onConnectionFailed(ConnectionResult result) {

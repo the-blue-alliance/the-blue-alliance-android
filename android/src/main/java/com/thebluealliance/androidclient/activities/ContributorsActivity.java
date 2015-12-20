@@ -82,16 +82,6 @@ public class ContributorsActivity extends DatafeedActivity {
     }
 
     @Override
-    public void showWarningMessage(CharSequence warningMessage) {
-
-    }
-
-    @Override
-    public void hideWarningMessage() {
-
-    }
-
-    @Override
     public FragmentComponent getComponent() {
         if (mComponent == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());

@@ -41,7 +41,6 @@ public class TeamAtDistrictActivity extends DatafeedActivity
 
     private String mDistrictKey;
     private String mTeamKey;
-    private TextView mWarningMessage;
     private FragmentComponent mComponent;
 
     public static Intent newInstance(Context c, String teamAtDistrictKey) {
@@ -79,9 +78,6 @@ public class TeamAtDistrictActivity extends DatafeedActivity
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mWarningMessage = (TextView) findViewById(R.id.warning_container);
-        hideWarningMessage();
-
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
         TeamAtDistrictFragmentPagerAdapter adapter = new TeamAtDistrictFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, mDistrictKey);
         pager.setAdapter(adapter);
@@ -97,7 +93,7 @@ public class TeamAtDistrictActivity extends DatafeedActivity
         setupActionBar();
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
-            showWarningMessage(getString(R.string.warning_unable_to_load));
+            showWarningMessage(WarningMessageType.OFFLINE);
         }
 
         setBeamUri(String.format(NfcUris.URI_TEAM_DISTRICT, mDistrictKey, mTeamKey));
@@ -152,17 +148,6 @@ public class TeamAtDistrictActivity extends DatafeedActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void showWarningMessage(CharSequence warningMessage) {
-        mWarningMessage.setText(warningMessage);
-        mWarningMessage.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideWarningMessage() {
-        mWarningMessage.setVisibility(View.GONE);
     }
 
     @SuppressWarnings(value = "unused")

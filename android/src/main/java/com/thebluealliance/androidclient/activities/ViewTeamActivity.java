@@ -50,7 +50,6 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
 
     private FragmentComponent mComponent;
     private static Object mModule;
-    private TextView mWarningMessage;
     private int mCurrentSelectedYearPosition = -1,
             mSelectedTab = -1;
 
@@ -103,9 +102,6 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         mYearSelectorTitle = (TextView) findViewById(R.id.year_selector_title);
         mYearSelectorSubtitle = (TextView) findViewById(R.id.year_selector_subtitle);
 
-        mWarningMessage = (TextView) findViewById(R.id.warning_container);
-        hideWarningMessage();
-
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(SELECTED_TAB)) {
                 mSelectedTab = savedInstanceState.getInt(SELECTED_TAB);
@@ -136,7 +132,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
-            showWarningMessage(getString(R.string.warning_unable_to_load));
+            showWarningMessage(WarningMessageType.OFFLINE);
         }
 
         getComponent().datafeed().fetchTeamYearsParticipated(mTeamKey, null)
@@ -275,17 +271,6 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void showWarningMessage(CharSequence warningMessage) {
-        mWarningMessage.setText(warningMessage);
-        mWarningMessage.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideWarningMessage() {
-        mWarningMessage.setVisibility(View.GONE);
     }
 
     @Override

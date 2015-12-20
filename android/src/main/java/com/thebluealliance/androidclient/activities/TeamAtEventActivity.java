@@ -39,7 +39,6 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity
 
     public static final String EVENT = "eventKey", TEAM = "teamKey";
 
-    private TextView mWarningMessage;
     private String mEventKey, mTeamKey;
     private TeamAtEventFragmentPagerAdapter mAdapter;
     private FragmentComponent mComponent;
@@ -87,11 +86,8 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
 
-        mWarningMessage = (TextView) findViewById(R.id.warning_container);
-        hideWarningMessage();
-
         if (!ConnectionDetector.isConnectedToInternet(this)) {
-            showWarningMessage(getString(R.string.warning_unable_to_load));
+            showWarningMessage(WarningMessageType.OFFLINE);
         }
 
         setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, mEventKey, mTeamKey));
@@ -148,17 +144,6 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity
     }
 
     @Override
-    public void showWarningMessage(CharSequence warningMessage) {
-        mWarningMessage.setText(warningMessage);
-        mWarningMessage.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideWarningMessage() {
-        mWarningMessage.setVisibility(View.GONE);
-    }
-
-    @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
     }
@@ -167,7 +152,11 @@ public class TeamAtEventActivity extends FABNotificationSettingsActivity
     protected void onTbaStatusUpdate(APIStatus newStatus) {
         super.onTbaStatusUpdate(newStatus);
         if (newStatus.getDownEvents().contains(mEventKey)) {
-            showWarningMessage(getText(R.string.event_not_updating_warning));
+            // This event is down
+            showWarningMessage(WarningMessageType.EVENT_DOWN);
+        } else {
+            // This event is not down! Hide the message if it was previously displayed
+            dismissWarningMessage(WarningMessageType.EVENT_DOWN);
         }
     }
 
