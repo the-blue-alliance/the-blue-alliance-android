@@ -41,7 +41,7 @@ import javax.inject.Inject;
 public class HomeActivity extends DatafeedActivity implements HasFragmentComponent {
 
     /**
-     * Saved instance state key representing the last select navigajjjjtion drawer item
+     * Saved instance state key representing the last select navigation drawer item
      */
     private static final String STATE_SELECTED_NAV_ID = "selected_navigation_drawer_position";
 
@@ -134,7 +134,6 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
             mCurrentSelectedYearPosition = 0;
             switchToModeForId(initNavId, savedInstanceState);
         }
-
 
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
@@ -230,9 +229,11 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         switch (mCurrentSelectedNavigationItemId) {
             case R.id.nav_item_events:
                 setupActionBarForEvents();
+                mToolbar.setContentInsetsAbsolute(0, 0);
                 break;
             case R.id.nav_item_districts:
                 setupActionBarForDistricts();
+                mToolbar.setContentInsetsAbsolute(0, 0);
                 break;
             case R.id.nav_item_teams:
                 getSupportActionBar().setTitle("Teams");
@@ -388,13 +389,13 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         if (mComponent == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .binderModule(application.getBinderModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .subscriberModule(new SubscriberModule(this))
-              .clickListenerModule(new ClickListenerModule(this))
-              .build();
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .binderModule(application.getBinderModule())
+                    .databaseWriterModule(application.getDatabaseWriterModule())
+                    .subscriberModule(new SubscriberModule(this))
+                    .clickListenerModule(new ClickListenerModule(this))
+                    .build();
         }
         return mComponent;
     }
