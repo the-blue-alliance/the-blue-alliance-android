@@ -2,6 +2,7 @@
 <resources>
 
     <!-- General strings -->
+    <string name="notifications">Notifications</string>
     <string name="and">and</string>
     <string name="gameday_ticker_event_title_format">%1$s [%2$s]</string>
     <!-- event name, event short -->

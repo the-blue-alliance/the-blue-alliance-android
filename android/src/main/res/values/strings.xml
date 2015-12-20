@@ -105,10 +105,6 @@
     <string name="cd_header">Chief Delphi Photos</string>
     <string name="yt_header">YouTube Videos</string>
 
-    <!-- My TBA -->
-    <string name="mytba_error">Error code %1$d: %2$s</string>
-    <string name="cannot_find_match_title">Could not find match title</string>
-
     <!-- Insights -->
     <string name="insights_placeholder">Insights have not yet been implemented.\n\nPlease check back here in the future!</string>
 
@@ -128,6 +124,9 @@
     <string name="events_matching">Events matching \"%1$s\"</string>
 
     <!-- myTBA -->
+    <string name="mytba">myTBA</string>
+    <string name="mytba_error">Error code %1$d: %2$s</string>
+    <string name="cannot_find_match_title">Could not find match title</string>
     <string name="mytba_favorite_title">Favorite</string>
     <string name="mytba_favorite_summary">You can save teams, events, and more for easy access by marking them as "favorites".</string>
     <string name="mytba_subscription_header">Notification Settings</string>
