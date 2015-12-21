@@ -89,7 +89,7 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity
         setupActionBar();
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
-            showWarningMessage(WarningMessageType.OFFLINE);
+            showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
 
         setBeamUri(String.format(NfcUris.URI_DISTRICT, districtAbbrev));

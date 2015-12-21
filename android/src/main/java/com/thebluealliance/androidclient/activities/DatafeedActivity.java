@@ -93,10 +93,10 @@ public abstract class DatafeedActivity extends BaseActivity
 
         if (newStatus.isFmsApiDown()) {
             // Everything is broken
-            showWarningMessage(WarningMessageType.FIRST_API_DOWN);
+            showWarningMessage(BaseActivity.WARNING_FIRST_API_DOWN);
         } else {
             // Everything is not broken!
-            dismissWarningMessage(WarningMessageType.FIRST_API_DOWN);
+            dismissWarningMessage(BaseActivity.WARNING_FIRST_API_DOWN);
         }
 
         onTbaStatusUpdate(newStatus);
@@ -114,10 +114,10 @@ public abstract class DatafeedActivity extends BaseActivity
     @SuppressWarnings("unused")
     public void onEvent(ConnectivityChangeEvent event) {
         if (event.getConnectivityChangeType() == ConnectivityChangeEvent.CONNECTION_FOUND) {
-            dismissWarningMessage(WarningMessageType.OFFLINE);
+            dismissWarningMessage(BaseActivity.WARNING_OFFLINE);
             mRefreshController.startRefresh(RefreshController.NOT_REQUESTED_BY_USER);
         } else {
-            showWarningMessage(WarningMessageType.OFFLINE);
+            showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
     }
 

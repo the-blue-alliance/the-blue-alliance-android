@@ -85,7 +85,7 @@ public class GamedayActivity extends BaseActivity
         setupActionBar();
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
-            showWarningMessage(WarningMessageType.OFFLINE);
+            showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
     }
 

@@ -132,7 +132,7 @@ public class ViewTeamActivity extends FABNotificationSettingsActivity implements
         ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
-            showWarningMessage(WarningMessageType.OFFLINE);
+            showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
 
         getComponent().datafeed().fetchTeamYearsParticipated(mTeamKey, null)

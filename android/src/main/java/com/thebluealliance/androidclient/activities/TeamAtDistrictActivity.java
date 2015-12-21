@@ -93,7 +93,7 @@ public class TeamAtDistrictActivity extends DatafeedActivity
         setupActionBar();
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
-            showWarningMessage(WarningMessageType.OFFLINE);
+            showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
 
         setBeamUri(String.format(NfcUris.URI_TEAM_DISTRICT, mDistrictKey, mTeamKey));

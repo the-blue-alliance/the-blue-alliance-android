@@ -133,7 +133,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
-            showWarningMessage(WarningMessageType.OFFLINE);
+            showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
     }
 

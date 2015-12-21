@@ -22,11 +22,14 @@ import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.IntDef;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,24 +41,15 @@ import java.util.Set;
 public abstract class BaseActivity extends NavigationDrawerActivity
         implements NfcAdapter.CreateNdefMessageCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    public enum WarningMessageType {
-        OFFLINE(3),
-        FIRST_API_DOWN(2),
-        EVENT_DOWN(1);
+    @IntDef({WARNING_OFFLINE, WARNING_FIRST_API_DOWN, WARNING_EVENT_DOWN})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface WarningMessageType {}
 
-        // Higher numbers correspond to higher priorities
-        private int priority;
+    public static final int WARNING_OFFLINE = 3;
+    public static final int WARNING_FIRST_API_DOWN = 2;
+    public static final int WARNING_EVENT_DOWN = 1;
 
-        WarningMessageType(int priority) {
-            this.priority = priority;
-        }
-
-        public int getPriority() {
-            return priority;
-        }
-    }
-
-    public Set<WarningMessageType> activeMessages = new HashSet<>();
+    public Set<Integer> activeMessages = new HashSet<>();
 
     String beamUri;
     boolean searchEnabled = true;
@@ -128,7 +122,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         return true;
     }
 
-    public void showWarningMessage(WarningMessageType messageType) {
+    public void showWarningMessage(@WarningMessageType int messageType) {
         if (!shouldShowWarningMessages()) {
             return;
         }
@@ -140,7 +134,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
 
     }
 
-    private void displayMessageForMessageType(WarningMessageType type) {
+    private void displayMessageForMessageType(@WarningMessageType int type) {
         View container = findViewById(R.id.root_snackbar_container);
         TextView message = (TextView) findViewById(R.id.root_snackbar_message);
         TextView action = (TextView) findViewById(R.id.root_snackbar_action);
@@ -151,7 +145,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         action.setVisibility(View.GONE);
 
         switch (type) {
-            case OFFLINE:
+            case WARNING_OFFLINE:
                 message.setText(R.string.warning_offline_message);
                 action.setVisibility(View.VISIBLE);
                 action.setText(R.string.warning_more);
@@ -166,7 +160,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
                     builder.create().show();
                 });
                 break;
-            case EVENT_DOWN:
+            case WARNING_EVENT_DOWN:
                 message.setText(R.string.warning_event_down_message);
                 action.setVisibility(View.VISIBLE);
                 action.setText(R.string.warning_more);
@@ -181,7 +175,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
                     builder.create().show();
                 });
                 break;
-            case FIRST_API_DOWN:
+            case WARNING_FIRST_API_DOWN:
                 message.setText(R.string.warning_first_down_message);
                 action.setVisibility(View.VISIBLE);
                 action.setText(R.string.warning_more);
@@ -199,7 +193,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         }
     }
 
-    public void dismissWarningMessage(WarningMessageType messageType) {
+    public void dismissWarningMessage(@WarningMessageType int messageType) {
         activeMessages.remove(messageType);
         if (activeMessages.isEmpty()) {
             // There are no more active messages; hide the container
@@ -215,17 +209,15 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         findViewById(R.id.root_snackbar_container).setVisibility(View.GONE);
     }
 
-    private WarningMessageType getHighestPriorityMessage() {
+    private @WarningMessageType int getHighestPriorityMessage() {
         int highestPriority = Integer.MIN_VALUE;
-        WarningMessageType highestPriorityType = null;
-        for (WarningMessageType type : activeMessages) {
-            if (type.getPriority() > highestPriority) {
-                highestPriority = type.getPriority();
-                highestPriorityType = type;
+        for (int type : activeMessages) {
+            if (type > highestPriority) {
+                highestPriority = type;
             }
         }
 
-        return highestPriorityType;
+        return highestPriority;
     }
 
     public void setBeamUri(String uri) {

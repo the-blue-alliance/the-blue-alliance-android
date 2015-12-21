@@ -102,7 +102,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
         setupActionBar();
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
-            showWarningMessage(WarningMessageType.OFFLINE);
+            showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
 
         isDistrict = true;
@@ -190,10 +190,10 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
         super.onTbaStatusUpdate(newStatus);
         if (newStatus.getDownEvents().contains(mEventKey)) {
             // This event is down
-            showWarningMessage(WarningMessageType.EVENT_DOWN);
+            showWarningMessage(BaseActivity.WARNING_EVENT_DOWN);
         } else {
             // This event is not down! Hide the message if it was previously displayed
-            dismissWarningMessage(WarningMessageType.EVENT_DOWN);
+            dismissWarningMessage(BaseActivity.WARNING_EVENT_DOWN);
         }
     }
 
