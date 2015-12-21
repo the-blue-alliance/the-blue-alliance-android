@@ -62,7 +62,6 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     private long mLastDialogTime;
 
     private boolean mUserIsLoggedIn;
-    @Inject Context context;
 
     @Inject
     public TBAStatusController(SharedPreferences prefs, Gson gson, Tracker tracker, Context context) {
