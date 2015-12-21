@@ -57,7 +57,6 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     private final SharedPreferences mPrefs;
     private final Gson mGson;
     private final Tracker mAnalyticsTracker;
-    private final Context mContext;
 
     private long mLastUpdateTime;
     private long mLastDialogTime;
@@ -70,7 +69,6 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         mPrefs = prefs;
         mGson = gson;
         mAnalyticsTracker = tracker;
-        mContext = context;
         mLastUpdateTime = Long.MIN_VALUE;
         mLastDialogTime = Long.MIN_VALUE;
 
