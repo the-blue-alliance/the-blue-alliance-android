@@ -409,12 +409,4 @@ public class Utilities {
             return new HashMap<>();
         }
     }
-
-    public static <K, V> Map<K, List<V>> getListMapForPlatform(Class<K> key, Class<V> value) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            return new ArrayMap<>();
-        } else {
-            return new HashMap<>();
-        }
-    }
 }

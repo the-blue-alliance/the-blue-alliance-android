@@ -45,17 +45,11 @@
     <string name="contributors_summary">View a list of people who contributed to this project</string>
     <string name="dev_settings">Debug Settings</string>
     <string name="notification_settings">Notification Settings</string>
-    <string name="notification_dashboard">Notification Dashboard</string>
-    <string name="notification_dashboard_summary">Recent notification you\'ve received</string>
 
     <!-- Notification Settings-->
     <string name="pref_enable_notifications">Enable Notifications</string>
     <string name="pref_notification_tone">Play Sound</string>
     <string name="pref_notification_vibrate">Vibrate</string>
-
-    <string name="pref_notification_visibility_private">When Device is Unlocked</string>
-    <string name="pref_notification_visibility_secret">Never</string>
-    <string name="pref_notification_visibility_public">Always</string>
 
     <string name="pref_notification_headsup">Heads Up Notifications</string>
 </resources>

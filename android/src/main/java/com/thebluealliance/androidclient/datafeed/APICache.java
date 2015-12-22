@@ -149,14 +149,6 @@ public class APICache {
         });
     }
 
-    public Observable<List<Event>> fetchTeamEventHistory(String teamKey) {
-        return null;
-    }
-
-    public Observable<List<Award>> fetchTeamEventAwards(String teamKey) {
-        return null;
-    }
-
     public Observable<List<Event>> fetchEventsInYear(int year) {
         return Observable.create((observer) -> {
             try {
