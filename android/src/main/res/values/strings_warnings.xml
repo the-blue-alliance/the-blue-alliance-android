@@ -6,16 +6,16 @@
     <string name="warning_close">Close</string>
 
     <string name="warning_offline_message">You are offline; data may be out of date.</string>
-    <string name="warning_offline_explanation">We were unable to reach the servers to load the latest information. Check your internet connection and try again.</string>
+    <string name="warning_offline_explanation">We were unable to reach the servers to load the
+        latest information. Check your internet connection and try again.</string>
 
-    <string name="warning_event_down_message">This event is down.</string>
+    <string name="warning_event_down_message">This event is offline.</string>
     <string name="warning_event_down_explanation">It looks like this event hasn\'t posted
         any results recently. It\'s possible that the internet connection at this event
-        might be down. The information you see here might be out of date.</string>
+        is down. The event's information might be out of date.</string>
 
     <string name="warning_first_down_message">FIRST\'s servers are down.</string>
     <string name="warning_first_down_explanation">We rely on FIRST to provide scores,
         rankings, and more. Unfortunately, FIRST\'s servers are broken right now, so we can\'t get
-        the latest updates. The information you see here may be out of
-        date.</string>
+        the latest updates. The information you see here may be out of date.</string>
 </resources>
