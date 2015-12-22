@@ -36,13 +36,10 @@ public class ContributorsActivity extends DatafeedActivity {
 
         setupActionBar();
 
-        ((ListView) findViewById(android.R.id.list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String login = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-                String url = "https://github.com/" + login;
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-            }
+        ((ListView) findViewById(android.R.id.list)).setOnItemClickListener((adapterView, view, position, id) -> {
+            String login = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
+            String url = "https://github.com/" + login;
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
         });
 
         setSearchEnabled(false);

@@ -60,7 +60,7 @@ public class Utilities {
         return sw.toString();
     }
 
-    public static int getFirstompWeek(Date date) {
+    public static int getFirstCompWeek(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return getFirstCompWeek(cal.get(Calendar.YEAR));
