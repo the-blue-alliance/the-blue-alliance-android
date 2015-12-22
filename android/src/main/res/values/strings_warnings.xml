@@ -12,7 +12,7 @@
     <string name="warning_event_down_message">This event is offline.</string>
     <string name="warning_event_down_explanation">It looks like this event hasn\'t posted
         any results recently. It\'s possible that the internet connection at this event
-        is down. The event's information might be out of date.</string>
+        is down. The event\'s information might be out of date.</string>
 
     <string name="warning_first_down_message">FIRST\'s servers are down.</string>
     <string name="warning_first_down_explanation">We rely on FIRST to provide scores,
