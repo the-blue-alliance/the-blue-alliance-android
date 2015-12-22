@@ -362,6 +362,10 @@ public class Utilities {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
+    public static boolean hasMApis() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
     public static String getDeviceUUID(Context context) {
         return Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
     }
