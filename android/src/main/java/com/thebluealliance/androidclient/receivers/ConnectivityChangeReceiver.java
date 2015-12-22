@@ -11,9 +11,6 @@ import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
 
 import de.greenrobot.event.EventBus;
 
-/**
- * Created by phil on 7/8/14.
- */
 public class ConnectivityChangeReceiver extends BroadcastReceiver {
 
     /**

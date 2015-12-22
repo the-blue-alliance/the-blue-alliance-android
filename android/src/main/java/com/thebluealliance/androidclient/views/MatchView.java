@@ -21,9 +21,6 @@ import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by Nathan on 8/3/2014.
- */
 public class MatchView extends FrameLayout {
 
     TextView matchTitle, red1, red2, red3, blue1, blue2, blue3, redScore, blueScore, time;

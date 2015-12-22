@@ -9,14 +9,12 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
-
 import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.models.APIStatus;
@@ -35,8 +33,19 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
 
     public static final String STATUS_PREF_KEY = "tba_status";
 
-    /* 15 minutes in nanoseconds */
-    private static final double UPDATE_TIMEOUT_NS = 9e+11;
+    /**
+     * We use different timeouts for logged in users and not logged in users. Logged-in users will
+     * receive push notifications when the status changes, so it's not as important to poll
+     * frequently. For logged-out users, however, we want to poll more often because they won't
+     * get push notifications.
+     */
+    // 15 minutes
+    private static final double UPDATE_TIMEOUT_LOGGED_IN_NS = 9e+11;
+    // 1 minute
+    private static final double UPDATE_TIMEOUT_LOGGED_OUT_NS = 6e+10;
+
+    // 3 hours
+    private static final double DIALOG_TIMEOUT = 1.08e+13;
 
     private final SharedPreferences mPrefs;
     private final Gson mGson;
@@ -45,13 +54,17 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     private long mLastUpdateTime;
     private long mLastDialogTime;
 
+    private boolean mUserIsLoggedIn;
+
     @Inject
-    public TBAStatusController(SharedPreferences prefs, Gson gson, Tracker tracker) {
+    public TBAStatusController(SharedPreferences prefs, Gson gson, Tracker tracker, Context context) {
         mPrefs = prefs;
         mGson = gson;
         mAnalyticsTracker = tracker;
         mLastUpdateTime = Long.MIN_VALUE;
         mLastDialogTime = Long.MIN_VALUE;
+
+        mUserIsLoggedIn = AccountHelper.isMyTBAEnabled(context);
     }
 
     public void scheduleStatusUpdate(Context context) {
@@ -109,7 +122,9 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     @Override
     public void onActivityResumed(Activity activity) {
         /* Update myTBA Status */
-        if (mLastUpdateTime + UPDATE_TIMEOUT_NS < System.nanoTime()) {
+        double timeout = mUserIsLoggedIn ? UPDATE_TIMEOUT_LOGGED_IN_NS :
+                UPDATE_TIMEOUT_LOGGED_OUT_NS;
+        if (mLastUpdateTime + timeout < System.nanoTime()) {
             scheduleStatusUpdate(activity);
             mLastUpdateTime = System.nanoTime();
         }
@@ -117,7 +132,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         if (BuildConfig.VERSION_CODE < getMinAppVersion()) {
             activity.startActivity(new Intent(activity, UpdateRequiredActivity.class));
         } else if (BuildConfig.VERSION_CODE < getLatestAppVersion()
-                && mLastDialogTime + UPDATE_TIMEOUT_NS < System.nanoTime()) {
+                && mLastDialogTime + DIALOG_TIMEOUT < System.nanoTime()) {
             /* Show an app update dialog */
             new AlertDialog.Builder(activity)
                     .setTitle(R.string.update_dialog_title)

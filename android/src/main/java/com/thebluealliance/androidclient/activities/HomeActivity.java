@@ -29,6 +29,7 @@ import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
+import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
@@ -41,7 +42,7 @@ import javax.inject.Inject;
 public class HomeActivity extends DatafeedActivity implements HasFragmentComponent {
 
     /**
-     * Saved instance state key representing the last select navigajjjjtion drawer item
+     * Saved instance state key representing the last select navigation drawer item
      */
     private static final String STATE_SELECTED_NAV_ID = "selected_navigation_drawer_position";
 
@@ -131,7 +132,6 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         }
 
 
-
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
@@ -186,8 +186,8 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 startActivity(new Intent(this, SettingsActivity.class));
                 return;
             case R.id.nav_item_notifications:
-                startActivity(RecentNotificationsActivity.newInstance(this));
-                return;
+                fragment = new RecentNotificationsFragment();
+                break;
             case R.id.nav_item_gameday:
                 startActivity(GamedayActivity.newInstance(this));
                 return;
@@ -200,8 +200,10 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         // Call this to make sure the toolbar has the correct contents
         invalidateOptionsMenu();
 
-        // The Districts fragment doesn't have tabs to set an elevation to, so we have to apply an elevation to the toolbar here
-        if (mCurrentSelectedNavigationItemId == R.id.nav_item_districts) {
+        // The Districts & Notifications fragments don't have tabs to set an elevation to, so we
+        // have to apply an elevation to the toolbar here
+        if (mCurrentSelectedNavigationItemId == R.id.nav_item_districts
+                || mCurrentSelectedNavigationItemId == R.id.nav_item_notifications) {
             ViewCompat.setElevation(mToolbar, getResources().getDimension(R.dimen.toolbar_elevation));
         } else {
             ViewCompat.setElevation(mToolbar, 0);
@@ -212,7 +214,6 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
             mYearSelectorContainer.setVisibility(View.GONE);
-            //bar.setDisplayShowCustomEnabled(false);
             bar.setDisplayShowTitleEnabled(true);
         }
     }
@@ -225,16 +226,22 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         switch (mCurrentSelectedNavigationItemId) {
             case R.id.nav_item_events:
                 setupActionBarForEvents();
+                mToolbar.setContentInsetsAbsolute(0, 0);
                 break;
             case R.id.nav_item_districts:
                 setupActionBarForDistricts();
+                mToolbar.setContentInsetsAbsolute(0, 0);
                 break;
             case R.id.nav_item_teams:
-                getSupportActionBar().setTitle("Teams");
+                getSupportActionBar().setTitle(R.string.teams);
                 mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
                 break;
             case R.id.nav_item_my_tba:
-                getSupportActionBar().setTitle("myTBA");
+                getSupportActionBar().setTitle(R.string.mytba);
+                mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
+                break;
+            case R.id.nav_item_notifications:
+                getSupportActionBar().setTitle(R.string.notifications);
                 mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
                 break;
         }
@@ -243,8 +250,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
     }
 
     private void setupActionBarForEvents() {
-        ActionBar bar = getSupportActionBar();
-        bar.setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         mYearSelectorContainer.setVisibility(View.VISIBLE);
 
@@ -267,8 +273,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
     }
 
     private void setupActionBarForDistricts() {
-        ActionBar bar = getSupportActionBar();
-        bar.setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         mYearSelectorContainer.setVisibility(View.VISIBLE);
 
@@ -372,13 +377,13 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         if (mComponent == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .binderModule(application.getBinderModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .subscriberModule(new SubscriberModule(this))
-              .clickListenerModule(new ClickListenerModule(this))
-              .build();
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .binderModule(application.getBinderModule())
+                    .databaseWriterModule(application.getDatabaseWriterModule())
+                    .subscriberModule(new SubscriberModule(this))
+                    .clickListenerModule(new ClickListenerModule(this))
+                    .build();
         }
         return mComponent;
     }

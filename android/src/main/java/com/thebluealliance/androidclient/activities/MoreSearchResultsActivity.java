@@ -24,9 +24,6 @@ import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 
-/**
- * Created by Nathan on 6/15/2014.
- */
 public class MoreSearchResultsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final int TEAM_RESULTS = 1;

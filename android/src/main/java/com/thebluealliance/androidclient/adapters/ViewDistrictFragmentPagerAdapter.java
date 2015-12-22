@@ -7,9 +7,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.thebluealliance.androidclient.fragments.district.DistrictEventsFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictRankingsFragment;
 
-/**
- * Created by phil on 7/10/14.
- */
 public class ViewDistrictFragmentPagerAdapter extends FragmentPagerAdapter {
 
     public final String[] TITLES = {"Events", "Rankings"};
