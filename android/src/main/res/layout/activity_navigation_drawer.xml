@@ -26,7 +26,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@color/primary_dark">
+            android:background="@color/primary_dark"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp">
 
             <TextView
                 android:id="@+id/root_snackbar_message"
@@ -35,22 +37,20 @@
                 android:layout_alignParentLeft="true"
                 android:layout_toLeftOf="@+id/root_snackbar_action"
                 android:paddingBottom="14dp"
-                android:paddingLeft="24dp"
-                android:paddingRight="24dp"
                 android:paddingTop="14dp"
                 android:textColor="@color/white"
                 tools:text="FIRST's API is down." />
 
             <TextView
                 android:id="@id/root_snackbar_action"
+                style="@style/SnackbarActionStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:paddingBottom="14dp"
-                android:paddingLeft="48dp"
-                android:paddingRight="24dp"
                 android:paddingTop="14dp"
+                android:layout_marginLeft="24dp"
                 android:textColor="@color/accent"
                 tools:text="MORE" />
         </RelativeLayout>

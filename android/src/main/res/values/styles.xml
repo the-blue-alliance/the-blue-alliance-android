@@ -114,14 +114,6 @@
         <item name="android:paddingBottom">16dp</item>
         <item name="android:textStyle">bold</item>
     </style>
-<!--
-    <style name="ContentOverlayStyle">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_alignParentBottom">true</item>
-        <item name="android:orientation">vertical</item>
-    </style>
-    -->
 
     <style name="InfoOverlayStyle">
         <item name="android:layout_width">fill_parent</item>
@@ -132,25 +124,6 @@
         <item name="android:textAppearance">@android:style/TextAppearance.DeviceDefault.Small</item>
         <item name="android:background">@color/lighter_blue</item>
         <item name="android:drawableLeft">@drawable/ic_action_about_blue</item>
-    </style>
-
-    <style name="WarningOverlayStyle">
-        <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_alignParentBottom">true</item>
-        <item name="android:padding">8dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textAppearance">@android:style/TextAppearance.DeviceDefault.Small</item>
-        <item name="android:background">@color/lighter_red</item>
-        <item name="android:drawableLeft">@drawable/ic_action_warning_blue</item>
-    </style>
-
-    <style name="NoDataFoundStyle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:layout_marginLeft">16dp</item>
-        <item name="android:paddingTop">16dp</item>
     </style>
 
     <style name="DropDownNavStyle" parent="@android:style/Widget.Holo.Light.Spinner"/>
@@ -175,6 +148,10 @@
 
     <style name="DefaultLightToolbarStyle" parent="DefaultToolbarStyle">
         <item name="theme">@style/ThemeOverlay.AppCompat.Light</item>
+    </style>
+
+    <style name="SnackbarActionStyle">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
 
     <!-- Used for the checkboxes in the gameday ticker filterer -->
@@ -202,15 +179,6 @@
     <style name="GamedayTickerCheckboxAwardsPosted" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/gameday_ticker_awards_header</item>
     </style>
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
     <style name="normalText" >
         <item name="android:textStyle">normal</item>
