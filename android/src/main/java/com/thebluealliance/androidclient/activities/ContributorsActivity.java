@@ -22,15 +22,13 @@ import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 public class ContributorsActivity extends DatafeedActivity {
 
-    Toolbar toolbar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_contributors);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
         setSupportActionBar(toolbar);
 
