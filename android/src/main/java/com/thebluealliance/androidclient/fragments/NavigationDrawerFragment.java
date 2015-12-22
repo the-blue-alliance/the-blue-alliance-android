@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -34,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.plus.model.people.Person;
+
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
@@ -93,9 +95,6 @@ public class NavigationDrawerFragment extends Fragment {
         NAVIGATION_ITEMS.add(new SpacerListItem());
     }
 
-    /**
-     * Helper component that ties the action bar to the navigation drawer.
-     */
     private ActionBarDrawerToggle mDrawerToggle;
 
     private DrawerLayout mDrawerLayout;
@@ -104,7 +103,6 @@ public class NavigationDrawerFragment extends Fragment {
     private ImageView coverPhoto;
     private TextView profileName;
     private View mFragmentContainerView;
-    private View accountDetailsContainer;
     private NavigationDrawerAdapter mNavigationAdapter;
     private NavigationDrawerListener mListener;
 
@@ -138,20 +136,14 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-        mDrawerListView = (ListView) v.findViewById(R.id.left_drawer);
-        mDrawerListView.setOnItemClickListener((parent, view, position, id) -> {
-            // Ignore items that represent things like spacers and dividers
-            if (mNavigationAdapter.getItem(position) instanceof NavDrawerItem) {
-                selectItem(position);
-            }
-        });
 
+        mDrawerListView = (ListView) v.findViewById(R.id.left_drawer);
+        mDrawerListView.setOnItemClickListener((parent, view, position, id) -> navigationItemClicked(position));
         mDrawerListView.setAdapter(mNavigationAdapter);
 
-        accountDetailsContainer = v.findViewById(R.id.account_details_container);
+        View accountDetailsContainer = v.findViewById(R.id.account_details_container);
 
         profileName = (TextView) v.findViewById(R.id.profile_name);
         profilePicture = (CircleImageView) v.findViewById(R.id.profile_image);
@@ -270,7 +262,6 @@ public class NavigationDrawerFragment extends Fragment {
                         return;
                     }
 
-                    mListener.onNavDrawerClosed();
                     getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
                 }
 
@@ -290,7 +281,6 @@ public class NavigationDrawerFragment extends Fragment {
                         sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                     }
 
-                    mListener.onNavDrawerOpened();
                     getActivity().invalidateOptionsMenu(); // calls onPrepareOptionsMenu()
                 }
             };
@@ -314,17 +304,11 @@ public class NavigationDrawerFragment extends Fragment {
                                 .getDefaultSharedPreferences(getActivity());
                         sp.edit().putBoolean(PREF_USER_LEARNED_DRAWER, true).apply();
                     }
-
-                    mListener.onNavDrawerOpened();
                 }
 
                 @Override
                 public void onDrawerClosed(View drawerView) {
-                    if (!isAdded()) {
-                        return;
-                    }
-
-                    mListener.onNavDrawerClosed();
+                    // Do nothing
                 }
             });
         }
@@ -341,15 +325,18 @@ public class NavigationDrawerFragment extends Fragment {
      *
      * @param position The position of the clicked item
      */
-    private void selectItem(int position) {
+    private void navigationItemClicked(int position) {
+        ListItem item = mNavigationAdapter.getItem(position);
+
+        // Ignore clicks on items like dividers and spacers
+        if (!(item instanceof NavDrawerItem)) {
+            return;
+        }
+
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
         }
 
-        ListItem item = mNavigationAdapter.getItem(position);
-        if (!(item instanceof NavDrawerItem)) {
-            return;
-        }
         mListener.onNavDrawerItemClicked((NavDrawerItem) item);
 
         if (mDrawerLayout != null) {
@@ -373,9 +360,10 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
+        Activity activity = getActivity();
         if (activity instanceof NavigationDrawerListener) {
             mListener = (NavigationDrawerListener) activity;
         } else {
@@ -419,17 +407,7 @@ public class NavigationDrawerFragment extends Fragment {
          *
          * @param item The item that was clicked
          */
-        public void onNavDrawerItemClicked(NavDrawerItem item);
-
-        /**
-         * Called when the drawer is opened.
-         */
-        public void onNavDrawerOpened();
-
-        /**
-         * CAlled when the drawer is opened.
-         */
-        public void onNavDrawerClosed();
+        void onNavDrawerItemClicked(NavDrawerItem item);
 
     }
 

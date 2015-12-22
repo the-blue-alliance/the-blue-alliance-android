@@ -134,7 +134,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit().putBoolean(AccountHelper.PREF_MYTBA_ENABLED, true).apply();
         GCMHelper.registerGCMIfNeeded(this);
-        setDrawerProfileInfo();
         startService(new Intent(this, MyTbaUpdateService.class));
     }
 
