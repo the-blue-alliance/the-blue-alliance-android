@@ -6,11 +6,13 @@ import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.res.ColorStateList;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.animation.ValueAnimatorCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
@@ -35,7 +37,7 @@ import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
-public abstract class  FABNotificationSettingsActivity extends DatafeedActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
+public abstract class FABNotificationSettingsActivity extends DatafeedActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
     private CoordinatorLayout mCoordinatorLayout;
     private RelativeLayout mNotificationSettings;
@@ -121,9 +123,13 @@ public abstract class  FABNotificationSettingsActivity extends DatafeedActivity 
                 mOpenNotificationSettingsButton.setVisibility(View.INVISIBLE);
                 mCloseNotificationSettingsButton.setVisibility(View.VISIBLE);
                 mNotificationSettings.setVisibility(View.VISIBLE);
-                if (Utilities.hasLApis()) {
-                    getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
-                }
+
+                // Set up system UI (status bar background and icon color
+                getDrawerLayout().setStatusBarBackgroundColor(getResources().getColor(R.color
+                        .accent_dark));
+                int vis = getWindow().getDecorView().getSystemUiVisibility();
+                vis |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                getWindow().getDecorView().setSystemUiVisibility(vis);
             } else {
                 mOpenNotificationSettingsButton.setVisibility(View.VISIBLE);
                 mCloseNotificationSettingsButton.setVisibility(View.INVISIBLE);
@@ -256,8 +262,23 @@ public abstract class  FABNotificationSettingsActivity extends DatafeedActivity 
         dimAnimation.addUpdateListener(animation -> mForegroundDim.setAlpha((float) animation.getAnimatedValue()));
         dimAnimation.setDuration(ANIMATION_DURATION);
 
+        // Change the system UI color on 6.0+
+        ValueAnimator systemUiAnimator = ValueAnimator.ofFloat(0, 1).setDuration(1);
+        systemUiAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    int vis = getWindow().getDecorView().getSystemUiVisibility();
+                    // Set light
+                    vis |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                    getWindow().getDecorView().setSystemUiVisibility(vis);
+                }
+            }
+        });
+
         AnimatorSet animationSet = new AnimatorSet();
         animationSet.play(settingsPanelAnimator);
+        animationSet.play(systemUiAnimator).after(ANIMATION_DURATION / 2);
         animationSet.play(closeButtonScaleUp).after(ANIMATION_DURATION / 2);
         animationSet.play(colorAnimation).with(settingsPanelAnimator);
         animationSet.play(dimAnimation).with(settingsPanelAnimator);
@@ -343,8 +364,23 @@ public abstract class  FABNotificationSettingsActivity extends DatafeedActivity 
         dimAnimation.addUpdateListener(animation -> mForegroundDim.setAlpha((float) animation.getAnimatedValue()));
         dimAnimation.setDuration(ANIMATION_DURATION);
 
+        // Change the system UI color on 6.0+
+        ValueAnimator systemUiAnimator = ValueAnimator.ofFloat(0, 0).setDuration(1);
+        systemUiAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    int vis = getWindow().getDecorView().getSystemUiVisibility();
+                    // Set dark
+                    vis &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                    getWindow().getDecorView().setSystemUiVisibility(vis);
+                }
+            }
+        });
+
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.play(settingsPanelAnimator);
+        animatorSet.play(systemUiAnimator).after(ANIMATION_DURATION / 3);
         animatorSet.play(closeButtonScaleDown).after(ANIMATION_DURATION / 2);
         animatorSet.play(colorAnimation).with(settingsPanelAnimator);
         animatorSet.play(dimAnimation).with(settingsPanelAnimator);
@@ -366,7 +402,7 @@ public abstract class  FABNotificationSettingsActivity extends DatafeedActivity 
         if (mFabVisible) {
             return;
         }
-        if(!mIsMyTBAEnabled) {
+        if (!mIsMyTBAEnabled) {
             hideFab(false);
             return;
         }
@@ -529,11 +565,12 @@ public abstract class  FABNotificationSettingsActivity extends DatafeedActivity 
     }
 
     /**
-     * Used to defer an operation until after the notifications setting panel has finished animating closed.
+     * Used to defer an operation until after the notifications setting panel has finished
+     * animating
+     * closed.
      * <p>
-     * If the panel has already finished animating when this is called, the Runnable will be run immediately.
-     *
-     * @param runnable
+     * If the panel has already finished animating when this is called, the Runnable will be run
+     * immediately.
      */
     private void runAfterNotificationSettingsPanelIsClosed(Runnable runnable) {
         if (mRunningPanelAnimation == null) {
