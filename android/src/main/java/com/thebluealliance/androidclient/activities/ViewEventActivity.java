@@ -31,15 +31,13 @@ import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 public class ViewEventActivity extends FABNotificationSettingsActivity
-  implements ViewPager.OnPageChangeListener, HasFragmentComponent {
+        implements ViewPager.OnPageChangeListener, HasFragmentComponent {
 
     public static final String EVENTKEY = "eventKey";
     public static final String TAB = "tab";
 
     private String mEventKey;
     private int currentTab;
-    private TextView infoMessage;
-    private TextView warningMessage;
     private ViewPager pager;
     private ViewEventFragmentPagerAdapter adapter;
     private boolean isDistrict;
@@ -85,11 +83,6 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
         setModelKey(mEventKey, ModelType.EVENT);
         setContentView(R.layout.activity_view_event);
 
-        infoMessage = (TextView) findViewById(R.id.info_container);
-        warningMessage = (TextView) findViewById(R.id.warning_container);
-        hideInfoMessage();
-        hideWarningMessage();
-
         pager = (ViewPager) findViewById(R.id.view_pager);
         adapter = new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey);
         pager.setAdapter(adapter);
@@ -109,7 +102,7 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
         setupActionBar();
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
-            showWarningMessage(getString(R.string.warning_unable_to_load));
+            showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
 
         isDistrict = true;
@@ -137,17 +130,6 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
     protected void onResume() {
         super.onResume();
         setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
-    }
-
-    public void updateDistrict(boolean isDistrict) {
-        this.isDistrict = isDistrict;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        mOptionsMenu = menu;
-        return true;
     }
 
     @Override
@@ -203,31 +185,15 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
         }
     }
 
-    public void showInfoMessage(CharSequence message) {
-        infoMessage.setText(message);
-        infoMessage.setVisibility(View.VISIBLE);
-    }
-
-    public void hideInfoMessage() {
-        infoMessage.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showWarningMessage(CharSequence warningMessage) {
-        this.warningMessage.setText(warningMessage);
-        this.warningMessage.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideWarningMessage() {
-        warningMessage.setVisibility(View.GONE);
-    }
-
     @Override
     protected void onTbaStatusUpdate(APIStatus newStatus) {
         super.onTbaStatusUpdate(newStatus);
         if (newStatus.getDownEvents().contains(mEventKey)) {
-            showWarningMessage(getText(R.string.event_not_updating_warning));
+            // This event is down
+            showWarningMessage(BaseActivity.WARNING_EVENT_DOWN);
+        } else {
+            // This event is not down! Hide the message if it was previously displayed
+            dismissWarningMessage(BaseActivity.WARNING_EVENT_DOWN);
         }
     }
 
@@ -239,14 +205,6 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
     @Override
     public void onPageSelected(int position) {
         currentTab = position;
-
-        if (mOptionsMenu != null) {
-            if (position == ViewEventFragmentPagerAdapter.TAB_STATS && !isDistrict) {
-                showInfoMessage(getString(R.string.warning_not_real_district));
-            } else {
-                hideInfoMessage();
-            }
-        }
 
         // hide the FAB if we aren't on the first page
         if (position != ViewEventFragmentPagerAdapter.TAB_INFO) {
@@ -277,13 +235,13 @@ public class ViewEventActivity extends FABNotificationSettingsActivity
         if (mComponent == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .binderModule(application.getBinderModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .subscriberModule(new SubscriberModule(this))
-              .clickListenerModule(new ClickListenerModule(this))
-              .build();
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .binderModule(application.getBinderModule())
+                    .databaseWriterModule(application.getDatabaseWriterModule())
+                    .subscriberModule(new SubscriberModule(this))
+                    .clickListenerModule(new ClickListenerModule(this))
+                    .build();
         }
         return mComponent;
     }

@@ -62,7 +62,6 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
     private int mCurrentSelectedNavigationItemId = -1;
     private int mCurrentSelectedYearPosition = -1;
     private String[] mEventsDropdownItems, mDistrictsDropdownItems;
-    private TextView mWarningMessage;
     private Toolbar mToolbar;
     private View mYearSelectorContainer;
     private TextView mYarSelectorTitle;
@@ -86,10 +85,6 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
         mYearSelectorContainer = findViewById(R.id.year_selector_container);
         mYarSelectorTitle = (TextView) findViewById(R.id.year_selector_title);
-
-        mWarningMessage = (TextView) findViewById(R.id.warning_container);
-
-        hideWarningMessage();
 
         handler = new Handler();
         mMaxCompYear = mStatusController.getMaxCompYear();
@@ -138,7 +133,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
-            showWarningMessage(getString(R.string.warning_unable_to_load));
+            showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
     }
 
@@ -323,17 +318,6 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
             // Launch after a short delay to give the drawer time to close.
             handler.postDelayed(() -> switchToModeForId(id, null), DRAWER_CLOSE_ANIMATION_DURATION);
         }
-    }
-
-    @Override
-    public void showWarningMessage(CharSequence warningMessage) {
-        mWarningMessage.setText(warningMessage);
-        mWarningMessage.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideWarningMessage() {
-        mWarningMessage.setVisibility(View.GONE);
     }
 
     @Override
