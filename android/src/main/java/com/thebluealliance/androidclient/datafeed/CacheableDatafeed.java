@@ -43,7 +43,7 @@ public class CacheableDatafeed {
 
     @Inject
     public CacheableDatafeed(
-      @Named("retrofit") APIv2 retrofitAPI,
+      @Named("tba_api") APIv2 retrofitAPI,
       @Named("cache") APICache apiCache,
       DatabaseWriter writer,
       RetrofitResponseMap responseMap) {

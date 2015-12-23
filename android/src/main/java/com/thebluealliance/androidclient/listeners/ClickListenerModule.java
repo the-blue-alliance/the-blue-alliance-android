@@ -23,4 +23,9 @@ public class ClickListenerModule {
     public EventInfoContainerClickListener provideEventInfoContainerClickListener() {
         return new EventInfoContainerClickListener(mContext);
     }
+
+    @Provides
+    public ContributorClickListener provideContributorClickListener() {
+        return new ContributorClickListener(mContext);
+    }
 }

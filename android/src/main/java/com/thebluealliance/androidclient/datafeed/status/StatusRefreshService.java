@@ -1,11 +1,5 @@
 package com.thebluealliance.androidclient.datafeed.status;
 
-import android.app.IntentService;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.annotation.WorkerThread;
-import android.util.Log;
-
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TBAAndroid;
@@ -14,6 +8,12 @@ import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.models.APIStatus;
+
+import android.app.IntentService;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.support.annotation.WorkerThread;
+import android.util.Log;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,7 +27,7 @@ import rx.schedulers.Schedulers;
  */
 public class StatusRefreshService extends IntentService {
 
-    @Inject @Named("retrofit") APIv2 mRetrofitAPI;
+    @Inject @Named("tba_api") APIv2 mRetrofitAPI;
     @Inject SharedPreferences mPrefs;
     @Inject EventBus mEventBus;
 
