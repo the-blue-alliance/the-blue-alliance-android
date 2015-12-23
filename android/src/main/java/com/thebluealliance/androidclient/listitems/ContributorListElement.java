@@ -1,19 +1,19 @@
 package com.thebluealliance.androidclient.listitems;
 
+import com.squareup.picasso.Picasso;
+import com.thebluealliance.androidclient.R;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-import com.thebluealliance.androidclient.R;
-
 public class ContributorListElement extends ListElement {
 
-    private String username;
-    private int contributionCount;
-    private String avatarUrl;
+    public final String username;
+    public final int contributionCount;
+    public final String avatarUrl;
 
     public ContributorListElement(String username, int contributionCount, String avatarUrl) {
         super(username);
