@@ -1,9 +1,5 @@
 package com.thebluealliance.androidclient.background;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
@@ -13,13 +9,17 @@ import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
 
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
 public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.LoadTBADataCallbacks {
 
     DatafeedComponent mComponent;
-    @Inject @Named("retrofit") APIv2 mDatafeed;
+    @Inject @Named("tba_api") APIv2 mDatafeed;
     @Inject Database mDb;
     @Inject TeamListWriter mTeamWriter;
     @Inject EventListWriter mEventWriter;
