@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.binders;
 
+import com.thebluealliance.androidclient.adapters.TeamListFragmentPagerAdapter;
+import com.thebluealliance.androidclient.views.SlidingTabs;
+
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-
-import com.thebluealliance.androidclient.adapters.TeamListFragmentPagerAdapter;
-import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import javax.inject.Inject;
 
@@ -17,9 +17,16 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
     public SlidingTabs tabs;
     public FragmentManager fragmentManager;
 
+    private int mInitialTab;
+
     @Inject
     public TeamTabBinder() {
         super();
+        mInitialTab = 0;
+    }
+
+    public void setInitialTab(int initialTab) {
+        mInitialTab = initialTab;
     }
 
     @Override
@@ -32,6 +39,7 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
         viewPager.post(() -> {
             viewPager.setAdapter(new TeamListFragmentPagerAdapter(fragmentManager, data == null ? 0 : data));
             tabs.setViewPager(viewPager);
+            viewPager.setCurrentItem(mInitialTab);
         });
     }
 

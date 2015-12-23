@@ -1,23 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.StringRes;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.View;
-import android.widget.TextView;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
@@ -36,6 +18,24 @@ import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.StringRes;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.View;
+import android.widget.TextView;
 
 import javax.inject.Inject;
 
@@ -177,7 +177,10 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 fragment = DistrictListFragment.newInstance(mMaxCompYear - mCurrentSelectedYearPosition);
                 break;
             case R.id.nav_item_teams:
-                fragment = new AllTeamsListFragment();
+                int teamTab = savedInstanceState != null
+                        ? savedInstanceState.getInt(AllTeamsListFragment.SELECTED_TAB, 0)
+                        : 0;
+                fragment = AllTeamsListFragment.newInstance(teamTab);
                 break;
             case R.id.nav_item_my_tba:
                 fragment = new MyTBAFragment();
