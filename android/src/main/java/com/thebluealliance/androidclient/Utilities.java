@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.RawRes;
 import android.text.Html;
 import android.text.format.DateFormat;
 import android.util.ArrayMap;
@@ -208,7 +209,7 @@ public class Utilities {
         }
     }
 
-    public static void showHelpDialog(Context c, int rawText, String dialogTitle) {
+    public static void showHelpDialog(Context c, @RawRes int rawText, String dialogTitle) {
         String helpText;
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(c.getResources().openRawResource(rawText)));
@@ -231,11 +232,8 @@ public class Utilities {
         builder.setMessage(Html.fromHtml(helpText));
         builder.setCancelable(true);
         builder.setNeutralButton(c.getString(R.string.close_stats_help),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
+                (dialog, which) -> {
+                    dialog.cancel();
                 }
         );
         builder.create().show();

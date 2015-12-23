@@ -6,6 +6,11 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <!-- on API >= 21, this will use the borderless seelectable background -->
+    <style name="SnackbarActionStyle">
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+    </style>
+
     <!-- Uses selectableItemBackgroundBorderless on API >= 21 -->
     <style name="ListItemButtonStyle">
         <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
@@ -14,13 +19,5 @@
         <item name="android:layout_width">48dp</item>
         <item name="android:layout_height">48dp</item>
         <item name="android:padding">12dp</item>
-    </style>
-    >
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 </resources>

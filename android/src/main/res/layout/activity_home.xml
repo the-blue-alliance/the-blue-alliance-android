@@ -43,12 +43,6 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/warning_container"
         android:layout_below="@id/toolbar" />
-
-    <TextView
-        android:id="@id/warning_container"
-        style="@style/WarningOverlayStyle"
-        android:visibility="gone" />
 
 </RelativeLayout>

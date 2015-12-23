@@ -1,4 +1,5 @@
-<android.support.v4.widget.DrawerLayout android:id="@+id/nav_drawer_layout"
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/nav_drawer_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,11 +9,54 @@
     android:orientation="vertical">
 
     <!-- Framelayout to display Fragments -->
-    <FrameLayout
-        android:id="@+id/content"
+
+    <RelativeLayout
+        android:id="@+id/content_wrapper"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/warning_container" />
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/root_snackbar_container" />
+
+        <RelativeLayout
+            android:id="@id/root_snackbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/primary_dark"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp">
+
+            <TextView
+                android:id="@+id/root_snackbar_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/root_snackbar_action"
+                android:paddingBottom="14dp"
+                android:paddingTop="14dp"
+                android:textColor="@color/white"
+                tools:text="FIRST's API is down." />
+
+            <TextView
+                android:id="@id/root_snackbar_action"
+                style="@style/SnackbarActionStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:paddingBottom="14dp"
+                android:paddingTop="14dp"
+                android:layout_marginLeft="24dp"
+                android:textColor="@color/accent"
+                tools:text="MORE" />
+        </RelativeLayout>
+
+
+    </RelativeLayout>
 
     <com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout
         android:id="@+id/navigation_drawer_fragment_container"

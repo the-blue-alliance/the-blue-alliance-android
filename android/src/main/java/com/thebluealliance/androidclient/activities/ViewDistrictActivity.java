@@ -35,7 +35,6 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity
 
     private String mDistrictKey;
     private int mYear;
-    private TextView mWarningMessage;
     private FragmentComponent mComponent;
 
     public static Intent newInstance(Context c, String districtAbbrev, int year) {
@@ -73,9 +72,6 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity
         setModelKey(mDistrictKey, ModelType.DISTRICT);
         setContentView(R.layout.activity_view_district);
 
-        mWarningMessage = (TextView) findViewById(R.id.warning_container);
-        hideWarningMessage();
-
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
         ViewDistrictFragmentPagerAdapter adapter = new ViewDistrictFragmentPagerAdapter(getSupportFragmentManager(), mDistrictKey);
         pager.setAdapter(adapter);
@@ -93,7 +89,7 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity
         setupActionBar();
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
-            showWarningMessage(getString(R.string.warning_unable_to_load));
+            showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
 
         setBeamUri(String.format(NfcUris.URI_DISTRICT, districtAbbrev));
@@ -145,17 +141,6 @@ public class ViewDistrictActivity extends FABNotificationSettingsActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void showWarningMessage(CharSequence warningMessage) {
-        mWarningMessage.setText(warningMessage);
-        mWarningMessage.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideWarningMessage() {
-        mWarningMessage.setVisibility(View.GONE);
     }
 
     @Override

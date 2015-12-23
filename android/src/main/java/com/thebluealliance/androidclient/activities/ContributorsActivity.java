@@ -32,6 +32,7 @@ public class ContributorsActivity extends DatafeedActivity {
                 .add(R.id.contributors_fragment_container, contributorsFragment).commit();
 
         setSearchEnabled(false);
+        setRefreshEnabled(false);
     }
 
     @Override
@@ -56,16 +57,6 @@ public class ContributorsActivity extends DatafeedActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void showWarningMessage(CharSequence warningMessage) {
-
-    }
-
-    @Override
-    public void hideWarningMessage() {
-
     }
 
     @Override
