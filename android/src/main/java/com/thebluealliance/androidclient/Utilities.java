@@ -61,7 +61,7 @@ public class Utilities {
         return sw.toString();
     }
 
-    public static int getFirstompWeek(Date date) {
+    public static int getFirstCompWeek(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return getFirstCompWeek(cal.get(Calendar.YEAR));
@@ -360,6 +360,10 @@ public class Utilities {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
+    public static boolean hasMApis() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
     public static String getDeviceUUID(Context context) {
         return Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
     }
@@ -397,14 +401,6 @@ public class Utilities {
      * {@link ArrayMap} is more memory efficient than {@link HashMap}, so prefer that if possible
      */
     public static <K, V> Map<K, V> getMapForPlatform(Class<K> key, Class<V> value) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            return new ArrayMap<>();
-        } else {
-            return new HashMap<>();
-        }
-    }
-
-    public static <K, V> Map<K, List<V>> getListMapForPlatform(Class<K> key, Class<V> value) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             return new ArrayMap<>();
         } else {

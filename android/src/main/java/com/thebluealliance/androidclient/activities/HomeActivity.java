@@ -220,7 +220,6 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // This will be triggered whenever the drawer opens or closes.
         resetActionBar();
 
         switch (mCurrentSelectedNavigationItemId) {
@@ -325,30 +324,20 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        Log.d(Constants.LOG_TAG, "New intent received!");
         if (intent != null && intent.getExtras() != null) {
             int requestedMode = intent.getExtras().getInt(REQUESTED_MODE, R.id.nav_item_events);
             if (requestedMode == mCurrentSelectedNavigationItemId) {
                 // We are already in the appropriate mode
-                Log.d(Constants.LOG_TAG, "Same requested mode");
                 return;
             } else {
-                Log.d(Constants.LOG_TAG, "New requested mode");
                 switchToModeForId(requestedMode, null);
-                // Ensure that the Action Bar is properly configured for the current mode
-                invalidateOptionsMenu();
             }
         } else {
-            /* No intent given. Switch to default mode */
+            // No intent given. Switch to default mode
             switchToModeForId(mCurrentSelectedNavigationItemId, null);
             invalidateOptionsMenu();
         }
     }
-
-    public void onEvent() {
-
-    }
-
 
     private void onYearSelected(int position) {
         // Only handle this if the year has actually changed

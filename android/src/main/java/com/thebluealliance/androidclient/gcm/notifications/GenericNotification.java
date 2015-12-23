@@ -17,34 +17,48 @@ import com.thebluealliance.androidclient.helpers.JSONHelper;
 
 import java.util.Date;
 
-/**
- * File created by phil on 9/7/14.
- */
 public class GenericNotification extends BaseNotification {
 
-    private String title, message;
-    private PendingIntent intent;
-    private Context context;
+    public static final String TITLE = "title";
+    public static final String TEXT = "desc";
+    public static final String URL = "url";
+    public static final String APP_VERSION = "app_version";
+
+    protected String title, message;
+    protected PendingIntent intent;
+    protected Context context;
 
     public GenericNotification(Context c, String type, String messageData) {
         super(type, messageData);
         context = c;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public PendingIntent getContentIntent() {
+        return intent;
+    }
+
     @Override
     public void parseMessageData() throws JsonParseException {
         JsonObject jsonData = JSONHelper.getasJsonObject(messageData);
-        if (!jsonData.has("title")) {
+        if (!jsonData.has(TITLE)) {
             throw new JsonParseException("Notification data does not contain 'title'");
         }
-        title = jsonData.get("title").getAsString();
-        if (!jsonData.has("desc")) {
+        title = jsonData.get(TITLE).getAsString();
+        if (!jsonData.has(TEXT)) {
             throw new JsonParseException("Notification data does not contain 'desc'");
         }
-        message = jsonData.get("desc").getAsString();
+        message = jsonData.get(TEXT).getAsString();
 
-        if (jsonData.has("url")) {
-            Uri uri = Uri.parse(jsonData.get("url").getAsString());
+        if (jsonData.has(URL)) {
+            Uri uri = Uri.parse(jsonData.get(URL).getAsString());
             Intent launch = Utilities.getIntentForTBAUrl(context, uri);
             launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent = PendingIntent.getActivity(context, 0, launch, 0);
@@ -53,8 +67,8 @@ public class GenericNotification extends BaseNotification {
             intent = PendingIntent.getActivity(context, getNotificationId(), launch, 0);
         }
 
-        if (jsonData.has("app_version")) {
-            String targetVersion = jsonData.get("app_version").getAsString();
+        if (jsonData.has(APP_VERSION)) {
+            String targetVersion = jsonData.get(APP_VERSION).getAsString();
             String currentVersion = Utilities.getVersionNumber();
             if (!targetVersion.contains(currentVersion)) {
                 // The broadcast is not targeted at this version, don't show it
@@ -65,15 +79,19 @@ public class GenericNotification extends BaseNotification {
 
     @Override
     public Notification buildNotification(Context context) {
-        return new NotificationCompat.Builder(context)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(message)
-                .setContentIntent(intent)
                 .setAutoCancel(true)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-                .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)))
-                .build();
+                .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)));
+
+        if (intent != null) {
+            builder.setContentIntent(intent);
+        }
+
+        return builder.build();
     }
 
     @Override

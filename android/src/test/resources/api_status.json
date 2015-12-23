@@ -11,5 +11,9 @@
   "down_events": [
     "2015test",
     "2015down"
-  ]
+  ],
+  "message": {
+    "text": "This is only a test",
+    "expiration": 1449698422
+  }
 }

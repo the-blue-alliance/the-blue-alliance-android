@@ -1,7 +1,0 @@
-<resources>
-    <string name="title_activity_authenticator">Sign in</string>
-
-    <!-- Strings related to login -->
-    <string name="not_now">Not Now</string>
-    <string name="gms_not_supported">Your device does not support myTBA</string>
-</resources>

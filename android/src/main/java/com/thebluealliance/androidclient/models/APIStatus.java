@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
+import java.util.Date;
 import java.util.List;
 
 public class APIStatus {
@@ -9,6 +10,11 @@ public class APIStatus {
     private int latestAppersion;
     private List<String> downEvents;
     private String jsonBlob;
+
+    /* Admin Message */
+    private boolean hasMessage;
+    private String messageText;
+    private Date messageExipration;
 
     public APIStatus() {
 
@@ -60,5 +66,29 @@ public class APIStatus {
 
     public void setJsonBlob(String jsonBlob) {
         this.jsonBlob = jsonBlob;
+    }
+
+    public boolean hasMessage() {
+        return hasMessage;
+    }
+
+    public void setHasMessage(boolean hasMessage) {
+        this.hasMessage = hasMessage;
+    }
+
+    public String getMessageText() {
+        return messageText;
+    }
+
+    public void setMessageText(String messageText) {
+        this.messageText = messageText;
+    }
+
+    public Date getMessageExipration() {
+        return messageExipration;
+    }
+
+    public void setMessageExipration(Date messageExipration) {
+        this.messageExipration = messageExipration;
     }
 }

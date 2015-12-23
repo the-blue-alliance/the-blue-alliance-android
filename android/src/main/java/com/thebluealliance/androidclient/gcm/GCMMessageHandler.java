@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
+import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DaggerNotificationComponent;
 import com.thebluealliance.androidclient.di.components.NotificationComponent;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
@@ -28,6 +29,7 @@ import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotificat
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.CompLevelStartingNotification;
 import com.thebluealliance.androidclient.gcm.notifications.DistrictPointsUpdatedNotification;
+import com.thebluealliance.androidclient.gcm.notifications.EventDownNotification;
 import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
@@ -48,6 +50,7 @@ public class GCMMessageHandler extends IntentService {
     @Inject DatabaseWriter mWriter;
     @Inject SharedPreferences mPrefs;
     @Inject EventBus mEventBus;
+    @Inject TBAStatusController mStatusController;
 
     private NotificationComponent mComponenet;
 
@@ -134,6 +137,13 @@ public class GCMMessageHandler extends IntentService {
                     break;
                 case NotificationTypes.DISTRICT_POINTS_UPDATED:
                     notification = new DistrictPointsUpdatedNotification(messageData);
+                    break;
+                case NotificationTypes.EVENT_DOWN:
+                    notification = new EventDownNotification(c, messageData);
+                    /* Don't break, we also want to schedule a status update here */
+                case NotificationTypes.SYNC_STATUS:
+                    Log.i(Constants.LOG_TAG, "Updating TBA API Status via push notification");
+                    mStatusController.scheduleStatusUpdate(c);
                     break;
             }
 
