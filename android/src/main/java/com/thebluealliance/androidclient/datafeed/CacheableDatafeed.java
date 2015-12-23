@@ -130,14 +130,6 @@ public class CacheableDatafeed {
         return mAPICache.fetchTeamMediaInYear(teamKey, year).concatWith(apiData);
     }
 
-    public Observable<List<Event>> fetchTeamEventHistory(String teamKey, String cacheHeader) {
-        return null;
-    }
-
-    public Observable<List<Award>> fetchTeamEventAwards(String teamKey, String cacheHeader) {
-        return null;
-    }
-
     public Observable<List<Event>> fetchEventsInYear(int year, String cacheHeader) {
         Observable<List<Event>> apiData = mResponseMap.getAndWriteResponseBody(
           mRetrofitAPI.fetchEventsInYear(year, cacheHeader),

@@ -6,13 +6,23 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listitems.ContributorListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import retrofit.http.HTTP;
 
 public class PopulateContributors extends AsyncTask<String, Void, Void> {
     private ContributorsActivity activity;
@@ -25,10 +35,24 @@ public class PopulateContributors extends AsyncTask<String, Void, Void> {
     @Override
     protected Void doInBackground(String... params) {
         ArrayList<ListItem> list = new ArrayList<>();
-        JsonArray data = new JsonArray();//JSONHelper.getasJsonArray(HTTP.GET("https://api.github.com/repos/the-blue-alliance/the-blue-alliance-android/contributors"));
 
-        for (int i = 0; i < data.size(); i++) {
-            list.add(new ContributorListElement(data.get(i).getAsJsonObject().get("login").getAsString(), data.get(i).getAsJsonObject().get("avatar_url").getAsString()));
+        try {
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url("https://api.github.com/repos/the-blue-alliance/the-blue-alliance-android/contributors")
+                    .build();
+            Response response = client.newCall(request).execute();
+            JsonArray data = JSONHelper.getasJsonArray(response.body().string());
+
+            for (JsonElement e : data) {
+                JsonObject user = e.getAsJsonObject();
+                String username = user.get("login").getAsString();
+                int contributionCount = user.get("contributions").getAsInt();
+                String avatarUrl = user.get("avatar_url").getAsString();
+                list.add(new ContributorListElement(username, contributionCount, avatarUrl));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         adapter = new ListViewAdapter(activity, list);

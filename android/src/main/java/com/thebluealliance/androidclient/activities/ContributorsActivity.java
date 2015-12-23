@@ -22,27 +22,22 @@ import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 public class ContributorsActivity extends DatafeedActivity {
 
-    Toolbar toolbar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_contributors);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
         setSupportActionBar(toolbar);
 
         setupActionBar();
 
-        ((ListView) findViewById(android.R.id.list)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                String login = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-                String url = "https://github.com/" + login;
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-            }
+        ((ListView) findViewById(android.R.id.list)).setOnItemClickListener((adapterView, view, position, id) -> {
+            String login = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
+            String url = "https://github.com/" + login;
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
         });
 
         setSearchEnabled(false);

@@ -84,7 +84,7 @@
             android:theme="@style/AppThemeNoActionBarTranslucentStatus"/>
         <activity
             android:name=".activities.settings.MyTBAModelSettingsActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus"/>
+            android:theme="@style/AppThemeNoActionBarTranslucentLightStatus"/>
         <activity
             android:name=".activities.ViewEventActivity"
             android:launchMode="standard"

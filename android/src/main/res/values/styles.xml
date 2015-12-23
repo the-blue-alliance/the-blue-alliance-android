@@ -18,17 +18,18 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <!-- on v21 or later, this lets us draw the status bar background. on < v21,
-    this is the same as simply not showing the action bar. -->
-    <style name="AppThemeNoActionBarTranslucentStatus" parent="AppTheme">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
     <style name="AppThemeNoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <!-- on v21 or later, this lets us draw the status bar background. on < v21,
+    this is the same as simply not showing the action bar. -->
+    <style name="AppThemeNoActionBarTranslucentStatus" parent="AppThemeNoActionBar" />
+
+    <!-- on v23 or later, this will show the status bar with dark status icons to go with a dark
+    status bar background -->
+    <style name="AppThemeNoActionBarTranslucentLightStatus" parent="AppThemeNoActionBarTranslucentStatus"/>
 
     <style name="InfoItemStyle">
         <item name="android:layout_width">match_parent</item>
@@ -152,7 +153,7 @@
         <item name="android:paddingTop">16dp</item>
     </style>
 
-    <style name="DropDownNavStyle" parent="@android:style/Widget.Holo.Light.Spinner"/>
+    <style name="DropDownNavStyle" parent="@android:style/Widget.Holo.Light.Spinner" />
 
     <style name="ListItemButtonStyle">
         <item name="android:background">?android:attr/selectableItemBackground</item>
@@ -207,11 +208,11 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="normalText" >
+    <style name="normalText">
         <item name="android:textStyle">normal</item>
     </style>
 
