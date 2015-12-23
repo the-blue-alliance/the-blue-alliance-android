@@ -2,8 +2,10 @@ package com.thebluealliance.androidclient.fragments;
 
 import com.google.gson.JsonElement;
 
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
 import com.thebluealliance.androidclient.listeners.ContributorClickListener;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.ContributorListSubscriber;
 
 import android.os.Bundle;
@@ -46,5 +48,10 @@ public class ContributorsFragment extends ListViewFragment<JsonElement, Contribu
     @Override
     protected String getRefreshTag() {
         return "app-contributors";
+    }
+
+    @Override
+    protected NoDataViewParams getNoDataParams() {
+        return new NoDataViewParams(R.drawable.ic_info_black_48dp, R.string.no_contributors_list);
     }
 }

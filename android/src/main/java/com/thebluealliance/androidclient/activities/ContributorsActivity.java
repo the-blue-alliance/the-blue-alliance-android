@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -41,8 +42,11 @@ public class ContributorsActivity extends DatafeedActivity {
     }
 
     private void setupActionBar() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setActionBarTitle(getString(R.string.contributors));
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            setActionBarTitle(getString(R.string.contributors));
+        }
     }
 
     @Override

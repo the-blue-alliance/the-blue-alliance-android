@@ -210,7 +210,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     }
 
     private @WarningMessageType int getHighestPriorityMessage() {
-        int highestPriority = Integer.MIN_VALUE;
+        @WarningMessageType int highestPriority = Integer.MIN_VALUE;
         for (int type : activeMessages) {
             if (type > highestPriority) {
                 highestPriority = type;

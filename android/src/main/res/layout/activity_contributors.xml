@@ -10,23 +10,7 @@
     <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/overlay_container"
             android:id="@+id/contributors_fragment_container"
             android:layout_below="@id/toolbar"
             android:orientation="vertical" />
-
-    <LinearLayout
-            android:id="@id/overlay_container"
-            style="@style/ContentOverlayStyle">
-
-        <TextView
-                android:id="@+id/info_container"
-                style="@style/InfoOverlayStyle"
-                android:visibility="gone" />
-
-        <TextView
-                android:id="@+id/warning_container"
-                style="@style/WarningOverlayStyle"
-                android:visibility="gone" />
-    </LinearLayout>
 </RelativeLayout>
