@@ -179,6 +179,16 @@ def ping_command(data=ping_sample):
 def broadcast_command(data=ping_sample):
     notify('broadcast', data)
 
+sync_status_sample = {}
+def status_sync_command(data=sync_status_sample):
+    notify('sync_status', data)
+
+event_down_sample = {
+    "event_key": "2015cthar",
+    "event_name": "Hartford"
+}
+def event_down_command(data=event_down_sample):
+    notify('event_down', data)
 
 # ====== main ======
 
