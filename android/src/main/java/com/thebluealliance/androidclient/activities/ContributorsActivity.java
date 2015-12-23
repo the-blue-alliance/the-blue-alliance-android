@@ -1,24 +1,18 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.background.PopulateContributors;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.fragments.ContributorsFragment;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
-import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
+
+import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 public class ContributorsActivity extends DatafeedActivity {
 
@@ -34,19 +28,12 @@ public class ContributorsActivity extends DatafeedActivity {
 
         setupActionBar();
 
-        ((ListView) findViewById(android.R.id.list)).setOnItemClickListener((adapterView, view, position, id) -> {
-            String login = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-            String url = "https://github.com/" + login;
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-        });
+        ContributorsFragment contributorsFragment = ContributorsFragment.newInstance();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.contributors_fragment_container, contributorsFragment).commit();
 
         setSearchEnabled(false);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        new PopulateContributors(this).execute();
+        setRefreshEnabled(false);
     }
 
     @Override
@@ -55,8 +42,11 @@ public class ContributorsActivity extends DatafeedActivity {
     }
 
     private void setupActionBar() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setActionBarTitle(getString(R.string.contributors));
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            setActionBarTitle(getString(R.string.contributors));
+        }
     }
 
     @Override
