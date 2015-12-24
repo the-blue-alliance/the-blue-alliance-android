@@ -1,8 +1,11 @@
 package com.thebluealliance.androidclient.views;
 
+import com.thebluealliance.androidclient.Constants;
+
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 
 public class DisableSwipeViewPager extends ViewPager {
@@ -31,6 +34,13 @@ public class DisableSwipeViewPager extends ViewPager {
             return false;
         }
         return super.onInterceptTouchEvent(event);
+    }
+
+    @Override
+    public void setCurrentItem(int item) {
+        super.setCurrentItem(item);
+
+        Log.d(Constants.LOG_TAG, "PAGER SET TO ITEM " + item);
     }
 
     public void setSwipeEnabled(boolean enabled) {

@@ -26,6 +26,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -36,12 +37,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class OnboardingActivity extends AppCompatActivity
-  implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks, PlusManager.Callbacks,
-  MyTBAOnboardingViewPager.Callbacks, HasDatafeedComponent {
+        implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks, PlusManager.Callbacks,
+        MyTBAOnboardingViewPager.Callbacks, HasDatafeedComponent {
 
     private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";
     private static final String LOADING_COMPLETE = "loading_complete";
     private static final String MYTBA_LOGIN_COMPLETE = "mytba_login_complete";
+    private static final String CURRENT_TAB = "current_tab";
     private static final String LOAD_FRAGMENT_TAG = "loadFragment";
 
     private DatafeedComponent mComponent;
@@ -93,6 +95,14 @@ public class OnboardingActivity extends AppCompatActivity
                 isDataFinishedLoading = savedInstanceState.getBoolean(LOADING_COMPLETE);
             }
 
+            if (savedInstanceState.containsKey(CURRENT_TAB)) {
+                Handler handler = new Handler();
+                handler.post(() -> {
+                    viewPager.setCurrentItem(savedInstanceState.getInt(CURRENT_TAB));
+                    Log.d(Constants.LOG_TAG, "Setting view pager tab to " + savedInstanceState.getInt(CURRENT_TAB));
+                });
+            }
+
             if (savedInstanceState.containsKey(MYTBA_LOGIN_COMPLETE)) {
                 isMyTBALoginComplete = savedInstanceState.getBoolean(MYTBA_LOGIN_COMPLETE);
             }
@@ -104,8 +114,6 @@ public class OnboardingActivity extends AppCompatActivity
         loadFragment = (LoadTBADataTaskFragment) getSupportFragmentManager().findFragmentByTag(LOAD_FRAGMENT_TAG);
 
         if (loadFragment != null) {
-            viewPager.setCurrentItem(1, false);
-
             LoadTBAData.LoadProgressInfo info = loadFragment.getLastProgressUpdate();
             if (info != null) {
                 if (!loadFragment.wasLastUpdateDelivered() && info.state != LoadTBAData.LoadProgressInfo.STATE_FINISHED) {
@@ -145,6 +153,7 @@ public class OnboardingActivity extends AppCompatActivity
         super.onSaveInstanceState(outState);
         outState.putString(CURRENT_LOADING_MESSAGE_KEY, currentLoadingMessage);
         outState.putBoolean(LOADING_COMPLETE, isDataFinishedLoading);
+        outState.putInt(CURRENT_TAB, viewPager.getCurrentItem());
         outState.putBoolean(MYTBA_LOGIN_COMPLETE, isMyTBALoginComplete);
     }
 
@@ -374,9 +383,9 @@ public class OnboardingActivity extends AppCompatActivity
         if (mComponent == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponent = DaggerDatafeedComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .build();
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .build();
         }
         return mComponent;
     }
