@@ -18,7 +18,7 @@ Insall with: pip install google-api-python-client
 """
 
 PACKAGE = 'com.thebluealliance.androidclient'
-CHANGELOG_PATH = 'android/src/main/play/en-US/whatsnew'
+CHANGELOG_PATH = 'android/src/prod/play/en-US/whatsnew'
 INAPP_CHANGELOG = 'android/src/main/res/raw/changelog.txt'
 
 parser = argparse.ArgumentParser(add_help=True)
@@ -85,7 +85,7 @@ def build_apk(args):
     subprocess.call(["git", "checkout", "v{}".format(args.tag)])
     print "Building and uploading the app..."
     time.sleep(2)
-    # call(["./gradlew", "publishProdRelease"])
+    call(["./gradlew", "publishProdRelease"])
     subprocess.call(["./gradlew", "assembleProdRelease"])
     print "Returning to {}".format(old_branch)
     subprocess.call(["git", "checkout", old_branch])
