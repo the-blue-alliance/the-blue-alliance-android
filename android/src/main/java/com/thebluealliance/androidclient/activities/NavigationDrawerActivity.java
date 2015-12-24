@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
@@ -38,13 +39,12 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
     private NavigationDrawerFragment mNavDrawerFragment;
     private DrawerLayout mDrawerLayout;
     private FrameLayout mContentView;
-    private ScrimInsetsFrameLayout drawerContainer;
+    private ScrimInsetsFrameLayout mDrawerContainer;
 
     private String mActionBarTitle;
 
     private boolean mUseActionBarToggle = false;
     private boolean mEncourageLearning = false;
-    private boolean mShowAppNameWhenDrawerOpened = false;
 
     protected Handler handler;
 
@@ -69,15 +69,12 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         super.setContentView(R.layout.activity_navigation_drawer);
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
-
         mContentView = (FrameLayout) findViewById(R.id.content);
-
         mDrawerLayout.setStatusBarBackground(R.color.primary_dark);
-
-        drawerContainer = (ScrimInsetsFrameLayout) findViewById(R.id.navigation_drawer_fragment_container);
+        mDrawerContainer = (ScrimInsetsFrameLayout) findViewById(R.id.navigation_drawer_fragment_container);
 
         handler = new Handler();
     }
@@ -85,8 +82,6 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
     /**
      * We set up the nav drawer here to give child activities a chance to set the window's Action
      * Bar if they're using a Toolbar instead of the default Action Bar.
-     *
-     * @param savedInstanceState
      */
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -99,29 +94,20 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
         mNavDrawerFragment.setUp(R.id.navigation_drawer_fragment_container,
                 (DrawerLayout) findViewById(R.id.nav_drawer_layout),
                 mEncourageLearning, mUseActionBarToggle);
-        drawerContainer.setOnInsetsCallback(new ScrimInsetsFrameLayout.OnInsetsCallback() {
-            @Override
-            public void onInsetsChanged(Rect insets) {
-                mNavDrawerFragment.onInsetsChanged(insets);
-            }
-        });
+        mDrawerContainer.setOnInsetsCallback(insets -> mNavDrawerFragment.onInsetsChanged(insets));
 
         // Restore the state of the navigation drawer on rotation changes
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(IS_DRAWER_OPEN)) {
-                if (savedInstanceState.getBoolean(IS_DRAWER_OPEN)) {
-                    mDrawerLayout.openDrawer(Gravity.LEFT);
-                }
-            }
+        if (savedInstanceState != null && savedInstanceState.getBoolean(IS_DRAWER_OPEN, false)) {
+            mDrawerLayout.openDrawer(Gravity.LEFT);
         }
 
         onNavigationDrawerCreated();
     }
 
     /**
-     * Called before the navigation drawer is created. Subclasses can override this to perform setup
-     * before the navigation drawer is created, such as enabling or disabling it or disabling the
-     * action bar toggle. Subclasses do not have to call through to super.
+     * Called before the navigation drawer is created. Subclasses can override this to perform
+     * setup before the navigation drawer is created, such as enabling or disabling it or disabling
+     * the action bar toggle. Subclasses do not have to call through to super.
      */
     public void onCreateNavigationDrawer() {
         // Default implementation is empty
@@ -150,10 +136,10 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
     }
 
     /**
-     * Provides a default implementation of item click handling that simply opens the specified mode
-     * in a StartActivity that is inserted into the back stack. Children classes can override this
-     * if they want to enable custom handling of click events. If children override this method,
-     * they should <strong>not</strong> call through to this method.
+     * Provides a default implementation of item click handling that simply opens the specified
+     * mode in a StartActivity that is inserted into the back stack. Children classes can override
+     * this if they want to enable custom handling of click events. If children override this
+     * method, they should <strong>not</strong> call through to this method.
      *
      * @param item The item that was clicked
      */
@@ -178,12 +164,7 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
         }
         // Launch after a short delay to give the drawer time to close.
         if (intent != null) {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    startActivity(intent);
-                }
-            }, DRAWER_CLOSE_ANIMATION_DURATION);
+            handler.postDelayed(() -> startActivity(intent), DRAWER_CLOSE_ANIMATION_DURATION);
         }
 
         /*
@@ -193,12 +174,7 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
          * Launch after a short delay to give the drawer time to close.
          */
 
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                TaskStackBuilder.create(NavigationDrawerActivity.this).addNextIntent(HomeActivity.newInstance(NavigationDrawerActivity.this, id)).startActivities();
-            }
-        }, DRAWER_CLOSE_ANIMATION_DURATION);
+        handler.postDelayed(() -> TaskStackBuilder.create(NavigationDrawerActivity.this).addNextIntent(HomeActivity.newInstance(NavigationDrawerActivity.this, id)).startActivities(), DRAWER_CLOSE_ANIMATION_DURATION);
     }
 
 
@@ -238,18 +214,14 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
      * Closes the navigation drawer
      */
     public void closeDrawer() {
-        if (isDrawerOpen()) {
-            getDrawerLayout().closeDrawer(Gravity.LEFT);
-        }
+        getDrawerLayout().closeDrawer(Gravity.LEFT);
     }
 
     /**
      * Opens the navigation drawer
      */
     public void openDrawer() {
-        if (!isDrawerOpen()) {
-            getDrawerLayout().openDrawer(Gravity.LEFT);
-        }
+        getDrawerLayout().openDrawer(Gravity.LEFT);
     }
 
     /**
@@ -311,31 +283,6 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
             getSupportActionBar().setTitle(mActionBarTitle);
         }
     }
-
-    public void showAppNameWhenDrawerOpened(boolean show) {
-        mShowAppNameWhenDrawerOpened = show;
-    }
-
-    @Override
-    public void onNavDrawerClosed() {
-        if (mActionBarTitle != null) {
-            getSupportActionBar().setTitle(mActionBarTitle);
-        }
-    }
-
-    @Override
-    public void onNavDrawerOpened() {
-        if (mShowAppNameWhenDrawerOpened) {
-            getSupportActionBar().setTitle(R.string.app_name);
-        }
-    }
-
-    protected void setDrawerProfileInfo() {
-        if (mNavDrawerFragment != null) {
-            mNavDrawerFragment.setDrawerProfileInfo();
-        }
-    }
-
 
     /* Plus callbacks */
     @Override

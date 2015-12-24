@@ -29,5 +29,5 @@ cache:
     - $HOME/.gradle/wrapper/
 
 notifications:
-  slack: tba-android:g0OFNqSnj71KnQC8IHGXnzhj
+  slack: the-blue-alliance:m2F6L0FT1ORBmSzKdLvAEmm1
   email: false

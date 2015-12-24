@@ -1,12 +1,9 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
-
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 import com.thebluealliance.androidclient.Constants;
@@ -25,6 +22,7 @@ import com.thebluealliance.androidclient.datafeed.deserializers.TeamDistrictPoin
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
+import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
@@ -37,6 +35,10 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -53,14 +55,34 @@ public class DatafeedModule {
 
     public DatafeedModule() {}
 
-    @Provides @Singleton
-    public Retrofit provideRetrofit(Gson gson, OkHttpClient okHttpClient, SharedPreferences prefs) {
+    @Provides @Singleton @Named("tba_retrofit")
+    public Retrofit provideTBARetrofit(
+            Gson gson,
+            OkHttpClient okHttpClient,
+            SharedPreferences prefs) {
         return getRetrofit(gson, okHttpClient, prefs);
     }
 
-    @Provides @Singleton @Named("retrofit")
-    public APIv2 provideRetrofitAPI(Retrofit retrofit) {
+    @Provides @Singleton @Named("github_retrofit")
+    public Retrofit provideGithubRetrofit(
+            Gson gson,
+            OkHttpClient okHttpClient) {
+        return new Retrofit.Builder()
+                .baseUrl("https://api.github.com/")
+                .client(okHttpClient)
+                .addConverterFactory(LenientGsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+    }
+
+    @Provides @Singleton @Named("tba_api")
+    public APIv2 provideTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
         return retrofit.create(APIv2.class);
+    }
+
+    @Provides @Singleton @Named("github_api")
+    public GitHubAPI provideGitHubAPI(@Named("github_retrofit") Retrofit retrofit) {
+        return retrofit.create(GitHubAPI.class);
     }
 
     @Provides @Singleton
@@ -88,7 +110,7 @@ public class DatafeedModule {
 
     @Provides @Singleton
     public CacheableDatafeed provideDatafeed(
-      @Named("retrofit") APIv2 retrofit,
+      @Named("tba_api") APIv2 retrofit,
       APICache cache,
       DatabaseWriter writer,
       RetrofitResponseMap responseMap) {
@@ -106,8 +128,9 @@ public class DatafeedModule {
     }
 
     @Provides @Singleton
-    public TBAStatusController provideTbaStatusController(SharedPreferences prefs, Gson gson, Tracker tracker) {
-        return new TBAStatusController(prefs, gson, tracker);
+    public TBAStatusController provideTbaStatusController(SharedPreferences prefs, Gson gson,
+                                                          Tracker tracker, Context context) {
+        return new TBAStatusController(prefs, gson, tracker, context);
     }
 
     public static Gson getGson() {

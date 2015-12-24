@@ -1,8 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.app.Activity;
-
 import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
@@ -15,6 +14,8 @@ import com.thebluealliance.androidclient.renderers.MediaRenderer;
 import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
 import com.thebluealliance.androidclient.renderers.RendererModule;
 import com.thebluealliance.androidclient.renderers.TeamRenderer;
+
+import android.app.Activity;
 
 import dagger.Module;
 import dagger.Provides;
@@ -151,5 +152,10 @@ public class SubscriberModule {
     @Provides
     FavoriteListSubscriber provideFavoriteListSubscriber(MyTbaModelRenderer renderer) {
         return new FavoriteListSubscriber(renderer);
+    }
+
+    @Provides
+    public ContributorListSubscriber provideContributorListSubscriber() {
+        return new ContributorListSubscriber();
     }
 }

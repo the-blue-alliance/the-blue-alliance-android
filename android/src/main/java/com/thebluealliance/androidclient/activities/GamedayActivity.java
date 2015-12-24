@@ -38,7 +38,6 @@ public class GamedayActivity extends BaseActivity
     private static final int FAB_ANIMATION_DURATION = 250;
 
     private FragmentComponent mComponent;
-    private TextView mWarningMessage;
 
     FloatingActionButton mFab;
     boolean mIsFabVisible = true;
@@ -69,9 +68,6 @@ public class GamedayActivity extends BaseActivity
 
         mFab = (FloatingActionButton) findViewById(R.id.filter_button);
 
-        mWarningMessage = (TextView) findViewById(R.id.warning_container);
-        hideWarningMessage();
-
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
         GamedayFragmentPagerAdapter adapter = new GamedayFragmentPagerAdapter(getSupportFragmentManager());
         pager.setAdapter(adapter);
@@ -89,7 +85,7 @@ public class GamedayActivity extends BaseActivity
         setupActionBar();
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
-            showWarningMessage(getString(R.string.warning_unable_to_load));
+            showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
     }
 
@@ -112,17 +108,6 @@ public class GamedayActivity extends BaseActivity
     private void setupActionBar() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setActionBarTitle(R.string.title_activity_gameday);
-    }
-
-    @Override
-    public void showWarningMessage(CharSequence warningMessage) {
-        mWarningMessage.setText(warningMessage);
-        mWarningMessage.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideWarningMessage() {
-        mWarningMessage.setVisibility(View.GONE);
     }
 
     @Override

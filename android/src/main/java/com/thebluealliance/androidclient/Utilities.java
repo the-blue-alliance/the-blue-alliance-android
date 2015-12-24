@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.RawRes;
 import android.text.Html;
 import android.text.format.DateFormat;
 import android.util.ArrayMap;
@@ -60,7 +61,7 @@ public class Utilities {
         return sw.toString();
     }
 
-    public static int getFirstompWeek(Date date) {
+    public static int getFirstCompWeek(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return getFirstCompWeek(cal.get(Calendar.YEAR));
@@ -208,7 +209,7 @@ public class Utilities {
         }
     }
 
-    public static void showHelpDialog(Context c, int rawText, String dialogTitle) {
+    public static void showHelpDialog(Context c, @RawRes int rawText, String dialogTitle) {
         String helpText;
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(c.getResources().openRawResource(rawText)));
@@ -231,11 +232,8 @@ public class Utilities {
         builder.setMessage(Html.fromHtml(helpText));
         builder.setCancelable(true);
         builder.setNeutralButton(c.getString(R.string.close_stats_help),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
+                (dialog, which) -> {
+                    dialog.cancel();
                 }
         );
         builder.create().show();
@@ -362,6 +360,10 @@ public class Utilities {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
+    public static boolean hasMApis() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
     public static String getDeviceUUID(Context context) {
         return Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
     }
@@ -399,14 +401,6 @@ public class Utilities {
      * {@link ArrayMap} is more memory efficient than {@link HashMap}, so prefer that if possible
      */
     public static <K, V> Map<K, V> getMapForPlatform(Class<K> key, Class<V> value) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            return new ArrayMap<>();
-        } else {
-            return new HashMap<>();
-        }
-    }
-
-    public static <K, V> Map<K, List<V>> getListMapForPlatform(Class<K> key, Class<V> value) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             return new ArrayMap<>();
         } else {

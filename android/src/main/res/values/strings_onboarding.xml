@@ -43,10 +43,10 @@
     <string name="send_email">Send email&#8230;</string>
 
     <!-- myTBA prompt dialog -->
-    <string name="mytba_prompt_title">Are you sure you don\'t want to enable myTBA?</string>
+    <string name="mytba_prompt_title">Do you want to enable myTBA?</string>
     <string name="mytba_prompt_message">You can always enable it later in Settings.</string>
-    <string name="mytba_prompt_yes">Yes</string>
-    <string name="mytba_prompt_cancel">Cancel</string>
+    <string name="mytba_prompt_yes">Enable Now</string>
+    <string name="mytba_prompt_cancel">Maybe Later</string>
 
     <!-- Status Messages -->
     <string name="loading_teams" formatted="false">Loading teams from %1$d to %2$d</string>

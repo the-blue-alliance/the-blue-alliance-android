@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
+import com.thebluealliance.androidclient.fragments.ContributorsFragment;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
@@ -111,4 +112,5 @@ public interface FragmentComponent {
 
     void inject(LoadTBADataTaskFragment loadTBADataTaskFragment);
     void inject(AllTeamsListFragment allTeamsListFragment);
+    void inject(ContributorsFragment contributorsFragment);
 }

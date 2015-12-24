@@ -28,6 +28,11 @@ tasks.withType(Test) {
     }
 }
 
+project.afterEvaluate {
+    def generateReleasePlayResources = project.tasks.getByName("generateProdReleasePlayResources")
+    generateReleasePlayResources.dependsOn loadProperties
+}
+
 android {
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
@@ -132,6 +137,7 @@ android {
 
 play {
     serviceAccountEmail = 'some-email-address'
+    pk12File = file("somefile.p12")
     track = 'beta'
 }
 
@@ -149,8 +155,8 @@ task loadProperties << {
         android.signingConfigs.release.keyAlias = config["release.key.alias"]
         android.signingConfigs.release.keyPassword = config["release.key.aliasPass"]
 
-        play.serviceAccountEmail = config['play.serviceEmail']
-        //play.pk12File = file(config['play.serviceKey'])
+        play.serviceAccountEmail = config['play.release.serviceEmail']
+        play.pk12File = file(config['play.release.keyFile'])
     }
 
     // check to make sure that an analytics key is defined

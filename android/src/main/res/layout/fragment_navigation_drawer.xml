@@ -47,7 +47,6 @@
                 android:maxLines="1"
                 android:paddingBottom="16dp"
                 android:paddingLeft="16dp"
-                android:text="Matias Duarte"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />

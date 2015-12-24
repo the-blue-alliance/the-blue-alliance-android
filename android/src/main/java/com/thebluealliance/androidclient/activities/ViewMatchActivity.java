@@ -32,7 +32,6 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
     public static final String MATCH_KEY = "match_key";
 
     private String mMatchKey;
-    private TextView mWarningMessage;
 
 
     public static Intent newInstance(Context context, String matchKey) {
@@ -60,8 +59,6 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
         MatchInfoFragment matchInfoFragment = MatchInfoFragment.newInstance(mMatchKey);
         getSupportFragmentManager().beginTransaction()
           .add(R.id.match_info_fragment_container, matchInfoFragment).commit();
-
-        mWarningMessage = (TextView) findViewById(R.id.warning_container);
     }
 
     @Override
@@ -95,21 +92,6 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
     private void setupActionBar() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setActionBarTitle("");
-    }
-
-    @Override
-    public void showWarningMessage(CharSequence warningMessage) {
-        if (mWarningMessage != null) {
-            mWarningMessage.setText(warningMessage);
-            mWarningMessage.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public void hideWarningMessage() {
-        if (mWarningMessage != null) {
-            mWarningMessage.setVisibility(View.GONE);
-        }
     }
 
     @Override

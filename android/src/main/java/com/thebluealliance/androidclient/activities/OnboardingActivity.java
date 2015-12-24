@@ -1,5 +1,23 @@
 package com.thebluealliance.androidclient.activities;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+
+import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.accounts.PlusManager;
+import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
+import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
+import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
+import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
+import com.thebluealliance.androidclient.di.components.DatafeedComponent;
+import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
+import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
+import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -16,23 +34,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.accounts.PlusManager;
-import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
-import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
-import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
-import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
-import com.thebluealliance.androidclient.di.components.DatafeedComponent;
-import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
-import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
-import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 
 public class OnboardingActivity extends AppCompatActivity
   implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks, PlusManager.Callbacks,
@@ -165,12 +166,12 @@ public class OnboardingActivity extends AppCompatActivity
                             .setMessage(getString(R.string.mytba_prompt_message))
                             .setCancelable(false)
                             .setPositiveButton(R.string.mytba_prompt_yes, (dialog, dialogId) -> {
-                                // Scroll to the last page
-                                viewPager.setCurrentItem(2);
+                                // Do nothing; allow user to enable myTBA
                                 dialog.dismiss();
                             })
                             .setNegativeButton(R.string.mytba_prompt_cancel, (dialog, dialogId) -> {
-                                // Do nothing; allow user to enable myTBA
+                                // Scroll to the last page
+                                viewPager.setCurrentItem(2);
                                 dialog.dismiss();
                             }).create().show();
                 } else if (isMyTBALoginComplete || !supportsGooglePlayServices()) {

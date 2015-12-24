@@ -43,7 +43,7 @@ public class CacheableDatafeed {
 
     @Inject
     public CacheableDatafeed(
-      @Named("retrofit") APIv2 retrofitAPI,
+      @Named("tba_api") APIv2 retrofitAPI,
       @Named("cache") APICache apiCache,
       DatabaseWriter writer,
       RetrofitResponseMap responseMap) {
@@ -128,14 +128,6 @@ public class CacheableDatafeed {
           mRetrofitAPI.fetchTeamMediaInYear(teamKey, year, cacheHeader),
           mWriter.getMediaListWriter().get());
         return mAPICache.fetchTeamMediaInYear(teamKey, year).concatWith(apiData);
-    }
-
-    public Observable<List<Event>> fetchTeamEventHistory(String teamKey, String cacheHeader) {
-        return null;
-    }
-
-    public Observable<List<Award>> fetchTeamEventAwards(String teamKey, String cacheHeader) {
-        return null;
     }
 
     public Observable<List<Event>> fetchEventsInYear(int year, String cacheHeader) {

@@ -142,13 +142,8 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     }
 
     @Override
-    public void showWarningMessage(CharSequence warningMessage) {
-        // Nope.
-    }
-
-    @Override
-    public void hideWarningMessage() {
-        // Also nope.
+    public boolean shouldShowWarningMessages() {
+        return false;
     }
 
     @Override

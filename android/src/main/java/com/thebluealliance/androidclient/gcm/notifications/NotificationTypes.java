@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
 /**
- * File created by phil on 8/17/14.
+ * Notification type strings, found in dicts received from GCM
  */
 public class NotificationTypes {
     public static final String
@@ -16,11 +16,16 @@ public class NotificationTypes {
             FINAL_RESULTS = "final_results",
             PING = "ping",
             BROADCAST = "broadcast",
+            SYNC_STATUS = "sync_status",
+            EVENT_DOWN = "event_down",
 
-    UPDATE_FAVORITES = "update_favorites",
+            UPDATE_FAVORITES = "update_favorites",
             UPDATE_SUBSCRIPTIONS = "update_subscriptions",
             SUMMARY = "summary";
 
+    /**
+     * Get the display name for each notification type we can subscribe to for mytba
+     */
     public static String getDisplayName(String notificationType) {
         switch (notificationType) {
             case UPCOMING_MATCH:

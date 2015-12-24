@@ -24,9 +24,9 @@
         android:layout_toLeftOf="@+id/team_info"
         android:layout_toRightOf="@id/team_number"
         android:orientation="vertical"
-        android:paddingBottom="20dp"
+        android:paddingBottom="16dp"
         android:paddingRight="16dp"
-        android:paddingTop="20dp">
+        android:paddingTop="16dp">
 
         <TextView
             android:id="@+id/team_name"
@@ -60,7 +60,7 @@
         style="@style/ListItemButtonStyle"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:visibility="gone"
-        android:src="@drawable/ic_settings_black_24dp" />
+        android:src="@drawable/ic_settings_black_24dp"
+        android:visibility="gone" />
 
 </RelativeLayout>

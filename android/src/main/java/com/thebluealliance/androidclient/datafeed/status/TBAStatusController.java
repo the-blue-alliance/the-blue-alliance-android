@@ -1,5 +1,15 @@
 package com.thebluealliance.androidclient.datafeed.status;
 
+import com.google.android.gms.analytics.Tracker;
+import com.google.gson.Gson;
+
+import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
+import com.thebluealliance.androidclient.background.AnalyticsActions;
+import com.thebluealliance.androidclient.models.APIStatus;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -10,15 +20,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.google.android.gms.analytics.Tracker;
-import com.google.gson.Gson;
-import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
-import com.thebluealliance.androidclient.background.AnalyticsActions;
-import com.thebluealliance.androidclient.models.APIStatus;
-
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -32,8 +35,19 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
 
     public static final String STATUS_PREF_KEY = "tba_status";
 
-    /* 15 minutes in nanoseconds */
-    private static final double UPDATE_TIMEOUT_NS = 9e+11;
+    /**
+     * We use different timeouts for logged in users and not logged in users. Logged-in users will
+     * receive push notifications when the status changes, so it's not as important to poll
+     * frequently. For logged-out users, however, we want to poll more often because they won't
+     * get push notifications.
+     */
+    // 15 minutes
+    private static final double UPDATE_TIMEOUT_LOGGED_IN_NS = 9e+11;
+    // 1 minute
+    private static final double UPDATE_TIMEOUT_LOGGED_OUT_NS = 6e+10;
+
+    // 3 hours
+    private static final double DIALOG_TIMEOUT = 1.08e+13;
 
     private final SharedPreferences mPrefs;
     private final Gson mGson;
@@ -41,14 +55,19 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
 
     private long mLastUpdateTime;
     private long mLastDialogTime;
+    private long mLastMessageTime;
+
+    private boolean mUserIsLoggedIn;
 
     @Inject
-    public TBAStatusController(SharedPreferences prefs, Gson gson, Tracker tracker) {
+    public TBAStatusController(SharedPreferences prefs, Gson gson, Tracker tracker, Context context) {
         mPrefs = prefs;
         mGson = gson;
         mAnalyticsTracker = tracker;
         mLastUpdateTime = Long.MIN_VALUE;
         mLastDialogTime = Long.MIN_VALUE;
+
+        mUserIsLoggedIn = AccountHelper.isMyTBAEnabled(context);
     }
 
     public void scheduleStatusUpdate(Context context) {
@@ -104,31 +123,50 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     @Override
     public void onActivityResumed(Activity activity) {
         /* Update myTBA Status */
-        if (mLastUpdateTime + UPDATE_TIMEOUT_NS < System.nanoTime()) {
+        double timeout = mUserIsLoggedIn ? UPDATE_TIMEOUT_LOGGED_IN_NS :
+                UPDATE_TIMEOUT_LOGGED_OUT_NS;
+        if (mLastUpdateTime + timeout < System.nanoTime()) {
             scheduleStatusUpdate(activity);
             mLastUpdateTime = System.nanoTime();
         }
 
-        if (BuildConfig.VERSION_CODE < getMinAppVersion()){
+        /* App updates required/recommended */
+        if (BuildConfig.VERSION_CODE < getMinAppVersion()) {
             activity.startActivity(new Intent(activity, UpdateRequiredActivity.class));
         } else if (BuildConfig.VERSION_CODE < getLatestAppVersion()
-          && mLastDialogTime + UPDATE_TIMEOUT_NS < System.nanoTime()) {
+                && mLastDialogTime + DIALOG_TIMEOUT < System.nanoTime()) {
             /* Show an app update dialog */
             new AlertDialog.Builder(activity)
-              .setTitle(R.string.update_dialog_title)
-              .setMessage(R.string.update_dialog_text)
-              .setPositiveButton(R.string.update_dialog_action, (dialog, which) -> {
-                  /* Open Play Store page */
-                  dialog.dismiss();
-                  Intent i = new Intent(Intent.ACTION_VIEW);
-                  i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient"));
-                  activity.startActivity(i);
-              })
-              .setNegativeButton(R.string.cancel, (dialog, which) -> {
-                  dialog.dismiss();
-              })
-              .show();
+                    .setTitle(R.string.update_dialog_title)
+                    .setMessage(R.string.update_dialog_text)
+                    .setPositiveButton(R.string.update_dialog_action, (dialog, which) -> {
+                        /* Open Play Store page */
+                        dialog.dismiss();
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient"));
+                        activity.startActivity(i);
+                    })
+                    .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .show();
             mLastDialogTime = System.nanoTime();
+        }
+
+        /* Admin push message */
+        APIStatus status = fetchApiStatus();
+        Date now = new Date();
+        if (status != null && status.hasMessage()
+                && mLastMessageTime + DIALOG_TIMEOUT < System.nanoTime()
+                && status.getMessageExipration().compareTo(now) > 0) {
+            new AlertDialog.Builder(activity)
+                    .setMessage(status.getMessageText())
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.ok, ((dialog, which) -> {
+                        dialog.dismiss();
+                    }))
+                    .show();
+            mLastMessageTime = System.nanoTime();
         }
     }
 
