@@ -28,6 +28,11 @@ tasks.withType(Test) {
     }
 }
 
+project.afterEvaluate {
+    def generateReleasePlayResources = project.tasks.getByName("generateProdReleasePlayResources")
+    generateReleasePlayResources.dependsOn loadProperties
+}
+
 android {
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
@@ -61,7 +66,8 @@ android {
             debug {
                 applicationIdSuffix ".development"
                 testCoverageEnabled = true
-                manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
+                manifestPlaceholders = [gcmPermissionRequired: ""]
+                // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
             }
 
             // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
@@ -132,6 +138,7 @@ android {
 
 play {
     serviceAccountEmail = 'some-email-address'
+    pk12File = file("somefile.p12")
     track = 'beta'
 }
 
@@ -149,8 +156,8 @@ task loadProperties << {
         android.signingConfigs.release.keyAlias = config["release.key.alias"]
         android.signingConfigs.release.keyPassword = config["release.key.aliasPass"]
 
-        play.serviceAccountEmail = config['play.serviceEmail']
-        //play.pk12File = file(config['play.serviceKey'])
+        play.serviceAccountEmail = config['play.release.serviceEmail']
+        play.pk12File = file(config['play.release.keyFile'])
     }
 
     // check to make sure that an analytics key is defined
@@ -220,7 +227,7 @@ dependencies {
     apt 'com.google.dagger:dagger-compiler:2.0.1'
 
     // Other third party libraries
-    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.google.code.gson:gson:2.3.1'
     compile 'me.xuender:unidecode:0.0.7'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'de.hdodenhof:circleimageview:1.3.0'
