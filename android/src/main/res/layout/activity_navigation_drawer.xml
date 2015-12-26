@@ -28,7 +28,8 @@
             android:layout_alignParentBottom="true"
             android:background="@color/primary_dark"
             android:paddingLeft="24dp"
-            android:paddingRight="24dp">
+            android:paddingRight="24dp"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/root_snackbar_message"
@@ -48,9 +49,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="24dp"
                 android:paddingBottom="14dp"
                 android:paddingTop="14dp"
-                android:layout_marginLeft="24dp"
                 android:textColor="@color/accent"
                 tools:text="MORE" />
         </RelativeLayout>
