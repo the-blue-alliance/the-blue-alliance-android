@@ -66,8 +66,7 @@ android {
             debug {
                 applicationIdSuffix ".development"
                 testCoverageEnabled = true
-                manifestPlaceholders = [gcmPermissionRequired: ""]
-                // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
+                manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
             }
 
             // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
