@@ -28,11 +28,6 @@ tasks.withType(Test) {
     }
 }
 
-project.afterEvaluate {
-    def generateReleasePlayResources = project.tasks.getByName("generateProdReleasePlayResources")
-    generateReleasePlayResources.dependsOn loadProperties
-}
-
 android {
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
@@ -137,7 +132,6 @@ android {
 
 play {
     serviceAccountEmail = 'some-email-address'
-    pk12File = file("somefile.p12")
     track = 'beta'
 }
 
@@ -155,8 +149,8 @@ task loadProperties << {
         android.signingConfigs.release.keyAlias = config["release.key.alias"]
         android.signingConfigs.release.keyPassword = config["release.key.aliasPass"]
 
-        play.serviceAccountEmail = config['play.release.serviceEmail']
-        play.pk12File = file(config['play.release.keyFile'])
+        play.serviceAccountEmail = config['play.serviceEmail']
+        //play.pk12File = file(config['play.serviceKey'])
     }
 
     // check to make sure that an analytics key is defined
@@ -189,6 +183,11 @@ repositories {
     }
 }
 
+ext {
+    supportLibVersion = '23.1.1'
+    playServicesVersion = '8.4.0'
+}
+
 dependencies {
 
     // compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -197,19 +196,19 @@ dependencies {
     compile files('libs/tbaMobile-v9-1.19.0-SNAPSHOT.jar')
 
     // Android support libraries
-    compile 'com.android.support:support-v13:23.1.1'
-    compile 'com.android.support:cardview-v7:23.1.1'
-    compile 'com.android.support:support-v4:23.1.1'
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile "com.android.support:support-v13:${supportLibVersion}"
+    compile "com.android.support:cardview-v7:${supportLibVersion}"
+    compile "com.android.support:support-v4:${supportLibVersion}"
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:design:23.1.1'
+    compile "com.android.support:design:${supportLibVersion}"
 
     // Play Services Libraries
     // See http://developer.android.com/google/play-services/setup.html
-    compile 'com.google.android.gms:play-services-base:8.3.0'
-    compile 'com.google.android.gms:play-services-plus:8.3.0'
-    compile 'com.google.android.gms:play-services-analytics:8.3.0'
-    compile 'com.google.android.gms:play-services-gcm:8.3.0'
+    compile "com.google.android.gms:play-services-base:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-plus:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-gcm:${playServicesVersion}"
 
     // Square Libraries
     compile 'com.squareup.picasso:picasso:2.5.2'
@@ -221,7 +220,7 @@ dependencies {
     apt 'com.google.dagger:dagger-compiler:2.0.1'
 
     // Other third party libraries
-    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.google.code.gson:gson:2.4'
     compile 'me.xuender:unidecode:0.0.7'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'de.hdodenhof:circleimageview:1.3.0'
