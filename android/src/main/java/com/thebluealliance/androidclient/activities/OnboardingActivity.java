@@ -167,7 +167,7 @@ public class OnboardingActivity extends AppCompatActivity
             case R.id.continue_to_end:
                 // If myTBA hasn't been activated yet, prompt the user one last time to sign in
                 if (!mMyTBAOnboardingViewPager.isOnLoginPage()) {
-                    mMyTBAOnboardingViewPager.scrollToLoginPage();
+                    mMyTBAOnboardingViewPager.scrollToLoginPage(true);
                 } else if (!isMyTBALoginComplete && supportsGooglePlayServices()) {
                     // Only show this dialog if play services are actually available
                     new AlertDialog.Builder(this)

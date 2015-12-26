@@ -16,8 +16,9 @@ import me.relex.circleindicator.CircleIndicator;
 
 public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnClickListener {
 
-    private final ViewPager mViewPager;
+    private final DisableSwipeViewPager mViewPager;
     private final View mSignInButton;
+    private View mPagerIndicator;
     private final TextView myTBATitle;
     private final TextView myTBASubtitle;
 
@@ -30,8 +31,9 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
 
         myTBATitle = (TextView) findViewById(R.id.mytba_title);
         myTBASubtitle = (TextView) findViewById(R.id.mytba_subtitle);
+        mPagerIndicator = findViewById(R.id.mytba_pager_indicator);
 
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
+        mViewPager = (DisableSwipeViewPager) findViewById(R.id.view_pager);
         mViewPager.setAdapter(new MyTBAOnboardingPagerAdapter(mViewPager));
         mViewPager.setOffscreenPageLimit(10);
 
@@ -59,9 +61,9 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
 
     }
 
-    public void scrollToLoginPage() {
+    public void scrollToLoginPage(boolean animate) {
         // Login page should always be the last page
-        mViewPager.setCurrentItem(mViewPager.getAdapter().getCount() - 1);
+        mViewPager.setCurrentItem(mViewPager.getAdapter().getCount() - 1, animate);
     }
 
     public boolean isOnLoginPage() {
@@ -82,6 +84,10 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
 
         myTBASubtitle.setVisibility(View.VISIBLE);
         myTBASubtitle.setText(R.string.mytba_no_play_services_subtitle);
+
+        scrollToLoginPage(false);
+        mViewPager.setSwipeEnabled(false);
+        setPagerIndicatorVisible(false);
     }
 
     public void setUpForLoginPrompt() {
@@ -100,6 +106,13 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
         myTBASubtitle.setText(R.string.mytba_login_success_subtitle);
 
         mSignInButton.setVisibility(View.GONE);
+        scrollToLoginPage(false);
+        mViewPager.setSwipeEnabled(false);
+        setPagerIndicatorVisible(false);
+    }
+
+    public void setPagerIndicatorVisible(boolean visible) {
+        mPagerIndicator.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     public interface Callbacks {
