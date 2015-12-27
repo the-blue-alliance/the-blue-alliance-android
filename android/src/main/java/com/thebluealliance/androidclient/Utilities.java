@@ -1,8 +1,6 @@
 package com.thebluealliance.androidclient;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
@@ -10,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.RawRes;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.format.DateFormat;
 import android.util.ArrayMap;

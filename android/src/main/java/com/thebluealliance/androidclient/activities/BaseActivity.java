@@ -12,7 +12,7 @@ import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 import com.thebluealliance.androidclient.types.ModelType;
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
