@@ -35,7 +35,7 @@ Code Style
 
 We use the base [Android Code Style](https://github.com/android/platform_development/blob/master/ide/intellij/codestyles/AndroidStyle.xml)
 When you set up Android Studio, copy `AndroidStyle.xml` into your config directory (on linux,
-`~/.AndroidStudioXX/config/codestyles/` and then open Settings -> Editor -> Code Style and in the
+`~/.AndroidStudioXX/config/codestyles/`) and then open Settings -> Editor -> Code Style and in the
  dropdown, select `AndroidStyle`.
 
 ### <a name="setup"></a>
