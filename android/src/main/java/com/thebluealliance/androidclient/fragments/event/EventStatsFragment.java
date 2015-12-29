@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
