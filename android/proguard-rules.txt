@@ -59,6 +59,7 @@ public static *** d(...);
 -keepclassmembers class android.support.design.widget.FloatingActionButton$Behavior { public <init>(); }
 
 -keep class com.firebase.** { *; }
+-dontwarn com.firebase.**
 -keepnames class com.fasterxml.jackson.** { *; }
 -keep class com.thebluealliance.androidclient.** { *; }
 -keepnames class com.thebluealliance.androidclient.** { *; }
