@@ -53,7 +53,7 @@ def update_whatsnew():
     subprocess.call(["cp", CHANGELOG_PATH, INAPP_CHANGELOG])
 
     # Fix line breaks
-    subprocess.call(["sed", "-i", "'s/$/<br>/'", INAPP_CHANGELOG])
+    subprocess.call(["sed", "-i", 's/$/<br>/', INAPP_CHANGELOG])
     subprocess.call(["rm", "-f", "{}{}".format(INAPP_CHANGELOG, "bak")])
 
 
@@ -74,7 +74,7 @@ def create_tag(args):
     print("Creating new git tag for release v{}: {}".format(args.tag, name))
     print("To skip creating a new tag, run with --skip_tag")
     time.sleep(2)
-    subprocess.call(["git", "tag", "-a", "v{}".format(args.tag)])
+    subprocess.call(["git", "tag", "-a", "v{}".format(args.tag), "-m", name])
 
 
 def build_apk(args):
@@ -85,10 +85,14 @@ def build_apk(args):
     subprocess.call(["git", "checkout", "v{}".format(args.tag)])
     print "Building and uploading the app..."
     time.sleep(2)
-    call(["./gradlew", "publishProdRelease"])
-    subprocess.call(["./gradlew", "assembleProdRelease"])
+    subprocess.call(["./gradlew", "publishProdRelease"])
     print "Returning to {}".format(old_branch)
     subprocess.call(["git", "checkout", old_branch])
+
+
+def push_repo():
+    subprocess.call(["git", "push", "upstream"])
+    subprocess.call(["git", "push", "--tags", "upstream"])
 
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -99,3 +103,4 @@ if __name__ == "__main__":
         commit_whatsnew()
         create_tag(args)
     build_apk(args)
+    push_repo()
