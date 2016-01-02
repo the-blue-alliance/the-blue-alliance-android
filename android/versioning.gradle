@@ -40,6 +40,9 @@ ext {
 
         (major, minor, patch, candidate) = [major, minor, patch, candidate].collect{it.toInteger()}
 
-        (major * 1000000) + (minor * 10000) + (patch * 100) + candidate;
+        def versionCode = (major * 1000000) + (minor * 10000) + (patch * 100) + candidate;
+
+        [major, minor, patch, versionCode, version.tagName, version.gitHash,
+         version.commitCountFromTag, version.dirty]
     }
 }

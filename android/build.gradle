@@ -20,6 +20,8 @@ retrolambda {
 }
 
 version semverVersion()
+def (major, minor, patch, versionNum, gitTag, gitHash, commitsFromTag, repoDirty) =
+buildVersionCode()
 
 tasks.withType(Test) {
     testLogging {
@@ -91,10 +93,18 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode buildVersionCode()
+        versionCode versionNum
         versionName version.toString()
-
         multiDexEnabled true
+
+        // Add specific versioning things to BuildConfig
+        buildConfigField "int", "MAJOR_VERSION", "$major"
+        buildConfigField "int", "MINOR_VERSION", "$minor"
+        buildConfigField "int", "PATCH_VERSION", "$patch"
+        buildConfigField "String", "GIT_TAG", "\"$gitTag\""
+        buildConfigField "String", "GIT_HASH", "\"$gitHash\""
+        buildConfigField "int", "COMMITS_FROM_TAG", "$commitsFromTag"
+        buildConfigField "boolean", "REPO_DIRTY", "$repoDirty"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
