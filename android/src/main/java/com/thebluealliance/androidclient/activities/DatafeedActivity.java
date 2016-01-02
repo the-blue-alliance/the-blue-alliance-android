@@ -126,7 +126,7 @@ public abstract class DatafeedActivity extends BaseActivity
      * Receive a notification for an to TBA status
      */
     @SuppressWarnings("unused")
-    public void onEvent(APIStatus tbaStatus) {
+    public void onEventMainThread(APIStatus tbaStatus) {
         commonStatusUpdate(tbaStatus);
     }
 
