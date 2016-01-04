@@ -1,10 +1,8 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import android.content.Context;
-import android.database.Cursor;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
@@ -24,6 +22,9 @@ import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.DistrictType;
+
+import android.content.Context;
+import android.database.Cursor;
 
 import java.util.Calendar;
 import java.util.List;
@@ -325,7 +326,7 @@ public class APICache {
         return Observable.create((observer) -> {
             try {
                 String where =
-                  String.format("$1%s = ? AND %2$s = ?", EventsTable.YEAR, EventsTable.DISTRICT);
+                  String.format("%1$s = ? AND %2$s = ?", EventsTable.YEAR, EventsTable.DISTRICT);
                 int districtEnum = DistrictType.fromAbbreviation(districtShort).ordinal();
                 List<Event> events = mDb.getEventsTable().getForQuery(
                   null,
