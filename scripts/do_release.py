@@ -38,6 +38,17 @@ def check_clean_repo():
         sys.exit(1)
 
 
+def check_unittest():
+    print "Running project unit tests..."
+    time.sleep(2)
+    try:
+        subprocess.check_call(["./gradlew", "testProdDebugUnitTest"])
+        print "Unit tests passed!"
+    except CalledProcessError:
+        print "Unit tests failed. Fix them before releasing"
+        sys.exit(1)
+
+
 def update_whatsnew():
     print "Updating whatsnew file ({}). Limit 500 characters".format(CHANGELOG_PATH)
     time.sleep(2)
@@ -98,6 +109,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if not args.dirty_repo:
         check_clean_repo()
+    check_unittest()
     if not args.skip_tag:
         update_whatsnew()
         commit_whatsnew()
