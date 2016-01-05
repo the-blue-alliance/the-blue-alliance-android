@@ -81,7 +81,7 @@ public class SettingsActivity extends AppCompatActivity {
             changelog.setIntent(new Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/" +
-                            "releases/tag/" + versionName)));
+                            "releases/tag/v" + versionName)));
 
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
