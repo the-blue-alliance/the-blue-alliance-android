@@ -28,6 +28,8 @@ parser.add_argument("--skip-tag", action="store_true", default=False,
                     help="Do not make a new git tag. Instead, push existing release identified by <tag>")
 parser.add_argument("--dirty-repo", action="store_true", default=False,
                     help="Allow untracked changes in the repo")
+parser.add_argument("--skip-validate", action="store_true", default=False,
+                    help="Do not build an install the prod apk to test on a real device")
 
 
 def check_clean_repo():
@@ -42,7 +44,7 @@ def check_unittest():
     print "Running project unit tests..."
     time.sleep(2)
     try:
-        subprocess.check_call(["./gradlew", "testProdDebugUnitTest"])
+        subprocess.check_call(["./gradlew", "testProdReleaseUnitTest"])
         print "Unit tests passed!"
     except CalledProcessError:
         print "Unit tests failed. Fix them before releasing"
@@ -88,6 +90,22 @@ def create_tag(args):
     subprocess.call(["git", "tag", "-a", "v{}".format(args.tag), "-m", name])
 
 
+def validate_build():
+    print "Installing build, ensure a device is plugged in with USB Debugging enabled"
+    subprocess.call(["adb", "devices"])
+    try:
+        input("Press Enter to continue...")
+    except SyntaxError:
+        pass
+    time.sleep(5)
+    subprocess.check_call(["./gradlew", "installProdRelease"])
+    subprocess.call(["adb", "shell", "am", "start", "-n", "com.thebluealliance.androidclient/com.thebluealliance.androidclient.activities.LaunchActivity"])
+    try:
+        input("Press Enter to continue the release, or ^C to quit")
+    except SyntaxError:
+        pass
+
+
 def build_apk(args):
     # Check out repo at specified tag and build
     old_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip()
@@ -114,5 +132,7 @@ if __name__ == "__main__":
         update_whatsnew()
         commit_whatsnew()
         create_tag(args)
+    if not args.skip_validate:
+        validate_build()
     build_apk(args)
     push_repo()
