@@ -1,4 +1,4 @@
-Version 3.0.2:<br>
+Version 3.0.3:<br>
     - We've rewritten the way the app loads data to make it better, faster, and more reliable. Hope you can notice an improvement :)<br>
     - Many bugfixes and other app improvements<br>
 <br>
