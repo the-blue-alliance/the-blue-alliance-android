@@ -73,7 +73,7 @@ public class RankingsListSubscriberTest {
         }
         String breakdown = EventHelper.createRankingBreakdown(rankingElements);
         RankingListElement expected =
-          new RankingListElement("frc1519", 1519, "Team 1519", 1, "", breakdown);
+          new RankingListElement("frc1519", "1519", "Team 1519", 1, "", breakdown);
 
         assertEquals(1, data.size());
         assertEquals(expected, data.get(0));
