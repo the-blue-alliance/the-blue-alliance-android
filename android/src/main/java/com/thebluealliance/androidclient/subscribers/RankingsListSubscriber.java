@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.subscribers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
@@ -12,8 +11,6 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.RankingListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
-
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +77,7 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonElement, List<
             } else {
                 nickname = "Team " + teamKey.substring(3);
             }
+
             mDataToBind.add(
                     new RankingListElement(
                             teamKey,
