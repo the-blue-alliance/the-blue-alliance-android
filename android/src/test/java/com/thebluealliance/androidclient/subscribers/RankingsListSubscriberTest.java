@@ -36,6 +36,8 @@ public class RankingsListSubscriberTest {
 
     RankingsListSubscriber mSubscriber;
     JsonArray mRankings;
+    // Includes a team with a number like "####B"
+    JsonArray mRankingsMultiTeam;
 
     @Before
     public void setUp() {
@@ -44,6 +46,7 @@ public class RankingsListSubscriberTest {
 
         mSubscriber = new RankingsListSubscriber(mDb, mEventBus);
         mRankings = ModelMaker.getModel(JsonArray.class, "2015necmp_rankings");
+        mRankingsMultiTeam = ModelMaker.getModel(JsonArray.class, "2015ohri_rankings");
     }
 
     @Test
@@ -74,6 +77,23 @@ public class RankingsListSubscriberTest {
         String breakdown = EventHelper.createRankingBreakdown(rankingElements);
         RankingListElement expected =
           new RankingListElement("frc1519", "1519", "Team 1519", 1, "", breakdown);
+
+        assertEquals(1, data.size());
+        assertEquals(expected, data.get(0));
+    }
+
+    @Test
+    public void testParsedDataWithMultiTeam() throws BasicModel.FieldNotDefinedException {
+        List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mRankingsMultiTeam);
+        EventHelper.CaseInsensitiveMap<String> rankingElements = new EventHelper.CaseInsensitiveMap<>();
+        for (int j = 2; j < mRankingsMultiTeam.get(0).getAsJsonArray().size(); j++) {
+            rankingElements.put(
+                    mRankingsMultiTeam.get(0).getAsJsonArray().get(j).getAsString(),
+                    mRankingsMultiTeam.get(1).getAsJsonArray().get(j).getAsString());
+        }
+        String breakdown = EventHelper.createRankingBreakdown(rankingElements);
+        RankingListElement expected =
+                new RankingListElement("frc1038B", "1038B", "Team 1038B", 30, "", breakdown);
 
         assertEquals(1, data.size());
         assertEquals(expected, data.get(0));
