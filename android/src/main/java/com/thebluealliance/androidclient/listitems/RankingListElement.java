@@ -9,13 +9,13 @@ import com.thebluealliance.androidclient.R;
 
 public class RankingListElement extends ListElement {
 
-    public final int teamNumber;
+    public final String teamNumber;
     public final String teamName;
     public final int teamRank;
     public final String teamRecord;
     public final String teamBreakdown;
 
-    public RankingListElement(String key, int number, String name, int ranking, String record, String breakdown) {
+    public RankingListElement(String key, String number, String name, int ranking, String record, String breakdown) {
         super(key);
         teamNumber = number;
         teamName = name;
@@ -41,7 +41,7 @@ public class RankingListElement extends ListElement {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.teamNumber.setText("" + teamNumber);
+        holder.teamNumber.setText(teamNumber);
 
         if (teamName.equals("")) {
             holder.teamName.setVisibility(View.INVISIBLE);
@@ -76,7 +76,7 @@ public class RankingListElement extends ListElement {
             return false;
         }
         RankingListElement element = (RankingListElement) o;
-        return teamNumber == element.teamNumber &&
+        return teamNumber.equals(element.teamNumber) &&
           teamName.equals(element.teamName) &&
           teamRank == element.teamRank &&
           teamRecord.equals(element.teamRecord) &&
