@@ -344,7 +344,7 @@ public class Utilities {
     }
 
     public static String sha256(String input) {
-        MessageDigest digest = null;
+        MessageDigest digest;
         String hash = null;
         try {
             digest = MessageDigest.getInstance("SHA-256");
