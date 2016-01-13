@@ -14,9 +14,6 @@ import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * File created by phil on 4/22/14.
- */
 public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
     public final List<ListGroup> groups;

@@ -10,9 +10,6 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 
-/**
- * File created by phil on 7/27/14.
- */
 public class GCMHelper {
 
     private static String senderId;

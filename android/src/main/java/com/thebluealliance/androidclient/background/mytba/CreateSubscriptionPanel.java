@@ -19,9 +19,6 @@ import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 
-/**
- * File created by phil on 8/13/14.
- */
 public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
 
     private Context context;

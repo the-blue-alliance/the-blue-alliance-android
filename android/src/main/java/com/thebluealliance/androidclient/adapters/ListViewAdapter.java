@@ -10,9 +10,6 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 
 import java.util.List;
 
-/**
- * File created by phil on 4/20/14.
- */
 public class ListViewAdapter extends ArrayAdapter<ListItem> {
     private LayoutInflater mInflater;
     public List<ListItem> values;

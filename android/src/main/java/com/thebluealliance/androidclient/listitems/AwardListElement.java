@@ -17,9 +17,6 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.util.HashMap;
 
-/**
- * File created by phil on 4/23/14.
- */
 public class AwardListElement extends ListElement {
 
     private String mAwardName, mEventKey, mSelectedTeamNum;

@@ -21,9 +21,6 @@ import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 import java.util.ArrayList;
 import java.util.Set;
 
-/**
- * File created by phil on 8/18/14.
- */
 public class MyTBASettingsFragment extends PreferenceFragment {
 
     public static final String MODEL_KEY = "model_key";

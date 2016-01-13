@@ -9,9 +9,6 @@ import org.robolectric.RobolectricTestRunner;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * File created by phil on 5/31/14.
- */
 @RunWith(RobolectricTestRunner.class)
 public class ValidatorTest {
 

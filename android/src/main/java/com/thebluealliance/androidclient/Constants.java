@@ -4,9 +4,6 @@ import com.thebluealliance.androidclient.types.MediaType;
 
 import java.util.HashMap;
 
-/**
- * File created by phil on 4/22/14.
- */
 public class Constants {
     public static final String LOG_TAG = "tba-android";
     public static final String DATAMANAGER_LOG = LOG_TAG + ":dataManager";

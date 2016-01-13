@@ -27,9 +27,6 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
 
-/**
- * File created by phil on 4/22/14.
- */
 public class JSONHelper {
     private static Gson gson;
     private static JsonParser parser;

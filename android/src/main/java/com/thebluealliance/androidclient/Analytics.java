@@ -9,9 +9,6 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.util.HashMap;
 
-/**
- * File created by phil on 7/25/14.
- */
 public class Analytics {
     private static final String PROD_ANALYTICS_KEY = "analytics.id";
     static HashMap<GAnalyticsTracker, Tracker> mTrackers = new HashMap<>();
