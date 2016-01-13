@@ -1,18 +1,26 @@
 package com.thebluealliance.androidclient.activities;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
+import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
+import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
+import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
+import com.thebluealliance.androidclient.types.ModelType;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.res.ColorStateList;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.animation.ValueAnimatorCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
@@ -26,16 +34,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
-import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
-import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
-import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
 public abstract class FABNotificationSettingsActivity extends DatafeedActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
