@@ -94,7 +94,10 @@ public abstract class FABNotificationSettingsActivity extends DatafeedActivity i
 
         // Hide the notification settings button if myTBA isn't enabled
         if (!AccountHelper.isMyTBAEnabled(this)) {
+            Log.d(Constants.LOG_TAG, "myTBA is not enabled, hiding button");
             mNotificationSettings.setVisibility(View.INVISIBLE);
+        } else {
+            Log.d(Constants.LOG_TAG, "myTBA is enabled!");
         }
 
         mNotificationSettingsToolbar = (Toolbar) findViewById(R.id.notification_settings_toolbar);
@@ -127,11 +130,7 @@ public abstract class FABNotificationSettingsActivity extends DatafeedActivity i
                 // Set up system UI (status bar background and icon color
                 getDrawerLayout().setStatusBarBackgroundColor(getResources().getColor(R.color
                         .accent_dark));
-                if (Utilities.hasMApis()) {
-                    int vis = getWindow().getDecorView().getSystemUiVisibility();
-                    vis |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-                    getWindow().getDecorView().setSystemUiVisibility(vis);
-                }
+                Utilities.setLightStatusBar(getWindow(), true);
             } else {
                 mOpenNotificationSettingsButton.setVisibility(View.VISIBLE);
                 mCloseNotificationSettingsButton.setVisibility(View.INVISIBLE);
@@ -269,12 +268,7 @@ public abstract class FABNotificationSettingsActivity extends DatafeedActivity i
         systemUiAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                if (Utilities.hasMApis()) {
-                    int vis = getWindow().getDecorView().getSystemUiVisibility();
-                    // Set light
-                    vis |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-                    getWindow().getDecorView().setSystemUiVisibility(vis);
-                }
+                Utilities.setLightStatusBar(getWindow(), true);
             }
         });
 
@@ -371,12 +365,7 @@ public abstract class FABNotificationSettingsActivity extends DatafeedActivity i
         systemUiAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                if (Utilities.hasMApis()) {
-                    int vis = getWindow().getDecorView().getSystemUiVisibility();
-                    // Set dark
-                    vis &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
-                    getWindow().getDecorView().setSystemUiVisibility(vis);
-                }
+                Utilities.setLightStatusBar(getWindow(), false);
             }
         });
 
