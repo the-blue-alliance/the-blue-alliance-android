@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * File created by phil on 8/18/14.
  */
-public class NotificationSettingsFragment extends PreferenceFragment {
+public class MyTBASettingsFragment extends PreferenceFragment {
 
     public static final String MODEL_KEY = "model_key";
     public static final String MODEL_TYPE = "model_type";
@@ -37,8 +37,8 @@ public class NotificationSettingsFragment extends PreferenceFragment {
 
     private boolean preferencesLoaded = false;
 
-    public static NotificationSettingsFragment newInstance(String modelKey, ModelType modelType, Bundle savedStateBundle) {
-        NotificationSettingsFragment fragment = new NotificationSettingsFragment();
+    public static MyTBASettingsFragment newInstance(String modelKey, ModelType modelType, Bundle savedStateBundle) {
+        MyTBASettingsFragment fragment = new MyTBASettingsFragment();
         Bundle args = new Bundle();
         args.putString(MODEL_KEY, modelKey);
         args.putInt(MODEL_TYPE, modelType.getEnum());
@@ -59,7 +59,7 @@ public class NotificationSettingsFragment extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() == null || !getArguments().containsKey(MODEL_KEY)) {
-            throw new IllegalArgumentException("NotificationSettingsFragment must be constructed with a model key");
+            throw new IllegalArgumentException("MyTBASettingsFragment must be constructed with a model key");
         }
         modelKey = getArguments().getString(MODEL_KEY);
         modelType = ModelHelper.getModelFromEnum(getArguments().getInt(MODEL_TYPE));

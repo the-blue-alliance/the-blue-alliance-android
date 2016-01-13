@@ -37,7 +37,7 @@ import javax.inject.Inject;
 
 import rx.schedulers.Schedulers;
 
-public class ViewTeamActivity extends FABNotificationSettingsActivity implements
+public class ViewTeamActivity extends MyTBASettingsActivity implements
         ViewPager.OnPageChangeListener,
         View.OnClickListener,
         HasFragmentComponent,
