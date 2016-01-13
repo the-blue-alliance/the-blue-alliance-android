@@ -121,5 +121,8 @@
     <string name="no_recent_notifications">No recent notifications</string>
     <string name="recent_notifications_title">Recent Notifications</string>
     <string name="title_activity_update_required">UpdateRequiredActivity</string>
+    <string name="mytba_settings_not_changed">Settings not changed</string>
+    <string name="mytba_settings_updated_successfully">Settings updated successfully</string>
+    <string name="mytba_settings_error">Error updating settings</string>
 
 </resources>

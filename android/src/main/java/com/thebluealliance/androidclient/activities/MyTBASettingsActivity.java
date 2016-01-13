@@ -18,6 +18,7 @@ import android.animation.ValueAnimator;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.StringRes;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -457,7 +458,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     @Override
     public void onSuccess() {
         Runnable runnable = () -> {
-            showSnackbar("Settings updated successfully");
+            showSnackbar(R.string.mytba_settings_updated_successfully);
 
             Integer colorFrom = getResources().getColor(R.color.accent);
             Integer colorTo = getResources().getColor(R.color.green);
@@ -486,10 +487,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
 
     @Override
     public void onNoOp() {
-        Runnable runnable = () -> {
-            showSnackbar("Settings not changed");
-        };
-        runAfterSettingsPanelIsClosed(runnable);
+        runAfterSettingsPanelIsClosed(() -> showSnackbar(R.string.mytba_settings_not_changed));
 
         mSaveInProgress = false;
     }
@@ -497,7 +495,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     @Override
     public void onError() {
         Runnable runnable = () -> {
-            showSnackbar("Error updating settings");
+            showSnackbar(R.string.mytba_settings_error);
             // Something went wrong, restore the initial state
             mSettingsFragment.restoreInitialState();
 
@@ -535,8 +533,8 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         mCloseSettingsButton.setEnabled(true);
     }
 
-    private void showSnackbar(int messageResId) {
-        showSnackbar(getResources().getString(messageResId));
+    private void showSnackbar(@StringRes int messageResId) {
+        showSnackbar(getString(messageResId));
     }
 
     private void showSnackbar(String message) {
