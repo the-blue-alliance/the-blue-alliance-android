@@ -71,7 +71,6 @@ public class Utilities {
     public static int getFirstCompWeek(int year) {
         int offset = year - 1992;
         if (Constants.FIRST_COMP_WEEK.length > offset && year != -1) {
-            ;
             return offset >= Constants.FIRST_COMP_WEEK.length || offset < 0 ?
                     Constants.FIRST_COMP_WEEK[Constants.FIRST_COMP_WEEK.length - 1] :
                     Constants.FIRST_COMP_WEEK[offset];
@@ -344,10 +343,9 @@ public class Utilities {
     }
 
     public static String sha256(String input) {
-        MessageDigest digest;
         String hash = null;
         try {
-            digest = MessageDigest.getInstance("SHA-256");
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
             digest.update(input.getBytes());
 
             hash = bytesToHexString(digest.digest());
