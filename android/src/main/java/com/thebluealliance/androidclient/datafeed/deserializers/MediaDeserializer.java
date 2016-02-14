@@ -9,9 +9,6 @@ import com.thebluealliance.androidclient.models.Media;
 
 import java.lang.reflect.Type;
 
-/**
- * File created by phil on 5/31/14.
- */
 public class MediaDeserializer implements JsonDeserializer<Media> {
     @Override
     public Media deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

@@ -12,9 +12,6 @@ import com.thebluealliance.androidclient.types.ModelType;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * File created by phil on 8/13/14.
- */
 public class Subscription {
     private String userName;
     private String modelKey;

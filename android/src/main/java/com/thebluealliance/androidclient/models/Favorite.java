@@ -5,9 +5,6 @@ import android.content.ContentValues;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.types.ModelType;
 
-/**
- * File created by phil on 8/13/14.
- */
 public class Favorite {
 
     private String userName;

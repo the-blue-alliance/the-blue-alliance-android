@@ -13,25 +13,22 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
-import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
+import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 
-/**
- * File created by phil on 8/13/14.
- */
 public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
 
     private Context context;
     private boolean favExists;
-    private NotificationSettingsFragment fragment;
+    private MyTBASettingsFragment fragment;
     private Bundle savedState;
     private ModelType type;
     private String currentSettings;
 
-    public CreateSubscriptionPanel(Context context, NotificationSettingsFragment preferenceFragment, Bundle savedState, ModelType type) {
+    public CreateSubscriptionPanel(Context context, MyTBASettingsFragment preferenceFragment, Bundle savedState, ModelType type) {
         this.context = context;
         this.fragment = preferenceFragment;
         this.savedState = savedState;

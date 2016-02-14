@@ -7,8 +7,6 @@ import android.support.annotation.Nullable;
  *
  * @author Phil Lopreiato
  * @author Bryce Matsuda
- *         <p>
- *         File created by phil on 6/15/14.
  */
 public class TeamHelper {
     /**

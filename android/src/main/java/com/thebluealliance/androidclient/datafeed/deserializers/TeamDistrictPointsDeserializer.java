@@ -9,9 +9,6 @@ import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 
 import java.lang.reflect.Type;
 
-/**
- * File created by phil on 7/26/14.
- */
 public class TeamDistrictPointsDeserializer implements JsonDeserializer<DistrictPointBreakdown> {
     @Override
     public DistrictPointBreakdown deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

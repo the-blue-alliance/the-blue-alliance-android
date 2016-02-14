@@ -29,9 +29,6 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.util.Date;
 
-/**
- * File created by phil on 6/21/14.
- */
 public class ModelInflater {
 
     /**

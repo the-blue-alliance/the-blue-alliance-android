@@ -17,9 +17,6 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.util.HashMap;
 
-/**
- * File created by phil on 4/23/14.
- */
 public class AwardListElement extends ListElement {
 
     private String mAwardName, mEventKey, mSelectedTeamNum;
@@ -56,8 +53,7 @@ public class AwardListElement extends ListElement {
             JsonObject winner = mAwardWinner.getAsJsonObject();
             View winnerView = inflater.inflate(R.layout.list_item_award_recipient, null);
 
-            String teamNumber = "";
-            String awardee = "";
+            String teamNumber, awardee;
             if (JSONHelper.isNull(winner.get("team_number"))) {
                 teamNumber = "";
             } else {

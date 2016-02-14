@@ -130,7 +130,7 @@ public class UpcomingMatchNotification extends BaseNotification {
 
         int numFavoritedTeams = favoritedTeamsFromMatch.size();
 
-        String contentText = "";
+        String contentText;
         if (numFavoritedTeams == 0) {
             // Looks like we got this GCM notification by mistake
             return null;

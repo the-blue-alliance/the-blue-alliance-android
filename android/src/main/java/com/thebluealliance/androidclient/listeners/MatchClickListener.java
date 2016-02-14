@@ -10,9 +10,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 
-/**
- * File created by phil on 7/18/14.
- */
 public class MatchClickListener implements View.OnClickListener {
 
     Context context;

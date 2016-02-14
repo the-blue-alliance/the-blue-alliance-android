@@ -8,9 +8,6 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.views.SelectableImageView;
 
-/**
- * File created by phil on 4/20/14.
- */
 public class NavDrawerItem implements ListItem {
 
     private int id;

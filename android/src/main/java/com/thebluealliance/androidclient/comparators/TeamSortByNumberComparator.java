@@ -9,9 +9,6 @@ import com.thebluealliance.androidclient.models.Team;
 import java.util.Arrays;
 import java.util.Comparator;
 
-/**
- * File created by phil on 5/4/14.
- */
 public class TeamSortByNumberComparator implements Comparator<Team> {
     @Override
     public int compare(Team team, Team team2) {

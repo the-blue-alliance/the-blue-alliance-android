@@ -25,9 +25,6 @@ import com.thebluealliance.androidclient.background.mytba.DisableMyTBA;
 
 import java.io.IOException;
 
-/**
- * File created by phil on 7/28/14.
- */
 public class AccountHelper {
 
     public static final String PREF_MYTBA_ENABLED = "mytba_enabled";

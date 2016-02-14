@@ -30,9 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * File created by phil on 8/2/14.
- */
 public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserModelSettings.Result> {
 
     protected enum Result {

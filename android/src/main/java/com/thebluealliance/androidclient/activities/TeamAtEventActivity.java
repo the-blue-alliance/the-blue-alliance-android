@@ -11,8 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
@@ -34,7 +32,7 @@ import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import java.util.Arrays;
 
-public class TeamAtEventActivity extends FABNotificationSettingsActivity
+public class TeamAtEventActivity extends MyTBASettingsActivity
   implements ViewPager.OnPageChangeListener, HasFragmentComponent {
 
     public static final String EVENT = "eventKey", TEAM = "teamKey";

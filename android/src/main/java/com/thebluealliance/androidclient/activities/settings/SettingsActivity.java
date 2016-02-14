@@ -38,10 +38,6 @@ public class SettingsActivity extends AppCompatActivity {
             addPreferencesFromResource(R.xml.preferences);
 
             Preference appVersion = findPreference("app_version");
-            int versionCode = BuildConfig.VERSION_CODE;
-            int major = BuildConfig.MAJOR_VERSION;
-            int minor = BuildConfig.MINOR_VERSION;
-            int patch = BuildConfig.PATCH_VERSION;
 
             String versionInfo;
             String commit = BuildConfig.GIT_HASH;

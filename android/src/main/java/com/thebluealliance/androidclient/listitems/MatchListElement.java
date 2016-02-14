@@ -10,9 +10,6 @@ import com.thebluealliance.androidclient.views.MatchView;
 import java.io.Serializable;
 import java.util.Arrays;
 
-/**
- * File created by phil on 4/20/14.
- */
 public class MatchListElement extends ListElement implements Serializable {
 
     public final String videoKey, matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore, selectedTeamKey;

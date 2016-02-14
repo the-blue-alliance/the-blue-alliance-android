@@ -2,9 +2,6 @@ package com.thebluealliance.androidclient.listitems;
 
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 
-/**
- * File created by phil on 4/20/14.
- */
 public abstract class ListElement implements ListItem {
     protected final String key;
 

@@ -7,9 +7,6 @@ import android.widget.CheckedTextView;
 
 import com.thebluealliance.androidclient.R;
 
-/**
- * File created by phil on 8/18/14.
- */
 public class NotificationTypeListElement extends ListElement {
 
     private String notificationTitle;

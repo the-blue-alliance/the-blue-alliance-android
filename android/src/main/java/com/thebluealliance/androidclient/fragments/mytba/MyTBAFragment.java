@@ -17,9 +17,6 @@ import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
 import com.thebluealliance.androidclient.adapters.MyTBAFragmentPagerAdapter;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
-/**
- * File created by phil on 8/2/14.
- */
 public class MyTBAFragment extends Fragment {
 
     private ViewPager mViewPager;

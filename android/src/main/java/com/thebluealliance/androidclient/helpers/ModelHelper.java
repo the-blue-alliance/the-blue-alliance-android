@@ -18,9 +18,6 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.ModelType;
 
-/**
- * File created by phil on 8/13/14.
- */
 public class ModelHelper {
 
     public static ModelType getModelFromEnum(int model_enum) {

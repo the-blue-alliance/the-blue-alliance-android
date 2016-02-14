@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.BaseActivity;
-import com.thebluealliance.androidclient.fragments.mytba.NotificationSettingsFragment;
+import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
 import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.types.ModelType;
@@ -41,7 +41,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     private String modelKey;
     private ModelType modelType;
 
-    private NotificationSettingsFragment settings;
+    private MyTBASettingsFragment settings;
     private UpdateUserModelSettingsTaskFragment saveSettingsTaskFragment;
 
     private Handler handler = new Handler();
@@ -96,18 +96,18 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
             getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
         }
 
-        saveModelPreferencesFab = (FloatingActionButton) findViewById(R.id.close_notification_settings_button);
+        saveModelPreferencesFab = (FloatingActionButton) findViewById(R.id.close_settings_button);
         saveModelPreferencesFab.setOnClickListener(this);
 
         if (savedInstanceState != null) {
-            savedPreferenceState = savedInstanceState.getBundle(NotificationSettingsFragment.SAVED_STATE_BUNDLE);
+            savedPreferenceState = savedInstanceState.getBundle(MyTBASettingsFragment.SAVED_STATE_BUNDLE);
         }
 
         saveSettingsTaskFragment = (UpdateUserModelSettingsTaskFragment) getSupportFragmentManager().findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
 
         // Create the settings fragment
         saveModelPreferencesFab.setEnabled(false);
-        settings = NotificationSettingsFragment.newInstance(this.modelKey, this.modelType, savedPreferenceState);
+        settings = MyTBASettingsFragment.newInstance(this.modelKey, this.modelType, savedPreferenceState);
         getFragmentManager().beginTransaction().replace(R.id.settings_list, settings).commit();
 
         // Create drawable for the FAB
@@ -126,7 +126,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         if (settings != null && settings.arePreferencesLoaded()) {
             Bundle b = new Bundle();
             settings.writeStateToBundle(b);
-            outState.putBundle(NotificationSettingsFragment.SAVED_STATE_BUNDLE, b);
+            outState.putBundle(MyTBASettingsFragment.SAVED_STATE_BUNDLE, b);
         }
     }
 
@@ -148,7 +148,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.close_notification_settings_button) {
+        if (v.getId() == R.id.close_settings_button) {
             // Save all the things!
             if (saveSettingsTaskFragment == null) {
                 saveSettingsTaskFragment = new UpdateUserModelSettingsTaskFragment(settings.getSettings());

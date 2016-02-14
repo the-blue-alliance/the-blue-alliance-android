@@ -345,14 +345,14 @@ public class Match extends BasicModel<Match> {
      * @return A MatchListElement to be used to display this match
      */
     public MatchListElement render(boolean showVideo, boolean showHeaders, boolean showMatchTitle, boolean clickable) {
-        JsonObject alliances = null;
+        JsonObject alliances;
         try {
             alliances = getAlliances();
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required field for match render: Database.Matches.ALLIANCES");
             return null;
         }
-        JsonArray videos = null;
+        JsonArray videos;
         try {
             videos = getVideos();
         } catch (FieldNotDefinedException e) {

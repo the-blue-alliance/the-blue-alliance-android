@@ -4,9 +4,6 @@ import com.thebluealliance.androidclient.models.Match;
 
 import java.util.Comparator;
 
-/**
- * File created by phil on 5/4/14.
- */
 public class MatchSortByPlayOrderComparator implements Comparator<Match> {
     @Override
     public int compare(Match match, Match match2) {

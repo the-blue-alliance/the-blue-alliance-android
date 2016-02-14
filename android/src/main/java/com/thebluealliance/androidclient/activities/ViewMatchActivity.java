@@ -10,8 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
@@ -26,7 +24,7 @@ import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
-public class ViewMatchActivity extends FABNotificationSettingsActivity
+public class ViewMatchActivity extends MyTBASettingsActivity
   implements HasFragmentComponent {
 
     public static final String MATCH_KEY = "match_key";

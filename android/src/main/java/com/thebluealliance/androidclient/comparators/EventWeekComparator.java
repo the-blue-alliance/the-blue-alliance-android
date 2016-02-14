@@ -5,9 +5,6 @@ import com.thebluealliance.androidclient.models.Event;
 
 import java.util.Comparator;
 
-/**
- * File created by phil on 5/21/14.
- */
 public class EventWeekComparator implements Comparator<Event> {
 
     @Override

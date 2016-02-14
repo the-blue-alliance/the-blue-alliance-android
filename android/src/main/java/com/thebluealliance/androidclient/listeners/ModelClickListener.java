@@ -8,9 +8,6 @@ import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.types.ModelType;
 
-/**
- * File created by phil on 8/13/14.
- */
 public class ModelClickListener implements View.OnClickListener {
 
     private Context context;

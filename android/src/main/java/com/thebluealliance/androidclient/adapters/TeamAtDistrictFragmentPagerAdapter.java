@@ -7,9 +7,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.thebluealliance.androidclient.fragments.district.TeamAtDistrictBreakdownFragment;
 import com.thebluealliance.androidclient.fragments.district.TeamAtDistrictSummaryFragment;
 
-/**
- * File created by phil on 7/26/14.
- */
 public class TeamAtDistrictFragmentPagerAdapter extends FragmentPagerAdapter {
 
     public final String[] TITLES = {"Summary", "Breakdown"};

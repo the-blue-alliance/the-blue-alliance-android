@@ -10,9 +10,6 @@ import android.view.View;
 
 import com.thebluealliance.androidclient.R;
 
-/**
- * File created by phil on 9/5/14.
- */
 public class NotificationSettingsActivity extends AppCompatActivity {
 
     @Override
