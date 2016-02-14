@@ -91,6 +91,7 @@ android {
     }
 
     defaultConfig {
+        applicationId "com.thebluealliance.androidclient"
         minSdkVersion 16
         targetSdkVersion 22
         versionCode versionNum
