@@ -20,6 +20,7 @@ Insall with: pip install google-api-python-client
 PACKAGE = 'com.thebluealliance.androidclient'
 CHANGELOG_PATH = 'android/src/prod/play/en-US/whatsnew'
 INAPP_CHANGELOG = 'android/src/main/res/raw/changelog.txt'
+APK_PATH_FORMAT = 'android/build/apk/tba-android-v{}-release.apk'
 
 parser = argparse.ArgumentParser(add_help=True)
 parser.add_argument("tag", help="New version number (e.g. 3.1.4)")
@@ -30,6 +31,8 @@ parser.add_argument("--dirty-repo", action="store_true", default=False,
                     help="Allow untracked changes in the repo")
 parser.add_argument("--skip-validate", action="store_true", default=False,
                     help="Do not build an install the prod apk to test on a real device")
+parser.add_argument("--skip-gh", action="store_true", default=False,
+                    help="Do not create a new release on GitHub")
 
 
 def check_clean_repo():
@@ -122,6 +125,13 @@ def build_apk(args):
 def push_repo():
     subprocess.call(["git", "push", "upstream"])
     subprocess.call(["git", "push", "--tags", "upstream"])
+
+
+def create_release(args):
+    apk_path = APK_PATH_FORMAT.format(args.tag)
+    title = "Version {}".format(args.tag)
+    tag = "v{}".format(args.tag)
+    subprocess.call(["scripts/github_release.sh", tag, title, CHANGELOG_PATH, apk_path])
 
 if __name__ == "__main__":
     args = parser.parse_args()
