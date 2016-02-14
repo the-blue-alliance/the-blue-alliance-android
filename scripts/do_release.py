@@ -146,3 +146,4 @@ if __name__ == "__main__":
         validate_build()
     build_apk(args)
     push_repo()
+    create_release(args)

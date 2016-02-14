@@ -17,8 +17,7 @@ APK=$4
 APK_NAME=$(basename $APK)
 DESC=$(cat $DESC_PATH)
 
-echo $TAG
-exit 0
+echo "Creating GitHub Release for $USER/$REPO @ $TAG"
 
 # Load github auth token
 TOKEN=$(cat scripts/github_token)
