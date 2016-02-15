@@ -20,8 +20,6 @@ public class EventTickerFragment extends FirebaseTickerFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
             mEventKey = getArguments().getString(KEY, "");
         }
@@ -29,6 +27,8 @@ public class EventTickerFragment extends FirebaseTickerFragment {
         if (mEventKey == null || mEventKey.isEmpty()) {
             throw new IllegalArgumentException("EventTickerFragment must be created with an event key");
         }
+
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -38,6 +38,6 @@ public class EventTickerFragment extends FirebaseTickerFragment {
 
     @Override
     protected String getFirebaseUrlSuffix() {
-        return "events/" + mEventKey;
+        return "events/" + mEventKey + "/notifications/";
     }
 }
