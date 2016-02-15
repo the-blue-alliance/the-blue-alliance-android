@@ -12,18 +12,20 @@ import com.thebluealliance.androidclient.fragments.event.EventMatchesFragment;
 import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventTeamsFragment;
+import com.thebluealliance.androidclient.fragments.event.EventTickerFragment;
 
 public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    public final String[] TITLES = {"Info", "Teams", "Rankings", "Matches", "Alliances", "District Points", "Stats", "Awards"};
-    public static final int TAB_INFO = 0,
-            TAB_TEAMS = 1,
-            TAB_RANKINGS = 2,
-            TAB_MATCHES = 3,
-            TAB_ALLIANCES = 4,
-            TAB_DISTRICT_POINTS = 5,
-            TAB_STATS = 6,
-            TAB_AWARDS = 7;
+    public final String[] TITLES = {"Ticker", "Info", "Teams", "Rankings", "Matches", "Alliances", "District Points", "Stats", "Awards"};
+    public static final int TAB_TICKER = 0,
+            TAB_INFO = 1,
+            TAB_TEAMS = 2,
+            TAB_RANKINGS = 3,
+            TAB_MATCHES = 4,
+            TAB_ALLIANCES = 5,
+            TAB_DISTRICT_POINTS = 6,
+            TAB_STATS = 7,
+            TAB_AWARDS = 8;
 
     private String mEventKey;
 
@@ -47,30 +49,35 @@ public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         Fragment fragment;
         switch (position) {
-            default:
-            case TAB_INFO: //event info
+            case TAB_TICKER: // live ticker
+                fragment = EventTickerFragment.newInstance(mEventKey);
+                break;
+            case TAB_INFO: // event info
                 fragment = EventInfoFragment.newInstance(mEventKey);
                 break;
-            case TAB_TEAMS: //teams
+            case TAB_TEAMS: // teams
                 fragment = EventTeamsFragment.newInstance(mEventKey);
                 break;
-            case TAB_RANKINGS: //rankings
+            case TAB_RANKINGS: // rankings
                 fragment = EventRankingsFragment.newInstance(mEventKey);
                 break;
-            case TAB_MATCHES: //results
+            case TAB_MATCHES: // results
                 fragment = EventMatchesFragment.newInstance(mEventKey);
                 break;
-            case TAB_ALLIANCES: //alliances
+            case TAB_ALLIANCES: // alliances
                 fragment = EventAlliancesFragment.newInstance(mEventKey);
                 break;
-            case TAB_DISTRICT_POINTS: //district points
+            case TAB_DISTRICT_POINTS: // district points
                 fragment = EventDistrictPointsFragment.newInstance(mEventKey);
                 break;
-            case TAB_STATS: //stats
+            case TAB_STATS: // stats
                 fragment = EventStatsFragment.newInstance(mEventKey);
                 break;
-            case TAB_AWARDS: //awards
+            case TAB_AWARDS: // awards
                 fragment = EventAwardsFragment.newInstance(mEventKey);
+                break;
+            default:
+                fragment = new Fragment();
                 break;
         }
         return fragment;
