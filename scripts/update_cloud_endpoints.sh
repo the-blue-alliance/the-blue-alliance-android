@@ -47,8 +47,9 @@ cd $TBA_HOME
 perl -pi -e "s/tbatv-dev-hrd/$TBA_APP_ID/g" *.yaml
 git apply $TBA_ANDROID_HOME/scripts/patches/endpoints_remove_sitevar.patch
 
-# Actually build library
-$GAE_HOME/endpointscfg.py get_client_lib java -o $TBA_ANDROID_HOME -bs gradle mobile_main.MobileAPI
+# Generate discovery document
+# $GAE_HOME/endpointscfg.py get_client_lib java -o $TBA_ANDROID_HOME -bs gradle mobile_main.MobileAPI
+$GAE_HOME/endpointscfg.py get_discovery_doc -o $TBA_ANDROID_HOME/gce/ mobile_main.MobileAPI
 RES="$?"
 
 # Undo our changes
@@ -57,14 +58,15 @@ perl -pi -e "s/$TBA_APP_ID/tbatv-dev-hrd/g" *.yaml
 cd $TBA_ANDROID_HOME
 
 if [ $RES != 0 ]; then
-    echo "Failed to generate cloud endpoints"
+    echo "Failed to generate cloud endpoints discovery doc"
     exit $RES
 fi
 
-unzip -o tbaMobile-v*.zip
-rm -rf tbaMobile-v*.zip
+# Now generate retrofit services
+echo "Renaming discovery document to gce/gce_discovery.json"
+mv gce/tbaMobile-v*.discovery gce/gce_discovery.json
 
-# Patch the TbaMobile API Service
-git apply scripts/patches/tbaMobile_constructor.patch
+echo "Generating retrofit services"
+java -jar gce/gce2retrofit.jar gce/gce_discovery.json ./tbaMobile/src/main/java/ -methods sync,async,reactive
 
 exit $RES
