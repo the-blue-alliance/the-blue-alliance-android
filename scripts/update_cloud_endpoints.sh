@@ -45,21 +45,26 @@ cd $TBA_HOME
 
 # Set the proper app id and modify mobile API file to remove sitevar references
 perl -pi -e "s/tbatv-dev-hrd/$TBA_APP_ID/g" *.yaml
-git apply $TBA_ANDROID_HOME/scripts/endpoints.patch
+git apply $TBA_ANDROID_HOME/scripts/patches/endpoints_remove_sitevar.patch
 
 # Actually build library
 $GAE_HOME/endpointscfg.py get_client_lib java -o $TBA_ANDROID_HOME -bs gradle mobile_main.MobileAPI
-$RES=$?
+RES="$?"
 
 # Undo our changes
-git apply -R $TBA_ANDROID_HOME/scripts/endpoints.patch
+git apply -R $TBA_ANDROID_HOME/scripts/patches/endpoints_remove_sitevar.patch
 perl -pi -e "s/$TBA_APP_ID/tbatv-dev-hrd/g" *.yaml
 cd $TBA_ANDROID_HOME
 
-if [ $RES -neq 0 ]; then
-    echo "Endpoint generation failed"
-    echo $RES
+if [ $RES != 0 ]; then
+    echo "Failed to generate cloud endpoints"
+    exit $RES
 fi
 
 unzip -o tbaMobile-v*.zip
 rm -rf tbaMobile-v*.zip
+
+# Patch the TbaMobile API Service
+git apply scripts/patches/tbaMobile_constructor.patch
+
+exit $RES
