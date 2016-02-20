@@ -55,6 +55,7 @@ public class APIStatusDeserializerTest {
         assertTrue(mStatus.hasMessage());
         assertEquals("This is only a test", mStatus.getMessageText());
         assertEquals(new Date(1449698422l * 1000), mStatus.getMessageExipration());
+        assertEquals(1449698422, mStatus.getLastOkHttpCacheClear());
 
         List<String> downKeys = mStatus.getDownEvents();
         assertNotNull(downKeys);
@@ -164,5 +165,12 @@ public class APIStatusDeserializerTest {
         mJsonData.get(APIStatusDeserializer.MESSAGE_DICT).getAsJsonObject()
           .remove(APIStatusDeserializer.MESSAGE_EXPIRATION);
         mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+    }
+
+    @Test
+    public void testNoLastCacheClear() {
+        mJsonData.remove(APIStatusDeserializer.LAST_OKHTTP_CACHE_CLEAR);
+        mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+        assertEquals(-1, mStatus.getLastOkHttpCacheClear());
     }
 }
