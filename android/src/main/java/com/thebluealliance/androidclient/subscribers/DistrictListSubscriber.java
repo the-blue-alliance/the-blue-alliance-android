@@ -28,11 +28,11 @@ public class DistrictListSubscriber extends BaseAPISubscriber<List<District>, Li
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
         if (mAPIData == null) {
             return;
         }
 
+        mDataToBind.clear();
         for (int i = 0; i < mAPIData.size(); i++) {
             District district = mAPIData.get(i);
             int numEvents = getNumEventsForDistrict(district.getKey());

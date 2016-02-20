@@ -24,10 +24,11 @@ public class WebcastListSubscriber extends BaseAPISubscriber<List<Event>, List<L
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
         if (mAPIData == null) {
             return;
         }
+        
+        mDataToBind.clear();
         Collections.sort(mAPIData, mComparator);
 
         for (int i = 0; i < mAPIData.size(); i++) {

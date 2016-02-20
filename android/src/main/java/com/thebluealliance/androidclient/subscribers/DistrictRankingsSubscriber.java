@@ -26,10 +26,11 @@ public class DistrictRankingsSubscriber
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
         if (mAPIData == null) {
             return;
         }
+
+        mDataToBind.clear();
         for (int i = 0; i < mAPIData.size(); i++) {
             DistrictTeam districtTeam = mAPIData.get(i);
             Team teamData = mDb.getTeamsTable().get(districtTeam.getTeamKey());

@@ -52,10 +52,10 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
         if (mAPIData == null || mAPIData.event == null || mAPIData.match == null) {
             return;
         }
+        mDataToBind.clear();
 
         mDataToBind.add(mRenderer.renderFromModel(mAPIData.match, MatchRenderer.RENDER_MATCH_INFO));
 

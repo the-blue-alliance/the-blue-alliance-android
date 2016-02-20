@@ -32,10 +32,11 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonElement, List<
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
         if (mAPIData == null || !mAPIData.isJsonArray()) {
             return;
         }
+
+        mDataToBind.clear();
         JsonArray rankingsData = mAPIData.getAsJsonArray();
         if (rankingsData.size() == 0) return;
         JsonArray headerRow = rankingsData.get(0).getAsJsonArray();

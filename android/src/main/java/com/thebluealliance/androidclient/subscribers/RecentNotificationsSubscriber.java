@@ -28,12 +28,11 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
-
         if (mAPIData == null || mAPIData.isEmpty()) {
             return;
         }
 
+        mDataToBind.clear();
         for (int i = 0; i < mAPIData.size(); i++) {
             StoredNotification notification = mAPIData.get(i);
             BaseNotification renderable = notification.getNotification(mWriter);

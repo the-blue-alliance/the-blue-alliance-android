@@ -20,10 +20,11 @@ public class AllianceListSubscriber extends BaseAPISubscriber<Event, List<ListIt
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
         if (mAPIData == null) {
             return;
         }
+        mDataToBind.clear();
+
         mRenderer.renderAlliances(mAPIData, mDataToBind);
     }
 }

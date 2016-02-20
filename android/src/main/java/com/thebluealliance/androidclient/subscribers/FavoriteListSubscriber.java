@@ -26,10 +26,11 @@ public class FavoriteListSubscriber extends BaseAPISubscriber<List<Favorite>, Li
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
         if (mAPIData == null) {
             return;
         }
+
+        mDataToBind.clear();
         int lastModel = -1;
         Collections.sort(mAPIData, mComparator);
         for (int i = 0; i < mAPIData.size(); i++) {

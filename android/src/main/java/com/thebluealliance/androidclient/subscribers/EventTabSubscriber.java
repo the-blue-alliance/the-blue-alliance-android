@@ -25,10 +25,11 @@ public class EventTabSubscriber extends BaseAPISubscriber<List<Event>, List<Even
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
         if (mAPIData == null || mAPIData.isEmpty()) {
             return;
         }
+
+        mDataToBind.clear();
         Collections.sort(mAPIData, mEventComparator);
 
         Calendar cal = Calendar.getInstance();

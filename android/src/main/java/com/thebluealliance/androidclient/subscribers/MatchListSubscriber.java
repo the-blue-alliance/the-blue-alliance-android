@@ -53,14 +53,14 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
+        if (mAPIData == null || mAPIData.isEmpty()) {
+            return;
+        }
         mDataToBind.clear();
         mQualMatches.clear();
         mQuarterMatches.clear();
         mSemiMatches.clear();
         mFinalMatches.clear();
-        if (mAPIData == null || mAPIData.isEmpty()) {
-            return;
-        }
 
         int[] record = {0, 0, 0}; //wins, losses, ties
         Match nextMatch = null;

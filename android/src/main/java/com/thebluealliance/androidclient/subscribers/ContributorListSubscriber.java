@@ -19,12 +19,12 @@ public class ContributorListSubscriber extends BaseAPISubscriber<JsonElement, Li
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
 
         if (mAPIData == null || !mAPIData.isJsonArray()) {
             return;
         }
 
+        mDataToBind.clear();
         JsonArray data = mAPIData.getAsJsonArray();
         for (JsonElement e : data) {
             JsonObject user = e.getAsJsonObject();

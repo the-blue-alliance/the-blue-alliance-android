@@ -64,12 +64,12 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
     @Override
     public synchronized void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
         if (!mIsMatchListLoaded || mAPIData == null ||
           mAPIData.event == null || mAPIData.teamAtEventRank == null) {
             return;
         }
 
+        mDataToBind.clear();
         Match nextMatch = null, lastMatch = null;
         Collections.sort(mMatches, new MatchSortByPlayOrderComparator());
 

@@ -25,10 +25,11 @@ public class TeamStatsSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
         if (mAPIData == null || !mAPIData.isJsonObject()) {
             return;
         }
+
+        mDataToBind.clear();
         JsonObject statsData = mAPIData.getAsJsonObject();
         if (statsData.has("opr")) {
             mDataToBind.add(new LabelValueListItem(

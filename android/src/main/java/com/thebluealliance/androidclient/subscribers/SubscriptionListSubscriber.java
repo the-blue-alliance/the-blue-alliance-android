@@ -27,11 +27,11 @@ public class SubscriptionListSubscriber
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
         if (mAPIData == null) {
             return;
         }
 
+        mDataToBind.clear();
         Collections.sort(mAPIData, mComparator);
         int lastModel = -1;
         for (int i = 0; i < mAPIData.size(); i++) {

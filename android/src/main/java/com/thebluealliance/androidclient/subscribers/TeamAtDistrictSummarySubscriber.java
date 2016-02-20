@@ -47,11 +47,11 @@ public class TeamAtDistrictSummarySubscriber
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
         if (mAPIData == null) {
             return;
         }
 
+        mDataToBind.clear();
         EventsTable eventsTable = mDb.getEventsTable();
         mDataToBind.add(new LabelValueListItem(mResources.getString(R.string.district_point_rank),
           mAPIData.getRank() + Utilities.getOrdinalFor(mAPIData.getRank())));

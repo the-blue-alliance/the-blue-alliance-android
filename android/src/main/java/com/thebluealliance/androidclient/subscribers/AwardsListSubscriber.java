@@ -33,10 +33,11 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
         if (mAPIData == null || mAPIData.isEmpty()) {
             return;
         }
+
+        mDataToBind.clear();
         Map<String, Team> teams = Utilities.getMapForPlatform(String.class, Team.class);
         for (int i = 0; i < mAPIData.size(); i++) {
             Award award = mAPIData.get(i);

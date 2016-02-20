@@ -33,10 +33,11 @@ public class TeamAtDistrictBreakdownSubscriber
 
     @Override
     public synchronized void parseData() throws BasicModel.FieldNotDefinedException {
-        mDataToBind.clear();
         if (mAPIData == null) {
             return;
         }
+
+        mDataToBind.clear();
         Map<String, JsonObject> eventBreakdowns =
           Utilities.getMapForPlatform(String.class, JsonObject.class);
         JsonObject rawDistrictTeam = mGson.fromJson(mAPIData.getJson(), JsonObject.class);
