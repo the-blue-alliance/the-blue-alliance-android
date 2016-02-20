@@ -39,14 +39,6 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
                 EventsTable.getAllColumnsForJoin(), Database.TABLE_EVENTTEAMS, Database.TABLE_EVENTS, EVENTKEY, EventsTable.KEY, TEAMKEY, YEAR);
         Cursor cursor = mDb.rawQuery(query, new String[]{teamKey, Integer.toString(year)});
         ArrayList<Event> results = new ArrayList<>();
-        System.out.println("query: " + query);
-        System.out.println("cursor row count: " + cursor.getCount());
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                String contents = DatabaseUtils.dumpCurrentRowToString(cursor);
-                System.out.println(contents);
-            } while (cursor.moveToNext());
-        }
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 results.add(ModelInflater.inflateEvent(cursor));
