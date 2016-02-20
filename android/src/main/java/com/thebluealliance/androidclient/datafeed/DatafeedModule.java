@@ -134,8 +134,8 @@ public class DatafeedModule {
 
     @Provides @Singleton
     public TBAStatusController provideTbaStatusController(SharedPreferences prefs, Gson gson,
-                                                          Tracker tracker, Context context) {
-        return new TBAStatusController(prefs, gson, tracker, context);
+                                                          Cache cache, Context context) {
+        return new TBAStatusController(prefs, gson, cache, context);
     }
 
     public static Gson getGson() {

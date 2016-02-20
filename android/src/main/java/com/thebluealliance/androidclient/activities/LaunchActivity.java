@@ -107,10 +107,10 @@ public class LaunchActivity extends AppCompatActivity {
         boolean redownload = false;
         Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + prefs.contains(Constants.APP_VERSION_KEY));
 
-        /* Clear OkHttp cache for the new version. */
-        clearDatafeedCache();
-
         if (prefs.contains(Constants.APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
+            /* Clear OkHttp cache for the new version. */
+            mStatusController.clearOkCacheIfNeeded(mStatusController.fetchApiStatus(), true);
+
             // We are updating the app. Do stuffs, if necessary.
             // TODO: make sure to modify changelog.txt with any recent changes
             if (lastVersion < 14) {
@@ -223,17 +223,6 @@ public class LaunchActivity extends AppCompatActivity {
 
         // Default to kicking the user to the events list if none of the URIs match
         goToHome();
-    }
-
-    private void clearDatafeedCache() {
-        Schedulers.io().createWorker().schedule(() -> {
-            Log.i(Constants.LOG_TAG, "Clearing okhttp cache");
-            try {
-                mDatafeedCache.evictAll();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
     }
 
     private DatafeedComponent getComponenet() {
