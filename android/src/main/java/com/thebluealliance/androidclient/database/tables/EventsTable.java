@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.database.ModelTable;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventsTable extends ModelTable<Event> {
@@ -45,6 +46,51 @@ public class EventsTable extends ModelTable<Event> {
         mDb = db;
     }
 
+    /**
+     * Generates a comma-separated list of all this model's columns, like the following:
+     * <p>
+     * event.key, events.name, events.year... and so on.
+     * <p>
+     * This is useful for when we only want to select the event table's columns during a join, it
+     * saves us from having to type all this out in place.
+     *
+     * @return comma-separated list of this model's columns
+     */
+    public static String getAllColumnsForJoin() {
+        List<String> columns = new ArrayList<>();
+        columns.add(KEY);
+        columns.add(YEAR);
+        columns.add(NAME);
+        columns.add(SHORTNAME);
+        columns.add(LOCATION);
+        columns.add(VENUE);
+        columns.add(TYPE);
+        columns.add(DISTRICT);
+        columns.add(DISTRICT_STRING);
+        columns.add(DISTRICT_POINTS);
+        columns.add(START);
+        columns.add(END);
+        columns.add(OFFICIAL);
+        columns.add(WEEK);
+        columns.add(TEAMS);
+        columns.add(RANKINGS);
+        columns.add(ALLIANCES);
+        columns.add(WEBCASTS);
+        columns.add(STATS);
+        columns.add(WEBSITE);
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < columns.size(); i++) {
+            builder.append(Database.TABLE_EVENTS);
+            builder.append(".");
+            builder.append(columns.get(i));
+            if (i != columns.size() - 1) {
+                builder.append(", ");
+            }
+        }
+        return builder.toString();
+    }
+
     @Override
     protected void insertCallback(Event event) {
         ContentValues cv = new ContentValues();
@@ -73,7 +119,7 @@ public class EventsTable extends ModelTable<Event> {
             mDb.update(Database.TABLE_SEARCH_EVENTS, cv, Database.SearchEvent.KEY + "=?", new String[]{event.getKey()});
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:" +
-              "Database.Events.KEY, Database.Events.YEAR");
+                    "Database.Events.KEY, Database.Events.YEAR");
         }
     }
 
@@ -131,20 +177,20 @@ public class EventsTable extends ModelTable<Event> {
         String table = getTableName();
         String searchTable = Database.TABLE_SEARCH_EVENTS;
         String rawQuery = "SELECT " + table + ".rowid as '_id',"
-            + table + "." + KEY + ","
-            + table + "." + NAME + ","
-            + table + "." + SHORTNAME + ","
-            + table + "." + TYPE + ","
-            + table + "." + DISTRICT + ","
-            + table + "." + START + ","
-            + table + "." + END + ","
-            + table + "." + LOCATION + ","
-            + table + "." + VENUE + ","
-            + table + "." + OFFICIAL + ","
-            + table + "." + DISTRICT_STRING
-            + " FROM " + getTableName()
-            + " JOIN (SELECT " + searchTable + "." + Database.SearchEvent.KEY + " FROM " + searchTable + " WHERE " + searchTable + "." + Database.SearchEvent.TITLES + " MATCH ?)" +
-            " as 'tempevents' ON tempevents." +Database.SearchEvent.KEY+ " = " + table + "." + KEY + " ORDER BY " + table + "." + YEAR + " DESC";
+                + table + "." + KEY + ","
+                + table + "." + NAME + ","
+                + table + "." + SHORTNAME + ","
+                + table + "." + TYPE + ","
+                + table + "." + DISTRICT + ","
+                + table + "." + START + ","
+                + table + "." + END + ","
+                + table + "." + LOCATION + ","
+                + table + "." + VENUE + ","
+                + table + "." + OFFICIAL + ","
+                + table + "." + DISTRICT_STRING
+                + " FROM " + getTableName()
+                + " JOIN (SELECT " + searchTable + "." + Database.SearchEvent.KEY + " FROM " + searchTable + " WHERE " + searchTable + "." + Database.SearchEvent.TITLES + " MATCH ?)" +
+                " as 'tempevents' ON tempevents." + Database.SearchEvent.KEY + " = " + table + "." + KEY + " ORDER BY " + table + "." + YEAR + " DESC";
         Cursor cursor = mDb.rawQuery(rawQuery, new String[]{query});
 
         if (cursor == null) {
