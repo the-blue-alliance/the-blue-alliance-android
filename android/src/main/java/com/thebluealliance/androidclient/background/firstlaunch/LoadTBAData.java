@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -186,11 +187,11 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             editor.putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE);
             editor.apply();
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_FINISHED, context.getString(R.string.loading_finished)));
-        } catch (Exception e) {
+        } catch (RuntimeException ex) {
             // This is bad, probably an error in the response from the server
-            e.printStackTrace();
+            ex.printStackTrace();
             // Alert the user that there was a problem
-            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_ERROR, Utilities.exceptionStacktraceToString(e)));
+            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_ERROR, Utilities.exceptionStacktraceToString(ex)));
         }
         return null;
     }
