@@ -87,7 +87,6 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         // Delivery will be resumed once the view hierarchy is created
         mFirebaseSubscriber.pauseDelivery();
         mFirebaseSubscriber.getObservable()
-                .doOnEach(event -> System.out.println("EVENT: " + event.toString()))
                 .filter(childEvent -> childEvent != null && childEvent.eventType == FirebaseChildType.CHILD_ADDED)
                 .map(childEvent1 -> childEvent1.snapshot.getValue(FirebaseNotification.class))
                 .buffer(5)
