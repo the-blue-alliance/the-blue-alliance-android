@@ -26,6 +26,9 @@ public class TeamAndEventTeamCombiner implements Func1<List<Team>, EventTeamAndT
     public EventTeamAndTeam call(List<Team> teams) {
         int year = EventHelper.getYear(mEventKey);
         List<EventTeam> eventTeams = new ArrayList<>();
+        if (teams == null) {
+            return null;
+        }
         for (int i = 0; i < teams.size(); i++) {
             Team team = teams.get(i);
             EventTeam eventTeam = new EventTeam();

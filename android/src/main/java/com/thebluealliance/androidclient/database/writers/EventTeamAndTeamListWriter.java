@@ -24,6 +24,9 @@ public class EventTeamAndTeamListWriter extends BaseDbWriter<EventTeamAndTeamLis
 
     @Override
     public void write(EventTeamAndTeam newModels) {
+        if (newModels == null) {
+            return;
+        }
         mDb.getWritableDatabase().beginTransaction();
         try {
             mEventTeamListWriter.write(newModels.eventTeams);
