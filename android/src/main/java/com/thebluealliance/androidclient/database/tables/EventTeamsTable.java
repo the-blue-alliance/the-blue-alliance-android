@@ -45,7 +45,6 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
             } while (cursor.moveToNext());
         }
         return results;
-        /*return new ArrayList<>();*/
     }
 
     /**
