@@ -51,7 +51,7 @@ public class GCMAuthHelper {
             Log.e(Constants.LOG_TAG, "Auth exception while fetching token for " + currentCredential.getSelectedAccountName());
             e.printStackTrace();
         }
-        TbaMobile service = AccountHelper.getTbaMobile(currentCredential);
+        TbaMobile service = AccountHelper.getTbaMobile(context, currentCredential);
         ModelsMobileApiMessagesRegistrationRequest request = new ModelsMobileApiMessagesRegistrationRequest();
         request.setMobileId(gcmId);
         request.setOperatingSystem(OS_ANDROID);
