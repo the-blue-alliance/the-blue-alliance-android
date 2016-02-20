@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="firebase_filter">FILTER</string>
+    <string name="firebase_apply_filter">APPLY FILTER</string>
+    <string name="firebase_cancel">CANCEL</string>
+
+    <string name="firebase_empty_ticker">This ticker is currently empty. Try again later!</string>
+    <string name="firebase_no_matching_items">No items match the applied filter.</string>
+    <string name="firebase_error">There was an error loading the ticker. Try again later!</string>
+</resources>
