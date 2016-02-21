@@ -170,23 +170,40 @@ def district_points_updated_command(data=district_points_updated_sample):
 
 ping_sample = {
     "title": "TBA Test Message",
-    "desc": "This is a test message ensuring your device can receive push messages from The Blue Alliance"
+    "desc": "This is a test message ensuring your device can receive push messages from The Blue Alliance",
+    "url": "https://www.youtube.com/watch?v=RpSgUrsghv4"
 }
 
-def ping_command(data=ping_sample):
+def ping_command(data=ping_sample, url="", no_url=False):
+    if url:
+        data["url"] = url
+
+    if no_url:
+        del data["url"]
+        
     notify('ping', data)
 
-def broadcast_command(data=ping_sample):
+def broadcast_command(data=ping_sample, url="", no_url=False):
+    if url:
+        data["url"] = url
+
+    if no_url:
+        del data["url"]
+
     notify('broadcast', data)
 
+
 sync_status_sample = {}
-def status_sync_command(data=sync_status_sample):
+
+def sync_status_command(data=sync_status_sample):
     notify('sync_status', data)
+
 
 event_down_sample = {
     "event_key": "2015cthar",
     "event_name": "Hartford"
 }
+
 def event_down_command(data=event_down_sample):
     notify('event_down', data)
 
