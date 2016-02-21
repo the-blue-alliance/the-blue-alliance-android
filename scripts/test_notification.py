@@ -183,7 +183,7 @@ def ping_command(data=ping_sample, url="", no_url=False):
         
     notify('ping', data)
 
-def broadcast_command(data=ping_sample):
+def broadcast_command(data=ping_sample, url="", no_url=False):
     if url:
         data["url"] = url
 
