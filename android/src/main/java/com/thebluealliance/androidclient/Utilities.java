@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -127,6 +128,15 @@ public class Utilities {
     public static Intent getIntentForTBAUrl(Context c, Uri data) {
         Log.d(Constants.LOG_TAG, "Uri: " + data.toString());
         List<String> urlParts = data.getPathSegments();
+
+        // Check if this is actually a TBA URL
+        // Simply checks if the host matches (*.)thebluealliance.com
+        String tbaHostPattern = "(.*\\.?)thebluealliance.com";
+        Pattern pattern = Pattern.compile(tbaHostPattern);
+        if (!pattern.matcher(data.getHost()).matches()) {
+            return null;
+        }
+
         Intent intent = null;
         if (urlParts != null) {
             if (urlParts.isEmpty()) {
@@ -412,7 +422,7 @@ public class Utilities {
      * On API 23+, this allows us to set the color of the status bar icons (either light or dark)
      * to look better with the status bar background. If the background is light, the icons will be
      * tinted gray/black; otherwise, they will be the default white.
-     *
+     * <p>
      * This is safe to be called from any API level, as this method checks the API level before
      * trying to use the new feature.
      *
