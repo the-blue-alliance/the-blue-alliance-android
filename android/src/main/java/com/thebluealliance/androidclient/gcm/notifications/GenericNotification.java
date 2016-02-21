@@ -1,15 +1,5 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-
-import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.activities.RecentNotificationsActivity;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -19,12 +9,25 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.activities.RecentNotificationsActivity;
+import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.models.StoredNotification;
+
+import java.util.Calendar;
 import java.util.Date;
 
 public class GenericNotification extends BaseNotification {
 
     public static final String TITLE = "title";
-    public static final String TEXT = "desc";
+    public static final String DESC = "desc";
     public static final String URL = "url";
     public static final String APP_VERSION = "app_version";
 
@@ -35,6 +38,16 @@ public class GenericNotification extends BaseNotification {
     public GenericNotification(Context c, String type, String messageData) {
         super(type, messageData);
         context = c;
+    }
+
+    @Override
+    public boolean shouldShowInRecentNotificationsList() {
+        if (getNotificationType().equals(NotificationTypes.BROADCAST)) {
+            return true;
+        }
+
+        // False for pings
+        return false;
     }
 
     public String getTitle() {
@@ -56,10 +69,10 @@ public class GenericNotification extends BaseNotification {
             throw new JsonParseException("Notification data does not contain 'title'");
         }
         title = jsonData.get(TITLE).getAsString();
-        if (!jsonData.has(TEXT)) {
+        if (!jsonData.has(DESC)) {
             throw new JsonParseException("Notification data does not contain 'desc'");
         }
-        message = jsonData.get(TEXT).getAsString();
+        message = jsonData.get(DESC).getAsString();
 
         if (jsonData.has(URL)) {
             Uri uri = Uri.parse(jsonData.get(URL).getAsString());
@@ -85,6 +98,17 @@ public class GenericNotification extends BaseNotification {
 
     @Override
     public Notification buildNotification(Context context) {
+        if(getNotificationType().equals(NotificationTypes.BROADCAST)) {
+            // Only store broadcasts, not pings
+            stored = new StoredNotification();
+            stored.setType(getNotificationType());
+            stored.setTitle(title);
+            stored.setBody(message);
+            stored.setMessageData(messageData);
+            // stored.setIntent(MyTBAHelper.serializeIntent(intent));
+            stored.setTime(Calendar.getInstance().getTime());
+        }
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)

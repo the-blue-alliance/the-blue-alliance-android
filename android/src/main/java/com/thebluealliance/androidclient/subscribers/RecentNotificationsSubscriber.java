@@ -50,7 +50,9 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
     @SuppressWarnings("unused")
     public void onEvent(NotificationsUpdatedEvent event) {
         Log.d(Constants.LOG_TAG, "Updating notification list");
-        mDataToBind.add(0, event.getNotification());
+        BaseNotification notification = event.getNotification();
+        notification.parseMessageData();
+        mDataToBind.add(0, notification);
         bindData();
     }
 }

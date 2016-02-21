@@ -59,6 +59,10 @@ public abstract class BaseNotification extends ListElement {
         return display;
     }
 
+    public boolean shouldShowInRecentNotificationsList() {
+        return true;
+    }
+
     public abstract Notification buildNotification(Context context);
 
     public String getNotificationType() {

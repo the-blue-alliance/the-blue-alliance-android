@@ -15,6 +15,11 @@ public class EventDownNotification extends GenericNotification {
     }
 
     @Override
+    public boolean shouldShowInRecentNotificationsList() {
+        return false;
+    }
+
+    @Override
     public void parseMessageData() throws JsonParseException {
         JsonObject jsonData = JSONHelper.getasJsonObject(messageData);
         if (!jsonData.has("event_key")) {

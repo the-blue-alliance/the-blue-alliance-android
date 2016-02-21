@@ -36,7 +36,7 @@ public class GenericNotificationTest {
         mNotification.parseMessageData();
 
         assertEquals(mData.get(GenericNotification.TITLE).getAsString(), mNotification.getTitle());
-        assertEquals(mData.get(GenericNotification.TEXT).getAsString(), mNotification.getMessage());
+        assertEquals(mData.get(GenericNotification.DESC).getAsString(), mNotification.getMessage());
         assertNotNull(mNotification.getContentIntent());
     }
 }
