@@ -77,8 +77,19 @@ public class GenericNotification extends BaseNotification {
         if (jsonData.has(URL)) {
             Uri uri = Uri.parse(jsonData.get(URL).getAsString());
             Intent launch = Utilities.getIntentForTBAUrl(context, uri);
+            if (launch == null) {
+                // The URI didn't match anything that TBA can process
+                // Pass off the URI to a general View intent
+                launch = new Intent(Intent.ACTION_VIEW, uri);
+
+            }
             launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent = PendingIntent.getActivity(context, 0, launch, 0);
+            if (launch.resolveActivity(context.getPackageManager()) != null) {
+                intent = PendingIntent.getActivity(context, 0, launch, 0);
+            } else {
+                // Nothing can process this URI, pretend it doesn't exist and go on our merry way
+                intent = null;
+            }
         } else {
             Intent launch = RecentNotificationsActivity.newInstance(context);
             intent = PendingIntent.getActivity(context, getNotificationId(), launch, 0);
