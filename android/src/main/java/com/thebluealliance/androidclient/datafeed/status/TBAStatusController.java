@@ -127,7 +127,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
                 try {
                     mOkHttpCache.evictAll();
                     mPrefs.edit()
-                            .putLong(STATUS_CACHE_CLEAR_KEY, System.currentTimeMillis() / 1000l)
+                            .putLong(STATUS_CACHE_CLEAR_KEY, System.currentTimeMillis() / 1000L)
                             .apply();
                 } catch (IOException e) {
                     e.printStackTrace();
