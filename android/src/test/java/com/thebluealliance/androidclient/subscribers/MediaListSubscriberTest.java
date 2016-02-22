@@ -1,8 +1,5 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.res.Resources;
-import android.support.annotation.StringRes;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
@@ -17,6 +14,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import android.content.res.Resources;
+import android.support.annotation.StringRes;
 
 import java.util.List;
 
@@ -57,13 +57,16 @@ public class MediaListSubscriberTest {
         List<ListGroup> data = DatafeedTestDriver.getParsedData(mSubscriber, mMedias);
 
         assertEquals(2, data.size());
-        assertMediaGroup(0, data.get(0), R.string.media_images_header);
-        assertMediaGroup(1, data.get(1), R.string.media_videos_header);
+        assertMediaGroup(data.get(0), 2, R.string.media_images_header, 0, 2);
+        assertMediaGroup(data.get(1), 1, R.string.media_videos_header, 1);
     }
 
-    private void assertMediaGroup(int index, ListGroup group, @StringRes int titleRes) {
+    private void assertMediaGroup(ListGroup group, int size, @StringRes int titleRes, int... indexes) {
         assertEquals(group.getTitle(), mResources.getString(titleRes));
-        assertEquals(group.children.size(), 1);
-        assertEquals(group.children.get(0), mMedias.get(index));
+        assertEquals(group.children.size(), size);
+        assertEquals(size, indexes.length);
+        for (int i = 0; i < group.children.size(); i++) {
+            assertEquals(group.children.get(i), mMedias.get(indexes[i]));
+        }
     }
 }
