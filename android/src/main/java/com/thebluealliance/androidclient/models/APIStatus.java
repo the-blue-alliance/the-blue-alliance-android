@@ -8,6 +8,7 @@ public class APIStatus {
     private boolean fmsApiDown;
     private int minAppVersion;
     private int latestAppersion;
+    private long lastOkHttpCacheClear;
     private List<String> downEvents;
     private String jsonBlob;
 
@@ -90,5 +91,13 @@ public class APIStatus {
 
     public void setMessageExipration(Date messageExipration) {
         this.messageExipration = messageExipration;
+    }
+
+    public long getLastOkHttpCacheClear() {
+        return lastOkHttpCacheClear;
+    }
+
+    public void setLastOkHttpCacheClear(long lastOkHttpCacheClear) {
+        this.lastOkHttpCacheClear = lastOkHttpCacheClear;
     }
 }

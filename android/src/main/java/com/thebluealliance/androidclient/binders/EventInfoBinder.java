@@ -80,6 +80,13 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
     @Override
     public void updateData(@Nullable Model data) {
+        if (data == null) {
+            if (!isDataBound()) {
+                bindNoDataView();
+            }
+            return;
+        }
+
         mSocialClickListener.setModelKey(data.eventKey);
         mIsLive = data.isLive;
         eventName.setText(data.nameString);

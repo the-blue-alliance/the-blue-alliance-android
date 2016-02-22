@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import com.facebook.stetho.common.Util;
+import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -94,6 +96,9 @@ public class DatafeedModule {
     public OkHttpClient getOkHttp(Cache responseCache) {
         OkHttpClient client = new OkHttpClient();
         client.interceptors().add(new APIv2RequestInterceptor());
+        if (Utilities.isDebuggable()) {
+            client.networkInterceptors().add(new StethoInterceptor());
+        }
         client.setCache(responseCache);
         return client;
     }
@@ -129,8 +134,8 @@ public class DatafeedModule {
 
     @Provides @Singleton
     public TBAStatusController provideTbaStatusController(SharedPreferences prefs, Gson gson,
-                                                          Tracker tracker, Context context) {
-        return new TBAStatusController(prefs, gson, tracker, context);
+                                                          Cache cache, Context context) {
+        return new TBAStatusController(prefs, gson, cache, context);
     }
 
     public static Gson getGson() {

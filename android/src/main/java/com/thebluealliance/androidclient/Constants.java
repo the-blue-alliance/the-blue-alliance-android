@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient;
 
-import com.thebluealliance.androidclient.types.MediaType;
-
 import java.util.HashMap;
 
 public class Constants {
@@ -16,8 +14,6 @@ public class Constants {
     public static final String LAST_YEAR_KEY = "last_season";
 
     public static final HashMap<String, String> MATCH_LEVELS;
-    public static final HashMap<MediaType, String> MEDIA_IMG_URL_PATTERN,
-            MEDIA_LINK_URL_PATTERN;
 
     static {
         MATCH_LEVELS = new HashMap<>();
@@ -34,12 +30,6 @@ public class Constants {
         MATCH_LEVELS.put("Final", "f");
         MATCH_LEVELS.put("f", "f");
 
-        MEDIA_IMG_URL_PATTERN = new HashMap<>();
-        MEDIA_LINK_URL_PATTERN = new HashMap<>();
-        MEDIA_IMG_URL_PATTERN.put(MediaType.CD_PHOTO_THREAD, "http://www.chiefdelphi.com/media/img/%s");
-        MEDIA_LINK_URL_PATTERN.put(MediaType.CD_PHOTO_THREAD, "http://www.chiefdelphi.com/media/photos/%s");
-        MEDIA_IMG_URL_PATTERN.put(MediaType.YOUTUBE, "http://img.youtube.com/vi/%s/hqdefault.jpg");
-        MEDIA_LINK_URL_PATTERN.put(MediaType.YOUTUBE, "https://www.youtube.com/watch?v=%s");
     }
 
     public static String getApiHeader() {

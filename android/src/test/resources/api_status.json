@@ -15,5 +15,6 @@
   "message": {
     "text": "This is only a test",
     "expiration": 1449698422
-  }
+  },
+  "last_cache_clear": 1449698422
 }
