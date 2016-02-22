@@ -24,6 +24,11 @@ import rx.android.schedulers.AndroidSchedulers;
  * This class takes an input of data directly from Retrofit (using {@link rx.Subscriber} and
  * provides a callback to
  *
+ * Subclasses should implement {@link #parseData()} to take the data set in {@link #mAPIData} and
+ * produce something bindable and store it in {@link #mDataToBind}. Subclasses should also
+ * initialize {@link #mDataToBind} in their constructors, as it's possible that the variable
+ * is accessed before {@link #parseData()} is called
+ *
  * @param <APIType>  Datatype to be returned from the API (one from {@link APIv2}
  * @param <BindType> Datatype to be returned for binding to views
  */
@@ -91,7 +96,9 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         setApiData(data);
         postToEventBus(EventBus.getDefault());
         try {
-            parseData();
+            if (isDataValid()) {
+                parseData();
+            }
             if (shouldBindImmediately || shouldBindOnce) {
                 bindViewsIfNeeded();
                 bindData();
@@ -187,6 +194,15 @@ public abstract class BaseAPISubscriber<APIType, BindType>
      */
     protected boolean shouldPostToEventBus() {
         return false;
+    }
+
+    /**
+     * Subclasses can override this method to determine if {@link #mAPIData} is valid.
+     * Default to simply checking if null
+     */
+    @VisibleForTesting
+    public boolean isDataValid() {
+        return mAPIData != null;
     }
 
     private void sendTimingUpdate(long timeSpent) {

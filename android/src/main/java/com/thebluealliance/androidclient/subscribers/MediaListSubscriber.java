@@ -8,6 +8,8 @@ import com.thebluealliance.androidclient.types.MediaType;
 
 import android.content.res.Resources;
 
+import android.content.res.Resources;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +29,7 @@ public class MediaListSubscriber extends BaseAPISubscriber<List<Media>, List<Lis
         mDataToBind.clear();
         mPhotos.clear();
         mVideos.clear();
-        if (mAPIData == null) {
-            return;
-        }
+
         for (int i=0; i < mAPIData.size(); i++) {
             Media media = mAPIData.get(i);
             MediaType mediaType = media.getMediaType();

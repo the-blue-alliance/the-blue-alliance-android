@@ -1,9 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.res.Resources;
-import android.util.Log;
-
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -20,6 +18,9 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
+
+import android.content.res.Resources;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,11 +66,6 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
     @Override
     public synchronized void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
-        if (!mIsMatchListLoaded || mAPIData == null ||
-          mAPIData.event == null || mAPIData.teamAtEventRank == null) {
-            return;
-        }
-
         Match nextMatch = null, lastMatch = null;
         Collections.sort(mMatches, new MatchSortByPlayOrderComparator());
 
@@ -199,6 +195,11 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
     }
 
+    @Override public boolean isDataValid() {
+        return super.isDataValid() && mIsMatchListLoaded && mAPIData.event != null
+                && mAPIData.teamAtEventRank != null;
+    }
+
     /**
      * Load matches for team@event
      * Posted by {@link com.thebluealliance.androidclient.fragments.event.EventMatchesFragment}
@@ -211,8 +212,10 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         mIsMatchListLoaded = true;
         mMatches = new ArrayList<>(matches.getMatches());
         try {
-            parseData();
-            bindData();
+            if (isDataValid()) {
+                parseData();
+                bindData();
+            }
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
         }

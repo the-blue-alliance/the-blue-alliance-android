@@ -5,6 +5,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.models.APIStatus;
 
 import java.lang.reflect.Type;
@@ -25,6 +26,7 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
     public static final String MESSAGE_DICT = "message";
     public static final String MESSAGE_TEXT = "text";
     public static final String MESSAGE_EXPIRATION = "expiration";
+    public static final String LAST_OKHTTP_CACHE_CLEAR = "last_cache_clear";
 
     @Override
     public APIStatus deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -92,6 +94,15 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
             status.setMessageExipration(new Date(messageExpiration.getAsLong() * MS_PER_SECOND));
         } else {
             status.setHasMessage(false);
+        }
+
+        JsonElement lastCacheClear = data.get(LAST_OKHTTP_CACHE_CLEAR);
+        if (lastCacheClear != null && !lastCacheClear.isJsonNull() && lastCacheClear.isJsonPrimitive()) {
+            JsonPrimitive lastCacheTime = lastCacheClear.getAsJsonPrimitive();
+            long lastTimestamp = lastCacheTime.getAsLong();
+            status.setLastOkHttpCacheClear(lastTimestamp);
+        } else {
+            status.setLastOkHttpCacheClear(-1);
         }
 
         status.setJsonBlob(json.toString());
