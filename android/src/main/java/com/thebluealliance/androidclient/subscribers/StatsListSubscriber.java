@@ -1,9 +1,8 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.res.Resources;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.comparators.StatListElementComparator;
 import com.thebluealliance.androidclient.database.Database;
@@ -13,6 +12,8 @@ import com.thebluealliance.androidclient.listitems.StatsListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Stat;
 import com.thebluealliance.androidclient.models.Team;
+
+import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,12 +43,6 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        if (mAPIData == null ||
-          !mAPIData.isJsonObject()) {
-
-            return;
-        }
-
         mDataToBind.clear();
         JsonObject statsData = mAPIData.getAsJsonObject();
         if (!statsData.has("oprs") || !statsData.get("oprs").isJsonObject() ||
@@ -84,6 +79,10 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
         }
         Collections.sort(mDataToBind, new StatListElementComparator(mStatToSortBy));
         mEventBus.post(new EventStatsEvent(getTopStatsString()));
+    }
+
+    @Override public boolean isDataValid() {
+        return super.isDataValid() && mAPIData.isJsonObject();
     }
 
     private String getTopStatsString() {

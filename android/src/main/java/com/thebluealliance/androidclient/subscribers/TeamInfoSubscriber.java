@@ -13,10 +13,6 @@ public class TeamInfoSubscriber extends BaseAPISubscriber<Team, TeamInfoBinder.M
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException{
-        if (mAPIData == null) {
-            return;
-        }
-
         mDataToBind = new TeamInfoBinder.Model();
         mDataToBind.teamKey = mAPIData.getKey();
         mDataToBind.fullName = mAPIData.getFullName();

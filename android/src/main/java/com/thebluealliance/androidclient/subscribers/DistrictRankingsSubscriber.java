@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.util.Log;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
@@ -9,6 +7,8 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Team;
+
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +26,6 @@ public class DistrictRankingsSubscriber
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        if (mAPIData == null) {
-            return;
-        }
-
         mDataToBind.clear();
         for (int i = 0; i < mAPIData.size(); i++) {
             DistrictTeam districtTeam = mAPIData.get(i);

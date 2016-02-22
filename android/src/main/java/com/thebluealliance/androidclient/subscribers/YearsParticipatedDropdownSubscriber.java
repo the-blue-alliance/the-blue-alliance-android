@@ -21,9 +21,6 @@ public class YearsParticipatedDropdownSubscriber implements Action1<JsonArray> {
 
     @Override
     public void call(JsonArray apiYears) {
-        if (apiYears == null) {
-            return;
-        }
         int[] years = new int[apiYears.size()];
         for (int i = apiYears.size() - 1; i >= 0; i--) {
             years[i] = apiYears.get(i).getAsInt();

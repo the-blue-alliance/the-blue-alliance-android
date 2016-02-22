@@ -1,9 +1,8 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.res.Resources;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.listitems.ListGroup;
@@ -11,6 +10,8 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
+
+import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +34,6 @@ public class TeamAtDistrictBreakdownSubscriber
 
     @Override
     public synchronized void parseData() throws BasicModel.FieldNotDefinedException {
-        if (mAPIData == null) {
-            return;
-        }
-
         mDataToBind.clear();
         Map<String, JsonObject> eventBreakdowns =
           Utilities.getMapForPlatform(String.class, JsonObject.class);

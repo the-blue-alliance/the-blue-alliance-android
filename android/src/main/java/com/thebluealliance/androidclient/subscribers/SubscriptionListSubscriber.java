@@ -27,10 +27,6 @@ public class SubscriptionListSubscriber
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        if (mAPIData == null) {
-            return;
-        }
-
         mDataToBind.clear();
         Collections.sort(mAPIData, mComparator);
         int lastModel = -1;

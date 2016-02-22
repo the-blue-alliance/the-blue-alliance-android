@@ -12,11 +12,6 @@ public class EventInfoSubscriber extends BaseAPISubscriber<Event, Model> {
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        if (mAPIData == null) {
-            // no need to parse Event model
-            return;
-        }
-
         mDataToBind = new Model();
         mDataToBind.eventKey = mAPIData.getKey();
         mDataToBind.nameString = mAPIData.getEventName();

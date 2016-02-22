@@ -19,11 +19,6 @@ public class ContributorListSubscriber extends BaseAPISubscriber<JsonElement, Li
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-
-        if (mAPIData == null || !mAPIData.isJsonArray()) {
-            return;
-        }
-
         mDataToBind.clear();
         JsonArray data = mAPIData.getAsJsonArray();
         for (JsonElement e : data) {
@@ -33,5 +28,9 @@ public class ContributorListSubscriber extends BaseAPISubscriber<JsonElement, Li
             String avatarUrl = user.get("avatar_url").getAsString();
             mDataToBind.add(new ContributorListElement(username, contributionCount, avatarUrl));
         }
+    }
+
+    @Override public boolean isDataValid() {
+        return super.isDataValid() && mAPIData.isJsonArray();
     }
 }

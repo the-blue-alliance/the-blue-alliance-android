@@ -29,7 +29,7 @@ public class YearsParticipatedDropdownSubscriberTest {
         mYearsParticipated = ModelMaker.getModel(JsonArray.class, "frc1124_years_participated");
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testParseNullData() {
         mSubscriber.call(null);
     }

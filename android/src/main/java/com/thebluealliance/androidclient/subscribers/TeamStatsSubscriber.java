@@ -1,14 +1,15 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.res.Resources;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Stat;
+
+import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,6 @@ public class TeamStatsSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        if (mAPIData == null || !mAPIData.isJsonObject()) {
-            return;
-        }
-
         mDataToBind.clear();
         JsonObject statsData = mAPIData.getAsJsonObject();
         if (statsData.has("opr")) {
@@ -46,5 +43,9 @@ public class TeamStatsSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
               mResources.getString(R.string.ccwm_no_colon),
               Stat.displayFormat.format(statsData.get("ccwm").getAsDouble())));
         }
+    }
+
+    @Override public boolean isDataValid() {
+        return super.isDataValid() && mAPIData.isJsonObject();
     }
 }

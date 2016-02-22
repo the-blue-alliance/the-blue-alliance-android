@@ -40,10 +40,6 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement,
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
-        if (mAPIData == null || !mAPIData.isJsonObject()) {
-            return;
-        }
-
         mDataToBind.clear();
         JsonObject rankingsData = mAPIData.getAsJsonObject();
         if (!rankingsData.has("points")) {
@@ -80,6 +76,10 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement,
             pointBreakdowns.get(i).setRank(i + 1);
             mDataToBind.add(mRenderer.renderFromModel(pointBreakdowns.get(i), null));
         }
+    }
+
+    @Override public boolean isDataValid() {
+        return super.isDataValid() && mAPIData.isJsonObject();
     }
 
     /**
