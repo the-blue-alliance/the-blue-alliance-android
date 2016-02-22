@@ -35,8 +35,8 @@ public class MediaListSubscriberTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        when(mResources.getString(R.string.cd_header)).thenReturn("Chief Delphi Photos");
-        when(mResources.getString(R.string.yt_header)).thenReturn("YouTube Videos");
+        when(mResources.getString(R.string.media_images_header)).thenReturn("Chief Delphi Photos");
+        when(mResources.getString(R.string.media_videos_header)).thenReturn("YouTube Videos");
 
         mSubscriber = new MediaListSubscriber(mResources);
         mMedias = ModelMaker.getModelList(Media.class, "media_frc254_2014");
@@ -57,8 +57,8 @@ public class MediaListSubscriberTest {
         List<ListGroup> data = DatafeedTestDriver.getParsedData(mSubscriber, mMedias);
 
         assertEquals(2, data.size());
-        assertMediaGroup(0, data.get(0), R.string.cd_header);
-        assertMediaGroup(1, data.get(1), R.string.yt_header);
+        assertMediaGroup(0, data.get(0), R.string.media_images_header);
+        assertMediaGroup(1, data.get(1), R.string.media_videos_header);
     }
 
     private void assertMediaGroup(int index, ListGroup group, @StringRes int titleRes) {
