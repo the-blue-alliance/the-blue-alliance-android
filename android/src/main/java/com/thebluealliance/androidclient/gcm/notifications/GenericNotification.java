@@ -8,6 +8,9 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -16,8 +19,12 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RecentNotificationsActivity;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.views.MatchView;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -135,5 +142,40 @@ public class GenericNotification extends BaseNotification {
     @Override
     public int getNotificationId() {
         return (new Date().getTime() + ":" + getNotificationType() + ":" + messageData).hashCode();
+    }
+
+
+    @Override
+    public View getView(Context c, LayoutInflater inflater, View convertView) {
+        ViewHolder holder;
+        if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
+            convertView = inflater.inflate(R.layout.list_item_notification_generic, null, false);
+
+            holder = new ViewHolder();
+            holder.header = (TextView) convertView.findViewById(R.id.card_header);
+            holder.title = (TextView) convertView.findViewById(R.id.title);
+            holder.message = (TextView) convertView.findViewById(R.id.message);
+            holder.time = (TextView) convertView.findViewById(R.id.notification_time);
+            holder.summaryContainer = convertView.findViewById(R.id.summary_container);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        holder.header.setText(c.getString(R.string.notification_broadcast_header));
+        holder.title.setText(title);
+        holder.message.setText(message);
+        holder.time.setText(getNotificationTimeString(c));
+        holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
+
+        return convertView;
+    }
+
+    private class ViewHolder {
+        public TextView header;
+        public TextView title;
+        public TextView message;
+        public TextView time;
+        private View summaryContainer;
     }
 }
