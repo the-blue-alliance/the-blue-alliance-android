@@ -1,16 +1,17 @@
 package com.thebluealliance.androidclient.renderers;
 
-import android.support.annotation.Nullable;
-import android.util.Log;
-
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.types.MediaType;
-import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.types.MediaType;
+import com.thebluealliance.androidclient.types.ModelType;
+
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -35,18 +36,24 @@ public class MediaRenderer implements ModelRenderer<Media, Void> {
         try {
             MediaType mediaType = media.getMediaType();
             String foreignKey = media.getForeignKey();
-            if (mediaType == MediaType.CD_PHOTO_THREAD) {
-                JsonObject details = media.getDetails();
-                imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType),
-                  details.get("image_partial").getAsString().replace("_l.jpg", "_m.jpg"));
-            } else if (mediaType == MediaType.YOUTUBE) {
-                imageUrl = String.format(Constants.MEDIA_IMG_URL_PATTERN.get(mediaType), foreignKey);
-            } else {
-                imageUrl = "";
+
+            /* Build the link of the remote image based on foreign key */
+            switch (mediaType) {
+                case CD_PHOTO_THREAD:
+                    JsonObject details = media.getDetails();
+                    imageUrl = String.format(mediaType.getImageUrlPattern(),
+                            details.get("image_partial").getAsString().replace("_l.jpg", "_m.jpg"));
+                    break;
+                case YOUTUBE:
+                case IMGUR:
+                    imageUrl = String.format(mediaType.getImageUrlPattern(), foreignKey);
+                    break;
+                default:
+                    imageUrl = "";
             }
             Boolean isVideo = mediaType == MediaType.YOUTUBE;
             return new ImageListElement(imageUrl,
-              String.format(Constants.MEDIA_LINK_URL_PATTERN.get(mediaType), foreignKey), isVideo);
+              String.format(mediaType.getLinkUrlPattern(), foreignKey), isVideo);
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields not defined for rendering. \n" +
               "Fields Required: Database.Medias.TYPE, Database.Medias.DETAILS, Database.Medias.FOREIGNKEY");
