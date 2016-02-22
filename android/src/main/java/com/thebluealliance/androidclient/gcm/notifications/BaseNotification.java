@@ -27,6 +27,7 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
 
 import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public abstract class BaseNotification extends ListElement {
@@ -49,6 +50,9 @@ public abstract class BaseNotification extends ListElement {
         this.logTag = null;
         this.display = true;
         this.stored = null;
+
+        // Set default time to the time this object was created
+        setDate(Calendar.getInstance().getTime());
     }
 
     public void setDate(Date date) {
