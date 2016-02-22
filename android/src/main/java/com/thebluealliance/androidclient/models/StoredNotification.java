@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotificat
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.CompLevelStartingNotification;
 import com.thebluealliance.androidclient.gcm.notifications.DistrictPointsUpdatedNotification;
+import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
@@ -150,6 +151,9 @@ public class StoredNotification {
                 break;
             case NotificationTypes.DISTRICT_POINTS_UPDATED:
                 notification = new DistrictPointsUpdatedNotification(data);
+                break;
+            case NotificationTypes.BROADCAST:
+                notification = new GenericNotification(getType(), data);
                 break;
             default:
                 return null;

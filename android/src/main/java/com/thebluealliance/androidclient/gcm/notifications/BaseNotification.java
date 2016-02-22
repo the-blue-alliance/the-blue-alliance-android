@@ -22,9 +22,9 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
-import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -106,19 +106,22 @@ public abstract class BaseNotification extends ListElement {
     }
 
     /**
-     * Adds a Category to activityIntent to mark it as "triggered by tapping a system notification",
-     * then builds a PendingIntent with it.
+     * Wraps an intent in an intent to NotificationChangedReceiver
      */
     protected PendingIntent makeNotificationIntent(Context context, Intent activityIntent) {
-        activityIntent.addCategory(Intent.CATEGORY_ALTERNATIVE);
-        return PendingIntent.getActivity(context, getNotificationId(), activityIntent, 0);
+        Intent clickIntent = NotificationChangedReceiver.newIntent(context);
+        clickIntent.setAction(NotificationChangedReceiver.ACTION_NOTIFICATION_CLICKED);
+        clickIntent.putExtra(NotificationChangedReceiver.EXTRA_INTENT, activityIntent);
+        return PendingIntent.getBroadcast(context, getNotificationId(), clickIntent, 0);
     }
 
     /**
      * Creates a builder with the important defaults set.
      */
     public NotificationCompat.Builder getBaseBuilder(Context context) {
-        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, NotificationDismissedListener.newIntent(context), 0);
+        Intent dismissIntent = NotificationChangedReceiver.newIntent(context);
+        dismissIntent.setAction(NotificationChangedReceiver.ACTION_NOTIFICATION_DELETED);
+        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, dismissIntent, 0);
 
         return new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_notification)
