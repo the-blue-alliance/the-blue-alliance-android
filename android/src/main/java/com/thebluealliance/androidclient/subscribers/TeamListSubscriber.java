@@ -32,9 +32,6 @@ public class TeamListSubscriber extends BaseAPISubscriber<List<Team>, List<ListI
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
-        if (mAPIData == null) {
-            return;
-        }
         Collections.sort(mAPIData, mComparator);
         for (int i=0; i < mAPIData.size(); i++) {
             Team team = mAPIData.get(i);

@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.res.Resources;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
+
+import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +26,7 @@ public class MediaListSubscriber extends BaseAPISubscriber<List<Media>, List<Lis
         mDataToBind.clear();
         mCdPhotos.clear();
         mYtVideos.clear();
-        if (mAPIData == null) {
-            return;
-        }
+
         for (int i=0; i < mAPIData.size(); i++) {
             Media media = mAPIData.get(i);
             switch (media.getMediaType()) {

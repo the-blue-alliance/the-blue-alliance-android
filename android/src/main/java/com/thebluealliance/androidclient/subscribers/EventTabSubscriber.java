@@ -26,9 +26,6 @@ public class EventTabSubscriber extends BaseAPISubscriber<List<Event>, List<Even
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
-        if (mAPIData == null || mAPIData.isEmpty()) {
-            return;
-        }
         Collections.sort(mAPIData, mEventComparator);
 
         Calendar cal = Calendar.getInstance();
@@ -52,5 +49,9 @@ public class EventTabSubscriber extends BaseAPISubscriber<List<Event>, List<Even
                 lastEventWeek = competitionWeek;
             }
         }
+    }
+
+    @Override public boolean isDataValid() {
+        return super.isDataValid() && !mAPIData.isEmpty();
     }
 }
