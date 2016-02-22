@@ -224,6 +224,8 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         resetActionBar();
+        setSearchEnabled(true);
+        setRefreshEnabled(true);
 
         switch (mCurrentSelectedNavigationItemId) {
             case R.id.nav_item_events:
@@ -244,6 +246,8 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 break;
             case R.id.nav_item_notifications:
                 getSupportActionBar().setTitle(R.string.notifications);
+                getMenuInflater().inflate(R.menu.recent_notifications_help_menu, menu);
+                setRefreshEnabled(false);
                 mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
                 break;
         }
