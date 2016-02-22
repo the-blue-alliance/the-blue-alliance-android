@@ -1,10 +1,8 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
 import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -18,13 +16,10 @@ import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.activities.RecentNotificationsActivity;
-import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
-import com.thebluealliance.androidclient.views.MatchView;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -129,7 +124,7 @@ public class GenericNotification extends BaseNotification {
                 intent = null;
             }
         } else {
-            intent = RecentNotificationsActivity.newInstance(context);
+            intent = HomeActivity.newInstance(context, R.id.nav_item_notifications);
         }
         return intent;
     }

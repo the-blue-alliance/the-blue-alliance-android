@@ -196,15 +196,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.RecentNotificationsActivity"
-            android:label="@string/title_activity_notification_dashboard"
-            android:parentActivityName=".activities.HomeActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.thebluealliance.androidclient.activities.HomeActivity"/>
-        </activity>
-        <activity
             android:name=".activities.UpdateRequiredActivity"
             android:label="@string/title_activity_update_required"
             android:theme="@style/AppThemeNoActionBar"/>
