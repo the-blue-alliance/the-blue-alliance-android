@@ -174,6 +174,9 @@ public class GCMMessageHandler extends IntentService {
                     table.prune();
                 }
 
+                // Tell interested parties that a new notification has arrived
+                mEventBus.post(new NotificationsUpdatedEvent(notification));
+
                 if (notification.shouldShow()) {
                     if (SummaryNotification.isNotificationActive(c)) {
                         notification = new SummaryNotification();
@@ -185,7 +188,6 @@ public class GCMMessageHandler extends IntentService {
                     notificationManager.notify(id, built);
                 }
 
-                mEventBus.post(new NotificationsUpdatedEvent(notification));
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...
