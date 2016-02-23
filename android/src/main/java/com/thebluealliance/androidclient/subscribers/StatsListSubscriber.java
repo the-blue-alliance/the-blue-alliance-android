@@ -89,7 +89,8 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
         String statsString = "";
         for (int i = 0; i < Math.min(EventStatsEvent.SIZE, mDataToBind.size()); i++) {
             String opr = ((StatsListElement)mDataToBind.get(i)).getFormattedOpr();
-            statsString += (i + 1) + ". <b>" + opr + "</b>";
+            String teamName = ((StatsListElement)mDataToBind.get(i)).getTeamNumberString();
+            statsString += (i + 1) + ". " + teamName + " - <b>" + opr + "</b>";
             if (i < Math.min(EventStatsEvent.SIZE, mDataToBind.size()) - 1) {
                 statsString += "<br>";
             }
