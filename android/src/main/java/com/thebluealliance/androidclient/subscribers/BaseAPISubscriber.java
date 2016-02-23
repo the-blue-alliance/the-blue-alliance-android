@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
@@ -88,6 +89,11 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         if (refreshType == RefreshController.REQUESTED_BY_USER) {
             sendRefreshUpdate();
         }
+    }
+
+    @UiThread
+    public void onParentStop() {
+        hasBinderBoundViews = false;
     }
 
     @Override
