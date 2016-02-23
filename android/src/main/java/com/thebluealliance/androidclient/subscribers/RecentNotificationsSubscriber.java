@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.util.Log;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
@@ -7,8 +9,6 @@ import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.StoredNotification;
-
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +34,15 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
             BaseNotification renderable = notification.getNotification(mWriter);
             if (renderable != null) {
                 renderable.parseMessageData();
-                mDataToBind.add(renderable);
+                if (renderable.shouldShowInRecentNotificationsList()) {
+                    mDataToBind.add(renderable);
+                }
             }
         }
     }
 
-    @Override public boolean isDataValid() {
+    @Override
+    public boolean isDataValid() {
         return super.isDataValid() && !mAPIData.isEmpty();
     }
 
@@ -49,7 +52,11 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
     @SuppressWarnings("unused")
     public void onEvent(NotificationsUpdatedEvent event) {
         Log.d(Constants.LOG_TAG, "Updating notification list");
-        mDataToBind.add(0, event.getNotification());
+        BaseNotification notification = event.getNotification();
+        notification.parseMessageData();
+        if (notification.shouldShowInRecentNotificationsList()) {
+            mDataToBind.add(0, notification);
+        }
         bindData();
     }
 }

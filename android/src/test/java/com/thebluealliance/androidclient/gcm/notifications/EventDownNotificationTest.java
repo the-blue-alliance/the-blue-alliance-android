@@ -27,12 +27,13 @@ public class EventDownNotificationTest {
 
     private EventDownNotification mNotification;
     private JsonObject mData;
+    private Context context;
 
     @Before
     public void setUp() {
-        Context context = mock(Context.class, RETURNS_DEEP_STUBS);
+        context = mock(Context.class, RETURNS_DEEP_STUBS);
         mData = ModelMaker.getModel(JsonObject.class, "notification_event_down");
-        mNotification = new EventDownNotification(context, mData.toString());
+        mNotification = new EventDownNotification(mData.toString());
 
         when(context.getString(R.string.notification_event_down)).thenReturn(MOCK_TITLE);
         when(context.getString(R.string.notification_event_down_content, "Down Event"))
@@ -42,9 +43,9 @@ public class EventDownNotificationTest {
     @Test
     public void testParseData() {
         mNotification.parseMessageData();
+        mNotification.buildNotification(context);
 
         assertEquals(MOCK_TITLE, mNotification.getTitle());
         assertEquals(MOCK_TEXT, mNotification.getMessage());
-        assertNull(mNotification.getContentIntent());
     }
 }

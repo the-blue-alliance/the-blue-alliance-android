@@ -114,7 +114,7 @@ public class GCMMessageHandler extends IntentService {
                     break;
                 case NotificationTypes.PING:
                 case NotificationTypes.BROADCAST:
-                    notification = new GenericNotification(c, messageType, messageData);
+                    notification = new GenericNotification(messageType, messageData);
                     break;
                 case NotificationTypes.MATCH_SCORE:
                 case "score":
@@ -139,7 +139,7 @@ public class GCMMessageHandler extends IntentService {
                     notification = new DistrictPointsUpdatedNotification(messageData);
                     break;
                 case NotificationTypes.EVENT_DOWN:
-                    notification = new EventDownNotification(c, messageData);
+                    notification = new EventDownNotification(messageData);
                     /* Don't break, we also want to schedule a status update here */
                 case NotificationTypes.SYNC_STATUS:
                     Log.i(Constants.LOG_TAG, "Updating TBA API Status via push notification");
@@ -174,6 +174,9 @@ public class GCMMessageHandler extends IntentService {
                     table.prune();
                 }
 
+                // Tell interested parties that a new notification has arrived
+                mEventBus.post(new NotificationsUpdatedEvent(notification));
+
                 if (notification.shouldShow()) {
                     if (SummaryNotification.isNotificationActive(c)) {
                         notification = new SummaryNotification();
@@ -185,7 +188,6 @@ public class GCMMessageHandler extends IntentService {
                     notificationManager.notify(id, built);
                 }
 
-                mEventBus.post(new NotificationsUpdatedEvent(notification));
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...

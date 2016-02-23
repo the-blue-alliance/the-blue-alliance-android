@@ -24,7 +24,6 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
 
     public DistrictPointsUpdatedNotification(String messageData) {
         super(NotificationTypes.DISTRICT_POINTS_UPDATED, messageData);
-
     }
 
     @Override
