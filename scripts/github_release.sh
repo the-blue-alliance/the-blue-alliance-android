@@ -17,7 +17,7 @@ SHORTLOG_PATH=$4
 APK=$5
 APK_NAME=$(basename $APK)
 DESC=$(cat $DESC_PATH)
-DESC+="\nShortlog:\n$(cat $SHORTLOG_PATH)"
+DESC+=$"\nShortlog:\n\`\`\`\n$(cat $SHORTLOG_PATH)\n\`\`\`"
 
 echo "Creating GitHub Release for $USER/$REPO @ $TAG"
 
