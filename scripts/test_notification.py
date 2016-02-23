@@ -22,7 +22,7 @@
 #     "test_notification.py upcoming_match -h", ...
 
 
-import subprocess, json
+import subprocess, json, random
 
 
 # Sends a test push-notification over adb to TBA Android app.
@@ -32,6 +32,7 @@ import subprocess, json
 # This should echo something like:
 #    Broadcasting: Intent { act=com.google.android.c2dm.intent.RECEIVE cat=[com.thebluealliance.androidclient] (has extras) }
 #    Broadcast completed: result=-1
+
 def notify(message_type, json_data):
     if type(json_data) != str:
         json_data = json.dumps(json_data)
@@ -44,8 +45,25 @@ def notify(message_type, json_data):
         --es message_type %s \
         --es message_data '%s'"""
     command = template % (message_type, json_text)
+    
+    print "\nSending " + message_type + " broadcast"
 
     subprocess.call(["adb", "shell", command])
+
+def get_notification_commands():
+    commands = []
+
+    commands.append('awards_posted_command')
+    commands.append('schedule_updated_command')
+    commands.append('alliance_selection_command')
+    commands.append('event_down_command')
+    commands.append('ping_command')
+    commands.append('level_starting_command')
+    commands.append('broadcast_command')
+    commands.append('match_score_command')
+    commands.append('upcoming_match_command')
+
+    return commands
 
 
 # ====== scriptine commands ======
@@ -206,6 +224,21 @@ event_down_sample = {
 
 def event_down_command(data=event_down_sample):
     notify('event_down', data)
+    
+
+def spam_command(count=10):
+    commands = get_notification_commands()
+    commandsToRun = random.sample(commands, count) 
+
+    for command in commandsToRun:
+        globals()[command]()
+
+
+def all_command():
+    commands = get_notification_commands()
+
+    for command in commands:
+        globals()[command]()
 
 # ====== main ======
 
