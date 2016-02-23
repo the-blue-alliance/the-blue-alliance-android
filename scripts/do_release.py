@@ -57,7 +57,18 @@ def check_unittest():
 def update_whatsnew():
     print "Updating whatsnew file ({}). Limit 500 characters".format(CHANGELOG_PATH)
     time.sleep(2)
+    base_tag = subprocess.check_output(["git", "describe", "--tags", "--abbrev=0"]).split()[0]
+    commitlog = subprocess.check_output(["git", "log", "{}..HEAD".format(base_tag), "--oneline", "--no-merges"])
+    commitlog = '# '.join(('\n' + commitlog.lstrip()).splitlines(True))
+
+    # Append commented commitlog to whatsnew file for ease of writing
+    with open(CHANGELOG_PATH, "a") as whatsnew:
+        whatsnew.write(commitlog)
+
     subprocess.call(["vim", CHANGELOG_PATH])
+
+    # Remove "commented" commitlog lines
+    subprocess.call(["sed", "-i", "/^#/d", CHANGELOG_PATH])
 
     # Check character count
     chars = subprocess.check_output(["wc", "-m", CHANGELOG_PATH])
