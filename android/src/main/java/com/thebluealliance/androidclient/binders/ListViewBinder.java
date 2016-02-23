@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -43,11 +44,11 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
         long startTime = System.currentTimeMillis();
         Log.d(Constants.LOG_TAG, "BINDING DATA");
         if (mAdapter == null) {
-            mAdapter = newAdapter(data);
+            mAdapter = newAdapter(new ArrayList<>(data));
             listView.setAdapter(mAdapter);
         } else {
             mAdapter.clear();
-            mAdapter.addAll(data);
+            mAdapter.addAll(new ArrayList<>(data));
             mAdapter.notifyDataSetChanged();
         }
 

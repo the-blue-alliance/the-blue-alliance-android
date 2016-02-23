@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
@@ -13,6 +12,7 @@ import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.views.ExpandableListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,8 +31,7 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
     @Bind(R.id.expandable_list) ExpandableListView expandableListView;
     @Bind(R.id.progress) ProgressBar progressBar;
 
-    //public ExpandableListView expandableListView;
-    //public ProgressBar progressBar;
+    private ExpandableListViewAdapter mAdapter;
 
     private short mExpandMode;
     protected ModelRendererSupplier mRendererSupplier;
@@ -65,9 +64,15 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
             return;
         }
 
-        ExpandableListViewAdapter adapter = newAdapter(ImmutableList.copyOf(data));
-        expandableListView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        if (mAdapter == null) {
+            mAdapter = newAdapter(new ArrayList<>(data));
+            expandableListView.setAdapter(mAdapter);
+        } else {
+            mAdapter.removeAllGroups();
+            mAdapter.addAllGroups(new ArrayList<>(data));
+            mAdapter.notifyDataSetChanged();
+        }
+
         expandableListView.setVisibility(View.VISIBLE);
         expandForMode(data);
 
@@ -75,7 +80,6 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
             progressBar.setVisibility(View.GONE);
         }
 
-        expandableListView.setVisibility(View.VISIBLE);
         mNoDataBinder.unbindData();
         setDataBound(true);
     }
