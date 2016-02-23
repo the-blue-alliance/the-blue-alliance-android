@@ -19,8 +19,12 @@ import butterknife.ButterKnife;
 
 public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
-    @Bind(R.id.list) ListView listView;
-    @Bind(R.id.progress) ProgressBar progressBar;
+    @Bind(R.id.list)
+    ListView listView;
+    @Bind(R.id.progress)
+    ProgressBar progressBar;
+
+    ListViewAdapter mAdapter;
 
     @Override
     public void bindViews() {
@@ -39,9 +43,14 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
         }
         long startTime = System.currentTimeMillis();
         Log.d(Constants.LOG_TAG, "BINDING DATA");
-        ListViewAdapter adapter = newAdapter(new ArrayList<>(data));
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        if (mAdapter == null) {
+            mAdapter = newAdapter(new ArrayList<>(data));
+            listView.setAdapter(mAdapter);
+        } else {
+            mAdapter.clear();
+            mAdapter.addAll(new ArrayList<>(data));
+            mAdapter.notifyDataSetChanged();
+        }
 
         if (progressBar != null) {
             progressBar.setVisibility(View.GONE);
