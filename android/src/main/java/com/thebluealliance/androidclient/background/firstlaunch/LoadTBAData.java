@@ -1,11 +1,5 @@
 package com.thebluealliance.androidclient.background.firstlaunch;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
-import android.util.Log;
-
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -23,11 +17,19 @@ import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
-import java.net.SocketTimeoutException;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.preference.PreferenceManager;
+import android.util.Log;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import retrofit.Call;
+import retrofit.Response;
 import rx.schedulers.Schedulers;
 
 public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, Void> {
@@ -80,12 +82,17 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
         /* We need to download and cache every team and event into the database. To avoid
          * unexpected behavior caused by changes in network connectivity, we will load all
          * teams into memory first. Once we have loaded everything, only then will we wipe the
-         * database and insert all the new teams and events.        *
+         * database and insert all the new teams and events
          */
 
         try {
-            APIStatus status = datafeed.status().toBlocking().first().body();
-            int maxCompYear = status.getMaxSeason();
+            Call<APIStatus> statusCall = datafeed.statusCall();
+            Response<APIStatus> statusResponse = statusCall.execute();
+            if (!statusResponse.isSuccess() && statusResponse.body() != null) {
+                onConnectionError();
+                return null;
+            }
+            int maxCompYear = statusResponse.body().getMaxSeason();
 
 
             List<Team> allTeams = new ArrayList<>();
@@ -101,13 +108,20 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     int end = start + Constants.API_TEAM_LIST_PAGE_SIZE - 1;
                     start = start == 0 ? 1 : start;
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_teams), start, end)));
-                    List<Team> teamListResponse;
-                    teamListResponse = datafeed.fetchTeamPage(pageNum, APIv2.TBA_CACHE_WEB).toBlocking().first().body();
-                    if (teamListResponse == null || teamListResponse.size() == 0) {
+                    Call<List<Team>> teamListCall =
+                            datafeed.fetchTeamPageCall(pageNum, APIv2.TBA_CACHE_WEB);
+                    Response<List<Team>> teamListResponse = teamListCall.execute();
+                    if (teamListResponse == null
+                            || !teamListResponse.isSuccess()
+                            || teamListResponse.body() == null) {
+                        onConnectionError();
+                        return null;
+                    }
+                    if (teamListResponse.body().isEmpty()) {
                         // No teams found for a page; we are done
                         break;
                     }
-                    allTeams.addAll(teamListResponse);
+                    allTeams.addAll(teamListResponse.body());
                     maxPageNum = Math.max(maxPageNum, pageNum);
                 }
             }
@@ -121,13 +135,18 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                         return null;
                     }
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_events), Integer.toString(year))));
-                    List<Event> eventListResponse;
-                    eventListResponse = datafeed.fetchEventsInYear(year, APIv2.TBA_CACHE_WEB).toBlocking().first().body();
-                    if (eventListResponse == null) {
-                        continue;
+                    Call<List<Event>> eventListCall =
+                            datafeed.fetchEventsInYearCall(year, APIv2.TBA_CACHE_WEB);
+                    Response<List<Event>> eventListResponse = eventListCall.execute();
+                    if (eventListResponse == null
+                            || !eventListResponse.isSuccess()
+                            || eventListResponse.body() == null) {
+                        onConnectionError();
+                        return null;
                     }
-                    allEvents.addAll(eventListResponse);
-                    Log.i(Constants.LOG_TAG, String.format("Loaded %1$d events in %2$d", eventListResponse.size(), year));
+                    allEvents.addAll(eventListResponse.body());
+                    Log.i(Constants.LOG_TAG, String.format("Loaded %1$d events in %2$d",
+                            eventListResponse.body().size(), year));
                 }
             }
 
@@ -140,15 +159,22 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                         return null;
                     }
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_districts), year)));
-                    List<District> districtListResponse;
                     AddDistrictKeys keyAdder = new AddDistrictKeys(year);
-                    districtListResponse = datafeed.fetchDistrictList(year, APIv2.TBA_CACHE_WEB).toBlocking().first().body();
-                    keyAdder.call(districtListResponse);
-                    if (districtListResponse == null) {
-                        continue;
+                    Call<List<District>> districtListCall =
+                            datafeed.fetchDistrictListCall(year, APIv2.TBA_CACHE_WEB);
+                    Response<List<District>> districtListResponse = districtListCall.execute();
+                    if (districtListResponse == null
+                            || !districtListResponse.isSuccess()
+                            || districtListResponse.body() == null) {
+                        onConnectionError();
+                        return null;
                     }
-                    allDistricts.addAll(districtListResponse);
-                    Log.i(Constants.LOG_TAG, String.format("Loaded %1$d districts in %2$d", districtListResponse.size(), year));
+
+                    List<District> newDistrictList = districtListResponse.body();
+                    keyAdder.call(newDistrictList);
+                    allDistricts.addAll(newDistrictList);
+                    Log.i(Constants.LOG_TAG, String.format("Loaded %1$d districts in %2$d",
+                            newDistrictList.size(), year));
                 }
             }
 
@@ -169,8 +195,8 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
 
             // Write TBA Status
-            editor.putString(TBAStatusController.STATUS_PREF_KEY, status.getJsonBlob());
-            editor.putInt(Constants.LAST_YEAR_KEY, status.getMaxSeason());
+            editor.putString(TBAStatusController.STATUS_PREF_KEY, statusResponse.body().getJsonBlob());
+            editor.putInt(Constants.LAST_YEAR_KEY, statusResponse.body().getMaxSeason());
 
             // Loop through all pages
             for (int pageNum = 0; pageNum <= maxPageNum; pageNum++) {
@@ -192,6 +218,10 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             ex.printStackTrace();
             // Alert the user that there was a problem
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_ERROR, Utilities.exceptionStacktraceToString(ex)));
+        } catch (IOException e) {
+            /* Some sort of network error */
+            e.printStackTrace();
+            onConnectionError();
         }
         return null;
     }
@@ -231,6 +261,6 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
     }
 
     public interface LoadTBADataCallbacks {
-        public void onProgressUpdate(LoadProgressInfo info);
+        void onProgressUpdate(LoadProgressInfo info);
     }
 }
