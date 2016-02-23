@@ -1,6 +1,9 @@
-Version 3.0.5:<br>
-    - We've rewritten the way the app loads data to make it better, faster, and more reliable. Hope you can notice an improvement :)<br>
-    - Many bugfixes and other app improvements<br>
+Version 3.1.0:<br>
+    - Added live ticker for individual events<br>
+    - Add support for imgur team media<br>
+    - Fixed bug where Team's events didn't show up<br>
+    - Fixed many other bugs encountered during Week 0 testing.<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>
+<br>
