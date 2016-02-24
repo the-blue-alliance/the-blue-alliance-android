@@ -20,7 +20,7 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.datafeed.DatafeedModule;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -46,7 +46,7 @@ public abstract class BaseNotification extends ListElement {
     public BaseNotification(String messageType, String messageData) {
         this.messageType = messageType;
         this.messageData = messageData;
-        this.gson = DatafeedModule.getGson();
+        this.gson = HttpModule.getGson();
         this.logTag = null;
         this.display = true;
         this.stored = null;

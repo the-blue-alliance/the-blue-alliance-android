@@ -1,10 +1,6 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import com.facebook.stetho.common.Util;
-import com.facebook.stetho.okhttp.StethoInterceptor;
-import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
@@ -12,15 +8,6 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
-import com.thebluealliance.androidclient.datafeed.deserializers.APIStatusDeserializer;
-import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
-import com.thebluealliance.androidclient.datafeed.deserializers.DistrictDeserializer;
-import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
-import com.thebluealliance.androidclient.datafeed.deserializers.EventDeserializer;
-import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserializer;
-import com.thebluealliance.androidclient.datafeed.deserializers.MediaDeserializer;
-import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
-import com.thebluealliance.androidclient.datafeed.deserializers.TeamDistrictPointsDeserializer;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
@@ -28,18 +15,10 @@ import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
-import com.thebluealliance.androidclient.models.APIStatus;
-import com.thebluealliance.androidclient.models.Award;
-import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
-import com.thebluealliance.androidclient.models.DistrictTeam;
-import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.Match;
-import com.thebluealliance.androidclient.models.Media;
-import com.thebluealliance.androidclient.models.Team;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import javax.inject.Named;
@@ -50,10 +29,9 @@ import dagger.Provides;
 import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
 
-@Module(includes = TBAAndroidModule.class)
+@Module(includes = {TBAAndroidModule.class, HttpModule.class})
 public class DatafeedModule {
 
-    public static int CACHE_SIZE = 10 * 1024 * 1024;
 
     public DatafeedModule() {}
 
@@ -87,26 +65,6 @@ public class DatafeedModule {
         return retrofit.create(GitHubAPI.class);
     }
 
-    @Provides @Singleton
-    public Gson provideGson() {
-        return getGson();
-    }
-
-    @Provides @Singleton
-    public OkHttpClient getOkHttp(Cache responseCache) {
-        OkHttpClient client = new OkHttpClient();
-        client.interceptors().add(new APIv2RequestInterceptor());
-        if (Utilities.isDebuggable()) {
-            client.networkInterceptors().add(new StethoInterceptor());
-        }
-        client.setCache(responseCache);
-        return client;
-    }
-
-    @Provides @Singleton
-    public Cache provideOkCache(Context context) {
-        return new Cache(context.getCacheDir(), CACHE_SIZE);
-    }
 
     @Provides @Singleton
     public APICache provideApiCache(Database db) {
@@ -138,20 +96,7 @@ public class DatafeedModule {
         return new TBAStatusController(prefs, gson, cache, context);
     }
 
-    public static Gson getGson() {
-        GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Award.class, new AwardDeserializer());
-        builder.registerTypeAdapter(Event.class, new EventDeserializer());
-        builder.registerTypeAdapter(Match.class, new MatchDeserializer());
-        builder.registerTypeAdapter(Team.class, new TeamDeserializer());
-        builder.registerTypeAdapter(Media.class, new MediaDeserializer());
-        builder.registerTypeAdapter(District.class, new DistrictDeserializer());
-        builder.registerTypeAdapter(DistrictTeam.class, new DistrictTeamDeserializer());
-        builder.registerTypeAdapter(DistrictPointBreakdown.class, new TeamDistrictPointsDeserializer());
-        builder.registerTypeAdapter(APIStatus.class, new APIStatusDeserializer());
-        return builder.create();
-    }
-
+    @VisibleForTesting
     public static Retrofit getRetrofit(Gson gson, OkHttpClient okHttpClient, SharedPreferences prefs) {
         String baseUrl = Utilities.isDebuggable()
           ? prefs.getString(APIv2.DEV_TBA_PREF_KEY, APIv2.TBA_URL)
