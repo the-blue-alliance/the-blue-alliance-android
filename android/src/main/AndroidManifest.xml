@@ -245,6 +245,9 @@
         <service
             android:name=".datafeed.status.StatusRefreshService"
             android:exported="false"/>
+        <service
+            android:name=".imgur.ImgurSuggestionService"
+            android:exported="false" />
     </application>
 
 </manifest>
