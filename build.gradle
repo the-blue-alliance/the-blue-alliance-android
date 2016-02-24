@@ -43,5 +43,6 @@ allprojects {
         playServicesVersion = '8.4.0'
         googleApiClientVersion = '1.21.0'
         retrofitVersion = '2.0.0-beta1'
+        rxJavaVersion = '1.0.1'
     }
 }

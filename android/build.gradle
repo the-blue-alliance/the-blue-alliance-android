@@ -208,6 +208,7 @@ dependencies {
     compile ([group: 'com.google.api-client', name: 'google-api-client-android', version: googleApiClientVersion])
     compile ([group: 'com.google.http-client', name: 'google-http-client-gson', version: googleApiClientVersion])
     compile project(':tbaMobile')
+    compile project(':libImgur')
 
     // Android support libraries
     compile "com.android.support:support-v13:${supportLibVersion}"
@@ -241,7 +242,7 @@ dependencies {
     compile 'com.facebook.stetho:stetho:1.1.1'
     compile 'com.facebook.stetho:stetho-okhttp:1.1.1'
     compile 'com.firebase:firebase-client-android:2.3.1'
-    compile 'io.reactivex:rxandroid:1.0.1'
+    compile "io.reactivex:rxandroid:${rxJavaVersion}"
     compile 'io.reactivex:rxjava-math:1.0.0'
     compile 'me.relex:circleindicator:1.1.5@aar'
     compile 'com.jakewharton:butterknife:7.0.1'
