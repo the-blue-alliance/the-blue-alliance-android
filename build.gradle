@@ -31,9 +31,17 @@ buildscript {
     }
 }
 
+
 allprojects {
     repositories {
         jcenter()
         mavenCentral()
+    }
+
+    ext {
+        supportLibVersion = '23.1.1'
+        playServicesVersion = '8.4.0'
+        googleApiClientVersion = '1.21.0'
+        retrofitVersion = '2.0.0-beta1'
     }
 }
