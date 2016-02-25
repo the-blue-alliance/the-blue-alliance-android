@@ -1,19 +1,18 @@
 package com.thebluealliance.androidclient.datafeed.status;
 
-import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 
 import com.squareup.okhttp.Cache;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.models.APIStatus;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +20,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import java.io.IOException;
@@ -157,9 +157,10 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         }
 
         /* App updates required/recommended */
-        if (BuildConfig.VERSION_CODE < getMinAppVersion()) {
+        if (!Utilities.isDebuggable() && BuildConfig.VERSION_CODE < getMinAppVersion()) {
             activity.startActivity(new Intent(activity, UpdateRequiredActivity.class));
-        } else if (BuildConfig.VERSION_CODE < getLatestAppVersion()
+        } else if (!Utilities.isDebuggable()
+                && BuildConfig.VERSION_CODE < getLatestAppVersion()
                 && mLastDialogTime + DIALOG_TIMEOUT < System.nanoTime()) {
             /* Show an app update dialog */
             new AlertDialog.Builder(activity)
