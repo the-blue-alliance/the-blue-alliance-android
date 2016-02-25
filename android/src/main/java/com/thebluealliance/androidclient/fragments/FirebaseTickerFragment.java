@@ -93,6 +93,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                 .filter(childEvent -> childEvent != null && childEvent.eventType == FirebaseChildType.CHILD_ADDED)
                 .map(childEvent1 -> childEvent1.snapshot.getValue(FirebaseNotification.class))
                 .buffer(5, TimeUnit.SECONDS, 5)
+                .filter(itemList -> itemList != null && !itemList.isEmpty())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this, throwable -> {
@@ -328,6 +329,9 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     }
 
     public void call(List<FirebaseNotification> firebaseNotifications) {
+        if (firebaseNotifications.isEmpty()) {
+            return;
+        }
         mChildHasBeenAdded = true;
         mProgressBar.setVisibility(View.GONE);
         for (FirebaseNotification firebaseNotification : firebaseNotifications) {
