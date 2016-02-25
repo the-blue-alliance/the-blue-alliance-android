@@ -1,21 +1,10 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -30,10 +19,23 @@ import com.thebluealliance.androidclient.listitems.gameday.GamedayTickerFilterCh
 import com.thebluealliance.androidclient.models.FirebaseNotification;
 import com.thebluealliance.androidclient.views.NoDataView;
 
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -87,12 +89,21 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         // Delivery will be resumed once the view hierarchy is created
         mFirebaseSubscriber.pauseDelivery();
         mFirebaseSubscriber.getObservable()
+                .onBackpressureBuffer()
                 .filter(childEvent -> childEvent != null && childEvent.eventType == FirebaseChildType.CHILD_ADDED)
                 .map(childEvent1 -> childEvent1.snapshot.getValue(FirebaseNotification.class))
-                .buffer(5)
+                .buffer(5, TimeUnit.SECONDS, 5)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this);
+                .subscribe(this, throwable -> {
+                    Log.e(Constants.LOG_TAG, "Firebase error: " + throwable);
+                    throwable.printStackTrace();
+                    // Show the "none found" warning
+                    mProgressBar.setVisibility(View.GONE);
+                    mListView.setVisibility(View.GONE);
+                    mNoDataView.setVisibility(View.VISIBLE);
+                    mNoDataView.setText(R.string.firebase_no_matching_items);
+                });
         Firebase.setAndroidContext(getActivity());
         Firebase ticker = new Firebase(mFirebaseUrl);
         ticker.limitToLast(mFirebaseLoadDepth).addChildEventListener(mFirebaseSubscriber);
@@ -293,6 +304,14 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                         mNoDataView.setVisibility(View.GONE);
                         mProgressBar.setVisibility(View.GONE);
                     }
+                }, throwable -> {
+                    Log.e(Constants.LOG_TAG, "Firebase error");
+                    throwable.printStackTrace();
+                    // Show the "none found" warning
+                    mProgressBar.setVisibility(View.GONE);
+                    mListView.setVisibility(View.GONE);
+                    mNoDataView.setVisibility(View.VISIBLE);
+                    mNoDataView.setText(R.string.firebase_no_matching_items);
                 });
     }
 
