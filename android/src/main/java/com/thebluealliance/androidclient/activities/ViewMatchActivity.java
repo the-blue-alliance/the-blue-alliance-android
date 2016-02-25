@@ -55,8 +55,7 @@ public class ViewMatchActivity extends MyTBASettingsActivity
         setSettingsToolbarTitle("Match settings");
 
         MatchInfoFragment matchInfoFragment = MatchInfoFragment.newInstance(mMatchKey);
-        getSupportFragmentManager().beginTransaction()
-          .add(R.id.match_info_fragment_container, matchInfoFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.match_info_fragment_container, matchInfoFragment).commit();
     }
 
     @Override
