@@ -9,6 +9,7 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import javax.inject.Inject;
 
@@ -40,13 +41,13 @@ public class ImgurSuggestionService extends IntentService {
      * @return An Intent to pass to {@link Context#startService(Intent)}
      */
     public static Intent newIntent(Context context,
-                                   String filepath,
+                                   Uri filepath,
                                    String title,
                                    String description,
                                    String teamKey,
                                    int year) {
         Intent intent = new Intent(context, ImgurSuggestionService.class);
-        intent.putExtra(EXTRA_FILEPATH, filepath);
+        intent.putExtra(EXTRA_FILEPATH, filepath.toString());
         intent.putExtra(EXTRA_TITLE, title);
         intent.putExtra(EXTRA_DESCRIPTION, description);
         intent.putExtra(EXTRA_TEAMKEY, teamKey);
