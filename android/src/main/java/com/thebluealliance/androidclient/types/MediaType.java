@@ -40,7 +40,7 @@ public enum MediaType {
             case YOUTUBE:
                 return "http://img.youtube.com/vi/%s/hqdefault.jpg";
             case IMGUR:
-                return "http://i.imgur.com/%s.jpg";
+                return "http://i.imgur.com/%sl.jpg";
             default:
                 return "";
         }
