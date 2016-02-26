@@ -44,5 +44,6 @@ allprojects {
         googleApiClientVersion = '1.21.0'
         retrofitVersion = '2.0.0-beta1'
         rxJavaVersion = '1.0.1'
+        gsonVersion = '2.3.1'
     }
 }
