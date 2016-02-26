@@ -1,10 +1,27 @@
 package com.thebluealliance.androidclient.fragments;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.database.DatabaseWriter;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.firebase.FirebaseChildType;
+import com.thebluealliance.androidclient.firebase.ResumeableRxFirebase;
+import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
+import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.listitems.gameday.GamedayTickerFilterCheckbox;
+import com.thebluealliance.androidclient.models.FirebaseNotification;
+import com.thebluealliance.androidclient.views.NoDataView;
+
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,28 +29,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-
-import com.firebase.client.Firebase;
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.activities.GamedayActivity;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.database.DatabaseWriter;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
-import com.thebluealliance.androidclient.firebase.FirebaseChildType;
-import com.thebluealliance.androidclient.firebase.ResumeableRxFirebase;
-import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
-import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
-import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.listitems.gameday.GamedayTickerFilterCheckbox;
-import com.thebluealliance.androidclient.models.FirebaseNotification;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -42,31 +44,34 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-public abstract class FirebaseTickerFragment extends Fragment implements Action1<List<FirebaseNotification>> {
-
-    private static final String TICKER_FILTER_ENABLED_NOTIFICATIONS = "gameday_ticker_filter_enabled_notificaitons";
+public abstract class FirebaseTickerFragment extends Fragment implements Action1<List<FirebaseNotification>>, View.OnClickListener {
 
     private static final String FIREBASE_URL_DEFAULT = "https://thebluealliance.firebaseio.com/";
     private static final int FIREBASE_LOAD_DEPTH_DEFAULT = 25;
 
-    @Inject DatabaseWriter mWriter;
+    @Inject
+    DatabaseWriter mWriter;
 
     private ListView mListView;
     private ListView mFilterListView;
+    private NoDataView mNoDataView;
     private ProgressBar mProgressBar;
     private ListViewAdapter mNotificationsAdapter;
     private ListViewAdapter mNotificationFilterAdapter;
     private Parcelable mListState;
-    private FloatingActionButton mFab;
     private int mFirstVisiblePosition;
     private List<FirebaseNotification> mAllNotifications = new ArrayList<>();
     private ResumeableRxFirebase mFirebaseSubscriber;
+
+    private TextView leftButton, rightButton;
+    private Set<String> enabledNotifications;
+    private boolean filterListShowing;
 
     private boolean mChildHasBeenAdded = false;
     private String mFirebaseUrl;
     private int mFirebaseLoadDepth;
 
-    protected  FragmentComponent mComponent;
+    protected FragmentComponent mComponent;
 
     protected abstract void inject();
 
@@ -84,29 +89,68 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         // Delivery will be resumed once the view hierarchy is created
         mFirebaseSubscriber.pauseDelivery();
         mFirebaseSubscriber.getObservable()
-          .filter(childEvent -> childEvent != null && childEvent.eventType == FirebaseChildType.CHILD_ADDED)
-          .map(childEvent1 -> childEvent1.snapshot.getValue(FirebaseNotification.class))
-          .buffer(5)
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(this);
+                .onBackpressureBuffer()
+                .filter(childEvent -> childEvent != null && childEvent.eventType == FirebaseChildType.CHILD_ADDED)
+                .map(childEvent1 -> childEvent1.snapshot.getValue(FirebaseNotification.class))
+                .buffer(5, TimeUnit.SECONDS, 5)
+                .filter(itemList -> itemList != null && !itemList.isEmpty())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this, throwable -> {
+                    Log.e(Constants.LOG_TAG, "Firebase error: " + throwable);
+                    throwable.printStackTrace();
+                    // Show the "none found" warning
+                    mProgressBar.setVisibility(View.GONE);
+                    mListView.setVisibility(View.GONE);
+                    mNoDataView.setVisibility(View.VISIBLE);
+                    mNoDataView.setText(R.string.firebase_no_matching_items);
+                });
         Firebase.setAndroidContext(getActivity());
         Firebase ticker = new Firebase(mFirebaseUrl);
         ticker.limitToLast(mFirebaseLoadDepth).addChildEventListener(mFirebaseSubscriber);
+        ticker.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() == 0) {
+                    mNoDataView.setVisibility(View.VISIBLE);
+                    mNoDataView.setText(R.string.firebase_empty_ticker);
+                    mListView.setVisibility(View.GONE);
+                    mProgressBar.setVisibility(View.GONE);
+                } else {
+                    mNoDataView.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                mNoDataView.setVisibility(View.VISIBLE);
+                mNoDataView.setText(R.string.firebase_error);
+                mListView.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.GONE);
+            }
+        });
+
+        filterListShowing = false;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.list_view_gameday_ticker, null);
+        View v = inflater.inflate(R.layout.fragment_firebase_ticker, null);
         mFilterListView = (ListView) v.findViewById(R.id.filter_list);
+
+        mNoDataView = (NoDataView) v.findViewById(R.id.no_data);
+        mNoDataView.setImage(R.drawable.ic_notifications_black_48dp);
 
         if (mNotificationFilterAdapter == null) {
             mNotificationFilterAdapter = createFilterListAdapter();
         }
         mFilterListView.setAdapter(mNotificationFilterAdapter);
 
-        mFab = ((GamedayActivity) getActivity()).getmFab();
-        mFab.setOnClickListener(v1 -> onFabClicked());
+        leftButton = (TextView) v.findViewById(R.id.left_button);
+        rightButton = (TextView) v.findViewById(R.id.right_button);
+        leftButton.setOnClickListener(this);
+        rightButton.setOnClickListener(this);
+
         mListView = (ListView) v.findViewById(R.id.list);
         mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
         if (mChildHasBeenAdded) {
@@ -123,6 +167,9 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
             mNotificationsAdapter = new ListViewAdapter(getActivity(), new ArrayList<>());
             mListView.setAdapter(mNotificationsAdapter);
         }
+
+        setUpFilterListViews();
+
         return v;
     }
 
@@ -144,24 +191,50 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         mFirebaseSubscriber.pauseDelivery();
     }
 
-    private void onFabClicked() {
-        if (mFilterListView.getVisibility() != View.VISIBLE) {
-            // filter list is currently hidden. show it.
-            mFilterListView.setVisibility(View.VISIBLE);
-            // change the fab to a checkbox
-            mFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_check_white_24dp));
-        } else {
-            // it's visible. hide it and update the filtered things.
-            mFilterListView.setVisibility(View.GONE);
-            updateList();
-            // persist the new filter settings
-            PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putStringSet(TICKER_FILTER_ENABLED_NOTIFICATIONS, getEnabledNotificationKeys()).apply();
-            // change the fab back to the filter icon
-            mFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_filter_list_white_24dp));
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.right_button) {
+            if (!filterListShowing) {
+                filterListShowing = true;
+                setUpFilterListViews();
+                // Save the initially checked items
+                enabledNotifications = getEnabledNotificationKeys();
+            } else {
+                filterListShowing = false;
+                setUpFilterListViews();
+                // Apply the filter
+                updateList();
+            }
+        } else if (id == R.id.left_button) {
+            filterListShowing = false;
+            setUpFilterListViews();
+            // Reset the filter options
+            mNotificationFilterAdapter = createFilterListAdapter(enabledNotifications);
+            mFilterListView.setAdapter(mNotificationFilterAdapter);
         }
     }
 
-    private ListViewAdapter createFilterListAdapter() {
+    private void setUpFilterListViews() {
+        if (filterListShowing) {
+            // Show the filter list
+            mFilterListView.setVisibility(View.VISIBLE);
+            // Show the left button
+            leftButton.setVisibility(View.VISIBLE);
+            leftButton.setText(R.string.firebase_cancel);
+            // Set up right button
+            rightButton.setText(R.string.firebase_apply_filter);
+        } else {
+            // Hide the filter list
+            mFilterListView.setVisibility(View.GONE);
+            // Hide the left button
+            leftButton.setVisibility(View.GONE);
+            // Update the right button
+            rightButton.setText(R.string.firebase_filter);
+        }
+    }
+
+    private ListViewAdapter createFilterListAdapter(Set<String> enabledNotifications) {
         List<ListItem> listItems = new ArrayList<>();
 
         // Start with all notifications enabled
@@ -172,9 +245,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         listItems.add(new GamedayTickerFilterCheckbox(R.layout.list_item_checkbox_alliance_selections, "Alliance Selections", NotificationTypes.ALLIANCE_SELECTION, true));
         listItems.add(new GamedayTickerFilterCheckbox(R.layout.list_item_checkbox_awards_posted, "Awards Posted", NotificationTypes.AWARDS, true));
 
-        // Retrieve the stored filter preference
-        // On the first time launching gameday, that preference will be null, so we must account for that
-        Set<String> enabledNotifications = PreferenceManager.getDefaultSharedPreferences(getActivity()).getStringSet(TICKER_FILTER_ENABLED_NOTIFICATIONS, null);
+        // Initialize the preferences to their appropriate value
         if (enabledNotifications != null) {
             for (ListItem item : listItems) {
                 GamedayTickerFilterCheckbox checkbox = (GamedayTickerFilterCheckbox) item;
@@ -185,6 +256,10 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         }
 
         return new ListViewAdapter(getActivity(), listItems);
+    }
+
+    private ListViewAdapter createFilterListAdapter() {
+        return createFilterListAdapter(null);
     }
 
     private void loadFirebaseParams() {
@@ -198,7 +273,6 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
             mFirebaseLoadDepth = FIREBASE_LOAD_DEPTH_DEFAULT;
         }
     }
-
 
     private void updateList() {
         // Collect a list of all enabled notification keys
@@ -219,18 +293,26 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                     }
                     if (notificationsList.isEmpty()) {
                         // Show the "none found" warning
-                        // TODO: Switch to using NoDataView
                         mProgressBar.setVisibility(View.GONE);
-                        getView().findViewById(R.id.no_notifications_found).setVisibility(View.VISIBLE);
                         mListView.setVisibility(View.GONE);
+                        mNoDataView.setVisibility(View.VISIBLE);
+                        mNoDataView.setText(R.string.firebase_no_matching_items);
                     } else {
                         mNotificationsAdapter.values.clear();
                         mNotificationsAdapter.values.addAll(notificationsList);
                         mNotificationsAdapter.notifyDataSetChanged();
                         mListView.setVisibility(View.VISIBLE);
-                        getView().findViewById(R.id.no_notifications_found).setVisibility(View.GONE);
+                        mNoDataView.setVisibility(View.GONE);
                         mProgressBar.setVisibility(View.GONE);
                     }
+                }, throwable -> {
+                    Log.e(Constants.LOG_TAG, "Firebase error");
+                    throwable.printStackTrace();
+                    // Show the "none found" warning
+                    mProgressBar.setVisibility(View.GONE);
+                    mListView.setVisibility(View.GONE);
+                    mNoDataView.setVisibility(View.VISIBLE);
+                    mNoDataView.setText(R.string.firebase_no_matching_items);
                 });
     }
 
@@ -247,25 +329,16 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     }
 
     public void call(List<FirebaseNotification> firebaseNotifications) {
+        if (firebaseNotifications.isEmpty()) {
+            return;
+        }
         mChildHasBeenAdded = true;
         mProgressBar.setVisibility(View.GONE);
         for (FirebaseNotification firebaseNotification : firebaseNotifications) {
             firebaseNotification.setDatabaseWriter(mWriter);
             mAllNotifications.add(0, firebaseNotification);
-
-            // Normally we would call updateList() to update the list
-            // However, that requires rechecking the types of all notificaitons. To be more
-            // efficient, we should simply add it to the adapter if the notificaiton's type is
-            // currently enabled
-            if (getEnabledNotificationKeys().contains(firebaseNotification.getNotificationType())) {
-                BaseNotification notification = firebaseNotification.getNotification();
-                if (notification != null) {
-                    Log.d(Constants.LOG_TAG, "Adding ticker item with key " + notification.getKey());
-                    mNotificationsAdapter.values.add(0, notification);
-                    mNotificationsAdapter.notifyDataSetChanged();
-                }
-            }
         }
+        updateList();
     }
 
 }

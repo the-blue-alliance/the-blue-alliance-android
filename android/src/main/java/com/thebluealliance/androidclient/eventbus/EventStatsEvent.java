@@ -12,4 +12,12 @@ public class EventStatsEvent {
     public String getStatString() {
         return mTopStatString;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o != null
+                && o instanceof EventStatsEvent
+                && (((EventStatsEvent) o).getStatString() == null && getStatString() == null
+                    || ((EventStatsEvent) o).getStatString().equals(getStatString()));
+    }
 }

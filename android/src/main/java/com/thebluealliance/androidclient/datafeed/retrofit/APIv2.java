@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.models.Team;
 
 import java.util.List;
 
+import retrofit.Call;
 import retrofit.Response;
 import retrofit.http.GET;
 import retrofit.http.Header;
@@ -40,6 +41,14 @@ public interface APIv2 {
 
     @GET("/api/v2/teams/{pageNum}")
     Observable<Response<List<Team>>> fetchTeamPage(
+      @Path("pageNum") int pageNum,
+      @Header(TBA_CACHE_HEADER) String cacheHeader);
+
+    /**
+     * Use to execute synchronous request in {@link com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData}
+     */
+    @GET("/api/v2/teams/{pageNum}")
+    Call<List<Team>> fetchTeamPageCall(
       @Path("pageNum") int pageNum,
       @Header(TBA_CACHE_HEADER) String cacheHeader);
 
@@ -92,6 +101,14 @@ public interface APIv2 {
       @Path("year") int year,
       @Header(TBA_CACHE_HEADER) String cacheHeader);
 
+    /**
+     * Use to execute synchronous request in {@link com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData}
+     */
+    @GET("/api/v2/events/{year}")
+    Call<List<Event>> fetchEventsInYearCall(
+      @Path("year") int year,
+      @Header(TBA_CACHE_HEADER) String cacheHeader);
+
     @GET("/api/v2/event/{eventKey}")
     Observable<Response<Event>> fetchEvent(
       @Path("eventKey") String eventKey,
@@ -132,6 +149,14 @@ public interface APIv2 {
       @Path("year") int year,
       @Header(TBA_CACHE_HEADER) String cacheHeader);
 
+    /**
+     * Use to execute synchronous request in {@link com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData}
+     */
+    @GET("/api/v2/districts/{year}")
+    Call<List<District>> fetchDistrictListCall(
+      @Path("year") int year,
+      @Header(TBA_CACHE_HEADER) String cacheHeader);
+
     @GET("/api/v2/district/{districtShort}/{year}/events")
     Observable<Response<List<Event>>> fetchDistrictEvents(
       @Path("districtShort") String districtShort,
@@ -151,4 +176,10 @@ public interface APIv2 {
 
     @GET("/api/v2/status")
     Observable<Response<APIStatus>> status();
+
+    /**
+     * Use to execute synchronous request in {@link com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData}
+     */
+    @GET("/api/v2/status")
+    Call<APIStatus> statusCall();
 }

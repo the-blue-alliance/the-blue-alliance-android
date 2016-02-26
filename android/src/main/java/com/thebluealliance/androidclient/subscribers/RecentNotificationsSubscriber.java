@@ -29,19 +29,21 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
-
-        if (mAPIData == null || mAPIData.isEmpty()) {
-            return;
-        }
-
         for (int i = 0; i < mAPIData.size(); i++) {
             StoredNotification notification = mAPIData.get(i);
             BaseNotification renderable = notification.getNotification(mWriter);
             if (renderable != null) {
                 renderable.parseMessageData();
-                mDataToBind.add(renderable);
+                if (renderable.shouldShowInRecentNotificationsList()) {
+                    mDataToBind.add(renderable);
+                }
             }
         }
+    }
+
+    @Override
+    public boolean isDataValid() {
+        return super.isDataValid() && !mAPIData.isEmpty();
     }
 
     /**
@@ -50,7 +52,11 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
     @SuppressWarnings("unused")
     public void onEvent(NotificationsUpdatedEvent event) {
         Log.d(Constants.LOG_TAG, "Updating notification list");
-        mDataToBind.add(0, event.getNotification());
+        BaseNotification notification = event.getNotification();
+        notification.parseMessageData();
+        if (notification.shouldShowInRecentNotificationsList()) {
+            mDataToBind.add(0, notification);
+        }
         bindData();
     }
 }

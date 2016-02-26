@@ -5,7 +5,7 @@
 # Depends on github-release
 # https://github.com/aktau/github-release
 
-# Usage: ./scripts/github_release.sh <tag> <name> <changelog_path> <apk file>
+# Usage: ./scripts/github_release.sh <tag> <name> <changelog_path> <shortlog_path> <apk file>
 
 # Variables
 USER="the-blue-alliance"
@@ -13,9 +13,11 @@ REPO="the-blue-alliance-android"
 TAG=$1
 NAME=$2
 DESC_PATH=$3
-APK=$4
+SHORTLOG_PATH=$4
+APK=$5
 APK_NAME=$(basename $APK)
 DESC=$(cat $DESC_PATH)
+DESC+=$"\nShortlog:\n\`\`\`\n$(cat $SHORTLOG_PATH)\n\`\`\`"
 
 echo "Creating GitHub Release for $USER/$REPO @ $TAG"
 

@@ -1,9 +1,8 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.res.Resources;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.comparators.StatListElementComparator;
 import com.thebluealliance.androidclient.database.Database;
@@ -13,6 +12,8 @@ import com.thebluealliance.androidclient.listitems.StatsListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Stat;
 import com.thebluealliance.androidclient.models.Team;
+
+import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,12 +44,6 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
-        if (mAPIData == null ||
-          !mAPIData.isJsonObject()) {
-
-            return;
-        }
-
         JsonObject statsData = mAPIData.getAsJsonObject();
         if (!statsData.has("oprs") || !statsData.get("oprs").isJsonObject() ||
           !statsData.has("dprs") ||!statsData.get("dprs").isJsonObject() ||
@@ -86,11 +81,16 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
         mEventBus.post(new EventStatsEvent(getTopStatsString()));
     }
 
+    @Override public boolean isDataValid() {
+        return super.isDataValid() && mAPIData.isJsonObject();
+    }
+
     private String getTopStatsString() {
         String statsString = "";
         for (int i = 0; i < Math.min(EventStatsEvent.SIZE, mDataToBind.size()); i++) {
             String opr = ((StatsListElement)mDataToBind.get(i)).getFormattedOpr();
-            statsString += (i + 1) + ". <b>" + opr + "</b>";
+            String teamName = ((StatsListElement)mDataToBind.get(i)).getTeamNumberString();
+            statsString += (i + 1) + ". " + teamName + " - <b>" + opr + "</b>";
             if (i < Math.min(EventStatsEvent.SIZE, mDataToBind.size()) - 1) {
                 statsString += "<br>";
             }

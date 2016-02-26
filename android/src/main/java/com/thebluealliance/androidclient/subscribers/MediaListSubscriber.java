@@ -1,50 +1,49 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.res.Resources;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.types.MediaType;
+
+import android.content.res.Resources;
+
+import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MediaListSubscriber extends BaseAPISubscriber<List<Media>, List<ListGroup>> {
 
-    private ListGroup mCdPhotos, mYtVideos;
+    private ListGroup mPhotos, mVideos;
 
     public MediaListSubscriber(Resources resources) {
         super();
-        mCdPhotos = new ListGroup(resources.getString(R.string.cd_header));
-        mYtVideos = new ListGroup(resources.getString(R.string.yt_header));
+        mPhotos = new ListGroup(resources.getString(R.string.media_images_header));
+        mVideos = new ListGroup(resources.getString(R.string.media_videos_header));
         mDataToBind = new ArrayList<>();
     }
 
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException{
         mDataToBind.clear();
-        mCdPhotos.clear();
-        mYtVideos.clear();
-        if (mAPIData == null) {
-            return;
-        }
+        mPhotos.clear();
+        mVideos.clear();
+
         for (int i=0; i < mAPIData.size(); i++) {
             Media media = mAPIData.get(i);
-            switch (media.getMediaType()) {
-                case CD_PHOTO_THREAD:
-                    mCdPhotos.children.add(media);
-                    break;
-                case YOUTUBE:
-                    mYtVideos.children.add(media);
-                    break;
+            MediaType mediaType = media.getMediaType();
+            if (mediaType.isImage()) {
+                mPhotos.children.add(media);
+            } else if (mediaType.isVideo()) {
+                mVideos.children.add(media);
             }
         }
-        if (!mCdPhotos.children.isEmpty()) {
-            mDataToBind.add(mCdPhotos);
+        if (!mPhotos.children.isEmpty()) {
+            mDataToBind.add(mPhotos);
         }
-        if (!mYtVideos.children.isEmpty()) {
-            mDataToBind.add(mYtVideos);
+        if (!mVideos.children.isEmpty()) {
+            mDataToBind.add(mVideos);
         }
     }
 }

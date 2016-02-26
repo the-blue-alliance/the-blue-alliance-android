@@ -33,9 +33,6 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonElement, List<
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
-        if (mAPIData == null || !mAPIData.isJsonArray()) {
-            return;
-        }
         JsonArray rankingsData = mAPIData.getAsJsonArray();
         if (rankingsData.size() == 0) return;
         JsonArray headerRow = rankingsData.get(0).getAsJsonArray();
@@ -88,6 +85,10 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonElement, List<
                             rankingString));
         }
         mEventBus.post(new EventRankingsEvent(generateTopRanksString(rankingsData)));
+    }
+
+    @Override public boolean isDataValid() {
+        return super.isDataValid() && mAPIData.isJsonArray();
     }
 
     private String generateTopRanksString(JsonArray rankingsData) {

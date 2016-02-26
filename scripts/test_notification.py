@@ -22,7 +22,7 @@
 #     "test_notification.py upcoming_match -h", ...
 
 
-import subprocess, json
+import subprocess, json, random
 
 
 # Sends a test push-notification over adb to TBA Android app.
@@ -32,6 +32,7 @@ import subprocess, json
 # This should echo something like:
 #    Broadcasting: Intent { act=com.google.android.c2dm.intent.RECEIVE cat=[com.thebluealliance.androidclient] (has extras) }
 #    Broadcast completed: result=-1
+
 def notify(message_type, json_data):
     if type(json_data) != str:
         json_data = json.dumps(json_data)
@@ -44,8 +45,25 @@ def notify(message_type, json_data):
         --es message_type %s \
         --es message_data '%s'"""
     command = template % (message_type, json_text)
+    
+    print "\nSending " + message_type + " broadcast"
 
     subprocess.call(["adb", "shell", command])
+
+def get_notification_commands():
+    commands = []
+
+    commands.append('awards_posted_command')
+    commands.append('schedule_updated_command')
+    commands.append('alliance_selection_command')
+    commands.append('event_down_command')
+    commands.append('ping_command')
+    commands.append('level_starting_command')
+    commands.append('broadcast_command')
+    commands.append('match_score_command')
+    commands.append('upcoming_match_command')
+
+    return commands
 
 
 # ====== scriptine commands ======
@@ -170,25 +188,57 @@ def district_points_updated_command(data=district_points_updated_sample):
 
 ping_sample = {
     "title": "TBA Test Message",
-    "desc": "This is a test message ensuring your device can receive push messages from The Blue Alliance"
+    "desc": "This is a test message ensuring your device can receive push messages from The Blue Alliance",
+    "url": "https://www.youtube.com/watch?v=RpSgUrsghv4"
 }
 
-def ping_command(data=ping_sample):
+def ping_command(data=ping_sample, url="", no_url=False):
+    if url:
+        data["url"] = url
+
+    if no_url:
+        del data["url"]
+        
     notify('ping', data)
 
-def broadcast_command(data=ping_sample):
+def broadcast_command(data=ping_sample, url="", no_url=False):
+    if url:
+        data["url"] = url
+
+    if no_url:
+        del data["url"]
+
     notify('broadcast', data)
 
+
 sync_status_sample = {}
-def status_sync_command(data=sync_status_sample):
+
+def sync_status_command(data=sync_status_sample):
     notify('sync_status', data)
+
 
 event_down_sample = {
     "event_key": "2015cthar",
     "event_name": "Hartford"
 }
+
 def event_down_command(data=event_down_sample):
     notify('event_down', data)
+    
+
+def spam_command(count=10):
+    commands = get_notification_commands()
+    commandsToRun = random.sample(commands, count) 
+
+    for command in commandsToRun:
+        globals()[command]()
+
+
+def all_command():
+    commands = get_notification_commands()
+
+    for command in commands:
+        globals()[command]()
 
 # ====== main ======
 

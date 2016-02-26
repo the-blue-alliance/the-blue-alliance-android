@@ -152,9 +152,6 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
             case R.id.nav_item_settings:
                 intent = new Intent(NavigationDrawerActivity.this, SettingsActivity.class);
                 break;
-            case R.id.nav_item_notifications:
-                intent = RecentNotificationsActivity.newInstance(NavigationDrawerActivity.this);
-                break;
             case R.id.nav_item_gameday:
                 intent = GamedayActivity.newInstance(NavigationDrawerActivity.this);
                 break;

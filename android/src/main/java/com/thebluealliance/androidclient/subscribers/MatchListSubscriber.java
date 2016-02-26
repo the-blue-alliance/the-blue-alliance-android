@@ -1,18 +1,18 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.res.Resources;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
-import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.types.MatchType;
+
+import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,9 +58,6 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         mQuarterMatches.clear();
         mSemiMatches.clear();
         mFinalMatches.clear();
-        if (mAPIData == null || mAPIData.isEmpty()) {
-            return;
-        }
 
         int[] record = {0, 0, 0}; //wins, losses, ties
         Match nextMatch = null;
@@ -146,6 +143,10 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         }
 
         mEventBus.post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
+    }
+
+    @Override public boolean isDataValid() {
+        return super.isDataValid() && !mAPIData.isEmpty();
     }
 
     @Override

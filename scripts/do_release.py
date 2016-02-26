@@ -21,6 +21,7 @@ PACKAGE = 'com.thebluealliance.androidclient'
 CHANGELOG_PATH = 'android/src/prod/play/en-US/whatsnew'
 INAPP_CHANGELOG = 'android/src/main/res/raw/changelog.txt'
 APK_PATH_FORMAT = 'android/build/apk/tba-android-v{}-release.apk'
+SHORTLOG_PATH = 'RELEASE_SHORTLOG'
 
 parser = argparse.ArgumentParser(add_help=True)
 parser.add_argument("tag", help="New version number (e.g. 3.1.4)")
@@ -57,7 +58,18 @@ def check_unittest():
 def update_whatsnew():
     print "Updating whatsnew file ({}). Limit 500 characters".format(CHANGELOG_PATH)
     time.sleep(2)
+    base_tag = subprocess.check_output(["git", "describe", "--tags", "--abbrev=0"]).split()[0]
+    commitlog = subprocess.check_output(["git", "shortlog", "{}..HEAD".format(base_tag), "--oneline", "--no-merges"])
+    commitlog = '# '.join(('\n' + commitlog.lstrip()).splitlines(True))
+
+    # Append commented commitlog to whatsnew file for ease of writing
+    with open(CHANGELOG_PATH, "a") as whatsnew:
+        whatsnew.write(commitlog)
+
     subprocess.call(["vim", CHANGELOG_PATH])
+
+    # Remove "commented" commitlog lines
+    subprocess.call(["sed", "-i", "/^#/d", CHANGELOG_PATH])
 
     # Check character count
     chars = subprocess.check_output(["wc", "-m", CHANGELOG_PATH])
@@ -82,6 +94,12 @@ def commit_whatsnew():
     except CalledProcessError:
         print "Unable to commit new changelog"
         sys.exit(1)
+
+    # Write shortlog to file
+    base_tag = subprocess.check_output(["git", "describe", "--tags", "--abbrev=0"]).split()[0]
+    shortlog = subprocess.check_output(["git", "shortlog", "{}..HEAD".format(base_tag), "--no-merges", "--oneline"])
+    with open(SHORTLOG_PATH, "w") as logfile:
+        logfile.write(shortlog)
 
 
 def create_tag(args):
@@ -131,7 +149,7 @@ def create_release(args):
     apk_path = APK_PATH_FORMAT.format(args.tag)
     title = "Version {}".format(args.tag)
     tag = "v{}".format(args.tag)
-    subprocess.call(["scripts/github_release.sh", tag, title, CHANGELOG_PATH, apk_path])
+    subprocess.call(["scripts/github_release.sh", tag, title, CHANGELOG_PATH, SHORTLOG_PATH, apk_path])
 
 if __name__ == "__main__":
     args = parser.parse_args()

@@ -1,9 +1,9 @@
 package com.thebluealliance.androidclient.binders;
 
-import android.support.annotation.Nullable;
-
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.models.EventWeekTab;
+
+import android.support.annotation.Nullable;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class EventTabBinder extends AbstractDataBinder<List<EventWeekTab>> {
 
     @Override
     public void updateData(@Nullable List<EventWeekTab> data) {
-        if (data != null && !data.equals(mTabs)) {
+        if (data != null && !data.isEmpty() && !data.equals(mTabs)) {
             mTabs = data;
             mFragment.updateLabels(mTabs);
         }

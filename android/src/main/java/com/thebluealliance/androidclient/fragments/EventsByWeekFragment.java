@@ -1,15 +1,7 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.google.common.base.Preconditions;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -21,6 +13,15 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventWeekTab;
 import com.thebluealliance.androidclient.subscribers.EventTabSubscriber;
 import com.thebluealliance.androidclient.views.SlidingTabs;
+
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.List;
 
@@ -65,10 +66,13 @@ public class EventsByWeekFragment
         super.onCreate(savedInstanceState);
         Log.d(Constants.LOG_TAG, "EventsByWeekFragment created!");
         mYear = mStatusController.getMaxCompYear();
+        mSelectedTab = -1;
         if (getArguments() != null) {
             // Default to the current year if no year is provided in the arguments
             mYear = getArguments().getInt(YEAR, mStatusController.getMaxCompYear());
             mSelectedTab = getArguments().getInt(TAB, -1);
+        } else if (savedInstanceState != null && savedInstanceState.containsKey(TAB)) {
+            mSelectedTab = savedInstanceState.getInt(TAB);
         }
         mBinder.setFragment(this);
     }
@@ -134,12 +138,16 @@ public class EventsByWeekFragment
         if (mPagerState != null) {
             mViewPager.onRestoreInstanceState(mPagerState);
             mFragmentAdapter.restoreState(mAdapterState, ClassLoader.getSystemClassLoader());
+        } else if (mSelectedTab != -1) {
+            mViewPager.setCurrentItem(mSelectedTab);
+            mFragmentBinder.onPageSelected(mSelectedTab);
         } else {
             setPagerWeek();
-        }
-        if (mSelectedTab != -1) {
             mViewPager.setCurrentItem(mSelectedTab);
+            mFragmentBinder.onPageSelected(mSelectedTab);
         }
+
+
 
         mFragmentAdapter.setAutoBindOnceAtPosition(mViewPager.getCurrentItem(), true);
     }
@@ -172,14 +180,11 @@ public class EventsByWeekFragment
         int weekCount = mViewPager.getAdapter().getCount();
 
         if (currentYear != mYear && week1Index > -1) {
-            mViewPager.setCurrentItem(week1Index);
-            mFragmentBinder.onPageSelected(week1Index);
+            mSelectedTab = week1Index;
         } else if (currentIndex < weekCount && currentIndex > -1) {
-            mViewPager.setCurrentItem(currentIndex);
-            mFragmentBinder.onPageSelected(currentIndex);
+            mSelectedTab = currentIndex;
         } else {
-            mViewPager.setCurrentItem(0);
-            mFragmentBinder.onPageSelected(0);
+            mSelectedTab = 0;
         }
     }
 

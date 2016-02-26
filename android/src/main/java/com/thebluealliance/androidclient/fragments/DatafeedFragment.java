@@ -1,9 +1,7 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-
 import com.google.android.gms.analytics.Tracker;
+
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
@@ -11,12 +9,15 @@ import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController.RefreshType;
 import com.thebluealliance.androidclient.datafeed.refresh.Refreshable;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
-import com.thebluealliance.androidclient.models.NoDataViewParams;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import javax.inject.Inject;
 
@@ -87,6 +88,13 @@ public abstract class DatafeedFragment
             if (shouldRegisterSubscriberToEventBus()) {
                 mEventBus.unregister(mSubscriber);
             }
+        }
+    }
+
+    @Override public void onStop() {
+        super.onStop();
+        if (mSubscriber != null) {
+            mSubscriber.onParentStop();
         }
     }
 

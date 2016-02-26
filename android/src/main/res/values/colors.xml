@@ -43,6 +43,7 @@
     <color name="gameday_ticker_level_starting_header">#9c27b0</color>
     <color name="gameday_ticker_awards_header">#4caf50</color>
     <color name="gameday_ticker_time_footer">#ECECEC</color>
+    <color name="notification_generic_header">#9E9E9E</color>
 
     <!-- Google sign in button colors -->
     <color name="google_sign_in_button">#ffffff</color>

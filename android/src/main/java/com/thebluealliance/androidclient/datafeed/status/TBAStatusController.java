@@ -1,17 +1,18 @@
 package com.thebluealliance.androidclient.datafeed.status;
 
-import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 
+import com.squareup.okhttp.Cache;
 import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.models.APIStatus;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -19,12 +20,17 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import rx.schedulers.Schedulers;
 
 /**
  * A class to handle the TBA Status API
@@ -34,6 +40,7 @@ import javax.inject.Singleton;
 public class TBAStatusController implements Application.ActivityLifecycleCallbacks {
 
     public static final String STATUS_PREF_KEY = "tba_status";
+    public static final String STATUS_CACHE_CLEAR_KEY = "last_okcache_clear";
 
     /**
      * We use different timeouts for logged in users and not logged in users. Logged-in users will
@@ -51,7 +58,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
 
     private final SharedPreferences mPrefs;
     private final Gson mGson;
-    private final Tracker mAnalyticsTracker;
+    private final Cache mOkHttpCache;
 
     private long mLastUpdateTime;
     private long mLastDialogTime;
@@ -60,10 +67,10 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     private boolean mUserIsLoggedIn;
 
     @Inject
-    public TBAStatusController(SharedPreferences prefs, Gson gson, Tracker tracker, Context context) {
+    public TBAStatusController(SharedPreferences prefs, Gson gson, Cache cache, Context context) {
         mPrefs = prefs;
         mGson = gson;
-        mAnalyticsTracker = tracker;
+        mOkHttpCache = cache;
         mLastUpdateTime = Long.MIN_VALUE;
         mLastDialogTime = Long.MIN_VALUE;
 
@@ -110,6 +117,25 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         return status.getLatestAppersion();
     }
 
+    public void clearOkCacheIfNeeded(@Nullable APIStatus status, boolean forceClear) {
+        long lastCacheClear = mPrefs.getLong(STATUS_CACHE_CLEAR_KEY, Long.MIN_VALUE);
+        if (status != null
+                && mOkHttpCache != null
+                && (forceClear || lastCacheClear < status.getLastOkHttpCacheClear())) {
+            Schedulers.io().createWorker().schedule(() -> {
+                Log.i(Constants.LOG_TAG, "Clearing OkHttp cache");
+                try {
+                    mOkHttpCache.evictAll();
+                    mPrefs.edit()
+                            .putLong(STATUS_CACHE_CLEAR_KEY, System.currentTimeMillis() / 1000L)
+                            .apply();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
+
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
 
@@ -131,9 +157,10 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         }
 
         /* App updates required/recommended */
-        if (BuildConfig.VERSION_CODE < getMinAppVersion()) {
+        if (!Utilities.isDebuggable() && BuildConfig.VERSION_CODE < getMinAppVersion()) {
             activity.startActivity(new Intent(activity, UpdateRequiredActivity.class));
-        } else if (BuildConfig.VERSION_CODE < getLatestAppVersion()
+        } else if (!Utilities.isDebuggable()
+                && BuildConfig.VERSION_CODE < getLatestAppVersion()
                 && mLastDialogTime + DIALOG_TIMEOUT < System.nanoTime()) {
             /* Show an app update dialog */
             new AlertDialog.Builder(activity)
@@ -168,6 +195,9 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
                     .show();
             mLastMessageTime = System.nanoTime();
         }
+
+        /* Clear OkHttp Cache when commanded */
+        clearOkCacheIfNeeded(status, false);
     }
 
     @Override
