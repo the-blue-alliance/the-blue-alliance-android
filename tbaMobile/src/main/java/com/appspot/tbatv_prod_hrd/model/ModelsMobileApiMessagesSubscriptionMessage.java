@@ -7,6 +7,6 @@ import java.util.List;
 public class ModelsMobileApiMessagesSubscriptionMessage {
   public String device_key;
   public String model_key;
-  public String model_type;
+  public Integer model_type;
   public List<String> notifications;
 }

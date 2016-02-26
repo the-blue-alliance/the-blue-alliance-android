@@ -2,6 +2,7 @@ package com.appspot.tbatv_prod_hrd;
 
 import com.appspot.tbatv_prod_hrd.model.*;
 
+import retrofit.Call;
 import retrofit.Callback;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
@@ -15,15 +16,11 @@ import rx.Observable;
 
 public interface Tbamobile {
   @POST("/register")
-  ModelsMobileApiMessagesBaseResponse register(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesRegistrationRequest resource);
+  Call<ModelsMobileApiMessagesBaseResponse> register(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesRegistrationRequest resource);
   @POST("/register")
-  void register(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesRegistrationRequest resource, Callback<ModelsMobileApiMessagesBaseResponse> cb);
-  @POST("/register")
-  Observable<ModelsMobileApiMessagesBaseResponse> registerRx(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesRegistrationRequest resource);
+  Call<Observable<ModelsMobileApiMessagesBaseResponse>> registerRx(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesRegistrationRequest resource);
   @POST("/unregister")
-  ModelsMobileApiMessagesBaseResponse unregister(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesRegistrationRequest resource);
+  Call<ModelsMobileApiMessagesBaseResponse> unregister(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesRegistrationRequest resource);
   @POST("/unregister")
-  void unregister(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesRegistrationRequest resource, Callback<ModelsMobileApiMessagesBaseResponse> cb);
-  @POST("/unregister")
-  Observable<ModelsMobileApiMessagesBaseResponse> unregisterRx(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesRegistrationRequest resource);
+  Call<Observable<ModelsMobileApiMessagesBaseResponse>> unregisterRx(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesRegistrationRequest resource);
 }

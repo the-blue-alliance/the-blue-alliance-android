@@ -2,6 +2,7 @@ package com.appspot.tbatv_prod_hrd;
 
 import com.appspot.tbatv_prod_hrd.model.*;
 
+import retrofit.Call;
 import retrofit.Callback;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
@@ -15,9 +16,7 @@ import rx.Observable;
 
 public interface Favorites {
   @POST("/favorites/list")
-  ModelsMobileApiMessagesFavoriteCollection list(@Header("Authorization") String authToken);
+  Call<ModelsMobileApiMessagesFavoriteCollection> list(@Header("Authorization") String authToken);
   @POST("/favorites/list")
-  void list(@Header("Authorization") String authToken, Callback<ModelsMobileApiMessagesFavoriteCollection> cb);
-  @POST("/favorites/list")
-  Observable<ModelsMobileApiMessagesFavoriteCollection> listRx(@Header("Authorization") String authToken);
+  Call<Observable<ModelsMobileApiMessagesFavoriteCollection>> listRx(@Header("Authorization") String authToken);
 }

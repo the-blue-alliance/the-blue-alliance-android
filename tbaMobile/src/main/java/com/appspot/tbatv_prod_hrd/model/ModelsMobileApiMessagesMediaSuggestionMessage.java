@@ -9,5 +9,5 @@ public class ModelsMobileApiMessagesMediaSuggestionMessage {
   public String media_url;
   public String reference_key;
   public String reference_type;
-  public String year;
+  public Integer year;
 }

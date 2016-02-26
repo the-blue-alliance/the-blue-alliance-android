@@ -8,6 +8,6 @@ public class ModelsMobileApiMessagesModelPreferenceMessage {
   public String device_key;
   public Boolean favorite;
   public String model_key;
-  public String model_type;
+  public Integer model_type;
   public List<String> notifications;
 }

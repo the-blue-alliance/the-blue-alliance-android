@@ -5,6 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class ModelsMobileApiMessagesBaseResponse {
-  public String code;
+  public Integer code;
   public String message;
 }
