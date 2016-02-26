@@ -1,5 +1,19 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewEventActivity;
+import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.database.writers.EventWriter;
+import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.StoredNotification;
+
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
@@ -9,19 +23,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.ViewEventActivity;
-import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.database.writers.EventWriter;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.helpers.MyTBAHelper;
-import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -111,7 +112,7 @@ public class AllianceSelectionNotification extends BaseNotification {
     public View getView(Context c, LayoutInflater inflater, View convertView) {
         ViewHolder holder;
         if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
-            convertView = inflater.inflate(R.layout.list_item_notification_awards_posted, null, false);
+            convertView = inflater.inflate(R.layout.list_item_notification_alliance_selection, null, false);
 
             holder = new ViewHolder();
             holder.header = (TextView) convertView.findViewById(R.id.card_header);
