@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/X-NNi3s_Iem30IH4-r87V9AKrc0\"",
+ "etag": "\"u_zXkMELIlX4ktyNbM2XKD4vK8E/DAxq4RtoWYUAiLNQNdgcsxE_-V0\"",
  "discoveryVersion": "v1",
  "id": "tbaMobile:v9",
  "name": "tbaMobile",
@@ -107,6 +107,28 @@
      "type": "string"
     },
     "model_type": {
+     "type": "string",
+     "format": "int64"
+    }
+   }
+  },
+  "ModelsMobileApiMessagesMediaSuggestionMessage": {
+   "id": "ModelsMobileApiMessagesMediaSuggestionMessage",
+   "type": "object",
+   "properties": {
+    "details_json": {
+     "type": "string"
+    },
+    "media_url": {
+     "type": "string"
+    },
+    "reference_key": {
+     "type": "string"
+    },
+    "reference_type": {
+     "type": "string"
+    },
+    "year": {
      "type": "string",
      "format": "int64"
     }
@@ -269,6 +291,29 @@
      "scopes": [
       "https://www.googleapis.com/auth/userinfo.email"
      ]
+    }
+   }
+  },
+  "team": {
+   "resources": {
+    "media": {
+     "methods": {
+      "suggestion": {
+       "id": "tbaMobile.team.media.suggestion",
+       "path": "team/media/suggest",
+       "httpMethod": "POST",
+       "request": {
+        "$ref": "ModelsMobileApiMessagesMediaSuggestionMessage",
+        "parameterName": "resource"
+       },
+       "response": {
+        "$ref": "ModelsMobileApiMessagesBaseResponse"
+       },
+       "scopes": [
+        "https://www.googleapis.com/auth/userinfo.email"
+       ]
+      }
+     }
     }
    }
   }
