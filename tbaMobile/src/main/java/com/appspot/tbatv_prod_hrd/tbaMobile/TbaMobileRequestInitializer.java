@@ -79,6 +79,7 @@ package com.appspot.tbatv_prod_hrd.tbaMobile;
  *
  * @since 1.12
  */
+@Deprecated
 public class TbaMobileRequestInitializer extends com.google.api.client.googleapis.services.json.CommonGoogleJsonClientRequestInitializer {
 
   public TbaMobileRequestInitializer() {

@@ -23,6 +23,7 @@ package com.appspot.tbatv_prod_hrd.tbaMobile;
  *
  * @since 1.4
  */
+@Deprecated
 public class TbaMobileScopes {
 
   /** View your email address. */

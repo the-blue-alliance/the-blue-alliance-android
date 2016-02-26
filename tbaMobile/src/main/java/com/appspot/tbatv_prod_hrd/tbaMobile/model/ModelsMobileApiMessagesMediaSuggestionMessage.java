@@ -29,6 +29,7 @@ package com.appspot.tbatv_prod_hrd.tbaMobile.model;
  * @author Google, Inc.
  */
 @SuppressWarnings("javadoc")
+@Deprecated
 public final class ModelsMobileApiMessagesMediaSuggestionMessage extends com.google.api.client.json.GenericJson {
 
   /**

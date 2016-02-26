@@ -24,6 +24,7 @@ package com.appspot.tbatv_prod_hrd.tbaMobile;
  * @since 1.3
  */
 @SuppressWarnings("javadoc")
+@Deprecated
 public abstract class TbaMobileRequest<T> extends com.google.api.client.googleapis.services.json.AbstractGoogleJsonClientRequest<T> {
 
   /**

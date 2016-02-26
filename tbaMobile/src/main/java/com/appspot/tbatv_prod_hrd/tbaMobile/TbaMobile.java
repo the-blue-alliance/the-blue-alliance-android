@@ -39,6 +39,7 @@ package com.appspot.tbatv_prod_hrd.tbaMobile;
  * @author Google, Inc.
  */
 @SuppressWarnings("javadoc")
+@Deprecated
 public class TbaMobile extends com.google.api.client.googleapis.services.json.AbstractGoogleJsonClient {
 
   // Note: Leave this static initializer at the top of the file.
