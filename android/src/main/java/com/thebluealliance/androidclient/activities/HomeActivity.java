@@ -171,7 +171,9 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         switch (id) {
             default:
             case R.id.nav_item_events:
-                int weekTab = savedInstanceState != null ? savedInstanceState.getInt(EventsByWeekFragment.TAB, 0) : 0;
+                int weekTab = savedInstanceState != null
+                        ? savedInstanceState.getInt(EventsByWeekFragment.TAB, -1)
+                        : -1;
                 fragment = EventsByWeekFragment.newInstance(mMaxCompYear - mCurrentSelectedYearPosition, weekTab);
                 break;
             case R.id.nav_item_districts:
