@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.fragments.match.MatchInfoFragment;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
@@ -112,7 +113,8 @@ public class ViewMatchActivity extends MyTBASettingsActivity
                     closeDrawer();
                     return true;
                 }
-                String eventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
+
+                String eventKey = MatchHelper.getEventKeyFromMatchKey(mMatchKey);
                 Intent upIntent = ViewEventActivity.newInstance(this, eventKey);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     Log.d(Constants.LOG_TAG, "Navigating to new back stack with key " + eventKey);
@@ -120,6 +122,7 @@ public class ViewMatchActivity extends MyTBASettingsActivity
                             .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
                 } else {
                     Log.d(Constants.LOG_TAG, "Navigating up...");
+                    //upIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     NavUtils.navigateUpTo(this, upIntent);
                 }
                 return true;
