@@ -1,9 +1,10 @@
-Version 3.1.0:<br>
-    - Added live ticker for individual events<br>
-    - Add support for imgur team media<br>
-    - Fixed bug where Team's events didn't show up<br>
-    - Fixed many other bugs encountered during Week 0 testing.<br>
+Version 3.1.1:<br>
+    - Fix strange video dupe issues with view match<br>
+    - Don't show full size (huge) imgur images<br>
+    - Fix tickers with few items perma-spinning<br>
+    - Automatically select current comp week<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>
+<br>
 <br>
