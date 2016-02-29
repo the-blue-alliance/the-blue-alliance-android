@@ -20,7 +20,7 @@ import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.models.APIStatus;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
@@ -63,19 +63,14 @@ public class ViewEventActivity extends MyTBASettingsActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MyTBAHelper.serializeIntent(getIntent());
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(EVENTKEY)) {
-            mEventKey = getIntent().getExtras().getString(EVENTKEY, "");
-        } else {
-            throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
+        Bundle extras = getIntent().getExtras() == null ? new Bundle() : getIntent().getExtras();
+
+        mEventKey = extras.getString(EVENTKEY, "");
+        if (!EventHelper.validateEventKey(mEventKey)) {
+            throw new IllegalArgumentException("ViewEventActivity must be given a valid event key");
         }
 
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(TAB)) {
-            currentTab = getIntent().getExtras().getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
-        } else {
-            Log.i(Constants.LOG_TAG, "ViewEvent intent doesn't contain TAB. Defaulting to TAB_INFO");
-            currentTab = ViewEventFragmentPagerAdapter.TAB_INFO;
-        }
+        currentTab = extras.getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
 
         setModelKey(mEventKey, ModelType.EVENT);
         setContentView(R.layout.activity_view_event);
@@ -110,11 +105,24 @@ public class ViewEventActivity extends MyTBASettingsActivity
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        Log.d(Constants.LOG_TAG, "onNewIntent called");
         setIntent(intent);
-        if (intent.getExtras() != null && intent.getExtras().containsKey(EVENTKEY)) {
-            mEventKey = intent.getExtras().getString(EVENTKEY, "");
-        } else {
+        String newEventKey;
+
+        Bundle extras = intent.getExtras() == null ? new Bundle() : intent.getExtras();
+
+        newEventKey = extras.getString(EVENTKEY, "");
+        if (!EventHelper.validateEventKey(newEventKey)) {
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
+        }
+
+        currentTab = extras.getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
+
+        if (mEventKey != null && newEventKey.equals(mEventKey)) {
+            // The event keys are the same; don't recreate anything
+            return;
+        } else {
+            mEventKey = newEventKey;
         }
         setModelKey(mEventKey, ModelType.EVENT);
         adapter = new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey);
