@@ -102,9 +102,8 @@ public class ViewMatchActivity extends MyTBASettingsActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        String eventKey = MatchHelper.getEventKeyFromMatchKey(mMatchKey);
+
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
@@ -113,7 +112,6 @@ public class ViewMatchActivity extends MyTBASettingsActivity
                     return true;
                 }
 
-                String eventKey = MatchHelper.getEventKeyFromMatchKey(mMatchKey);
                 Intent upIntent = ViewEventActivity.newInstance(this, eventKey);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     Log.d(Constants.LOG_TAG, "Navigating to new back stack with key " + eventKey);
@@ -121,12 +119,13 @@ public class ViewMatchActivity extends MyTBASettingsActivity
                             .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
                 } else {
                     Log.d(Constants.LOG_TAG, "Navigating up...");
-                    //upIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    NavUtils.navigateUpTo(this, upIntent);
+                    upIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(upIntent);
+                    finish();
                 }
                 return true;
             case R.id.action_view_event:
-                startActivity(ViewEventActivity.newInstance(this, mMatchKey.split("_")[0]));
+                startActivity(ViewEventActivity.newInstance(this, eventKey));
                 return true;
         }
         return super.onOptionsItemSelected(item);

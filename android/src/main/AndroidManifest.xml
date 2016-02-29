@@ -87,7 +87,7 @@
             android:theme="@style/AppThemeNoActionBarTranslucentLightStatus"/>
         <activity
             android:name=".activities.ViewEventActivity"
-            android:launchMode="standard"
+            android:launchMode="singleTop"
             android:parentActivityName=".activities.HomeActivity"
             android:theme="@style/AppThemeNoActionBarTranslucentStatus">
             <meta-data
