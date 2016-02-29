@@ -67,7 +67,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
 
         mEventKey = extras.getString(EVENTKEY, "");
         if (!EventHelper.validateEventKey(mEventKey)) {
-            throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
+            throw new IllegalArgumentException("ViewEventActivity must be given a valid event key");
         }
 
         currentTab = extras.getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
