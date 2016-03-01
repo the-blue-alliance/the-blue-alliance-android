@@ -34,6 +34,8 @@ parser.add_argument("--skip-validate", action="store_true", default=False,
                     help="Do not build an install the prod apk to test on a real device")
 parser.add_argument("--skip-gh", action="store_true", default=False,
                     help="Do not create a new release on GitHub")
+parser.add_argument("--dry-run", action="store_true", default=False,
+                    help="Don't run any permanent commands, just print what's happening")
 
 
 def check_clean_repo():
@@ -44,18 +46,18 @@ def check_clean_repo():
         sys.exit(1)
 
 
-def check_unittest():
+def check_unittest(dry_run):
     print "Running project unit tests..."
     time.sleep(2)
     try:
-        subprocess.check_call(["./gradlew", "testProdReleaseUnitTest"])
+        subprocess.check_call(["./gradlew", ("-m" if dry_run else ""), "testProdReleaseUnitTest"])
         print "Unit tests passed!"
     except CalledProcessError:
         print "Unit tests failed. Fix them before releasing"
         sys.exit(1)
 
 
-def update_whatsnew():
+def update_whatsnew(dry_run):
     print "Updating whatsnew file ({}). Limit 500 characters".format(CHANGELOG_PATH)
     time.sleep(2)
     base_tag = subprocess.check_output(["git", "describe", "--tags", "--abbrev=0"]).split()[0]
@@ -63,13 +65,18 @@ def update_whatsnew():
     commitlog = '# '.join(('\n' + commitlog.lstrip()).splitlines(True))
 
     # Append commented commitlog to whatsnew file for ease of writing
-    with open(CHANGELOG_PATH, "a") as whatsnew:
-        whatsnew.write(commitlog)
+    if not dry_run:
+        with open(CHANGELOG_PATH, "a") as whatsnew:
+            whatsnew.write(commitlog)
 
-    subprocess.call(["vim", CHANGELOG_PATH])
+    if dry_run:
+        print "Would edit changelog file: {}".format(CHANGELOG_PATH)
+    else:
+        subprocess.call(["vim", CHANGELOG_PATH])
 
     # Remove "commented" commitlog lines
-    subprocess.call(["sed", "-i", "/^#/d", CHANGELOG_PATH])
+    if not dry_run:
+        subprocess.call(["sed", "-i", "/^#/d", CHANGELOG_PATH])
 
     # Check character count
     chars = subprocess.check_output(["wc", "-m", CHANGELOG_PATH])
@@ -78,28 +85,41 @@ def update_whatsnew():
         sys.exit(1)
 
     # Copy to in-app changelog
-    subprocess.call(["cp", CHANGELOG_PATH, INAPP_CHANGELOG])
+    if not dry_run:
+        subprocess.call(["cp", CHANGELOG_PATH, INAPP_CHANGELOG])
+    else:
+        print "Would move {} to {}".format(CHANGELOG_PATH, INAPP_CHANGELOG)
 
     # Fix line breaks
-    subprocess.call(["sed", "-i", 's/$/<br>/', INAPP_CHANGELOG])
-    subprocess.call(["rm", "-f", "{}{}".format(INAPP_CHANGELOG, "bak")])
+    if not dry_run:
+        subprocess.call(["sed", "-i", 's/$/<br>/', INAPP_CHANGELOG])
+        subprocess.call(["rm", "-f", "{}{}".format(INAPP_CHANGELOG, "bak")])
 
 
-def commit_whatsnew():
+def commit_whatsnew(dry_run):
     print "Committing new changelog"
     time.sleep(2)
-    subprocess.call(["git", "add", INAPP_CHANGELOG, CHANGELOG_PATH])
-    try:
-        subprocess.check_output(["git", "commit", "-m", "Version {} Whatsnew".format(args.tag)])
-    except CalledProcessError:
-        print "Unable to commit new changelog"
-        sys.exit(1)
+    if not dry_run:
+        subprocess.call(["git", "add", INAPP_CHANGELOG, CHANGELOG_PATH])
+
+        try:
+            subprocess.check_output(["git", "commit", "-m", "Version {} Whatsnew".format(args.tag)])
+        except CalledProcessError:
+            print "Unable to commit new changelog"
+            sys.exit(1)
+    else:
+        print "Would commit changelog"
 
     # Write shortlog to file
     base_tag = subprocess.check_output(["git", "describe", "--tags", "--abbrev=0"]).split()[0]
     shortlog = subprocess.check_output(["git", "shortlog", "{}..HEAD".format(base_tag), "--no-merges", "--oneline"])
-    with open(SHORTLOG_PATH, "w") as logfile:
-        logfile.write(shortlog)
+
+    if not dry_run:
+        with open(SHORTLOG_PATH, "w") as logfile:
+            logfile.write(shortlog)
+    else:
+        print "Would write shortlog to file: {}".format(SHORTLOG_PATH)
+        print "Shortlog contents:\n{}".format(shortlog)
 
 
 def create_tag(args):
@@ -108,10 +128,11 @@ def create_tag(args):
     print("Creating new git tag for release v{}: {}".format(args.tag, name))
     print("To skip creating a new tag, run with --skip_tag")
     time.sleep(2)
-    subprocess.call(["git", "tag", "-a", "v{}".format(args.tag), "-m", name])
+    if not args.dry_run:
+        subprocess.call(["git", "tag", "-a", "v{}".format(args.tag), "-m", name])
 
 
-def validate_build():
+def validate_build(dry_run):
     print "Installing build, ensure a device is plugged in with USB Debugging enabled"
     subprocess.call(["adb", "devices"])
     try:
@@ -119,8 +140,12 @@ def validate_build():
     except SyntaxError:
         pass
     time.sleep(5)
-    subprocess.check_call(["./gradlew", "installProdRelease"])
-    subprocess.call(["adb", "shell", "am", "start", "-n", "com.thebluealliance.androidclient/com.thebluealliance.androidclient.activities.LaunchActivity"])
+    subprocess.check_call(["./gradlew", ("-m" if dry_run else ""), "installProdRelease"])
+
+    if not dry_run:
+        subprocess.call(["adb", "shell", "am", "start", "-n", "com.thebluealliance.androidclient/com.thebluealliance.androidclient.activities.LaunchActivity"])
+    else:
+        print "Would start launch activity"
     try:
         input("Press Enter to continue the release, or ^C to quit")
     except SyntaxError:
@@ -132,36 +157,47 @@ def build_apk(args):
     old_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).strip()
     print "Leaving {}, checking out tag v{}".format(old_branch, args.tag)
     time.sleep(2)
-    subprocess.call(["git", "checkout", "v{}".format(args.tag)])
+    if not args.dry_run:
+        subprocess.call(["git", "checkout", "v{}".format(args.tag)])
+
     print "Building and uploading the app..."
     time.sleep(2)
-    subprocess.call(["./gradlew", "publishProdRelease"])
+    subprocess.call(["./gradlew", ("-m" if args.dry_run else ""), "publishProdRelease"])
     print "Returning to {}".format(old_branch)
-    subprocess.call(["git", "checkout", old_branch])
+    if not args.dry_run:
+        subprocess.call(["git", "checkout", old_branch])
 
 
-def push_repo():
-    subprocess.call(["git", "push", "upstream"])
-    subprocess.call(["git", "push", "--tags", "upstream"])
+def push_repo(dry_run):
+    if not dry_run:
+        subprocess.call(["git", "push", "upstream"])
+        subprocess.call(["git", "push", "--tags", "upstream"])
+    else:
+        print "Would push repo and tags to upstream"
 
 
 def create_release(args):
     apk_path = APK_PATH_FORMAT.format(args.tag)
     title = "Version {}".format(args.tag)
     tag = "v{}".format(args.tag)
-    subprocess.call(["scripts/github_release.sh", tag, title, CHANGELOG_PATH, SHORTLOG_PATH, apk_path])
+    script_args = ["scripts/github_release.sh", tag, title, CHANGELOG_PATH, SHORTLOG_PATH, apk_path]
+
+    if not args.dry_run:
+        subprocess.call(script_args)
+    else:
+        print "Would call {}".format(subprocess.list2cmdline(script_args))
 
 if __name__ == "__main__":
     args = parser.parse_args()
     if not args.dirty_repo:
         check_clean_repo()
-    check_unittest()
+    check_unittest(args.dry_run)
     if not args.skip_tag:
-        update_whatsnew()
-        commit_whatsnew()
+        update_whatsnew(args.dry_run)
+        commit_whatsnew(args.dry_run)
         create_tag(args)
     if not args.skip_validate:
-        validate_build()
+        validate_build(args.dry_run)
     build_apk(args)
-    push_repo()
+    push_repo(args.dry_run)
     create_release(args)
