@@ -50,7 +50,10 @@ def check_unittest(dry_run):
     print "Running project unit tests..."
     time.sleep(2)
     try:
-        subprocess.check_call(["./gradlew", ("-m" if dry_run else ""), "testProdReleaseUnitTest"])
+        script_args = ["./gradlew", "testProdReleaseUnitTest"]
+        if dry_run:
+            script_args.append("-m")
+        subprocess.check_call(script_args)
         print "Unit tests passed!"
     except CalledProcessError:
         print "Unit tests failed. Fix them before releasing"
@@ -140,7 +143,10 @@ def validate_build(dry_run):
     except SyntaxError:
         pass
     time.sleep(5)
-    subprocess.check_call(["./gradlew", ("-m" if dry_run else ""), "installProdRelease"])
+    script_args = ["./gradlew", "installProdRelease"]
+    if dry_run:
+        script_args.append("-m")
+    subprocess.check_call(script_args)
 
     if not dry_run:
         subprocess.call(["adb", "shell", "am", "start", "-n", "com.thebluealliance.androidclient/com.thebluealliance.androidclient.activities.LaunchActivity"])
@@ -164,7 +170,9 @@ def build_apk(args):
     time.sleep(2)
 
     # Don't rebuild the app, because we've built it already
-    script_args = ["./gradlew", ("-m" if args.dry_run else ""), "publishProdRelease"]
+    script_args = ["./gradlew", "publishProdRelease"]
+    if args.dry_run:
+        script_args.append("-m")
     if not args.skip_validate:
         script_args.append("-x")
         script_args.append("assembleProdRelease")
