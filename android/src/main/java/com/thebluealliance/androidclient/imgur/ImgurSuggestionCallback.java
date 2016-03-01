@@ -1,13 +1,14 @@
 package com.thebluealliance.androidclient.imgur;
 
-import android.util.Log;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.gce.TbaSuggestionController;
 import com.thebluealliance.imgur.responses.UploadResponse;
 
+import android.util.Log;
+
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Class that takes a sucessful upload from the imgur API and suggests it TBA
@@ -29,7 +30,7 @@ public class ImgurSuggestionCallback implements Callback<UploadResponse> {
 
 
     @Override
-    public void onResponse(Response<UploadResponse> response) {
+    public void onResponse(Response<UploadResponse> response, Retrofit retrofit) {
         if (response.isSuccess()) {
             UploadResponse uploadResponse = response.body();
             mSuggestionController.suggest(

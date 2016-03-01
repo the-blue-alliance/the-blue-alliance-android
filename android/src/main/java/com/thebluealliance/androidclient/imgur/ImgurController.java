@@ -1,16 +1,14 @@
 package com.thebluealliance.androidclient.imgur;
 
-import android.content.Context;
-
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.imgur.ImgurApi;
 import com.thebluealliance.imgur.responses.UploadResponse;
 
+import android.content.Context;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -37,11 +35,10 @@ public class ImgurController {
             ImgurSuggestionCallback callback) throws IOException {
         String authToken = getAuthHeader(context);
         File file = new File(filepath);
-        FileInputStream stream = new FileInputStream(file);
-        byte[] buf = new byte[stream.available()];
-        while(stream.read(buf) != -1);
-        RequestBody body = RequestBody.create(MediaType.parse("application/octet-stream"), buf);
-        Call<UploadResponse> apiCall = mImgurApi.uploadImage(authToken, title, description, body);
+        RequestBody body = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        RequestBody titlePart = RequestBody.create(MediaType.parse("text/plain"), title);
+        RequestBody descPart = RequestBody.create(MediaType.parse("text/plain"), description);
+        Call<UploadResponse> apiCall = mImgurApi.uploadImage(authToken, titlePart, descPart, body);
         apiCall.enqueue(callback);
     }
 
