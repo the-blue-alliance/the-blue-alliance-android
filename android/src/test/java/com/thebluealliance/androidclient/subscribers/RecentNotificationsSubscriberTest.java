@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.Context;
+
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
@@ -16,6 +18,8 @@ import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotifica
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -45,13 +49,15 @@ public class RecentNotificationsSubscriberTest {
 
     private RecentNotificationsSubscriber mSubscriber;
     private List<StoredNotification> mNotifications;
+    private Context mContext;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        mContext = mock(Context.class, RETURNS_DEEP_STUBS);
         DatabaseMocker.mockNotificationsTable(mDb);
         DatabaseWriter writer = mockDatabaseWriter();
-        mSubscriber = new RecentNotificationsSubscriber(writer);
+        mSubscriber = new RecentNotificationsSubscriber(writer, mContext);
         List<JsonObject> notificationData = ModelMaker.getMultiModelList(JsonObject.class,
           "notification_alliance_selection",
           "notification_awards_posted",
@@ -87,12 +93,12 @@ public class RecentNotificationsSubscriberTest {
 
     @Test
     public void testParsedData() throws BasicModel.FieldNotDefinedException {
-        List<ListItem> parsedData = DatafeedTestDriver.getParsedData(mSubscriber, mNotifications);
+        List<Object> parsedData = DatafeedTestDriver.getParsedData(mSubscriber, mNotifications);
 
         assertNotNull(parsedData);
         assertEquals(parsedData.size(), 6);
-        assertTrue(parsedData.get(0) instanceof AllianceSelectionNotification);
-        assertTrue(parsedData.get(1) instanceof AwardsPostedNotification);
+        assertTrue(parsedData.get(0) instanceof AllianceSelectionNotificationViewModel);
+        assertTrue(parsedData.get(1) instanceof AwardsPostedNotificationViewModel);
         assertTrue(parsedData.get(2) instanceof CompLevelStartingNotification);
         assertTrue(parsedData.get(3) instanceof ScoreNotification);
         assertTrue(parsedData.get(4) instanceof ScheduleUpdatedNotification);
