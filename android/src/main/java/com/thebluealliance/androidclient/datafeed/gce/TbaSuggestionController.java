@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Class that interfaces Suggestions with GCE
@@ -47,7 +48,8 @@ public class TbaSuggestionController {
         Call<ModelsMobileApiMessagesBaseResponse> request = mTeamMediaApi.suggestion(authHeader, message);
         request.enqueue(new Callback<ModelsMobileApiMessagesBaseResponse>() {
             @Override
-            public void onResponse(Response<ModelsMobileApiMessagesBaseResponse> response) {
+            public void onResponse(Response<ModelsMobileApiMessagesBaseResponse> response,
+                                   Retrofit retrofit) {
                 //TODO stuff
             }
 
