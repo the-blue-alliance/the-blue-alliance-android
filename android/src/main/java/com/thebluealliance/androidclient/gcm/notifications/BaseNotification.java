@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,12 +26,16 @@ import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
+import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public abstract class BaseNotification extends ListElement {
+import io.nlopez.smartadapters.views.BindableLayout;
+
+public abstract class BaseNotification<VIEWMODEL> extends ListElement implements ViewModelRenderer<VIEWMODEL, Void> {
 
     String messageData;
     String messageType;
@@ -170,7 +175,7 @@ public abstract class BaseNotification extends ListElement {
         return finalBitmap;
     }
 
-    protected String getNotificationTimeString(Context c) {
+    public String getNotificationTimeString(Context c) {
         DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(c);
         DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(c);
         if (notificationTime == null) return "";

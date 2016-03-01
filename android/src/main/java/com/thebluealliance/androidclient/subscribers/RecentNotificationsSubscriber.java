@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
-import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
@@ -15,14 +15,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<StoredNotification>, List<ListItem>> {
+public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<StoredNotification>, List<Object>> {
 
     private final DatabaseWriter mWriter;
+    private Context mContext;
 
     @Inject
-    public RecentNotificationsSubscriber(DatabaseWriter writer) {
+    public RecentNotificationsSubscriber(DatabaseWriter writer, Context context) {
         super();
         mWriter = writer;
+        mContext = context;
         mDataToBind = new ArrayList<>();
     }
 
@@ -35,7 +37,7 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
             if (renderable != null) {
                 renderable.parseMessageData();
                 if (renderable.shouldShowInRecentNotificationsList()) {
-                    mDataToBind.add(renderable);
+                    mDataToBind.add(renderable.renderToViewModel(mContext, null));
                 }
             }
         }
@@ -55,7 +57,7 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
         BaseNotification notification = event.getNotification();
         notification.parseMessageData();
         if (notification.shouldShowInRecentNotificationsList()) {
-            mDataToBind.add(0, notification);
+            mDataToBind.add(0, notification.renderToViewModel(null, null));
         }
         bindData();
     }

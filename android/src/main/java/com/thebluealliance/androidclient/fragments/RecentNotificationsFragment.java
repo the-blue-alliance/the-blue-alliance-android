@@ -9,22 +9,31 @@ import android.view.ViewGroup;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.itemviews.AllianceSelectionNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.AwardsPostedNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.GenericNotificationItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.subscribers.RecentNotificationsSubscriber;
+import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
 import de.greenrobot.event.EventBus;
+import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
 public class RecentNotificationsFragment
-  extends ListViewFragment<List<StoredNotification>, RecentNotificationsSubscriber> {
+        extends RecyclerViewFragment<List<StoredNotification>, RecentNotificationsSubscriber> {
 
-    @Inject Database mDb;
-    @Inject EventBus mEventBus;
+    @Inject
+    Database mDb;
+    @Inject
+    EventBus mEventBus;
 
     @Override
     protected void inject() {
@@ -38,20 +47,18 @@ public class RecentNotificationsFragment
      * to special-case a subclass of DatafeedFragment and inflate a different view, we'll simply
      * override all this stuff programmatically!
      *
-     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param view               The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
+     *                           from a previous saved state as given here.
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         int pBottom, pLeft, pRight;
-        pBottom = mListView.getPaddingBottom();
-        pLeft = mListView.getPaddingLeft();
-        pRight = mListView.getPaddingRight();
-        mListView.setPadding(pLeft, Utilities.getPixelsFromDp(getContext(), 8), pRight, pBottom);
-        mListView.setDivider(null);
-        mListView.setDividerHeight(0);
-        mListView.setClipToPadding(false);
+        pBottom = mRecyclerView.getPaddingBottom();
+        pLeft = mRecyclerView.getPaddingLeft();
+        pRight = mRecyclerView.getPaddingRight();
+        mRecyclerView.setPadding(pLeft, Utilities.getPixelsFromDp(getContext(), 8), pRight, pBottom);
+        mRecyclerView.setClipToPadding(false);
     }
 
     @Override
@@ -79,5 +86,12 @@ public class RecentNotificationsFragment
     @Override
     protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_notifications_black_48dp, R.string.no_recent_notifications);
+    }
+
+    @Override
+    public void initializeMaps(SmartAdapter.MultiAdaptersCreator creator) {
+        creator.map(AllianceSelectionNotificationViewModel.class, AllianceSelectionNotificationItemView.class)
+                .map(AwardsPostedNotificationViewModel.class, AwardsPostedNotificationItemView.class)
+                .map(GenericNotificationViewModel.class, GenericNotificationItemView.class);
     }
 }

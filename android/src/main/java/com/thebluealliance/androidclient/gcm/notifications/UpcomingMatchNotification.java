@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.gcm.notifications;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,13 +25,14 @@ import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class UpcomingMatchNotification extends BaseNotification {
+public class UpcomingMatchNotification extends BaseNotification<GenericNotificationViewModel> {
 
     private String eventName, eventKey, matchKey, redTeams[], blueTeams[];
     private JsonElement matchTime;
@@ -216,6 +218,12 @@ public class UpcomingMatchNotification extends BaseNotification {
         new MatchListElement(redTeams, blueTeams, matchKey, JSONHelper.isNull(matchTime) ? -1 : matchTime.getAsLong(), "").getView(c, inflater, holder.matchView);
 
         return convertView;
+    }
+
+    @Nullable
+    @Override
+    public GenericNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        return new GenericNotificationViewModel(messageType, messageData);
     }
 
     private class ViewHolder {

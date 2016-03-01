@@ -43,6 +43,11 @@ public class BinderModule {
     }
 
     @Provides
+    RecyclerViewBinder provideRecyclerViewBinder() {
+        return new RecyclerViewBinder();
+    }
+
+    @Provides
     public ExpandableListViewBinder provideExpandableListBinder(ModelRendererSupplier supplier) {
         return new ExpandableListViewBinder(supplier);
     }

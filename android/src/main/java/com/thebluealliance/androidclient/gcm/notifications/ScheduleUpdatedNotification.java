@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.gcm.notifications;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -21,11 +22,12 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 
 import java.util.Calendar;
 import java.util.Date;
 
-public class ScheduleUpdatedNotification extends BaseNotification {
+public class ScheduleUpdatedNotification extends BaseNotification<GenericNotificationViewModel> {
 
     private String eventName, eventKey;
     private JsonElement matchTime;
@@ -150,6 +152,12 @@ public class ScheduleUpdatedNotification extends BaseNotification {
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
 
         return convertView;
+    }
+
+    @Nullable
+    @Override
+    public GenericNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        return new GenericNotificationViewModel(messageType, messageData);
     }
 
     private class ViewHolder {

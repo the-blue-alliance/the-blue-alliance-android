@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,13 +28,14 @@ import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ScoreNotification extends BaseNotification {
+public class ScoreNotification extends BaseNotification<GenericNotificationViewModel> {
 
     private final MatchWriter mWriter;
     private String eventName, eventKey, matchKey;
@@ -260,6 +262,12 @@ public class ScoreNotification extends BaseNotification {
         match.render(false, false, false, true).getView(c, inflater, holder.matchView);
 
         return convertView;
+    }
+
+    @Nullable
+    @Override
+    public GenericNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        return new GenericNotificationViewModel(messageType, messageData);
     }
 
     private class ViewHolder {

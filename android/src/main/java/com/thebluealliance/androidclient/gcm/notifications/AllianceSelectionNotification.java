@@ -13,11 +13,13 @@ import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
 
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,7 +29,7 @@ import android.widget.TextView;
 import java.util.Calendar;
 import java.util.Date;
 
-public class AllianceSelectionNotification extends BaseNotification {
+public class AllianceSelectionNotification extends BaseNotification<AllianceSelectionNotificationViewModel> {
 
     private final EventWriter mWriter;
     private Event event;
@@ -136,6 +138,21 @@ public class AllianceSelectionNotification extends BaseNotification {
         holder.time.setText(getNotificationTimeString(c));
 
         return convertView;
+    }
+
+    @Nullable
+    @Override
+    public AllianceSelectionNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        String titleString, shortName, shortCode;
+        try {
+            shortName = event.getEventShortName();
+            shortCode = EventHelper.getShortCodeForEventKey(event.getKey()).toUpperCase();
+            titleString = context.getString(R.string.gameday_ticker_event_title_format, shortName, shortCode);
+        } catch (BasicModel.FieldNotDefinedException e) {
+            titleString = eventKey;
+        }
+
+        return new AllianceSelectionNotificationViewModel(titleString, getNotificationTimeString(context));
     }
 
     private class ViewHolder {

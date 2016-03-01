@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,11 +21,12 @@ import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 
 import java.util.Calendar;
 import java.util.Date;
 
-public class GenericNotification extends BaseNotification {
+public class GenericNotification extends BaseNotification<GenericNotificationViewModel> {
 
     public static final String TITLE = "title";
     public static final String DESC = "desc";
@@ -164,6 +166,12 @@ public class GenericNotification extends BaseNotification {
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
 
         return convertView;
+    }
+
+    @Nullable
+    @Override
+    public GenericNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        return new GenericNotificationViewModel(messageType, messageData);
     }
 
     private class ViewHolder {
