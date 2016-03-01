@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
+import com.thebluealliance.androidclient.imgur.ImgurSuggestionService;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.models.Favorite;
 
@@ -118,6 +119,16 @@ public class DevSettingsActivity extends AppCompatActivity {
                 public boolean onPreferenceClick(Preference preference) {
                     GoogleAccountCredential credential = AccountHelper.getSelectedAccountCredential(getActivity());
                     getActivity().startActivity(credential.newChooseAccountIntent());
+                    return false;
+                }
+            });
+
+            Preference imgur = findPreference("imgur_test");
+            imgur.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent imgurIntetn = new Intent(getActivity(), ImgurSuggestionService.class);
+                    getActivity().startService(imgurIntetn);
                     return false;
                 }
             });

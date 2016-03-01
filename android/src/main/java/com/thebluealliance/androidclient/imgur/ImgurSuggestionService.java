@@ -13,6 +13,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 
 /**
@@ -81,10 +83,15 @@ public class ImgurSuggestionService extends IntentService {
         int year = intent.getIntExtra(EXTRA_YEAR,0);
         ImgurSuggestionCallback callback = new ImgurSuggestionCallback(
                 mSuggestionController,
-                teamKey,
-                year);
+                "frc1124", //teamKey,
+                2016); //year);
 
-        mImgurController.uploadImage(filepath, title, description, callback);
+        try {
+            mImgurController.uploadImage(getApplicationContext(), "/storage/emulated/0/Download/hqdefault.jpg", "Furry Hat", "The Hat has spoken!", callback);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //mImgurController.uploadImage(filepath, title, description, callback);
     }
 
     private SuggestionComponent getComponent() {

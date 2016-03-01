@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.imgur;
 
+import android.util.Log;
+
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.gce.TbaSuggestionController;
 import com.thebluealliance.imgur.responses.UploadResponse;
 
@@ -27,12 +30,17 @@ public class ImgurSuggestionCallback implements Callback<UploadResponse> {
 
     @Override
     public void onResponse(Response<UploadResponse> response) {
-        UploadResponse uploadResponse = response.body();
-        mSuggestionController.suggest(
-                mTeamKey,
-                mYear,
-                uploadResponse.data.link,
-                uploadResponse.data.deletehash);
+        if (response.isSuccess()) {
+            UploadResponse uploadResponse = response.body();
+            mSuggestionController.suggest(
+                    mTeamKey,
+                    mYear,
+                    uploadResponse.data.link,
+                    uploadResponse.data.deletehash);
+        } else {
+            Log.e(Constants.LOG_TAG, "Error uploading imgur image\n"
+                    +response.code() + " " + response.message());
+        }
     }
 
     @Override
