@@ -7,18 +7,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.datafeed.combiners.TeamPageCombiner;
-import com.thebluealliance.androidclient.listeners.TeamClickListener;
+import com.thebluealliance.androidclient.itemviews.TeamItemView;
 import com.thebluealliance.androidclient.models.Team;
-import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
+import com.thebluealliance.androidclient.subscribers.TeamListRecyclerSubscriber;
+import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 
 import java.util.List;
 
+import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
 /**
  * Displays 1000 team numbers starting with {@link #START}
  */
-public class TeamListFragment extends ListViewFragment<List<Team>, TeamListSubscriber> {
+public class TeamListFragment extends RecyclerViewFragment<List<Team>, TeamListRecyclerSubscriber> {
 
     private static final String START = "START";
     private int mPageStart;
@@ -43,10 +45,11 @@ public class TeamListFragment extends ListViewFragment<List<Team>, TeamListSubsc
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
-        mListView.setOnItemClickListener(new TeamClickListener(getActivity(), mSubscriber));
 
+        // TODO: figure out how to implement this for RecyclerView
         // Enable fast scrolling
-        mListView.setFastScrollEnabled(true);
+        // mListView.setFastScrollEnabled(true);
+
         return view;
     }
 
@@ -65,5 +68,15 @@ public class TeamListFragment extends ListViewFragment<List<Team>, TeamListSubsc
     @Override
     protected String getRefreshTag() {
         return String.format("teamList_%1$d", mPageStart);
+    }
+
+    @Override
+    public void initializeMaps(SmartAdapter.MultiAdaptersCreator creator) {
+        creator.map(TeamViewModel.class, TeamItemView.class);
+    }
+
+    @Override
+    protected boolean shouldShowDividers() {
+        return true;
     }
 }
