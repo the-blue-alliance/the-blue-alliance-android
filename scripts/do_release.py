@@ -4,6 +4,7 @@ import argparse
 import time
 import subprocess
 import sys
+import re
 
 from apiclient import sample_tools
 from oauth2client import client
@@ -15,6 +16,8 @@ See samples: https://github.com/googlesamples/android-play-publisher-api
 
 Requires Google API python client
 Insall with: pip install google-api-python-client
+
+Travis support requires the official client: https://github.com/travis-ci/travis.rb
 """
 
 PACKAGE = 'com.thebluealliance.androidclient'
@@ -22,6 +25,7 @@ CHANGELOG_PATH = 'android/src/prod/play/en-US/whatsnew'
 INAPP_CHANGELOG = 'android/src/main/res/raw/changelog.txt'
 APK_PATH_FORMAT = 'android/build/apk/tba-android-v{}-release.apk'
 SHORTLOG_PATH = 'RELEASE_SHORTLOG'
+GH_TOKEN = 'scripts/github_token'
 
 parser = argparse.ArgumentParser(add_help=True)
 parser.add_argument("tag", help="New version number (e.g. 3.1.4)")
@@ -36,6 +40,10 @@ parser.add_argument("--skip-gh", action="store_true", default=False,
                     help="Do not create a new release on GitHub")
 parser.add_argument("--dry-run", action="store_true", default=False,
                     help="Don't run any permanent commands, just print what's happening")
+parser.add_argument("--skip-local-tests", action="store_true", default=False,
+                    help="Don't run the test suite on the local machine")
+parser.add_argument("--skip-travis", action="store_true", default=False,
+                    help="Don't wait for travis build to complete")
 
 
 def check_clean_repo():
@@ -46,12 +54,33 @@ def check_clean_repo():
         sys.exit(1)
 
 
-def check_unittest(dry_run):
+def check_travis_tests(args):
+    tag_name = "v{}".format(args.tag)
+    print "Checking travis build status at tag {}".format(tag_name)
+
+    status = "created"
+    while status == "created" or status == "started":
+        info = subprocess.check_output(["travis", "show", tag_name])
+        regex = re.search(".*State:[ \t]+((\w)*)\n", info)
+        status = regex.group(1)
+        print "Build Status: {}".format(status)
+        if status == "passed" or status == "failed" or status == "errored":
+            break
+        time.sleep(30)
+
+    if status == "failed" or status == "errored":
+        print "Errors with the travis build"
+        print info
+        if not args.dry_run:
+            sys.exit(-1)
+
+
+def check_unittest_local(args):
     print "Running project unit tests..."
     time.sleep(2)
     try:
         script_args = ["./gradlew", "testProdReleaseUnitTest"]
-        if dry_run:
+        if args.dry_run:
             script_args.append("-m")
         subprocess.check_call(script_args)
         print "Unit tests passed!"
@@ -205,7 +234,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if not args.dirty_repo:
         check_clean_repo()
-    check_unittest(args.dry_run)
+    if not args.skip_local_tests:
+        check_unittest_local(args)
     if not args.skip_tag:
         update_whatsnew(args.dry_run)
         commit_whatsnew(args.dry_run)
@@ -214,4 +244,6 @@ if __name__ == "__main__":
         validate_build(args.dry_run)
     build_apk(args)
     push_repo(args.dry_run)
+    if not args.skip_travis:
+        check_travis_tests(args)
     create_release(args)
