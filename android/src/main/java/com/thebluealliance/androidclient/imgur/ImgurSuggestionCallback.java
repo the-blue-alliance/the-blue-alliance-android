@@ -4,11 +4,13 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.gce.TbaSuggestionController;
 import com.thebluealliance.imgur.responses.UploadResponse;
 
+import android.support.annotation.UiThread;
 import android.util.Log;
 
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import rx.schedulers.Schedulers;
 
 /**
  * Class that takes a sucessful upload from the imgur API and suggests it TBA
@@ -30,14 +32,18 @@ public class ImgurSuggestionCallback implements Callback<UploadResponse> {
 
 
     @Override
+    @UiThread
     public void onResponse(Response<UploadResponse> response, Retrofit retrofit) {
         if (response.isSuccess()) {
             UploadResponse uploadResponse = response.body();
-            mSuggestionController.suggest(
+            Log.d(Constants.LOG_TAG, "Uploaded imgur image: " + uploadResponse.data.link);
+            
+            //noinspection WrongThread - we schedule on io thread, linter isn't smart enough to tell
+            Schedulers.io().createWorker().schedule(() -> mSuggestionController.suggest(
                     mTeamKey,
                     mYear,
                     uploadResponse.data.link,
-                    uploadResponse.data.deletehash);
+                    uploadResponse.data.deletehash));
         } else {
             Log.e(Constants.LOG_TAG, "Error uploading imgur image\n"
                     +response.code() + " " + response.message());
@@ -45,6 +51,7 @@ public class ImgurSuggestionCallback implements Callback<UploadResponse> {
     }
 
     @Override
+    @UiThread
     public void onFailure(Throwable t) {
 
     }
