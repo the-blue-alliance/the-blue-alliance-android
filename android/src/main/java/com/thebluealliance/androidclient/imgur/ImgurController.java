@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import retrofit.Call;
 
 /**
- * Class than handles interactions with the imgur API
+ * Class than handles interactions with {@link ImgurApi}
  */
 public class ImgurController {
 
@@ -27,6 +27,15 @@ public class ImgurController {
         mImgurApi = imgurApi;
     }
 
+    /**
+     * Upload an image to Imgur
+     * @param context Android context
+     * @param filepath Path to the image on the local device
+     * @param title Imgur title for the image
+     * @param description Imgur description for the image
+     * @param callback Callback to execute after the upload request completes.
+     * @throws IOException
+     */
     public void uploadImage(
             Context context,
             String filepath,

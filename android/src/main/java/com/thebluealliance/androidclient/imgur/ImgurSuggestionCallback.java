@@ -13,7 +13,7 @@ import retrofit.Retrofit;
 import rx.schedulers.Schedulers;
 
 /**
- * Class that takes a sucessful upload from the imgur API and suggests it TBA
+ * Class that takes a successful upload from the imgur API and suggests it TBA for a given team/year
  */
 public class ImgurSuggestionCallback implements Callback<UploadResponse> {
 
@@ -29,7 +29,6 @@ public class ImgurSuggestionCallback implements Callback<UploadResponse> {
         mTeamKey = teamKey;
         mYear = year;
     }
-
 
     @Override
     @UiThread
@@ -53,6 +52,7 @@ public class ImgurSuggestionCallback implements Callback<UploadResponse> {
     @Override
     @UiThread
     public void onFailure(Throwable t) {
-
+        Log.e(Constants.LOG_TAG, "Failed to upload image to imgur");
+        t.printStackTrace();
     }
 }

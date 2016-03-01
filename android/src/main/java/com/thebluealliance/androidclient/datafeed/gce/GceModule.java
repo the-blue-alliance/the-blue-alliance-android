@@ -44,10 +44,10 @@ public class GceModule {
 
     @Provides
     public GceAuthController provideGceAuthController(
-            Context localContext,
+            Context context,
             SharedPreferences sharedPreferences,
             AccountManager accountManager) {
-        return new GceAuthController(localContext, sharedPreferences, accountManager);
+        return new GceAuthController(context, sharedPreferences, accountManager);
     }
 
     @Provides @Singleton @Named("gce_retrofit")

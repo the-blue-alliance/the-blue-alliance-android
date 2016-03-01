@@ -89,6 +89,7 @@ public class ImgurSuggestionService extends IntentService {
         try {
             mImgurController.uploadImage(getApplicationContext(), filepath, title, description, callback);
         } catch (IOException e) {
+            Log.e(Constants.LOG_TAG, "IO Exception while uploading to imgur");
             e.printStackTrace();
         }
     }

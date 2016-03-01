@@ -23,7 +23,6 @@ import javax.inject.Inject;
  * Class that handles getting oauth tokens to interact with Cloud Endpoints
  * Mainly uses the {@link GoogleAuthUtil} helper class
  * Resulting oauth tokens are to be used with the GCE Retrofit Services
- * DO NOT USE AS A SINGLETON, since the tokens rely on local activity contexts
  */
 public class GceAuthController {
     public static final String PREF_SELECTED_ACCOUNT = "selected_account";
