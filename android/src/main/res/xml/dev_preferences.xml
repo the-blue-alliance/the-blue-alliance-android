@@ -45,11 +45,6 @@
             android:key="select_account"
             android:selectable="true"
             android:title="@string/pref_select_account" />
-        <Preference
-            android:key="imgur_test"
-            android:selectable="true"
-            android:persistent="false"
-            android:title="Test Imgur Upload" />
     </PreferenceCategory>
 
 </PreferenceScreen>

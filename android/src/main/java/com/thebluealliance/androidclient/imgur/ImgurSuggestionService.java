@@ -87,11 +87,10 @@ public class ImgurSuggestionService extends IntentService {
                 2016); //year);
 
         try {
-            mImgurController.uploadImage(getApplicationContext(), "/storage/emulated/0/Download/hqdefault.jpg", "Furry Hat", "The Hat has spoken!", callback);
+            mImgurController.uploadImage(getApplicationContext(), filepath, title, description, callback);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //mImgurController.uploadImage(filepath, title, description, callback);
     }
 
     private SuggestionComponent getComponent() {

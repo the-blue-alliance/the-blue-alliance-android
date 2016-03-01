@@ -1,5 +1,17 @@
 package com.thebluealliance.androidclient.activities.settings;
 
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+
+import com.thebluealliance.androidclient.Analytics;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.activities.RedownloadActivity;
+import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
+import com.thebluealliance.androidclient.models.Favorite;
+import com.thebluealliance.androidclient.types.ModelType;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -8,18 +20,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.thebluealliance.androidclient.Analytics;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.activities.RedownloadActivity;
-import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
-import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
-import com.thebluealliance.androidclient.imgur.ImgurSuggestionService;
-import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.models.Favorite;
 
 public class DevSettingsActivity extends AppCompatActivity {
     @Override
@@ -123,15 +123,6 @@ public class DevSettingsActivity extends AppCompatActivity {
                 }
             });
 
-            Preference imgur = findPreference("imgur_test");
-            imgur.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    Intent imgurIntetn = new Intent(getActivity(), ImgurSuggestionService.class);
-                    getActivity().startService(imgurIntetn);
-                    return false;
-                }
-            });
         }
 
         @Override

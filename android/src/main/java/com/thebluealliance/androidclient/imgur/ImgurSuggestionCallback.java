@@ -37,7 +37,7 @@ public class ImgurSuggestionCallback implements Callback<UploadResponse> {
         if (response.isSuccess()) {
             UploadResponse uploadResponse = response.body();
             Log.d(Constants.LOG_TAG, "Uploaded imgur image: " + uploadResponse.data.link);
-            
+
             //noinspection WrongThread - we schedule on io thread, linter isn't smart enough to tell
             Schedulers.io().createWorker().schedule(() -> mSuggestionController.suggest(
                     mTeamKey,
