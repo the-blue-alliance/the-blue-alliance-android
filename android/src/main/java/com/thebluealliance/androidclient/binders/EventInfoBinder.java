@@ -36,6 +36,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     private LayoutInflater mInflater;
     private MatchRenderer mMatchRenderer;
     private boolean mIsLive;
+    private boolean mAreViewsBound;
 
     @Inject SocialClickListener mSocialClickListener;
     @Inject EventInfoContainerClickListener mInfoClickListener;
@@ -70,6 +71,8 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         mSocialClickListener = socialClickListener;
         mInfoClickListener = eventInfoContainerClickListener;
         mMatchRenderer = renderer;
+        mIsLive = false;
+        mAreViewsBound = false;
     }
 
     public void setInflater(LayoutInflater inflater) {
@@ -78,7 +81,10 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
     @Override
     public void bindViews() {
-        ButterKnife.bind(this, mRootView);
+        if (!mAreViewsBound) {
+            ButterKnife.bind(this, mRootView);
+            mAreViewsBound = true;
+        }
     }
 
     @Override
@@ -189,6 +195,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         super.unbind(unbindViews);
         if (unbindViews) {
             ButterKnife.unbind(this);
+            mAreViewsBound = false;
         }
     }
 
@@ -215,6 +222,9 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     }
 
     protected void showLastMatch(MatchListElement match) {
+        if (!mAreViewsBound) {
+            bindViews();
+        }
         lastMatchView.setVisibility(View.VISIBLE);
         lastMatchContainer.setVisibility(View.VISIBLE);
         lastMatchView.removeAllViews();
@@ -222,22 +232,45 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     }
 
     protected void showNextMatch(MatchListElement match) {
+        if (!mAreViewsBound) {
+            bindViews();
+        }
         nextMatchView.setVisibility(View.VISIBLE);
         nextMatchContainer.setVisibility(View.VISIBLE);
         nextMatchView.removeAllViews();
         nextMatchView.addView(match.getView(mActivity, mInflater, null));
     }
 
+    protected void hideLastMatch() {
+        if (!mAreViewsBound) {
+            bindViews();
+        }
+        lastMatchContainer.setVisibility(View.GONE);
+    }
+
+    protected void hideNextMatch() {
+        if (!mAreViewsBound) {
+            bindViews();
+        }
+        nextMatchContainer.setVisibility(View.GONE);
+    }
+
     @SuppressWarnings("unused")
     public void onEvent(LiveEventMatchUpdateEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
-            if (mIsLive && event.getLastMatch() != null) {
+            if (mIsLive && event != null && event.getLastMatch() != null) {
                 Log.d(Constants.LOG_TAG, "showing last match");
                 showLastMatch(mMatchRenderer.renderFromModel(event.getLastMatch(), RENDER_DEFAULT));
+            } else {
+                Log.d(Constants.LOG_TAG, "hiding last match");
+                hideLastMatch();
             }
-            if (mIsLive && event.getNextMatch() != null) {
+            if (mIsLive && event != null && event.getNextMatch() != null) {
                 Log.d(Constants.LOG_TAG, "showing next match");
                 showNextMatch(mMatchRenderer.renderFromModel(event.getNextMatch(), RENDER_DEFAULT));
+            } else {
+                Log.d(Constants.LOG_TAG, "hiding next match");
+                hideNextMatch();
             }
         });
     }
