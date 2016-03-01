@@ -30,7 +30,7 @@ import retrofit.Retrofit;
 public class GceModule {
 
     // Format with app engine project ID
-    public static final String GCE_URL_FORMAT = "https://%1$s.appspot.com/_ah/api/";
+    public static final String GCE_URL_FORMAT = "https://%1$s.appspot.com";
 
     public GceModule() {
     }
@@ -44,7 +44,7 @@ public class GceModule {
 
     @Provides
     public GceAuthController provideGceAuthController(
-            @Named("local_context") Context localContext,
+            Context localContext,
             SharedPreferences sharedPreferences,
             AccountManager accountManager) {
         return new GceAuthController(localContext, sharedPreferences, accountManager);

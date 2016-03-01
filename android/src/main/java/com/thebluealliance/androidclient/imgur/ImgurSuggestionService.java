@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.imgur;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.datafeed.gce.TbaSuggestionController;
 import com.thebluealliance.androidclient.di.components.DaggerSuggestionComponent;
@@ -10,6 +11,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
 import javax.inject.Inject;
 
@@ -58,16 +60,20 @@ public class ImgurSuggestionService extends IntentService {
 
     /**
      * Creates an ImgurSuggestionService
-     *
-     * @param name Used to name the worker thread, important only for debugging.
      */
-    public ImgurSuggestionService(String name) {
-        super(name);
+    public ImgurSuggestionService() {
+        super("imgurSuggestion");
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
         getComponent().inject(this);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.d(Constants.LOG_TAG, "IMGUR SERVICE START");
         String filepath = intent.getStringExtra(EXTRA_FILEPATH);
         String title = intent.getStringExtra(EXTRA_TITLE);
         String description = intent.getStringExtra(EXTRA_DESCRIPTION);

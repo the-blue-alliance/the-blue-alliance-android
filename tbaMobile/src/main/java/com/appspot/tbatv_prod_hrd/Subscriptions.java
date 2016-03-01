@@ -15,8 +15,8 @@ import retrofit.http.Query;
 import rx.Observable;
 
 public interface Subscriptions {
-  @POST("/subscriptions/list")
+  @POST("/_ah/api/tbaMobile/v9/subscriptions/list")
   Call<ModelsMobileApiMessagesSubscriptionCollection> list(@Header("Authorization") String authToken);
-  @POST("/subscriptions/list")
+  @POST("/_ah/api/tbaMobile/v9/subscriptions/list")
   Call<Observable<ModelsMobileApiMessagesSubscriptionCollection>> listRx(@Header("Authorization") String authToken);
 }

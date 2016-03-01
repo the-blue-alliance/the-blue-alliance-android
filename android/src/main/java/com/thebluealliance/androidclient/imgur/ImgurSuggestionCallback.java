@@ -31,7 +31,6 @@ public class ImgurSuggestionCallback implements Callback<UploadResponse> {
         mSuggestionController.suggest(
                 mTeamKey,
                 mYear,
-                uploadResponse.data.id,
                 uploadResponse.data.link,
                 uploadResponse.data.deletehash);
     }
