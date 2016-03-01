@@ -162,7 +162,13 @@ def build_apk(args):
 
     print "Building and uploading the app..."
     time.sleep(2)
-    subprocess.call(["./gradlew", ("-m" if args.dry_run else ""), "publishProdRelease"])
+
+    # Don't rebuild the app, because we've built it already
+    script_args = ["./gradlew", ("-m" if args.dry_run else ""), "publishProdRelease"]
+    if not args.skip_validate:
+        script_args.append("-x")
+        script_args.append("assembleProdRelease")
+    subprocess.call(script_args)
     print "Returning to {}".format(old_branch)
     if not args.dry_run:
         subprocess.call(["git", "checkout", old_branch])
