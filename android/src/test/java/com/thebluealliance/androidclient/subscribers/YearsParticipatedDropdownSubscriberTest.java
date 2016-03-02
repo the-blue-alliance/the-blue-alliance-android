@@ -31,13 +31,13 @@ public class YearsParticipatedDropdownSubscriberTest {
 
     @Test(expected = NullPointerException.class)
     public void testParseNullData() {
-        mSubscriber.call(null);
+        mSubscriber.onNext(null);
     }
 
     @Test
     public void testParsedData() {
         int[] expected = {2015, 2014, 2013, 2012};
-        mSubscriber.call(mYearsParticipated);
+        mSubscriber.onNext(mYearsParticipated);
         verify(mCallback).updateYearsParticipated(expected);
     }
 }
