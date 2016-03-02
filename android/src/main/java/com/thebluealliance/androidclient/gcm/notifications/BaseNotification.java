@@ -127,13 +127,16 @@ public abstract class BaseNotification extends ListElement {
         dismissIntent.setAction(NotificationChangedReceiver.ACTION_NOTIFICATION_DELETED);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, dismissIntent, 0);
 
+        NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
+        wearableExtender.setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background));
+
         return new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setGroup(GCMMessageHandler.GROUP_KEY)
                 .setColor(context.getResources().getColor(R.color.accent_dark))
                 .setDeleteIntent(onDismiss)
                 .setAutoCancel(true)
-                .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)));
+                .extend(wearableExtender);
     }
 
     /**
