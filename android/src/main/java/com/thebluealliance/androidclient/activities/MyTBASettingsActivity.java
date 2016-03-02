@@ -1,15 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
-import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
-import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
-import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
-import com.thebluealliance.androidclient.types.ModelType;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -36,38 +26,47 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
+import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
+import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
+import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
+import com.thebluealliance.androidclient.types.ModelType;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Activity which hosts a FAB that opens a myTBA model settings panel.
  */
 
 public abstract class MyTBASettingsActivity extends DatafeedActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
-    private CoordinatorLayout mCoordinatorLayout;
-    private RelativeLayout mSettingsContainer;
-    private FloatingActionButton mOpenSettingsButton;
-    private FloatingActionButton mCloseSettingsButton;
-    private View mForegroundDim;
+    private static final String SETTINGS_PANEL_OPEN = "settings_panel_open";
+    private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
 
-    private Toolbar mSettingsToolbar;
+    @Bind(R.id.coordinator) CoordinatorLayout mCoordinatorLayout;
+    @Bind(R.id.settings) RelativeLayout mSettingsContainer;
+    @Bind(R.id.open_settings_button) FloatingActionButton mOpenSettingsButton;
+    @Bind(R.id.close_settings_button) FloatingActionButton mCloseSettingsButton;
+    @Bind(R.id.activity_foreground_dim) View mForegroundDim;
+    @Bind(R.id.settings_toolbar) Toolbar mSettingsToolbar;
+
     private Handler mFabHandler = new Handler();
 
     private MyTBASettingsFragment mSettingsFragment;
-
     private UpdateUserModelSettingsTaskFragment mSaveSettingsTaskFragment;
 
     private boolean mIsMyTBAEnabled;
-
     private boolean mIsSettingsPanelOpen = false;
-
     private boolean mSaveInProgress = false;
-
     private boolean mFabVisible = true;
+
     private ValueAnimator mRunningFabAnimation;
     private AnimatorSet mRunningPanelAnimation;
-
-    private static final String SETTINGS_PANEL_OPEN = "settings_panel_open";
-
-    private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
 
     // In milliseconds
     private static final int ANIMATION_DURATION = 500;
@@ -75,7 +74,6 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     private static final int FAB_COLOR_ANIMATION_DURATION = 250;
 
     private static final float UNDIMMED_ALPHA = 0.0f;
-
     private static final float DIMMED_ALPHA = 0.7f;
 
     private Bundle savedPreferenceState;
@@ -86,23 +84,17 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
 
         super.setContentView(R.layout.activity_mytba_settings);
 
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator);
+        ButterKnife.bind(this);
 
-        mSettingsContainer = (RelativeLayout) findViewById(R.id.settings);
-        mOpenSettingsButton = (FloatingActionButton) findViewById(R.id.open_settings_button);
         mOpenSettingsButton.setOnClickListener(this);
-
-        mCloseSettingsButton = (FloatingActionButton) findViewById(R.id.close_settings_button);
         mCloseSettingsButton.setOnClickListener(this);
 
-        mSettingsToolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         mSettingsToolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
         mSettingsToolbar.setTitle("Team Settings");
         mSettingsToolbar.setNavigationOnClickListener(v -> onSettingsCloseButtonClick());
         mSettingsToolbar.setNavigationContentDescription(R.string.close);
         ViewCompat.setElevation(mSettingsToolbar, getResources().getDimension(R.dimen.toolbar_elevation));
 
-        mForegroundDim = findViewById(R.id.activity_foreground_dim);
 
         // We check this so that we can hide the fab and prevent it from being subsequently shown
         // if myTBA is not enabled
