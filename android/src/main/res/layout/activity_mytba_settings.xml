@@ -45,22 +45,12 @@
         </RelativeLayout>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/open_settings_button"
+            android:id="@+id/toggle_settings_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_star_white_24dp"
-            app:fabSize="normal" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/close_settings_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_margin="@dimen/fab_margin"
-            android:src="@drawable/ic_check_white_24dp"
-            android:visibility="invisible"
             app:fabSize="normal" />
 
     </android.support.design.widget.CoordinatorLayout>
