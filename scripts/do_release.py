@@ -59,11 +59,14 @@ def check_travis_tests(args):
     print "Checking travis build status at tag {}".format(tag_name)
 
     status = "created"
+    duration = ""
     while status == "created" or status == "started":
         info = subprocess.check_output(["travis", "show", tag_name])
         regex = re.search(".*State:[ \t]+((\w)*)\n", info)
         status = regex.group(1)
-        print "Build Status: {}".format(status)
+        regex = re.search(".*Duration:[ \t]+((\w)*)\n", info)
+        duration = regex.group(1)
+        print "Build Status: {}, duration: {}".format(status, duration)
         if status == "passed" or status == "failed" or status == "errored":
             break
         time.sleep(30)
@@ -195,7 +198,7 @@ def build_apk(args):
     if not args.dry_run:
         subprocess.call(["git", "checkout", "v{}".format(args.tag)])
 
-    print "Building and uploading the app..."
+    print "Uploading the app to Google Play..."
     time.sleep(2)
 
     # Don't rebuild the app, because we've built it already
@@ -212,6 +215,9 @@ def build_apk(args):
 
 
 def push_repo(dry_run):
+    print "Pushing updates to GitHub"
+    time.sleep(2)
+
     if not dry_run:
         subprocess.call(["git", "push", "upstream"])
         subprocess.call(["git", "push", "--tags", "upstream"])
@@ -242,8 +248,8 @@ if __name__ == "__main__":
         create_tag(args)
     if not args.skip_validate:
         validate_build(args.dry_run)
-    build_apk(args)
     push_repo(args.dry_run)
     if not args.skip_travis:
         check_travis_tests(args)
+    build_apk(args)
     create_release(args)
