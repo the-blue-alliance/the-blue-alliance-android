@@ -8,6 +8,8 @@ import android.animation.ValueAnimator;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -15,7 +17,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -26,7 +27,6 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
@@ -47,6 +47,10 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
 
     private static final String SETTINGS_PANEL_OPEN = "settings_panel_open";
     private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
+
+    @ColorRes private static final int FAB_COLOR = R.color.accent;
+    @ColorRes private static final int FAB_COLOR_SUCCESS = R.color.green;
+    @ColorRes private static final int FAB_COLOR_ERROR = R.color.red;
 
     @Bind(R.id.coordinator) CoordinatorLayout mCoordinatorLayout;
     @Bind(R.id.settings) RelativeLayout mSettingsContainer;
@@ -106,8 +110,6 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
 
         setupFabIconForSettingsPanelOpen(false);
 
-        // Setup the settings menu
-        Log.d(Constants.LOG_TAG, "Model: " + modelKey);
         if (savedInstanceState != null) {
             mIsSettingsPanelOpen = savedInstanceState.getBoolean(SETTINGS_PANEL_OPEN);
             setupFabIconForSettingsPanelOpen(mIsSettingsPanelOpen);
@@ -161,6 +163,10 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.toggle_settings_button) {
+            if (onFabClick()) {
+                // A subclass handled this click for us, no need to do anything
+                return;
+            }
             if (!mIsSettingsPanelOpen) {
                 if (!mSaveInProgress) {
                     openSettingsPanel();
@@ -168,9 +174,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
             } else {
                 // The user wants to save the preferences
                 // Always close the panel
-                mFabHandler.postDelayed(() -> {
-                    closeSettingsPanel();
-                }, 1);
+                mFabHandler.postDelayed(this::closeSettingsPanel, 1);
 
                 // If saving is disabled, don't attempt to save
                 if (!mIsSaveEnalbed) {
@@ -215,14 +219,14 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         mSettingsFragment.restoreInitialState();
     }
 
-    private void openSettingsPanel() {
+    protected void openSettingsPanel() {
         mSettingsFragment.restoreInitialState();
 
         // Reset the color of the button
         if (mFabColorAnimator != null) {
             mFabColorAnimator.cancel();
         }
-        mToggleSettingsPanelButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.accent)));
+        setFabColor(FAB_COLOR);
 
         // Hide the button immediately
         mToggleSettingsPanelButton.setVisibility(View.GONE);
@@ -305,7 +309,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         mIsSettingsPanelOpen = true;
     }
 
-    private void closeSettingsPanel() {
+    protected void closeSettingsPanel() {
         int centerOfButtonOutsideX = (mToggleSettingsPanelButton.getLeft() + mToggleSettingsPanelButton.getRight()) / 2;
         int centerOfButtonOutsideY = (mToggleSettingsPanelButton.getTop() + mToggleSettingsPanelButton.getBottom()) / 2;
 
@@ -397,11 +401,11 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         mIsSettingsPanelOpen = false;
     }
 
-    public void showFab(boolean animate) {
+    public void showFab(boolean animate, boolean overrideMyTbaCheck) {
         if (mFabVisible) {
             return;
         }
-        if (!mIsMyTBAEnabled) {
+        if (!mIsMyTBAEnabled && !overrideMyTbaCheck) {
             hideFab(false);
             return;
         }
@@ -448,16 +452,15 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
             public void onAnimationStart(Animator animation) {
                 mToggleSettingsPanelButton.setVisibility(View.VISIBLE);
             }
-        });
-        fabScaleDown.addUpdateListener(animation -> {
-            ViewCompat.setScaleX(mToggleSettingsPanelButton, (float) animation.getAnimatedValue());
-            ViewCompat.setScaleY(mToggleSettingsPanelButton, (float) animation.getAnimatedValue());
-        });
-        fabScaleDown.addListener(new AnimatorListenerAdapter() {
+
             @Override
             public void onAnimationEnd(Animator animation) {
                 mToggleSettingsPanelButton.setVisibility(View.GONE);
             }
+        });
+        fabScaleDown.addUpdateListener(animation -> {
+            ViewCompat.setScaleX(mToggleSettingsPanelButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(mToggleSettingsPanelButton, (float) animation.getAnimatedValue());
         });
         fabScaleDown.setDuration(FAB_ANIMATION_DURATION);
         fabScaleDown.setInterpolator(new AccelerateInterpolator());
@@ -474,8 +477,8 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         Runnable runnable = () -> {
             showSnackbar(R.string.mytba_settings_updated_successfully);
 
-            Integer colorFrom = getResources().getColor(R.color.accent);
-            Integer colorTo = getResources().getColor(R.color.green);
+            Integer colorFrom = getResources().getColor(FAB_COLOR);
+            Integer colorTo = getResources().getColor(FAB_COLOR_SUCCESS);
 
             ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
             colorAnimation.addUpdateListener(animator -> mToggleSettingsPanelButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
@@ -485,10 +488,22 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
             reverseColorAnimation.addUpdateListener(animator -> mToggleSettingsPanelButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
             reverseColorAnimation.setDuration(FAB_COLOR_ANIMATION_DURATION);
 
-            AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet.play(colorAnimation);
-            animatorSet.play(reverseColorAnimation).after(2000);
-            animatorSet.start();
+            mFabColorAnimator = new AnimatorSet();
+            mFabColorAnimator.play(colorAnimation);
+            mFabColorAnimator.play(reverseColorAnimation).after(2000);
+            mFabColorAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    // Reset the FAB to the default color
+                    setFabColor(FAB_COLOR);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mFabColorAnimator = null;
+                }
+            });
+            mFabColorAnimator.start();
         };
         runAfterSettingsPanelIsClosed(runnable);
 
@@ -513,8 +528,8 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
             // Something went wrong, restore the initial state
             mSettingsFragment.restoreInitialState();
 
-            Integer colorFrom = getResources().getColor(R.color.accent);
-            Integer colorTo = getResources().getColor(R.color.red);
+            Integer colorFrom = getResources().getColor(FAB_COLOR);
+            Integer colorTo = getResources().getColor(FAB_COLOR_ERROR);
             ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
             colorAnimation.addUpdateListener(animator -> mToggleSettingsPanelButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
             colorAnimation.setDuration(FAB_COLOR_ANIMATION_DURATION);
@@ -530,7 +545,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
                 @Override
                 public void onAnimationCancel(Animator animation) {
                     // Reset the FAB to the default color
-                    mToggleSettingsPanelButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.accent)));
+                    setFabColor(FAB_COLOR);
                 }
 
                 @Override
@@ -590,5 +605,29 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
                 }
             });
         }
+    }
+
+    /**
+     * Subclasses should override this if they care about FAB click events. If they handle the
+     * event, return true; otherwise, return false so the default behavior (opening and closing
+     * the settings panel) will occur.
+     *
+     * @return true if the click was handled by this method
+     */
+    protected boolean onFabClick() {
+        return false;
+    }
+
+    protected void setFabColor(@ColorRes int color) {
+        mToggleSettingsPanelButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(color)));
+    }
+
+    protected void setFabDrawable(@DrawableRes int drawable) {
+        mToggleSettingsPanelButton.setImageResource(drawable);
+    }
+
+    protected void setupFabForMyTbaSettingsTab() {
+        setupFabIconForSettingsPanelOpen(mIsSettingsPanelOpen);
+        setFabColor(FAB_COLOR);
     }
 }

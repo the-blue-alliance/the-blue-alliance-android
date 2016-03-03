@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,11 +9,13 @@ import android.support.annotation.StringRes;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
@@ -26,15 +27,17 @@ import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.interfaces.YearsParticipatedUpdate;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.subscribers.YearsParticipatedDropdownSubscriber;
+import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import javax.inject.Inject;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import rx.schedulers.Schedulers;
 
 public class ViewTeamActivity extends MyTBASettingsActivity implements
@@ -49,7 +52,6 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
             SELECTED_TAB = "tab";
 
     private FragmentComponent mComponent;
-    private static Object mModule;
     private int mCurrentSelectedYearPosition = -1,
             mSelectedTab = -1;
 
@@ -59,14 +61,15 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
 
     // Should come in the format frc####
     private String mTeamKey;
-
     private int mYear;
-    private View mYearSelectorContainer;
-    private View mYearSelectorSubtitleContainer;
-    private TextView mYearSelectorTitle;
-    private TextView mYearSelectorSubtitle;
-    private ViewPager mPager;
-    private ViewTeamFragmentPagerAdapter mAdapter;
+
+    @Bind(R.id.year_selector_container) View mYearSelectorContainer;
+    @Bind(R.id.year_selector_subtitle_container) View mYearSelectorSubtitleContainer;
+    @Bind(R.id.year_selector_title) TextView mYearSelectorTitle;
+    @Bind(R.id.year_selector_subtitle) TextView mYearSelectorSubtitle;
+    @Bind(R.id.view_pager) ViewPager mPager;
+
+    ViewTeamFragmentPagerAdapter mAdapter;
 
     public static Intent newInstance(Context context, String teamKey) {
         System.out.println("making intent for " + teamKey);
@@ -94,13 +97,10 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         setModelKey(mTeamKey, ModelType.TEAM);
         setContentView(R.layout.activity_view_team);
 
+        ButterKnife.bind(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        mYearSelectorContainer = findViewById(R.id.year_selector_container);
-        mYearSelectorSubtitleContainer = findViewById(R.id.year_selector_subtitle_container);
-        mYearSelectorTitle = (TextView) findViewById(R.id.year_selector_title);
-        mYearSelectorSubtitle = (TextView) findViewById(R.id.year_selector_subtitle);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(SELECTED_TAB)) {
@@ -119,7 +119,6 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
             mSelectedTab = 0;
         }
 
-        mPager = (ViewPager) findViewById(R.id.view_pager);
         mPager.setOffscreenPageLimit(3);
         mPager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
         // We will notify the fragments of the year later
@@ -156,14 +155,6 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     public void onCreateNavigationDrawer() {
         useActionBarToggle(false);
         encourageLearning(false);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        if (!isDrawerOpen()) {
-            setupActionBar();
-        }
-        return super.onPrepareOptionsMenu(menu);
     }
 
     private void setupActionBar() {
@@ -281,17 +272,36 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     @Override
     public void onPageSelected(int position) {
         mSelectedTab = position;
-        // hide the FAB if we aren't on the first page
-        if (position != 0) {
-            hideFab(true);
-        } else {
-            showFab(true);
+
+        switch (position) {
+            case ViewTeamFragmentPagerAdapter.TAB_INFO:
+                setupFabForMyTbaSettingsTab();
+                showFab(true, false);
+                break;
+            case ViewTeamFragmentPagerAdapter.TAB_MEDIA:
+                showFab(true, true);
+                setFabColor(R.color.accent);
+                setFabDrawable(R.drawable.ic_add_a_photo_white_24dp);
+                break;
+            default:
+                hideFab(true);
+                break;
         }
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    @Override
+    protected boolean onFabClick() {
+        switch (mSelectedTab) {
+            case ViewTeamFragmentPagerAdapter.TAB_MEDIA:
+                Toast.makeText(this, "Upload image!", Toast.LENGTH_SHORT).show();
+                return true;
+        }
+        return false;
     }
 
     public FragmentComponent getComponent() {

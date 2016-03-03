@@ -34,7 +34,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
     public static final String TAB = "tab";
 
     private String mEventKey;
-    private int currentTab;
+    private int mSelectedTab;
     private ViewPager pager;
     private ViewEventFragmentPagerAdapter adapter;
     private boolean isDistrict;
@@ -70,7 +70,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
             throw new IllegalArgumentException("ViewEventActivity must be given a valid event key");
         }
 
-        currentTab = extras.getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
+        mSelectedTab = extras.getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
 
         setModelKey(mEventKey, ModelType.EVENT);
         setContentView(R.layout.activity_view_event);
@@ -88,7 +88,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
         tabs.setViewPager(pager);
         ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
 
-        pager.setCurrentItem(currentTab);  // Do this after we set onPageChangeListener, so that FAB gets hidden, if needed
+        pager.setCurrentItem(mSelectedTab);  // Do this after we set onPageChangeListener, so that FAB gets hidden, if needed
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
@@ -116,7 +116,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
         }
 
-        currentTab = extras.getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
+        mSelectedTab = extras.getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
 
         if (mEventKey != null && newEventKey.equals(mEventKey)) {
             // The event keys are the same; don't recreate anything
@@ -125,6 +125,10 @@ public class ViewEventActivity extends MyTBASettingsActivity
             mEventKey = newEventKey;
         }
         setModelKey(mEventKey, ModelType.EVENT);
+
+        // If the settings panel was open before, close it
+        closeSettingsPanel();
+
         adapter = new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey);
         pager.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -209,22 +213,14 @@ public class ViewEventActivity extends MyTBASettingsActivity
 
     @Override
     public void onPageSelected(int position) {
-        currentTab = position;
+        mSelectedTab = position;
 
         // hide the FAB if we aren't on the first page
         if (position != ViewEventFragmentPagerAdapter.TAB_INFO) {
             hideFab(true);
         } else {
-            showFab(true);
+            showFab(true, false);
         }
-
-        /* Track the call */
-        /*Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, ViewEventActivity.this);
-        t.send(new HitBuilders.EventBuilder()
-                .setCategory("view_event-tabs")
-                .setAction("tab_change")
-                .setLabel(eventKey+ " "+adapter.getPageTitle(position))
-                .build());*/
     }
 
     @Override

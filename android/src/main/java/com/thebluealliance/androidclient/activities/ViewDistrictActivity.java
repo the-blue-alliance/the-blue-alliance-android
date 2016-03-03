@@ -161,7 +161,7 @@ public class ViewDistrictActivity extends MyTBASettingsActivity
         if (position != 0) {
             hideFab(true);
         } else {
-            showFab(true);
+            showFab(true, false);
         }
     }
 
