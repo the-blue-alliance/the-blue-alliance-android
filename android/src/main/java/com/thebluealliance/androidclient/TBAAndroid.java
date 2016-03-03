@@ -1,8 +1,5 @@
 package com.thebluealliance.androidclient;
 
-import android.support.multidex.MultiDexApplication;
-import android.util.Log;
-
 import com.facebook.stetho.Stetho;
 import com.thebluealliance.androidclient.binders.BinderModule;
 import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
@@ -13,6 +10,9 @@ import com.thebluealliance.androidclient.di.components.ApplicationComponent;
 import com.thebluealliance.androidclient.di.components.DaggerApplicationComponent;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
+
+import android.support.multidex.MultiDexApplication;
+import android.util.Log;
 
 import javax.inject.Inject;
 
@@ -25,6 +25,12 @@ public class TBAAndroid extends MultiDexApplication {
     private DatafeedModule mDatafeedModule;
     private BinderModule mBinderModule;
     private DatabaseWriterModule mDatabaseWriterModule;
+    private boolean mShouldBindStetho;
+
+    public TBAAndroid() {
+        super();
+        mShouldBindStetho = true;
+    }
 
     @Override
     public void onCreate() {
@@ -33,13 +39,17 @@ public class TBAAndroid extends MultiDexApplication {
         getDatafeedComponenet().inject(this);
         registerActivityLifecycleCallbacks(mStatusController);
 
-        if (Utilities.isDebuggable()) {
+        if (Utilities.isDebuggable() && mShouldBindStetho) {
             Stetho.initialize(
                     Stetho.newInitializerBuilder(this)
                             .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                             .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                             .build());
         }
+    }
+
+    public void setShouldBindStetho(boolean shouldBindStetho) {
+        mShouldBindStetho = shouldBindStetho;
     }
 
     public TBAAndroidModule getModule() {
