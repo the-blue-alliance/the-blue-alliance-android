@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.thebluealliance.androidclient.adapters.TeamListFragmentPagerAdapter;
-import com.thebluealliance.androidclient.views.SlidingTabs;
-
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+
+import com.thebluealliance.androidclient.adapters.TeamListFragmentPagerAdapter;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import javax.inject.Inject;
 
@@ -16,6 +16,8 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
     public ViewPager viewPager;
     public SlidingTabs tabs;
     public FragmentManager fragmentManager;
+
+    private Integer oldData;
 
     private int mInitialTab;
 
@@ -31,6 +33,10 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
 
     @Override
     public void updateData(@Nullable Integer data) {
+        if (data != null && oldData != null && data.equals(oldData)) {
+            // No need to update anything
+            return;
+        }
         /**
          * Fix for really strange bug. Menu bar items wouldn't appear only when navigated to from 'Events' in the nav drawer
          * Bug is some derivation of this: https://code.google.com/p/android/issues/detail?id=29472
@@ -41,6 +47,8 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
             tabs.setViewPager(viewPager);
             viewPager.setCurrentItem(mInitialTab);
         });
+
+        oldData = data;
     }
 
     @Override

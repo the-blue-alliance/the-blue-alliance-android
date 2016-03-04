@@ -14,35 +14,29 @@ import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * File created by phil on 4/22/14.
- */
 public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
-    public final List<ListGroup> groups;
-    public LayoutInflater inflater;
+    public final List<ListGroup> mGroups;
+    public LayoutInflater mInflater;
     public Activity mActivity;
 
     private boolean mIsChildSelectable = true;
     protected ModelRendererSupplier mRendererSupplier;
 
     public ExpandableListViewAdapter() {
-        groups = new ArrayList<>();
+        mGroups = new ArrayList<>();
     }
 
-    public ExpandableListViewAdapter(
-      Activity activity,
-      ModelRendererSupplier supplier,
-      List<ListGroup> groups) {
+    public ExpandableListViewAdapter(Activity activity, ModelRendererSupplier supplier, List<ListGroup> groups) {
         mActivity = activity;
         mRendererSupplier = supplier;
-        this.groups = groups;
-        inflater = activity.getLayoutInflater();
+        mGroups = groups;
+        mInflater = activity.getLayoutInflater();
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return groups.get(groupPosition).children.get(childPosition);
+        return mGroups.get(groupPosition).children.get(childPosition);
     }
 
     @Override
@@ -52,27 +46,35 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        if (groups == null || groups.get(groupPosition) == null)
+        if (mGroups == null || mGroups.get(groupPosition) == null)
             return 0;
-        return groups.get(groupPosition).children.size();
+        return mGroups.get(groupPosition).children.size();
     }
 
     @Override
     public Object getGroup(int groupPosition) {
-        return groups.get(groupPosition);
+        return mGroups.get(groupPosition);
     }
 
     public void addGroup(int position, ListGroup group) {
-        groups.add(position, group);
+        mGroups.add(position, group);
     }
 
     public void addGroup(ListGroup group) {
-        groups.add(group);
+        mGroups.add(group);
+    }
+
+    public void addAllGroups(List<ListGroup> groups) {
+        mGroups.addAll(groups);
+    }
+
+    public void removeAllGroups() {
+        mGroups.clear();
     }
 
     @Override
     public int getGroupCount() {
-        return groups.size();
+        return mGroups.size();
     }
 
     @Override
@@ -93,7 +95,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.expandable_list_group, null);
+            convertView = mInflater.inflate(R.layout.expandable_list_group, null);
         }
         ListGroup group = (ListGroup) getGroup(groupPosition);
         ((TextView) convertView.findViewById(R.id.group_name)).setText(group.string);
@@ -117,8 +119,8 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        return groups.get(groupPosition).children.get(childPosition)
-          .render(mRendererSupplier).getView(mActivity, inflater, convertView);
+        return mGroups.get(groupPosition).children.get(childPosition)
+                .render(mRendererSupplier).getView(mActivity, mInflater, convertView);
     }
 }
 

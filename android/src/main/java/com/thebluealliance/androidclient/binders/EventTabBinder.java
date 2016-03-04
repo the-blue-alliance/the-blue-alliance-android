@@ -1,9 +1,11 @@
 package com.thebluealliance.androidclient.binders;
 
-import android.support.annotation.Nullable;
-
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.models.EventWeekTab;
+
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class EventTabBinder extends AbstractDataBinder<List<EventWeekTab>> {
 
     @Override
     public void updateData(@Nullable List<EventWeekTab> data) {
-        if (data != null && !data.equals(mTabs)) {
+        if (data != null && !data.isEmpty() && !data.equals(mTabs)) {
             mTabs = data;
             mFragment.updateLabels(mTabs);
         }
@@ -46,6 +48,7 @@ public class EventTabBinder extends AbstractDataBinder<List<EventWeekTab>> {
 
     @Override
     public void onError(Throwable throwable) {
-
+        Log.e(Constants.LOG_TAG, "Error fetching event years");
+        throwable.printStackTrace();
     }
 }

@@ -12,6 +12,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.squareup.okhttp.Cache;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
@@ -25,14 +26,18 @@ import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import rx.schedulers.Schedulers;
+
 public class LaunchActivity extends AppCompatActivity {
 
     @Inject TBAStatusController mStatusController;
+    @Inject Cache mDatafeedCache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +106,11 @@ public class LaunchActivity extends AppCompatActivity {
 
         boolean redownload = false;
         Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + prefs.contains(Constants.APP_VERSION_KEY));
+
         if (prefs.contains(Constants.APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
+            /* Clear OkHttp cache for the new version. */
+            mStatusController.clearOkCacheIfNeeded(mStatusController.fetchApiStatus(), true);
+
             // We are updating the app. Do stuffs, if necessary.
             // TODO: make sure to modify changelog.txt with any recent changes
             if (lastVersion < 14) {

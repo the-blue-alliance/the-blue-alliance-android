@@ -1,18 +1,6 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.accounts.PlusHelper;
-import com.thebluealliance.androidclient.gcm.GCMHelper;
-import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
-import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
-import com.thebluealliance.androidclient.types.ModelType;
-
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
@@ -23,10 +11,20 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.IntDef;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.PlusHelper;
+import com.thebluealliance.androidclient.gcm.GCMHelper;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
+import com.thebluealliance.androidclient.types.ModelType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -56,16 +54,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     String modelKey = "";
     ModelType modelType;
 
-    /**
-     * If this Activity was triggered by tapping a system notification, dismiss the "active" stored
-     * notifications as having been "read."
-     */
-    private void handleIntent(Intent intent) {
-        if (intent != null && intent.hasCategory(Intent.CATEGORY_ALTERNATIVE)) {
-            sendBroadcast(NotificationDismissedListener.newIntent(this));
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,14 +63,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
             // Register callback
             mNfcAdapter.setNdefPushMessageCallback(this, this);
         }
-
-        handleIntent(getIntent());
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        handleIntent(intent);
     }
 
     @Override

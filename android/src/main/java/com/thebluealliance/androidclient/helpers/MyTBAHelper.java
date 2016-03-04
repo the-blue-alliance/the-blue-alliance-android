@@ -12,9 +12,6 @@ import com.thebluealliance.androidclient.Constants;
 
 import java.util.Map;
 
-/**
- * File created by phil on 8/13/14.
- */
 public class MyTBAHelper {
 
     private static final String INTENT_PACKAGE = "package", INTENT_CLASS = "class", INTENT_EXTRAS = "extras";

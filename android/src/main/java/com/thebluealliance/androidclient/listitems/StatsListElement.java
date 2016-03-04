@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.listitems;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.models.Stat;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.models.Stat;
 
 public class StatsListElement extends ListElement {
 
@@ -85,6 +85,10 @@ public class StatsListElement extends ListElement {
 
     public String getFormattedCcwm() {
         return Stat.displayFormat.format(ccwm);
+    }
+
+    public String getTeamNumberString() {
+        return String.format("Team %1$s", teamNumber);
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import android.support.annotation.Nullable;
-
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.models.BasicModel;
+
+import android.support.annotation.Nullable;
 
 /**
  * An interface that a {@link rx.Subscriber} in the package
@@ -14,6 +14,9 @@ import com.thebluealliance.androidclient.models.BasicModel;
 public interface APISubscriber<T> {
     /**
      * Parse data from the API and construct the values to return, if necessary
+     * For example, {@link com.thebluealliance.androidclient.subscribers.BaseAPISubscriber} will
+     * not call this method unless the data is valid (not-null), but this is not a hard guarantee
+     * and should be handled
      * Usually creates a {@link ListViewAdapter}
      */
     void parseData() throws BasicModel.FieldNotDefinedException;

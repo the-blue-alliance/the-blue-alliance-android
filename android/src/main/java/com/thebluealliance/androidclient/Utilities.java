@@ -1,8 +1,6 @@
 package com.thebluealliance.androidclient;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
@@ -10,11 +8,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.RawRes;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.format.DateFormat;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
+import android.view.Window;
 
 import com.thebluealliance.androidclient.activities.GamedayActivity;
 import com.thebluealliance.androidclient.activities.HomeActivity;
@@ -41,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -70,9 +72,9 @@ public class Utilities {
     public static int getFirstCompWeek(int year) {
         int offset = year - 1992;
         if (Constants.FIRST_COMP_WEEK.length > offset && year != -1) {
-;            return offset >= Constants.FIRST_COMP_WEEK.length || offset < 0?
-              Constants.FIRST_COMP_WEEK[Constants.FIRST_COMP_WEEK.length - 1] :
-              Constants.FIRST_COMP_WEEK[offset];
+            return offset >= Constants.FIRST_COMP_WEEK.length || offset < 0 ?
+                    Constants.FIRST_COMP_WEEK[Constants.FIRST_COMP_WEEK.length - 1] :
+                    Constants.FIRST_COMP_WEEK[offset];
         } else {
             //if no data for this year, return the most recent data
             Log.w(Constants.LOG_TAG, "No first competition week data available for " + year + ". Using most recent year.");
@@ -126,6 +128,15 @@ public class Utilities {
     public static Intent getIntentForTBAUrl(Context c, Uri data) {
         Log.d(Constants.LOG_TAG, "Uri: " + data.toString());
         List<String> urlParts = data.getPathSegments();
+
+        // Check if this is actually a TBA URL
+        // Simply checks if the host matches (*.)thebluealliance.com
+        String tbaHostPattern = "(.*\\.?)thebluealliance.com";
+        Pattern pattern = Pattern.compile(tbaHostPattern);
+        if (!pattern.matcher(data.getHost()).matches()) {
+            return null;
+        }
+
         Intent intent = null;
         if (urlParts != null) {
             if (urlParts.isEmpty()) {
@@ -342,10 +353,9 @@ public class Utilities {
     }
 
     public static String sha256(String input) {
-        MessageDigest digest = null;
         String hash = null;
         try {
-            digest = MessageDigest.getInstance("SHA-256");
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
             digest.update(input.getBytes());
 
             hash = bytesToHexString(digest.digest());
@@ -406,5 +416,31 @@ public class Utilities {
         } else {
             return new HashMap<>();
         }
+    }
+
+    /**
+     * On API 23+, this allows us to set the color of the status bar icons (either light or dark)
+     * to look better with the status bar background. If the background is light, the icons will be
+     * tinted gray/black; otherwise, they will be the default white.
+     * <p>
+     * This is safe to be called from any API level, as this method checks the API level before
+     * trying to use the new feature.
+     *
+     * @param window          the window to be modified
+     * @param lightBackground if the background of the status bar is light
+     */
+    public static void setLightStatusBar(Window window, boolean lightBackground) {
+        if (!hasMApis()) {
+            return;
+        }
+
+        int vis = window.getDecorView().getSystemUiVisibility();
+        // Set light
+        if (lightBackground) {
+            vis |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        } else {
+            vis &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        }
+        window.getDecorView().setSystemUiVisibility(vis);
     }
 }

@@ -10,7 +10,7 @@ public class DistrictHelper {
             return false;
         }
         try {
-            int year = Integer.parseInt(key.substring(0, 4));
+            Integer.parseInt(key.substring(0, 4));
             String districtAbbrev = key.substring(4);
             return DistrictType.fromAbbreviation(districtAbbrev) != DistrictType.NO_DISTRICT;
         } catch (NumberFormatException e) {

@@ -106,6 +106,14 @@
                             style="@style/InfoItemStyle"
                             android:clickable="true">
 
+                            <!-- We scale the X axis by -1 to flip this horizontally -->
+                            <com.thebluealliance.androidclient.views.RecoloredImageView
+                                android:id="@+id/team_motto_icon"
+                                style="@style/InfoItemImageStyle"
+                                android:src="@drawable/ic_format_quote_black_24dp"
+                                android:scaleX="-1"
+                                app:tintColor="@color/primary" />
+
                             <TextView
                                 android:id="@+id/team_motto"
                                 style="@style/InfoItemTextStyle"

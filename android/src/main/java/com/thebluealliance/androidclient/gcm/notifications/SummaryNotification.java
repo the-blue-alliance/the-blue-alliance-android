@@ -8,12 +8,12 @@ import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.RecentNotificationsActivity;
+import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
-import com.thebluealliance.androidclient.listeners.NotificationDismissedListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
 
 import java.util.List;
 
@@ -51,7 +51,10 @@ public class SummaryNotification extends BaseNotification {
 
         Intent instance = getIntent(context);
         PendingIntent intent = makeNotificationIntent(context, instance);
-        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, new Intent(context, NotificationDismissedListener.class), 0);
+
+        Intent dismissIntent = NotificationChangedReceiver.newIntent(context);
+        dismissIntent.setAction(NotificationChangedReceiver.ACTION_NOTIFICATION_DELETED);
+        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, dismissIntent, 0);
 
         return new NotificationCompat.Builder(context)
                 .setContentTitle(notificationTitle)
@@ -72,7 +75,7 @@ public class SummaryNotification extends BaseNotification {
 
     @Override
     public Intent getIntent(Context c) {
-        return RecentNotificationsActivity.newInstance(c);
+        return HomeActivity.newInstance(c, R.id.nav_item_notifications);
     }
 
     @Override

@@ -21,9 +21,6 @@ import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 
 import java.io.IOException;
 
-/**
- * File created by phil on 8/29/14.
- */
 public class DisableMyTBA extends AsyncTask<String, Void, Void> {
 
     private Context context;

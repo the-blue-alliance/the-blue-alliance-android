@@ -13,9 +13,6 @@ import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 
-/**
- * File created by phil on 6/4/14.
- */
 public class AllianceListElement extends ListElement implements RenderableModel {
 
     public final int number;

@@ -50,3 +50,9 @@ Thumbs.db
 
 # Logs captured from Device Monitor
 captures/
+
+# User Github token for releases
+scripts/github_token
+
+# Current release shortlog, used in scripts
+RELEASE_SHORTLOG

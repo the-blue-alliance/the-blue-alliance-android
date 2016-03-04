@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.fragments.mytba;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,9 +17,6 @@ import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
 import com.thebluealliance.androidclient.adapters.MyTBAFragmentPagerAdapter;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
-/**
- * File created by phil on 8/2/14.
- */
 public class MyTBAFragment extends Fragment {
 
     private ViewPager mViewPager;

@@ -1,6 +1,9 @@
-Version 3.0.0:
-    - We've rewritten the way the app loads data to make it better, faster, and more reliable. Hope you can notice an improvement :)
-    - Many bugfixes and other app improvements
+Version 3.1.2 (2016 Week 1):
+    - Fix up/back navigation bugs when viewing match
+    - Improve notification format to be more readable
+    - Optimize performacne with long lists of data
+    - Fix other encountered crashes
 
 View the full changelog for this and previous releases on the GitHub page:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
+

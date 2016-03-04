@@ -19,7 +19,7 @@ import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -34,6 +34,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -170,7 +171,9 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         switch (id) {
             default:
             case R.id.nav_item_events:
-                int weekTab = savedInstanceState != null ? savedInstanceState.getInt(EventsByWeekFragment.TAB, 0) : 0;
+                int weekTab = savedInstanceState != null
+                        ? savedInstanceState.getInt(EventsByWeekFragment.TAB, -1)
+                        : -1;
                 fragment = EventsByWeekFragment.newInstance(mMaxCompYear - mCurrentSelectedYearPosition, weekTab);
                 break;
             case R.id.nav_item_districts:
@@ -224,6 +227,8 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         resetActionBar();
+        setSearchEnabled(true);
+        setRefreshEnabled(true);
 
         switch (mCurrentSelectedNavigationItemId) {
             case R.id.nav_item_events:
@@ -244,11 +249,24 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 break;
             case R.id.nav_item_notifications:
                 getSupportActionBar().setTitle(R.string.notifications);
+                getMenuInflater().inflate(R.menu.recent_notifications_help_menu, menu);
+                setRefreshEnabled(false);
                 mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
                 break;
         }
 
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.recent_notifications_help:
+                Utilities.showHelpDialog(this, R.raw.recent_notifications_help, getString(R.string.action_help));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void setupActionBarForEvents() {

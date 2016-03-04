@@ -27,9 +27,6 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * File created by phil on 10/12/14.
- */
 public class CompLevelStartingNotification extends BaseNotification {
 
     private @Nullable JsonElement scheduledTime;

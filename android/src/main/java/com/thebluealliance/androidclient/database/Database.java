@@ -428,7 +428,6 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public Cursor getMatchesForTeamQuery(String query) {
-        Cursor cursor = null;
         String selection = SearchTeam.TITLES + " MATCH ?";
         String[] selectionArgs = new String[]{query};
 
@@ -436,7 +435,7 @@ public class Database extends SQLiteOpenHelper {
         builder.setTables(TABLE_SEARCH_TEAMS);
         builder.setDistinct(true);
 
-        cursor = builder.query(mDb,
+        Cursor cursor = builder.query(mDb,
                 new String[]{SearchTeam.KEY + " as _id", SearchTeam.TITLES, SearchTeam.NUMBER}, selection, selectionArgs, null, null, SearchTeam.NUMBER + " ASC");
 
         if (cursor == null) {
@@ -449,7 +448,6 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public Cursor getMatchesForEventQuery(String query) {
-        Cursor cursor = null;
         String selection = SearchEvent.TITLES + " MATCH ?";
         String[] selectionArgs = new String[]{query};
 
@@ -457,7 +455,7 @@ public class Database extends SQLiteOpenHelper {
         builder.setTables(TABLE_SEARCH_EVENTS);
         builder.setDistinct(true);
 
-        cursor = builder.query(mDb,
+        Cursor cursor = builder.query(mDb,
                 new String[]{SearchEvent.KEY + " as _id", SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC");
 
         if (cursor == null) {

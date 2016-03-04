@@ -34,9 +34,6 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
-        if (mAPIData == null || mAPIData.isEmpty()) {
-            return;
-        }
         Map<String, Team> teams = Utilities.getMapForPlatform(String.class, Team.class);
         for (int i = 0; i < mAPIData.size(); i++) {
             Award award = mAPIData.get(i);
@@ -51,5 +48,9 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
             AwardRenderer.RenderArgs args = new AwardRenderer.RenderArgs(teams, mTeamKey);
             mDataToBind.add(mRenderer.renderFromModel(award, args));
         }
+    }
+
+    @Override public boolean isDataValid() {
+        return super.isDataValid() && !mAPIData.isEmpty();
     }
 }

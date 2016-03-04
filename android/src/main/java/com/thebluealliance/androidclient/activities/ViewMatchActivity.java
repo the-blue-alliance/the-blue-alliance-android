@@ -10,8 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
@@ -22,11 +20,12 @@ import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.fragments.match.MatchInfoFragment;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
-public class ViewMatchActivity extends FABNotificationSettingsActivity
+public class ViewMatchActivity extends MyTBASettingsActivity
   implements HasFragmentComponent {
 
     public static final String MATCH_KEY = "match_key";
@@ -57,8 +56,7 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
         setSettingsToolbarTitle("Match settings");
 
         MatchInfoFragment matchInfoFragment = MatchInfoFragment.newInstance(mMatchKey);
-        getSupportFragmentManager().beginTransaction()
-          .add(R.id.match_info_fragment_container, matchInfoFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.match_info_fragment_container, matchInfoFragment).commit();
     }
 
     @Override
@@ -104,9 +102,8 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        String eventKey = MatchHelper.getEventKeyFromMatchKey(mMatchKey);
+
         int id = item.getItemId();
         switch (id) {
             case android.R.id.home:
@@ -114,7 +111,7 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
                     closeDrawer();
                     return true;
                 }
-                String eventKey = mMatchKey.substring(0, mMatchKey.indexOf("_"));
+
                 Intent upIntent = ViewEventActivity.newInstance(this, eventKey);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     Log.d(Constants.LOG_TAG, "Navigating to new back stack with key " + eventKey);
@@ -122,11 +119,13 @@ public class ViewMatchActivity extends FABNotificationSettingsActivity
                             .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
                 } else {
                     Log.d(Constants.LOG_TAG, "Navigating up...");
-                    NavUtils.navigateUpTo(this, upIntent);
+                    upIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(upIntent);
+                    finish();
                 }
                 return true;
             case R.id.action_view_event:
-                startActivity(ViewEventActivity.newInstance(this, mMatchKey.split("_")[0]));
+                startActivity(ViewEventActivity.newInstance(this, eventKey));
                 return true;
         }
         return super.onOptionsItemSelected(item);

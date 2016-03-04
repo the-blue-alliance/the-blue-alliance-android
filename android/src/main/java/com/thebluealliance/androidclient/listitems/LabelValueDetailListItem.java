@@ -10,9 +10,6 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 
-/**
- * File created by phil on 7/26/14.
- */
 public class LabelValueDetailListItem extends ListElement {
 
     public final String label, value, key;

@@ -8,9 +8,6 @@ import com.thebluealliance.androidclient.models.Event;
 
 import java.util.Comparator;
 
-/**
- * File created by phil on 5/7/14.
- */
 public class EventSortByDateComparator implements Comparator<Event> {
     @Override
     public int compare(Event event, Event event2) {

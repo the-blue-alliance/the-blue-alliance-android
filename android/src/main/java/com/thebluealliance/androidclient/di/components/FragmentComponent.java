@@ -33,6 +33,7 @@ import com.thebluealliance.androidclient.fragments.event.EventMatchesFragment;
 import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventTeamsFragment;
+import com.thebluealliance.androidclient.fragments.event.EventTickerFragment;
 import com.thebluealliance.androidclient.fragments.gameday.GamedayTickerFragment;
 import com.thebluealliance.androidclient.fragments.gameday.GamedayWebcastsFragment;
 import com.thebluealliance.androidclient.fragments.match.MatchInfoFragment;
@@ -70,6 +71,7 @@ public interface FragmentComponent {
     void inject(TeamEventsFragment fragment);
     void inject(TeamMediaFragment fragment);
 
+    void inject(EventTickerFragment fragment);
     void inject(EventInfoFragment fragment);
     void inject(EventTeamsFragment fragment);
     void inject(EventRankingsFragment fragment);

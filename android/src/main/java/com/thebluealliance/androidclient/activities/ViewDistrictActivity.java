@@ -9,8 +9,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
@@ -27,7 +25,7 @@ import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
-public class ViewDistrictActivity extends FABNotificationSettingsActivity
+public class ViewDistrictActivity extends MyTBASettingsActivity
   implements ViewPager.OnPageChangeListener, HasFragmentComponent {
 
     public static final String DISTRICT_ABBREV = "districtKey";

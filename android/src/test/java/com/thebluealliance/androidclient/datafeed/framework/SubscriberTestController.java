@@ -52,7 +52,9 @@ public class SubscriberTestController<API, VIEW> {
 
     public SubscriberTestController<API, VIEW> parse() throws BasicModel.FieldNotDefinedException {
         checkPreconditions();
-        mSubscriber.parseData();
+        if (mSubscriber.isDataValid()) {
+            mSubscriber.parseData();
+        }
         hasParsed = true;
         return this;
     }

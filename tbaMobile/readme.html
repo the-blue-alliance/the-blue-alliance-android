@@ -1,0 +1,74 @@
+<html>
+<title>tbaMobile v9 Client Library for Java</title>
+<body>
+<h1>Overview</h1>
+<p>This is a client library bundle using Google Cloud Endpoints. In order to use this API client library in your project, you need to build the library using Gradle.</p>
+
+
+
+<h2>How to build API client library using Gradle</h2>
+<p>Under the root directory of the client bundle, run <b><i>"gradle install"</i></b> in the command console. By running this command, this API client bundle would be build by Gradle, and be deployed to local Maven repository. (Gradle doesn't have native repository system, but could leverage repository systems like maven repository.)</p>
+
+<h2>How to use API client library in Gradle project</h2>
+<p><b>Step 1</b>: Add the following <i>compile</i> section to your <b><i>build.gradle</i></b> file.</p>
+<ul>
+<pre style="background-color: #eee;">
+  compile ([group: 'com.appspot.tbatv_prod_hrd', name: 'tbaMobile', version: 'v9-1.21.0-SNAPSHOT'])
+</pre>
+</ul>
+<p><b>Step 2</b>: Add one of the following <i>compile</i> sections to your <b><i>build.gradle</i></b> file, based on your platform (Android/App Engine/Servlet). Google Cloud Endpoints API client is compatible with all supported Java platforms (with minimum Java version 5).</p>
+<ul>
+<li>
+<b>For Android</b>
+<pre style="background-color: #eee;">
+  compile ([group: 'com.google.api-client', name: 'google-api-client-android', version: '1.21.0'])
+</pre>
+</li>
+<li>
+<b>For App Engine</b>
+<pre style="background-color: #eee;">
+  compile ([group: 'com.google.api-client', name: 'google-api-client-appengine', version: '1.21.0'])
+</pre>
+</li>
+<li>
+<b>For Java Servlet</b>
+<pre style="background-color: #eee;">
+  compile ([group: 'com.google.api-client', name: 'google-api-client-servlet', version: '1.21.0'])
+</pre>
+</li>
+</ul>
+<p><b>Step 3</b>: Add one of the following <i>compile</i> sections to your <b><i>build.gradle</i></b> file, or directly import AndroidJsonFactory into your Java source, based on your JsonFactory implementation (GSON/Jackson/AndroidJson).</p>
+<ul>
+<li>
+<b>Using GsonFactory</b>
+<pre style="background-color: #eee;">
+  compile ([group: 'com.google.api-client', name: 'google-http-client-gson', version: '1.21.0'])
+</pre>
+</li>
+<li>
+<b>Using JacksonFactory</b>
+<pre style="background-color: #eee;">
+  compile ([group: 'com.google.api-client', name: 'google-http-client-jackson2', version: '1.21.0'])
+</pre>
+</li>
+<li>
+<b>Using AndroidJsonFactory (Android with minimum API level 11)</b><br/>
+For Andoird with minimum API level 11, import AndroidJsonFactory into your Java source.
+<pre style="background-color: #eee;">
+  import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+</pre>
+</li>
+</ul>
+<p><b>Step 4</b>: Make sure local Maven repository is added to the repository section of <b><i>build.gradle</i></b> file.
+<ul>
+<pre style="background-color: #eee;">
+  repositories {
+    mavenCentral()
+    <b>mavenLocal()</b>
+  }
+</pre>
+</ul>
+<p><b>Step 5</b>: Refer to the "Creating the service object" and "Calling the API exposed by the Endpoint" sections of this <a href="https://developers.google.com/appengine/docs/java/endpoints/consume_android">Endpoints Java Documentation</a> to see how to use the client library in Android.</p>
+
+</html>
+

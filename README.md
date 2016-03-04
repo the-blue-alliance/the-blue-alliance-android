@@ -1,20 +1,22 @@
 The Blue Alliance - Android App
 ===============================
 
-[![Build Status](https://travis-ci.org/the-blue-alliance/the-blue-alliance-android.png?branch=master)](https://travis-ci.org/the-blue-alliance/the-blue-alliance-android) [![Coverage Status](https://coveralls.io/repos/the-blue-alliance/the-blue-alliance-android/badge.svg)](https://coveralls.io/r/the-blue-alliance/the-blue-alliance-android) [![Stories in Ready](https://badge.waffle.io/the-blue-alliance/the-blue-alliance-android.png?label=ready&title=Ready)](https://github.com/the-blue-alliance/the-blue-alliance-android/labels/ready) [![Stories in Needs Review](https://badge.waffle.io/the-blue-alliance/the-blue-alliance-android.png?label=needs-review&title=Needs%20Review)](https://github.com/the-blue-alliance/the-blue-alliance-android/labels/needs-review) [![Stories in On Hold](https://badge.waffle.io/the-blue-alliance/the-blue-alliance-android.png?label=on-hold&title=On%20Hold)](https://github.com/the-blue-alliance/the-blue-alliance-android/labels/on-hold)
+[![Build Status](https://img.shields.io/travis/the-blue-alliance/the-blue-alliance-android/master.svg?style=flat-square)](https://travis-ci.org/the-blue-alliance/the-blue-alliance-android) [![Coverage Status](https://img.shields.io/coveralls/the-blue-alliance/the-blue-alliance-android.svg?style=flat-square)](https://coveralls.io/r/the-blue-alliance/the-blue-alliance-android) [![Stories in Ready](https://badge.waffle.io/the-blue-alliance/the-blue-alliance-android.png?label=ready&title=Ready)](https://github.com/the-blue-alliance/the-blue-alliance-android/labels/ready) [![Stories in Needs Review](https://badge.waffle.io/the-blue-alliance/the-blue-alliance-android.png?label=needs-review&title=Needs%20Review)](https://github.com/the-blue-alliance/the-blue-alliance-android/labels/needs-review) [![Stories in On Hold](https://badge.waffle.io/the-blue-alliance/the-blue-alliance-android.png?label=on-hold&title=On%20Hold)](https://github.com/the-blue-alliance/the-blue-alliance-android/labels/on-hold)
 
 An Android app for accessing information about the FIRST Robotics Competition. This is a native mobile version of [The Blue Alliance](http://www.thebluealliance.com).
 
-The app has been released to the [Play Store](https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient&hl=en)! We also have a [beta tester community](https://plus.google.com/communities/108444518980185742549) that you can join to try some of the latest and greatest features without having to build the app yourself. Just rememver, there may still be issues. If you find any, please report them on the issue tracker so we can fix them.
+The app has been released to the [Play Store](https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient&hl=en)! We also have a [beta tester community](https://plus.google.com/communities/108444518980185742549) that you can join to try some of the latest and greatest features without having to build the app yourself. Just remember, there may still be issues. If you find any, please report them on the issue tracker so we can fix them.
 
 Contributing
 ============
+
 Want to add features, fix bugs, or just poke around the code? No problem!
 
 ### Project Management 
  - Keep up to date with the [mailing list](https://groups.google.com/forum/#!forum/thebluealliance-developers) 
  - Read through the [planning documents](https://drive.google.com/#folders/0B5RO2Yzh2z01MDBOVXYwM1lXdFk) so you know what's going on.
  - Watch our [Trello board](https://trello.com/b/x42paPe3/tba-android) for updates on our long-term plans
+ - Chat with us on our [Slack team](https://the-blue-alliance.slack.com/) (Request an invite in the mailing list)
 
 ### Learning
  - Read through the [Project Wiki](https://github.com/the-blue-alliance/the-blue-alliance-android/wiki) to get comfortable with some of the technologies we use
@@ -34,7 +36,7 @@ Code Style
 
 We use the base [Android Code Style](https://github.com/android/platform_development/blob/master/ide/intellij/codestyles/AndroidStyle.xml)
 When you set up Android Studio, copy `AndroidStyle.xml` into your config directory (on linux,
-`~/.AndroidStudioXX/config/codestyles/` and then open Settings -> Editor -> Code Style and in the
+`~/.AndroidStudioXX/config/codestyles/`) and then open Settings -> Editor -> Code Style and in the
  dropdown, select `AndroidStyle`.
 
 ### <a name="setup"></a>

@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.datafeed.refresh;
 
+import com.thebluealliance.androidclient.R;
+
 import android.support.annotation.IntDef;
 import android.support.annotation.UiThread;
 import android.support.v4.util.ArrayMap;
 import android.view.MenuItem;
-
-import com.thebluealliance.androidclient.R;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -177,6 +177,7 @@ public class RefreshController {
      *
      * @return returns the value of {@code mIsRefreshing} for convenience
      */
+    @UiThread
     private boolean updateRefreshingState() {
         Collection<RefreshWrapper> refreshingStates = mRefreshableStates.values();
         for (RefreshWrapper wrapper: refreshingStates) {
@@ -193,6 +194,7 @@ public class RefreshController {
      * Based on the current refreshing state, shows or hides a loading indicator from the bound
      * {@link MenuItem}, if applicable.
      */
+    @UiThread
     private void updateMenuItemState() {
         if (mMenuItem == null) {
             return;

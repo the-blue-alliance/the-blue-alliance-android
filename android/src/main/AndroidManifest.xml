@@ -87,7 +87,7 @@
             android:theme="@style/AppThemeNoActionBarTranslucentLightStatus"/>
         <activity
             android:name=".activities.ViewEventActivity"
-            android:launchMode="standard"
+            android:launchMode="singleTop"
             android:parentActivityName=".activities.HomeActivity"
             android:theme="@style/AppThemeNoActionBarTranslucentStatus">
             <meta-data
@@ -196,15 +196,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.RecentNotificationsActivity"
-            android:label="@string/title_activity_notification_dashboard"
-            android:parentActivityName=".activities.HomeActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.thebluealliance.androidclient.activities.HomeActivity"/>
-        </activity>
-        <activity
             android:name=".activities.UpdateRequiredActivity"
             android:label="@string/title_activity_update_required"
             android:theme="@style/AppThemeNoActionBar"/>
@@ -229,9 +220,9 @@
                 <category android:name="com.thebluealliance.androidclient"/>
             </intent-filter>
         </receiver>
-        <receiver
-            android:name=".listeners.NotificationDismissedListener"
-            android:exported="false"/>
+
+        <receiver android:name=".receivers.NotificationChangedReceiver"
+            android:exported="false" />
 
         <service android:name=".gcm.GCMMessageHandler"/>
         <service

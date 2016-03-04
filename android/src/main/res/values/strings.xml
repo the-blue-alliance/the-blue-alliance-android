@@ -91,8 +91,8 @@
     <string name="submatch_title_abbrev_format">%1$s%2$s-%3$s</string>
 
     <!-- Team Media -->
-    <string name="cd_header">Chief Delphi Photos</string>
-    <string name="yt_header">YouTube Videos</string>
+    <string name="media_images_header">Photos</string>
+    <string name="media_videos_header">YouTube Videos</string>
 
     <!-- Warnings -->
     <string name="warning_unable_to_load">Unable to load data. Check your internet connection.</string>
@@ -121,5 +121,8 @@
     <string name="no_recent_notifications">No recent notifications</string>
     <string name="recent_notifications_title">Recent Notifications</string>
     <string name="title_activity_update_required">UpdateRequiredActivity</string>
+    <string name="mytba_settings_not_changed">Settings not changed</string>
+    <string name="mytba_settings_updated_successfully">Settings updated successfully</string>
+    <string name="mytba_settings_error">Error updating settings</string>
 
 </resources>

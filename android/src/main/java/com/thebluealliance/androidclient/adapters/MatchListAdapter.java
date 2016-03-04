@@ -13,9 +13,6 @@ import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 
 import java.util.List;
 
-/**
- * File created by phil on 4/22/14.
- */
 public class MatchListAdapter extends ExpandableListViewAdapter {
 
     private String mTeamKey;
@@ -37,15 +34,15 @@ public class MatchListAdapter extends ExpandableListViewAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        RenderableModel child = groups.get(groupPosition).children.get(childPosition);
+        RenderableModel child = mGroups.get(groupPosition).children.get(childPosition);
         if (child instanceof Match) {
             ((Match) child).setSelectedTeam(mTeamKey);
         }
         ListItem renderedChild = child.render(mRendererSupplier);
         if (renderedChild != null) {
-            return renderedChild.getView(mActivity, inflater, convertView);
+            return renderedChild.getView(mActivity, mInflater, convertView);
         } else {
-            return new LabelValueListItem("Match", "Unable to render").getView(mActivity, inflater, convertView);
+            return new LabelValueListItem("Match", "Unable to render").getView(mActivity, mInflater, convertView);
         }
     }
 }

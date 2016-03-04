@@ -10,9 +10,6 @@ import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 
-/**
- * File created by phil on 7/26/14.
- */
 public class TeamAtDistrictClickListener implements View.OnClickListener {
 
     private Context c;

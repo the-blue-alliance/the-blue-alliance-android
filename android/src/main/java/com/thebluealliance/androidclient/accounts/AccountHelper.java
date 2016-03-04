@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
+import com.facebook.stetho.common.Util;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -25,9 +26,6 @@ import com.thebluealliance.androidclient.background.mytba.DisableMyTBA;
 
 import java.io.IOException;
 
-/**
- * File created by phil on 7/28/14.
- */
 public class AccountHelper {
 
     public static final String PREF_MYTBA_ENABLED = "mytba_enabled";
@@ -99,8 +97,17 @@ public class AccountHelper {
         return credential;
     }
 
-    public static TbaMobile getTbaMobile(GoogleAccountCredential credential) {
+    public static TbaMobile getTbaMobile(Context context, GoogleAccountCredential credential) {
         TbaMobile.Builder tbaMobile = new TbaMobile.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential);
+        if (Utilities.isDebuggable()) {
+            // If a debug build, set Cloud Endpoints to point to a dev TBA instance
+            String appspotId = Utilities.readLocalProperty(context, "appspot.projectId");
+            if (!appspotId.isEmpty()) {
+                String apiUrl = String.format("https://%1$s.appspot.com/_ah/api/", appspotId);
+                Log.i(Constants.LOG_TAG, String.format("Using Cloud Endpoints url: %1$s", apiUrl));
+                tbaMobile.setRootUrl(apiUrl);
+            }
+        }
         tbaMobile.setApplicationName("The Blue Alliance");
         return tbaMobile.build();
     }
@@ -121,7 +128,7 @@ public class AccountHelper {
             Log.e(Constants.LOG_TAG, "Auth exception while fetching token for " + currentCredential.getSelectedAccountName());
             e.printStackTrace();
         }
-        return AccountHelper.getTbaMobile(currentCredential);
+        return AccountHelper.getTbaMobile(context, currentCredential);
     }
 
     public static String getWebClientId(Context context) {

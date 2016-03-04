@@ -49,7 +49,7 @@ public class StatusRefreshService extends IntentService {
 
     @WorkerThread
     private void updateTbaStatus() {
-        Response<APIStatus> response = null;
+        Response<APIStatus> response;
         try {
              response = mRetrofitAPI.status().toBlocking().first();
         } catch(Exception ex) {

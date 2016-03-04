@@ -1,14 +1,5 @@
 package com.thebluealliance.androidclient.binders;
 
-import android.net.Uri;
-import android.text.Html;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
@@ -19,6 +10,16 @@ import com.thebluealliance.androidclient.listeners.EventInfoContainerClickListen
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
+
+import android.net.Uri;
+import android.support.v7.widget.CardView;
+import android.text.Html;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -35,6 +36,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     private LayoutInflater mInflater;
     private MatchRenderer mMatchRenderer;
     private boolean mIsLive;
+    private boolean mAreViewsBound;
 
     @Inject SocialClickListener mSocialClickListener;
     @Inject EventInfoContainerClickListener mInfoClickListener;
@@ -58,7 +60,9 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @Bind(R.id.event_youtube_title) TextView eventYoutubeTitle;
     @Bind(R.id.event_cd_container) View eventCdContainer;
     @Bind(R.id.last_match_view) FrameLayout lastMatchView;
+    @Bind(R.id.next_match_container) CardView nextMatchContainer;
     @Bind(R.id.next_match_view) FrameLayout nextMatchView;
+    @Bind(R.id.last_match_container) CardView lastMatchContainer;
 
     @Inject
     public EventInfoBinder(MatchRenderer renderer,
@@ -67,6 +71,8 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         mSocialClickListener = socialClickListener;
         mInfoClickListener = eventInfoContainerClickListener;
         mMatchRenderer = renderer;
+        mIsLive = false;
+        mAreViewsBound = false;
     }
 
     public void setInflater(LayoutInflater inflater) {
@@ -75,11 +81,21 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
     @Override
     public void bindViews() {
-        ButterKnife.bind(this, mRootView);
+        if (!mAreViewsBound) {
+            ButterKnife.bind(this, mRootView);
+            mAreViewsBound = true;
+        }
     }
 
     @Override
     public void updateData(@Nullable Model data) {
+        if (data == null) {
+            if (!isDataBound()) {
+                bindNoDataView();
+            }
+            return;
+        }
+
         mSocialClickListener.setModelKey(data.eventKey);
         mIsLive = data.isLive;
         eventName.setText(data.nameString);
@@ -179,6 +195,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         super.unbind(unbindViews);
         if (unbindViews) {
             ButterKnife.unbind(this);
+            mAreViewsBound = false;
         }
     }
 
@@ -205,29 +222,55 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     }
 
     protected void showLastMatch(MatchListElement match) {
-        FrameLayout matchView = lastMatchView;
-        matchView.setVisibility(View.VISIBLE);
-        matchView.removeAllViews();
-        matchView.addView(match.getView(mActivity, mInflater, null));
+        if (!mAreViewsBound) {
+            bindViews();
+        }
+        lastMatchView.setVisibility(View.VISIBLE);
+        lastMatchContainer.setVisibility(View.VISIBLE);
+        lastMatchView.removeAllViews();
+        lastMatchView.addView(match.getView(mActivity, mInflater, null));
     }
 
     protected void showNextMatch(MatchListElement match) {
-        FrameLayout matchView = nextMatchView;
-        matchView.setVisibility(View.VISIBLE);
-        matchView.removeAllViews();
-        matchView.addView(match.getView(mActivity, mInflater, null));
+        if (!mAreViewsBound) {
+            bindViews();
+        }
+        nextMatchView.setVisibility(View.VISIBLE);
+        nextMatchContainer.setVisibility(View.VISIBLE);
+        nextMatchView.removeAllViews();
+        nextMatchView.addView(match.getView(mActivity, mInflater, null));
+    }
+
+    protected void hideLastMatch() {
+        if (!mAreViewsBound) {
+            bindViews();
+        }
+        lastMatchContainer.setVisibility(View.GONE);
+    }
+
+    protected void hideNextMatch() {
+        if (!mAreViewsBound) {
+            bindViews();
+        }
+        nextMatchContainer.setVisibility(View.GONE);
     }
 
     @SuppressWarnings("unused")
     public void onEvent(LiveEventMatchUpdateEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
-            if (mIsLive && event.getLastMatch() != null) {
+            if (mIsLive && event != null && event.getLastMatch() != null) {
                 Log.d(Constants.LOG_TAG, "showing last match");
                 showLastMatch(mMatchRenderer.renderFromModel(event.getLastMatch(), RENDER_DEFAULT));
+            } else {
+                Log.d(Constants.LOG_TAG, "hiding last match");
+                hideLastMatch();
             }
-            if (mIsLive && event.getNextMatch() != null) {
+            if (mIsLive && event != null && event.getNextMatch() != null) {
                 Log.d(Constants.LOG_TAG, "showing next match");
                 showNextMatch(mMatchRenderer.renderFromModel(event.getNextMatch(), RENDER_DEFAULT));
+            } else {
+                Log.d(Constants.LOG_TAG, "hiding next match");
+                hideNextMatch();
             }
         });
     }
