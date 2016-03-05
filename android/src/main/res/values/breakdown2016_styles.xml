@@ -26,6 +26,7 @@
 
     <style name="breakdown_category" parent="breakdown_base">
         <item name="android:background">@color/column_header_gray</item>
+        <item name="android:layout_marginBottom">2dp</item>
     </style>
 
     <style name="breakdown_redTotal" parent="breakdown_base">

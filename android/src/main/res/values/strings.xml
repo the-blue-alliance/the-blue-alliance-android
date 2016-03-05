@@ -63,6 +63,7 @@
     <string name="no_subscription_data">No subscriptions found</string>
     <string name="no_contributors_list">Unable to load contributors list.\n\nCheck your network connection and try again.</string>
     <string name="no_team_at_event_summary_data">No info found</string>
+    <string name="no_match_breakdown">No match breakdown found</string>
 
     <!-- View Team -->
     <string name="social_media">Social media</string>

@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.R;
 import android.content.Context;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.GridLayout;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -47,6 +48,17 @@ public class MatchBreakdownView2016 extends FrameLayout {
 
     public MatchBreakdownView2016(Context context) {
         super(context);
+        init();
+    }
+
+    public MatchBreakdownView2016(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    public MatchBreakdownView2016(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init();
     }
 
     private void init() {
@@ -126,8 +138,8 @@ public class MatchBreakdownView2016 extends FrameLayout {
         JsonObject redData = data.get("red").getAsJsonObject();
         JsonObject blueData = data.get("blue").getAsJsonObject();
 
-        redAutoBoulder.setText((getIntDefault(redData, "autoBouldersHigh") + getIntDefault(redData, "autoBouldersLow")));
-        blueAutoBoulder.setText((getIntDefault(blueData, "autoBouldersHigh") + getIntDefault(blueData, "autoBouldersLow")));
+        redAutoBoulder.setText(getAutoBoulder(redData));
+        blueAutoBoulder.setText(getAutoBoulder(blueData));
         redAutoReach.setText(getIntDefault(redData, "autoReachPoints"));
         blueAutoReach.setText(getIntDefault(blueData, "autoReachPoints"));
         redAutoCross.setText(getIntDefault(redData, "autoCrossingPoints"));
@@ -135,28 +147,28 @@ public class MatchBreakdownView2016 extends FrameLayout {
         redAutoTotal.setText(getIntDefault(redData, "autoPoints"));
         blueAutoTotal.setText(getIntDefault(blueData, "autoPoints"));
 
-        redDefense1Cross.setText(getIntDefault(redData, "position1Crossings"));
-        blueDefense1Cross.setText(getIntDefault(blueData, "position1Crossings"));
+        redDefense1Cross.setText(getCrossValue(redData, "position1Crossings"));
+        blueDefense1Cross.setText(getCrossValue(blueData, "position1Crossings"));
 
         redDefense2Name.setText(getDefenseName(redData, "position2"));
-        redDefense2Cross.setText(getIntDefault(redData, "position2Crossings"));
+        redDefense2Cross.setText(getCrossValue(redData, "position2Crossings"));
         blueDefense2Name.setText(getDefenseName(blueData, "position2"));
-        blueDefense2Cross.setText(getIntDefault(blueData, "position2Crossings"));
+        blueDefense2Cross.setText(getCrossValue(blueData, "position2Crossings"));
 
         redDefense3Name.setText(getDefenseName(redData, "position3"));
-        redDefense3Cross.setText(getIntDefault(redData, "position3Crossings"));
+        redDefense3Cross.setText(getCrossValue(redData, "position3Crossings"));
         blueDefense3Name.setText(getDefenseName(blueData, "position3"));
-        blueDefense3Cross.setText(getIntDefault(blueData, "position3Crossings"));
+        blueDefense3Cross.setText(getCrossValue(blueData, "position3Crossings"));
 
         redDefense4Name.setText(getDefenseName(redData, "position4"));
-        redDefense4Cross.setText(getIntDefault(redData, "position4Crossings"));
+        redDefense4Cross.setText(getCrossValue(redData, "position4Crossings"));
         blueDefense4Name.setText(getDefenseName(blueData, "position4"));
-        blueDefense4Cross.setText(getIntDefault(blueData, "position4Crossings"));
+        blueDefense4Cross.setText(getCrossValue(blueData, "position4Crossings"));
 
         redDefense5Name.setText(getDefenseName(redData, "position5"));
-        redDefense5Cross.setText(getIntDefault(redData, "position5Crossings"));
+        redDefense5Cross.setText(getCrossValue(redData, "position5Crossings"));
         blueDefense5Name.setText(getDefenseName(blueData, "position5"));
-        blueDefense5Cross.setText(getIntDefault(blueData, "position5Crossings"));
+        blueDefense5Cross.setText(getCrossValue(blueData, "position5Crossings"));
 
         redTeleopCross.setText(getIntDefault(redData, "teleopCrossingPoints"));
         blueTeleopCross.setText(getIntDefault(blueData, "teleopCrossingPoints"));
@@ -180,7 +192,7 @@ public class MatchBreakdownView2016 extends FrameLayout {
             ? R.drawable.ic_done_black_24dp
             : R.drawable.ic_clear_black_24dp);
 
-        int redBreachPoints = getIntDefault(redData, "breachPoints");
+        int redBreachPoints = getIntDefaultValue(redData, "breachPoints");
         if (redBreachPoints > 0) {
             redBreach.setText(getContext().getString(R.string.breakdown2016_addition_format, redBreachPoints));
             redBreach.setVisibility(VISIBLE);
@@ -188,7 +200,7 @@ public class MatchBreakdownView2016 extends FrameLayout {
             redBreach.setVisibility(GONE);
         }
 
-        int blueBreachPoints = getIntDefault(blueData, "breachPoints");
+        int blueBreachPoints = getIntDefaultValue(blueData, "breachPoints");
         if (blueBreachPoints > 0) {
             blueBreach.setText(getContext().getString(R.string.breakdown2016_addition_format, blueBreachPoints));
             blueBreach.setVisibility(VISIBLE);
@@ -203,7 +215,7 @@ public class MatchBreakdownView2016 extends FrameLayout {
             ? R.drawable.ic_done_black_24dp
             : R.drawable.ic_clear_black_24dp);
 
-        int redCapturePoints = getIntDefault(redData, "capturePoints");
+        int redCapturePoints = getIntDefaultValue(redData, "capturePoints");
         if (redCapturePoints > 0) {
             redCapture.setText(getContext().getString(R.string.breakdown2016_addition_format, redCapturePoints));
             redCapture.setVisibility(VISIBLE);
@@ -211,7 +223,7 @@ public class MatchBreakdownView2016 extends FrameLayout {
             redCapture.setVisibility(GONE);
         }
 
-        int blueCapturePoints = getIntDefault(blueData, "capturePoints");
+        int blueCapturePoints = getIntDefaultValue(blueData, "capturePoints");
         if (blueCapturePoints > 0) {
             blueCapture.setText(getContext().getString(R.string.breakdown2016_addition_format, blueCapturePoints));
             blueCapture.setVisibility(VISIBLE);
@@ -219,31 +231,48 @@ public class MatchBreakdownView2016 extends FrameLayout {
             blueCapture.setVisibility(GONE);
         }
 
-        redFoul.setText(getContext().getString(R.string.breakdown2016_foul_format, getIntDefault(redData, "foulPoints")));
-        blueFoul.setText(getContext().getString(R.string.breakdown2016_foul_format, getIntDefault(blueData, "foulPoints")));
+        redFoul.setText(getContext().getString(R.string.breakdown2016_foul_format, getIntDefaultValue(redData, "foulPoints")));
+        blueFoul.setText(getContext().getString(R.string.breakdown2016_foul_format, getIntDefaultValue(blueData, "foulPoints")));
         redAdjust.setText(getIntDefault(redData, "adjustPoints"));
         blueAdjust.setText(getIntDefault(blueData, "adjustPoints"));
         redTotal.setText(getIntDefault(redData, "totalPoints"));
         blueTotal.setText(getIntDefault(blueData, "totalPoints"));
     }
 
-    private static int getIntDefault(JsonObject data, String key) {
+    private static String getIntDefault(JsonObject data, String key) {
+        if (data.has(key)) {
+            return data.get(key).getAsString();
+        } else {
+            return "0";
+        }
+    }
+
+    private static int getIntDefaultValue(JsonObject data, String key) {
         if (data.has(key)) {
             return data.get(key).getAsInt();
         } else {
             return 0;
         }
     }
-
     private static boolean getBooleanDefault(JsonObject data, String key) {
         return data.has(key) && data.get(key).getAsBoolean();
     }
 
-    private static int getTeleopTotal(JsonObject data) {
-        return getIntDefault(data, "teleopCrossingPoints")
-                + getIntDefault(data, "teleopBoulderPoints")
-                + getIntDefault(data, "teleopChallengePoints")
-                + getIntDefault(data, "teleopScalePoints");
+    private static String getTeleopTotal(JsonObject data) {
+        return Integer.toString(getIntDefaultValue(data, "teleopCrossingPoints")
+                + getIntDefaultValue(data, "teleopBoulderPoints")
+                + getIntDefaultValue(data, "teleopChallengePoints")
+                + getIntDefaultValue(data, "teleopScalePoints"));
+    }
+
+    private static String getAutoBoulder(JsonObject data) {
+        return Integer.toString(getIntDefaultValue(data, "autoBouldersHigh")
+                + getIntDefaultValue(data, "autoBouldersLow"));
+    }
+
+    private String getCrossValue(JsonObject data, String key) {
+        int crossCount = getIntDefaultValue(data, key);
+        return getContext().getString(R.string.breakdown2016_cross_format, crossCount);
     }
 
     private static @StringRes int getDefenseName(JsonObject data, String key) {

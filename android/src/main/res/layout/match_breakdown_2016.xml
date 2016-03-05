@@ -9,6 +9,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/breakdown2016_container"
+            android:paddingTop="8dp"
+            android:background="@color/column_header_gray"
             app:columnCount="3"
             app:rowCount="26"
             app:alignmentMode="alignBounds" >

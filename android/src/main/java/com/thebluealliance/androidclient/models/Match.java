@@ -1,19 +1,20 @@
 package com.thebluealliance.androidclient.models;
 
-import android.util.Log;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.listitems.MatchListElement;
+
+import android.util.Log;
 
 import java.util.Date;
 
@@ -30,6 +31,7 @@ public class Match extends BasicModel<Match> {
     private MatchType type;
     private JsonObject alliances;
     private JsonArray videos;
+    private JsonObject breakdown;
 
     public Match() {
         super(Database.TABLE_MATCHES, ModelType.MATCH);
@@ -106,6 +108,26 @@ public class Match extends BasicModel<Match> {
 
     public void setTypeFromShort(String type) {
         this.type = MatchType.fromShortType(type);
+    }
+
+    public JsonObject getBreakdown() throws FieldNotDefinedException {
+        if (breakdown != null) {
+            return breakdown;
+        }
+        if (fields.containsKey(MatchesTable.BREAKDOWN) && fields.get(MatchesTable.BREAKDOWN) instanceof String) {
+            alliances = JSONHelper.getasJsonObject((String) fields.get(MatchesTable.BREAKDOWN));
+            return alliances;
+        }
+        throw new FieldNotDefinedException("Field Database.Matches.BREAKDOWN is not defined");
+    }
+
+    public void setBreakdown(String breakdown) {
+        fields.put(MatchesTable.BREAKDOWN, breakdown);
+    }
+
+    public void setBreakdown(JsonObject breakdown) {
+        fields.put(MatchesTable.BREAKDOWN, breakdown.toString());
+        this.breakdown = breakdown;
     }
 
     public JsonObject getAlliances() throws FieldNotDefinedException {

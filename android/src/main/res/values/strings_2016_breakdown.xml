@@ -9,6 +9,7 @@
     <string name="breakdown2016_defense3">Defense 3 (Audience)</string>
     <string name="breakdown2016_defense4">Defense 4</string>
     <string name="breakdown2016_defense5">Defense 5</string>
+    <string name="breakdown2016_cross_format">%1$dx Cross</string>
     <string name="breakdown2016_teleop_cross">Teleop Crossing</string>
     <string name="breakdown2016_teleop_boulder_high">Teleop Boulders High</string>
     <string name="breakdown2016_teleop_boulder_low">Teleop Boulders Low</string>
