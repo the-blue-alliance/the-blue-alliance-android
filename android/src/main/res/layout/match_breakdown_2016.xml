@@ -7,7 +7,8 @@
 <android.support.v7.widget.GridLayout
             app:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/breakdown2016_container"
             app:columnCount="3"
             app:rowCount="26"
             app:alignmentMode="alignBounds" >
@@ -128,7 +129,7 @@
             app:layout_columnWeight="1"
             app:layout_rowSpan="1"
             app:layout_gravity="fill"
-            tools:text="Low Bar"/>
+            android:text="@string/defense2016_low_bar"/>
    <TextView
             android:text="@string/breakdown2016_defense1"
             style="@style/breakdown_category"
@@ -143,7 +144,7 @@
             app:layout_columnWeight="1"
             app:layout_rowSpan="1"
             app:layout_gravity="fill"
-            tools:text="Low Bar"/>
+            android:text="@string/defense2016_low_bar"/>
     <TextView
             android:id="@+id/breakdown_red_defense1_cross"
             style="@style/breakdown_redItemSmall"
@@ -527,7 +528,7 @@
                 android:id="@+id/breakdown2016_breach_icon_red"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_done_black_24dp"/>
+                tools:background="@drawable/ic_done_black_24dp"/>
         <TextView
                 android:id="@+id/breakdown2016_breach_points_red"
                 android:layout_width="wrap_content"
@@ -554,7 +555,7 @@
                 android:id="@+id/breakdown2016_breach_icon_blue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_clear_black_24dp"/>
+                tools:background="@drawable/ic_clear_black_24dp"/>
         <TextView
                 android:id="@+id/breakdown2016_breach_points_blue"
                 android:layout_width="wrap_content"
