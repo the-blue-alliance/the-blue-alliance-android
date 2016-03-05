@@ -577,12 +577,12 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         mIsSaveEnalbed = true;
     }
 
-    private void showSnackbar(@StringRes int messageResId) {
+    protected void showSnackbar(@StringRes int messageResId) {
         showSnackbar(getString(messageResId));
     }
 
     @SuppressWarnings("WrongConstant")
-    private void showSnackbar(String message) {
+    protected void showSnackbar(String message) {
         Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, 2000);
         TextView text = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
         if (text != null) {

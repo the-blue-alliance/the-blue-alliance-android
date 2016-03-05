@@ -74,6 +74,8 @@
     <string name="view_team_twitter">View #%1$s on Twitter</string>
     <string name="view_team_youtube">View %1$s on YouTube</string>
     <string name="view_team_cd">View photos on Chief Delphi</string>
+    <string name="error_loading_image">Error loading image</string>
+    <string name="error_taking_picture">Error taking picture</string>
 
     <!-- View Match Details -->
     <string name="teams">Teams</string>

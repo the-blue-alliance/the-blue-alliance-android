@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.StringRes;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
@@ -39,6 +42,11 @@ import com.thebluealliance.androidclient.subscribers.YearsParticipatedDropdownSu
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.inject.Inject;
 
 import butterknife.Bind;
@@ -59,9 +67,17 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     private static final int CHOOSE_IMAGE_REQUEST = 42;
     private static final int TAKE_PICTURE_REQUEST = 43;
 
+    @Bind(R.id.year_selector_container) View mYearSelectorContainer;
+    @Bind(R.id.year_selector_subtitle_container) View mYearSelectorSubtitleContainer;
+    @Bind(R.id.year_selector_title) TextView mYearSelectorTitle;
+    @Bind(R.id.year_selector_subtitle) TextView mYearSelectorSubtitle;
+    @Bind(R.id.view_pager) ViewPager mPager;
+
     private FragmentComponent mComponent;
     private int mCurrentSelectedYearPosition = -1,
             mSelectedTab = -1;
+
+    private String mCurrentPhotoPath;
 
     private int[] mYearsParticipated;
 
@@ -70,12 +86,6 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     // Should come in the format frc####
     private String mTeamKey;
     private int mYear;
-
-    @Bind(R.id.year_selector_container) View mYearSelectorContainer;
-    @Bind(R.id.year_selector_subtitle_container) View mYearSelectorSubtitleContainer;
-    @Bind(R.id.year_selector_title) TextView mYearSelectorTitle;
-    @Bind(R.id.year_selector_subtitle) TextView mYearSelectorSubtitle;
-    @Bind(R.id.view_pager) ViewPager mPager;
 
     ViewTeamFragmentPagerAdapter mAdapter;
 
@@ -308,24 +318,30 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
             case ViewTeamFragmentPagerAdapter.TAB_MEDIA:
                 Toast.makeText(this, "Upload image!", Toast.LENGTH_SHORT).show();
 
-                final String[] items = new String[]{"Take picture", "Choose image"};
-                final Integer[] icons = new Integer[]{R.drawable.ic_photo_camera_black_24dp, R.drawable.ic_photo_library_black_24dp};
-                ListAdapter adapter = new DialogListWithIconsAdapter(this, items, icons);
+                // If the device doesn't have a camera, send them straight to the image picker
+                if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                    selectImage();
+                } else {
+                    final String[] items = new String[]{"Take picture", "Choose image"};
+                    final Integer[] icons = new Integer[]{R.drawable.ic_photo_camera_black_24dp, R.drawable.ic_photo_library_black_24dp};
+                    ListAdapter adapter = new DialogListWithIconsAdapter(this, items, icons);
 
-                new AlertDialog.Builder(this)
-                        .setTitle("Add team image")
-                        .setAdapter(adapter, (dialog, position) -> {
-                            switch (position) {
-                                case 0: // take picture
-                                    dialog.cancel();
-                                    break;
-                                case 1: // select from gallery
-                                    selectImage();
-                                    dialog.cancel();
-                                    break;
-                            }
-                        })
-                        .show();
+                    new AlertDialog.Builder(this)
+                            .setTitle("Add team image")
+                            .setAdapter(adapter, (dialog, position) -> {
+                                switch (position) {
+                                    case 0: // take picture
+                                        takePicture();
+                                        dialog.cancel();
+                                        break;
+                                    case 1: // select from gallery
+                                        selectImage();
+                                        dialog.cancel();
+                                        break;
+                                }
+                            })
+                            .show();
+                }
                 return true;
         }
         return false;
@@ -335,7 +351,31 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), CHOOSE_IMAGE_REQUEST);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(Intent.createChooser(intent, "Select Picture"), CHOOSE_IMAGE_REQUEST);
+        }
+    }
+
+    private void takePicture() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                // TODO handle this
+                ex.printStackTrace();
+                showSnackbar(R.string.error_taking_picture);
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, TAKE_PICTURE_REQUEST);
+            }
+        }
     }
 
     @Override
@@ -348,7 +388,31 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
                 // and suggesting the appropriate image
                 startActivity(ConfirmImageSuggestionActivity.newIntent(this, uri, mTeamKey, mYear));
             }
+        } else if (requestCode == TAKE_PICTURE_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                // Tell Media Scanner about the new photo
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(mCurrentPhotoPath)));
+
+                // Off to ConfirmImageSuggestionActivity!
+                startActivity(ConfirmImageSuggestionActivity.newIntent(this, Uri.parse(mCurrentPhotoPath), mTeamKey, mYear));
+            }
         }
+    }
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
     }
 
     public FragmentComponent getComponent() {
