@@ -147,28 +147,28 @@ public class MatchBreakdownView2016 extends FrameLayout {
         redAutoTotal.setText(getIntDefault(redData, "autoPoints"));
         blueAutoTotal.setText(getIntDefault(blueData, "autoPoints"));
 
-        redDefense1Cross.setText(getCrossValue(redData, "position1Crossings"));
-        blueDefense1Cross.setText(getCrossValue(blueData, "position1Crossings"));
+        redDefense1Cross.setText(getCrossValue(redData, "position1crossings"));
+        blueDefense1Cross.setText(getCrossValue(blueData, "position1crossings"));
 
         redDefense2Name.setText(getDefenseName(redData, "position2"));
-        redDefense2Cross.setText(getCrossValue(redData, "position2Crossings"));
+        redDefense2Cross.setText(getCrossValue(redData, "position2crossings"));
         blueDefense2Name.setText(getDefenseName(blueData, "position2"));
-        blueDefense2Cross.setText(getCrossValue(blueData, "position2Crossings"));
+        blueDefense2Cross.setText(getCrossValue(blueData, "position2crossings"));
 
         redDefense3Name.setText(getDefenseName(redData, "position3"));
-        redDefense3Cross.setText(getCrossValue(redData, "position3Crossings"));
+        redDefense3Cross.setText(getCrossValue(redData, "position3crossings"));
         blueDefense3Name.setText(getDefenseName(blueData, "position3"));
-        blueDefense3Cross.setText(getCrossValue(blueData, "position3Crossings"));
+        blueDefense3Cross.setText(getCrossValue(blueData, "position3crossings"));
 
         redDefense4Name.setText(getDefenseName(redData, "position4"));
-        redDefense4Cross.setText(getCrossValue(redData, "position4Crossings"));
+        redDefense4Cross.setText(getCrossValue(redData, "position4crossings"));
         blueDefense4Name.setText(getDefenseName(blueData, "position4"));
-        blueDefense4Cross.setText(getCrossValue(blueData, "position4Crossings"));
+        blueDefense4Cross.setText(getCrossValue(blueData, "position4crossings"));
 
         redDefense5Name.setText(getDefenseName(redData, "position5"));
-        redDefense5Cross.setText(getCrossValue(redData, "position5Crossings"));
+        redDefense5Cross.setText(getCrossValue(redData, "position5crossings"));
         blueDefense5Name.setText(getDefenseName(blueData, "position5"));
-        blueDefense5Cross.setText(getCrossValue(blueData, "position5Crossings"));
+        blueDefense5Cross.setText(getCrossValue(blueData, "position5crossings"));
 
         redTeleopCross.setText(getIntDefault(redData, "teleopCrossingPoints"));
         blueTeleopCross.setText(getIntDefault(blueData, "teleopCrossingPoints"));
