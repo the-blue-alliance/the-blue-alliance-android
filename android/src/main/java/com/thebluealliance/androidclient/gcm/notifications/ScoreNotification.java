@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,23 +98,22 @@ public class ScoreNotification extends BaseNotification {
         int redScore = Match.getRedScore(alliances);
         int blueScore = Match.getBlueScore(alliances);
 
-        // TODO filter out teams that the user doesn't want notifications about
-        // These arrays hold the numbers of teams that the user cares about
+        // TODO: Only boldify team numbers that the user is following
         ArrayList<String> redTeams = Match.teamNumbers(Match.getRedTeams(alliances));
         ArrayList<String> blueTeams = Match.teamNumbers(Match.getBlueTeams(alliances));
+        CharSequence firstTeams = Utilities.boldNameList(redTeams);
+        CharSequence secondTeams = Utilities.boldNameList(blueTeams);
 
         // Make sure the score string is formatted properly with the winning score first
         String scoreString;
-        if (redScore > blueScore) {
-            scoreString = redScore + "-" + blueScore;
-        } else if (redScore < blueScore) {
+        if (blueScore > redScore) {
             scoreString = blueScore + "-" + redScore;
+            CharSequence temp = firstTeams;
+            firstTeams        = secondTeams;
+            secondTeams       = temp;
         } else {
-            scoreString = redScore + "-" + redScore;
+            scoreString = redScore + "-" + blueScore;
         }
-
-        String redTeamString = Utilities.stringifyListOfStrings(context, redTeams);
-        String blueTeamString = Utilities.stringifyListOfStrings(context, blueTeams);
 
         boolean useSpecial2015Format;
         try {
@@ -124,53 +124,16 @@ public class ScoreNotification extends BaseNotification {
         }
 
         String eventShortName = EventHelper.shortName(eventName);
-        String notificationString;
-        if (redTeams.size() == 0 && blueTeams.size() == 0) {
-            // We must have gotten this GCM message by mistake
-            return null;
-        } else if (useSpecial2015Format) {
-            /* Only for 2015 non-finals matches. Ugh */
-            notificationString = context.getString(R.string.notification_score_2015_no_winner, eventShortName, matchTitle, redTeamString, redScore, blueTeamString, blueScore);
-        } else if ((redTeams.size() > 0 && blueTeams.size() == 0)) {
-            // The user only cares about some teams on the red alliance
-            if (redScore > blueScore) {
-                // Red won
-                notificationString = context.getString(R.string.notification_score_teams_won, eventShortName, redTeamString, matchTitle, scoreString);
-            } else if (redScore < blueScore) {
-                // Red lost
-                notificationString = context.getString(R.string.notification_score_teams_lost, eventShortName, redTeamString, matchTitle, scoreString);
-            } else {
-                // Red tied
-                notificationString = context.getString(R.string.notification_score_teams_tied, eventShortName, redTeamString, matchTitle, scoreString);
-            }
-        } else if ((blueTeams.size() > 0 && redTeams.size() == 0)) {
-            // The user only cares about some teams on the blue alliance
-            if (blueScore > redScore) {
-                // Blue won
-                notificationString = context.getString(R.string.notification_score_teams_won, eventShortName, blueTeamString, matchTitle, scoreString);
-            } else if (blueScore < redScore) {
-                // Blue lost
-                notificationString = context.getString(R.string.notification_score_teams_lost, eventShortName, blueTeamString, matchTitle, scoreString);
-            } else {
-                // Blue tied
-                notificationString = context.getString(R.string.notification_score_teams_tied, eventShortName, blueTeamString, matchTitle, scoreString);
-            }
-        } else if ((blueTeams.size() > 0 && redTeams.size() > 0)) {
-            // The user cares about teams on both alliances
-            if (blueScore > redScore) {
-                // Blue won
-                notificationString = context.getString(R.string.notification_score_teams_beat_teams, eventShortName, blueTeamString, redTeamString, matchTitle, scoreString);
-            } else if (blueScore < redScore) {
-                // Blue lost
-                notificationString = context.getString(R.string.notification_score_teams_beat_teams, eventShortName, redTeamString, blueTeamString, matchTitle, scoreString);
-            } else {
-                // Blue tied
-                notificationString = context.getString(R.string.notification_score_teams_tied_with_teams, eventShortName, redTeamString, blueTeamString, matchTitle, scoreString);
-            }
-        } else {
-            // We should never, ever get here but if we do...
-            return null;
+        String template;
+        if (useSpecial2015Format) { // firstTeams played secondTeams (for 2015 non-finals matches)
+            template = context.getString(R.string.notification_score_teams_played_teams);
+        } else if (blueScore == redScore) { // firstTeams tied secondTeams
+            template = context.getString(R.string.notification_score_teams_tied_teams);
+        } else { // firstTeams beat secondTeams
+            template = context.getString(R.string.notification_score_teams_beat_teams);
         }
+        CharSequence notificationBody = TextUtils.expandTemplate(template,
+                eventShortName, matchTitle, firstTeams, secondTeams, scoreString);
 
         // We can finally build the notification!
         Intent instance = getIntent(context);
@@ -180,17 +143,17 @@ public class ScoreNotification extends BaseNotification {
         String eventCode = EventHelper.getEventCode(matchKey);
         String notificationTitle = r.getString(R.string.notification_score_title, eventCode, matchAbbrevTitle);
         stored.setTitle(notificationTitle);
-        stored.setBody(notificationString);
+        stored.setBody(notificationBody.toString());
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         stored.setMessageData(messageData);
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(notificationTitle)
-                .setContentText(notificationString)
+                .setContentText(notificationBody)
                 .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp));
 
-        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(notificationString);
+        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(notificationBody);
         builder.setStyle(style);
         return builder.build();
     }
