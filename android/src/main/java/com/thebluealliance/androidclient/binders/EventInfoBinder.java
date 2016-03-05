@@ -172,7 +172,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         eventCdContainer.setTag("http://www.chiefdelphi.com/media/photos/tags/" + data.eventKey);
         eventCdContainer.setOnClickListener(mSocialClickListener);
 
-        if (data.webcasts != null && data.webcasts.size() > 0) {
+        if (data.isLive && data.webcasts != null && data.webcasts.size() > 0) {
             if (data.webcasts.size() == 1) {
                 // Only one webcast, we can link directly to that
                 JsonObject eventWebcast = data.webcasts.get(0).getAsJsonObject();
