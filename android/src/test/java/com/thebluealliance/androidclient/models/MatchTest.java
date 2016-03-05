@@ -10,6 +10,9 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -53,5 +56,12 @@ public class MatchTest {
         JsonArray blueTeams = blueAlliance.get("teams").getAsJsonArray();
         assertEquals(blueTeams.size(), 3);
         assertEquals(blueTeams.get(0).getAsString(), "frc469");
+    }
+
+    @Test
+    public void testUtilities() throws BasicModel.FieldNotDefinedException {
+        JsonArray teamsJson = Match.getRedTeams(mMatch.getAlliances());
+        ArrayList<String> teamNumbers = Match.teamNumbers(teamsJson);
+        assertEquals(Arrays.asList("1678", "1640", "1114"), teamNumbers);
     }
 }

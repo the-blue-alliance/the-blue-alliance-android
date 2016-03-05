@@ -1,20 +1,23 @@
 package com.thebluealliance.androidclient.models;
 
-import android.util.Log;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.listitems.MatchListElement;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -150,6 +153,29 @@ public class Match extends BasicModel<Match> {
 
     public static JsonArray getBlueTeams(JsonObject alliances) {
         return getBlueAlliance(alliances).getAsJsonArray("teams");
+    }
+
+    /** @return team keys from {@link #getRedTeams} or {@link #getBlueTeams}. */
+    @NonNull
+    public static ArrayList<String> teamKeys(JsonArray teamsJson) {
+        ArrayList<String> teamKeys = new ArrayList<>();
+
+        for (int i = 0; i < teamsJson.size(); i++) {
+            teamKeys.add(teamsJson.get(i).getAsString());
+        }
+        return teamKeys;
+    }
+
+    /** @return team number strings from {@link #getRedTeams} or {@link #getBlueTeams}. */
+    @NonNull
+    public static ArrayList<String> teamNumbers(JsonArray teamsJson) {
+        ArrayList<String> teamKeys = teamKeys(teamsJson);
+        ArrayList<String> teamNumbers = new ArrayList<>();
+
+        for (String key : teamKeys) {
+            teamNumbers.add(key.replace("frc", ""));
+        }
+        return teamNumbers;
     }
 
     /**

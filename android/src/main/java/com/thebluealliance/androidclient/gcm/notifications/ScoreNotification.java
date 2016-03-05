@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
@@ -81,9 +80,7 @@ public class ScoreNotification extends BaseNotification {
     public Notification buildNotification(Context context) {
         Resources r = context.getResources();
 
-        String matchKey;
         matchKey = match.getKey();
-        this.matchKey = matchKey;
 
         String matchTitle = MatchHelper.getMatchTitleFromMatchKey(context, matchKey);
         String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);
@@ -96,35 +93,14 @@ public class ScoreNotification extends BaseNotification {
             e.printStackTrace();
             return null;
         }
+
         int redScore = Match.getRedScore(alliances);
-
-        ArrayList<String> redTeamKeys = new ArrayList<>();
-        JsonArray redTeamsJson = Match.getRedTeams(alliances);
-        for (int i = 0; i < redTeamsJson.size(); i++) {
-            redTeamKeys.add(redTeamsJson.get(i).getAsString());
-        }
-
         int blueScore = Match.getBlueScore(alliances);
 
-        ArrayList<String> blueTeamKeys = new ArrayList<>();
-        JsonArray blueTeamsJson = Match.getBlueTeams(alliances);
-        for (int i = 0; i < blueTeamsJson.size(); i++) {
-            blueTeamKeys.add(blueTeamsJson.get(i).getAsString());
-        }
-
         // TODO filter out teams that the user doesn't want notifications about
-
         // These arrays hold the numbers of teams that the user cares about
-        ArrayList<String> redTeams = new ArrayList<>();
-        ArrayList<String> blueTeams = new ArrayList<>();
-
-        for (String key : redTeamKeys) {
-            redTeams.add(key.replace("frc", ""));
-        }
-
-        for (String key : blueTeamKeys) {
-            blueTeams.add(key.replace("frc", ""));
-        }
+        ArrayList<String> redTeams = Match.teamNumbers(Match.getRedTeams(alliances));
+        ArrayList<String> blueTeams = Match.teamNumbers(Match.getBlueTeams(alliances));
 
         // Make sure the score string is formatted properly with the winning score first
         String scoreString;
