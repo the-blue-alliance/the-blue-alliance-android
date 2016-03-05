@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="breakdown2016_auto_boulder">Auto Boulder</string>
+    <string name="breakdown2016_auto_reach">Auto Reach</string>
+    <string name="breakdown2016_auto_cross">Auto Crossing</string>
+    <string name="breakdown2016_auto_total">Total Auto</string>
+    <string name="breakdown2016_defense1">Defense 1</string>
+    <string name="breakdown2016_defense2">Defense 2</string>
+    <string name="breakdown2016_defense3">Defense 3 (Audience)</string>
+    <string name="breakdown2016_defense4">Defense 4</string>
+    <string name="breakdown2016_defense5">Defense 5</string>
+    <string name="breakdown2016_teleop_cross">Teleop Crossing</string>
+    <string name="breakdown2016_teleop_boulder_high">Teleop Boulders High</string>
+    <string name="breakdown2016_teleop_boulder_low">Teleop Boulders Low</string>
+    <string name="breakdown2016_teleop_boulder_total">Total Teleop Boulder</string>
+    <string name="breakdown2016_teleop_challenge">Teleop Challenge</string>
+    <string name="breakdown2016_teleop_scale">Teleop Scale</string>
+    <string name="breakdown2016_teleop_total">Total Teleop</string>
+    <string name="breakdown2016_breach">Defenses Breached</string>
+    <string name="breakdown2016_capture">Tower Captured</string>
+    <string name="breakdown2016_addition_format">(+ %1$d)</string>
+    <string name="breakdown2016_foul">Fouls</string>
+    <style name="breakdown2016_foul_format">+ %1$d</style>
+    <string name="breakdown2016_adjust">Adjustments</string>
+    <string name="breakdown2016_total">Total Score</string>
+</resources>

@@ -9,6 +9,7 @@
     <color name="green">#4CAF50</color>
 
     <color name="column_header_gray">#ddd</color>
+    <color name="column_header_total_gray">#ccc</color>
     <color name="white">#FFF</color>
     <color name="black">#000000</color>
     <color name="nav_text_color">#000000</color>
