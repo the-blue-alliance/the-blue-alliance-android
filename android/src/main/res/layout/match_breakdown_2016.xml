@@ -19,512 +19,280 @@
     <TextView
             android:id="@+id/breakdown_auto_boulder_red"
             style="@style/breakdown_redItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="10"/>
 
     <TextView
             android:text="@string/breakdown2016_auto_boulder"
-            style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_category" />
 
     <TextView
             android:id="@+id/breakdown_auto_boulder_blue"
             style="@style/breakdown_blueItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="10"/>
 
     <!-- Auto Reach -->
     <TextView
             android:id="@+id/breakdown_auto_reach_red"
             style="@style/breakdown_redItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="12"/>
 
     <TextView
             android:text="@string/breakdown2016_auto_reach"
-            style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_category" />
 
     <TextView
             android:id="@+id/breakdown_auto_reach_blue"
             style="@style/breakdown_blueItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="14"/>
 
     <!-- Auto Cross -->
     <TextView
             android:id="@+id/breakdown_auto_cross_red"
             style="@style/breakdown_redItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="12"/>
 
     <TextView
             android:text="@string/breakdown2016_auto_cross"
-            style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_category" />
 
     <TextView
             android:id="@+id/breakdown_auto_cross_blue"
             style="@style/breakdown_blueItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="14"/>
 
     <!-- Auto Total -->
     <TextView
             android:id="@+id/breakdown_auto_total_red"
             style="@style/breakdown_redTotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="12"/>
 
     <TextView
             android:text="@string/breakdown2016_auto_total"
-            style="@style/breakdown_categoryTotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_categoryTotal" />
 
     <TextView
             android:id="@+id/breakdown_auto_total_blue"
             style="@style/breakdown_blueTotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="14"/>
 
     <!-- Defense 1-->
     <TextView
             android:id="@+id/breakdown_red_defense1_name"
             style="@style/breakdown_redItalic"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             android:text="@string/defense2016_low_bar"/>
    <TextView
             android:text="@string/breakdown2016_defense1"
             style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="2"
-            app:layout_gravity="fill" />
+            app:layout_rowSpan="2" />
     <TextView
             android:id="@+id/breakdown_blue_defense1_name"
             style="@style/breakdown_blueItalic"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             android:text="@string/defense2016_low_bar"/>
     <TextView
             android:id="@+id/breakdown_red_defense1_cross"
             style="@style/breakdown_redItemSmall"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="2x Cross"/>
     <TextView
             android:id="@+id/breakdown_blue_defense1_cross"
             style="@style/breakdown_blueItemSmall"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="2x Cross"/>
-
 
     <!-- Defense 2-->
     <TextView
             android:id="@+id/breakdown_red_defense2_name"
             style="@style/breakdown_redItalic"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="Ramparts"/>
    <TextView
             android:text="@string/breakdown2016_defense2"
             style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="2"
-            app:layout_gravity="fill" />
+            app:layout_rowSpan="2" />
     <TextView
             android:id="@+id/breakdown_blue_defense2_name"
             style="@style/breakdown_blueItalic"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="Rough Terrain"/>
     <TextView
             android:id="@+id/breakdown_red_defense2_cross"
             style="@style/breakdown_redItemSmall"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="0x Cross"/>
     <TextView
             android:id="@+id/breakdown_blue_defense2_cross"
             style="@style/breakdown_blueItemSmall"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="2x Cross"/>
 
     <!-- Defense 3-->
     <TextView
             android:id="@+id/breakdown_red_defense3_name"
             style="@style/breakdown_redItalic"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="Sally Port"/>
     <TextView
             android:text="@string/breakdown2016_defense3"
             style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="2"
-            app:layout_gravity="fill" />
+            app:layout_rowSpan="2" />
     <TextView
             android:id="@+id/breakdown_blue_defense3_name"
             style="@style/breakdown_blueItalic"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="Sally Port"/>
     <TextView
             android:id="@+id/breakdown_red_defense3_cross"
             style="@style/breakdown_redItemSmall"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="1x Cross"/>
     <TextView
             android:id="@+id/breakdown_blue_defense3_cross"
             style="@style/breakdown_blueItemSmall"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="0x Cross"/>
 
     <!-- Defense 4-->
     <TextView
             android:id="@+id/breakdown_red_defense4_name"
             style="@style/breakdown_redItalic"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="Cheval De Frise"/>
     <TextView
             android:text="@string/breakdown2016_defense4"
             style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="2"
-            app:layout_gravity="fill" />
+            app:layout_rowSpan="2" />
     <TextView
             android:id="@+id/breakdown_blue_defense4_name"
             style="@style/breakdown_blueItalic"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="Portcullis"/>
     <TextView
             android:id="@+id/breakdown_red_defense4_cross"
             style="@style/breakdown_redItemSmall"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="1x Cross"/>
     <TextView
             android:id="@+id/breakdown_blue_defense4_cross"
             style="@style/breakdown_blueItemSmall"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="0x Cross"/>
 
     <!-- Defense 5-->
     <TextView
             android:id="@+id/breakdown_red_defense5_name"
             style="@style/breakdown_redItalic"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="Cheval De Frise"/>
     <TextView
             android:text="@string/breakdown2016_defense5"
             style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="2"
-            app:layout_gravity="fill" />
+            app:layout_rowSpan="2" />
     <TextView
             android:id="@+id/breakdown_blue_defense5_name"
             style="@style/breakdown_blueItalic"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="Portcullis"/>
     <TextView
             android:id="@+id/breakdown_red_defense5_cross"
             style="@style/breakdown_redItemSmall"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="1x Cross"/>
     <TextView
             android:id="@+id/breakdown_blue_defense5_cross"
             style="@style/breakdown_blueItemSmall"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="0x Cross"/>
 
     <!-- Teleop Cross -->
     <TextView
             android:id="@+id/breakdown_teleop_cross_red"
             style="@style/breakdown_redTotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="12"/>
 
     <TextView
             android:text="@string/breakdown2016_teleop_cross"
-            style="@style/breakdown_categorySubtotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_categorySubtotal" />
 
     <TextView
             android:id="@+id/breakdown_teleop_cross_blue"
             style="@style/breakdown_blueTotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="14"/>
 
     <!-- Teleop High Boulder -->
     <TextView
             android:id="@+id/breakdown_teleop_high_boulder_red"
             style="@style/breakdown_redItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="12"/>
 
     <TextView
             android:text="@string/breakdown2016_teleop_boulder_high"
-            style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_category" />
 
     <TextView
             android:id="@+id/breakdown_teleop_high_boulder_blue"
             style="@style/breakdown_blueItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="14"/>
 
     <!-- Teleop Low Boulder -->
     <TextView
             android:id="@+id/breakdown_teleop_low_boulder_red"
             style="@style/breakdown_redItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="12"/>
 
     <TextView
             android:text="@string/breakdown2016_teleop_boulder_low"
-            style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_category" />
 
     <TextView
             android:id="@+id/breakdown_teleop_low_boulder_blue"
             style="@style/breakdown_blueItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="14"/>
 
     <!-- Teleop Low Boulder -->
     <TextView
             android:id="@+id/breakdown_teleop_total_boulder_red"
             style="@style/breakdown_redTotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="12"/>
 
     <TextView
             android:text="@string/breakdown2016_teleop_boulder_total"
-            style="@style/breakdown_categorySubtotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_categorySubtotal" />
 
     <TextView
             android:id="@+id/breakdown_teleop_total_boulder_blue"
             style="@style/breakdown_blueTotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="14"/>
 
     <!-- Teleop Challenge -->
     <TextView
             android:id="@+id/breakdown_teleop_challenge_red"
             style="@style/breakdown_redItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="12"/>
 
     <TextView
             android:text="@string/breakdown2016_teleop_challenge"
-            style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_category" />
 
     <TextView
             android:id="@+id/breakdown_teleop_challenge_blue"
             style="@style/breakdown_blueItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="14"/>
 
     <!-- Teleop Scale -->
     <TextView
             android:id="@+id/breakdown_teleop_scale_red"
             style="@style/breakdown_redItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="12"/>
 
     <TextView
             android:text="@string/breakdown2016_teleop_scale"
-            style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_category" />
 
     <TextView
             android:id="@+id/breakdown_teleop_scale_blue"
             style="@style/breakdown_blueItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="14"/>
 
     <!-- Teleop Total -->
     <TextView
             android:id="@+id/breakdown_teleop_total_red"
             style="@style/breakdown_redTotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="12"/>
 
     <TextView
             android:text="@string/breakdown2016_teleop_total"
-            style="@style/breakdown_categoryTotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_categoryTotal" />
 
     <TextView
             android:id="@+id/breakdown_teleop_total_blue"
             style="@style/breakdown_blueTotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="14"/>
 
     <!-- Breach -->
     <LinearLayout
             style="@style/breakdown_redItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             android:orientation="horizontal">
         <ImageView
                 android:id="@+id/breakdown2016_breach_icon_red"
@@ -540,18 +308,10 @@
 
     <TextView
             android:text="@string/breakdown2016_breach"
-            style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_category" />
 
     <LinearLayout
             style="@style/breakdown_blueItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             android:orientation="horizontal">
         <ImageView
                 android:id="@+id/breakdown2016_breach_icon_blue"
@@ -568,10 +328,6 @@
     <!-- Capture -->
     <LinearLayout
             style="@style/breakdown_redItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             android:orientation="horizontal">
         <ImageView
                 android:id="@+id/breakdown2016_capture_icon_red"
@@ -587,18 +343,10 @@
 
     <TextView
             android:text="@string/breakdown2016_capture"
-            style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_category" />
 
     <LinearLayout
             style="@style/breakdown_blueItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             android:orientation="horizontal">
         <ImageView
                 android:id="@+id/breakdown2016_capture_icon_blue"
@@ -616,81 +364,45 @@
     <TextView
             android:id="@+id/breakdown_fouls_red"
             style="@style/breakdown_redItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="+ 5"/>
 
     <TextView
             android:text="@string/breakdown2016_foul"
-            style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_category" />
 
     <TextView
             android:id="@+id/breakdown_fouls_blue"
             style="@style/breakdown_blueItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="+ 10"/>
 
     <!-- Adjustments -->
     <TextView
             android:id="@+id/breakdown_adjust_red"
             style="@style/breakdown_redItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="0"/>
 
     <TextView
             android:text="@string/breakdown2016_adjust"
-            style="@style/breakdown_category"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_category" />
 
     <TextView
             android:id="@+id/breakdown_adjust_blue"
             style="@style/breakdown_blueItem"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="0"/>
 
     <!-- Total -->
     <TextView
             android:id="@+id/breakdown_total_red"
             style="@style/breakdown_redTotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="100"/>
 
     <TextView
             android:text="@string/breakdown2016_total"
-            style="@style/breakdown_categoryTotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill" />
+            style="@style/breakdown_categoryTotal" />
 
     <TextView
             android:id="@+id/breakdown_total_blue"
             style="@style/breakdown_blueTotal"
-            app:layout_columnSpan="1"
-            app:layout_columnWeight="1"
-            app:layout_rowSpan="1"
-            app:layout_gravity="fill"
             tools:text="120"/>
 
 
