@@ -23,4 +23,14 @@
     <style name="breakdown2016_foul_format">+ %1$d</style>
     <string name="breakdown2016_adjust">Adjustments</string>
     <string name="breakdown2016_total">Total Score</string>
+    
+    <string name="defense2016_low_bar">Low Bar</string>
+    <string name="defense2016_ramparts">Ramparts</string>
+    <string name="defense2016_rough_terrain">Rough Terrain</string>
+    <string name="defense2016_sally_port">Sally Port</string>
+    <string name="defense2016_drawbridge">Drawbridge</string>
+    <string name="defense2016_cdf">Cheval De Frise</string>
+    <string name="defense2016_portcullis">Portcullis</string>
+    <string name="defense2016_rock_wall">Rock Wall</string>
+    <string name="defense2016_moat">Moat</string>
 </resources>
