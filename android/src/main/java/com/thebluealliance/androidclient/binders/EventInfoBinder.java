@@ -74,7 +74,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @Bind(R.id.next_match_container) CardView nextMatchContainer;
     @Bind(R.id.next_match_view) FrameLayout nextMatchView;
     @Bind(R.id.last_match_container) CardView lastMatchContainer;
-    @Bind(R.id.event_webcast_button_container) CardView webcastContainer;
+    @Bind(R.id.event_webcast_container) FrameLayout webcastContainer;
     @Bind((R.id.event_webcast_button)) Button webcastButton;
 
     @Inject

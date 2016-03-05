@@ -88,28 +88,20 @@
 
                         </RelativeLayout>
                     </FrameLayout>
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
 
-            <!-- Webcast card -->
-            <android.support.v7.widget.CardView
-                android:id="@+id/event_webcast_button_container"
-                style="@style/InfoItemCardStyle"
-                android:visibility="gone"
-                tools:visibility="visible">
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="16dp"
-                        android:text="@string/event_webcast"
-                        android:textColor="@color/primary"
-                        android:textSize="16sp" />
-                    <View style="@style/InfoItemFullWidthDividerStyle" />
-                    <Button android:id="@+id/event_webcast_button"
+                    <FrameLayout
+                            android:id="@+id/event_webcast_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                        <View style="@style/InfoItemDividerStyle" />
+
+                        <Button android:id="@+id/event_webcast_button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
@@ -119,6 +111,7 @@
                             android:padding="12dp"
                             android:layout_margin="8dp"
                             tools:text="View Broadcast on Twitch"/>
+                    </FrameLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
