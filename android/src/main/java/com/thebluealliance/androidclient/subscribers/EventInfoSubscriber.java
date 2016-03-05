@@ -22,5 +22,6 @@ public class EventInfoSubscriber extends BaseAPISubscriber<Event, Model> {
         mDataToBind.dateString = mAPIData.getDateString();
         mDataToBind.isLive = mAPIData.isHappeningNow();
         mDataToBind.titleString = mAPIData.getEventYear() + " " + mAPIData.getEventShortName();
+        mDataToBind.webcasts = mAPIData.getWebcasts();
     }
 }
