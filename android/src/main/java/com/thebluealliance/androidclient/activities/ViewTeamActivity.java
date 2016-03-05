@@ -1,9 +1,11 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v4.view.ViewCompat;
@@ -11,16 +13,19 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.adapters.DialogListWithIconsAdapter;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
@@ -50,6 +55,9 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
             TEAM_YEAR = "team_year",
             SELECTED_YEAR = "year",
             SELECTED_TAB = "tab";
+
+    private static final int CHOOSE_IMAGE_REQUEST = 42;
+    private static final int TAKE_PICTURE_REQUEST = 43;
 
     private FragmentComponent mComponent;
     private int mCurrentSelectedYearPosition = -1,
@@ -299,9 +307,48 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         switch (mSelectedTab) {
             case ViewTeamFragmentPagerAdapter.TAB_MEDIA:
                 Toast.makeText(this, "Upload image!", Toast.LENGTH_SHORT).show();
+
+                final String[] items = new String[]{"Take picture", "Choose image"};
+                final Integer[] icons = new Integer[]{R.drawable.ic_photo_camera_black_24dp, R.drawable.ic_photo_library_black_24dp};
+                ListAdapter adapter = new DialogListWithIconsAdapter(this, items, icons);
+
+                new AlertDialog.Builder(this)
+                        .setTitle("Add team image")
+                        .setAdapter(adapter, (dialog, position) -> {
+                            switch (position) {
+                                case 0: // take picture
+                                    dialog.cancel();
+                                    break;
+                                case 1: // select from gallery
+                                    selectImage();
+                                    dialog.cancel();
+                                    break;
+                            }
+                        })
+                        .show();
                 return true;
         }
         return false;
+    }
+
+    private void selectImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), CHOOSE_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CHOOSE_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                Uri uri = data.getData();
+                Log.i(Constants.LOG_TAG, "Uri: " + uri.toString());
+                // Pass off the URI to ConfirmImageSuggestionActivity, it will handle uploading
+                // and suggesting the appropriate image
+                startActivity(ConfirmImageSuggestionActivity.newIntent(this, uri, mTeamKey, mYear));
+            }
+        }
     }
 
     public FragmentComponent getComponent() {

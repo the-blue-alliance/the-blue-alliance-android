@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.imgur;
 
+import android.content.Context;
+
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.imgur.ImgurApi;
 import com.thebluealliance.imgur.responses.UploadResponse;
-
-import android.content.Context;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,11 +29,12 @@ public class ImgurController {
 
     /**
      * Upload an image to Imgur
-     * @param context Android context
-     * @param filepath Path to the image on the local device
-     * @param title Imgur title for the image
+     *
+     * @param context     Android context
+     * @param filepath    Path to the image on the local device
+     * @param title       Imgur title for the image
      * @param description Imgur description for the image
-     * @param callback Callback to execute after the upload request completes.
+     * @param callback    Callback to execute after the upload request completes.
      * @throws IOException
      */
     public void uploadImage(

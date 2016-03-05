@@ -37,7 +37,6 @@ import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 import com.thebluealliance.androidclient.types.ModelType;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 
 /**
  * Activity which hosts a FAB that opens a myTBA model settings panel.
@@ -52,11 +51,11 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     @ColorRes private static final int FAB_COLOR_SUCCESS = R.color.green;
     @ColorRes private static final int FAB_COLOR_ERROR = R.color.red;
 
-    @Bind(R.id.coordinator) CoordinatorLayout mCoordinatorLayout;
-    @Bind(R.id.settings) RelativeLayout mSettingsContainer;
-    @Bind(R.id.toggle_settings_button) FloatingActionButton mToggleSettingsPanelButton;
-    @Bind(R.id.activity_foreground_dim) View mForegroundDim;
-    @Bind(R.id.settings_toolbar) Toolbar mSettingsToolbar;
+    CoordinatorLayout mCoordinatorLayout;
+    RelativeLayout mSettingsContainer;
+    FloatingActionButton mToggleSettingsPanelButton;
+    View mForegroundDim;
+    Toolbar mSettingsToolbar;
 
     private Handler mFabHandler = new Handler();
 
@@ -90,7 +89,11 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
 
         super.setContentView(R.layout.activity_mytba_settings);
 
-        ButterKnife.bind(this);
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator);
+        mSettingsContainer = (RelativeLayout) findViewById(R.id.settings);
+        mToggleSettingsPanelButton = (FloatingActionButton) findViewById(R.id.toggle_settings_button);
+        mForegroundDim = findViewById(R.id.activity_foreground_dim);
+        mSettingsToolbar = (Toolbar) findViewById(R.id.settings_toolbar);
 
         mToggleSettingsPanelButton.setOnClickListener(this);
 
