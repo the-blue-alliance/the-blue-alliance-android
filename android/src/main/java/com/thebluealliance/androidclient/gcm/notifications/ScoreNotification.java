@@ -1,5 +1,25 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.activities.ViewMatchActivity;
+import com.thebluealliance.androidclient.database.writers.MatchWriter;
+import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.androidclient.views.MatchView;
+
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
@@ -9,25 +29,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.activities.ViewMatchActivity;
-import com.thebluealliance.androidclient.database.writers.MatchWriter;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.types.MatchType;
-import com.thebluealliance.androidclient.helpers.MyTBAHelper;
-import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
-import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.Match;
-import com.thebluealliance.androidclient.models.StoredNotification;
-import com.thebluealliance.androidclient.views.MatchView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -262,7 +263,7 @@ public class ScoreNotification extends BaseNotification {
         return convertView;
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         public TextView header;
         public TextView title;
         public MatchView matchView;

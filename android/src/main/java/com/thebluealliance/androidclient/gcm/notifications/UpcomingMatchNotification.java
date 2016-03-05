@@ -1,5 +1,24 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.activities.ViewMatchActivity;
+import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
+import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.views.MatchView;
+
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
@@ -7,24 +26,6 @@ import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.activities.ViewMatchActivity;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.helpers.MyTBAHelper;
-import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
-import com.thebluealliance.androidclient.listitems.MatchListElement;
-import com.thebluealliance.androidclient.models.StoredNotification;
-import com.thebluealliance.androidclient.views.MatchView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -218,7 +219,7 @@ public class UpcomingMatchNotification extends BaseNotification {
         return convertView;
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         public TextView header;
         public TextView title;
         public MatchView matchView;

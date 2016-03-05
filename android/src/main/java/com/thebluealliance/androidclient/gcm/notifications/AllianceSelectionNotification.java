@@ -138,7 +138,7 @@ public class AllianceSelectionNotification extends BaseNotification {
         return convertView;
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         public TextView header;
         public TextView details;
         public TextView time;
