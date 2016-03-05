@@ -15,6 +15,11 @@ public class FragmentTestDriver {
         controller.attach();
     }
 
+    public static <F extends DatafeedFragment> void testLifecycle(F fragment) {
+        DatafeedFragmentTestController<F> controller = getController(fragment);
+        controller.attach().pause().stop();
+    }
+
     public static <F extends DatafeedFragment<T, V, S, B>, T, V, S extends BaseAPISubscriber<T, V>,
             B extends AbstractDataBinder<V>> void testDatafeedBindings(
             F fragment, T apiData) {

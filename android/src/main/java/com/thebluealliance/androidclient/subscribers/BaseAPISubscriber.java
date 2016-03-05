@@ -37,8 +37,8 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         implements Observer<APIType>, APISubscriber<BindType> {
 
     DataConsumer<BindType> mConsumer;
-    APIType mAPIData;
-    BindType mDataToBind;
+    protected APIType mAPIData;
+    protected BindType mDataToBind;
     RefreshController mRefreshController; //TODO hook up to DI
     String mRefreshTag;
     Tracker mAnalyticsTracker;

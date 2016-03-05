@@ -11,9 +11,7 @@ import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.binders.BinderModule;
 import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
-import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
-import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.ContributorsFragment;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
@@ -45,7 +43,6 @@ import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventStatsFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
-import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 import javax.inject.Singleton;
@@ -62,10 +59,6 @@ import dagger.Component;
     ClickListenerModule.class},
   dependencies = {ApplicationComponent.class})
 public interface FragmentComponent {
-
-    CacheableDatafeed datafeed();
-    EventBusSubscriber eventBusSubscriber();
-    RefreshController refreshController();
 
     void inject(TeamInfoFragment fragment);
     void inject(TeamEventsFragment fragment);

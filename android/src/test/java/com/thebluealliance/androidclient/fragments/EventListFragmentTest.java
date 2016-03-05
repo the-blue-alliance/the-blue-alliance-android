@@ -18,8 +18,8 @@ public class EventListFragmentTest {
     }
 
     @Test
-    public void testAttach() {
-        FragmentTestDriver.testAttach(mFragment);
+    public void testLifecycle() {
+        FragmentTestDriver.testLifecycle(mFragment);
     }
 
 }

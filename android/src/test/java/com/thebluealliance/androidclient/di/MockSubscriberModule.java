@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
+import com.thebluealliance.androidclient.fragments.framework.SimpleSubscriber;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
 import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
 import com.thebluealliance.androidclient.renderers.DistrictRenderer;
@@ -38,6 +39,8 @@ import com.thebluealliance.androidclient.subscribers.TeamStatsSubscriber;
 import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
 
 import org.mockito.Mockito;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -175,5 +178,10 @@ public class MockSubscriberModule {
     @Provides
     public ContributorListSubscriber provideContributorListSubscriber() {
         return Mockito.mock(ContributorListSubscriber.class);
+    }
+
+    @Provides @Singleton
+    public SimpleSubscriber provideBaseSubscriber() {
+        return Mockito.mock(SimpleSubscriber.class);
     }
 }

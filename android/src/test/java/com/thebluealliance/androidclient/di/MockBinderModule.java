@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.binders.MatchListBinder;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.binders.StatsListBinder;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
+import com.thebluealliance.androidclient.fragments.framework.SimpleBinder;
 import com.thebluealliance.androidclient.helpers.FragmentBinder;
 import com.thebluealliance.androidclient.listeners.EventInfoContainerClickListener;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
@@ -16,6 +17,8 @@ import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 
 import org.mockito.Mockito;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -70,5 +73,10 @@ public class MockBinderModule {
     @Provides
     public NoDataBinder provideNoDataBinder() {
         return Mockito.mock(NoDataBinder.class);
+    }
+
+    @Provides @Singleton
+    public SimpleBinder provideSimpleBinder() {
+        return Mockito.mock(SimpleBinder.class);
     }
 }

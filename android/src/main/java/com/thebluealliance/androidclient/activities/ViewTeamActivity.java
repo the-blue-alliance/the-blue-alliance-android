@@ -1,6 +1,23 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.support.v7.app.AlertDialog;
+import com.thebluealliance.androidclient.NfcUris;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
+import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
+import com.thebluealliance.androidclient.interfaces.YearsParticipatedUpdate;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
+import com.thebluealliance.androidclient.subscribers.YearsParticipatedDropdownSubscriber;
+import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.androidclient.views.SlidingTabs;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,28 +27,12 @@ import android.support.annotation.StringRes;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.NfcUris;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
-import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
-import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
-import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.interfaces.YearsParticipatedUpdate;
-import com.thebluealliance.androidclient.listeners.ClickListenerModule;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
-import com.thebluealliance.androidclient.subscribers.YearsParticipatedDropdownSubscriber;
-import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import javax.inject.Inject;
 
@@ -56,6 +57,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     private int[] mYearsParticipated;
 
     @Inject TBAStatusController mStatusController;
+    @Inject CacheableDatafeed mDatafeed;
 
     // Should come in the format frc####
     private String mTeamKey;
@@ -135,7 +137,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
             showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
 
-        getComponent().datafeed().fetchTeamYearsParticipated(mTeamKey, null)
+        mDatafeed.fetchTeamYearsParticipated(mTeamKey, null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation())
                 .subscribe(new YearsParticipatedDropdownSubscriber(this));
