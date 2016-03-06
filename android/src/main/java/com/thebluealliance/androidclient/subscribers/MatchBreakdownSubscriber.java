@@ -11,7 +11,15 @@ public class MatchBreakdownSubscriber extends BaseAPISubscriber<Match, JsonObjec
     public void parseData() throws BasicModel.FieldNotDefinedException {
         if (mAPIData.getYear() == 2016) {
             // Currently only support 2016 matches
-            mDataToBind = mAPIData.getBreakdown();
+            try {
+                mDataToBind = mAPIData.getBreakdown();
+                if (mDataToBind.entrySet().isEmpty()) {
+                    mDataToBind = null;
+                }
+            } catch (BasicModel.FieldNotDefinedException ex) {
+                // Match is unplayed or doesn't have a breakdown. Fail gracefully
+                mDataToBind = null;
+            }
         } else {
             mDataToBind = null;
         }
