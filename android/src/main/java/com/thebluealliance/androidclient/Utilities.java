@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient;
 
+import com.google.common.base.Predicate;
+
 import com.thebluealliance.androidclient.activities.GamedayActivity;
 import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
@@ -343,10 +345,11 @@ public class Utilities {
     }
 
     /**
-     * @return a comma-separated CharSequence of the given names, applying bold to names that
-     * satisfy the [TODO] given predicate.
+     * @return a comma-separated CharSequence of the given names, applying bold style to names that
+     * satisfy the given predicate.
      */
-    public static CharSequence boldNameList(Iterable<? extends CharSequence> names) {
+    public static CharSequence boldNameList(Iterable<? extends CharSequence> names,
+                                            Predicate<CharSequence> beBold) {
         final SpannableStringBuilder result = new SpannableStringBuilder();
         boolean first = true;
 
@@ -356,7 +359,12 @@ public class Utilities {
             } else {
                 result.append(", ");
             }
-            result.append(name, new StyleSpan(Typeface.BOLD), 0);
+
+            if (beBold.apply(name)) {
+                result.append(name, new StyleSpan(Typeface.BOLD), 0);
+            } else {
+                result.append(name);
+            }
         }
         return result;
     }

@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import com.google.common.base.Predicate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -124,8 +125,12 @@ public class UpcomingMatchNotification extends BaseNotification {
         }
 
         // TODO: Only boldify team numbers that the user is following
-        CharSequence redTeamNumbers = Utilities.boldNameList(Arrays.asList(redTeams));
-        CharSequence blueTeamNumbers = Utilities.boldNameList(Arrays.asList(blueTeams));
+        Predicate<CharSequence> isFollowing = input -> {
+            // return input.toString().startsWith("1");
+            return true;
+        };
+        CharSequence redTeamNumbers = Utilities.boldNameList(Arrays.asList(redTeams), isFollowing);
+        CharSequence blueTeamNumbers = Utilities.boldNameList(Arrays.asList(blueTeams), isFollowing);
 
         String matchTitle = MatchHelper.getMatchTitleFromMatchKey(context, matchKey);
         String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);

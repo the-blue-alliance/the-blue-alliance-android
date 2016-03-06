@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import com.google.common.base.Predicate;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
@@ -99,10 +100,14 @@ public class ScoreNotification extends BaseNotification {
         int blueScore = Match.getBlueScore(alliances);
 
         // TODO: Only boldify team numbers that the user is following
+        Predicate<CharSequence> isFollowing = input -> {
+            // return input.toString().endsWith("5");
+            return true;
+        };
         ArrayList<String> redTeams = Match.teamNumbers(Match.getRedTeams(alliances));
         ArrayList<String> blueTeams = Match.teamNumbers(Match.getBlueTeams(alliances));
-        CharSequence firstTeams = Utilities.boldNameList(redTeams);
-        CharSequence secondTeams = Utilities.boldNameList(blueTeams);
+        CharSequence firstTeams = Utilities.boldNameList(redTeams, isFollowing);
+        CharSequence secondTeams = Utilities.boldNameList(blueTeams, isFollowing);
 
         // Make sure the score string is formatted properly with the winning score first
         String scoreString;
