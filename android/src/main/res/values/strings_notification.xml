@@ -21,14 +21,14 @@
          Score notification
          ********************* -->
     <string name="notification_score_title">%1$s %2$s Results</string>
-    <!-- Example: Midwest Regional Quals 32: 111, 971, 1114 beat 254, 118, 1983 with a score of 324-42. -->
-    <string name="notification_score_teams_beat_teams">^1 ^2: ^3 beat ^4 with a score of ^5.</string>
-    <!-- Example: Midwest Regional Quals 32: 111, 971, 1114 tied 254, 118, 1983 with a score of 324-324. -->
-    <string name="notification_score_teams_tied_teams">^1 ^2: ^3 tied ^4 with a score of ^5.</string>
+    <!-- Example: Midwest Regional Quals 32: 111, 971, 1114 beat 254, 118, 1983 scoring 324-42. -->
+    <string name="notification_score_teams_beat_teams">^1 ^2: ^3 beat ^4 scoring ^5.</string>
+    <!-- Example: Midwest Regional Quals 32: 111, 971, 1114 tied 254, 118, 1983 scoring 324-324. -->
+    <string name="notification_score_teams_tied_teams">^1 ^2: ^3 tied ^4 scoring ^5.</string>
 
     <!-- For use only with 2015 non-finals matches, because that thing with no winners. Such a great game... -->
-    <!-- Example: Midwest Regional Quals 32: 111, 33, 329 played 54, 295, 3594 with a score of 156-63. -->
-    <string name="notification_score_teams_played_teams">^1 ^2: ^3 played ^4 with a score of ^5.</string>
+    <!-- Example: Midwest Regional Quals 32: 111, 33, 329 played 54, 295, 3594 scoring 156-63. -->
+    <string name="notification_score_teams_played_teams">^1 ^2: ^3 played ^4 scoring ^5.</string>
     <string name="notification_score_gameday_title">Match result: %1$s</string>
 
     <!-- *********************
