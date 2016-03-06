@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.database.writers.EventWriter;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -57,7 +58,7 @@ public class AllianceSelectionNotification extends BaseNotification {
     }
 
     @Override
-    public Notification buildNotification(Context context) {
+    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         Resources r = context.getResources();
         String eventName;
         try {

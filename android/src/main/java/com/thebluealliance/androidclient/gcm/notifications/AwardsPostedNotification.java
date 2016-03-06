@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.database.writers.AwardListWriter;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.helpers.AwardHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
@@ -77,7 +78,7 @@ public class AwardsPostedNotification extends BaseNotification {
     }
 
     @Override
-    public Notification buildNotification(Context context) {
+    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         String eventShortName = EventHelper.shortName(eventName);
         String contentText = context.getString(R.string.notification_awards_updated, eventShortName);
 

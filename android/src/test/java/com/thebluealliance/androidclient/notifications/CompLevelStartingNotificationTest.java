@@ -95,7 +95,7 @@ public class CompLevelStartingNotificationTest {
           .thenReturn("Competition Level Starting HIHO");
         when(res.getString(R.string.notification_level_starting, mNotification.getEventName(), "Finals Matches"))
           .thenReturn("Finals Matches starting");
-        Notification notification = mNotification.buildNotification(mContext);
+        Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();
@@ -119,7 +119,7 @@ public class CompLevelStartingNotificationTest {
           .thenReturn("Finals Matches starting");
         when(res.getString(R.string.notification_level_starting_title, "HIHO"))
           .thenReturn("Competition Level Starting HIHO");
-        Notification notification = mNotification.buildNotification(mContext);
+        Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();

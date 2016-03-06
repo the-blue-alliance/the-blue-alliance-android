@@ -11,6 +11,7 @@ import com.google.gson.JsonParser;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
@@ -109,10 +110,11 @@ public class UpcomingMatchNotification extends BaseNotification {
 
     /**
      * @param context a Context object for use by the notification builder
+     * @param followsChecker for checking which teams the user follows
      * @return A constructed notification
      */
     @Override
-    public Notification buildNotification(Context context) {
+    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         String scheduledStartTimeString;
         if (JSONHelper.isNull(matchTime)) {
             scheduledStartTimeString = "";
@@ -124,10 +126,10 @@ public class UpcomingMatchNotification extends BaseNotification {
             scheduledStartTimeString = format.format(scheduledStartTime);
         }
 
-        // TODO: Only boldify team numbers that the user is following
-        Predicate<CharSequence> isFollowing = input -> {
-            // return input.toString().startsWith("1");
-            return true;
+        // Boldify the team numbers that the user is following.
+        Predicate<String> isFollowing = teamNumber -> {
+            return followsChecker.followsTeam(context, teamNumber,
+                    NotificationTypes.UPCOMING_MATCH);
         };
         CharSequence redTeamNumbers = Utilities.boldNameList(Arrays.asList(redTeams), isFollowing);
         CharSequence blueTeamNumbers = Utilities.boldNameList(Arrays.asList(blueTeams), isFollowing);

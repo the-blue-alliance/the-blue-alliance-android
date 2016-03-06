@@ -349,7 +349,7 @@ public class Utilities {
      * satisfy the given predicate.
      */
     public static CharSequence boldNameList(Iterable<? extends CharSequence> names,
-                                            Predicate<CharSequence> beBold) {
+                                            Predicate<String> beBold) {
         final SpannableStringBuilder result = new SpannableStringBuilder();
         boolean first = true;
 
@@ -360,7 +360,7 @@ public class Utilities {
                 result.append(", ");
             }
 
-            if (beBold.apply(name)) {
+            if (beBold.apply(name.toString())) {
                 result.append(name, new StyleSpan(Typeface.BOLD), 0);
             } else {
                 result.append(name);

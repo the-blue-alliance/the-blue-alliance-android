@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.database.writers.MatchWriter;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
@@ -79,7 +80,7 @@ public class ScoreNotification extends BaseNotification {
     }
 
     @Override
-    public Notification buildNotification(Context context) {
+    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         Resources r = context.getResources();
 
         matchKey = match.getKey();
@@ -99,10 +100,10 @@ public class ScoreNotification extends BaseNotification {
         int redScore = Match.getRedScore(alliances);
         int blueScore = Match.getBlueScore(alliances);
 
-        // TODO: Only boldify team numbers that the user is following
-        Predicate<CharSequence> isFollowing = input -> {
-            // return input.toString().endsWith("5");
-            return true;
+        // Boldify the team numbers that the user is following.
+        Predicate<String> isFollowing = teamNumber -> {
+            return followsChecker.followsTeam(context, teamNumber,
+                    NotificationTypes.MATCH_SCORE);
         };
         ArrayList<String> redTeams = Match.teamNumbers(Match.getRedTeams(alliances));
         ArrayList<String> blueTeams = Match.teamNumbers(Match.getBlueTeams(alliances));
