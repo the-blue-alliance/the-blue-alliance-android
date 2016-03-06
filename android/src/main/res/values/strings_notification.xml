@@ -23,8 +23,8 @@
     <string name="notification_score_title">%1$s %2$s Results</string>
     <!-- Example: Midwest Regional Quals 32: 111, 971, 1114 beat 254, 118, 1983 scoring 324-42. -->
     <string name="notification_score_teams_beat_teams">^1 ^2: ^3 beat ^4 scoring ^5.</string>
-    <!-- Example: Midwest Regional Quals 32: 111, 971, 1114 tied 254, 118, 1983 scoring 324-324. -->
-    <string name="notification_score_teams_tied_teams">^1 ^2: ^3 tied ^4 scoring ^5.</string>
+    <!-- Example: Midwest Regional Quals 32: 111, 971, 1114 tied with 254, 118, 1983 scoring 324-324. -->
+    <string name="notification_score_teams_tied_teams">^1 ^2: ^3 tied with ^4 scoring ^5.</string>
 
     <!-- For use only with 2015 non-finals matches, because that thing with no winners. Such a great game... -->
     <!-- Example: Midwest Regional Quals 32: 111, 33, 329 played 54, 295, 3594 scoring 156-63. -->

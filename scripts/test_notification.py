@@ -228,10 +228,9 @@ def event_down_command(data=event_down_sample):
 
 def spam_command(count=10):
     commands = get_notification_commands()
-    commandsToRun = random.sample(commands, min(count, len(commands)))
 
-    for command in commandsToRun:
-        globals()[command]()
+    for command in range(count):
+        globals()[random.choice(commands)]()
 
 
 def all_command():
