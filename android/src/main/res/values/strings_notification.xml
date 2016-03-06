@@ -34,9 +34,9 @@
     <!-- *********************
         Comp Level Starting Notification
         ********************* -->
-    <string name="notification_level_starting_title">%1$s Competition Level Starting</string>
+    <string name="notification_level_starting_title">%1$s %2$s Starting</string>
     <string name="notification_level_starting">%1$s: %2$s are starting.</string>
-    <string name="notification_level_starting_with_time">%1$s: %2$s are scheduled to start at %3$s.</string>
+    <string name="notification_level_starting_with_time">%1$s: %2$s are scheduled for %3$s.</string>
     <string name="notification_level_starting_gameday_details">%1$s starting</string>
 
     <!-- *********************

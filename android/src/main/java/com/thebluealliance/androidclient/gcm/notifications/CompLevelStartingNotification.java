@@ -77,11 +77,9 @@ public class CompLevelStartingNotification extends BaseNotification {
     public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         Resources r = context.getResources();
         String compLevel = getCompLevelNameFromAbbreviation(context, compLevelAbbrev);
-        String scheduledStartTimeString;
+        String scheduledStartTimeString = "";
 
-        if (JSONHelper.isNull(scheduledTime)) {
-            scheduledStartTimeString = "";
-        } else {
+        if (!JSONHelper.isNull(scheduledTime)) {
             long scheduledStartTimeUNIX = scheduledTime.getAsLong();
             // We multiply by 1000 because the Date constructor expects ms
             Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
@@ -101,7 +99,7 @@ public class CompLevelStartingNotification extends BaseNotification {
         stored = new StoredNotification();
         stored.setType(getNotificationType());
         String eventCode = EventHelper.getEventCode(eventKey);
-        String title = r.getString(R.string.notification_level_starting_title, eventCode);
+        String title = r.getString(R.string.notification_level_starting_title, eventCode, compLevel);
         stored.setTitle(title);
         stored.setBody(contentText);
         stored.setMessageData(messageData);
