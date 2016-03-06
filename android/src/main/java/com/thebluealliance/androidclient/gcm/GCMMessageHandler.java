@@ -9,7 +9,6 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
-import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
@@ -30,6 +29,7 @@ import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.SummaryNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import android.app.IntentService;
@@ -87,21 +87,16 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     }
 
     /**
-     * Checks if the user subscribes to or favorites the given team. Implements FollowsChecker.
+     * Checks if the user subscribes to the given team. Implements FollowsChecker.
      *
      * @param teamNumber the team number without the "frc" prefix.
      * @param notificationType one of NotificationTypes.UPCOMING_MATCH, MATCH_SCORE, ...
      */
     public boolean followsTeam(Context context, String teamNumber, String notificationType) {
         String currentUser = AccountHelper.getSelectedAccount(context);
-        // TODO: Drop any letter suffix from teamNumber?
-        String myKey = MyTBAHelper.createKey(currentUser, "frc" + teamNumber);
-        FavoritesTable favTable = mDb.getFavoritesTable();
+        String teamKey = TeamHelper.baseTeamKey("frc" + teamNumber);
+        String myKey = MyTBAHelper.createKey(currentUser, teamKey);
         SubscriptionsTable subTable = mDb.getSubscriptionsTable();
-
-        if (favTable.exists(myKey)) {
-            return true;
-        }
 
         if (!subTable.exists(myKey)) {
             return false;

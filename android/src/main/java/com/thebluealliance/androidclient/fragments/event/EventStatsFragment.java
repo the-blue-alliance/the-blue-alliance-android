@@ -1,18 +1,7 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.support.v7.app.AlertDialog;
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-
 import com.google.gson.JsonElement;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
@@ -25,6 +14,18 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
+
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import java.util.Arrays;
 import java.util.List;
@@ -134,10 +135,7 @@ public class EventStatsFragment
         mListView.setOnItemClickListener((adapterView, view1, position, id) -> {
             String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
             if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
-                if (TeamHelper.validateMultiTeamKey(teamKey)) {
-                    // Take out extra letter at end to make team key valid.
-                    teamKey = teamKey.substring(0, teamKey.length() - 1);
-                }
+                teamKey = TeamHelper.baseTeamKey(teamKey);
                 startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
             } else {
                 throw new IllegalArgumentException("OnItemClickListener must be attached to a view with a valid team key set as the tag!");

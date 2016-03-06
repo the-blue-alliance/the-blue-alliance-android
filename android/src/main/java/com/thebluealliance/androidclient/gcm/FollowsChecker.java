@@ -7,7 +7,7 @@ import android.content.Context;
  */
 public interface FollowsChecker {
     /**
-     * Checks if the user subscribes to or favorites the given team.
+     * Checks if the user subscribes to the given team.
      *
      * @param teamNumber the team number without the "frc" prefix.
      * @param notificationType one of NotificationTypes.UPCOMING_MATCH, MATCH_SCORE, ...
