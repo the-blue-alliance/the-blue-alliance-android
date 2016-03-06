@@ -204,7 +204,8 @@
             android:theme="@style/AppThemeNoActionBar" />
         <activity
             android:name=".activities.ConfirmImageSuggestionActivity"
-            android:label="@string/title_activity_confirm_image_suggestion" />
+            android:label="@string/title_activity_confirm_image_suggestion"
+            android:theme="@style/AppThemeNoActionBar" />
 
         <receiver android:name=".receivers.ConnectivityChangeReceiver">
             <intent-filter>

@@ -1,18 +1,18 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
-
-import java.io.InputStream;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -20,13 +20,14 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ConfirmImageSuggestionActivity extends Activity {
+public class ConfirmImageSuggestionActivity extends AppCompatActivity {
 
     private static final String EXTRA_IMAGE_URI = "image_uri";
     private static final String EXTRA_TEAM_KEY = "team_key";
     private static final String EXTRA_YEAR = "year";
 
     @Bind(R.id.image) ImageView mImageView;
+    @Bind(R.id.toolbar) Toolbar mToolbar;
 
     private Uri mUri;
     private String mTeamKey;
@@ -48,6 +49,11 @@ public class ConfirmImageSuggestionActivity extends Activity {
 
         setContentView(R.layout.activity_confirm_image_suggestion);
         ButterKnife.bind(this);
+
+        ViewCompat.setElevation(mToolbar, getResources().getDimension(R.dimen.toolbar_elevation));
+        mToolbar.setContentInsetsRelative(0, 0);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("Confirm suggestion");
 
         Bundle extras = getIntent().getExtras() == null ? new Bundle() : getIntent().getExtras();
         if (!extras.containsKey(EXTRA_IMAGE_URI)
