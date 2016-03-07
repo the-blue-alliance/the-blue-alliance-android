@@ -54,7 +54,6 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
     private int mYear;
 
     private File mImageFile;
-    private boolean mDidFileExistOnCreate = false;
 
     public static Intent newIntent(Context context, Uri imageUri, String teamKey, int year) {
         Bundle extras = new Bundle();
@@ -104,10 +103,7 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
         }
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_TEMP_FILE_PATH)) {
-            Log.d(Constants.LOG_TAG, "saved file path: " + savedInstanceState.getString(SAVED_TEMP_FILE_PATH));
             mImageFile = new File(savedInstanceState.getString(SAVED_TEMP_FILE_PATH));
-            mDidFileExistOnCreate = true;
-            mProgressBar.setVisibility(View.GONE);
         }
 
         // Don't begin caching and loading the image until layout is complete; the ImageView must
@@ -170,16 +166,14 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(bitmap -> {
-                    Log.d(Constants.LOG_TAG, "Displaying bitmap");
                     mImageView.setImageBitmap(bitmap);
+
+                    // Fade ImageView in and ProgressBar out
                     mImageView.setAlpha(0.0f);
                     mImageView.animate().alpha(1.0f).setDuration(500).start();
+                    mProgressBar.setAlpha(1.0f);
+                    mProgressBar.animate().alpha(0.0f).setDuration(500).start();
 
-                    // Only animate the progress bar out of sight if we are loading the image
-                    // into a temporary file for the first time
-                    if (!mDidFileExistOnCreate) {
-                        mProgressBar.animate().scaleX(0.0f).scaleY(0.0f).setDuration(500).start();
-                    }
                     mConfirmFab.setEnabled(true);
                 });
     }

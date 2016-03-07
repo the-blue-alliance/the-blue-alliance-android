@@ -21,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
@@ -59,10 +58,11 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         HasFragmentComponent,
         YearsParticipatedUpdate {
 
-    public static final String TEAM_KEY = "team_key",
-            TEAM_YEAR = "team_year",
-            SELECTED_YEAR = "year",
-            SELECTED_TAB = "tab";
+    public static final String EXTRA_TEAM_KEY = "team_key";
+    public static final String TEAM_YEAR = "team_year";
+    public static final String SELECTED_YEAR = "year";
+    public static final String SELECTED_TAB = "tab";
+    public static final String CURRENT_PHOTO_URI = "current_photo_uri";
 
     private static final int CHOOSE_IMAGE_REQUEST = 42;
     private static final int TAKE_PICTURE_REQUEST = 43;
@@ -92,13 +92,13 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     public static Intent newInstance(Context context, String teamKey) {
         System.out.println("making intent for " + teamKey);
         Intent intent = new Intent(context, ViewTeamActivity.class);
-        intent.putExtra(TEAM_KEY, teamKey);
+        intent.putExtra(EXTRA_TEAM_KEY, teamKey);
         return intent;
     }
 
     public static Intent newInstance(Context context, String teamKey, int year) {
         Intent intent = new Intent(context, ViewTeamActivity.class);
-        intent.putExtra(TEAM_KEY, teamKey);
+        intent.putExtra(EXTRA_TEAM_KEY, teamKey);
         intent.putExtra(TEAM_YEAR, year);
         return intent;
     }
@@ -107,7 +107,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mTeamKey = getIntent().getStringExtra(TEAM_KEY);
+        mTeamKey = getIntent().getStringExtra(EXTRA_TEAM_KEY);
         if (mTeamKey == null) {
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
@@ -126,6 +126,9 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
             }
             if (savedInstanceState.containsKey(SELECTED_YEAR)) {
                 mYear = savedInstanceState.getInt(SELECTED_YEAR);
+            }
+            if (savedInstanceState.containsKey(CURRENT_PHOTO_URI)) {
+                mCurrentPhotoUri = savedInstanceState.getString(CURRENT_PHOTO_URI);
             }
         } else {
             int maxYear = mStatusController.getMaxCompYear();
@@ -167,6 +170,9 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         super.onSaveInstanceState(outState);
         outState.putInt(SELECTED_YEAR, mYear);
         outState.putInt(SELECTED_TAB, mSelectedTab);
+        if (mCurrentPhotoUri != null) {
+            outState.putString(CURRENT_PHOTO_URI, mCurrentPhotoUri);
+        }
     }
 
     @Override
