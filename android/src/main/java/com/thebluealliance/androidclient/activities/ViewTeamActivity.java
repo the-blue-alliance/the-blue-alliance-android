@@ -316,8 +316,6 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     protected boolean onFabClick() {
         switch (mSelectedTab) {
             case ViewTeamFragmentPagerAdapter.TAB_MEDIA:
-                Toast.makeText(this, "Upload image!", Toast.LENGTH_SHORT).show();
-
                 // If the device doesn't have a camera, send them straight to the image picker
                 if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
                     selectImage();
