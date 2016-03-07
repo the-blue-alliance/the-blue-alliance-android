@@ -9,10 +9,17 @@ import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.ImageView;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
+import com.thebluealliance.androidclient.imgur.ImgurUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,6 +39,8 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity {
     private Uri mUri;
     private String mTeamKey;
     private int mYear;
+
+    private File mImageFile;
 
     public static Intent newIntent(Context context, Uri imageUri, String teamKey, int year) {
         Bundle extras = new Bundle();
@@ -77,25 +86,36 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity {
         // We'll fetch and decode the image in a background thread to keep things responsive
         // This will also write the file to our cache directory so that we can pass it to the
         // upload service. We can't pass the URI directly.
-        final int width = mImageView.getWidth(), height = mImageView.getHeight();
-        Observable<Bitmap> observable = Observable.create((observer) -> {
-            try {
-                // First, read in a scaled version of the image
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = calculateInSampleSize(options, width, height);
-                Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(mUri), null, options);
-
-
-                observer.onNext(bitmap);
-            } catch (Exception e) {
-                observer.onError(e);
-            } finally {
-                observer.onCompleted();
+        Observable.just(mUri).map((uri) -> {
+            mImageFile = ImgurUtils.createFile(uri, ConfirmImageSuggestionActivity.this);
+            if (mImageFile == null) {
+                // TODO error handling!
+                Log.e(Constants.LOG_TAG, "Image was null!");
             }
+            return mImageFile;
+        }).map((file) -> {
+            try {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                FileInputStream stream = new FileInputStream(file);
+                BitmapFactory.decodeStream(stream, null, options);
+                stream.close();
+                stream = null;
+
+                options.inSampleSize = calculateInSampleSize(options, mImageView.getWidth(), mImageView.getHeight());
+
+                options.inJustDecodeBounds = false;
+                stream = new FileInputStream(file);
+                Bitmap bitmap = BitmapFactory.decodeStream(stream, null, options);
+                stream.close();
+                return bitmap;
+            } catch (IOException e) {
+                throw new RuntimeException("Error reading bitmap");
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(bitmap -> {
+            mImageView.setImageBitmap(bitmap);
         });
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(bitmap -> mImageView.setImageBitmap(bitmap));
     }
 
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {

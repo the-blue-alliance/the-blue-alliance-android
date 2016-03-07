@@ -77,7 +77,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     private int mCurrentSelectedYearPosition = -1,
             mSelectedTab = -1;
 
-    private String mCurrentPhotoPath;
+    private String mCurrentPhotoUri;
 
     private int[] mYearsParticipated;
 
@@ -388,14 +388,12 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
                 // and suggesting the appropriate image
                 startActivity(ConfirmImageSuggestionActivity.newIntent(this, uri, mTeamKey, mYear));
             }
-        } else if (requestCode == TAKE_PICTURE_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                // Tell Media Scanner about the new photo
-                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(mCurrentPhotoPath)));
+        } else if (requestCode == TAKE_PICTURE_REQUEST && resultCode == RESULT_OK) {
+            // Tell Media Scanner about the new photo
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(mCurrentPhotoUri)));
 
-                // Off to ConfirmImageSuggestionActivity!
-                startActivity(ConfirmImageSuggestionActivity.newIntent(this, Uri.parse(mCurrentPhotoPath), mTeamKey, mYear));
-            }
+            // Off to ConfirmImageSuggestionActivity!
+            startActivity(ConfirmImageSuggestionActivity.newIntent(this, Uri.parse(mCurrentPhotoUri), mTeamKey, mYear));
         }
     }
 
@@ -404,14 +402,15 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        storageDir = new File(storageDir, "The Blue Alliance");
+        storageDir.mkdir();
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
 
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        mCurrentPhotoUri = "file:" + image.getAbsolutePath();
         return image;
     }
 
