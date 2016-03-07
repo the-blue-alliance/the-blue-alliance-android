@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.Constants;
@@ -43,9 +44,10 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
 
     private static final String SAVED_TEMP_FILE_PATH = "saved_file_url";
 
+    @Bind(R.id.toolbar) Toolbar mToolbar;
+    @Bind(R.id.header) TextView mHeader;
     @Bind(R.id.image) ImageView mImageView;
     @Bind(R.id.progress) ProgressBar mProgressBar;
-    @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.confirm_fab) FloatingActionButton mConfirmFab;
     @Bind(R.id.cancel_fab) FloatingActionButton mCancelFab;
 
@@ -105,6 +107,9 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
         if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_TEMP_FILE_PATH)) {
             mImageFile = new File(savedInstanceState.getString(SAVED_TEMP_FILE_PATH));
         }
+
+        // Set up the header view, which displays "Team NUMBER (YEAR)"
+        mHeader.setText(getString(R.string.imgur_confirm_image_header, TeamHelper.getTeamNumber(mTeamKey), mYear));
 
         // Don't begin caching and loading the image until layout is complete; the ImageView must
         // have a defined width and height in order to compute inSampleSize for loading the bitmap
@@ -214,7 +219,7 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
         switch (v.getId()) {
             case R.id.confirm_fab:
                 Toast.makeText(this, "Your image will be uploaded in the background!", Toast.LENGTH_SHORT).show();
-                startService(ImgurSuggestionService.newIntent(this, mImageFile.getAbsolutePath(), "", "", mTeamKey, mYear));
+                startService(ImgurSuggestionService.newIntent(this, mImageFile.getAbsolutePath(), mTeamKey, mYear));
                 this.finish();
                 break;
             case R.id.cancel_fab:

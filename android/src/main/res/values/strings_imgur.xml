@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="imgur_confirm_image_header">Team %1$s (%2$s)</string>
+
     <string name="imgur_upload_uploading">Image uploading...</string>
     <string name="imgur_upload_success_title">Image uploaded!</string>
     <string name="imgur_upload_success_message">Your image will be reviewed by the moderators.</string>

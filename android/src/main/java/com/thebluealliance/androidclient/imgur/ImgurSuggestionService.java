@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.gce.GceAuthController;
 import com.thebluealliance.androidclient.di.components.DaggerSuggestionComponent;
 import com.thebluealliance.androidclient.di.components.SuggestionComponent;
+import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.imgur.ImgurApi;
 import com.thebluealliance.imgur.responses.UploadResponse;
 
@@ -49,7 +50,7 @@ public class ImgurSuggestionService extends IntentService {
 
     /**
      * Create a new Intent pass to {@link Context#startService(Intent)} that uploads the given image
-     * file to imgur
+     * file to imgur and suggests it to The Blue Alliance.
      *
      * @param context     Context to create the intent with
      * @param filepath    Local filepath of the image file to suggest
@@ -69,6 +70,31 @@ public class ImgurSuggestionService extends IntentService {
         intent.putExtra(EXTRA_FILEPATH, filepath);
         intent.putExtra(EXTRA_TITLE, title);
         intent.putExtra(EXTRA_DESCRIPTION, description);
+        intent.putExtra(EXTRA_TEAMKEY, teamKey);
+        intent.putExtra(EXTRA_YEAR, year);
+
+        return intent;
+    }
+
+    /**
+     * Create a new Intent pass to {@link Context#startService(Intent)} that uploads the given image
+     * file to imgur and suggests it to The Blue Alliance. This method will automatically generate
+     * a title and description for the image; useful if the user didn't specify any.
+     *
+     * @param context     Context to create the intent with
+     * @param filepath    Local filepath of the image file to suggest
+     * @param teamKey     Team to suggest the image with
+     * @param year        Year to suggest the image for, along with teamKey
+     * @return An Intent to pass to {@link Context#startService(Intent)}
+     */
+    public static Intent newIntent(Context context,
+                                   String filepath,
+                                   String teamKey,
+                                   int year) {
+        Intent intent = new Intent(context, ImgurSuggestionService.class);
+        intent.putExtra(EXTRA_FILEPATH, filepath);
+        intent.putExtra(EXTRA_TITLE, "Team " + TeamHelper.getTeamNumber(teamKey) + " (" + year + ")");
+        intent.putExtra(EXTRA_DESCRIPTION, "Uploaded from The Blue Alliance Android app");
         intent.putExtra(EXTRA_TEAMKEY, teamKey);
         intent.putExtra(EXTRA_YEAR, year);
 
