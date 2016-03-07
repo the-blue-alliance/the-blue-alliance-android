@@ -61,7 +61,14 @@ public class MatchTest {
     @Test
     public void testUtilities() throws BasicModel.FieldNotDefinedException {
         JsonArray teamsJson = Match.getRedTeams(mMatch.getAlliances());
+        ArrayList<String> teamKeys = Match.teamKeys(teamsJson);
+        assertEquals(Arrays.asList("frc1678", "frc1640", "frc1114"), teamKeys);
+
         ArrayList<String> teamNumbers = Match.teamNumbers(teamsJson);
         assertEquals(Arrays.asList("1678", "1640", "1114"), teamNumbers);
+
+        JsonArray emptyJsonArray = new JsonArray();
+        assertEquals(0, Match.teamKeys(emptyJsonArray).size());
+        assertEquals(0, Match.teamNumbers(emptyJsonArray).size());
     }
 }

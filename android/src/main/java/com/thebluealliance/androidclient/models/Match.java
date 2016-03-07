@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -158,10 +159,10 @@ public class Match extends BasicModel<Match> {
     /** @return team keys from {@link #getRedTeams} or {@link #getBlueTeams}. */
     @NonNull
     public static ArrayList<String> teamKeys(JsonArray teamsJson) {
-        ArrayList<String> teamKeys = new ArrayList<>();
+        ArrayList<String> teamKeys = new ArrayList<>(teamsJson.size());
 
-        for (int i = 0; i < teamsJson.size(); i++) {
-            teamKeys.add(teamsJson.get(i).getAsString());
+        for (JsonElement key : teamsJson) {
+            teamKeys.add(key.getAsString());
         }
         return teamKeys;
     }
@@ -170,7 +171,7 @@ public class Match extends BasicModel<Match> {
     @NonNull
     public static ArrayList<String> teamNumbers(JsonArray teamsJson) {
         ArrayList<String> teamKeys = teamKeys(teamsJson);
-        ArrayList<String> teamNumbers = new ArrayList<>();
+        ArrayList<String> teamNumbers = new ArrayList<>(teamKeys.size());
 
         for (String key : teamKeys) {
             teamNumbers.add(key.replace("frc", ""));
