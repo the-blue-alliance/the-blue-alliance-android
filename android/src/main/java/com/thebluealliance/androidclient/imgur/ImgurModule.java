@@ -32,9 +32,4 @@ public class ImgurModule {
     public ImgurApi provideImgurApi(@Named("imgur_retrofit") Retrofit retrofit) {
         return retrofit.create(ImgurApi.class);
     }
-
-    @Provides @Singleton
-    public ImgurController provideImgurController(ImgurApi api) {
-        return new ImgurController(api);
-    }
 }

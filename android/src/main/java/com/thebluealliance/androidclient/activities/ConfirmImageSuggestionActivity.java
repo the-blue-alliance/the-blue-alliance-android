@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
+import com.thebluealliance.androidclient.imgur.ImgurSuggestionService;
 import com.thebluealliance.androidclient.imgur.ImgurUtils;
 
 import java.io.BufferedInputStream;
@@ -125,7 +126,7 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
      * Loads the image from {@code mUri} into our cache directory and displays it in this activity.
      * The caching part is important because the image at {@code mUri} is not guaranteed to be in
      * local storage; for instance, it could be an image that needs to be loaded from Google Drive.
-     * We need to store it in a local file so that {@link com.thebluealliance.androidclient.imgur.ImgurController}
+     * We need to store it in a local file so that {@link ImgurSuggestionService}
      * can upload it properly.
      * <p>
      * This should not be called until after initial layout is complete; loading the Bitmap into
@@ -218,7 +219,9 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.confirm_fab:
-                Toast.makeText(this, "Confirmed image!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Your image will be uploaded in the background!", Toast.LENGTH_SHORT).show();
+                startService(ImgurSuggestionService.newIntent(this, mImageFile.getAbsolutePath(), "", "", mTeamKey, mYear));
+                this.finish();
                 break;
             case R.id.cancel_fab:
                 Toast.makeText(this, "Submission cancelled", Toast.LENGTH_SHORT).show();
