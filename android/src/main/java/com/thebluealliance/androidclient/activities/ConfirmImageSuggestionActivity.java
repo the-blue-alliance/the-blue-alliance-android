@@ -127,7 +127,7 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
      * local storage; for instance, it could be an image that needs to be loaded from Google Drive.
      * We need to store it in a local file so that {@link com.thebluealliance.androidclient.imgur.ImgurController}
      * can upload it properly.
-     *
+     * <p>
      * This should not be called until after initial layout is complete; loading the Bitmap into
      * memory efficiently requires that we know how big the target ImageView so we can scale it
      * properly during the decoding process.
@@ -222,6 +222,10 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
                 break;
             case R.id.cancel_fab:
                 Toast.makeText(this, "Submission cancelled", Toast.LENGTH_SHORT).show();
+                // Delete the cached image file to free up storage space
+                if (mImageFile != null) {
+                    mImageFile.delete();
+                }
                 this.finish();
                 break;
         }
