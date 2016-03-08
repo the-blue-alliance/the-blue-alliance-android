@@ -1,5 +1,4 @@
 apply plugin: 'java'
-apply plugin: 'maven'
 
 
 group = 'com.appspot.tbatv_prod_hrd'
@@ -25,5 +24,8 @@ repositories {
 }
 
 dependencies {
-    compile ([group: 'com.google.api-client', name: 'google-api-client', version: '1.21.0'])
+    compile ([group: 'com.google.api-client', name: 'google-api-client', version: googleApiClientVersion])
+    compile "io.reactivex:rxjava:${rxJavaVersion}"
+    compile "com.squareup.retrofit:retrofit:${retrofitVersion}"
+    compile "com.google.code.gson:gson:${gsonVersion}"
 }

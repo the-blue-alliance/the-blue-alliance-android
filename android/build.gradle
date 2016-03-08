@@ -98,6 +98,9 @@ android {
         versionName version.toString()
         multiDexEnabled true
 
+        // Needed for support lib 23.2.0+ on pre-L devices
+        vectorDrawables.useSupportLibrary = true
+
         // Add specific versioning things to BuildConfig
         buildConfigField "int", "MAJOR_VERSION", "$major"
         buildConfigField "int", "MINOR_VERSION", "$minor"
@@ -142,6 +145,11 @@ android {
         debugBlue {
             debuggable true
         }
+    }
+
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "2048M"
     }
 
 }
@@ -200,17 +208,15 @@ repositories {
     }
 }
 
-ext {
-    supportLibVersion = '23.1.1'
-    playServicesVersion = '8.4.0'
-}
+
 
 dependencies {
 
     // Google Cloud Endpoints Library
-    compile ([group: 'com.google.api-client', name: 'google-api-client-android', version: '1.21.0'])
-    compile ([group: 'com.google.http-client', name: 'google-http-client-gson', version: '1.21.0'])
+    compile ([group: 'com.google.api-client', name: 'google-api-client-android', version: googleApiClientVersion])
+    compile ([group: 'com.google.http-client', name: 'google-http-client-gson', version: googleApiClientVersion])
     compile project(':tbaMobile')
+    compile project(':libImgur')
 
     // Android support libraries
     compile "com.android.support:support-v13:${supportLibVersion}"
@@ -229,22 +235,22 @@ dependencies {
 
     // Square Libraries
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.squareup.retrofit:retrofit:2.0.0-beta1'
-    compile 'com.squareup.retrofit:adapter-rxjava:2.0.0-beta1'
+    compile "com.squareup.retrofit:retrofit:${retrofitVersion}"
+    compile "com.squareup.retrofit:adapter-rxjava:${retrofitVersion}"
     compile 'com.squareup.okhttp:okhttp:2.4.0'
 
     compile 'com.google.dagger:dagger:2.0.1'
     apt 'com.google.dagger:dagger-compiler:2.0.1'
 
     // Other third party libraries
-    compile 'com.google.code.gson:gson:2.3.1'
+    compile "com.google.code.gson:gson:${gsonVersion}"
     compile 'me.xuender:unidecode:0.0.7'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'de.hdodenhof:circleimageview:1.3.0'
     compile 'com.facebook.stetho:stetho:1.1.1'
     compile 'com.facebook.stetho:stetho-okhttp:1.1.1'
     compile 'com.firebase:firebase-client-android:2.3.1'
-    compile 'io.reactivex:rxandroid:1.0.1'
+    compile "io.reactivex:rxandroid:${rxJavaVersion}"
     compile 'io.reactivex:rxjava-math:1.0.0'
     compile 'me.relex:circleindicator:1.1.5@aar'
     compile 'com.jakewharton:butterknife:7.0.1'
