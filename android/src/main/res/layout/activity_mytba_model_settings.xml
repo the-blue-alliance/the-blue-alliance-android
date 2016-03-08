@@ -10,7 +10,7 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
-            style="@style/DefaultLightToolbarStyle"
+            style="@style/DefaultLightToolbarStyleWithContentInset"
             android:background="@color/accent"
             app:contentInsetStart="72dp"
             app:navigationContentDescription="@string/close"

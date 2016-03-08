@@ -98,6 +98,9 @@ android {
         versionName version.toString()
         multiDexEnabled true
 
+        // Needed for support lib 23.2.0+ on pre-L devices
+        vectorDrawables.useSupportLibrary = true
+
         // Add specific versioning things to BuildConfig
         buildConfigField "int", "MAJOR_VERSION", "$major"
         buildConfigField "int", "MINOR_VERSION", "$minor"
@@ -142,6 +145,11 @@ android {
         debugBlue {
             debuggable true
         }
+    }
+
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "2048M"
     }
 
 }

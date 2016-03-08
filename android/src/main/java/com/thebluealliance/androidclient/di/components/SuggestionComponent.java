@@ -13,6 +13,5 @@ import dagger.Component;
         modules = {ImgurModule.class, GceModule.class},
         dependencies = {ApplicationComponent.class})
 public interface SuggestionComponent {
-
     void inject(ImgurSuggestionService service);
 }

@@ -58,12 +58,11 @@ public class TeamClickListener implements AdapterView.OnItemClickListener, View.
         if (teams == null) {
             return;
         }
+
         String teamKey = teams.get(position).getKey();
-        Intent i = new Intent(mContext, ViewTeamActivity.class);
-        i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
+        Intent i = ViewTeamActivity.newInstance(mContext, teamKey);
+        mContext.startActivity(i);
 
         AnalyticsHelper.sendClickUpdate(mContext, "team_click", i.getDataString(), teamKey);
-
-        mContext.startActivity(i);
     }
 }
