@@ -81,7 +81,7 @@ public class ScheduleUpdatedNotificationTest {
           .thenReturn("The match schedule at Australia has been updated. The next match starts at 15:18:00");
         when(mContext.getString(R.string.notification_schedule_updated_title, "AUSY"))
           .thenReturn("Event Schedule Updated AUSY");
-        Notification notification = mNotification.buildNotification(mContext);
+        Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();

@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.database.tables;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.models.Subscription;
+
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,5 +98,13 @@ public class SubscriptionsTable {
 
     public void recreate(String user) {
         mDb.delete(Database.TABLE_SUBSCRIPTIONS, USER_NAME + " = ?", new String[]{user});
+    }
+
+    public boolean hasNotificationType(String key, String notificationType) {
+        if (!exists(key)) {
+            return false;
+        }
+        String settings = get(key).getNotificationSettings();
+        return settings.contains(notificationType);
     }
 }

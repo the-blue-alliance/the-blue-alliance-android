@@ -1,5 +1,19 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewEventActivity;
+import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
+import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
+import com.thebluealliance.androidclient.models.StoredNotification;
+
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
@@ -10,18 +24,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.ViewEventActivity;
-import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.helpers.MyTBAHelper;
-import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
-import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -72,14 +74,12 @@ public class CompLevelStartingNotification extends BaseNotification {
     }
 
     @Override
-    public Notification buildNotification(Context context) {
+    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         Resources r = context.getResources();
         String compLevel = getCompLevelNameFromAbbreviation(context, compLevelAbbrev);
-        String scheduledStartTimeString;
+        String scheduledStartTimeString = "";
 
-        if (JSONHelper.isNull(scheduledTime)) {
-            scheduledStartTimeString = "";
-        } else {
+        if (!JSONHelper.isNull(scheduledTime)) {
             long scheduledStartTimeUNIX = scheduledTime.getAsLong();
             // We multiply by 1000 because the Date constructor expects ms
             Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
@@ -99,7 +99,7 @@ public class CompLevelStartingNotification extends BaseNotification {
         stored = new StoredNotification();
         stored.setType(getNotificationType());
         String eventCode = EventHelper.getEventCode(eventKey);
-        String title = r.getString(R.string.notification_level_starting_title, eventCode);
+        String title = r.getString(R.string.notification_level_starting_title, eventCode, compLevel);
         stored.setTitle(title);
         stored.setBody(contentText);
         stored.setMessageData(messageData);
@@ -182,7 +182,7 @@ public class CompLevelStartingNotification extends BaseNotification {
         return convertView;
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         public TextView header;
         public TextView title;
         public TextView time;

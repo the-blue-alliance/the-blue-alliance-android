@@ -88,7 +88,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
         try {
             Call<APIStatus> statusCall = datafeed.statusCall();
             Response<APIStatus> statusResponse = statusCall.execute();
-            if (!statusResponse.isSuccess() && statusResponse.body() != null) {
+            if (!statusResponse.isSuccess() || statusResponse.body() == null) {
                 onConnectionError();
                 return null;
             }

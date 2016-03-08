@@ -7,6 +7,7 @@ import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(RobolectricTestRunner.class)
@@ -39,6 +40,14 @@ public class TeamHelperTest {
         for (String key : invalidKeys) {
             assertFalse(TeamHelper.validateMultiTeamKey(key));
         }
+    }
+
+    @Test
+    public void testBaseTeamKey() {
+        assertEquals("frc432", TeamHelper.baseTeamKey("frc432"));
+        assertEquals("frc432", TeamHelper.baseTeamKey("frc432B"));
+        assertEquals("", TeamHelper.baseTeamKey(""));
+        assertNull(TeamHelper.baseTeamKey(null));
     }
 
     @Test

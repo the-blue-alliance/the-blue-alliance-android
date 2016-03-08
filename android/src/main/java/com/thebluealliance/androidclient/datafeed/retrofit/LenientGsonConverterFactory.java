@@ -19,6 +19,10 @@ import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.ResponseBody;
+
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 import retrofit.Converter;
@@ -27,9 +31,10 @@ import retrofit.Converter;
  * A {@linkplain Converter.Factory converter} which uses Gson for JSON
  * Modified from https://github.com/square/retrofit/blob/master/retrofit-converters/gson/src/main/java/retrofit/GsonConverterFactory.java
  */
-public final class LenientGsonConverterFactory implements Converter.Factory {
+public final class LenientGsonConverterFactory extends Converter.Factory {
     /**
-     * Create an instance using a default {@link Gson} instance for conversion. Encoding to JSON and
+     * Create an instance using a default {@link Gson} instance for conversion. Encoding to JSON
+     * and
      * decoding from JSON (when no charset is specified by a header) will use UTF-8.
      */
     public static LenientGsonConverterFactory create() {
@@ -51,8 +56,15 @@ public final class LenientGsonConverterFactory implements Converter.Factory {
         this.gson = gson;
     }
 
-    @Override public Converter<?> get(Type type) {
+    @Override
+    public Converter<?, RequestBody> toRequestBody(Type type, Annotation[] annotations) {
         TypeAdapter<?> adapter = gson.getAdapter(TypeToken.get(type));
-        return new LenientGsonConverter<>(adapter);
+        return new LenientGsonRequestBodyConverter<>(adapter);
+    }
+
+    @Override
+    public Converter<ResponseBody, ?> fromResponseBody(Type type, Annotation[] annotations) {
+        TypeAdapter<?> adapter = gson.getAdapter(TypeToken.get(type));
+        return new LenientGsonResponseBodyConverter<>(adapter);
     }
 }

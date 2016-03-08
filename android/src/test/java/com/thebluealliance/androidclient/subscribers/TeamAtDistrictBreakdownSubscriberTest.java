@@ -5,11 +5,11 @@ import android.content.res.Resources;
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
-import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class TeamAtDistrictBreakdownSubscriberTest {
         DatabaseMocker.mockEventsTable(mDb);
         when(mResources.getString(anyInt())).thenReturn("String");
 
-        mGson = DatafeedModule.getGson();
+        mGson = HttpModule.getGson();
         mSubscriber = new TeamAtDistrictBreakdownSubscriber(mResources, mDb, mGson);
         mDistrictTeam = ModelMaker.getModelList(DistrictTeam.class, "2015ne_rankings").get(0);
     }
