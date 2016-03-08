@@ -1,16 +1,11 @@
 package com.thebluealliance.androidclient.imgur;
 
-import android.app.IntentService;
-import android.content.Context;
-import android.content.Intent;
-import android.os.PowerManager;
-import android.util.Log;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import com.appspot.tbatv_prod_hrd.TeamMedia;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesMediaSuggestionMessage;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
 import com.thebluealliance.androidclient.Constants;
@@ -22,6 +17,12 @@ import com.thebluealliance.androidclient.di.components.SuggestionComponent;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.imgur.ImgurApi;
 import com.thebluealliance.imgur.responses.UploadResponse;
+
+import android.app.IntentService;
+import android.content.Context;
+import android.content.Intent;
+import android.os.PowerManager;
+import android.util.Log;
 
 import java.io.File;
 
@@ -177,19 +178,18 @@ public class ImgurSuggestionService extends IntentService {
             // Something broke
             successful = false;
             e.printStackTrace();
+        } finally {
+            if (successful) {
+                notification.onUploadSuccess();
+            } else {
+                notification.onUploadFailure();
+            }
+
+            // Delete the temp cached image
+            new File(filepath).delete();
+
+            wakeLock.release();
         }
-
-
-        if (successful) {
-            notification.onUploadSuccess();
-        } else {
-            notification.onUploadFailure();
-        }
-
-        // Delete the temp cached image
-        new File(filepath).delete();
-
-        wakeLock.release();
     }
 
     private SuggestionComponent getComponent() {
