@@ -1,21 +1,6 @@
 package com.thebluealliance.androidclient;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.res.Resources;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.Settings;
-import android.support.annotation.RawRes;
-import android.support.v7.app.AlertDialog;
-import android.text.Html;
-import android.text.format.DateFormat;
-import android.util.ArrayMap;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.View;
-import android.view.Window;
+import com.google.common.base.Predicate;
 
 import com.thebluealliance.androidclient.activities.GamedayActivity;
 import com.thebluealliance.androidclient.activities.HomeActivity;
@@ -25,6 +10,26 @@ import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.res.Resources;
+import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
+import android.support.annotation.RawRes;
+import android.support.v7.app.AlertDialog;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.format.DateFormat;
+import android.text.style.StyleSpan;
+import android.util.ArrayMap;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.View;
+import android.view.Window;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -337,6 +342,31 @@ public class Utilities {
             // e.g. "111, 1114, and 254
         }
         return finalString;
+    }
+
+    /**
+     * @return a comma-separated CharSequence of the given names, applying bold style to names that
+     * satisfy the given predicate.
+     */
+    public static CharSequence boldNameList(Iterable<? extends CharSequence> names,
+                                            Predicate<String> beBold) {
+        final SpannableStringBuilder result = new SpannableStringBuilder();
+        boolean first = true;
+
+        for (CharSequence name : names) {
+            if (first) {
+                first = false;
+            } else {
+                result.append(", ");
+            }
+
+            if (beBold.apply(name.toString())) {
+                result.append(name, new StyleSpan(Typeface.BOLD), 0);
+            } else {
+                result.append(name);
+            }
+        }
+        return result;
     }
 
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
