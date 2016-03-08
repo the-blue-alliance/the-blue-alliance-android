@@ -34,6 +34,7 @@ public class Match extends BasicModel<Match> {
     private MatchType type;
     private JsonObject alliances;
     private JsonArray videos;
+    private JsonObject breakdown;
 
     public Match() {
         super(Database.TABLE_MATCHES, ModelType.MATCH);
@@ -110,6 +111,26 @@ public class Match extends BasicModel<Match> {
 
     public void setTypeFromShort(String type) {
         this.type = MatchType.fromShortType(type);
+    }
+
+    public JsonObject getBreakdown() throws FieldNotDefinedException {
+        if (breakdown != null) {
+            return breakdown;
+        }
+        if (fields.containsKey(MatchesTable.BREAKDOWN) && fields.get(MatchesTable.BREAKDOWN) instanceof String) {
+            alliances = JSONHelper.getasJsonObject((String) fields.get(MatchesTable.BREAKDOWN));
+            return alliances;
+        }
+        throw new FieldNotDefinedException("Field Database.Matches.BREAKDOWN is not defined");
+    }
+
+    public void setBreakdown(String breakdown) {
+        fields.put(MatchesTable.BREAKDOWN, breakdown);
+    }
+
+    public void setBreakdown(JsonObject breakdown) {
+        fields.put(MatchesTable.BREAKDOWN, breakdown.toString());
+        this.breakdown = breakdown;
     }
 
     public JsonObject getAlliances() throws FieldNotDefinedException {

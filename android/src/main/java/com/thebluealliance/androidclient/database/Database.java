@@ -1,14 +1,5 @@
 package com.thebluealliance.androidclient.database;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
-import android.os.Build;
-import android.preference.PreferenceManager;
-import android.util.Log;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
@@ -22,6 +13,15 @@ import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
+import android.os.Build;
+import android.preference.PreferenceManager;
+import android.util.Log;
+
 import java.util.Map;
 
 
@@ -31,7 +31,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
     public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
-    private static final int DATABASE_VERSION = 29;
+    private static final int DATABASE_VERSION = 30;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database";
     public static final @Deprecated String TABLE_API = "api";
@@ -98,7 +98,8 @@ public class Database extends SQLiteOpenHelper {
             + MatchesTable.TIMESTRING + " TEXT DEFAULT '', "
             + MatchesTable.TIME + " TIMESTAMP, "
             + MatchesTable.ALLIANCES + " TEXT DEFAULT '', "
-            + MatchesTable.VIDEOS + " TEXT DEFAULT '' "
+            + MatchesTable.VIDEOS + " TEXT DEFAULT '', "
+            + MatchesTable.BREAKDOWN + " TEXT DEFAULT '' "
             + ")";
     String CREATE_MEDIAS = "CREATE TABLE IF NOT EXISTS " + TABLE_MEDIAS + "("
             + MediasTable.TYPE + " TEXT DEFAULT '', "
@@ -371,9 +372,28 @@ public class Database extends SQLiteOpenHelper {
                         }
                         db.setTransactionSuccessful();
                     } finally {
-                        motto.close();
+                        if (motto != null) {
+                            motto.close();
+                        }
                         db.endTransaction();
-                        break;
+                    }
+                    break;
+                case 30:
+                    // Add match breakdown
+                    db.beginTransaction();
+                    Cursor breakdown = null;
+                    try {
+                        breakdown = db.rawQuery("SELECT * FROM " + TABLE_MATCHES + " LIMIT 0,1",
+                                null);
+                        if (breakdown.getColumnIndex(MatchesTable.BREAKDOWN) == -1) {
+                            db.execSQL("ALTER TABLE " + TABLE_MATCHES + " ADD COLUMN " + MatchesTable.BREAKDOWN + " TEXT DEFAULT '' ");
+                        }
+                        db.setTransactionSuccessful();
+                    } finally {
+                        if (breakdown != null) {
+                            breakdown.close();
+                        }
+                        db.endTransaction();
                     }
             }
             upgradeTo++;

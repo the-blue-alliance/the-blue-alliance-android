@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="breakdown2016_auto_boulder">Auto Boulder</string>
+    <string name="breakdown2016_auto_reach">Auto Reach</string>
+    <string name="breakdown2016_auto_cross">Auto Crossing</string>
+    <string name="breakdown2016_auto_total">Total Auto</string>
+    <string name="breakdown2016_defense1">Defense 1</string>
+    <string name="breakdown2016_defense2">Defense 2</string>
+    <string name="breakdown2016_defense3">Defense 3 (Audience)</string>
+    <string name="breakdown2016_defense4">Defense 4</string>
+    <string name="breakdown2016_defense5">Defense 5</string>
+    <string name="breakdown2016_cross_format">%1$dx Cross</string>
+    <string name="breakdown2016_teleop_cross">Teleop Crossing</string>
+    <string name="breakdown2016_teleop_boulder_high">Teleop Boulders High</string>
+    <string name="breakdown2016_teleop_boulder_low">Teleop Boulders Low</string>
+    <string name="breakdown2016_teleop_boulder_total">Total Teleop Boulder</string>
+    <string name="breakdown2016_teleop_challenge">Teleop Challenge</string>
+    <string name="breakdown2016_teleop_scale">Teleop Scale</string>
+    <string name="breakdown2016_teleop_total">Total Teleop</string>
+    <string name="breakdown2016_breach">Defenses Breached</string>
+    <string name="breakdown2016_capture">Tower Captured</string>
+    <string name="breakdown2016_addition_format">(+ %1$d)</string>
+    <string name="breakdown2016_foul">Fouls</string>
+    <string name="breakdown2016_foul_format">+ %1$d</string>
+    <string name="breakdown2016_adjust">Adjustments</string>
+    <string name="breakdown2016_total">Total Score</string>
+    
+    <string name="defense2016_low_bar">Low Bar</string>
+    <string name="defense2016_ramparts">Ramparts</string>
+    <string name="defense2016_rough_terrain">Rough Terrain</string>
+    <string name="defense2016_sally_port">Sally Port</string>
+    <string name="defense2016_drawbridge">Drawbridge</string>
+    <string name="defense2016_cdf">Cheval De Frise</string>
+    <string name="defense2016_portcullis">Portcullis</string>
+    <string name="defense2016_rock_wall">Rock Wall</string>
+    <string name="defense2016_moat">Moat</string>
+    <string name="defense2016_unknown">Unknown</string>
+</resources>
