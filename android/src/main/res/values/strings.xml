@@ -18,6 +18,8 @@
     </plurals>
 
     <string name="title_activity_gameday">GameDay</string>
+    <string name="title_activity_update_required">UpdateRequiredActivity</string>
+<string name="title_activity_confirm_image_suggestion">Confirm Suggestion</string>
 
     <!-- View Event -->
     <string name="view_event_website">View event\'s website</string>
@@ -28,6 +30,10 @@
     <string name="last_match">Last Match</string>
     <string name="next_match">Next Match</string>
     <string name="top_teams">Top Teams</string>
+    <string name="event_webcast">Webcast</string>
+    <string name="view_webcast_button">View Webcast</string>
+    <string name="select_multi_webcast">Select Webcast</string>
+    <string name="select_multi_webcast_stream_format">Stream %1$d: %2$s</string>
     <string name="top_oprs">Top OPRs</string>
     <string name="stats_format"> OPR: %1$s, DPR: %2$s, CCWM: %3$s</string>
     <string name="alliance_title">Alliance #%d:</string>
@@ -73,6 +79,8 @@
     <string name="view_team_twitter">View #%1$s on Twitter</string>
     <string name="view_team_youtube">View %1$s on YouTube</string>
     <string name="view_team_cd">View photos on Chief Delphi</string>
+    <string name="error_loading_image">Error loading image</string>
+    <string name="error_taking_picture">Error taking picture</string>
 
     <!-- View Match Details -->
     <string name="teams">Teams</string>
@@ -121,7 +129,6 @@
     <string name="title_activity_notification_dashboard">Notification Dashboard</string>
     <string name="no_recent_notifications">No recent notifications</string>
     <string name="recent_notifications_title">Recent Notifications</string>
-    <string name="title_activity_update_required">UpdateRequiredActivity</string>
     <string name="mytba_settings_not_changed">Settings not changed</string>
     <string name="mytba_settings_updated_successfully">Settings updated successfully</string>
     <string name="mytba_settings_error">Error updating settings</string>

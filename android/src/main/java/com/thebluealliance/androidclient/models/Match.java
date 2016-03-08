@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -14,8 +15,10 @@ import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.types.ModelType;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -172,6 +175,29 @@ public class Match extends BasicModel<Match> {
 
     public static JsonArray getBlueTeams(JsonObject alliances) {
         return getBlueAlliance(alliances).getAsJsonArray("teams");
+    }
+
+    /** @return team keys from {@link #getRedTeams} or {@link #getBlueTeams}. */
+    @NonNull
+    public static ArrayList<String> teamKeys(JsonArray teamsJson) {
+        ArrayList<String> teamKeys = new ArrayList<>(teamsJson.size());
+
+        for (JsonElement key : teamsJson) {
+            teamKeys.add(key.getAsString());
+        }
+        return teamKeys;
+    }
+
+    /** @return team number strings from {@link #getRedTeams} or {@link #getBlueTeams}. */
+    @NonNull
+    public static ArrayList<String> teamNumbers(JsonArray teamsJson) {
+        ArrayList<String> teamKeys = teamKeys(teamsJson);
+        ArrayList<String> teamNumbers = new ArrayList<>(teamKeys.size());
+
+        for (String key : teamKeys) {
+            teamNumbers.add(key.replace("frc", ""));
+        }
+        return teamNumbers;
     }
 
     /**
@@ -378,7 +404,8 @@ public class Match extends BasicModel<Match> {
         try {
             videos = getVideos();
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required field for match render: Database.Matches.VIDEOS. Defaulting to none.");
+            Log.d(Constants.LOG_TAG, "Required field for match render: Database.Matches.VIDEOS. " +
+                    "Defaulting to none.");
             videos = new JsonArray();
         }
         String key = getKey();

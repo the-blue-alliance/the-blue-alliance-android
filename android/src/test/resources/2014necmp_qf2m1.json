@@ -1,0 +1,34 @@
+{
+  "comp_level": "qf",
+  "match_number": 1,
+  "videos": [
+    {
+      "type": "youtube",
+      "key": "wInXE0_GiTs"
+    }
+  ],
+  "time_string": "1:36 PM",
+  "set_number": 2,
+  "key": "2014necmp_qf2m1",
+  "time": 1397324160,
+  "score_breakdown": null,
+  "alliances": {
+    "blue": {
+      "score": 151,
+      "teams": [
+        "frc1519",
+        "frc3467",
+        "frc58"
+      ]
+    },
+    "red": {
+      "score": 211,
+      "teams": [
+        "frc811",
+        "frc78",
+        "frc716"
+      ]
+    }
+  },
+  "event_key": "2014necmp"
+}

@@ -65,9 +65,9 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
 
         Event event = mDb.getEventsTable().get(mEventKey);
         if (event != null && event.isHappeningNow()) {
-            Collections.sort(mAPIData, new MatchSortByDisplayOrderComparator());
-        } else {
             Collections.sort(mAPIData, new MatchSortByPlayOrderComparator());
+        } else {
+            Collections.sort(mAPIData, new MatchSortByDisplayOrderComparator());
         }
 
         ListGroup currentGroup = mQualMatches;

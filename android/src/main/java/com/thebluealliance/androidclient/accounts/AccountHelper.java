@@ -1,16 +1,5 @@
 package com.thebluealliance.androidclient.accounts;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.util.Log;
-
-import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
-import com.facebook.stetho.common.Util;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -19,10 +8,21 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
+
+import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.background.mytba.DisableMyTBA;
+
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.io.IOException;
 
@@ -63,6 +63,7 @@ public class AccountHelper {
         prefs.edit().putString(PREF_SELECTED_ACCOUNT, accoutName).apply();
     }
 
+    @Deprecated
     public static String getSelectedAccount(Context context) {
         if (context == null) return "";
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -83,6 +84,7 @@ public class AccountHelper {
         return !getSelectedAccount(context).isEmpty();
     }
 
+    @Deprecated
     public static GoogleAccountCredential getSelectedAccountCredential(Context context) {
         String accountName = getSelectedAccount(context);
         if (accountName == null || accountName.isEmpty()) {
@@ -97,6 +99,7 @@ public class AccountHelper {
         return credential;
     }
 
+    @Deprecated
     public static TbaMobile getTbaMobile(Context context, GoogleAccountCredential credential) {
         TbaMobile.Builder tbaMobile = new TbaMobile.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential);
         if (Utilities.isDebuggable()) {
@@ -112,6 +115,7 @@ public class AccountHelper {
         return tbaMobile.build();
     }
 
+    @Deprecated
     public static TbaMobile getAuthedTbaMobile(Context context) {
         GoogleAccountCredential currentCredential = AccountHelper.getSelectedAccountCredential(context);
         if (currentCredential == null) {
