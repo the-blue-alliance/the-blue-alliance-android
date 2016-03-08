@@ -70,7 +70,8 @@ public class ViewMatchActivity extends MyTBASettingsActivity
         currentTab = getIntent().getIntExtra(TAB, ViewMatchFragmentPagerAdapter.TAB_RESULT);
 
         pager = (ViewPager) findViewById(R.id.view_pager);
-        adapter = new ViewMatchFragmentPagerAdapter(getSupportFragmentManager(), mMatchKey);
+        adapter = new ViewMatchFragmentPagerAdapter(getResources(), getSupportFragmentManager(),
+                mMatchKey);
         pager.setAdapter(adapter);
         // To support refreshing, all pages must be held in memory at once
         // This should be increased if we ever add more pages
@@ -107,7 +108,8 @@ public class ViewMatchActivity extends MyTBASettingsActivity
         currentTab = getIntent().getIntExtra(TAB, ViewMatchFragmentPagerAdapter.TAB_RESULT);
 
         pager = (ViewPager) findViewById(R.id.view_pager);
-        adapter = new ViewMatchFragmentPagerAdapter(getSupportFragmentManager(), mMatchKey);
+        adapter = new ViewMatchFragmentPagerAdapter(getResources(), getSupportFragmentManager(),
+                mMatchKey);
         pager.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

@@ -98,6 +98,8 @@
     <string name="match_title_abbrev_format">%1$s%2$s</string>
     <string name="submatch_title_format">%1$s %2$s Match %3$s</string>
     <string name="submatch_title_abbrev_format">%1$s%2$s-%3$s</string>
+    <string name="match_tab_results">Results</string>
+    <string name="match_tab_breakdown">Breakdown</string>
 
     <!-- Team Media -->
     <string name="media_images_header">Photos</string>
