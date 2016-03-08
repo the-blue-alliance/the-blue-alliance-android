@@ -73,7 +73,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_toRightOf="@id/confirm_fab"
                 android:src="@drawable/ic_close_black_24dp"
-                app:backgroundTint="@color/red_500"
+                app:backgroundTint="@color/white"
                 app:fabSize="mini" />
         </RelativeLayout>
     </RelativeLayout>
