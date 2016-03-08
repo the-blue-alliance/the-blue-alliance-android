@@ -36,6 +36,7 @@
     <color name="accent_dark">#e6c100</color>
     <color name="dark_theme_background">#303030</color>
     <color name="translucent_black">#77000000</color>
+    <color name="red_500">#F44336</color>
 
     <!-- Gameday ticker header colors -->
     <color name="gameday_ticker_alliance_selection_header">#f44336</color>
