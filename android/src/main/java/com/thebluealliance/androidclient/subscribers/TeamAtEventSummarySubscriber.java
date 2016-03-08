@@ -88,7 +88,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
         // Search for team in alliances
         JsonArray alliances = event.getAlliances();
-        int allianceNumber = 0, alliancePick = 0;
+        int allianceNumber = 0, alliancePick = -1;
 
         if (alliances == null || alliances.size() == 0) {
             // We don't have alliance data. Try to determine from matches.
