@@ -30,6 +30,10 @@
     <string name="last_match">Last Match</string>
     <string name="next_match">Next Match</string>
     <string name="top_teams">Top Teams</string>
+    <string name="event_webcast">Webcast</string>
+    <string name="view_webcast_button">View Webcast</string>
+    <string name="select_multi_webcast">Select Webcast</string>
+    <string name="select_multi_webcast_stream_format">Stream %1$d: %2$s</string>
     <string name="top_oprs">Top OPRs</string>
     <string name="stats_format"> OPR: %1$s, DPR: %2$s, CCWM: %3$s</string>
     <string name="alliance_title">Alliance #%d:</string>
