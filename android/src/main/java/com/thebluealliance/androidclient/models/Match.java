@@ -383,6 +383,8 @@ public class Match extends BasicModel<Match> {
         try {
             videos = getVideos();
         } catch (FieldNotDefinedException e) {
+            Log.d(Constants.LOG_TAG, "Required field for match render: Database.Matches.VIDEOS. " +
+                    "Defaulting to none.");
             videos = new JsonArray();
         }
         String key = getKey();
