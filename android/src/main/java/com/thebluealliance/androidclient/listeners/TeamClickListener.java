@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.listeners;
 
-import android.content.Context;
-import android.content.Intent;
-import android.view.View;
-import android.widget.AdapterView;
-
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
+
+import android.content.Context;
+import android.content.Intent;
+import android.view.View;
+import android.widget.AdapterView;
 
 import java.util.List;
 
@@ -41,10 +41,7 @@ public class TeamClickListener implements AdapterView.OnItemClickListener, View.
     public void onClick(View v) {
         String teamKey = mTeamKey;
         if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
-            if (TeamHelper.validateMultiTeamKey(teamKey)) {
-                // Take out extra letter at end to make team key valid.
-                teamKey = teamKey.substring(0, teamKey.length() - 1);
-            }
+            teamKey = TeamHelper.baseTeamKey(teamKey);
             /* Track the call */
             Intent intent = ViewTeamActivity.newInstance(mContext, teamKey);
             AnalyticsHelper.sendClickUpdate(mContext, "TeamListElement", teamKey, "");
@@ -58,12 +55,11 @@ public class TeamClickListener implements AdapterView.OnItemClickListener, View.
         if (teams == null) {
             return;
         }
+
         String teamKey = teams.get(position).getKey();
-        Intent i = new Intent(mContext, ViewTeamActivity.class);
-        i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
+        Intent i = ViewTeamActivity.newInstance(mContext, teamKey);
+        mContext.startActivity(i);
 
         AnalyticsHelper.sendClickUpdate(mContext, "team_click", i.getDataString(), teamKey);
-
-        mContext.startActivity(i);
     }
 }

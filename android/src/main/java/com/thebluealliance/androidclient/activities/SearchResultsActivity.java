@@ -242,32 +242,26 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         ListViewAdapter adapter = new ListViewAdapter(this, listItems);
         resultsList.setAdapter(adapter);
 
-        resultsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                ListViewAdapter adapter = (ListViewAdapter) adapterView.getAdapter();
-                ListItem clickedItem = adapter.getItem(position);
-                if (clickedItem instanceof TeamListElement) {
-                    String teamKey = ((ListElement) clickedItem).getKey();
-                    Intent i = new Intent(SearchResultsActivity.this, ViewTeamActivity.class);
-                    i.putExtra(ViewTeamActivity.TEAM_KEY, teamKey);
-                    startActivity(i);
-                } else if (clickedItem instanceof EventListElement) {
-                    String eventKey = ((ListElement) clickedItem).getKey();
-                    Intent intent = ViewEventActivity.newInstance(SearchResultsActivity.this, eventKey);
-                    startActivity(intent);
-                } else if (clickedItem == teamsHeader) {
-                    if (teamsHeader.isShowingMoreButton()) {
-                        startActivity(MoreSearchResultsActivity.newInstance(SearchResultsActivity.this, MoreSearchResultsActivity.TEAM_RESULTS, query));
-                    }
-                } else if (clickedItem == eventsHeader) {
-                    if (eventsHeader.isShowingMoreButton()) {
-                        startActivity(MoreSearchResultsActivity.newInstance(SearchResultsActivity.this, MoreSearchResultsActivity.EVENT_RESULTS, query));
-                    }
-                } else {
-                    searchView.setVisibility(View.INVISIBLE);
-                    searchView.setVisibility(View.VISIBLE);
+        resultsList.setOnItemClickListener((adapterView, view, position, id) -> {
+            ListViewAdapter adapter1 = (ListViewAdapter) adapterView.getAdapter();
+            ListItem clickedItem = adapter1.getItem(position);
+            if (clickedItem instanceof TeamListElement) {
+                String teamKey = ((ListElement) clickedItem).getKey();
+                startActivity(ViewTeamActivity.newInstance(SearchResultsActivity.this, teamKey));
+            } else if (clickedItem instanceof EventListElement) {
+                String eventKey = ((ListElement) clickedItem).getKey();
+                startActivity(ViewEventActivity.newInstance(SearchResultsActivity.this, eventKey));
+            } else if (clickedItem == teamsHeader) {
+                if (teamsHeader.isShowingMoreButton()) {
+                    startActivity(MoreSearchResultsActivity.newInstance(SearchResultsActivity.this, MoreSearchResultsActivity.TEAM_RESULTS, query));
                 }
+            } else if (clickedItem == eventsHeader) {
+                if (eventsHeader.isShowingMoreButton()) {
+                    startActivity(MoreSearchResultsActivity.newInstance(SearchResultsActivity.this, MoreSearchResultsActivity.EVENT_RESULTS, query));
+                }
+            } else {
+                searchView.setVisibility(View.INVISIBLE);
+                searchView.setVisibility(View.VISIBLE);
             }
         });
     }

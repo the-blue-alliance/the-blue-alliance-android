@@ -1,0 +1,86 @@
+{
+  "comp_level": "qf",
+  "match_number": 2,
+  "videos": [
+
+  ],
+  "time_string": null,
+  "set_number": 1,
+  "key": "2015necmp_qf1m2",
+  "time": 1428773820,
+  "score_breakdown": {
+    "blue": {
+      "tote_count_far": 9,
+      "tote_count_near": 4,
+      "container_count_level1": 0,
+      "container_count_level2": 0,
+      "container_count_level3": 0,
+      "container_count_level4": 1,
+      "container_count_level5": 1,
+      "container_count_level6": 0,
+      "teleop_points": 84,
+      "auto_points": 0,
+      "total_points": 84,
+      "tote_set": false,
+      "container_set": false,
+      "foul_count": 0,
+      "container_points": 36,
+      "adjust_points": 0,
+      "litter_count_unprocessed": 4,
+      "robot_set": false,
+      "litter_count_container": 1,
+      "tote_points": 26,
+      "foul_points": 0,
+      "tote_stack": false,
+      "litter_count_landfill": 0,
+      "litter_points": 22
+    },
+    "coopertition": "None",
+    "red": {
+      "tote_count_far": 10,
+      "tote_count_near": 11,
+      "container_count_level1": 0,
+      "container_count_level2": 0,
+      "container_count_level3": 0,
+      "container_count_level4": 0,
+      "container_count_level5": 0,
+      "container_count_level6": 1,
+      "teleop_points": 84,
+      "auto_points": 0,
+      "total_points": 84,
+      "tote_set": false,
+      "container_set": false,
+      "foul_count": 0,
+      "container_points": 24,
+      "adjust_points": 0,
+      "litter_count_unprocessed": 3,
+      "robot_set": false,
+      "litter_count_container": 1,
+      "tote_points": 42,
+      "foul_points": 0,
+      "tote_stack": false,
+      "litter_count_landfill": 0,
+      "litter_points": 18
+    },
+    "coopertition_points": 0
+  },
+  "alliances": {
+    "blue": {
+      "score": 84,
+      "teams": [
+        "frc230",
+        "frc2877",
+        "frc558"
+      ]
+    },
+    "red": {
+      "score": 84,
+      "teams": [
+        "frc319",
+        "frc3146",
+        "frc4564"
+      ]
+    }
+  },
+  "event_key": "2015necmp"
+}

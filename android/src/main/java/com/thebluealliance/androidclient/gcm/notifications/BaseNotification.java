@@ -1,5 +1,17 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
+import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
+
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -15,16 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.datafeed.DatafeedModule;
-import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
-import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.models.StoredNotification;
-import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -46,7 +49,7 @@ public abstract class BaseNotification extends ListElement {
     public BaseNotification(String messageType, String messageData) {
         this.messageType = messageType;
         this.messageData = messageData;
-        this.gson = DatafeedModule.getGson();
+        this.gson = HttpModule.getGson();
         this.logTag = null;
         this.display = true;
         this.stored = null;
@@ -67,7 +70,7 @@ public abstract class BaseNotification extends ListElement {
         return true;
     }
 
-    public abstract Notification buildNotification(Context context);
+    public abstract Notification buildNotification(Context context, FollowsChecker followsChecker);
 
     public String getNotificationType() {
         return messageType;

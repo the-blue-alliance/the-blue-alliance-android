@@ -1,22 +1,33 @@
 package com.thebluealliance.androidclient.binders;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.eventbus.EventStatsEvent;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
+import com.thebluealliance.androidclient.helpers.WebcastHelper;
 import com.thebluealliance.androidclient.listeners.EventInfoContainerClickListener;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
+import com.thebluealliance.androidclient.listeners.WebcastClickListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
+import com.thebluealliance.androidclient.types.WebcastType;
 
+import android.app.Dialog;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -63,6 +74,8 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @Bind(R.id.next_match_container) CardView nextMatchContainer;
     @Bind(R.id.next_match_view) FrameLayout nextMatchView;
     @Bind(R.id.last_match_container) CardView lastMatchContainer;
+    @Bind(R.id.event_webcast_container) FrameLayout webcastContainer;
+    @Bind((R.id.event_webcast_button)) Button webcastButton;
 
     @Inject
     public EventInfoBinder(MatchRenderer renderer,
@@ -159,6 +172,26 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         eventCdContainer.setTag("http://www.chiefdelphi.com/media/photos/tags/" + data.eventKey);
         eventCdContainer.setOnClickListener(mSocialClickListener);
 
+        if (data.isLive && data.webcasts != null && data.webcasts.size() > 0) {
+            if (data.webcasts.size() == 1) {
+                // Only one webcast, we can link directly to that
+                JsonObject eventWebcast = data.webcasts.get(0).getAsJsonObject();
+                WebcastType webcastType = WebcastHelper.getType(eventWebcast.get("type")
+                        .getAsString());
+                webcastButton.setText(webcastType.render(mActivity));
+                webcastButton.setOnClickListener(new WebcastClickListener(mActivity, data.eventKey,
+                        webcastType, eventWebcast, 1));
+            } else {
+                webcastButton.setText(R.string.view_webcast_button);
+                webcastButton.setOnClickListener(v -> {
+                    Dialog chooserDialog = buildMultiWebcastDialog(data.webcasts, data.eventKey);
+                    chooserDialog.show();
+                });
+
+            }
+            webcastContainer.setVisibility(View.VISIBLE);
+        }
+
         content.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
 
@@ -219,6 +252,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         public String eventWebsite;
         public String titleString;
         public boolean isLive;
+        public JsonArray webcasts;
     }
 
     protected void showLastMatch(MatchListElement match) {
@@ -291,5 +325,37 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
             topOprsContainer.setOnClickListener(mInfoClickListener);
             topOprs.setText(Html.fromHtml(event.getStatString()));
         });
+    }
+
+    private Dialog buildMultiWebcastDialog(final JsonArray webcasts, final String eventKey) {
+        String[] choices = new String[webcasts.size()];
+        for (int i = 0; i < webcasts.size(); i++) {
+            JsonObject webcastDetails = webcasts.get(i).getAsJsonObject();
+            WebcastType webcastType = WebcastHelper.getType(webcastDetails.get("type")
+                    .getAsString());
+            choices[i] = mActivity.getString(R.string.select_multi_webcast_stream_format, i + 1,
+                    webcastType.render(mActivity));
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        builder.setTitle(R.string.select_multi_webcast)
+                .setItems(choices, (dialog, which) -> {
+                    JsonObject details = webcasts.get(which).getAsJsonObject();
+                    WebcastType type = WebcastHelper.getType(details.get("type").getAsString());
+                    Intent intent = WebcastHelper.getIntentForWebcast(mActivity, eventKey, type,
+                            details, which + 1);
+                    try {
+                        mActivity.startActivity(intent);
+                        dialog.dismiss();
+                    } catch (ActivityNotFoundException ex) {
+                        // Unable to find an activity to handle the webcast
+                        // Fall back by just opening Gameday in browser
+                        String url = mActivity.getString(R.string.webcast_gameday_pattern,
+                                eventKey, which + 1);
+                        Intent gamedayIntent = WebcastHelper.getWebIntentForUrl(url);
+                        mActivity.startActivity(gamedayIntent);
+                        dialog.dismiss();
+                    }
+                });
+        return builder.create();
     }
 }

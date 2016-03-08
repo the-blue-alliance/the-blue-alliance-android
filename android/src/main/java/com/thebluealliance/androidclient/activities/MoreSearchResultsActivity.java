@@ -84,21 +84,18 @@ public class MoreSearchResultsActivity extends AppCompatActivity implements Load
                 break;
         }
 
-        resultsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                switch (resultsType) {
-                    case TEAM_RESULTS:
-                        TeamCursorAdapter teamAdapter = (TeamCursorAdapter) adapterView.getAdapter();
-                        String teamKey = teamAdapter.getKey(position);
-                        startActivity(ViewTeamActivity.newInstance(MoreSearchResultsActivity.this, teamKey));
-                        break;
-                    case EVENT_RESULTS:
-                        EventCursorAdapter eventAdapter = (EventCursorAdapter) adapterView.getAdapter();
-                        String eventKey = eventAdapter.getKey(position);
-                        startActivity(ViewEventActivity.newInstance(MoreSearchResultsActivity.this, eventKey));
-                        break;
-                }
+        resultsList.setOnItemClickListener((adapterView, view, position, id) -> {
+            switch (resultsType) {
+                case TEAM_RESULTS:
+                    TeamCursorAdapter teamAdapter = (TeamCursorAdapter) adapterView.getAdapter();
+                    String teamKey = teamAdapter.getKey(position);
+                    startActivity(ViewTeamActivity.newInstance(MoreSearchResultsActivity.this, teamKey));
+                    break;
+                case EVENT_RESULTS:
+                    EventCursorAdapter eventAdapter = (EventCursorAdapter) adapterView.getAdapter();
+                    String eventKey = eventAdapter.getKey(position);
+                    startActivity(ViewEventActivity.newInstance(MoreSearchResultsActivity.this, eventKey));
+                    break;
             }
         });
     }

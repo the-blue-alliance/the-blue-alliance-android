@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.binders;
 
-import android.content.res.Resources;
-
 import com.thebluealliance.androidclient.helpers.FragmentBinder;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listeners.EventInfoContainerClickListener;
@@ -9,6 +7,8 @@ import com.thebluealliance.androidclient.listeners.SocialClickListener;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.renderers.RendererModule;
+
+import android.content.res.Resources;
 
 import dagger.Module;
 import dagger.Provides;
@@ -70,5 +70,10 @@ public class BinderModule {
     @Provides
     public NoDataBinder provideNoDataBinder() {
         return new NoDataBinder();
+    }
+
+    @Provides
+    public MatchBreakdownBinder provideMatchBreakdownBinder() {
+        return new MatchBreakdownBinder();
     }
 }

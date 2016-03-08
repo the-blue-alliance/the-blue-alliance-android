@@ -84,7 +84,7 @@ public class AllianceSelectionNotificationTest {
           .thenReturn("Alliances have been updated at New England.");
         when(res.getString(R.string.notification_alliances_updated_title, "NECMP"))
           .thenReturn("Event Alliances Updated NECMP");
-        Notification notification = mNotification.buildNotification(mContext);
+        Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();

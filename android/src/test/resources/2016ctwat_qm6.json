@@ -1,0 +1,112 @@
+{
+  "comp_level": "qm",
+  "match_number": 6,
+  "videos": [
+
+  ],
+  "time_string": null,
+  "set_number": 1,
+  "key": "2016ctwat_qm6",
+  "time": 1457195880,
+  "score_breakdown": {
+    "blue": {
+      "teleopPoints": 51,
+      "robot3Auto": "None",
+      "breachPoints": 0,
+      "autoPoints": 12,
+      "teleopScalePoints": 0,
+      "autoBouldersLow": 0,
+      "teleopTowerCaptured": false,
+      "teleopBouldersLow": 3,
+      "teleopCrossingPoints": 25,
+      "foulCount": 0,
+      "foulPoints": 25,
+      "towerFaceB": "Challenged",
+      "towerFaceC": "Challenged",
+      "towerFaceA": "Unknown",
+      "techFoulCount": 0,
+      "totalPoints": 88,
+      "adjustPoints": 0,
+      "position3": "C_SallyPort",
+      "robot1Auto": "Reached",
+      "position4": "A_Portcullis",
+      "position5": "B_Ramparts",
+      "autoBoulderPoints": 0,
+      "teleopBoulderPoints": 16,
+      "teleopBouldersHigh": 2,
+      "autoBouldersHigh": 0,
+      "robot2Auto": "Crossed",
+      "position1crossings": 2,
+      "towerEndStrength": 11,
+      "position4crossings": 0,
+      "position2crossings": 2,
+      "position5crossings": 2,
+      "position3crossings": 0,
+      "teleopChallengePoints": 10,
+      "autoCrossingPoints": 10,
+      "teleopDefensesBreached": false,
+      "autoReachPoints": 2,
+      "position2": "D_RoughTerrain",
+      "capturePoints": 0
+    },
+    "red": {
+      "teleopPoints": 25,
+      "robot3Auto": "Reached",
+      "breachPoints": 0,
+      "autoPoints": 12,
+      "teleopScalePoints": 0,
+      "autoBouldersLow": 0,
+      "teleopTowerCaptured": false,
+      "teleopBouldersLow": 0,
+      "teleopCrossingPoints": 15,
+      "foulCount": 2,
+      "foulPoints": 0,
+      "towerFaceB": "Challenged",
+      "towerFaceC": "Unknown",
+      "towerFaceA": "Challenged",
+      "techFoulCount": 3,
+      "totalPoints": 37,
+      "adjustPoints": 0,
+      "position3": "C_SallyPort",
+      "robot1Auto": "Crossed",
+      "position4": "A_ChevalDeFrise",
+      "position5": "D_RockWall",
+      "autoBoulderPoints": 0,
+      "teleopBoulderPoints": 0,
+      "teleopBouldersHigh": 0,
+      "autoBouldersHigh": 0,
+      "robot2Auto": "None",
+      "position1crossings": 2,
+      "towerEndStrength": 3,
+      "position4crossings": 1,
+      "position2crossings": 0,
+      "position5crossings": 0,
+      "position3crossings": 1,
+      "teleopChallengePoints": 10,
+      "autoCrossingPoints": 10,
+      "teleopDefensesBreached": false,
+      "autoReachPoints": 2,
+      "position2": "B_Ramparts",
+      "capturePoints": 0
+    }
+  },
+  "alliances": {
+    "blue": {
+      "score": 88,
+      "teams": [
+        "frc5856",
+        "frc348",
+        "frc1124"
+      ]
+    },
+    "red": {
+      "score": 37,
+      "teams": [
+        "frc4557",
+        "frc1027",
+        "frc2064"
+      ]
+    }
+  },
+  "event_key": "2016ctwat"
+}

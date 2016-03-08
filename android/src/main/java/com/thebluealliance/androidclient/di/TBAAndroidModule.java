@@ -1,10 +1,7 @@
 package com.thebluealliance.androidclient.di;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-
 import com.google.android.gms.analytics.Tracker;
+
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
@@ -30,6 +27,12 @@ import com.thebluealliance.androidclient.database.writers.MediaWriter;
 import com.thebluealliance.androidclient.database.writers.TeamListWriter;
 import com.thebluealliance.androidclient.database.writers.TeamWriter;
 import com.thebluealliance.androidclient.database.writers.YearsParticipatedWriter;
+
+import android.accounts.AccountManager;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import javax.inject.Singleton;
 
@@ -79,6 +82,16 @@ public class TBAAndroidModule {
     @Singleton
     public Tracker provideAndroidTracker(Context context) {
         return Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, context);
+    }
+
+    @Provides
+    public NotificationManager provideNotificationManager(Context context) {
+        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    }
+
+    @Provides
+    public AccountManager provideAccountManager(Context context) {
+        return AccountManager.get(context);
     }
 
     @Provides
