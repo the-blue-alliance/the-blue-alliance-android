@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+    <RadioGroup android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/stats_type_selector"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible">
+        <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:id="@+id/show_event_stats"
+                android:text="Show Event Stats"/>
+        <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/show_team_stats"
+                android:text="Show Team Stats"/>
+    </RadioGroup>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/info_container"
+            android:layout_below="@id/stats_type_selector">
+
+        <ListView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:visibility="visible" />
+
+        <com.thebluealliance.androidclient.views.NoDataView
+                android:id="@+id/no_data"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+    </RelativeLayout>
+
+    <TextView
+            android:id="@id/info_container"
+            style="@style/InfoOverlayStyle"
+            android:visibility="gone" />
+
+</RelativeLayout>

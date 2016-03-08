@@ -1,18 +1,7 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.support.v7.app.AlertDialog;
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-
 import com.google.gson.JsonElement;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
@@ -25,6 +14,18 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
+
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import java.util.Arrays;
 import java.util.List;
@@ -116,7 +117,7 @@ public class EventStatsFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Setup views & listeners
-        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
+        View view = inflater.inflate(R.layout.fragment_event_stats, null);
         mBinder.setRootView(view);
         mListView = (ListView) view.findViewById(R.id.list);
 
