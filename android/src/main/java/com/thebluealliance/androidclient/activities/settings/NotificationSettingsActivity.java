@@ -1,14 +1,15 @@
 package com.thebluealliance.androidclient.activities.settings;
 
+import com.thebluealliance.androidclient.R;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-
-import com.thebluealliance.androidclient.R;
 
 public class NotificationSettingsActivity extends AppCompatActivity {
 
@@ -24,10 +25,10 @@ public class NotificationSettingsActivity extends AppCompatActivity {
 
     public static class NotificationSettingsFragment extends PreferenceFragment {
 
-        private static Preference notificationTone,
-                notificationVibrate,
-                notificationVisibility,
-                notificationHeadsup;
+        private static Preference notificationTone;
+        private static Preference notificationVibrate;
+        private static @Nullable Preference  notificationVisibility;
+        private static @Nullable Preference notificationHeadsup;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -51,18 +52,19 @@ public class NotificationSettingsActivity extends AppCompatActivity {
             notificationTone.setEnabled(currentlyEnabled);
             notificationVibrate.setEnabled(currentlyEnabled);
 
-            enableNotifications.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean value = (Boolean) newValue;
-                    notificationTone.setEnabled(value);
-                    notificationVibrate.setEnabled(value);
-                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            enableNotifications.setOnPreferenceChangeListener((preference, newValue) -> {
+                boolean value = (Boolean) newValue;
+                notificationTone.setEnabled(value);
+                notificationVibrate.setEnabled(value);
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                    if (notificationVisibility != null) {
                         notificationVisibility.setEnabled(value);
+                    }
+                    if (notificationHeadsup != null) {
                         notificationHeadsup.setEnabled(value);
                     }
-                    return true;
                 }
+                return true;
             });
         }
 
