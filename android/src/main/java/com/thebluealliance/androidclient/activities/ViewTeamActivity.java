@@ -299,11 +299,11 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
 
         switch (position) {
             case ViewTeamFragmentPagerAdapter.TAB_INFO:
+                syncFabVisibilityWithMyTbaEnabled(true);
                 setupFabForMyTbaSettingsTab();
-                showFab(true, false);
                 break;
             case ViewTeamFragmentPagerAdapter.TAB_MEDIA:
-                showFab(true, true);
+                syncFabVisibilityWithMyTbaEnabled(true);
                 setFabColor(R.color.accent);
                 setFabDrawable(R.drawable.ic_add_a_photo_white_24dp);
                 break;

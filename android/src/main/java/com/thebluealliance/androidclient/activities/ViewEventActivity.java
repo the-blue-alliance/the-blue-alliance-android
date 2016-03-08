@@ -219,7 +219,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
         if (position != ViewEventFragmentPagerAdapter.TAB_INFO) {
             hideFab(true);
         } else {
-            showFab(true, false);
+            syncFabVisibilityWithMyTbaEnabled(true);
         }
     }
 

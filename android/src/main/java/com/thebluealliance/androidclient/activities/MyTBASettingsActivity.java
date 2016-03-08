@@ -36,8 +36,6 @@ import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 import com.thebluealliance.androidclient.types.ModelType;
 
-import butterknife.Bind;
-
 /**
  * Activity which hosts a FAB that opens a myTBA model settings panel.
  */
@@ -66,7 +64,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     private boolean mIsSettingsPanelOpen = false;
     private boolean mIsSaveEnalbed = false;
     private boolean mSaveInProgress = false;
-    private boolean mFabVisible = true;
+    private boolean mFabVisible = false;
 
     // Track animations so we can cancel them if needed
     private AnimatorSet mFabColorAnimator;
@@ -107,9 +105,8 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         // if myTBA is not enabled
         mIsMyTBAEnabled = AccountHelper.isMyTBAEnabled(this);
 
-        if (!mIsMyTBAEnabled) {
-            hideFab(false);
-        }
+        mFabVisible = (mToggleSettingsPanelButton.getVisibility() == View.VISIBLE);
+        syncFabVisibilityWithMyTbaEnabled(false);
 
         setupFabIconForSettingsPanelOpen(false);
 
@@ -404,12 +401,21 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         mIsSettingsPanelOpen = false;
     }
 
-    public void showFab(boolean animate, boolean overrideMyTbaCheck) {
-        if (mFabVisible) {
-            return;
+    protected void syncFabVisibilityWithMyTbaEnabled(boolean animate) {
+        if (mIsMyTBAEnabled) {
+            showFab(animate);
+        } else {
+            hideFab(animate);
         }
-        if (!mIsMyTBAEnabled && !overrideMyTbaCheck) {
-            hideFab(false);
+    }
+
+    /**
+     * Will
+     *
+     * @param animate
+     */
+    protected void showFab(boolean animate) {
+        if (mFabVisible) {
             return;
         }
         mFabVisible = true;
@@ -417,7 +423,9 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
             mRunningFabAnimation.cancel();
         }
         if (!animate) {
-            mToggleSettingsPanelButton.setVisibility(View.GONE);
+            mToggleSettingsPanelButton.setVisibility(View.VISIBLE);
+            mToggleSettingsPanelButton.setScaleX(1.0f);
+            mToggleSettingsPanelButton.setScaleY(1.0f);
             return;
         }
         ValueAnimator fabScaleUp = ValueAnimator.ofFloat(0, 1);
@@ -437,7 +445,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         mRunningFabAnimation = fabScaleUp;
     }
 
-    public void hideFab(boolean animate) {
+    protected void hideFab(boolean animate) {
         if (!mFabVisible) {
             return;
         }
