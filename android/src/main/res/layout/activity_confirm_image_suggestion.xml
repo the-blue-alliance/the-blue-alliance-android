@@ -8,8 +8,7 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        style="@style/DefaultToolbarStyle"
-        app:contentInsetStart="16dp" />
+        style="@style/DefaultToolbarStyle" />
 
     <RelativeLayout
         android:layout_width="match_parent"

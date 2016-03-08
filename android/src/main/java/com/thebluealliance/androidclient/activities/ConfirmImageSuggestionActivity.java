@@ -81,8 +81,8 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
         mConfirmFab.setEnabled(false);
 
         ViewCompat.setElevation(mToolbar, getResources().getDimension(R.dimen.toolbar_elevation));
-        mToolbar.setContentInsetsRelative(0, 0);
         setSupportActionBar(mToolbar);
+        // TODO don't use hardcoded string
         getSupportActionBar().setTitle("Confirm suggestion");
 
         Bundle extras = getIntent().getExtras() == null ? new Bundle() : getIntent().getExtras();
