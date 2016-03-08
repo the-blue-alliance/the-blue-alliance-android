@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.datafeed.APICache;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
@@ -12,7 +13,6 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
-import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.MediaRenderer;
 import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber.Model;
@@ -51,7 +51,7 @@ public class MatchInfoSubscriberTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        mGson = DatafeedModule.getGson();
+        mGson = HttpModule.getGson();
         mRenderer = spy(new MatchRenderer(mCache));
         mMediaRenderer = spy(new MediaRenderer());
         mSubscriber = new MatchInfoSubscriber(mGson, mEventBus, mRenderer, mMediaRenderer);

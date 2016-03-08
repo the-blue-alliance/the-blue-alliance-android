@@ -47,39 +47,27 @@ public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment;
         switch (position) {
-            case TAB_TICKER: // live ticker
-                fragment = EventTickerFragment.newInstance(mEventKey);
-                break;
-            case TAB_INFO: // event info
-                fragment = EventInfoFragment.newInstance(mEventKey);
-                break;
-            case TAB_TEAMS: // teams
-                fragment = EventTeamsFragment.newInstance(mEventKey);
-                break;
-            case TAB_RANKINGS: // rankings
-                fragment = EventRankingsFragment.newInstance(mEventKey);
-                break;
-            case TAB_MATCHES: // results
-                fragment = EventMatchesFragment.newInstance(mEventKey);
-                break;
-            case TAB_ALLIANCES: // alliances
-                fragment = EventAlliancesFragment.newInstance(mEventKey);
-                break;
-            case TAB_DISTRICT_POINTS: // district points
-                fragment = EventDistrictPointsFragment.newInstance(mEventKey);
-                break;
-            case TAB_STATS: // stats
-                fragment = EventStatsFragment.newInstance(mEventKey);
-                break;
-            case TAB_AWARDS: // awards
-                fragment = EventAwardsFragment.newInstance(mEventKey);
-                break;
+            case TAB_TICKER:
+                return EventTickerFragment.newInstance(mEventKey);
+            case TAB_INFO:
+                return EventInfoFragment.newInstance(mEventKey);
+            case TAB_TEAMS:
+                return EventTeamsFragment.newInstance(mEventKey);
+            case TAB_RANKINGS:
+                return EventRankingsFragment.newInstance(mEventKey);
+            case TAB_MATCHES:
+                return EventMatchesFragment.newInstance(mEventKey);
+            case TAB_ALLIANCES:
+                return EventAlliancesFragment.newInstance(mEventKey);
+            case TAB_DISTRICT_POINTS:
+                return EventDistrictPointsFragment.newInstance(mEventKey);
+            case TAB_STATS:
+                return EventStatsFragment.newInstance(mEventKey);
+            case TAB_AWARDS:
+                return EventAwardsFragment.newInstance(mEventKey);
             default:
-                fragment = new Fragment();
-                break;
+                return new Fragment();
         }
-        return fragment;
     }
 }

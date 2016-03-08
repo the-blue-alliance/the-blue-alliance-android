@@ -6,7 +6,6 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -28,6 +27,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.datafeed.HttpModule;
+
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,7 +49,7 @@ public abstract class BaseNotification extends ListElement {
     public BaseNotification(String messageType, String messageData) {
         this.messageType = messageType;
         this.messageData = messageData;
-        this.gson = DatafeedModule.getGson();
+        this.gson = HttpModule.getGson();
         this.logTag = null;
         this.display = true;
         this.stored = null;

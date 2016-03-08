@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="imgur_media_snackbar_message"><![CDATA[You can now swipe to the <b>Media</b> tab to upload robot images!]]></string>
+    <string name="imgur_media_snackbar_Action_dismiss">DISMISS</string>
+
+    <string name="imgur_confirm_image_header">Team %1$s (%2$s)</string>
+
+    <string name="imgur_upload_uploading">Image uploading...</string>
+    <string name="imgur_upload_success_title">Image uploaded!</string>
+    <string name="imgur_upload_success_message">Your image will be reviewed by the moderators.</string>
+    <string name="imgur_upload_failure_title">Image upload failed</string>
+    <string name="imgur_upload_failure_message">There was an error uploading your image. Check your network connection and try again later.</string>
+</resources>

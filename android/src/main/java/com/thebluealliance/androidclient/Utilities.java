@@ -396,6 +396,10 @@ public class Utilities {
         return hash;
     }
 
+    public static boolean hasKApis() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    }
+
     public static boolean hasLApis() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
