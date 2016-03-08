@@ -28,6 +28,8 @@ import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotifi
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.SummaryNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -86,23 +88,18 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
         }
     }
 
-    /**
-     * Checks if the user subscribes to the given team. Implements FollowsChecker.
-     *
-     * @param teamNumber the team number without the "frc" prefix.
-     * @param notificationType one of NotificationTypes.UPCOMING_MATCH, MATCH_SCORE, ...
-     */
-    public boolean followsTeam(Context context, String teamNumber, String notificationType) {
+    public boolean followsTeam(Context context, String teamNumber, String matchKey,
+                               String notificationType) {
         String currentUser = AccountHelper.getSelectedAccount(context);
-        String teamKey = TeamHelper.baseTeamKey("frc" + teamNumber);
-        String myKey = MyTBAHelper.createKey(currentUser, teamKey);
+        String teamKey = TeamHelper.baseTeamKey("frc" + teamNumber); // "frc111"
+        String teamSubscriptionKey = MyTBAHelper.createKey(currentUser, teamKey); // "r@gmail.com:frc111"
+        String teamAtEventKey = EventTeamHelper.generateKey(
+                MatchHelper.getEventKeyFromMatchKey(matchKey), teamKey); // "2016calb_frc111"
+        String teamAtEventSubscriptionKey = MyTBAHelper.createKey(currentUser, teamAtEventKey);
         SubscriptionsTable subTable = mDb.getSubscriptionsTable();
 
-        if (!subTable.exists(myKey)) {
-            return false;
-        }
-        String settings = subTable.get(myKey).getNotificationSettings();
-        return settings.contains(notificationType);
+        return subTable.hasNotificationType(teamSubscriptionKey, notificationType)
+                || subTable.hasNotificationType(teamAtEventSubscriptionKey, notificationType);
     }
 
     @Override

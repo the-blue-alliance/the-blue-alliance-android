@@ -101,10 +101,8 @@ public class ScoreNotification extends BaseNotification {
         int blueScore = Match.getBlueScore(alliances);
 
         // Boldify the team numbers that the user is following.
-        Predicate<String> isFollowing = teamNumber -> {
-            return followsChecker.followsTeam(context, teamNumber,
-                    NotificationTypes.MATCH_SCORE);
-        };
+        Predicate<String> isFollowing = teamNumber -> followsChecker.followsTeam(context,
+                teamNumber, matchKey, NotificationTypes.MATCH_SCORE);
         ArrayList<String> redTeams = Match.teamNumbers(Match.getRedTeams(alliances));
         ArrayList<String> blueTeams = Match.teamNumbers(Match.getBlueTeams(alliances));
         CharSequence firstTeams = Utilities.boldNameList(redTeams, isFollowing);

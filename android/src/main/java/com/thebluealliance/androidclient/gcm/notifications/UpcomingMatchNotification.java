@@ -127,10 +127,8 @@ public class UpcomingMatchNotification extends BaseNotification {
         }
 
         // Boldify the team numbers that the user is following.
-        Predicate<String> isFollowing = teamNumber -> {
-            return followsChecker.followsTeam(context, teamNumber,
-                    NotificationTypes.UPCOMING_MATCH);
-        };
+        Predicate<String> isFollowing = teamNumber -> followsChecker.followsTeam(context,
+                teamNumber, matchKey, NotificationTypes.UPCOMING_MATCH);
         CharSequence redTeamNumbers = Utilities.boldNameList(Arrays.asList(redTeams), isFollowing);
         CharSequence blueTeamNumbers = Utilities.boldNameList(Arrays.asList(blueTeams), isFollowing);
 
