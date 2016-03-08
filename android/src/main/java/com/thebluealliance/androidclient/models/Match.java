@@ -1,19 +1,20 @@
 package com.thebluealliance.androidclient.models;
 
-import android.util.Log;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.listitems.MatchListElement;
+
+import android.util.Log;
 
 import java.util.Date;
 
@@ -356,7 +357,6 @@ public class Match extends BasicModel<Match> {
         try {
             videos = getVideos();
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required field for match render: Database.Matches.VIDEOS. Defaulting to none.");
             videos = new JsonArray();
         }
         String key = getKey();

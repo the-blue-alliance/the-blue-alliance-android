@@ -1,14 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.MenuItem;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
@@ -26,6 +17,15 @@ import com.thebluealliance.androidclient.models.APIStatus;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 
 public class ViewEventActivity extends MyTBASettingsActivity
         implements ViewPager.OnPageChangeListener, HasFragmentComponent {
@@ -232,7 +232,8 @@ public class ViewEventActivity extends MyTBASettingsActivity
 
     }
 
-    public void onEvent(ActionBarTitleEvent event) {
+    @SuppressWarnings("unused")
+    public void onEventMainThread(ActionBarTitleEvent event) {
         setActionBarTitle(event.getTitle());
     }
 
