@@ -41,12 +41,12 @@
         <item name="android:background">@color/light_blue</item>
     </style>
 
-    <style name="breakdown_categoryTotal" parent="breakdown_base">
+    <style name="breakdown_categoryTotal" parent="breakdown_category">
         <item name="android:background">@color/column_header_total_gray</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="breakdown_categorySubtotal" parent="breakdown_base">
+    <style name="breakdown_categorySubtotal" parent="breakdown_category">
         <item name="android:background">@color/column_header_total_gray</item>
     </style>
 
