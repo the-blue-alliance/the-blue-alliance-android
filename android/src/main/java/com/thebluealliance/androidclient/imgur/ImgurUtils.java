@@ -2,6 +2,8 @@ package com.thebluealliance.androidclient.imgur;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.util.Log;
 
 import com.thebluealliance.androidclient.Constants;
@@ -40,5 +42,11 @@ public class ImgurUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static AlertDialog getTeamImageUploadInfoDialog(Context context) {
+        return new AlertDialog.Builder(context)
+                .setMessage(Html.fromHtml("You can now swipe to the <b>Media</b> tab to upload robot images!"))
+                .create();
     }
 }

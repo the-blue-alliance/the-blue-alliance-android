@@ -590,13 +590,22 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     }
 
     @SuppressWarnings("WrongConstant")
-    protected void showSnackbar(String message) {
+    protected void showSnackbar(CharSequence message) {
         Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, 2000);
         TextView text = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
         if (text != null) {
             text.setTextColor(getResources().getColor(R.color.white));
         }
         snackbar.show();
+    }
+
+    protected Snackbar createSnackbar(CharSequence message, @Snackbar.Duration int duration) {
+        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message == null ? "" : message, duration);
+        TextView text = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+        if (text != null) {
+            text.setTextColor(getResources().getColor(R.color.white));
+        }
+        return snackbar;
     }
 
     /**

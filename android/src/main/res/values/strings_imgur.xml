@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="imgur_media_snackbar_message"><![CDATA[You can now swipe to the <b>Media</b> tab to upload robot images!]]></string>
+    <string name="imgur_media_snackbar_Action_dismiss">DISMISS</string>
+
     <string name="imgur_confirm_image_header">Team %1$s (%2$s)</string>
 
     <string name="imgur_upload_uploading">Image uploading...</string>

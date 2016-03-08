@@ -9,13 +9,16 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +30,7 @@ import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.adapters.DialogListWithIconsAdapter;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
@@ -63,6 +67,8 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     public static final String SELECTED_YEAR = "year";
     public static final String SELECTED_TAB = "tab";
     public static final String CURRENT_PHOTO_URI = "current_photo_uri";
+
+    private static final String PREF_MEDIA_SNACKBAR_DISMISSED = "pref_media_snackbar_dismissed";
 
     private static final int CHOOSE_IMAGE_REQUEST = 42;
     private static final int TAKE_PICTURE_REQUEST = 43;
@@ -163,6 +169,21 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         // We can call this even though the years participated haven't been loaded yet.
         // The years won't be shown yet; this just shows the team number in the toolbar.
         setupActionBar();
+
+        boolean wasMediaSnackbarDismissed = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(PREF_MEDIA_SNACKBAR_DISMISSED, false);
+        if (!wasMediaSnackbarDismissed && AccountHelper.isMyTBAEnabled(this)) {
+            Snackbar snackbar = createSnackbar(Html.fromHtml(getString(R.string.imgur_media_snackbar_message)), Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction(R.string.imgur_media_snackbar_Action_dismiss, (view) -> {
+            });
+            snackbar.setCallback(new Snackbar.Callback() {
+                @Override
+                public void onDismissed(Snackbar snackbar, int event) {
+                    PreferenceManager.getDefaultSharedPreferences(ViewTeamActivity.this)
+                            .edit().putBoolean(PREF_MEDIA_SNACKBAR_DISMISSED, true).commit();
+                }
+            }).show();
+        }
     }
 
     @Override
