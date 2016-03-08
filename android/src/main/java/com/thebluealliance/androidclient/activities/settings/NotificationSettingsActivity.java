@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.activities.settings;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -43,7 +44,7 @@ public class NotificationSettingsActivity extends AppCompatActivity {
             notificationVibrate = findPreference("notification_vibrate");
             notificationVisibility = null;
             notificationHeadsup = null;
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            if (Utilities.hasLApis()) {
                 notificationVisibility = findPreference("notification_visibility");
                 notificationHeadsup = findPreference("notification_headsup");
             }
@@ -56,13 +57,11 @@ public class NotificationSettingsActivity extends AppCompatActivity {
                 boolean value = (Boolean) newValue;
                 notificationTone.setEnabled(value);
                 notificationVibrate.setEnabled(value);
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-                    if (notificationVisibility != null) {
-                        notificationVisibility.setEnabled(value);
-                    }
-                    if (notificationHeadsup != null) {
-                        notificationHeadsup.setEnabled(value);
-                    }
+                if (notificationVisibility != null) {
+                    notificationVisibility.setEnabled(value);
+                }
+                if (notificationHeadsup != null) {
+                    notificationHeadsup.setEnabled(value);
                 }
                 return true;
             });
