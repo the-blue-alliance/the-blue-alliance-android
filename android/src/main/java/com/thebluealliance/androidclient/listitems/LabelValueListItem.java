@@ -44,7 +44,7 @@ public class LabelValueListItem extends ListElement {
         this.listItem = null;
         this.intent = "";
         this.layout = R.layout.list_item_summary;
-        this.boldTitle = true;
+        this.boldTitle = false;
     }
 
     public LabelValueListItem(String label, String value, boolean boldTitle) {

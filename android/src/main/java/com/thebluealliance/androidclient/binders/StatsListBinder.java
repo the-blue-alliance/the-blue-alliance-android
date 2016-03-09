@@ -55,12 +55,14 @@ public class StatsListBinder extends ListViewBinder implements RadioGroup.OnChec
         if (group.getCheckedRadioButtonId() == R.id.show_team_stats) {
             mData.setSelectedList(ListPair.LIST0);
             mAdapter.notifyDataSetChanged();
+            listView.setClickable(true);
             if (sortItem != null) {
                 sortItem.setVisible(true);
             }
         } else if (group.getCheckedRadioButtonId() == R.id.show_event_stats) {
             mData.setSelectedList(ListPair.LIST1);
             mAdapter.notifyDataSetChanged();
+            listView.setClickable(false);
             if (sortItem != null) {
                 sortItem.setVisible(false);
             }

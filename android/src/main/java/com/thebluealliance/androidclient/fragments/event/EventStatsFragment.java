@@ -146,8 +146,6 @@ public class EventStatsFragment
             if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
                 teamKey = TeamHelper.baseTeamKey(teamKey);
                 startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
-            } else {
-                throw new IllegalArgumentException("OnItemClickListener must be attached to a view with a valid team key set as the tag!");
             }
         });
 
