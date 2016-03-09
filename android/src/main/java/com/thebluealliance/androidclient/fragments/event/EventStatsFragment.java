@@ -135,10 +135,7 @@ public class EventStatsFragment
         mListView.setOnItemClickListener((adapterView, view1, position, id) -> {
             String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
             if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
-                if (TeamHelper.validateMultiTeamKey(teamKey)) {
-                    // Take out extra letter at end to make team key valid.
-                    teamKey = teamKey.substring(0, teamKey.length() - 1);
-                }
+                teamKey = TeamHelper.baseTeamKey(teamKey);
                 startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
             } else {
                 throw new IllegalArgumentException("OnItemClickListener must be attached to a view with a valid team key set as the tag!");

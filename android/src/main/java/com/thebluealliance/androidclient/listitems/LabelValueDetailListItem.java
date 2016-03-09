@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.listitems;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 
 public class LabelValueDetailListItem extends ListElement {
 
@@ -68,7 +68,7 @@ public class LabelValueDetailListItem extends ListElement {
         return convertView;
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         TextView label;
         TextView value;
         ImageView detail;

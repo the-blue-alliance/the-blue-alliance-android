@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout android:id="@+id/match_container"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
-    android:baselineAligned="false"
-    android:clickable="true"
-    android:orientation="horizontal"
-    android:padding="8dp">
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="?android:attr/selectableItemBackground"
+              android:baselineAligned="false"
+              android:clickable="true"
+              android:orientation="horizontal"
+              android:padding="8dp" xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:id="@+id/match_title_container"
@@ -24,7 +24,7 @@
             android:layout_above="@+id/match_video"
             android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:text="Quarters\n1 - 1" />
+            tools:text="Quarters\n1 - 1" />
 
         <ImageView
             android:id="@id/match_video"
@@ -103,7 +103,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/match_team_selector_red"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="Red 1" />
+                        tools:text="Red 1" />
 
                     <TextView
                         android:id="@+id/red2"
@@ -112,7 +112,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/match_team_selector_red"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="Red 2" />
+                        tools:text="Red 2" />
 
                     <TextView
                         android:id="@+id/red3"
@@ -121,7 +121,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/match_team_selector_red"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="Red 3" />
+                        tools:text="Red 3" />
 
                     <TextView
                         android:id="@+id/red_score"
@@ -130,7 +130,7 @@
                         android:layout_weight="1.5"
                         android:background="@color/light_red"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="Red Score"
+                        tools:text="Red Score"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -148,7 +148,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/match_team_selector_blue"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="Blue 1" />
+                        tools:text="Blue 1" />
 
                     <TextView
                         android:id="@+id/blue2"
@@ -157,7 +157,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/match_team_selector_blue"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="Blue 2" />
+                        tools:text="Blue 2" />
 
                     <TextView
                         android:id="@+id/blue3"
@@ -166,7 +166,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/match_team_selector_blue"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="Blue 3" />
+                        tools:text="Blue 3" />
 
                     <TextView
                         android:id="@+id/blue_score"
@@ -175,7 +175,7 @@
                         android:layout_weight="1.5"
                         android:background="@color/light_blue"
                         android:gravity="center_vertical|center_horizontal"
-                        android:text="Blue Score"
+                        tools:text="Blue Score"
                         android:textStyle="bold" />
 
                 </LinearLayout>
@@ -187,7 +187,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1.5"
                 android:gravity="center_horizontal|center_vertical"
-                android:text="88:88 PM" />
+                tools:text="88:88 PM" />
         </TableRow>
     </TableLayout>
 

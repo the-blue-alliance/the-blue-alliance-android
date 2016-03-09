@@ -1,5 +1,18 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
+import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.activities.HomeActivity;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
+import com.thebluealliance.androidclient.models.StoredNotification;
+
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
@@ -9,17 +22,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.activities.HomeActivity;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
-import com.thebluealliance.androidclient.models.StoredNotification;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -86,7 +88,7 @@ public class GenericNotification extends BaseNotification {
     }
 
     @Override
-    public Notification buildNotification(Context context) {
+    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         if (getNotificationType().equals(NotificationTypes.BROADCAST)) {
             // Only store broadcasts, not pings
             stored = new StoredNotification();
@@ -166,7 +168,7 @@ public class GenericNotification extends BaseNotification {
         return convertView;
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         public TextView header;
         public TextView title;
         public TextView message;

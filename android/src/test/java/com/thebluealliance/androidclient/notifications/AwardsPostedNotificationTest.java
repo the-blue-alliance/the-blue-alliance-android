@@ -99,7 +99,7 @@ public class AwardsPostedNotificationTest {
           .thenReturn("Event Awards Updated NECMP");
         when(mContext.getString(R.string.notification_awards_updated, "New England"))
           .thenReturn("Awards have been updated at New England");
-        Notification notification = mNotification.buildNotification(mContext);
+        Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();

@@ -43,7 +43,7 @@ public class EventDownNotificationTest {
     @Test
     public void testParseData() {
         mNotification.parseMessageData();
-        mNotification.buildNotification(context);
+        mNotification.buildNotification(context, null);
 
         assertEquals(MOCK_TITLE, mNotification.getTitle());
         assertEquals(MOCK_TEXT, mNotification.getMessage());

@@ -158,4 +158,9 @@ public class SubscriberModule {
     public ContributorListSubscriber provideContributorListSubscriber() {
         return new ContributorListSubscriber();
     }
+
+    @Provides
+    public MatchBreakdownSubscriber provideMatchBreakdownSubscriber() {
+        return new MatchBreakdownSubscriber();
+    }
 }
