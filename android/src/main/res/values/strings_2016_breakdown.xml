@@ -53,4 +53,9 @@
     <string name="breakdown2016_challenge">Challenges</string>
     <string name="breakdown2016_scales">Scales</string>
     <string name="breakdown2016_captures">Captures</string>
+    <string name="breakdown2016_high_score">High Score</string>
+    <string name="breakdown2016_match_stat">%1$d in %2$s</string>
+    <string name="breakdown2016_qual">Quals: %1$s</string>
+    <string name="breakdown2016_elim">Playoffs: %1$s</string>
+    <string name="breakdown2016_qual_and_elim">Quals: %1$s\nPlayoffs: %2$s</string>
 </resources>

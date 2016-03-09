@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.models.Stat;
 import com.thebluealliance.androidclient.models.Team;
 
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
 import java.text.DecimalFormat;
@@ -113,9 +114,22 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
 
     private void generateEventInsights(JsonObject eventInsights) {
         mEventStats.clear();
-        generate2016MatchInsights(eventInsights);
-        generate2016DefenseInsights(eventInsights);
-        generate2016TowerInsights(eventInsights);
+        JsonObject qualData;
+        JsonObject elimData;
+        if (eventInsights.has("qual") && eventInsights.get("qual").isJsonObject()) {
+            qualData = eventInsights.get("qual").getAsJsonObject();
+        } else {
+            qualData = new JsonObject();
+        }
+        if (eventInsights.has("playoff") && eventInsights.get("playoff").isJsonObject()) {
+            elimData = eventInsights.get("playoff").getAsJsonObject();
+        } else {
+            elimData = new JsonObject();
+        }
+
+        generate2016MatchInsights(qualData, elimData);
+        generate2016DefenseInsights(qualData, elimData);
+        generate2016TowerInsights(qualData, elimData);
     }
 
     private @StringRes int[] matchTitles = {R.string.breakdown2016_avg_low_goal, R.string
@@ -127,16 +141,37 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
             "average_win_score", "average_win_margin", "average_auto_score",
             "average_crossing_score", "average_boulder_score", "average_tower_score", "average_foul_score"};
 
-    private void generate2016MatchInsights(JsonObject eventInsights) {
+    private void generate2016MatchInsights(JsonObject quals, JsonObject elims) {
         mEventStats.add(new EventTypeHeader("Match Stats"));
 
-        JsonArray highScore = eventInsights.get("high_score").getAsJsonArray();
-        mEventStats.add(new LabelValueListItem("High Score", String.format("%1$d in %2$s",
-                highScore.get(0).getAsInt(), highScore.get(2).getAsString()), true));
+        String qualFormat = mResources.getString(R.string.breakdown2016_qual);
+        String elimFormat = mResources.getString(R.string.breakdown2016_elim);
 
+        // high_score
+        String qualHighScore = null, elimHighScore = null;
+        if (quals.has("high_score") && quals.get("high_score").isJsonArray()) {
+            JsonArray qualHigh = quals.get("high_score").getAsJsonArray();
+            qualHighScore = mResources.getString(R.string.breakdown2016_match_stat, qualHigh
+                    .get(0).getAsInt(), qualHigh.get(2).getAsString());
+        }
+        if (elims.has("high_score") && elims.get("high_score").isJsonArray()) {
+            JsonArray elimHigh = elims.get("high_score").getAsJsonArray();
+            elimHighScore = mResources.getString(R.string.breakdown2016_match_stat, elimHigh
+                    .get(0).getAsInt(), elimHigh.get(2).getAsString());
+        }
+        mEventStats.add(new LabelValueListItem(mResources.getString(R.string
+                .breakdown2016_high_score), combineQualAndElimStat(qualHighScore, elimHighScore)));
+        
         for (int i = 0; i < matchKeys.length; i++) {
-            mEventStats.add(new LabelValueListItem(mResources.getString(matchTitles[i]), df.format
-                    (eventInsights.get(matchKeys[i]).getAsDouble()), true));
+            String qualStat = null, elimStat = null;
+            if (quals.has(matchKeys[i]) && quals.get(matchKeys[i]).isJsonPrimitive()) {
+                qualStat = df.format(quals.get(matchKeys[i]).getAsDouble());
+            }
+            if (elims.has(matchKeys[i]) && elims.get(matchKeys[i]).isJsonPrimitive()) {
+                elimStat = df.format(elims.get(matchKeys[i]).getAsDouble());
+            }
+            mEventStats.add(new LabelValueListItem(mResources.getString(matchTitles[i]),
+                    combineQualAndElimStat(qualStat, elimStat), true));
         }
     }
 
@@ -148,14 +183,23 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
             .defense2016_drawbridge, R.string.defense2016_rough_terrain, R.string
             .defense2016_rock_wall, R.string.defense2016_breaches};
 
-    private void generate2016DefenseInsights(JsonObject eventInsights) {
+    private void generate2016DefenseInsights(JsonObject quals, JsonObject elims) {
         mEventStats.add(new EventTypeHeader("Defense Stats"));
         String defenseFormat = mResources.getString(R.string.defense2016_cross_format);
         for (int i = 0; i < defenseName.length; i++) {
-            JsonArray defenseData = eventInsights.get(defenseTitle[i]).getAsJsonArray();
-            mEventStats.add(new LabelValueListItem(mResources.getString(defenseName[i]), String.format
-                    (defenseFormat, defenseData.get(0).getAsInt(), defenseData.get(1).getAsInt(),
-                            defenseData.get(2).getAsDouble()), true));
+            String qualStat = null, elimStat = null;
+            if (quals.has(defenseTitle[i]) && quals.get(defenseTitle[i]).isJsonArray()) {
+                JsonArray qualData = quals.get(defenseTitle[i]).getAsJsonArray();
+                qualStat = String.format(defenseFormat, qualData.get(0).getAsInt(), qualData.get(1).getAsInt(),
+                            qualData.get(2).getAsDouble());
+            }
+            if (elims.has(defenseTitle[i]) && elims.get(defenseTitle[i]).isJsonArray()) {
+                JsonArray elimData = elims.get(defenseTitle[i]).getAsJsonArray();
+                elimStat = String.format(defenseFormat, elimData.get(0).getAsInt(), elimData.get(1)
+                        .getAsInt(), elimData.get(2).getAsDouble());
+            }
+            mEventStats.add(new LabelValueListItem(mResources.getString(defenseName[i]),
+                    combineQualAndElimStat(qualStat, elimStat), true));
         }
     }
 
@@ -163,14 +207,33 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
             .breakdown2016_scales, R.string.breakdown2016_captures};
     private String[] towerKeys = {"challenges", "scales", "captures"};
 
-    private void generate2016TowerInsights(JsonObject eventInsights) {
+    private void generate2016TowerInsights(JsonObject quals, JsonObject elims) {
         mEventStats.add(new EventTypeHeader("Tower Stats"));
         String defenseFormat = mResources.getString(R.string.defense2016_tower_format);
         for (int i = 0; i < towerTitles.length; i++) {
-            JsonArray towerData = eventInsights.get(towerKeys[i]).getAsJsonArray();
-            mEventStats.add(new LabelValueListItem(mResources.getString(towerTitles[i]), String
-                    .format(defenseFormat, towerData.get(0).getAsInt(), towerData.get(1).getAsInt(),
-                            towerData.get(2).getAsDouble()), true));
+            String qualStat = null, elimStat = null;
+            if (quals.has(towerKeys[i]) && quals.get(towerKeys[i]).isJsonArray()) {
+                JsonArray qualData = quals.get(towerKeys[i]).getAsJsonArray();
+                qualStat = String.format(defenseFormat, qualData.get(0).getAsInt(), qualData.get(1)
+                        .getAsInt(), qualData.get(2).getAsDouble());
+            }
+            if (elims.has(towerKeys[i]) && elims.get(towerKeys[i]).isJsonArray()) {
+                JsonArray elimData = elims.get(towerKeys[i]).getAsJsonArray();
+                elimStat = String.format(defenseFormat, elimData.get(0).getAsInt(), elimData.get(1)
+                        .getAsInt(), elimData.get(2).getAsDouble());
+            }
+            mEventStats.add(new LabelValueListItem(mResources.getString(towerTitles[i]),
+                    combineQualAndElimStat(qualStat, elimStat), true));
+        }
+    }
+
+    private String combineQualAndElimStat(@Nullable String qualStat, @Nullable  String elimStat) {
+        if (qualStat != null && elimStat != null) {
+            return mResources.getString(R.string.breakdown2016_qual_and_elim, qualStat, elimStat);
+        } else if (qualStat != null) {
+            return mResources.getString(R.string.breakdown2016_qual, qualStat);
+        } else {
+            return mResources.getString(R.string.breakdown2016_elim, elimStat);
         }
     }
 
