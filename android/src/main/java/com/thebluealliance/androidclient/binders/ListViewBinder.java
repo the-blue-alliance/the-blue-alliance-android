@@ -91,7 +91,7 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
         }
     }
 
-    private void bindNoDataView() {
+    protected void bindNoDataView() {
         // Set up views for "no data" message
         try {
             listView.setVisibility(View.GONE);

@@ -6,6 +6,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,8 +32,16 @@ public class StatsListBinder extends ListViewBinder implements RadioGroup.OnChec
 
     @Override
     public void updateData(@Nullable List<ListItem> data) {
+       if (!isDataBound()) {
+            // Always start with Team stats
+            setSelectedList(ListPair.LIST0);
+           mShowEventStats.setChecked(false);
+           mShowTeamStats.setChecked(true);
+        }
+
         mSelectorGroup.setVisibility(View.VISIBLE);
         mSelectorGroup.setOnCheckedChangeListener(this);
+
 
         /** Call this last, it calls {@link #setDataBound(boolean)} when done */
         super.updateData(data);
@@ -51,21 +60,35 @@ public class StatsListBinder extends ListViewBinder implements RadioGroup.OnChec
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
-        MenuItem sortItem = mMenu.findItem(R.id.action_sort_by);
+        if (mData == null) {
+            return;
+        }
+
         if (group.getCheckedRadioButtonId() == R.id.show_team_stats) {
-            mData.setSelectedList(ListPair.LIST0);
-            mAdapter.notifyDataSetChanged();
-            listView.setClickable(true);
-            if (sortItem != null) {
-                sortItem.setVisible(true);
-            }
+            setSelectedList(ListPair.LIST0);
         } else if (group.getCheckedRadioButtonId() == R.id.show_event_stats) {
-            mData.setSelectedList(ListPair.LIST1);
+            setSelectedList(ListPair.LIST1);
+        }
+    }
+
+    @UiThread
+    public void setSelectedList(@ListPair.ListOption int option) {
+        if (mData != null) {
+            MenuItem sortItem = mMenu.findItem(R.id.action_sort_by);
+            mData.setSelectedList(option);
             mAdapter.notifyDataSetChanged();
-            listView.setClickable(false);
+            listView.setClickable(option == ListPair.LIST0);
             if (sortItem != null) {
-                sortItem.setVisible(false);
+                sortItem.setVisible(option == ListPair.LIST0);
+            }
+
+            if (mData.isEmpty()) {
+                bindNoDataView();
+            } else {
+                listView.setVisibility(View.VISIBLE);
+                mNoDataBinder.unbindData();
             }
         }
     }
+
 }

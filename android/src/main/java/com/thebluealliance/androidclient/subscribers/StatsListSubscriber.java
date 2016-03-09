@@ -160,7 +160,8 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
                     .get(0).getAsInt(), elimHigh.get(2).getAsString());
         }
         mEventStats.add(new LabelValueListItem(mResources.getString(R.string
-                .breakdown2016_high_score), combineQualAndElimStat(qualHighScore, elimHighScore)));
+                .breakdown2016_high_score), combineQualAndElimStat
+                (qualHighScore, elimHighScore), true));
         
         for (int i = 0; i < matchKeys.length; i++) {
             String qualStat = null, elimStat = null;

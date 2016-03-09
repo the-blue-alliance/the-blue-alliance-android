@@ -18,13 +18,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/show_event_stats"
-                android:text="Show Event Stats"/>
+                android:text="@string/breakdown_event_stats"/>
         <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/show_team_stats"
                 android:checked="true"
-                android:text="Show Team Stats"/>
+                android:text="@string/breakdown_team_stats"/>
     </RadioGroup>
 
     <RelativeLayout
