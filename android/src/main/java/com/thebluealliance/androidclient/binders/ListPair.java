@@ -56,180 +56,132 @@ public class ListPair<T> implements List<T> {
 
     @Override
     public void add(int location, T object) {
-        if (mSelectedList == LIST0) {
-            mList0.add(location, object);
-        } else {
-            mList1.add(location, object);
-        }
+        getActiveList().add(location, object);
     }
 
     @Override
     public boolean add(T object) {
-        return mSelectedList == LIST0
-                ? mList0.add(object)
-                : mList1.add(object);
+        return getActiveList().add(object);
     }
 
     @Override
     public boolean addAll(int location, @NonNull Collection<? extends T> collection) {
-        return mSelectedList == LIST0
-                ? mList0.addAll(location, collection)
-                : mList1.addAll(location, collection);
+        return getActiveList().addAll(location, collection);
     }
 
     @Override
     public boolean addAll(@NonNull Collection<? extends T> collection) {
-        return mSelectedList == LIST0
-                ? mList0.addAll(collection)
-                : mList1.addAll(collection);
+        return getActiveList().addAll(collection);
     }
 
     @Override
     public void clear() {
-        if (mSelectedList == LIST0) {
-            mList0.clear();
-        } else {
-            mList1.clear();
-        }
+        getActiveList().clear();
     }
 
     @Override
     public boolean contains(Object object) {
-        return mSelectedList == LIST0
-                ? mList0.contains(object)
-                : mList1.contains(object);
+        return getActiveList().contains(object);
     }
 
     @Override
     public boolean containsAll(@NonNull Collection<?> collection) {
-        return mSelectedList == LIST0
-                ? mList0.containsAll(collection)
-                : mList1.containsAll(collection);
+        return getActiveList().containsAll(collection);
     }
 
     @Override
     public T get(int location) {
-        return mSelectedList == LIST0
-                ? mList0.get(location)
-                : mList1.get(location);
+        return getActiveList().get(location);
     }
 
     @Override
     public int indexOf(Object object) {
-        return mSelectedList == LIST0
-                ? mList0.indexOf(object)
-                : mList1.indexOf(object);
+        return getActiveList().indexOf(object);
     }
 
     @Override
     public boolean isEmpty() {
-        return mSelectedList == LIST0
-                ? mList0.isEmpty()
-                : mList1.isEmpty();
+        return getActiveList().isEmpty();
     }
 
     @NonNull @Override
     public Iterator<T> iterator() {
-        return mSelectedList == LIST0
-                ? mList0.iterator()
-                : mList1.iterator();
+        return getActiveList().iterator();
     }
 
     @Override
     public int lastIndexOf(Object object) {
-        return mSelectedList == LIST0
-                ? mList0.lastIndexOf(object)
-                : mList1.lastIndexOf(object);
+        return getActiveList().lastIndexOf(object);
     }
 
     @Override
     public ListIterator<T> listIterator() {
-        return mSelectedList == LIST0
-                ? mList0.listIterator()
-                : mList1.listIterator();
+        return getActiveList().listIterator();
     }
 
     @NonNull @Override
     public ListIterator<T> listIterator(int location) {
-        return mSelectedList == LIST0
-                ? mList0.listIterator(location)
-                : mList1.listIterator(location);
+        return getActiveList().listIterator(location);
     }
 
     @Override
     public T remove(int location) {
-        return mSelectedList == LIST0
-                ? mList0.remove(location)
-                : mList1.remove(location);
+        return getActiveList().remove(location);
     }
 
     @Override
     public boolean remove(Object object) {
-        return mSelectedList == LIST0
-                ? mList0.remove(object)
-                : mList1.remove(object);
+        return getActiveList().remove(object);
     }
 
     @Override
     public boolean removeAll(@NonNull  Collection<?> collection) {
-        return mSelectedList == LIST0
-                ? mList0.removeAll(collection)
-                : mList1.removeAll(collection);
+        return getActiveList().removeAll(collection);
     }
 
     @Override
     public boolean retainAll(@NonNull Collection<?> collection) {
-        return mSelectedList == LIST0
-                ? mList0.retainAll(collection)
-                : mList1.retainAll(collection);
+        return getActiveList().retainAll(collection);
     }
 
     @Override
     public T set(int location, T object) {
-        return mSelectedList == LIST0
-                ? mList0.set(location, object)
-                : mList1.set(location, object);
+        return getActiveList().set(location, object);
     }
 
     @Override
     public int size() {
-        return mSelectedList == LIST0
-                ? mList0.size()
-                : mList1.size();
+        return getActiveList().size();
     }
 
     @NonNull @Override
     public List<T> subList(int start, int end) {
-        return mSelectedList == LIST0
-                ? mList0.subList(start, end)
-                : mList1.subList(start, end);
+        return getActiveList().subList(start, end);
     }
 
     @NonNull @Override
     public Object[] toArray() {
-        return mSelectedList == LIST0
-                ? mList0.toArray()
-                : mList1.toArray();
+        return getActiveList().toArray();
     }
 
     @NonNull @Override
     public <T1> T1[] toArray(@NonNull  T1[] array) {
-        return mSelectedList == LIST0
-                ? mList0.toArray(array)
-                : mList1.toArray(array);
+        return getActiveList().toArray(array);
     }
 
     @Override
     public String toString() {
-        return mSelectedList == LIST0
-                ? mList0.toString()
-                : mList1.toString();
+        return getActiveList().toString();
     }
 
     @Override
     public int hashCode() {
+        return getActiveList().hashCode();
+    }
+
+    private List<T> getActiveList() {
         return mSelectedList == LIST0
-                ? mList0.hashCode()
-                : mList1.hashCode();
+                ? mList0
+                : mList1;
     }
 }
