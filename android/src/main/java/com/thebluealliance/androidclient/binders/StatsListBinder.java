@@ -6,6 +6,8 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
 import android.support.annotation.Nullable;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -21,6 +23,11 @@ public class StatsListBinder extends ListViewBinder implements RadioGroup.OnChec
     @Bind(R.id.show_team_stats) RadioButton mShowTeamStats;
 
     private ListPair<ListItem> mData;
+    private Menu mMenu;
+
+    public void setMenu(Menu menu) {
+        mMenu = menu;
+    }
 
     @Override
     public void updateData(@Nullable List<ListItem> data) {
@@ -44,12 +51,19 @@ public class StatsListBinder extends ListViewBinder implements RadioGroup.OnChec
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
+        MenuItem sortItem = mMenu.findItem(R.id.action_sort_by);
         if (group.getCheckedRadioButtonId() == R.id.show_team_stats) {
             mData.setSelectedList(ListPair.LIST0);
             mAdapter.notifyDataSetChanged();
+            if (sortItem != null) {
+                sortItem.setVisible(true);
+            }
         } else if (group.getCheckedRadioButtonId() == R.id.show_event_stats) {
             mData.setSelectedList(ListPair.LIST1);
             mAdapter.notifyDataSetChanged();
+            if (sortItem != null) {
+                sortItem.setVisible(false);
+            }
         }
     }
 }
