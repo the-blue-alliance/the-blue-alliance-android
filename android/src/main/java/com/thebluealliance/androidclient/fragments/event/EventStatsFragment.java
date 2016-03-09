@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.views.NoDataView;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,8 +51,10 @@ public class EventStatsFragment
     private String[] mItems;
     private String mEventKey;
     private Parcelable mListState;
+    private SparseArray<Parcelable> mRadioState;
     private EventStatsFragmentAdapter mAdapter;
     private ListView mListView;
+    private RadioGroup mRadioGroup;
     private String mStatSortCategory;
     private int mSelectedStatSort = -1;
 
@@ -122,6 +126,7 @@ public class EventStatsFragment
         View view = inflater.inflate(R.layout.fragment_event_stats, null);
         mBinder.setRootView(view);
         mListView = (ListView) view.findViewById(R.id.list);
+        mRadioGroup = (RadioGroup) view.findViewById(R.id.stats_type_selector);
 
         ProgressBar mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
         // Either reload data if returning from another fragment/activity
@@ -129,6 +134,7 @@ public class EventStatsFragment
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
+            mRadioGroup.restoreHierarchyState(mRadioState);
             mProgressBar.setVisibility(View.GONE);
         }
 
@@ -172,6 +178,10 @@ public class EventStatsFragment
         if (mListView != null) {
             mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
+        }
+        if (mRadioGroup != null) {
+            mRadioState = new SparseArray<>();
+            mRadioGroup.saveHierarchyState(mRadioState);
         }
     }
 
