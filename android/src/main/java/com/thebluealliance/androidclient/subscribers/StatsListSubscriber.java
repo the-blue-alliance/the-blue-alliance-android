@@ -132,11 +132,11 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
 
         JsonArray highScore = eventInsights.get("high_score").getAsJsonArray();
         mEventStats.add(new LabelValueListItem("High Score", String.format("%1$d in %2$s",
-                highScore.get(0).getAsInt(), highScore.get(2).getAsString())));
+                highScore.get(0).getAsInt(), highScore.get(2).getAsString()), true));
 
         for (int i = 0; i < matchKeys.length; i++) {
             mEventStats.add(new LabelValueListItem(mResources.getString(matchTitles[i]), df.format
-                    (eventInsights.get(matchKeys[i]).getAsDouble())));
+                    (eventInsights.get(matchKeys[i]).getAsDouble()), true));
         }
     }
 
@@ -155,7 +155,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
             JsonArray defenseData = eventInsights.get(defenseTitle[i]).getAsJsonArray();
             mEventStats.add(new LabelValueListItem(mResources.getString(defenseName[i]), String.format
                     (defenseFormat, defenseData.get(0).getAsInt(), defenseData.get(1).getAsInt(),
-                            defenseData.get(2).getAsDouble())));
+                            defenseData.get(2).getAsDouble()), true));
         }
     }
 
@@ -170,7 +170,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
             JsonArray towerData = eventInsights.get(towerKeys[i]).getAsJsonArray();
             mEventStats.add(new LabelValueListItem(mResources.getString(towerTitles[i]), String
                     .format(defenseFormat, towerData.get(0).getAsInt(), towerData.get(1).getAsInt(),
-                            towerData.get(2).getAsDouble())));
+                            towerData.get(2).getAsDouble()), true));
         }
     }
 
