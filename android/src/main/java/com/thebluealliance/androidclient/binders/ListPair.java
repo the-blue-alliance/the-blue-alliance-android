@@ -41,16 +41,11 @@ public class ListPair<T> implements List<T> {
         mSelectedList = selectedList;
     }
 
-    public void clearBoth() {
-        mList0.clear();
-        mList1.clear();
-    }
-
-    public void setCurrentListData(List<T> newData) {
+    public void swapSelectedList() {
         if (mSelectedList == LIST0) {
-            mList0 = newData;
-        } else {
-            mList1 = newData;
+            mSelectedList = LIST1;
+        } else if (mSelectedList == LIST1) {
+            mSelectedList = LIST0;
         }
     }
 

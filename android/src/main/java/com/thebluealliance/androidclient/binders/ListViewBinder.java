@@ -44,6 +44,7 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
         if (mAdapter == null) {
             mAdapter = newAdapter(data);
             listView.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
         } else {
             replaceDataInAdapter(data);
         }

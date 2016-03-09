@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.binders.StatsListBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -106,6 +107,7 @@ public class EventStatsFragment
         mStatsDialog = builder.create();
         setHasOptionsMenu(true);
         mSubscriber.setStatToSortBy(mStatSortCategory);
+        mSubscriber.setEventYear(EventHelper.getYear(mEventKey));
     }
 
     @Override

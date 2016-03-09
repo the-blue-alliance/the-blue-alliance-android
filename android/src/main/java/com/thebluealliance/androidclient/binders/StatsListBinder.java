@@ -5,6 +5,8 @@ import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
+import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -12,13 +14,22 @@ import java.util.List;
 
 import butterknife.Bind;
 
-public class StatsListBinder extends ListViewBinder {
+public class StatsListBinder extends ListViewBinder implements RadioGroup.OnCheckedChangeListener {
 
     @Bind(R.id.stats_type_selector) RadioGroup mSelectorGroup;
     @Bind(R.id.show_event_stats) RadioButton mShowEventStats;
     @Bind(R.id.show_team_stats) RadioButton mShowTeamStats;
 
     private ListPair<ListItem> mData;
+
+    @Override
+    public void updateData(@Nullable List<ListItem> data) {
+        mSelectorGroup.setVisibility(View.VISIBLE);
+        mSelectorGroup.setOnCheckedChangeListener(this);
+
+        /** Call this last, it calls {@link #setDataBound(boolean)} when done */
+        super.updateData(data);
+    }
 
     @Override
     public ListViewAdapter newAdapter(List<ListItem> data) {
@@ -29,5 +40,16 @@ public class StatsListBinder extends ListViewBinder {
     @Override
     protected void replaceDataInAdapter(List<ListItem> data) {
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        if (group.getCheckedRadioButtonId() == R.id.show_team_stats) {
+            mData.setSelectedList(ListPair.LIST0);
+            mAdapter.notifyDataSetChanged();
+        } else if (group.getCheckedRadioButtonId() == R.id.show_event_stats) {
+            mData.setSelectedList(ListPair.LIST1);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 }
