@@ -11,6 +11,8 @@
                 android:id="@+id/stats_type_selector"
                 android:orientation="horizontal"
                 android:visibility="gone"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
                 tools:visibility="visible">
         <RadioButton
                 android:layout_width="wrap_content"
