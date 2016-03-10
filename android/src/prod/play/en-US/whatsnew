@@ -1,8 +1,8 @@
-Version 3.1.2 (2016 Week 1):
-    - Fix up/back navigation bugs when viewing match
-    - Improve notification format to be more readable
-    - Optimize performacne with long lists of data
-    - Fix other encountered crashes
+Version 3.2.0 (2016 Week 2):
+    - You can now snap a robot picture and suggest it to TBA from team pages!
+    - Added full match score breakdowns as well as event specific stats
+    - Bold followed teams in notifications so you never miss them
+    - Many performance improvements and bug fixes
 
 View the full changelog for this and previous releases on the GitHub page:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
