@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -41,12 +42,12 @@ public class ListPair<T> implements List<T> {
         mSelectedList = selectedList;
     }
 
-    public void swapSelectedList() {
-        if (mSelectedList == LIST0) {
-            mSelectedList = LIST1;
-        } else if (mSelectedList == LIST1) {
-            mSelectedList = LIST0;
-        }
+    public List<T> getList0() {
+        return mList0;
+    }
+
+    public List<T> getList1() {
+        return mList1;
     }
 
     @Override
@@ -67,6 +68,13 @@ public class ListPair<T> implements List<T> {
     @Override
     public boolean addAll(@NonNull Collection<? extends T> collection) {
         return getActiveList().addAll(collection);
+    }
+
+    public void replaceAll(@NonNull ListPair<T> listPair) {
+        mList0.clear();
+        mList0.addAll(listPair.getList0());
+        mList1.clear();
+        mList1.addAll(listPair.getList1());
     }
 
     @Override
@@ -172,6 +180,10 @@ public class ListPair<T> implements List<T> {
     @Override
     public int hashCode() {
         return getActiveList().hashCode();
+    }
+
+    public ListPair<T> copyOf() {
+        return new ListPair<>(new ArrayList<>(mList0), new ArrayList<>(mList1));
     }
 
     private List<T> getActiveList() {

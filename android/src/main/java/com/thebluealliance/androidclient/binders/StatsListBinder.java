@@ -49,12 +49,13 @@ public class StatsListBinder extends ListViewBinder implements RadioGroup.OnChec
 
     @Override
     public ListViewAdapter newAdapter(List<ListItem> data) {
-        mData = (ListPair<ListItem>) data;
+        mData = ((ListPair<ListItem>) data).copyOf();
         return new EventStatsFragmentAdapter(mActivity, mData);
     }
 
     @Override
     protected void replaceDataInAdapter(List<ListItem> data) {
+        mData.replaceAll((ListPair<ListItem>) data);
         mAdapter.notifyDataSetChanged();
     }
 
