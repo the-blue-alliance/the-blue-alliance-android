@@ -64,8 +64,8 @@ def check_travis_tests(args):
         info = subprocess.check_output(["travis", "show", tag_name])
         regex = re.search(".*State:[ \t]+((\w)*)\n", info)
         status = regex.group(1)
-        regex = re.search(".*Duration:[ \t]+((\w)*)\n", info)
-        duration = regex.group(1)
+        regex = re.search(".*Duration:[ \t]+(([\w\d ])*)", info)
+        duration = regex.group(1) if regex else None
         print "Build Status: {}, duration: {}".format(status, duration)
         if status == "passed" or status == "failed" or status == "errored":
             break
