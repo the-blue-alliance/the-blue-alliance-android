@@ -79,6 +79,8 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     @Bind(R.id.year_selector_subtitle) TextView mYearSelectorSubtitle;
     @Bind(R.id.view_pager) ViewPager mPager;
 
+    private Snackbar mMediaSnackbar;
+
     private FragmentComponent mComponent;
     private int mCurrentSelectedYearPosition = -1,
             mSelectedTab = -1;
@@ -173,14 +175,13 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         boolean wasMediaSnackbarDismissed = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(PREF_MEDIA_SNACKBAR_DISMISSED, false);
         if (!wasMediaSnackbarDismissed && AccountHelper.isMyTBAEnabled(this)) {
-            Snackbar snackbar = createSnackbar(Html.fromHtml(getString(R.string.imgur_media_snackbar_message)), Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction(R.string.imgur_media_snackbar_Action_dismiss, (view) -> {
+            mMediaSnackbar = createSnackbar(Html.fromHtml(getString(R.string.imgur_media_snackbar_message)), Snackbar.LENGTH_INDEFINITE);
+            mMediaSnackbar.setAction(R.string.imgur_media_snackbar_Action_dismiss, (view) -> {
             });
-            snackbar.setCallback(new Snackbar.Callback() {
+            mMediaSnackbar.setCallback(new Snackbar.Callback() {
                 @Override
                 public void onDismissed(Snackbar snackbar, int event) {
-                    PreferenceManager.getDefaultSharedPreferences(ViewTeamActivity.this)
-                            .edit().putBoolean(PREF_MEDIA_SNACKBAR_DISMISSED, true).commit();
+                    markMediaSnackbarAsDismissed();
                 }
             }).show();
         }
@@ -367,6 +368,12 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
                             })
                             .show();
                 }
+
+                // Dismiss the awareness snackbar when the fab is clicked
+                if (mMediaSnackbar != null) {
+                    mMediaSnackbar.dismiss();
+                    markMediaSnackbarAsDismissed();
+                }
                 return true;
         }
         return false;
@@ -437,6 +444,11 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
 
         mCurrentPhotoUri = "file:" + image.getAbsolutePath();
         return image;
+    }
+
+    private void markMediaSnackbarAsDismissed() {
+        PreferenceManager.getDefaultSharedPreferences(ViewTeamActivity.this)
+                .edit().putBoolean(PREF_MEDIA_SNACKBAR_DISMISSED, true).commit();
     }
 
     public FragmentComponent getComponent() {
