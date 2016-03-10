@@ -8,6 +8,6 @@
         android:icon="@drawable/ic_refresh_white_24dp"
         android:orderInCategory="1"
         android:title="@string/menuitem_refresh"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
 </menu>

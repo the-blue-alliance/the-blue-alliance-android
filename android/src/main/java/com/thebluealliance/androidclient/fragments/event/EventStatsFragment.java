@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.binders.StatsListBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -18,6 +19,7 @@ import com.thebluealliance.androidclient.views.NoDataView;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 
 import java.util.Arrays;
 import java.util.List;
@@ -48,8 +51,10 @@ public class EventStatsFragment
     private String[] mItems;
     private String mEventKey;
     private Parcelable mListState;
+    private SparseArray<Parcelable> mRadioState;
     private EventStatsFragmentAdapter mAdapter;
     private ListView mListView;
+    private RadioGroup mRadioGroup;
     private String mStatSortCategory;
     private int mSelectedStatSort = -1;
 
@@ -106,20 +111,23 @@ public class EventStatsFragment
         mStatsDialog = builder.create();
         setHasOptionsMenu(true);
         mSubscriber.setStatToSortBy(mStatSortCategory);
+        mSubscriber.setEventYear(EventHelper.getYear(mEventKey));
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.stats_sort_menu, menu);
         inflater.inflate(R.menu.stats_help_menu, menu);
+        mBinder.setMenu(menu);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Setup views & listeners
-        View view = inflater.inflate(R.layout.list_view_with_spinner, null);
+        View view = inflater.inflate(R.layout.fragment_event_stats, null);
         mBinder.setRootView(view);
         mListView = (ListView) view.findViewById(R.id.list);
+        mRadioGroup = (RadioGroup) view.findViewById(R.id.stats_type_selector);
 
         ProgressBar mProgressBar = (ProgressBar) view.findViewById(R.id.progress);
         // Either reload data if returning from another fragment/activity
@@ -127,6 +135,7 @@ public class EventStatsFragment
         if (mAdapter != null) {
             mListView.setAdapter(mAdapter);
             mListView.onRestoreInstanceState(mListState);
+            mRadioGroup.restoreHierarchyState(mRadioState);
             mProgressBar.setVisibility(View.GONE);
         }
 
@@ -137,8 +146,6 @@ public class EventStatsFragment
             if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
                 teamKey = TeamHelper.baseTeamKey(teamKey);
                 startActivity(TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey));
-            } else {
-                throw new IllegalArgumentException("OnItemClickListener must be attached to a view with a valid team key set as the tag!");
             }
         });
 
@@ -170,6 +177,10 @@ public class EventStatsFragment
         if (mListView != null) {
             mAdapter = (EventStatsFragmentAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
+        }
+        if (mRadioGroup != null) {
+            mRadioState = new SparseArray<>();
+            mRadioGroup.saveHierarchyState(mRadioState);
         }
     }
 

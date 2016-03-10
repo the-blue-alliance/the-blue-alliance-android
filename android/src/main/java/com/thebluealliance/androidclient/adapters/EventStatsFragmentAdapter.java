@@ -1,17 +1,25 @@
 package com.thebluealliance.androidclient.adapters;
 
-import android.content.Context;
-
+import com.thebluealliance.androidclient.binders.ListPair;
 import com.thebluealliance.androidclient.comparators.StatListElementComparator;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
+import android.content.Context;
+
 import java.util.Collections;
-import java.util.List;
 
 public class EventStatsFragmentAdapter extends ListViewAdapter {
 
-    public EventStatsFragmentAdapter(Context context, List<ListItem> values) {
+    private final ListPair<ListItem> mListPair;
+
+    public EventStatsFragmentAdapter(Context context, ListPair<ListItem> values) {
         super(context, values);
+        mListPair = values;
+    }
+
+    public void setSelectedList(@ListPair.ListOption int option) {
+        mListPair.setSelectedList(option);
+        notifyDataSetChanged();
     }
 
     /**

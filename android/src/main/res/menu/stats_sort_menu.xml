@@ -7,5 +7,5 @@
         android:icon="@drawable/ic_sort_white_24dp"
         android:orderInCategory="115"
         android:title="@string/action_sort_option"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>
