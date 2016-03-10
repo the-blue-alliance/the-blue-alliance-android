@@ -60,9 +60,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     }
 
     @Inject DatabaseWriter mWriter;
-    @Inject
-    @Named("firebase_api")
-    FirebaseAPI mFirebaseApi;
+    @Inject @Named("firebase_api") FirebaseAPI mFirebaseApi;
 
     private ListView mListView;
     private ListView mFilterListView;
