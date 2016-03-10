@@ -142,7 +142,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
             "average_crossing_score", "average_boulder_score", "average_tower_score", "average_foul_score"};
 
     private void generate2016MatchInsights(JsonObject quals, JsonObject elims) {
-        mEventStats.add(new EventTypeHeader("Match Stats"));
+        mEventStats.add(new EventTypeHeader(mResources.getString(R.string.breakdown_match_stats)));
 
         String qualFormat = mResources.getString(R.string.breakdown2016_qual);
         String elimFormat = mResources.getString(R.string.breakdown2016_elim);
@@ -185,8 +185,8 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
             .defense2016_rock_wall, R.string.defense2016_breaches};
 
     private void generate2016DefenseInsights(JsonObject quals, JsonObject elims) {
-        mEventStats.add(new EventTypeHeader("Defense Stats"));
-        String defenseFormat = mResources.getString(R.string.defense2016_cross_format);
+        mEventStats.add(new EventTypeHeader(mResources.getString(R.string.breakdown2016_defense_stats)));
+        String defenseFormat = mResources.getString(R.string.defense2016_percent_format);
         for (int i = 0; i < defenseName.length; i++) {
             String qualStat = null, elimStat = null;
             if (quals.has(defenseTitle[i]) && quals.get(defenseTitle[i]).isJsonArray()) {
@@ -209,8 +209,9 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
     private String[] towerKeys = {"challenges", "scales", "captures"};
 
     private void generate2016TowerInsights(JsonObject quals, JsonObject elims) {
-        mEventStats.add(new EventTypeHeader("Tower Stats"));
-        String defenseFormat = mResources.getString(R.string.defense2016_tower_format);
+        mEventStats.add(new EventTypeHeader(mResources.getString(R.string.breakdwn2016_tower_stats)));
+        String defenseFormat = mResources.getString(R.string.defense2016_percent_format
+        );
         for (int i = 0; i < towerTitles.length; i++) {
             String qualStat = null, elimStat = null;
             if (quals.has(towerKeys[i]) && quals.get(towerKeys[i]).isJsonArray()) {
