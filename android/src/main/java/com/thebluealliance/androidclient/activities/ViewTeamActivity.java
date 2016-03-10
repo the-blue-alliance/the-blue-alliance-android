@@ -73,16 +73,11 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     private static final int CHOOSE_IMAGE_REQUEST = 42;
     private static final int TAKE_PICTURE_REQUEST = 43;
 
-    @Bind(R.id.year_selector_container)
-    View mYearSelectorContainer;
-    @Bind(R.id.year_selector_subtitle_container)
-    View mYearSelectorSubtitleContainer;
-    @Bind(R.id.year_selector_title)
-    TextView mYearSelectorTitle;
-    @Bind(R.id.year_selector_subtitle)
-    TextView mYearSelectorSubtitle;
-    @Bind(R.id.view_pager)
-    ViewPager mPager;
+    @Bind(R.id.year_selector_container) View mYearSelectorContainer;
+    @Bind(R.id.year_selector_subtitle_container) View mYearSelectorSubtitleContainer;
+    @Bind(R.id.year_selector_title) TextView mYearSelectorTitle;
+    @Bind(R.id.year_selector_subtitle) TextView mYearSelectorSubtitle;
+    @Bind(R.id.view_pager) ViewPager mPager;
 
     private Snackbar mMediaSnackbar;
 
@@ -94,8 +89,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
 
     private int[] mYearsParticipated;
 
-    @Inject
-    TBAStatusController mStatusController;
+    @Inject TBAStatusController mStatusController;
 
     // Should come in the format frc####
     private String mTeamKey;
