@@ -141,8 +141,7 @@ public class RefreshController {
     /**
      * Called to notify this class that a {@link Refreshable}'s refreshing state has changed. Note
      * that this will also register the {@link Refreshable} for future refresh start callbacks if
-     * it
-     * was not already registered.
+     * it was not already registered.
      *
      * @param refreshKey   the String linking to the {@link Refreshable} object being updated
      * @param isRefreshing true if the {@link Refreshable} is currently refreshing, false if it is
