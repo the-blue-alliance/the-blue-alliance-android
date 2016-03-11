@@ -41,6 +41,12 @@ public class ViewEventActivity extends MyTBASettingsActivity
     private FragmentComponent mComponent;
 
     /**
+     * Will be run in {@code onResume()}; used to perform UI setup that can't happen before the
+     * activity is resumed
+     */
+    private Runnable mOnNewIntentRunnable;
+
+    /**
      * Create new intent for ViewEventActivity
      *
      * @param c        context
@@ -126,12 +132,19 @@ public class ViewEventActivity extends MyTBASettingsActivity
         }
         setModelKey(mEventKey, ModelType.EVENT);
 
-        // If the settings panel was open before, close it
-        closeSettingsPanel();
+        mOnNewIntentRunnable = () -> {
+            // If the settings panel was open before, close it
+            closeSettingsPanel(false);
 
-        adapter = new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey);
-        pager.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+            // Reset the title; this will be set from the EventInfoFragment
+            setActionBarTitle("");
+
+            adapter.removeAllFragments();
+            adapter = new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey);
+            pager.setAdapter(adapter);
+            pager.setCurrentItem(mSelectedTab);
+        };
+
         Log.d(Constants.LOG_TAG, "Got new ViewEvent intent with key: " + mEventKey);
     }
 
@@ -139,6 +152,11 @@ public class ViewEventActivity extends MyTBASettingsActivity
     protected void onResume() {
         super.onResume();
         setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
+
+        if (mOnNewIntentRunnable != null) {
+            mOnNewIntentRunnable.run();
+            mOnNewIntentRunnable = null;
+        }
     }
 
     @Override

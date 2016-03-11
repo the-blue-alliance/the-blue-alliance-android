@@ -112,15 +112,10 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
 
         if (savedInstanceState != null) {
             mIsSettingsPanelOpen = savedInstanceState.getBoolean(SETTINGS_PANEL_OPEN);
-            setupFabIconForSettingsPanelOpen(mIsSettingsPanelOpen);
             if (mIsSettingsPanelOpen) {
-                mSettingsContainer.setVisibility(View.VISIBLE);
-                // Set up system UI (status bar background and icon color
-                getDrawerLayout().setStatusBarBackgroundColor(getResources().getColor(R.color
-                        .accent_dark));
-                Utilities.setLightStatusBar(getWindow(), true);
+                openSettingsPanel(false);
             } else {
-                mSettingsContainer.setVisibility(View.INVISIBLE);
+                closeSettingsPanel(false);
             }
             savedPreferenceState = savedInstanceState.getBundle(MyTBASettingsFragment.SAVED_STATE_BUNDLE);
         }
@@ -169,12 +164,12 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
             }
             if (!mIsSettingsPanelOpen) {
                 if (!mSaveInProgress) {
-                    openSettingsPanel();
+                    openSettingsPanel(true);
                 }
             } else {
                 // The user wants to save the preferences
                 // Always close the panel
-                mFabHandler.postDelayed(this::closeSettingsPanel, 1);
+                mFabHandler.postDelayed(() -> closeSettingsPanel(true), 1);
 
                 // If saving is disabled, don't attempt to save
                 if (!mIsSaveEnalbed) {
@@ -214,19 +209,42 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
      * Called when the user chooses to close the settings panel without saving their changes.
      */
     private void onSettingsCloseButtonClick() {
-        closeSettingsPanel();
+        closeSettingsPanel(true);
         // Cancel any changes made by the user
         mSettingsFragment.restoreInitialState();
     }
 
-    protected void openSettingsPanel() {
-        mSettingsFragment.restoreInitialState();
+    protected void openSettingsPanel(boolean animate) {
+        mIsSettingsPanelOpen = true;
+
+        if (mSettingsFragment != null) {
+            mSettingsFragment.restoreInitialState();
+        }
 
         // Reset the color of the button
         if (mFabColorAnimator != null) {
             mFabColorAnimator.cancel();
         }
         setFabColor(FAB_COLOR);
+
+        if (!animate) {
+            // Show the panel
+            mSettingsContainer.setVisibility(View.VISIBLE);
+
+            // Set up the status bar
+            getDrawerLayout().setStatusBarBackgroundColor(getResources().getColor(R.color
+                    .accent_dark));
+            getDrawerLayout().invalidate();
+            Utilities.setLightStatusBar(getWindow(), true);
+
+            // Dim the activity foreground
+            mForegroundDim.setAlpha(DIMMED_ALPHA);
+
+            // Configure the fab
+            setupFabIconForSettingsPanelOpen(true);
+
+            return;
+        }
 
         // Hide the button immediately
         mToggleSettingsPanelButton.setVisibility(View.GONE);
@@ -305,11 +323,30 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
                 mRunningPanelAnimation = null;
             }
         });
-
-        mIsSettingsPanelOpen = true;
     }
 
-    protected void closeSettingsPanel() {
+    protected void closeSettingsPanel(boolean animate) {
+        mIsSettingsPanelOpen = false;
+
+        if (!animate) {
+            // Hide the panel
+            mSettingsContainer.setVisibility(View.GONE);
+
+            // Set up the status bar
+            getDrawerLayout().setStatusBarBackgroundColor(getResources().getColor(R.color
+                    .primary_dark));
+            getDrawerLayout().invalidate();
+            Utilities.setLightStatusBar(getWindow(), false);
+
+            // Undim the activity foreground
+            mForegroundDim.setAlpha(UNDIMMED_ALPHA);
+
+            // Configure the fab
+            setupFabIconForSettingsPanelOpen(false);
+
+            return;
+        }
+
         int centerOfButtonOutsideX = (mToggleSettingsPanelButton.getLeft() + mToggleSettingsPanelButton.getRight()) / 2;
         int centerOfButtonOutsideY = (mToggleSettingsPanelButton.getTop() + mToggleSettingsPanelButton.getBottom()) / 2;
 
@@ -397,8 +434,6 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
                 mRunningPanelAnimation = null;
             }
         });
-
-        mIsSettingsPanelOpen = false;
     }
 
     protected void syncFabVisibilityWithMyTbaEnabled(boolean animate) {
@@ -409,11 +444,6 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         }
     }
 
-    /**
-     * Will
-     *
-     * @param animate
-     */
     protected void showFab(boolean animate) {
         if (mFabVisible) {
             return;
@@ -574,7 +604,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     @Override
     public void onBackPressed() {
         if (mIsSettingsPanelOpen) {
-            closeSettingsPanel();
+            closeSettingsPanel(true);
             return;
         }
         super.onBackPressed();
