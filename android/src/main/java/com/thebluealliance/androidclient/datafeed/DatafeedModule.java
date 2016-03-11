@@ -11,10 +11,12 @@ import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
+import com.thebluealliance.androidclient.datafeed.retrofit.FirebaseAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
+import com.thebluealliance.androidclient.fragments.FirebaseTickerFragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -55,6 +57,17 @@ public class DatafeedModule {
                 .build();
     }
 
+    @Provides @Singleton @Named("firebase_retrofit")
+    public Retrofit provideFirebaseRetrofit(Context context, Gson gson, OkHttpClient okHttpClient) {
+        String firebaseUrl = Utilities.readLocalProperty(context, "firebase.url", FirebaseTickerFragment.FIREBASE_URL_DEFAULT);
+        return new Retrofit.Builder()
+                .baseUrl(firebaseUrl)
+                .client(okHttpClient)
+                .addConverterFactory(LenientGsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+    }
+
     @Provides @Singleton @Named("tba_api")
     public APIv2 provideTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
         return retrofit.create(APIv2.class);
@@ -63,6 +76,11 @@ public class DatafeedModule {
     @Provides @Singleton @Named("github_api")
     public GitHubAPI provideGitHubAPI(@Named("github_retrofit") Retrofit retrofit) {
         return retrofit.create(GitHubAPI.class);
+    }
+
+    @Provides @Singleton @Named("firebase_api")
+    public FirebaseAPI provideFirebaseAPI(@Named("firebase_retrofit") Retrofit retrofit) {
+        return retrofit.create(FirebaseAPI.class);
     }
 
 
