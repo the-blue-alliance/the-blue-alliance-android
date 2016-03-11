@@ -18,10 +18,9 @@ import javax.inject.Singleton;
 /**
  * Provides an easy way to manage a collection of {@link Refreshable} objects. {@link Refreshable}
  * objects should register themselves with this class; they will receive callbacks when a refresh
- * is
- * requested. Additionally, they can push their current state (refreshing or not) into this class.
- * This allows us to determine if any registered objects are currently refreshing and take the
- * appropriate action.
+ * is requested. Additionally, they can push their current state (refreshing or not) into this
+ * class. This allows us to determine if any registered objects are currently refreshing and take
+ * the appropriate action.
  * <p>
  * The primary way this class will be used is to work with a {@link MenuItem} that controls
  * refreshing. When you bind a {@link RefreshController} to a {@link MenuItem} with the {@link
@@ -29,8 +28,7 @@ import javax.inject.Singleton;
  * registered {@link Refreshable}s and replace the item's action view with a progress indicator and
  * revert the icon to its normal state when the refresh is finished. And, as long as you proxy
  * {@link android.app.Activity#onOptionsItemSelected(MenuItem)} calls through to this class, it
- * will
- * automatically start a refresh when the bound {@link MenuItem} is clicked.
+ * will automatically start a refresh when the bound {@link MenuItem} is clicked.
  */
 @Singleton
 public class RefreshController {
@@ -40,8 +38,7 @@ public class RefreshController {
      */
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({REQUESTED_BY_USER, NOT_REQUESTED_BY_USER})
-    public @interface RefreshType {
-    }
+    public @interface RefreshType {}
 
     public static final int REQUESTED_BY_USER = 0;
     public static final int NOT_REQUESTED_BY_USER = 1;
@@ -97,8 +94,7 @@ public class RefreshController {
     /**
      * Calls to {@link android.app.Activity#onOptionsItemSelected(MenuItem)} should be proxied
      * through to this method if you want to take advantage of automatically starting a refresh
-     * when
-     * the bound {@link MenuItem} is clicked.
+     * when the bound {@link MenuItem} is clicked.
      *
      * @param menuItem the {@link MenuItem} that was clicked.
      * @return true if the click was handled, false otherwise
