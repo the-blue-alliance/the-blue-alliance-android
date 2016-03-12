@@ -361,12 +361,19 @@ public class Utilities {
             }
 
             if (beBold.apply(name.toString())) {
-                result.append(name, new StyleSpan(Typeface.BOLD), 0);
+                supportAppend(result, name, new StyleSpan(Typeface.BOLD), 0);
             } else {
                 result.append(name);
             }
         }
         return result;
+    }
+
+    private static SpannableStringBuilder supportAppend(SpannableStringBuilder builder, CharSequence text, Object what, int flags) {
+        int start = builder.length();
+        builder.append(text);
+        builder.setSpan(what, start, builder.length(), flags);
+        return builder;
     }
 
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
