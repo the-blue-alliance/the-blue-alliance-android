@@ -10,47 +10,39 @@
     <!-- ******************************
          Upcoming match notification
          ****************************** -->
-    <string name="notification_upcoming_match_title">Match %1$s %2$s starting soon</string>
-    <!-- Example: "Midwest Regional: Team 111 will play in Qualification Match 32, scheduled for 2:35PM" -->
-    <string name="notification_upcoming_match_text_single_team">%1$s: Team %2$s will play in %3$s, scheduled for %4$s.</string>
-    <string name="notification_upcoming_match_text_single_team_no_time">%1$s: Team %2$s will play in %3$s.</string>
-    <!-- Example: "Midwest Regional: Teams 111, 254, and 1114 will play in Qualification Match 32, scheduled for 2:35PM" -->
-    <string name="notification_upcoming_match_text_multiple_teams">%1$s: Teams %2$s will play in %3$s, scheduled for %4$s.</string>
-    <string name="notification_upcoming_match_text_multiple_teams_no_time">%1$s: Teams %2$s will play in %3$s.</string>
+    <string name="notification_upcoming_match_title">%1$s %2$s Starting Soon</string>
+    <!-- Example: "Midwest Regional Quals 32: 111, 200, 1984 will play 112, 201, 1985, scheduled for 2:35 PM." -->
+    <string name="notification_upcoming_match">^1 ^2: ^3 will play ^4, scheduled for ^5.</string>
+    <!-- Example: "Midwest Regional Quals 32: 111, 200, 1984 will play 112, 201, 1985." -->
+    <string name="notification_upcoming_match_no_time">^1 ^2: ^3 will play ^4.</string>
     <string name="notification_upcoming_match_gameday_title">Upcoming match: %1$s</string>
 
     <!-- *********************
          Score notification
          ********************* -->
-    <string name="notification_score_title">Match %1$s %2$s results</string>
-    <!-- Example: Midwest Regional: 111 and 1114 won in Quals 32 with a score of 523 - 42. -->
-    <string name="notification_score_teams_won">%1$s: %2$s won in %3$s with a score of %4$s</string>
-    <!-- Example: Midwest Regional: 111 and 1114 lost in Quals 32 with a score of 523 - 42. -->
-    <string name="notification_score_teams_lost">%1$s: %2$s lost in %3$s with a score of %4$s</string>
-    <!-- Example: Midwest Regional: 111 and 1114 tied with the opposing alliance in Quals 32 with a score of 42 - 42. -->
-    <string name="notification_score_teams_tied">%1$s: %2$s tied with the opposing alliance in %3$s with a score of %4$s</string>
-    <!-- Example: Midwest Regional: 111 and 1114 beat 564 in Quals 32 with a score of 324 - 42. -->
-    <string name="notification_score_teams_beat_teams">%1$s: %2$s beat %3$s in %4$s with a score of %5$s</string>
-    <!-- Example: Midwest Regional: 111 and 1114 tied with the opposing alliance in Quals 32 with a score of 42 - 42. -->
-    <string name="notification_score_teams_tied_with_teams">%1$s: %2$s tied with %3$s in %4$s with a score of %5$s</string>
+    <string name="notification_score_title">%1$s %2$s Results</string>
+    <!-- Example: Midwest Regional Quals 32: 111, 971, 1114 beat 254, 118, 1983 scoring 324-42. -->
+    <string name="notification_score_teams_beat_teams">^1 ^2: ^3 beat ^4 scoring ^5.</string>
+    <!-- Example: Midwest Regional Quals 32: 111, 971, 1114 tied with 254, 118, 1983 scoring 324-324. -->
+    <string name="notification_score_teams_tied_teams">^1 ^2: ^3 tied with ^4 scoring ^5.</string>
 
     <!-- For use only with 2015 non-finals matches, because that thing with no winners. Such a great game... -->
-    <!-- Example: Midwest Regional Quals 32: 111, 33, and 329 scored 156 points; 584, 295, and 594 scored 63 points. -->
-    <string name="notification_score_2015_no_winner">%1$s %2$s: %3$s scored %4$d points; %5$s scored %6$d points.</string>
+    <!-- Example: Midwest Regional Quals 32: 111, 33, 329 played 54, 295, 3594 scoring 156-63. -->
+    <string name="notification_score_teams_played_teams">^1 ^2: ^3 played ^4 scoring ^5.</string>
     <string name="notification_score_gameday_title">Match result: %1$s</string>
 
     <!-- *********************
         Comp Level Starting Notification
         ********************* -->
-    <string name="notification_level_starting_title">Competition Level Starting %1$s</string>
-    <string name="notification_level_starting">%1$s: %2$s are starting</string>
-    <string name="notification_level_starting_with_time">%1$s: %2$s are scheduled to start at %3$s</string>
+    <string name="notification_level_starting_title">%1$s %2$s Starting</string>
+    <string name="notification_level_starting">%1$s: %2$s are starting.</string>
+    <string name="notification_level_starting_with_time">%1$s: %2$s are scheduled for %3$s.</string>
     <string name="notification_level_starting_gameday_details">%1$s starting</string>
 
     <!-- *********************
         Event Schedule Updated Notification
         ********************* -->
-    <string name="notification_schedule_updated_title">Event Schedule Updated %1$s</string>
+    <string name="notification_schedule_updated_title">%1$s Schedule Updated</string>
     <string name="notification_schedule_updated_with_time">The match schedule at %1$s has been updated. The next match starts at %2$s.</string>
     <string name="notification_schedule_updated_without_time">The match schedule at %1$s has been updated.</string>
     <string name="notification_schedule_updated_gameday_title">Match Schedule Updated</string>
@@ -59,21 +51,21 @@
     <!-- *********************
         Awards Updated Notification
         ********************* -->
-    <string name="notification_awards_updated_title">Event Awards Updated %1$s</string>
+    <string name="notification_awards_updated_title">%1$s Awards Updated</string>
     <string name="notification_awards_updated">Awards have been updated at %1$s.</string>
     <string name="notification_awards_updated_gameday_details">Event awards have been updated</string>
 
     <!-- *********************
         Alliances Updated Notification
         ********************* -->
-    <string name="notification_alliances_updated_title">Event Alliances Updated %1$s</string>
+    <string name="notification_alliances_updated_title">%1$s Alliances Updated</string>
     <string name="notification_alliances_updated">Alliances have been updated at %1$s.</string>
     <string name="notification_alliances_updated_gameday_details">Alliance selections updated</string>
 
     <!-- *********************
-        DistrictPoints Updated Notification
+        District Points Updated Notification
         ********************* -->
-    <string name="notification_district_points_title">District Points Updated %1$s</string>
+    <string name="notification_district_points_title">%1$s District Points Updated</string>
     <string name="notification_district_points_updated">District point calculations have been updated for %1$s.</string>
 
     <!-- *********************

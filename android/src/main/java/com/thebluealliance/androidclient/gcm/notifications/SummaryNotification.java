@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
@@ -30,7 +31,7 @@ public class SummaryNotification extends BaseNotification<Void> {
     }
 
     @Override
-    public Notification buildNotification(Context context) {
+    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         NotificationsTable table = Database.getInstance(context).getNotificationsTable();
 
         List<StoredNotification> active = table.getActive();

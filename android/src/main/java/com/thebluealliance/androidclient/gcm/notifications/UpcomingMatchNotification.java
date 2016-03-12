@@ -9,26 +9,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.common.base.Predicate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
+import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -89,26 +94,28 @@ public class UpcomingMatchNotification extends BaseNotification<GenericNotificat
 
         eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
         teamKeys = jsonData.get("team_keys").getAsJsonArray();
-        redTeams = new String[teamKeys.size() / 2];
-        blueTeams = new String[teamKeys.size() / 2];
-        for (int i = 0; i < teamKeys.size() / 2; i++) {
-            redTeams[i] = teamKeys.get(i).getAsString().substring(3);
-            blueTeams[i] = teamKeys.get(i + teamKeys.size() / 2).getAsString().substring(3);
+        ArrayList<String> teamNumbers = Match.teamNumbers(teamKeys);
+        int allianceSize = teamNumbers.size() / 2;
+        redTeams = new String[allianceSize];
+        blueTeams = new String[allianceSize];
+        for (int i = 0; i < allianceSize; ++i) {
+            redTeams[i] = teamNumbers.get(i);
+            blueTeams[i] = teamNumbers.get(i + allianceSize);
         }
         if (jsonData.has("scheduled_time")) {
             matchTime = jsonData.get("scheduled_time");
         } else {
             matchTime = JsonNull.INSTANCE;
         }
-
     }
 
     /**
      * @param context a Context object for use by the notification builder
+     * @param followsChecker for checking which teams the user follows
      * @return A constructed notification
      */
     @Override
-    public Notification buildNotification(Context context) {
+    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         String scheduledStartTimeString;
         if (JSONHelper.isNull(matchTime)) {
             scheduledStartTimeString = "";
@@ -120,41 +127,20 @@ public class UpcomingMatchNotification extends BaseNotification<GenericNotificat
             scheduledStartTimeString = format.format(scheduledStartTime);
         }
 
-        ArrayList<String> favoritedTeamsFromMatch = new ArrayList<>();
-        for (int i = 0; i < teamKeys.size(); i++) {
-            // TODO determine if team is favorited by checking local database
-
-            // strip the "frc" from each team key to get the number
-            favoritedTeamsFromMatch.add(teamKeys.get(i).getAsString().replace("frc", ""));
-        }
-
-        String teamsString = Utilities.stringifyListOfStrings(context, favoritedTeamsFromMatch);
-
-        int numFavoritedTeams = favoritedTeamsFromMatch.size();
-
-        String contentText;
-        if (numFavoritedTeams == 0) {
-            // Looks like we got this GCM notification by mistake
-            return null;
-        }
+        // Boldify the team numbers that the user is following.
+        Predicate<String> isFollowing = teamNumber -> followsChecker.followsTeam(context,
+                teamNumber, matchKey, NotificationTypes.UPCOMING_MATCH);
+        CharSequence redTeamNumbers = Utilities.boldNameList(Arrays.asList(redTeams), isFollowing);
+        CharSequence blueTeamNumbers = Utilities.boldNameList(Arrays.asList(blueTeams), isFollowing);
 
         String matchTitle = MatchHelper.getMatchTitleFromMatchKey(context, matchKey);
         String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);
         String eventShortName = EventHelper.shortName(eventName);
-
-        if (scheduledStartTimeString.isEmpty()) {
-            if (numFavoritedTeams == 1) {
-                contentText = context.getString(R.string.notification_upcoming_match_text_single_team_no_time, eventShortName, teamsString, matchTitle);
-            } else {
-                contentText = context.getString(R.string.notification_upcoming_match_text_multiple_teams_no_time, eventShortName, teamsString, matchTitle);
-            }
-        } else {
-            if (numFavoritedTeams == 1) {
-                contentText = context.getString(R.string.notification_upcoming_match_text_single_team, eventShortName, teamsString, matchTitle, scheduledStartTimeString);
-            } else {
-                contentText = context.getString(R.string.notification_upcoming_match_text_multiple_teams, eventShortName, teamsString, matchTitle, scheduledStartTimeString);
-            }
-        }
+        String template = scheduledStartTimeString.isEmpty()
+                ? context.getString(R.string.notification_upcoming_match_no_time)
+                : context.getString(R.string.notification_upcoming_match);
+        CharSequence contentText = TextUtils.expandTemplate(template, eventShortName, matchTitle,
+                redTeamNumbers, blueTeamNumbers, scheduledStartTimeString);
 
         Intent instance = getIntent(context);
 
@@ -163,7 +149,7 @@ public class UpcomingMatchNotification extends BaseNotification<GenericNotificat
         String eventCode = EventHelper.getEventCode(matchKey);
         String notificationTitle = context.getString(R.string.notification_upcoming_match_title, eventCode, matchAbbrevTitle);
         stored.setTitle(notificationTitle);
-        stored.setBody(contentText);
+        stored.setBody(contentText.toString());
         stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
@@ -226,7 +212,7 @@ public class UpcomingMatchNotification extends BaseNotification<GenericNotificat
         return new GenericNotificationViewModel(messageType, messageData);
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         public TextView header;
         public TextView title;
         public MatchView matchView;

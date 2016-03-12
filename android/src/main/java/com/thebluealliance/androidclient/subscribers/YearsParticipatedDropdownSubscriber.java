@@ -1,16 +1,20 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.JsonArray;
+
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.interfaces.YearsParticipatedUpdate;
+
+import android.util.Log;
 
 import java.util.Arrays;
 
 import javax.inject.Inject;
 
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
-public class YearsParticipatedDropdownSubscriber implements Action1<JsonArray> {
+public class YearsParticipatedDropdownSubscriber extends Subscriber<JsonArray> {
 
     private final YearsParticipatedUpdate mCallback;
 
@@ -20,7 +24,18 @@ public class YearsParticipatedDropdownSubscriber implements Action1<JsonArray> {
     }
 
     @Override
-    public void call(JsonArray apiYears) {
+    public void onCompleted() {
+
+    }
+
+    @Override
+    public void onError(Throwable e) {
+        Log.e(Constants.LOG_TAG, "Error fetching team years");
+        e.printStackTrace();
+    }
+
+    @Override
+    public void onNext(JsonArray apiYears) {
         int[] years = new int[apiYears.size()];
         for (int i = apiYears.size() - 1; i >= 0; i--) {
             years[i] = apiYears.get(i).getAsInt();

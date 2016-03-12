@@ -1,14 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.MenuItem;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
@@ -20,12 +11,21 @@ import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.models.APIStatus;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 
 public class ViewEventActivity extends MyTBASettingsActivity
         implements ViewPager.OnPageChangeListener, HasFragmentComponent {
@@ -34,11 +34,17 @@ public class ViewEventActivity extends MyTBASettingsActivity
     public static final String TAB = "tab";
 
     private String mEventKey;
-    private int currentTab;
+    private int mSelectedTab;
     private ViewPager pager;
     private ViewEventFragmentPagerAdapter adapter;
     private boolean isDistrict;
     private FragmentComponent mComponent;
+
+    /**
+     * Will be run in {@code onResume()}; used to perform UI setup that can't happen before the
+     * activity is resumed
+     */
+    private Runnable mOnNewIntentRunnable;
 
     /**
      * Create new intent for ViewEventActivity
@@ -63,19 +69,14 @@ public class ViewEventActivity extends MyTBASettingsActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        MyTBAHelper.serializeIntent(getIntent());
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(EVENTKEY)) {
-            mEventKey = getIntent().getExtras().getString(EVENTKEY, "");
-        } else {
-            throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
+        Bundle extras = getIntent().getExtras() == null ? new Bundle() : getIntent().getExtras();
+
+        mEventKey = extras.getString(EVENTKEY, "");
+        if (!EventHelper.validateEventKey(mEventKey)) {
+            throw new IllegalArgumentException("ViewEventActivity must be given a valid event key");
         }
 
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey(TAB)) {
-            currentTab = getIntent().getExtras().getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
-        } else {
-            Log.i(Constants.LOG_TAG, "ViewEvent intent doesn't contain TAB. Defaulting to TAB_INFO");
-            currentTab = ViewEventFragmentPagerAdapter.TAB_INFO;
-        }
+        mSelectedTab = extras.getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
 
         setModelKey(mEventKey, ModelType.EVENT);
         setContentView(R.layout.activity_view_event);
@@ -93,7 +94,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
         tabs.setViewPager(pager);
         ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
 
-        pager.setCurrentItem(currentTab);  // Do this after we set onPageChangeListener, so that FAB gets hidden, if needed
+        pager.setCurrentItem(mSelectedTab);  // Do this after we set onPageChangeListener, so that FAB gets hidden, if needed
 
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setupActionBar();
@@ -110,16 +111,40 @@ public class ViewEventActivity extends MyTBASettingsActivity
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        Log.d(Constants.LOG_TAG, "onNewIntent called");
         setIntent(intent);
-        if (intent.getExtras() != null && intent.getExtras().containsKey(EVENTKEY)) {
-            mEventKey = intent.getExtras().getString(EVENTKEY, "");
-        } else {
+        String newEventKey;
+
+        Bundle extras = intent.getExtras() == null ? new Bundle() : intent.getExtras();
+
+        newEventKey = extras.getString(EVENTKEY, "");
+        if (!EventHelper.validateEventKey(newEventKey)) {
             throw new IllegalArgumentException("ViewEventActivity must be constructed with a key");
         }
+
+        mSelectedTab = extras.getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
+
+        if (mEventKey != null && newEventKey.equals(mEventKey)) {
+            // The event keys are the same; don't recreate anything
+            return;
+        } else {
+            mEventKey = newEventKey;
+        }
         setModelKey(mEventKey, ModelType.EVENT);
-        adapter = new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey);
-        pager.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+
+        mOnNewIntentRunnable = () -> {
+            // If the settings panel was open before, close it
+            closeSettingsPanel(false);
+
+            // Reset the title; this will be set from the EventInfoFragment
+            setActionBarTitle("");
+
+            adapter.removeAllFragments();
+            adapter = new ViewEventFragmentPagerAdapter(getSupportFragmentManager(), mEventKey);
+            pager.setAdapter(adapter);
+            pager.setCurrentItem(mSelectedTab);
+        };
+
         Log.d(Constants.LOG_TAG, "Got new ViewEvent intent with key: " + mEventKey);
     }
 
@@ -127,6 +152,11 @@ public class ViewEventActivity extends MyTBASettingsActivity
     protected void onResume() {
         super.onResume();
         setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
+
+        if (mOnNewIntentRunnable != null) {
+            mOnNewIntentRunnable.run();
+            mOnNewIntentRunnable = null;
+        }
     }
 
     @Override
@@ -201,22 +231,14 @@ public class ViewEventActivity extends MyTBASettingsActivity
 
     @Override
     public void onPageSelected(int position) {
-        currentTab = position;
+        mSelectedTab = position;
 
         // hide the FAB if we aren't on the first page
         if (position != ViewEventFragmentPagerAdapter.TAB_INFO) {
             hideFab(true);
         } else {
-            showFab(true);
+            syncFabVisibilityWithMyTbaEnabled(true);
         }
-
-        /* Track the call */
-        /*Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, ViewEventActivity.this);
-        t.send(new HitBuilders.EventBuilder()
-                .setCategory("view_event-tabs")
-                .setAction("tab_change")
-                .setLabel(eventKey+ " "+adapter.getPageTitle(position))
-                .build());*/
     }
 
     @Override
@@ -224,7 +246,8 @@ public class ViewEventActivity extends MyTBASettingsActivity
 
     }
 
-    public void onEvent(ActionBarTitleEvent event) {
+    @SuppressWarnings("unused")
+    public void onEventMainThread(ActionBarTitleEvent event) {
         setActionBarTitle(event.getTitle());
     }
 

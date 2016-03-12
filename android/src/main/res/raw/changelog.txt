@@ -1,8 +1,8 @@
-Version 3.1.1:<br>
-    - Fix strange video dupe issues with view match<br>
-    - Don't show full size (huge) imgur images<br>
-    - Fix tickers with few items perma-spinning<br>
-    - Automatically select current comp week<br>
+Version 3.2.0 (2016 Week 2):<br>
+    - You can now snap a robot picture and suggest it to TBA from team pages!<br>
+    - Added full match score breakdowns as well as event specific stats<br>
+    - Bold followed teams in notifications so you never miss them<br>
+    - Many performance improvements and bug fixes<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>

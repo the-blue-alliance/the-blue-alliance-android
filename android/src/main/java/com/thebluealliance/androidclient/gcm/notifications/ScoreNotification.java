@@ -1,35 +1,37 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
-
-import com.google.gson.JsonArray;
+import com.google.common.base.Predicate;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.database.writers.MatchWriter;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
+
+import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -79,12 +81,10 @@ public class ScoreNotification extends BaseNotification<GenericNotificationViewM
     }
 
     @Override
-    public Notification buildNotification(Context context) {
+    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         Resources r = context.getResources();
 
-        String matchKey;
         matchKey = match.getKey();
-        this.matchKey = matchKey;
 
         String matchTitle = MatchHelper.getMatchTitleFromMatchKey(context, matchKey);
         String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);
@@ -97,48 +97,28 @@ public class ScoreNotification extends BaseNotification<GenericNotificationViewM
             e.printStackTrace();
             return null;
         }
+
         int redScore = Match.getRedScore(alliances);
-
-        ArrayList<String> redTeamKeys = new ArrayList<>();
-        JsonArray redTeamsJson = Match.getRedTeams(alliances);
-        for (int i = 0; i < redTeamsJson.size(); i++) {
-            redTeamKeys.add(redTeamsJson.get(i).getAsString());
-        }
-
         int blueScore = Match.getBlueScore(alliances);
 
-        ArrayList<String> blueTeamKeys = new ArrayList<>();
-        JsonArray blueTeamsJson = Match.getBlueTeams(alliances);
-        for (int i = 0; i < blueTeamsJson.size(); i++) {
-            blueTeamKeys.add(blueTeamsJson.get(i).getAsString());
-        }
-
-        // TODO filter out teams that the user doesn't want notifications about
-
-        // These arrays hold the numbers of teams that the user cares about
-        ArrayList<String> redTeams = new ArrayList<>();
-        ArrayList<String> blueTeams = new ArrayList<>();
-
-        for (String key : redTeamKeys) {
-            redTeams.add(key.replace("frc", ""));
-        }
-
-        for (String key : blueTeamKeys) {
-            blueTeams.add(key.replace("frc", ""));
-        }
+        // Boldify the team numbers that the user is following.
+        Predicate<String> isFollowing = teamNumber -> followsChecker.followsTeam(context,
+                teamNumber, matchKey, NotificationTypes.MATCH_SCORE);
+        ArrayList<String> redTeams = Match.teamNumbers(Match.getRedTeams(alliances));
+        ArrayList<String> blueTeams = Match.teamNumbers(Match.getBlueTeams(alliances));
+        CharSequence firstTeams = Utilities.boldNameList(redTeams, isFollowing);
+        CharSequence secondTeams = Utilities.boldNameList(blueTeams, isFollowing);
 
         // Make sure the score string is formatted properly with the winning score first
         String scoreString;
-        if (redScore > blueScore) {
-            scoreString = redScore + "-" + blueScore;
-        } else if (redScore < blueScore) {
+        if (blueScore > redScore) {
             scoreString = blueScore + "-" + redScore;
+            CharSequence temp = firstTeams;
+            firstTeams        = secondTeams;
+            secondTeams       = temp;
         } else {
-            scoreString = redScore + "-" + redScore;
+            scoreString = redScore + "-" + blueScore;
         }
-
-        String redTeamString = Utilities.stringifyListOfStrings(context, redTeams);
-        String blueTeamString = Utilities.stringifyListOfStrings(context, blueTeams);
 
         boolean useSpecial2015Format;
         try {
@@ -149,53 +129,16 @@ public class ScoreNotification extends BaseNotification<GenericNotificationViewM
         }
 
         String eventShortName = EventHelper.shortName(eventName);
-        String notificationString;
-        if (redTeams.size() == 0 && blueTeams.size() == 0) {
-            // We must have gotten this GCM message by mistake
-            return null;
-        } else if (useSpecial2015Format) {
-            /* Only for 2015 non-finals matches. Ugh */
-            notificationString = context.getString(R.string.notification_score_2015_no_winner, eventShortName, matchTitle, redTeamString, redScore, blueTeamString, blueScore);
-        } else if ((redTeams.size() > 0 && blueTeams.size() == 0)) {
-            // The user only cares about some teams on the red alliance
-            if (redScore > blueScore) {
-                // Red won
-                notificationString = context.getString(R.string.notification_score_teams_won, eventShortName, redTeamString, matchTitle, scoreString);
-            } else if (redScore < blueScore) {
-                // Red lost
-                notificationString = context.getString(R.string.notification_score_teams_lost, eventShortName, redTeamString, matchTitle, scoreString);
-            } else {
-                // Red tied
-                notificationString = context.getString(R.string.notification_score_teams_tied, eventShortName, redTeamString, matchTitle, scoreString);
-            }
-        } else if ((blueTeams.size() > 0 && redTeams.size() == 0)) {
-            // The user only cares about some teams on the blue alliance
-            if (blueScore > redScore) {
-                // Blue won
-                notificationString = context.getString(R.string.notification_score_teams_won, eventShortName, blueTeamString, matchTitle, scoreString);
-            } else if (blueScore < redScore) {
-                // Blue lost
-                notificationString = context.getString(R.string.notification_score_teams_lost, eventShortName, blueTeamString, matchTitle, scoreString);
-            } else {
-                // Blue tied
-                notificationString = context.getString(R.string.notification_score_teams_tied, eventShortName, blueTeamString, matchTitle, scoreString);
-            }
-        } else if ((blueTeams.size() > 0 && redTeams.size() > 0)) {
-            // The user cares about teams on both alliances
-            if (blueScore > redScore) {
-                // Blue won
-                notificationString = context.getString(R.string.notification_score_teams_beat_teams, eventShortName, blueTeamString, redTeamString, matchTitle, scoreString);
-            } else if (blueScore < redScore) {
-                // Blue lost
-                notificationString = context.getString(R.string.notification_score_teams_beat_teams, eventShortName, redTeamString, blueTeamString, matchTitle, scoreString);
-            } else {
-                // Blue tied
-                notificationString = context.getString(R.string.notification_score_teams_tied_with_teams, eventShortName, redTeamString, blueTeamString, matchTitle, scoreString);
-            }
-        } else {
-            // We should never, ever get here but if we do...
-            return null;
+        String template;
+        if (useSpecial2015Format) { // firstTeams played secondTeams (for 2015 non-finals matches)
+            template = context.getString(R.string.notification_score_teams_played_teams);
+        } else if (blueScore == redScore) { // firstTeams tied secondTeams
+            template = context.getString(R.string.notification_score_teams_tied_teams);
+        } else { // firstTeams beat secondTeams
+            template = context.getString(R.string.notification_score_teams_beat_teams);
         }
+        CharSequence notificationBody = TextUtils.expandTemplate(template,
+                eventShortName, matchTitle, firstTeams, secondTeams, scoreString);
 
         // We can finally build the notification!
         Intent instance = getIntent(context);
@@ -205,17 +148,17 @@ public class ScoreNotification extends BaseNotification<GenericNotificationViewM
         String eventCode = EventHelper.getEventCode(matchKey);
         String notificationTitle = r.getString(R.string.notification_score_title, eventCode, matchAbbrevTitle);
         stored.setTitle(notificationTitle);
-        stored.setBody(notificationString);
+        stored.setBody(notificationBody.toString());
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         stored.setMessageData(messageData);
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(notificationTitle)
-                .setContentText(notificationString)
+                .setContentText(notificationBody)
                 .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp));
 
-        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(notificationString);
+        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(notificationBody);
         builder.setStyle(style);
         return builder.build();
     }
@@ -270,7 +213,7 @@ public class ScoreNotification extends BaseNotification<GenericNotificationViewM
         return new GenericNotificationViewModel(messageType, messageData);
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         public TextView header;
         public TextView title;
         public MatchView matchView;

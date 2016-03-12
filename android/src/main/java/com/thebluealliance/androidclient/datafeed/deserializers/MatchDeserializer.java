@@ -54,6 +54,10 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
             match.setVideos(object.get("videos").getAsJsonArray());
         }
 
+        if (object.has("score_breakdown") && object.get("score_breakdown").isJsonObject()) {
+            match.setBreakdown(object.get("score_breakdown").getAsJsonObject());
+        }
+
         return match;
     }
 

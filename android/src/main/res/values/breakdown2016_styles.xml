@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="breakdown_base">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="layout_columnSpan">1</item>
+        <item name="layout_columnWeight">1</item>
+        <item name="layout_rowSpan">1</item>
+        <item name="layout_gravity">fill</item>
+    </style>
+
+    <style name="breakdown_redItem" parent="breakdown_base">
+        <item name="android:background">@color/lighter_red</item>
+    </style>
+
+    <style name="breakdown_blueItem" parent="breakdown_base">
+        <item name="android:background">@color/lighter_blue</item>
+    </style>
+
+    <style name="breakdown_redItemSmall" parent="breakdown_redItem">
+        <item name="android:minHeight">20dp</item>
+    </style>
+
+    <style name="breakdown_blueItemSmall" parent="breakdown_blueItem">
+        <item name="android:minHeight">20dp</item>
+    </style>
+
+    <style name="breakdown_category" parent="breakdown_base">
+        <item name="android:background">@color/column_header_gray</item>
+        <item name="android:layout_marginBottom">2dp</item>
+    </style>
+
+    <style name="breakdown_redTotal" parent="breakdown_base">
+        <item name="android:background">@color/light_red</item>
+    </style>
+
+    <style name="breakdown_blueTotal" parent="breakdown_base">
+        <item name="android:background">@color/light_blue</item>
+    </style>
+
+    <style name="breakdown_categoryTotal" parent="breakdown_category">
+        <item name="android:background">@color/column_header_total_gray</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="breakdown_categorySubtotal" parent="breakdown_category">
+        <item name="android:background">@color/column_header_total_gray</item>
+    </style>
+
+    <style name="breakdown_redItalic" parent="breakdown_redItemSmall">
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="breakdown_blueItalic" parent="breakdown_blueItemSmall">
+        <item name="android:textStyle">italic</item>
+    </style>
+</resources>

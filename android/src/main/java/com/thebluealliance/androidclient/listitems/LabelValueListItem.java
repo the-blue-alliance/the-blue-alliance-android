@@ -1,18 +1,20 @@
 package com.thebluealliance.androidclient.listitems;
 
+import com.thebluealliance.androidclient.R;
+
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.R;
 
 public class LabelValueListItem extends ListElement {
 
     public final String label, value, intent;
     public final ListItem listItem;
     public final int layout;
+    public final boolean boldTitle;
 
     @Override
     public boolean equals(Object o) {
@@ -33,6 +35,7 @@ public class LabelValueListItem extends ListElement {
         this.listItem = null;
         this.intent = intent;
         this.layout = layout;
+        this.boldTitle = false;
     }
 
     public LabelValueListItem(String label, String value) {
@@ -41,6 +44,16 @@ public class LabelValueListItem extends ListElement {
         this.listItem = null;
         this.intent = "";
         this.layout = R.layout.list_item_summary;
+        this.boldTitle = false;
+    }
+
+    public LabelValueListItem(String label, String value, boolean boldTitle) {
+        this.label = label;
+        this.value = value;
+        this.listItem = null;
+        this.intent = "";
+        this.layout = R.layout.list_item_summary;
+        this.boldTitle = boldTitle;
     }
 
     public LabelValueListItem(String label, ListItem value) {
@@ -49,6 +62,7 @@ public class LabelValueListItem extends ListElement {
         this.value = null;
         this.intent = "";
         this.layout = R.layout.list_item_summary;
+        this.boldTitle = false;
     }
 
     @Override
@@ -68,12 +82,22 @@ public class LabelValueListItem extends ListElement {
         }
 
         holder.label.setText(label);
+        if (boldTitle) {
+            holder.label.setTypeface(null, Typeface.BOLD);
+        } else {
+            holder.label.setTypeface(null, Typeface.NORMAL);
+        }
         if (holder.container.getChildCount() > 2) {
             holder.container.removeViewAt(2);
         }
         if (value != null) {
             holder.value.setVisibility(View.VISIBLE);
             holder.value.setText(value);
+            if (boldTitle) {
+                holder.value.setTypeface(null, Typeface.NORMAL);
+            } else {
+                holder.value.setTypeface(null, Typeface.BOLD);
+            }
         } else {
             holder.value.setVisibility(View.GONE);
             holder.container.addView(listItem.getView(c, inflater, null), 2);
@@ -82,7 +106,7 @@ public class LabelValueListItem extends ListElement {
         return convertView;
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         TextView label;
         TextView value;
         LinearLayout container;

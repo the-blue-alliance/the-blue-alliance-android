@@ -1,28 +1,29 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewEventActivity;
+import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
+import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
+import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
+
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.ViewEventActivity;
-import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.helpers.MyTBAHelper;
-import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
-import com.thebluealliance.androidclient.models.StoredNotification;
-import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -67,7 +68,7 @@ public class ScheduleUpdatedNotification extends BaseNotification<GenericNotific
     }
 
     @Override
-    public Notification buildNotification(Context context) {
+    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         String firstMatchTime = null;
         if (!JSONHelper.isNull(matchTime)) {
             Date date = new Date(matchTime.getAsLong() * 1000L);
@@ -160,7 +161,7 @@ public class ScheduleUpdatedNotification extends BaseNotification<GenericNotific
         return new GenericNotificationViewModel(messageType, messageData);
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         public TextView header;
         public TextView title;
         public TextView details;

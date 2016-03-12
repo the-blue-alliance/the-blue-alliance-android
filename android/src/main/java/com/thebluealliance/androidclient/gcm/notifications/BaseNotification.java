@@ -18,9 +18,11 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.listitems.ListElement;
@@ -28,6 +30,7 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -51,7 +54,7 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
     public BaseNotification(String messageType, String messageData) {
         this.messageType = messageType;
         this.messageData = messageData;
-        this.gson = DatafeedModule.getGson();
+        this.gson = HttpModule.getGson();
         this.logTag = null;
         this.display = true;
         this.stored = null;
@@ -72,7 +75,7 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
         return true;
     }
 
-    public abstract Notification buildNotification(Context context);
+    public abstract Notification buildNotification(Context context, FollowsChecker followsChecker);
 
     public String getNotificationType() {
         return messageType;
@@ -132,13 +135,16 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
         dismissIntent.setAction(NotificationChangedReceiver.ACTION_NOTIFICATION_DELETED);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, dismissIntent, 0);
 
+        NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
+        wearableExtender.setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background));
+
         return new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setGroup(GCMMessageHandler.GROUP_KEY)
                 .setColor(context.getResources().getColor(R.color.accent_dark))
                 .setDeleteIntent(onDismiss)
                 .setAutoCancel(true)
-                .extend(new NotificationCompat.WearableExtender().setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background)));
+                .extend(wearableExtender);
     }
 
     /**

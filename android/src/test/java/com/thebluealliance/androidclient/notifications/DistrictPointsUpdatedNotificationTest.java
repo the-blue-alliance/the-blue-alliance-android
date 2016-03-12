@@ -72,7 +72,7 @@ public class DistrictPointsUpdatedNotificationTest {
           .thenReturn("District point calculations have been updated for Pacific Northwest");
         when(res.getString(R.string.notification_district_points_title, "PNW"))
           .thenReturn("District Points Updated PNW");
-        Notification notification = mNotification.buildNotification(mContext);
+        Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();

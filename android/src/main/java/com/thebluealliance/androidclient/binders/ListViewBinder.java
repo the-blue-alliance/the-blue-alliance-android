@@ -42,12 +42,11 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
         long startTime = System.currentTimeMillis();
         Log.d(Constants.LOG_TAG, "BINDING DATA");
         if (mAdapter == null) {
-            mAdapter = newAdapter(new ArrayList<>(data));
+            mAdapter = newAdapter(data);
             listView.setAdapter(mAdapter);
-        } else {
-            mAdapter.clear();
-            mAdapter.addAll(new ArrayList<>(data));
             mAdapter.notifyDataSetChanged();
+        } else {
+            replaceDataInAdapter(data);
         }
 
         if (progressBar != null) {
@@ -61,7 +60,13 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
     }
 
     protected ListViewAdapter newAdapter(List<ListItem> data) {
-        return new ListViewAdapter(mActivity, data);
+        return new ListViewAdapter(mActivity, new ArrayList<>(data));
+    }
+
+    protected void replaceDataInAdapter(List<ListItem> data) {
+        mAdapter.clear();
+        mAdapter.addAll(new ArrayList<>(data));
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -86,7 +91,7 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
         }
     }
 
-    private void bindNoDataView() {
+    protected void bindNoDataView() {
         // Set up views for "no data" message
         try {
             listView.setVisibility(View.GONE);

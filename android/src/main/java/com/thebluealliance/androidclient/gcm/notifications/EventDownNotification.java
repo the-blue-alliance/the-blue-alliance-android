@@ -1,13 +1,14 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
-import android.app.Notification;
-import android.content.Context;
-import android.support.annotation.Nullable;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
+
+import android.app.Notification;
+import android.content.Context;
 
 public class EventDownNotification extends GenericNotification {
 
@@ -34,10 +35,10 @@ public class EventDownNotification extends GenericNotification {
     }
 
     @Override
-    public Notification buildNotification(Context context) {
+    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         title = context.getString(R.string.notification_event_down);
         message = context.getString(R.string.notification_event_down_content, eventName);
 
-        return super.buildNotification(context);
+        return super.buildNotification(context, followsChecker);
     }
 }

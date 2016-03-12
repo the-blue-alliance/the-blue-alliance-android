@@ -13,11 +13,13 @@ import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.HomeActivity;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -88,7 +90,7 @@ public class GenericNotification extends BaseNotification<GenericNotificationVie
     }
 
     @Override
-    public Notification buildNotification(Context context) {
+    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         if (getNotificationType().equals(NotificationTypes.BROADCAST)) {
             // Only store broadcasts, not pings
             stored = new StoredNotification();
@@ -174,7 +176,7 @@ public class GenericNotification extends BaseNotification<GenericNotificationVie
         return new GenericNotificationViewModel(messageType, messageData);
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         public TextView header;
         public TextView title;
         public TextView message;

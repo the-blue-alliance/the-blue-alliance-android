@@ -1,15 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
-import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
-import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
-import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
-import com.thebluealliance.androidclient.types.ModelType;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -18,6 +8,8 @@ import android.animation.ValueAnimator;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -25,7 +17,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -36,38 +27,49 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
+import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
+import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
+import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
+import com.thebluealliance.androidclient.types.ModelType;
+
 /**
  * Activity which hosts a FAB that opens a myTBA model settings panel.
  */
 
 public abstract class MyTBASettingsActivity extends DatafeedActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
-    private CoordinatorLayout mCoordinatorLayout;
-    private RelativeLayout mSettingsContainer;
-    private FloatingActionButton mOpenSettingsButton;
-    private FloatingActionButton mCloseSettingsButton;
-    private View mForegroundDim;
+    private static final String SETTINGS_PANEL_OPEN = "settings_panel_open";
+    private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
 
-    private Toolbar mSettingsToolbar;
+    @ColorRes private static final int FAB_COLOR = R.color.accent;
+    @ColorRes private static final int FAB_COLOR_SUCCESS = R.color.green;
+    @ColorRes private static final int FAB_COLOR_ERROR = R.color.red;
+
+    CoordinatorLayout mCoordinatorLayout;
+    RelativeLayout mSettingsContainer;
+    FloatingActionButton mToggleSettingsPanelButton;
+    View mForegroundDim;
+    Toolbar mSettingsToolbar;
+
     private Handler mFabHandler = new Handler();
 
     private MyTBASettingsFragment mSettingsFragment;
-
     private UpdateUserModelSettingsTaskFragment mSaveSettingsTaskFragment;
 
     private boolean mIsMyTBAEnabled;
-
     private boolean mIsSettingsPanelOpen = false;
-
+    private boolean mIsSaveEnalbed = false;
     private boolean mSaveInProgress = false;
+    private boolean mFabVisible = false;
 
-    private boolean mFabVisible = true;
+    // Track animations so we can cancel them if needed
+    private AnimatorSet mFabColorAnimator;
     private ValueAnimator mRunningFabAnimation;
     private AnimatorSet mRunningPanelAnimation;
-
-    private static final String SETTINGS_PANEL_OPEN = "settings_panel_open";
-
-    private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
 
     // In milliseconds
     private static final int ANIMATION_DURATION = 500;
@@ -75,7 +77,6 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     private static final int FAB_COLOR_ANIMATION_DURATION = 250;
 
     private static final float UNDIMMED_ALPHA = 0.0f;
-
     private static final float DIMMED_ALPHA = 0.7f;
 
     private Bundle savedPreferenceState;
@@ -87,48 +88,34 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         super.setContentView(R.layout.activity_mytba_settings);
 
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator);
-
         mSettingsContainer = (RelativeLayout) findViewById(R.id.settings);
-        mOpenSettingsButton = (FloatingActionButton) findViewById(R.id.open_settings_button);
-        mOpenSettingsButton.setOnClickListener(this);
-
-        mCloseSettingsButton = (FloatingActionButton) findViewById(R.id.close_settings_button);
-        mCloseSettingsButton.setOnClickListener(this);
-
+        mToggleSettingsPanelButton = (FloatingActionButton) findViewById(R.id.toggle_settings_button);
+        mForegroundDim = findViewById(R.id.activity_foreground_dim);
         mSettingsToolbar = (Toolbar) findViewById(R.id.settings_toolbar);
+
+        mToggleSettingsPanelButton.setOnClickListener(this);
+
         mSettingsToolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
         mSettingsToolbar.setTitle("Team Settings");
         mSettingsToolbar.setNavigationOnClickListener(v -> onSettingsCloseButtonClick());
         mSettingsToolbar.setNavigationContentDescription(R.string.close);
         ViewCompat.setElevation(mSettingsToolbar, getResources().getDimension(R.dimen.toolbar_elevation));
 
-        mForegroundDim = findViewById(R.id.activity_foreground_dim);
-
         // We check this so that we can hide the fab and prevent it from being subsequently shown
         // if myTBA is not enabled
         mIsMyTBAEnabled = AccountHelper.isMyTBAEnabled(this);
 
-        if (!mIsMyTBAEnabled) {
-            hideFab(false);
-        }
+        mFabVisible = (mToggleSettingsPanelButton.getVisibility() == View.VISIBLE);
+        syncFabVisibilityWithMyTbaEnabled(false);
 
-        // Setup the settings menu
-        Log.d(Constants.LOG_TAG, "Model: " + modelKey);
+        setupFabIconForSettingsPanelOpen(false);
+
         if (savedInstanceState != null) {
             mIsSettingsPanelOpen = savedInstanceState.getBoolean(SETTINGS_PANEL_OPEN);
             if (mIsSettingsPanelOpen) {
-                mOpenSettingsButton.setVisibility(View.INVISIBLE);
-                mCloseSettingsButton.setVisibility(View.VISIBLE);
-                mSettingsContainer.setVisibility(View.VISIBLE);
-
-                // Set up system UI (status bar background and icon color
-                getDrawerLayout().setStatusBarBackgroundColor(getResources().getColor(R.color
-                        .accent_dark));
-                Utilities.setLightStatusBar(getWindow(), true);
+                openSettingsPanel(false);
             } else {
-                mOpenSettingsButton.setVisibility(View.VISIBLE);
-                mCloseSettingsButton.setVisibility(View.INVISIBLE);
-                mSettingsContainer.setVisibility(View.INVISIBLE);
+                closeSettingsPanel(false);
             }
             savedPreferenceState = savedInstanceState.getBundle(MyTBASettingsFragment.SAVED_STATE_BUNDLE);
         }
@@ -158,7 +145,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
 
         // Disable the submit settings button so we can't hit it before the content is loaded
         // This prevents accidentally wiping settings (see #317)
-        mCloseSettingsButton.setEnabled(false);
+        mIsSaveEnalbed = false;
     }
 
     @Override
@@ -170,45 +157,101 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.open_settings_button) {
-            if (!mSaveInProgress) {
-                openSettingsPanel();
+        if (v.getId() == R.id.toggle_settings_button) {
+            if (onFabClick()) {
+                // A subclass handled this click for us, no need to do anything
+                return;
             }
-        } else if (v.getId() == R.id.close_settings_button) {
-            // The user wants to save the preferences
-            if (mSaveSettingsTaskFragment == null) {
-                mSaveSettingsTaskFragment = new UpdateUserModelSettingsTaskFragment(mSettingsFragment.getSettings());
-                getSupportFragmentManager().beginTransaction().add(mSaveSettingsTaskFragment, SAVE_SETTINGS_TASK_FRAGMENT_TAG).commit();
-                mSaveInProgress = true;
+            if (!mIsSettingsPanelOpen) {
+                if (!mSaveInProgress) {
+                    openSettingsPanel(true);
+                }
+            } else {
+                // The user wants to save the preferences
+                // Always close the panel
+                mFabHandler.postDelayed(() -> closeSettingsPanel(true), 1);
 
-                final android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-                final Fragment settingsFragment = fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
-                mFabHandler.postDelayed(() -> {
-                    closeSettingsPanel();
-                    if (settingsFragment != null) {
-                        fm.beginTransaction().remove(settingsFragment).commitAllowingStateLoss();
-                    }
-                    mSaveSettingsTaskFragment = null;
-                }, 1);
+                // If saving is disabled, don't attempt to save
+                if (!mIsSaveEnalbed) {
+                    return;
+                }
+
+                if (mSaveSettingsTaskFragment == null) {
+                    mSaveSettingsTaskFragment = new UpdateUserModelSettingsTaskFragment(mSettingsFragment.getSettings());
+                    getSupportFragmentManager().beginTransaction().add(mSaveSettingsTaskFragment, SAVE_SETTINGS_TASK_FRAGMENT_TAG).commit();
+                    mSaveInProgress = true;
+
+                    final android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+                    final Fragment settingsFragment = fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
+                    mFabHandler.postDelayed(() -> {
+                        if (settingsFragment != null) {
+                            fm.beginTransaction().remove(settingsFragment).commitAllowingStateLoss();
+                        }
+                        mSaveSettingsTaskFragment = null;
+                    }, 1);
+                }
             }
-        } else {
-            Log.d(Constants.LOG_TAG, "Clicked id: " + v.getId() + " tag: " + v.getTag() + " view: " + v.toString());
         }
     }
 
+    /**
+     * Since we reuse the same FAB for both the open and close buttons, we have to toggle the icon
+     * displayed by the FAB. This method does that. If the panel is closed, the FAB displays a
+     * star; if it is open, it displays a checkmark (for the "save" action).
+     *
+     * @param panelOpen if the settings panel is open
+     */
+    private void setupFabIconForSettingsPanelOpen(boolean panelOpen) {
+        mToggleSettingsPanelButton.setImageResource(panelOpen ? R.drawable.ic_check_white_24dp : R.drawable.ic_star_white_24dp);
+    }
+
+    /**
+     * Called when the user chooses to close the settings panel without saving their changes.
+     */
     private void onSettingsCloseButtonClick() {
-        closeSettingsPanel();
+        closeSettingsPanel(true);
         // Cancel any changes made by the user
         mSettingsFragment.restoreInitialState();
     }
 
-    private void openSettingsPanel() {
-        mSettingsFragment.restoreInitialState();
-        mCloseSettingsButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.accent)));
+    protected void openSettingsPanel(boolean animate) {
+        mIsSettingsPanelOpen = true;
+
+        if (mSettingsFragment != null) {
+            mSettingsFragment.restoreInitialState();
+        }
+
+        // Reset the color of the button
+        if (mFabColorAnimator != null) {
+            mFabColorAnimator.cancel();
+        }
+        setFabColor(FAB_COLOR);
+
+        if (!animate) {
+            // Show the panel
+            mSettingsContainer.setVisibility(View.VISIBLE);
+
+            // Set up the status bar
+            getDrawerLayout().setStatusBarBackgroundColor(getResources().getColor(R.color
+                    .accent_dark));
+            getDrawerLayout().invalidate();
+            Utilities.setLightStatusBar(getWindow(), true);
+
+            // Dim the activity foreground
+            mForegroundDim.setAlpha(DIMMED_ALPHA);
+
+            // Configure the fab
+            setupFabIconForSettingsPanelOpen(true);
+
+            return;
+        }
+
+        // Hide the button immediately
+        mToggleSettingsPanelButton.setVisibility(View.GONE);
 
         // this is the center of the button in relation to the main view. This provides the center of the clipping circle for the settings view.
-        int centerOfButtonOutsideX = (mOpenSettingsButton.getLeft() + mOpenSettingsButton.getRight()) / 2;
-        int centerOfButtonOutsideY = (mOpenSettingsButton.getTop() + mOpenSettingsButton.getBottom()) / 2;
+        int centerOfButtonOutsideX = (mToggleSettingsPanelButton.getLeft() + mToggleSettingsPanelButton.getRight()) / 2;
+        int centerOfButtonOutsideY = (mToggleSettingsPanelButton.getTop() + mToggleSettingsPanelButton.getBottom()) / 2;
 
         float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - mSettingsContainer.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - mSettingsContainer.getTop(), 2));
 
@@ -227,20 +270,19 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
             settingsPanelAnimator.setDuration(ANIMATION_DURATION);
         }
 
-        mOpenSettingsButton.setVisibility(View.INVISIBLE);
-
-        ValueAnimator closeButtonScaleUp = ValueAnimator.ofFloat(0, 1).setDuration(ANIMATION_DURATION);
-        closeButtonScaleUp.addListener(new AnimatorListenerAdapter() {
+        ValueAnimator toggleButtonScaleUpAnimation = ValueAnimator.ofFloat(0, 1).setDuration(ANIMATION_DURATION);
+        toggleButtonScaleUpAnimation.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mCloseSettingsButton.setVisibility(View.VISIBLE);
+                mToggleSettingsPanelButton.setVisibility(View.VISIBLE);
+                setupFabIconForSettingsPanelOpen(true);
             }
         });
-        closeButtonScaleUp.addUpdateListener(animation -> {
-            ViewCompat.setScaleX(mCloseSettingsButton, (float) animation.getAnimatedValue());
-            ViewCompat.setScaleY(mCloseSettingsButton, (float) animation.getAnimatedValue());
+        toggleButtonScaleUpAnimation.addUpdateListener(animation -> {
+            ViewCompat.setScaleX(mToggleSettingsPanelButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(mToggleSettingsPanelButton, (float) animation.getAnimatedValue());
         });
-        closeButtonScaleUp.setDuration(ANIMATION_DURATION / 2);
+        toggleButtonScaleUpAnimation.setDuration(ANIMATION_DURATION / 2);
 
         // Animate the status bar color change
         Integer colorFrom = getResources().getColor(R.color.primary_dark);
@@ -269,7 +311,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         AnimatorSet animationSet = new AnimatorSet();
         animationSet.play(settingsPanelAnimator);
         animationSet.play(systemUiAnimator).after(ANIMATION_DURATION / 2);
-        animationSet.play(closeButtonScaleUp).after(ANIMATION_DURATION / 2);
+        animationSet.play(toggleButtonScaleUpAnimation).after(ANIMATION_DURATION / 2);
         animationSet.play(colorAnimation).with(settingsPanelAnimator);
         animationSet.play(dimAnimation).with(settingsPanelAnimator);
         animationSet.start();
@@ -281,13 +323,32 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
                 mRunningPanelAnimation = null;
             }
         });
-
-        mIsSettingsPanelOpen = true;
     }
 
-    private void closeSettingsPanel() {
-        int centerOfButtonOutsideX = (mOpenSettingsButton.getLeft() + mOpenSettingsButton.getRight()) / 2;
-        int centerOfButtonOutsideY = (mOpenSettingsButton.getTop() + mOpenSettingsButton.getBottom()) / 2;
+    protected void closeSettingsPanel(boolean animate) {
+        mIsSettingsPanelOpen = false;
+
+        if (!animate) {
+            // Hide the panel
+            mSettingsContainer.setVisibility(View.GONE);
+
+            // Set up the status bar
+            getDrawerLayout().setStatusBarBackgroundColor(getResources().getColor(R.color
+                    .primary_dark));
+            getDrawerLayout().invalidate();
+            Utilities.setLightStatusBar(getWindow(), false);
+
+            // Undim the activity foreground
+            mForegroundDim.setAlpha(UNDIMMED_ALPHA);
+
+            // Configure the fab
+            setupFabIconForSettingsPanelOpen(false);
+
+            return;
+        }
+
+        int centerOfButtonOutsideX = (mToggleSettingsPanelButton.getLeft() + mToggleSettingsPanelButton.getRight()) / 2;
+        int centerOfButtonOutsideY = (mToggleSettingsPanelButton.getTop() + mToggleSettingsPanelButton.getBottom()) / 2;
 
         float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - mSettingsContainer.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - mSettingsContainer.getTop(), 2));
 
@@ -312,31 +373,25 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
             settingsPanelAnimator.start();
         }
 
-        ValueAnimator closeButtonScaleDown = ValueAnimator.ofFloat(1, 0).setDuration(ANIMATION_DURATION);
-        closeButtonScaleDown.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mCloseSettingsButton.setVisibility(View.INVISIBLE);
-            }
+        ValueAnimator toggleButtonScaleDownAnimation = ValueAnimator.ofFloat(1, 0).setDuration(ANIMATION_DURATION);
+        toggleButtonScaleDownAnimation.addUpdateListener(animation -> {
+            ViewCompat.setScaleX(mToggleSettingsPanelButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(mToggleSettingsPanelButton, (float) animation.getAnimatedValue());
         });
-        closeButtonScaleDown.addUpdateListener(animation -> {
-            ViewCompat.setScaleX(mCloseSettingsButton, (float) animation.getAnimatedValue());
-            ViewCompat.setScaleY(mCloseSettingsButton, (float) animation.getAnimatedValue());
-        });
-        closeButtonScaleDown.setDuration(ANIMATION_DURATION / 2);
+        toggleButtonScaleDownAnimation.setDuration(ANIMATION_DURATION / 2);
 
-        ValueAnimator openButtonScaleUp = ValueAnimator.ofFloat(0, 1).setDuration(ANIMATION_DURATION);
-        openButtonScaleUp.addListener(new AnimatorListenerAdapter() {
+        ValueAnimator toggleButtonScaleUpAnimation = ValueAnimator.ofFloat(0, 1).setDuration(ANIMATION_DURATION);
+        toggleButtonScaleUpAnimation.addUpdateListener(animation -> {
+            ViewCompat.setScaleX(mToggleSettingsPanelButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(mToggleSettingsPanelButton, (float) animation.getAnimatedValue());
+        });
+        toggleButtonScaleUpAnimation.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mOpenSettingsButton.setVisibility(View.VISIBLE);
+                setupFabIconForSettingsPanelOpen(false);
             }
         });
-        openButtonScaleUp.addUpdateListener(animation -> {
-            ViewCompat.setScaleX(mOpenSettingsButton, (float) animation.getAnimatedValue());
-            ViewCompat.setScaleY(mOpenSettingsButton, (float) animation.getAnimatedValue());
-        });
-        openButtonScaleUp.setDuration(ANIMATION_DURATION / 2);
+        toggleButtonScaleUpAnimation.setDuration(ANIMATION_DURATION / 2);
 
         // Animate the status bar color change
         Integer colorFrom = getResources().getColor(R.color.accent_dark);
@@ -366,10 +421,10 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.play(settingsPanelAnimator);
         animatorSet.play(systemUiAnimator).after(ANIMATION_DURATION / 3);
-        animatorSet.play(closeButtonScaleDown).after(ANIMATION_DURATION / 2);
+        animatorSet.play(toggleButtonScaleDownAnimation).after(ANIMATION_DURATION / 2);
         animatorSet.play(colorAnimation).with(settingsPanelAnimator);
         animatorSet.play(dimAnimation).with(settingsPanelAnimator);
-        animatorSet.play(openButtonScaleUp).after(settingsPanelAnimator);
+        animatorSet.play(toggleButtonScaleUpAnimation).after(settingsPanelAnimator);
         animatorSet.start();
 
         mRunningPanelAnimation = animatorSet;
@@ -379,16 +434,18 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
                 mRunningPanelAnimation = null;
             }
         });
-
-        mIsSettingsPanelOpen = false;
     }
 
-    public void showFab(boolean animate) {
-        if (mFabVisible) {
-            return;
+    protected void syncFabVisibilityWithMyTbaEnabled(boolean animate) {
+        if (mIsMyTBAEnabled) {
+            showFab(animate);
+        } else {
+            hideFab(animate);
         }
-        if (!mIsMyTBAEnabled) {
-            hideFab(false);
+    }
+
+    protected void showFab(boolean animate) {
+        if (mFabVisible) {
             return;
         }
         mFabVisible = true;
@@ -396,19 +453,21 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
             mRunningFabAnimation.cancel();
         }
         if (!animate) {
-            mOpenSettingsButton.setVisibility(View.GONE);
+            mToggleSettingsPanelButton.setVisibility(View.VISIBLE);
+            mToggleSettingsPanelButton.setScaleX(1.0f);
+            mToggleSettingsPanelButton.setScaleY(1.0f);
             return;
         }
         ValueAnimator fabScaleUp = ValueAnimator.ofFloat(0, 1);
         fabScaleUp.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mOpenSettingsButton.setVisibility(View.VISIBLE);
+                mToggleSettingsPanelButton.setVisibility(View.VISIBLE);
             }
         });
         fabScaleUp.addUpdateListener(animation -> {
-            ViewCompat.setScaleX(mOpenSettingsButton, (float) animation.getAnimatedValue());
-            ViewCompat.setScaleY(mOpenSettingsButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleX(mToggleSettingsPanelButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(mToggleSettingsPanelButton, (float) animation.getAnimatedValue());
         });
         fabScaleUp.setDuration(FAB_ANIMATION_DURATION);
         fabScaleUp.setInterpolator(new DecelerateInterpolator());
@@ -416,7 +475,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         mRunningFabAnimation = fabScaleUp;
     }
 
-    public void hideFab(boolean animate) {
+    protected void hideFab(boolean animate) {
         if (!mFabVisible) {
             return;
         }
@@ -425,25 +484,24 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
             mRunningFabAnimation.cancel();
         }
         if (!animate) {
-            mOpenSettingsButton.setVisibility(View.GONE);
+            mToggleSettingsPanelButton.setVisibility(View.GONE);
             return;
         }
         ValueAnimator fabScaleDown = ValueAnimator.ofFloat(1, 0);
         fabScaleDown.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                mOpenSettingsButton.setVisibility(View.VISIBLE);
+                mToggleSettingsPanelButton.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mToggleSettingsPanelButton.setVisibility(View.GONE);
             }
         });
         fabScaleDown.addUpdateListener(animation -> {
-            ViewCompat.setScaleX(mOpenSettingsButton, (float) animation.getAnimatedValue());
-            ViewCompat.setScaleY(mOpenSettingsButton, (float) animation.getAnimatedValue());
-        });
-        fabScaleDown.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mOpenSettingsButton.setVisibility(View.GONE);
-            }
+            ViewCompat.setScaleX(mToggleSettingsPanelButton, (float) animation.getAnimatedValue());
+            ViewCompat.setScaleY(mToggleSettingsPanelButton, (float) animation.getAnimatedValue());
         });
         fabScaleDown.setDuration(FAB_ANIMATION_DURATION);
         fabScaleDown.setInterpolator(new AccelerateInterpolator());
@@ -460,21 +518,33 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         Runnable runnable = () -> {
             showSnackbar(R.string.mytba_settings_updated_successfully);
 
-            Integer colorFrom = getResources().getColor(R.color.accent);
-            Integer colorTo = getResources().getColor(R.color.green);
+            Integer colorFrom = getResources().getColor(FAB_COLOR);
+            Integer colorTo = getResources().getColor(FAB_COLOR_SUCCESS);
 
             ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-            colorAnimation.addUpdateListener(animator -> mOpenSettingsButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
+            colorAnimation.addUpdateListener(animator -> mToggleSettingsPanelButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
             colorAnimation.setDuration(FAB_COLOR_ANIMATION_DURATION);
 
             ValueAnimator reverseColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorTo, colorFrom);
-            reverseColorAnimation.addUpdateListener(animator -> mOpenSettingsButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
+            reverseColorAnimation.addUpdateListener(animator -> mToggleSettingsPanelButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
             reverseColorAnimation.setDuration(FAB_COLOR_ANIMATION_DURATION);
 
-            AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet.play(colorAnimation);
-            animatorSet.play(reverseColorAnimation).after(2000);
-            animatorSet.start();
+            mFabColorAnimator = new AnimatorSet();
+            mFabColorAnimator.play(colorAnimation);
+            mFabColorAnimator.play(reverseColorAnimation).after(2000);
+            mFabColorAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    // Reset the FAB to the default color
+                    setFabColor(FAB_COLOR);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mFabColorAnimator = null;
+                }
+            });
+            mFabColorAnimator.start();
         };
         runAfterSettingsPanelIsClosed(runnable);
 
@@ -499,20 +569,32 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
             // Something went wrong, restore the initial state
             mSettingsFragment.restoreInitialState();
 
-            Integer colorFrom = getResources().getColor(R.color.accent);
-            Integer colorTo = getResources().getColor(R.color.red);
+            Integer colorFrom = getResources().getColor(FAB_COLOR);
+            Integer colorTo = getResources().getColor(FAB_COLOR_ERROR);
             ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-            colorAnimation.addUpdateListener(animator -> mOpenSettingsButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
+            colorAnimation.addUpdateListener(animator -> mToggleSettingsPanelButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
             colorAnimation.setDuration(FAB_COLOR_ANIMATION_DURATION);
 
             ValueAnimator reverseColorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorTo, colorFrom);
-            reverseColorAnimation.addUpdateListener(animator -> mOpenSettingsButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
+            reverseColorAnimation.addUpdateListener(animator -> mToggleSettingsPanelButton.setBackgroundTintList(ColorStateList.valueOf((Integer) animator.getAnimatedValue())));
             reverseColorAnimation.setDuration(FAB_COLOR_ANIMATION_DURATION);
 
-            AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet.play(colorAnimation);
-            animatorSet.play(reverseColorAnimation).after(2000);
-            animatorSet.start();
+            mFabColorAnimator = new AnimatorSet();
+            mFabColorAnimator.play(colorAnimation);
+            mFabColorAnimator.play(reverseColorAnimation).after(2000);
+            mFabColorAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    // Reset the FAB to the default color
+                    setFabColor(FAB_COLOR);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    mFabColorAnimator = null;
+                }
+            });
+            mFabColorAnimator.start();
         };
         runAfterSettingsPanelIsClosed(runnable);
 
@@ -522,7 +604,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     @Override
     public void onBackPressed() {
         if (mIsSettingsPanelOpen) {
-            closeSettingsPanel();
+            closeSettingsPanel(true);
             return;
         }
         super.onBackPressed();
@@ -530,20 +612,30 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
 
     public void onSettingsLoaded() {
         // Re-enable the submit button
-        mCloseSettingsButton.setEnabled(true);
+        mIsSaveEnalbed = true;
     }
 
-    private void showSnackbar(@StringRes int messageResId) {
+    protected void showSnackbar(@StringRes int messageResId) {
         showSnackbar(getString(messageResId));
     }
 
-    private void showSnackbar(String message) {
+    @SuppressWarnings("WrongConstant")
+    protected void showSnackbar(CharSequence message) {
         Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, 2000);
         TextView text = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
         if (text != null) {
             text.setTextColor(getResources().getColor(R.color.white));
         }
         snackbar.show();
+    }
+
+    protected Snackbar createSnackbar(CharSequence message, @Snackbar.Duration int duration) {
+        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message == null ? "" : message, duration);
+        TextView text = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+        if (text != null) {
+            text.setTextColor(getResources().getColor(R.color.white));
+        }
+        return snackbar;
     }
 
     /**
@@ -563,5 +655,29 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
                 }
             });
         }
+    }
+
+    /**
+     * Subclasses should override this if they care about FAB click events. If they handle the
+     * event, return true; otherwise, return false so the default behavior (opening and closing
+     * the settings panel) will occur.
+     *
+     * @return true if the click was handled by this method
+     */
+    protected boolean onFabClick() {
+        return false;
+    }
+
+    protected void setFabColor(@ColorRes int color) {
+        mToggleSettingsPanelButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(color)));
+    }
+
+    protected void setFabDrawable(@DrawableRes int drawable) {
+        mToggleSettingsPanelButton.setImageResource(drawable);
+    }
+
+    protected void setupFabForMyTbaSettingsTab() {
+        setupFabIconForSettingsPanelOpen(mIsSettingsPanelOpen);
+        setFabColor(FAB_COLOR);
     }
 }

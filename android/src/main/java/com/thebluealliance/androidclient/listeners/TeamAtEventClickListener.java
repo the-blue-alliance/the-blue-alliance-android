@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.listeners;
 
-import android.content.Context;
-import android.content.Intent;
-import android.view.View;
-
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
+
+import android.content.Context;
+import android.content.Intent;
+import android.view.View;
 
 public class TeamAtEventClickListener implements View.OnClickListener {
 
@@ -44,10 +44,7 @@ public class TeamAtEventClickListener implements View.OnClickListener {
             eventKey = key.split("_")[0];
         }
         if (TeamHelper.validateTeamKey(teamKey) ^ TeamHelper.validateMultiTeamKey(teamKey)) {
-            if (TeamHelper.validateMultiTeamKey(teamKey)) {
-                // Take out extra letter at end to make team key valid.
-                teamKey = teamKey.substring(0, teamKey.length() - 1);
-            }
+            teamKey = TeamHelper.baseTeamKey(teamKey);
             //social button was clicked. Track the call
             Intent intent;
             if (EventHelper.validateEventKey(eventKey)) {

@@ -14,10 +14,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.database.writers.AwardListWriter;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.helpers.AwardHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
@@ -78,7 +80,7 @@ public class AwardsPostedNotification extends BaseNotification<AwardsPostedNotif
     }
 
     @Override
-    public Notification buildNotification(Context context) {
+    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         String eventShortName = EventHelper.shortName(eventName);
         String contentText = context.getString(R.string.notification_awards_updated, eventShortName);
 
@@ -159,7 +161,7 @@ public class AwardsPostedNotification extends BaseNotification<AwardsPostedNotif
         return new AwardsPostedNotificationViewModel(eventKey, eventName, getNotificationTimeString(context), getIntent(context));
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         public TextView header;
         public TextView details;
         public TextView time;
