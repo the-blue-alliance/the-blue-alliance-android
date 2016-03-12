@@ -1,14 +1,5 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
-
 import com.google.common.base.Predicate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -31,6 +22,16 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
+
+import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;

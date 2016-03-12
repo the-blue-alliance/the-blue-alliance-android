@@ -88,6 +88,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
         }
     }
 
+    @Override
     public boolean followsTeam(Context context, String teamNumber, String matchKey,
                                String notificationType) {
         String currentUser = AccountHelper.getSelectedAccount(context);

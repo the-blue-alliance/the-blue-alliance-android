@@ -1,5 +1,19 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
+import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
+import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
+
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -10,33 +24,14 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.gcm.FollowsChecker;
-import com.thebluealliance.androidclient.datafeed.DatafeedModule;
-import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
-import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.models.StoredNotification;
-import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
-import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
-import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
-import com.thebluealliance.androidclient.datafeed.HttpModule;
-
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import io.nlopez.smartadapters.views.BindableLayout;
 
 public abstract class BaseNotification<VIEWMODEL> extends ListElement implements ViewModelRenderer<VIEWMODEL, Void> {
 

@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
