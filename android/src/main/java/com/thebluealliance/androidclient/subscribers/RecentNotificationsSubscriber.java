@@ -51,7 +51,7 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
     /**
      * A new notification was received, refresh this view
      */
-    @SuppressWarnings("unused")
+    /*@SuppressWarnings("unused")
     public void onEvent(NotificationsUpdatedEvent event) {
         Log.d(Constants.LOG_TAG, "Updating notification list");
         BaseNotification notification = event.getNotification();
@@ -60,5 +60,5 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
             mDataToBind.add(0, notification.renderToViewModel(null, null));
         }
         bindData();
-    }
+    }*/
 }

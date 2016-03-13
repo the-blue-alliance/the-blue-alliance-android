@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamPageCombiner;
 import com.thebluealliance.androidclient.itemviews.TeamItemView;
 import com.thebluealliance.androidclient.models.Team;
@@ -20,7 +21,7 @@ import rx.Observable;
 /**
  * Displays 1000 team numbers starting with {@link #START}
  */
-public class TeamListFragment extends RecyclerViewFragment<List<Team>, TeamListRecyclerSubscriber> {
+public class TeamListFragment extends RecyclerViewFragment<List<Team>, TeamListRecyclerSubscriber, RecyclerViewBinder> {
 
     private static final String START = "START";
     private int mPageStart;

@@ -21,14 +21,13 @@ import io.nlopez.smartadapters.adapters.RecyclerMultiAdapter;
 
 public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
 
-    @Bind(R.id.list)
-    RecyclerView mRecyclerView;
-    @Bind(R.id.progress)
-    ProgressBar mProgressBar;
+    @Bind(R.id.list) RecyclerView mRecyclerView;
+    @Bind(R.id.progress) ProgressBar mProgressBar;
 
-    private RecyclerViewBinderMapper mMapper;
+    protected RecyclerViewBinderMapper mMapper;
+    protected RecyclerMultiAdapter mAdapter;
 
-    private RecyclerMultiAdapter mAdapter;
+    protected List<Object> mOldList;
 
     public void setRecyclerViewBinderMapper(RecyclerViewBinderMapper mapper) {
         mMapper = mapper;
@@ -59,9 +58,11 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
             SmartAdapter.MultiAdaptersCreator creator = SmartAdapter.items(new ArrayList<>(data));
             mMapper.initializeMaps(creator);
             mAdapter = creator.into(mRecyclerView);
-        } else {
+        } else if (mOldList == null) {
             mAdapter.clearItems();
             mAdapter.addItems(new ArrayList<>(data));
+        } else {
+            // Compute which items are new
         }
 
         if (mProgressBar != null) {

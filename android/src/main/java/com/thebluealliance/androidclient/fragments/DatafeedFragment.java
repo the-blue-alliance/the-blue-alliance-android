@@ -78,6 +78,9 @@ public abstract class DatafeedFragment
         if (shouldRegisterSubscriberToEventBus()) {
             mEventBus.register(mSubscriber);
         }
+        if( shouldRegisterBinderToEventBus()) {
+            mEventBus.register(mBinder);
+        }
     }
 
     @Override
@@ -87,6 +90,11 @@ public abstract class DatafeedFragment
         if (mSubscriber != null) {
             if (shouldRegisterSubscriberToEventBus()) {
                 mEventBus.unregister(mSubscriber);
+            }
+        }
+        if(mBinder != null) {
+            if(shouldRegisterBinderToEventBus()) {
+                mEventBus.unregister(mBinder);
             }
         }
     }
@@ -188,6 +196,10 @@ public abstract class DatafeedFragment
     }
 
     protected boolean shouldRegisterSubscriberToEventBus() {
+        return false;
+    }
+
+    protected boolean shouldRegisterBinderToEventBus() {
         return false;
     }
 }
