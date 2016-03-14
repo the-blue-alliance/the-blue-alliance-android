@@ -54,7 +54,7 @@ public class RecentNotificationsListBinder extends RecyclerViewBinder {
     }
 
     private void updateNewNotificationIndicator() {
-        mNewNotificationIndicator.setText(mNewNotificationCount + " new");
+        mNewNotificationIndicator.setText(mActivity.getString(R.string.new_notifications, mNewNotificationCount));
     }
 
     private void showNewNotificationIndicator(boolean animate) {
