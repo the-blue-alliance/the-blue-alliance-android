@@ -27,7 +27,7 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
     protected RecyclerViewBinderMapper mMapper;
     protected RecyclerMultiAdapter mAdapter;
 
-    protected List<Object> mOldList;
+    protected List<Object> mList;
 
     public void setRecyclerViewBinderMapper(RecyclerViewBinderMapper mapper) {
         mMapper = mapper;
@@ -40,6 +40,7 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
 
     @Override
     public void updateData(@Nullable List<Object> data) {
+        mList = data;
         if (data == null || mRecyclerView == null) {
             setDataBound(false);
             return;
@@ -55,14 +56,10 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
         long startTime = System.currentTimeMillis();
         Log.d(Constants.LOG_TAG, "BINDING DATA");
         if (mAdapter == null) {
-            SmartAdapter.MultiAdaptersCreator creator = SmartAdapter.items(new ArrayList<>(data));
-            mMapper.initializeMaps(creator);
-            mAdapter = creator.into(mRecyclerView);
-        } else if (mOldList == null) {
+            createAndInitializeAdapterForData(new ArrayList<>(data));
+        } else {
             mAdapter.clearItems();
             mAdapter.addItems(new ArrayList<>(data));
-        } else {
-            // Compute which items are new
         }
 
         if (mProgressBar != null) {
@@ -120,6 +117,12 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
         if (mProgressBar != null) {
             mProgressBar.setVisibility(View.VISIBLE);
         }
+    }
+
+    protected void createAndInitializeAdapterForData(List<Object> data) {
+        SmartAdapter.MultiAdaptersCreator creator = SmartAdapter.items(new ArrayList<>(data));
+        mMapper.initializeMaps(creator);
+        mAdapter = creator.into(mRecyclerView);
     }
 
     public interface RecyclerViewBinderMapper {

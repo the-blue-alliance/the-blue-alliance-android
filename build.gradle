@@ -14,7 +14,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.0-alpha1'
         classpath 'me.tatarka:gradle-retrolambda:3.2.2'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
 
         // dependency analysis
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.8'
@@ -27,7 +27,6 @@ buildscript {
 
         // auto-push releases
         classpath 'com.github.triplet.gradle:play-publisher:1.1.4'
-
     }
 }
 

@@ -11,7 +11,7 @@ import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
-import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
+import com.thebluealliance.androidclient.fragments.RecentNotificationsFragmentV2;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
@@ -192,7 +192,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 startActivity(new Intent(this, SettingsActivity.class));
                 return;
             case R.id.nav_item_notifications:
-                fragment = new RecentNotificationsFragment();
+                fragment = new RecentNotificationsFragmentV2();
                 break;
             case R.id.nav_item_gameday:
                 startActivity(GamedayActivity.newInstance(this));

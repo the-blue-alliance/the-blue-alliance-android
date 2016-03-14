@@ -48,6 +48,11 @@ public class BinderModule {
     }
 
     @Provides
+    public RecentNotificationsListBinder provideRecentNotificationsListBinder() {
+        return new RecentNotificationsListBinder();
+    }
+
+    @Provides
     public ExpandableListViewBinder provideExpandableListBinder(ModelRendererSupplier supplier) {
         return new ExpandableListViewBinder(supplier);
     }

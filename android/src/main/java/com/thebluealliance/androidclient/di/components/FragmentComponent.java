@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.fragments.ContributorsFragment;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
+import com.thebluealliance.androidclient.fragments.RecentNotificationsFragmentV2;
 import com.thebluealliance.androidclient.fragments.TeamListFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictEventsFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
@@ -100,6 +101,7 @@ public interface FragmentComponent {
 
     void inject(GamedayWebcastsFragment gamedayWebcastsFragment);
     void inject(RecentNotificationsFragment recentNotificationsFragment);
+    void inject(RecentNotificationsFragmentV2 recentNotificationsFragmentV2);
     void inject(GamedayTickerFragment gamedayTickerFragment);
 
     void inject(MySubscriptionsFragment mySubscriptionsFragment);

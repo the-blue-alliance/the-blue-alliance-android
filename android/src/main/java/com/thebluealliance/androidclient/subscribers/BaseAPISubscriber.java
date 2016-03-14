@@ -106,7 +106,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
                 parseData();
             }
             if (shouldBindImmediately || shouldBindOnce) {
-                bindViewsIfNeeded();
+                // bindViewsIfNeeded();
                 bindData();
             }
         } catch (BasicModel.FieldNotDefinedException e) {
