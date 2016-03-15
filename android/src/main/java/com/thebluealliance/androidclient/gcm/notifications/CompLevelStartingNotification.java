@@ -189,7 +189,7 @@ public class CompLevelStartingNotification extends BaseNotification<CompLevelSta
     public CompLevelStartingNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
         String header = getNotificationCardHeader(context, eventName, eventKey);
         String details = context.getString(R.string.notification_level_starting_gameday_details, getCompLevelNameFromAbbreviation(context, compLevelAbbrev));
-        return new CompLevelStartingNotificationViewModel(header, details, getNotificationTimeString(context));
+        return new CompLevelStartingNotificationViewModel(header, details, getNotificationTimeString(context), getIntent(context));
     }
 
     private static class ViewHolder {

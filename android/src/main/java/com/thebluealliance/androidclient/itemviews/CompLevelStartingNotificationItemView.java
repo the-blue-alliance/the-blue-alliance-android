@@ -1,9 +1,11 @@
 package com.thebluealliance.androidclient.itemviews;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.TextView;
 
 import butterknife.Bind;
@@ -14,6 +16,7 @@ public class CompLevelStartingNotificationItemView extends BindableFrameLayout<C
     @Bind(R.id.card_header) TextView header;
     @Bind(R.id.title) TextView details;
     @Bind(R.id.notification_time) TextView time;
+    @Bind(R.id.summary_container) View summaryContainer;
 
     public CompLevelStartingNotificationItemView(Context context) {
         super(context);
@@ -34,6 +37,8 @@ public class CompLevelStartingNotificationItemView extends BindableFrameLayout<C
         header.setText(model.getHeader());
         details.setText(model.getDetails());
         time.setText(model.getTimeString());
+        summaryContainer.setOnClickListener(new GamedayTickerClickListener(getContext(), model.getIntent()));
+
 
     }
 }
