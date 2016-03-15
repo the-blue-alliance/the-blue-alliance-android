@@ -6,12 +6,14 @@ import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.itemviews.AllianceSelectionNotificationItemView;
 import com.thebluealliance.androidclient.itemviews.AwardsPostedNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.CompLevelStartingNotificationItemView;
 import com.thebluealliance.androidclient.itemviews.GenericNotificationItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.subscribers.RecentNotificationsSubscriber;
 import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 import com.thebluealliance.androidclient.views.NoDataView;
 
@@ -110,6 +112,7 @@ public class RecentNotificationsFragmentV2
     public void initializeMaps(SmartAdapter.MultiAdaptersCreator creator) {
         creator.map(AllianceSelectionNotificationViewModel.class, AllianceSelectionNotificationItemView.class)
                 .map(AwardsPostedNotificationViewModel.class, AwardsPostedNotificationItemView.class)
+                .map(CompLevelStartingNotificationViewModel.class, CompLevelStartingNotificationItemView.class)
                 .map(GenericNotificationViewModel.class, GenericNotificationItemView.class);
     }
 

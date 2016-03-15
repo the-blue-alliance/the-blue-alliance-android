@@ -118,7 +118,7 @@ public class RecentNotificationsListBinder extends RecyclerViewBinder {
         notification.parseMessageData();
         if (notification.shouldShowInRecentNotificationsList()) {
             Log.d(Constants.LOG_TAG, "Adding notificatin to list");
-            addItemToBeginningOfList(notification.renderToViewModel(null, null));
+            addItemToBeginningOfList(notification.renderToViewModel(mActivity, null));
             if (mRecyclerView.computeVerticalScrollOffset() == 0) {
                 mNewNotificationCount = 0;
                 mRecyclerView.scrollToPosition(0);

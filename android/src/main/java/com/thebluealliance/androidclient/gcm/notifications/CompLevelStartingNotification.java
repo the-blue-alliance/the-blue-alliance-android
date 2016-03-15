@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 
 import android.app.Notification;
@@ -30,7 +31,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class CompLevelStartingNotification extends BaseNotification<GenericNotificationViewModel> {
+public class CompLevelStartingNotification extends BaseNotification<CompLevelStartingNotificationViewModel> {
 
     private @Nullable JsonElement scheduledTime;
     private String eventName, eventKey, compLevelAbbrev;
@@ -185,8 +186,10 @@ public class CompLevelStartingNotification extends BaseNotification<GenericNotif
 
     @Nullable
     @Override
-    public GenericNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
-        return new GenericNotificationViewModel(messageType, messageData);
+    public CompLevelStartingNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        String header = getNotificationCardHeader(context, eventName, eventKey);
+        String details = context.getString(R.string.notification_level_starting_gameday_details, getCompLevelNameFromAbbreviation(context, compLevelAbbrev));
+        return new CompLevelStartingNotificationViewModel(header, details, getNotificationTimeString(context));
     }
 
     private static class ViewHolder {

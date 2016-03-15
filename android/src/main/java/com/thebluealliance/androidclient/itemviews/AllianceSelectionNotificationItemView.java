@@ -11,14 +11,9 @@ import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class AllianceSelectionNotificationItemView extends BindableFrameLayout<AllianceSelectionNotificationViewModel> {
-    @Bind(R.id.card_header)
-    TextView header;
-
-    @Bind(R.id.details)
-    TextView details;
-
-    @Bind(R.id.notification_time)
-    TextView time;
+    @Bind(R.id.card_header) TextView header;
+    @Bind(R.id.details) TextView details;
+    @Bind(R.id.notification_time) TextView time;
 
     public AllianceSelectionNotificationItemView(Context context) {
         super(context);

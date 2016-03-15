@@ -9,7 +9,10 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
 import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
@@ -181,5 +184,10 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
         DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(c);
         if (notificationTime == null) return "";
         return dateFormat.format(notificationTime) + " " + timeFormat.format(notificationTime);
+    }
+
+    public String getNotificationCardHeader(Context context, String eventShortName, String eventKey) {
+        String shortCode = EventHelper.getShortCodeForEventKey(eventKey).toUpperCase();
+        return context.getString(R.string.gameday_ticker_event_title_format, eventShortName, shortCode);
     }
 }
