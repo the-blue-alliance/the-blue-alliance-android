@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.TaskStackBuilder;
@@ -286,7 +285,7 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
     public void onConnected(Bundle connectionHint) {
         PlusHelper.onConnectCommon(this);
         if (mNavDrawerFragment != null) {
-            mNavDrawerFragment.setDrawerProfileInfo();
+            mNavDrawerFragment.setupNavDrawerHeader();
         }
     }
 
