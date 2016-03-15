@@ -144,16 +144,14 @@ public class AllianceSelectionNotification extends BaseNotification<AllianceSele
     @Nullable
     @Override
     public AllianceSelectionNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
-        String titleString, shortName, shortCode;
+        String titleString;
         try {
-            shortName = event.getEventShortName();
-            shortCode = EventHelper.getShortCodeForEventKey(event.getKey()).toUpperCase();
-            titleString = context.getString(R.string.gameday_ticker_event_title_format, shortName, shortCode);
+            titleString = getNotificationCardHeader(context, event.getEventShortName(), event.getKey());
         } catch (BasicModel.FieldNotDefinedException e) {
             titleString = eventKey;
         }
 
-        return new AllianceSelectionNotificationViewModel(titleString, getNotificationTimeString(context));
+        return new AllianceSelectionNotificationViewModel(titleString, getNotificationTimeString(context), getIntent(context));
     }
 
     private static class ViewHolder {
