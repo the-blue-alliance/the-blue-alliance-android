@@ -8,6 +8,8 @@ import com.thebluealliance.androidclient.itemviews.AllianceSelectionNotification
 import com.thebluealliance.androidclient.itemviews.AwardsPostedNotificationItemView;
 import com.thebluealliance.androidclient.itemviews.CompLevelStartingNotificationItemView;
 import com.thebluealliance.androidclient.itemviews.GenericNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.ScoreNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.UpcomingMatchNotificationItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.subscribers.RecentNotificationsSubscriber;
@@ -15,6 +17,8 @@ import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificatio
 import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.NoDataView;
 
 import android.os.Bundle;
@@ -113,6 +117,8 @@ public class RecentNotificationsFragmentV2
         creator.map(AllianceSelectionNotificationViewModel.class, AllianceSelectionNotificationItemView.class)
                 .map(AwardsPostedNotificationViewModel.class, AwardsPostedNotificationItemView.class)
                 .map(CompLevelStartingNotificationViewModel.class, CompLevelStartingNotificationItemView.class)
+                .map(UpcomingMatchNotificationViewModel.class, UpcomingMatchNotificationItemView.class)
+                .map(ScoreNotificationViewModel.class, ScoreNotificationItemView.class)
                 .map(GenericNotificationViewModel.class, GenericNotificationItemView.class);
     }
 

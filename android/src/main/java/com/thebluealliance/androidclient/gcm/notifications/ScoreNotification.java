@@ -20,6 +20,8 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
 
 import android.app.Notification;
@@ -38,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ScoreNotification extends BaseNotification<GenericNotificationViewModel> {
+public class ScoreNotification extends BaseNotification<ScoreNotificationViewModel> {
 
     private final MatchWriter mWriter;
     private String eventName, eventKey, matchKey;
@@ -210,8 +212,10 @@ public class ScoreNotification extends BaseNotification<GenericNotificationViewM
 
     @Nullable
     @Override
-    public GenericNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
-        return new GenericNotificationViewModel(messageType, messageData);
+    public ScoreNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        String header = getNotificationCardHeader(context, EventHelper.shortName(eventName), eventKey);
+        String title = context.getString(R.string.notification_score_gameday_title, MatchHelper.getMatchTitleFromMatchKey(context, matchKey));
+        return new ScoreNotificationViewModel(header, title, getNotificationTimeString(context), getIntent(context), match);
     }
 
     private static class ViewHolder {

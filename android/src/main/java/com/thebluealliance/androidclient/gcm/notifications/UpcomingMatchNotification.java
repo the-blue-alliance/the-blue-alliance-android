@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
 
 import android.app.Notification;
@@ -38,7 +39,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
-public class UpcomingMatchNotification extends BaseNotification<GenericNotificationViewModel> {
+public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNotificationViewModel> {
 
     private String eventName, eventKey, matchKey, redTeams[], blueTeams[];
     private JsonElement matchTime;
@@ -202,15 +203,18 @@ public class UpcomingMatchNotification extends BaseNotification<GenericNotificat
         holder.time.setText(getNotificationTimeString(c));
 
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
-        new MatchListElement(redTeams, blueTeams, matchKey, JSONHelper.isNull(matchTime) ? -1 : matchTime.getAsLong(), "").getView(c, inflater, holder.matchView);
+        new MatchListElement(redTeams, blueTeams, matchKey, JSONHelper.isNull(matchTime) ? -1 : matchTime.getAsLong(), null).getView(c, inflater, holder.matchView);
 
         return convertView;
     }
 
     @Nullable
     @Override
-    public GenericNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
-        return new GenericNotificationViewModel(messageType, messageData);
+    public UpcomingMatchNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        String header = getNotificationCardHeader(context, EventHelper.shortName(eventName), eventKey);
+        String title = context.getString(R.string.notification_upcoming_match_gameday_title, MatchHelper.getMatchTitleFromMatchKey(context, matchKey));
+        long time = (JSONHelper.isNull(matchTime) ? -1 : matchTime.getAsLong());
+        return new UpcomingMatchNotificationViewModel(header, title, getNotificationTimeString(context), getIntent(context), matchKey, redTeams, blueTeams, time);
     }
 
     private static class ViewHolder {

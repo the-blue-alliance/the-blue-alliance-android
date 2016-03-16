@@ -186,8 +186,9 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
         return dateFormat.format(notificationTime) + " " + timeFormat.format(notificationTime);
     }
 
-    public String getNotificationCardHeader(Context context, String eventShortName, String eventKey) {
+    public String getNotificationCardHeader(Context context, String eventName, String eventKey) {
+        String shortName = EventHelper.shortName(eventName);
         String shortCode = EventHelper.getShortCodeForEventKey(eventKey).toUpperCase();
-        return context.getString(R.string.gameday_ticker_event_title_format, eventShortName, shortCode);
+        return context.getString(R.string.gameday_ticker_event_title_format, shortName, shortCode);
     }
 }
