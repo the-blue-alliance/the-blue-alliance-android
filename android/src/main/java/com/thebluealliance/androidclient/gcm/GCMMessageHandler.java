@@ -34,6 +34,8 @@ import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
+import org.greenrobot.eventbus.EventBus;
+
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -46,8 +48,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import javax.inject.Inject;
-
-import de.greenrobot.event.EventBus;
 
 public class GCMMessageHandler extends IntentService implements FollowsChecker {
 

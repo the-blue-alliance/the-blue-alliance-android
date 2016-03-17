@@ -10,6 +10,9 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +53,8 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
      * A new notification was received, refresh this view
      */
     @SuppressWarnings("unused")
-    public void onEvent(NotificationsUpdatedEvent event) {
+    @Subscribe
+    public void onNotificationReceived(NotificationsUpdatedEvent event) {
         Log.d(Constants.LOG_TAG, "Updating notification list");
         BaseNotification notification = event.getNotification();
         notification.parseMessageData();

@@ -8,13 +8,15 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
-import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
+import com.thebluealliance.androidclient.eventbus.LiveEventUpdateEvent;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.renderers.ModelRenderer;
 import com.thebluealliance.androidclient.types.EventType;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -28,8 +30,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import de.greenrobot.event.EventBus;
 
 public class EventHelper {
 
@@ -204,10 +204,10 @@ public class EventHelper {
     }
 
     private static void renderEventListWithComparator(
-      List<Event> events,
-      List<ListItem> output,
-      Comparator<Event> comparator,
-      ModelRenderer<Event, ?> renderer) {
+            List<Event> events,
+            List<ListItem> output,
+            Comparator<Event> comparator,
+            ModelRenderer<Event, ?> renderer) {
         Collections.sort(events, comparator);
         EventType lastType = null, currentType = null;
         int lastDistrict = -1, currentDistrict = -1;
@@ -216,11 +216,11 @@ public class EventHelper {
                 currentType = event.getEventType();
                 currentDistrict = event.getDistrictEnum();
                 if (currentType != lastType ||
-                  (currentType == EventType.DISTRICT
-                    && currentDistrict != lastDistrict)) {
+                        (currentType == EventType.DISTRICT
+                                && currentDistrict != lastDistrict)) {
                     if (currentType == EventType.DISTRICT) {
                         output.add(
-                          new EventTypeHeader(event.getDistrictTitle() + " District Events"));
+                                new EventTypeHeader(event.getDistrictTitle() + " District Events"));
                     } else {
                         output.add(new EventTypeHeader(currentType.toString()));
                     }
@@ -230,7 +230,7 @@ public class EventHelper {
                 if (event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
                     Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getKey());
-                    EventBus.getDefault().post(new LiveEventEventUpdateEvent(event));
+                    EventBus.getDefault().post(new LiveEventUpdateEvent(event));
                 }
 
             } catch (BasicModel.FieldNotDefinedException e) {
@@ -242,9 +242,9 @@ public class EventHelper {
     }
 
     public static void renderEventListForDistrict(
-      List<Event> events,
-      List<ListItem> output,
-      ModelRenderer<Event, ?> renderer) {
+            List<Event> events,
+            List<ListItem> output,
+            ModelRenderer<Event, ?> renderer) {
         Collections.sort(events, new EventSortByDateComparator());
         String lastHeader = null, currentHeader = null;
         for (Event event : events) {
@@ -258,7 +258,7 @@ public class EventHelper {
                 if (event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
                     Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getKey());
-                    EventBus.getDefault().post(new LiveEventEventUpdateEvent(event));
+                    EventBus.getDefault().post(new LiveEventUpdateEvent(event));
                 }
             } catch (BasicModel.FieldNotDefinedException e) {
                 Log.w(Constants.LOG_TAG, "Missing fields for rendering event lists");
@@ -273,7 +273,7 @@ public class EventHelper {
             return ThreadSafeFormatters.renderEventDate(startDate);
         }
         return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to " +
-          ThreadSafeFormatters.renderEventDate(endDate);
+                ThreadSafeFormatters.renderEventDate(endDate);
     }
 
     public static String extractRankingString(CaseInsensitiveMap rankingElements) {

@@ -9,6 +9,8 @@ import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.models.APIStatus;
 
+import org.greenrobot.eventbus.EventBus;
+
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,7 +20,6 @@ import android.util.Log;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import de.greenrobot.event.EventBus;
 import retrofit.Response;
 import rx.schedulers.Schedulers;
 

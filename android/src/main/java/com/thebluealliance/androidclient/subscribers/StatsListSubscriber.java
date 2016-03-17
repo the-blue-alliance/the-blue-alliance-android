@@ -17,6 +17,8 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Stat;
 import com.thebluealliance.androidclient.models.Team;
 
+import org.greenrobot.eventbus.EventBus;
+
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -26,8 +28,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
-
-import de.greenrobot.event.EventBus;
 
 public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<ListItem>> {
 

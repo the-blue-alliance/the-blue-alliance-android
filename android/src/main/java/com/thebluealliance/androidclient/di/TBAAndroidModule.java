@@ -28,6 +28,8 @@ import com.thebluealliance.androidclient.database.writers.TeamListWriter;
 import com.thebluealliance.androidclient.database.writers.TeamWriter;
 import com.thebluealliance.androidclient.database.writers.YearsParticipatedWriter;
 
+import org.greenrobot.eventbus.EventBus;
+
 import android.accounts.AccountManager;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -39,7 +41,6 @@ import javax.inject.Singleton;
 import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
-import de.greenrobot.event.EventBus;
 
 /**
  * App-wide dependency injection items
