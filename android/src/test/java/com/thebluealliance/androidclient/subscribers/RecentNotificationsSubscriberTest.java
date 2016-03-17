@@ -1,8 +1,11 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import android.content.Context;
+import android.content.res.Resources;
 
 import com.google.gson.JsonObject;
+
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -20,6 +23,10 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.ScheduleUpdatedNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +62,12 @@ public class RecentNotificationsSubscriberTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         mContext = mock(Context.class, RETURNS_DEEP_STUBS);
+
+        when(mContext.getString(R.string.match_title_abbrev_format)).thenReturn("%1$s%2$s");
+        when(mContext.getString(R.string.match_title_format)).thenReturn("%1$s %2$s");
+        when(mContext.getString(R.string.submatch_title_abbrev_format)).thenReturn("%1$s%2$s-%3$s");
+        when(mContext.getString(R.string.submatch_title_format)).thenReturn("%1$s %2$s Match %3$s");
+
         DatabaseMocker.mockNotificationsTable(mDb);
         DatabaseWriter writer = mockDatabaseWriter();
         mSubscriber = new RecentNotificationsSubscriber(writer, mContext);
@@ -99,10 +112,10 @@ public class RecentNotificationsSubscriberTest {
         assertEquals(parsedData.size(), 6);
         assertTrue(parsedData.get(0) instanceof AllianceSelectionNotificationViewModel);
         assertTrue(parsedData.get(1) instanceof AwardsPostedNotificationViewModel);
-        assertTrue(parsedData.get(2) instanceof CompLevelStartingNotification);
-        assertTrue(parsedData.get(3) instanceof ScoreNotification);
-        assertTrue(parsedData.get(4) instanceof ScheduleUpdatedNotification);
-        assertTrue(parsedData.get(5) instanceof UpcomingMatchNotification);
+        assertTrue(parsedData.get(2) instanceof CompLevelStartingNotificationViewModel);
+        assertTrue(parsedData.get(3) instanceof ScoreNotificationViewModel);
+        assertTrue(parsedData.get(4) instanceof ScheduleUpdatedNotificationViewModel);
+        assertTrue(parsedData.get(5) instanceof UpcomingMatchNotificationViewModel);
     }
 
     private static List<StoredNotification> mockStoredNotificationList(List<JsonObject> dataList, String[] types) {

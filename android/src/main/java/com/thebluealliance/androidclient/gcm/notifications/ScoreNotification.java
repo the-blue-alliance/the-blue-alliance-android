@@ -19,9 +19,7 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.types.MatchType;
-import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
-import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
 
 import android.app.Notification;
@@ -117,8 +115,8 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
         if (blueScore > redScore) {
             scoreString = blueScore + "-" + redScore;
             CharSequence temp = firstTeams;
-            firstTeams        = secondTeams;
-            secondTeams       = temp;
+            firstTeams = secondTeams;
+            secondTeams = temp;
         } else {
             scoreString = redScore + "-" + blueScore;
         }

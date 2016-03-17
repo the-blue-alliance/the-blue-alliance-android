@@ -48,17 +48,4 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
         return super.isDataValid() && !mAPIData.isEmpty();
     }
 
-    /**
-     * A new notification was received, refresh this view
-     */
-    /*@SuppressWarnings("unused")
-    public void onEvent(NotificationsUpdatedEvent event) {
-        Log.d(Constants.LOG_TAG, "Updating notification list");
-        BaseNotification notification = event.getNotification();
-        notification.parseMessageData();
-        if (notification.shouldShowInRecentNotificationsList()) {
-            mDataToBind.add(0, notification.renderToViewModel(null, null));
-        }
-        bindData();
-    }*/
 }
