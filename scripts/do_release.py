@@ -6,8 +6,6 @@ import subprocess
 import sys
 import re
 
-from apiclient import sample_tools
-from oauth2client import client
 from subprocess import CalledProcessError
 
 """

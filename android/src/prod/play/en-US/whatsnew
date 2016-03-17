@@ -1,10 +1,12 @@
-Version 3.2.0 (2016 Week 2):
+Version 3.2.1:
     - You can now snap a robot picture and suggest it to TBA from team pages!
     - Added full match score breakdowns as well as event specific stats
     - Bold followed teams in notifications so you never miss them
-    - Many performance improvements and bug fixes
+    - Request compressed API responses to reduce bandwidth usage
+    - Improve memory usage and fix reported crashes
 
 View the full changelog for this and previous releases on the GitHub page:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
+
 
 
