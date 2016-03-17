@@ -1,6 +1,9 @@
 package com.thebluealliance.androidclient.fragments.gameday;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -28,6 +31,17 @@ public class GamedayWebcastsFragment extends ListViewFragment<List<Event>, Webca
         mWeek = Utilities.getCurrentCompWeek();
         super.onCreate(savedInstanceState);
     }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+
+        /*mListView.setPadding(0, (int) (8 * getResources().getDisplayMetrics().density), 0, 0);
+        mListView.setClipToPadding(false);
+        mListView.setDivider(null);*/
+        return view;
+    }
+
 
     @Override
     protected void inject() {
