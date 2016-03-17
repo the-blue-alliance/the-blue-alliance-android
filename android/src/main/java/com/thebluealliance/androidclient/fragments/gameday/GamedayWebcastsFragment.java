@@ -33,17 +33,6 @@ public class GamedayWebcastsFragment extends ListViewFragment<List<Event>, Webca
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-
-        /*mListView.setPadding(0, (int) (8 * getResources().getDisplayMetrics().density), 0, 0);
-        mListView.setClipToPadding(false);
-        mListView.setDivider(null);*/
-        return view;
-    }
-
-
-    @Override
     protected void inject() {
         mComponent.inject(this);
     }
