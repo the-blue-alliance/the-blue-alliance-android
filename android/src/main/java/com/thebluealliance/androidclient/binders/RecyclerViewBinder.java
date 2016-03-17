@@ -53,8 +53,6 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
             throw new RuntimeException(this.getClass().getName() + " does not have a RecyclerViewBinderMapper set!");
         }
 
-        long startTime = System.currentTimeMillis();
-        Log.d(Constants.LOG_TAG, "BINDING DATA");
         if (mAdapter == null) {
             createAndInitializeAdapterForData(new ArrayList<>(data));
         } else {
@@ -68,7 +66,6 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
 
         mRecyclerView.setVisibility(View.VISIBLE);
         mNoDataBinder.unbindData();
-        Log.d(Constants.LOG_TAG, "BINDING COMPLETE; ELAPSED TIME: " + (System.currentTimeMillis() - startTime) + "ms");
         setDataBound(true);
     }
 

@@ -36,9 +36,7 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
             BaseNotification renderable = notification.getNotification(mWriter);
             if (renderable != null) {
                 renderable.parseMessageData();
-                if (renderable.shouldShowInRecentNotificationsList()) {
-                    mDataToBind.add(renderable.renderToViewModel(mContext, null));
-                }
+                mDataToBind.add(renderable.renderToViewModel(mContext, null));
             }
         }
     }

@@ -85,6 +85,7 @@
     <!-- *********************
         Generic Notification
         ********************* -->
+    <string name="notification_ping_header">Ping</string>
     <string name="notification_broadcast_header">Broadcast</string>
 
 </resources>

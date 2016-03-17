@@ -42,16 +42,6 @@ public class GenericNotification extends BaseNotification<GenericNotificationVie
         super(type, messageData);
     }
 
-    @Override
-    public boolean shouldShowInRecentNotificationsList() {
-        if (getNotificationType().equals(NotificationTypes.BROADCAST)) {
-            return true;
-        }
-
-        // False for pings
-        return false;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -91,15 +81,12 @@ public class GenericNotification extends BaseNotification<GenericNotificationVie
 
     @Override
     public Notification buildNotification(Context context, FollowsChecker followsChecker) {
-        if (getNotificationType().equals(NotificationTypes.BROADCAST)) {
-            // Only store broadcasts, not pings
-            stored = new StoredNotification();
-            stored.setType(getNotificationType());
-            stored.setTitle(title);
-            stored.setBody(message);
-            stored.setMessageData(messageData);
-            stored.setTime(Calendar.getInstance().getTime());
-        }
+        stored = new StoredNotification();
+        stored.setType(getNotificationType());
+        stored.setTitle(title);
+        stored.setBody(message);
+        stored.setMessageData(messageData);
+        stored.setTime(Calendar.getInstance().getTime());
 
         Intent intent = getIntent(context);
 
@@ -173,7 +160,15 @@ public class GenericNotification extends BaseNotification<GenericNotificationVie
     @Nullable
     @Override
     public GenericNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
-        return new GenericNotificationViewModel(messageType, messageData);
+        String header;
+        if (getNotificationType().equals(NotificationTypes.BROADCAST)) {
+            header = context.getString(R.string.notification_broadcast_header);
+        } else if (getNotificationType().equals(NotificationTypes.PING)) {
+            header = context.getString(R.string.notification_ping_header);
+        } else {
+            header = "";
+        }
+        return new GenericNotificationViewModel(header, title, message, getNotificationTimeString(context), getIntent(context));
     }
 
     private static class ViewHolder {

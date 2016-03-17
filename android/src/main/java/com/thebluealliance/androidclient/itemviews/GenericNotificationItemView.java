@@ -15,17 +15,11 @@ import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class GenericNotificationItemView extends BindableFrameLayout<GenericNotificationViewModel> {
-    @Bind(R.id.card_header)
-    TextView header;
-
-    @Bind(R.id.title)
-    TextView title;
-
-    @Bind(R.id.message)
-    TextView message;
-
-    @Bind(R.id.notification_time)
-    TextView time;
+    @Bind(R.id.card_header) TextView header;
+    @Bind(R.id.title) TextView title;
+    @Bind(R.id.message) TextView message;
+    @Bind(R.id.notification_time) TextView time;
+    @Bind(R.id.summary_container) View summaryContainer;
 
     public GenericNotificationItemView(Context context) {
         super(context);
@@ -43,9 +37,10 @@ public class GenericNotificationItemView extends BindableFrameLayout<GenericNoti
 
     @Override
     public void bind(GenericNotificationViewModel model) {
-        header.setText("Generic!");
+        header.setText(model.getHeader());
         title.setText(model.getTitle());
         message.setText(model.getSummary());
-        time.setText("It works o'clock");
+        time.setText(model.getTimeString());
+        summaryContainer.setOnClickListener(new GamedayTickerClickListener(getContext(), model.getIntent()));
     }
 }

@@ -104,6 +104,10 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
         return convertView;
     }
 
+    /**
+     * Most notifications will build their stored notification in {@code buildNotification}, so
+     * this method should be called after that.
+     */
     public StoredNotification getStoredNotification() {
         return stored;
     }
