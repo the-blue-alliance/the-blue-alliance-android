@@ -26,9 +26,10 @@ public class RecentNotificationsListBinder extends RecyclerViewBinder {
 
         mNewNotificationIndicator = (TextView) mRootView.findViewById(R.id.new_notification_indicator);
         mNewNotificationIndicator.setOnClickListener(v -> {
+            hideNewNotificationIndicator(true);
+            // Count should be reset after we start the hide animation
             mNewNotificationCount = 0;
             mRecyclerView.smoothScrollToPosition(0);
-            hideNewNotificationIndicator(true);
         });
 
         hideNewNotificationIndicator(false);
@@ -36,9 +37,13 @@ public class RecentNotificationsListBinder extends RecyclerViewBinder {
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                // If we're at the top of the list, hide the notif indicator
+                // If we're at the top of the list, hide the notif indicator and reset the new
+                // notif count
                 if (mRecyclerView.computeVerticalScrollOffset() == 0) {
                     hideNewNotificationIndicator(true);
+                    // Count should be reset after we start the hide animation
+                    mNewNotificationCount = 0;
+                    updateNewNotificationIndicator();
                     return;
                 }
 
