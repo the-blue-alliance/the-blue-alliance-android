@@ -1,32 +1,31 @@
 package com.thebluealliance.androidclient.itemviews;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
+import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.ScheduleUpdatedNotificationViewModel;
+
 import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
-import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
-import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
-public class AwardsPostedNotificationItemView extends BindableFrameLayout<AwardsPostedNotificationViewModel> {
+public class ScheduleUpdatedNotificationItemView extends BindableFrameLayout<ScheduleUpdatedNotificationViewModel> {
     @Bind(R.id.card_header) TextView header;
     @Bind(R.id.details) TextView details;
     @Bind(R.id.notification_time) TextView time;
     @Bind(R.id.summary_container) View summaryContainer;
 
-    public AwardsPostedNotificationItemView(Context context) {
+    public ScheduleUpdatedNotificationItemView(Context context) {
         super(context);
     }
 
     @Override
     public int getLayoutId() {
-        return R.layout.list_item_notification_awards_posted;
+        return R.layout.list_item_notification_schedule_updated;
     }
 
     @Override
@@ -35,9 +34,9 @@ public class AwardsPostedNotificationItemView extends BindableFrameLayout<Awards
     }
 
     @Override
-    public void bind(AwardsPostedNotificationViewModel model) {
-        header.setText(getContext().getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(model.getEventName()), EventHelper.getShortCodeForEventKey(model.getEventKey()).toUpperCase()));
-        details.setText(getContext().getString(R.string.notification_awards_updated_gameday_details));
+    public void bind(ScheduleUpdatedNotificationViewModel model) {
+        header.setText(model.getTitle());
+        details.setText(model.getDetails());
         time.setText(model.getTimeString());
         summaryContainer.setOnClickListener(new GamedayTickerClickListener(getContext(), model.getIntent()));
     }

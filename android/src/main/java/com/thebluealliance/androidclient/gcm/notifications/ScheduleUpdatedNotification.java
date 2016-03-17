@@ -13,7 +13,7 @@ import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
-import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.ScheduleUpdatedNotificationViewModel;
 
 import android.app.Notification;
 import android.content.Context;
@@ -26,10 +26,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ScheduleUpdatedNotification extends BaseNotification<GenericNotificationViewModel> {
+public class ScheduleUpdatedNotification extends BaseNotification<ScheduleUpdatedNotificationViewModel> {
 
     private String eventName, eventKey;
     private JsonElement matchTime;
@@ -131,7 +132,6 @@ public class ScheduleUpdatedNotification extends BaseNotification<GenericNotific
 
             holder = new ViewHolder();
             holder.header = (TextView) convertView.findViewById(R.id.card_header);
-            holder.title = (TextView) convertView.findViewById(R.id.title);
             holder.details = (TextView) convertView.findViewById(R.id.details);
             holder.time = (TextView) convertView.findViewById(R.id.notification_time);
             holder.summaryContainer = (LinearLayout) convertView.findViewById(R.id.summary_container);
@@ -140,16 +140,8 @@ public class ScheduleUpdatedNotification extends BaseNotification<GenericNotific
             holder = (ViewHolder) convertView.getTag();
         }
 
-        String firstMatchTime = null;
-        if (!JSONHelper.isNull(matchTime)) {
-            Date date = new Date(matchTime.getAsLong() * 1000L);
-            java.text.DateFormat format = DateFormat.getTimeFormat(c);
-            firstMatchTime = format.format(date);
-        }
-
         holder.header.setText(c.getString(R.string.gameday_ticker_event_title_format, EventHelper.shortName(eventName), EventHelper.getShortCodeForEventKey(eventKey).toUpperCase()));
-        holder.title.setText(c.getString(R.string.notification_schedule_updated_gameday_title));
-        holder.details.setText(c.getString(R.string.notification_schedule_updated_gameday_details, firstMatchTime));
+        holder.details.setText(getNotificationBodyString(c));
         holder.time.setText(getNotificationTimeString(c));
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
 
@@ -158,13 +150,25 @@ public class ScheduleUpdatedNotification extends BaseNotification<GenericNotific
 
     @Nullable
     @Override
-    public GenericNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
-        return new GenericNotificationViewModel(messageType, messageData);
+    public ScheduleUpdatedNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        String header = getNotificationCardHeader(context, EventHelper.shortName(eventName), EventHelper.getShortCodeForEventKey(eventKey));
+        return new ScheduleUpdatedNotificationViewModel(header, getNotificationBodyString(context), getNotificationTimeString(context), getIntent(context));
+    }
+
+    private String getNotificationBodyString(Context context) {
+        if (JSONHelper.isNull(matchTime)) {
+            return context.getString(R.string.notification_schedule_updated_gameday_body_without_time);
+        }
+
+        Date date = new Date(matchTime.getAsLong() * 1000L);
+        java.text.DateFormat timeFormat = DateFormat.getTimeFormat(context);
+        String time = timeFormat.format(date);
+
+        return context.getString(R.string.notification_schedule_updated_gameday_body_with_time, time);
     }
 
     private static class ViewHolder {
         public TextView header;
-        public TextView title;
         public TextView details;
         public TextView time;
         public LinearLayout summaryContainer;

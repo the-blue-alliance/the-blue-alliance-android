@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.itemviews.AllianceSelectionNotification
 import com.thebluealliance.androidclient.itemviews.AwardsPostedNotificationItemView;
 import com.thebluealliance.androidclient.itemviews.CompLevelStartingNotificationItemView;
 import com.thebluealliance.androidclient.itemviews.GenericNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.ScheduleUpdatedNotificationItemView;
 import com.thebluealliance.androidclient.itemviews.ScoreNotificationItemView;
 import com.thebluealliance.androidclient.itemviews.UpcomingMatchNotificationItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
@@ -17,6 +18,7 @@ import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificatio
 import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.ScheduleUpdatedNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.NoDataView;
@@ -119,6 +121,7 @@ public class RecentNotificationsFragmentV2
                 .map(CompLevelStartingNotificationViewModel.class, CompLevelStartingNotificationItemView.class)
                 .map(UpcomingMatchNotificationViewModel.class, UpcomingMatchNotificationItemView.class)
                 .map(ScoreNotificationViewModel.class, ScoreNotificationItemView.class)
+                .map(ScheduleUpdatedNotificationViewModel.class, ScheduleUpdatedNotificationItemView.class)
                 .map(GenericNotificationViewModel.class, GenericNotificationItemView.class);
     }
 
