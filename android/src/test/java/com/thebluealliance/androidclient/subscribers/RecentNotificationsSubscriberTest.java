@@ -24,6 +24,7 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.ScheduleUpdatedNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
@@ -109,13 +110,14 @@ public class RecentNotificationsSubscriberTest {
         List<Object> parsedData = DatafeedTestDriver.getParsedData(mSubscriber, mNotifications);
 
         assertNotNull(parsedData);
-        assertEquals(parsedData.size(), 6);
+        assertEquals(parsedData.size(), 7);
         assertTrue(parsedData.get(0) instanceof AllianceSelectionNotificationViewModel);
         assertTrue(parsedData.get(1) instanceof AwardsPostedNotificationViewModel);
         assertTrue(parsedData.get(2) instanceof CompLevelStartingNotificationViewModel);
         assertTrue(parsedData.get(3) instanceof ScoreNotificationViewModel);
-        assertTrue(parsedData.get(4) instanceof ScheduleUpdatedNotificationViewModel);
-        assertTrue(parsedData.get(5) instanceof UpcomingMatchNotificationViewModel);
+        assertTrue(parsedData.get(4) instanceof GenericNotificationViewModel);
+        assertTrue(parsedData.get(5) instanceof ScheduleUpdatedNotificationViewModel);
+        assertTrue(parsedData.get(6) instanceof UpcomingMatchNotificationViewModel);
     }
 
     private static List<StoredNotification> mockStoredNotificationList(List<JsonObject> dataList, String[] types) {
