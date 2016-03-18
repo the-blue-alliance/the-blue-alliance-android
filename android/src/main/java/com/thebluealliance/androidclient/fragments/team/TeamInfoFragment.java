@@ -34,6 +34,7 @@ public class TeamInfoFragment
 
     private String mTeamKey;
 
+    @Inject EventBus mEventBus;
     @Inject Lazy<EventRenderer> mEventRenderer;
 
     public static TeamInfoFragment newInstance(String teamKey) {
@@ -68,13 +69,13 @@ public class TeamInfoFragment
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+        mEventBus.register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
+        mEventBus.unregister(this);
     }
 
     public void showCurrentEvent(final EventListElement event) {

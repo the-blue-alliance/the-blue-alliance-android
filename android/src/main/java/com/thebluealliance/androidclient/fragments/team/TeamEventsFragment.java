@@ -26,6 +26,8 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 
 public class TeamEventsFragment extends ListViewFragment<List<Event>, EventListSubscriber> implements HasYearParam {
@@ -34,6 +36,8 @@ public class TeamEventsFragment extends ListViewFragment<List<Event>, EventListS
 
     private int mYear;
     private String mTeamKey;
+
+    @Inject EventBus mEventBus;
 
     public static TeamEventsFragment newInstance(String teamKey, int year) {
         TeamEventsFragment f = new TeamEventsFragment();
@@ -80,13 +84,13 @@ public class TeamEventsFragment extends ListViewFragment<List<Event>, EventListS
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+        mEventBus.register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
+        mEventBus.unregister(this);
     }
 
     @SuppressWarnings("unused")
