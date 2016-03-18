@@ -28,14 +28,15 @@ import rx.schedulers.Schedulers;
 
 /**
  * Easy abstraction of Fragment datafeed bindings
+ *
  * @param <T> Type returned by the API
  * @param <V> Type to be bound to a view
  * @param <S> {@link BaseAPISubscriber} that will take API Data -> prepare data to render
  * @param <B> {@link AbstractDataBinder} that will take prepared data -> view
  */
 public abstract class DatafeedFragment
-  <T, V, S extends BaseAPISubscriber<T, V>, B extends AbstractDataBinder<V>>
-  extends Fragment implements Refreshable {
+        <T, V, S extends BaseAPISubscriber<T, V>, B extends AbstractDataBinder<V>>
+        extends Fragment implements Refreshable {
 
     @Inject protected S mSubscriber;
     @Inject protected B mBinder;
@@ -78,7 +79,7 @@ public abstract class DatafeedFragment
         if (shouldRegisterSubscriberToEventBus()) {
             mEventBus.register(mSubscriber);
         }
-        if( shouldRegisterBinderToEventBus()) {
+        if (shouldRegisterBinderToEventBus()) {
             mEventBus.register(mBinder);
         }
     }
@@ -92,14 +93,15 @@ public abstract class DatafeedFragment
                 mEventBus.unregister(mSubscriber);
             }
         }
-        if(mBinder != null) {
-            if(shouldRegisterBinderToEventBus()) {
+        if (mBinder != null) {
+            if (shouldRegisterBinderToEventBus()) {
                 mEventBus.unregister(mBinder);
             }
         }
     }
 
-    @Override public void onStop() {
+    @Override
+    public void onStop() {
         super.onStop();
         if (mSubscriber != null) {
             mSubscriber.onParentStop();
@@ -147,9 +149,9 @@ public abstract class DatafeedFragment
     private void getNewObservables(@RefreshType int refreshType) {
         if (mSubscriber != null) {
             mObservable = getObservable(
-              refreshType == RefreshController.REQUESTED_BY_USER
-                ? APIv2.TBA_CACHE_WEB
-                : null);
+                    refreshType == RefreshController.REQUESTED_BY_USER
+                            ? APIv2.TBA_CACHE_WEB
+                            : null);
             if (mObservable != null) {
                 mObservable.subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.computation())
@@ -181,8 +183,10 @@ public abstract class DatafeedFragment
     /**
      * For child to make a call to return the Observable containing the main data model
      * Called in {@link #onResume()}
+     *
      * @param tbaCacheHeader String param to tell the datafeed how to load the data. Use
-     * {@link APIv2#TBA_CACHE_WEB}, {@link APIv2#TBA_CACHE_LOCAL}, or {@code null} for regular usage
+     *                       {@link APIv2#TBA_CACHE_WEB}, {@link APIv2#TBA_CACHE_LOCAL}, or {@code
+     *                       null} for regular usage
      */
     protected abstract Observable<? extends T> getObservable(String tbaCacheHeader);
 
