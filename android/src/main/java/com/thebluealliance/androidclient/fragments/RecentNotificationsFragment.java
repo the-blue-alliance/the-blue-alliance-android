@@ -1,68 +1,90 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.RecentNotificationsListBinder;
+import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.itemviews.AllianceSelectionNotificationItemView;
 import com.thebluealliance.androidclient.itemviews.AwardsPostedNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.CompLevelStartingNotificationItemView;
 import com.thebluealliance.androidclient.itemviews.GenericNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.ScheduleUpdatedNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.ScoreNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.UpcomingMatchNotificationItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.subscribers.RecentNotificationsSubscriber;
 import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.ScheduleUpdatedNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
+import com.thebluealliance.androidclient.views.NoDataView;
+
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
 public class RecentNotificationsFragment
-        extends RecyclerViewFragment<List<StoredNotification>, RecentNotificationsSubscriber, RecentNotificationsListBinder> {
+        extends DatafeedFragment<List<StoredNotification>, List<Object>, RecentNotificationsSubscriber, RecentNotificationsListBinder>
+        implements RecyclerViewBinder.RecyclerViewBinderMapper {
 
     @Inject Database mDb;
-    @Inject EventBus mEventBus;
+
+    private Parcelable mListState;
+    private RecyclerView.Adapter mAdapter;
+    protected RecyclerView mRecyclerView;
+    private LinearLayoutManager mLayoutManager;
 
     @Override
-    protected void inject() {
-        mComponent.inject(this);
+    public
+    @Nullable
+    View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_recent_notifications, null);
+
+        mBinder.setRootView(v);
+        mBinder.setRecyclerViewBinderMapper(this);
+
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.list);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.progress);
+        if (mAdapter != null) {
+            mRecyclerView.setAdapter(mAdapter);
+            mLayoutManager.onRestoreInstanceState(mListState);
+            progressBar.setVisibility(View.GONE);
+        }
+
+        mBinder.setNoDataView((NoDataView) v.findViewById(R.id.no_data));
+        return v;
     }
 
-    /**
-     * The recent notifications list has to render things a little differently than the normal
-     * list.
-     * Specifically, we need to remove the dividers between items, adjust the padding, and disable
-     * clip-to-padding so that the list's content can scroll beneath the padding. To avoid having
-     * to special-case a subclass of DatafeedFragment and inflate a different view, we'll simply
-     * override all this stuff programmatically!
-     *
-     * @param view               The View returned by {@link #onCreateView(LayoutInflater,
-     *                           ViewGroup, Bundle)}.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     *                           from a previous saved state as given here.
-     */
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        int pBottom, pLeft, pRight;
-        pBottom = mRecyclerView.getPaddingBottom();
-        pLeft = mRecyclerView.getPaddingLeft();
-        pRight = mRecyclerView.getPaddingRight();
-        mRecyclerView.setPadding(pLeft, Utilities.getPixelsFromDp(getContext(), 8), pRight, pBottom);
-        mRecyclerView.setClipToPadding(false);
-
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+    public void onPause() {
+        super.onPause();
+        if (mRecyclerView != null) {
+            mAdapter = mRecyclerView.getAdapter();
+            mListState = mLayoutManager.onSaveInstanceState();
+        }
     }
 
     @Override
@@ -78,7 +100,7 @@ public class RecentNotificationsFragment
     }
 
     @Override
-    protected boolean shouldRegisterSubscriberToEventBus() {
+    protected boolean shouldRegisterBinderToEventBus() {
         return true;
     }
 
@@ -96,6 +118,16 @@ public class RecentNotificationsFragment
     public void initializeMaps(SmartAdapter.MultiAdaptersCreator creator) {
         creator.map(AllianceSelectionNotificationViewModel.class, AllianceSelectionNotificationItemView.class)
                 .map(AwardsPostedNotificationViewModel.class, AwardsPostedNotificationItemView.class)
+                .map(CompLevelStartingNotificationViewModel.class, CompLevelStartingNotificationItemView.class)
+                .map(UpcomingMatchNotificationViewModel.class, UpcomingMatchNotificationItemView.class)
+                .map(ScoreNotificationViewModel.class, ScoreNotificationItemView.class)
+                .map(ScheduleUpdatedNotificationViewModel.class, ScheduleUpdatedNotificationItemView.class)
                 .map(GenericNotificationViewModel.class, GenericNotificationItemView.class);
+    }
+
+
+    @Override
+    protected void inject() {
+        mComponent.inject(this);
     }
 }
