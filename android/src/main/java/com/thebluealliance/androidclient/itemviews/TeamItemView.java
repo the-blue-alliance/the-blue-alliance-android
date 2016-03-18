@@ -18,20 +18,11 @@ import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class TeamItemView extends BindableFrameLayout<TeamViewModel> {
 
-    @Bind(R.id.team_number)
-    TextView teamNumber;
-
-    @Bind(R.id.team_name)
-    TextView teamName;
-
-    @Bind(R.id.team_location)
-    TextView teamLocation;
-
-    @Bind(R.id.team_info)
-    ImageView teamInfo;
-
-    @Bind(R.id.model_settings)
-    ImageView modelSettings;
+    @Bind(R.id.team_number) TextView teamNumber;
+    @Bind(R.id.team_name) TextView teamName;
+    @Bind(R.id.team_location) TextView teamLocation;
+    @Bind(R.id.team_info) ImageView teamInfo;
+    @Bind(R.id.model_settings) ImageView modelSettings;
 
     public TeamItemView(Context context) {
         super(context);
@@ -46,7 +37,6 @@ public class TeamItemView extends BindableFrameLayout<TeamViewModel> {
         ButterKnife.bind(this);
         setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
-
 
     @Override
     public void bind(TeamViewModel model) {
