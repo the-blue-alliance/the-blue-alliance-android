@@ -238,7 +238,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile "com.squareup.retrofit:retrofit:${retrofitVersion}"
     compile "com.squareup.retrofit:adapter-rxjava:${retrofitVersion}"
-    compile 'com.squareup.okhttp:okhttp:2.4.0'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
 
     compile 'com.google.dagger:dagger:2.0.1'
     apt 'com.google.dagger:dagger-compiler:2.0.1'
