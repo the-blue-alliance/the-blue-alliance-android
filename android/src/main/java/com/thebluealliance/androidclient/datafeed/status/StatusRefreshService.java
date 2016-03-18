@@ -19,7 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import de.greenrobot.event.EventBus;
-import retrofit.Response;
+import retrofit2.Response;
 import rx.schedulers.Schedulers;
 
 /**
@@ -57,7 +57,7 @@ public class StatusRefreshService extends IntentService {
             ex.printStackTrace();
             return;
         }
-        if (!response.isSuccess()) {
+        if (!response.isSuccessful()) {
             Log.w(Constants.LOG_TAG, "Unable to update myTBA Status\n"+
               response.code() + " " +response.message());
             return;

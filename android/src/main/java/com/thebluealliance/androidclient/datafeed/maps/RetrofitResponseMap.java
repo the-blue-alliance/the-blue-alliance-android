@@ -5,7 +5,7 @@ import com.thebluealliance.androidclient.database.writers.BaseDbWriter;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import retrofit.Response;
+import retrofit2.Response;
 import rx.Observable;
 import rx.functions.Func1;
 
@@ -116,7 +116,7 @@ public class RetrofitResponseMap {
     }
 
     private static synchronized boolean shouldWriteData(Response response) {
-        com.squareup.okhttp.Response cacheResponse = response.raw().cacheResponse();
+        okhttp3.Response cacheResponse = response.raw().cacheResponse();
         return cacheResponse == null || cacheResponse.code() == 504;
     }
 }

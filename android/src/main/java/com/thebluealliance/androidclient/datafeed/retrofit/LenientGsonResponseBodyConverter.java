@@ -3,12 +3,12 @@ package com.thebluealliance.androidclient.datafeed.retrofit;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 
-import com.squareup.okhttp.ResponseBody;
+import okhttp3.ResponseBody;
 
 import java.io.IOException;
 import java.io.Reader;
 
-import retrofit.Converter;
+import retrofit2.Converter;
 
 /**
  * A {@linkplain Converter} that uses a lenient gson {@link JsonReader}
