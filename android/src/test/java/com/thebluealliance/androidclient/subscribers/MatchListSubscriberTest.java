@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
+import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,8 +24,6 @@ import android.content.res.Resources;
 import android.support.annotation.StringRes;
 
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;

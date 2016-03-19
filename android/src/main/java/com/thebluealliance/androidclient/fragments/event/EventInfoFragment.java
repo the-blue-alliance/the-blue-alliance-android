@@ -1,25 +1,20 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
-import com.thebluealliance.androidclient.listeners.EventInfoContainerClickListener;
-import com.thebluealliance.androidclient.listeners.SocialClickListener;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
 
-import javax.inject.Inject;
+import org.greenrobot.eventbus.EventBus;
 
-import de.greenrobot.event.EventBus;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import rx.Observable;
 
 public class EventInfoFragment

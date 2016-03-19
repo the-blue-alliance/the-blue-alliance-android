@@ -51,7 +51,7 @@ public class TeamAtEventSummarySubscriberTest {
 
     @Test
     public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
-        mSubscriber.onEventAsync(mMatchesEvent);
+        mSubscriber.onEventMatchesLoaded(mMatchesEvent);
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mData);
     }
 }

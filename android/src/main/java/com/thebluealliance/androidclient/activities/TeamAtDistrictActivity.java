@@ -33,6 +33,9 @@ import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 public class TeamAtDistrictActivity extends DatafeedActivity
   implements HasFragmentComponent {
 
@@ -150,8 +153,9 @@ public class TeamAtDistrictActivity extends DatafeedActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings(value = "unused")
-    public void onEventMainThread(ActionBarTitleEvent event) {
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onActionBarTitleUpdated(ActionBarTitleEvent event) {
         setActionBarTitle(event.getTitle());
         setActionBarSubtitle(event.getSubtitle());
     }
