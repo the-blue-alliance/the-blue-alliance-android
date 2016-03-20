@@ -24,7 +24,7 @@ public class APIv2RequestInterceptor implements Interceptor {
 
         Request.Builder newRequestBuilder = originalRequest.newBuilder()
             .addHeader("X-TBA-App-Id", Constants.getApiHeader())
-            .addHeader("User-Agent", "gzip");  // App engine seems to be unhappy with OkHttp's User Agent. https://cloud.google.com/appengine/kb/#compression
+            .addHeader("User-Agent", Constants.getUserAgent() + " (gzip)");  // Include 'gzip' to force App Engine to serve gzipped content. https://cloud.google.com/appengine/kb/#compression
 
         // If we've specified via a header that we want to force from cache/web, build the
         // proper CacheControl header to send with the requests

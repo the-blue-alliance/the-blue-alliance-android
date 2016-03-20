@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 public class ConnectivityChangeReceiver extends BroadcastReceiver {
 

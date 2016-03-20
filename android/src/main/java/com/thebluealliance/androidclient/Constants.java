@@ -36,6 +36,10 @@ public class Constants {
         return "the-blue-alliance:android:v" + BuildConfig.VERSION_NAME.replace(":", "");  // X-TBA-App-Id must have exactly 3 semicolons
     }
 
+    public static String getUserAgent() {
+        return "The Blue Alliance Android v" + BuildConfig.VERSION_NAME;
+    }
+
     //the week of the year that each event starts competition on, starting with 1992
     //this is the nth week beginning in the given year
     public static final int[] FIRST_COMP_WEEK =

@@ -17,6 +17,9 @@ import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -169,8 +172,9 @@ public class ViewMatchActivity extends MyTBASettingsActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings(value = "unused")
-    public void onEventMainThread(ActionBarTitleEvent event) {
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onActionBarTitleUpdated(ActionBarTitleEvent event) {
         setActionBarTitle(event.getTitle());
         setActionBarSubtitle(event.getSubtitle());
     }

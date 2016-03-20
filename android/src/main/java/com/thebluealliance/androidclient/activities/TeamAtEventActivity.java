@@ -30,6 +30,9 @@ import com.thebluealliance.androidclient.models.APIStatus;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.Arrays;
 
 public class TeamAtEventActivity extends MyTBASettingsActivity
@@ -177,8 +180,9 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
         }
     }
 
-    @SuppressWarnings(value = "unused")
-    public void onEventMainThread(ActionBarTitleEvent event) {
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onActionBarTitleUpdated(ActionBarTitleEvent event) {
         setActionBarTitle(event.getTitle());
         setActionBarSubtitle(event.getSubtitle());
     }

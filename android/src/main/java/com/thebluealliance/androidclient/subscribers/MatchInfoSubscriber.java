@@ -13,10 +13,10 @@ import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.MediaRenderer;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 import static com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber.Model;
 

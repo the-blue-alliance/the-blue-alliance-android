@@ -12,11 +12,11 @@ import com.thebluealliance.androidclient.listitems.RankingListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import de.greenrobot.event.EventBus;
 
 public class RankingsListSubscriber extends BaseAPISubscriber<JsonElement, List<ListItem>> {
 

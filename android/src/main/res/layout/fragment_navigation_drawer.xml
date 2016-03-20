@@ -1,29 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <com.thebluealliance.androidclient.views.SixteenNineAspectRatioLayout
-        android:id="@+id/mytba_profile_info"
+        android:id="@+id/nav_drawer_header"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/primary"
         android:clickable="true">
 
-        <ImageView
-            android:id="@+id/profile_cover_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/default_cover" />
+        <FrameLayout
+            android:id="@+id/header_without_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="visible"
+            tools:visibility="gone">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_tba_lamp" />
+        </FrameLayout>
 
         <RelativeLayout
-            android:id="@+id/account_details_container"
+            android:id="@+id/header_with_account"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image"
@@ -34,7 +44,18 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"
+                tools:src="@drawable/ali_connors" />
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/ic_tba_lamp" />
 
             <TextView
                 android:id="@+id/profile_name"
@@ -47,6 +68,7 @@
                 android:maxLines="1"
                 android:paddingBottom="16dp"
                 android:paddingLeft="16dp"
+                tools:text="Ali Connors"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />
