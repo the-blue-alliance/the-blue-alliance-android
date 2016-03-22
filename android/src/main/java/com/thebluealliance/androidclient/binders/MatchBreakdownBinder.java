@@ -93,5 +93,12 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
             this.allianceData = allianceData;
             this.scoreData = scoreData;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            return o != null && o instanceof Model
+                    && ((Model) o).scoreData.equals(scoreData)
+                    && ((Model) o).allianceData.equals(allianceData);
+        }
     }
 }

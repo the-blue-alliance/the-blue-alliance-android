@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.google.gson.JsonObject;
-
+import com.thebluealliance.androidclient.binders.MatchBreakdownBinder;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -40,8 +39,8 @@ public class MatchBreakdownSubscriberTest {
 
     @Test
     public void testParsedData() throws BasicModel.FieldNotDefinedException {
-        JsonObject data = DatafeedTestDriver.getParsedData(mSubscriber, mMatch);
-        assertEquals(mMatch.getBreakdown(), data);
+        MatchBreakdownBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mMatch);
+        assertEquals(new MatchBreakdownBinder.Model(mMatch.getAlliances(), mMatch.getBreakdown()), data);
     }
 
 }
