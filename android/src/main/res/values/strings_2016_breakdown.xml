@@ -20,10 +20,13 @@
     <string name="breakdown2016_breach">Defenses Breached</string>
     <string name="breakdown2016_capture">Tower Captured</string>
     <string name="breakdown2016_addition_format">(+ %1$d)</string>
+    <string name="breakdown2016_rp_format">(+ %1$d RP)</string>
+    <string name="breakdown2016_total_rp">%1$d RP</string>
     <string name="breakdown2016_foul">Fouls</string>
     <string name="breakdown2016_foul_format">+ %1$d</string>
     <string name="breakdown2016_adjust">Adjustments</string>
     <string name="breakdown2016_total">Total Score</string>
+    <string name="breakdown2016_rp">Ranking Points</string>
     <string name="breakdown2016_teams">Teams</string>
     
     <string name="defense2016_low_bar">Low Bar</string>

@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2016;
 
 import android.support.annotation.Nullable;
@@ -19,6 +20,11 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
     @Bind(R.id.match_breakdown) MatchBreakdownView2016 breakdown;
     @Bind(R.id.progress) ProgressBar progressBar;
 
+    private MatchType mMatchType;
+
+    public void setMatchType(MatchType matchType) {
+        mMatchType = matchType;
+    }
 
     @Override
     public void updateData(@Nullable MatchBreakdownBinder.Model data) {
@@ -29,7 +35,7 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
         }
         long startTime = System.currentTimeMillis();
         Log.d(Constants.LOG_TAG, "BINDING DATA");
-        breakdown.initWithData(data.allianceData, data.scoreData);
+        breakdown.initWithData(mMatchType, data.allianceData, data.scoreData);
 
         if (progressBar != null) {
             progressBar.setVisibility(View.GONE);
