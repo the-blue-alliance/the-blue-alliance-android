@@ -13,8 +13,38 @@
             android:paddingBottom="8dp"
             android:background="@color/column_header_gray"
             app:columnCount="3"
-            app:rowCount="26"
+            app:rowCount="29"
             app:alignmentMode="alignBounds" >
+
+    <!-- Teams -->
+    <TextView
+            android:id="@+id/breakdown_red1"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 1"/>
+    <TextView
+            android:text="@string/breakdown2016_teams"
+            style="@style/breakdown_categorySubtotal"
+            app:layout_rowSpan="3" />
+    <TextView
+            android:id="@+id/breakdown_blue1"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 1"/>
+    <TextView
+            android:id="@+id/breakdown_red2"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 2"/>
+    <TextView
+            android:id="@+id/breakdown_blue2"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 2"/>
+    <TextView
+            android:id="@+id/breakdown_red3"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 3"/>
+    <TextView
+            android:id="@+id/breakdown_blue3"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 3"/>
 
     <!-- Auto Boulder -->
     <TextView

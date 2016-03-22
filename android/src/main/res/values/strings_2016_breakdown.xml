@@ -24,6 +24,7 @@
     <string name="breakdown2016_foul_format">+ %1$d</string>
     <string name="breakdown2016_adjust">Adjustments</string>
     <string name="breakdown2016_total">Total Score</string>
+    <string name="breakdown2016_teams">Teams</string>
     
     <string name="defense2016_low_bar">Low Bar</string>
     <string name="defense2016_ramparts">Ramparts</string>
@@ -43,7 +44,7 @@
     <string name="breakdown_event_stats">Event Stats</string>
     <string name="breakdown_match_stats">Match Stats</string>
     <string name="breakdown2016_defense_stats">Defense Stats (# damaged / # opportunities)</string>
-    <string name="breakdwn2016_tower_stats">Tower Stats (# successful / # opportunities)</string>
+    <string name="breakdown2016_tower_stats">Tower Stats (# successful / # opportunities)</string>
 
     <string name="breakdown2016_avg_low_goal">Average Low Goals</string>
     <string name="breakdown2016_avg_high_goal">Average High Goals</string>

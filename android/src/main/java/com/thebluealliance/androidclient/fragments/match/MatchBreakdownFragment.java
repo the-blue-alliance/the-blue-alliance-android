@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 
 import rx.Observable;
 
-public class MatchBreakdownFragment extends DatafeedFragment<Match, JsonObject,
+public class MatchBreakdownFragment extends DatafeedFragment<Match, MatchBreakdownBinder.Model,
         MatchBreakdownSubscriber, MatchBreakdownBinder> {
 
     private static final String KEY = "key";
