@@ -316,6 +316,9 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @Subscribe
     public void onEventRankingsUpdated(EventRankingsEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
+            if (topTeamsContainer == null || topTeams == null) {
+                return;
+            }
             topTeamsContainer.setVisibility(View.VISIBLE);
             topTeamsContainer.setOnClickListener(mInfoClickListener);
             topTeams.setText(Html.fromHtml(event.getRankString()));
@@ -326,6 +329,9 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @Subscribe
     public void onEventStatsUpdated(EventStatsEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
+            if (topOprsContainer == null || topOprs == null) {
+                return;
+            }
             topOprsContainer.setVisibility(View.VISIBLE);
             topOprsContainer.setOnClickListener(mInfoClickListener);
             topOprs.setText(Html.fromHtml(event.getStatString()));
