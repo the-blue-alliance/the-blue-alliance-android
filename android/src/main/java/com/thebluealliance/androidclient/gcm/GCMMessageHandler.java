@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
+import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
@@ -96,9 +97,12 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
         String teamAtEventKey = EventTeamHelper.generateKey(
                 MatchHelper.getEventKeyFromMatchKey(matchKey), teamKey); // "2016calb_frc111"
         String teamAtEventSubscriptionKey = MyTBAHelper.createKey(currentUser, teamAtEventKey);
+        FavoritesTable favTable = mDb.getFavoritesTable();
         SubscriptionsTable subTable = mDb.getSubscriptionsTable();
 
-        return subTable.hasNotificationType(teamSubscriptionKey, notificationType)
+        return favTable.exists(teamSubscriptionKey)
+                || favTable.exists(teamAtEventSubscriptionKey)
+                || subTable.hasNotificationType(teamSubscriptionKey, notificationType)
                 || subTable.hasNotificationType(teamAtEventSubscriptionKey, notificationType);
     }
 
