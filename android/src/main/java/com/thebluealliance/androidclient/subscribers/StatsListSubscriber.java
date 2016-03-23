@@ -209,7 +209,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
     private String[] towerKeys = {"challenges", "scales", "captures"};
 
     private void generate2016TowerInsights(JsonObject quals, JsonObject elims) {
-        mEventStats.add(new EventTypeHeader(mResources.getString(R.string.breakdwn2016_tower_stats)));
+        mEventStats.add(new EventTypeHeader(mResources.getString(R.string.breakdown2016_tower_stats)));
         String defenseFormat = mResources.getString(R.string.defense2016_percent_format
         );
         for (int i = 0; i < towerTitles.length; i++) {

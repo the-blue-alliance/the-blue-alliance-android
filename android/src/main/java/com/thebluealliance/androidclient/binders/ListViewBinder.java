@@ -32,11 +32,15 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
     @Override
     public void updateData(@Nullable List<ListItem> data) {
         if (data == null || listView == null) {
-            setDataBound(false);
+            if (!isDataBound()) {
+                setDataBound(false);
+            }
             return;
         }
         if (data.isEmpty()) {
-            setDataBound(false);
+            if (!isDataBound()) {
+                setDataBound(false);
+            }
             return;
         }
         long startTime = System.currentTimeMillis();
