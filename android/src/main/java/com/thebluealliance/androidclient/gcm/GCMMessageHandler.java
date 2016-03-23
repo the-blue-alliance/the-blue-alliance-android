@@ -91,19 +91,19 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
 
     public boolean followsTeam(Context context, String teamNumber, String matchKey,
                                String notificationType) {
-        String currentUser = AccountHelper.getSelectedAccount(context);
+        String currentUser = AccountHelper.getCurrentUser(mPrefs);
         String teamKey = TeamHelper.baseTeamKey("frc" + teamNumber); // "frc111"
-        String teamSubscriptionKey = MyTBAHelper.createKey(currentUser, teamKey); // "r@gmail.com:frc111"
+        String teamInterestKey = MyTBAHelper.createKey(currentUser, teamKey); // "r@gmail.com:frc111"
         String teamAtEventKey = EventTeamHelper.generateKey(
                 MatchHelper.getEventKeyFromMatchKey(matchKey), teamKey); // "2016calb_frc111"
-        String teamAtEventSubscriptionKey = MyTBAHelper.createKey(currentUser, teamAtEventKey);
+        String teamAtEventInterestKey = MyTBAHelper.createKey(currentUser, teamAtEventKey);
         FavoritesTable favTable = mDb.getFavoritesTable();
         SubscriptionsTable subTable = mDb.getSubscriptionsTable();
 
-        return favTable.exists(teamSubscriptionKey)
-                || favTable.exists(teamAtEventSubscriptionKey)
-                || subTable.hasNotificationType(teamSubscriptionKey, notificationType)
-                || subTable.hasNotificationType(teamAtEventSubscriptionKey, notificationType);
+        return favTable.exists(teamInterestKey)
+                || favTable.exists(teamAtEventInterestKey)
+                || subTable.hasNotificationType(teamInterestKey, notificationType)
+                || subTable.hasNotificationType(teamAtEventInterestKey, notificationType);
     }
 
     @Override
