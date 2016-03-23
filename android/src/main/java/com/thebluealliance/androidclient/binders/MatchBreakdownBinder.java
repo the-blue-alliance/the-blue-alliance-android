@@ -30,7 +30,9 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
     public void updateData(@Nullable MatchBreakdownBinder.Model data) {
         if (data == null || data.allianceData == null || data.scoreData == null ||
                 breakdown == null) {
-            setDataBound(false);
+            if (!isDataBound()) {
+                setDataBound(false);
+            }
             return;
         }
         long startTime = System.currentTimeMillis();
