@@ -2,10 +2,7 @@ package com.thebluealliance.androidclient.fragments;
 
 import com.google.gson.JsonObject;
 
-import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -134,6 +131,13 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                             mChildNodeState = FirebaseChildNodesState.NO_CHILDREN;
                         }
                     }
+                    updateViewVisibility();
+                }, throwable -> {
+                    Log.e(Constants.LOG_TAG, "Firebase rest error: " + throwable);
+                    throwable.printStackTrace();
+
+                    // net error getting item count, show no data view
+                    mChildNodeState = FirebaseChildNodesState.NO_CHILDREN;
                     updateViewVisibility();
                 });
 

@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.fragments.match;
 
-import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.MatchBreakdownBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
@@ -19,7 +17,7 @@ import android.view.ViewGroup;
 
 import rx.Observable;
 
-public class MatchBreakdownFragment extends DatafeedFragment<Match, JsonObject,
+public class MatchBreakdownFragment extends DatafeedFragment<Match, MatchBreakdownBinder.Model,
         MatchBreakdownSubscriber, MatchBreakdownBinder> {
 
     private static final String KEY = "key";
@@ -43,6 +41,8 @@ public class MatchBreakdownFragment extends DatafeedFragment<Match, JsonObject,
             throw new IllegalArgumentException("Invalid match key " + mMatchKey);
         }
         super.onCreate(savedInstanceState);
+
+        mBinder.setMatchType(MatchHelper.getMatchTypeFromKey(mMatchKey));
     }
 
     @Nullable @Override
