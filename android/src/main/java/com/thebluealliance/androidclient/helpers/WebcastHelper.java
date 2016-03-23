@@ -1,12 +1,13 @@
 package com.thebluealliance.androidclient.helpers;
 
+import com.google.gson.JsonObject;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.types.WebcastType;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-
-import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.types.WebcastType;
 
 public class WebcastHelper {
 
@@ -32,6 +33,10 @@ public class WebcastHelper {
     }
 
     public static Intent getIntentForWebcast(Context context, String eventKey, WebcastType type, JsonObject params, int number) {
+        if (type != WebcastType.IFRAME && !params.has("channel")) {
+            return getGamedayIntent(context, eventKey, number);
+        }
+
         switch (type) {
             case YOUTUBE:
                 return getWebIntentForUrl(context.getString(R.string.webcast_youtube_embed_pattern, params.get("channel").getAsString()));
@@ -40,6 +45,9 @@ public class WebcastHelper {
             case USTREAM:
                 return getWebIntentForUrl(context.getString(R.string.webcast_ustream_embed_pattern, params.get("channel").getAsString()));
             case LIVESTREAM:
+                if (!params.has("file")) {
+                    return getGamedayIntent(context, eventKey, number);
+                }
                 return getWebIntentForUrl(context.getString(R.string.webcast_livestream_embed_pattern, params.get("channel").getAsString(), params.get("file").getAsString()));
             case HTML5:
                 return new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.parse(params.get("channel").getAsString()), "video/*");
@@ -47,8 +55,12 @@ public class WebcastHelper {
                 return new Intent(Intent.ACTION_VIEW).setDataAndType(Uri.parse(context.getString(R.string.webcast_stemtv_embed_pattern, params.get("channel").getAsString())), "video/*");
             default:
             case IFRAME:
-                return getWebIntentForUrl(context.getString(R.string.webcast_gameday_pattern, eventKey, number));
+                return getGamedayIntent(context, eventKey, number);
         }
+    }
+
+    public static Intent getGamedayIntent(Context context, String eventKey, int number) {
+        return getWebIntentForUrl(context.getString(R.string.webcast_gameday_pattern, eventKey, number));
     }
 
     public static Intent getWebIntentForUrl(String url) {
