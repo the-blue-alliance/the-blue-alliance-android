@@ -23,7 +23,9 @@ public class MatchBreakdownBinder extends AbstractDataBinder<JsonObject> {
     @Override
     public void updateData(@Nullable JsonObject data) {
         if (data == null || breakdown == null) {
-            setDataBound(false);
+            if (!isDataBound()) {
+                setDataBound(false);
+            }
             return;
         }
         long startTime = System.currentTimeMillis();
