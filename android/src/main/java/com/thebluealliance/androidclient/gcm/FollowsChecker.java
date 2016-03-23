@@ -7,7 +7,8 @@ import android.content.Context;
  */
 public interface FollowsChecker {
     /**
-     * Checks if the user subscribes to the given Team or Team@Event for this notification type.
+     * Checks if the user follows (subscribes to or favorites) the given Team or Team@Event for this
+     * notification type.
      *
      * @param teamNumber the team number without the "frc" prefix, e.g. "111" or "111B".
      * @param matchKey the event_match key, e.g. "2014calb_qm17", for extracting the event key.
