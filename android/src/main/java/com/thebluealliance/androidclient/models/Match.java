@@ -118,8 +118,8 @@ public class Match extends BasicModel<Match> {
             return breakdown;
         }
         if (fields.containsKey(MatchesTable.BREAKDOWN) && fields.get(MatchesTable.BREAKDOWN) instanceof String) {
-            alliances = JSONHelper.getasJsonObject((String) fields.get(MatchesTable.BREAKDOWN));
-            return alliances;
+            breakdown = JSONHelper.getasJsonObject((String) fields.get(MatchesTable.BREAKDOWN));
+            return breakdown;
         }
         throw new FieldNotDefinedException("Field Database.Matches.BREAKDOWN is not defined");
     }
