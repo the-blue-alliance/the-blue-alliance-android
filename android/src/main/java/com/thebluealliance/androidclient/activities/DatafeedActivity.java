@@ -20,7 +20,9 @@ import android.view.MenuItem;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * An activity that serves as a host to datafeed fragments
@@ -113,7 +115,8 @@ public abstract class DatafeedActivity extends BaseActivity
     }
 
     @SuppressWarnings("unused")
-    public void onEvent(ConnectivityChangeEvent event) {
+    @Subscribe
+    public void onConnectivityChanged(ConnectivityChangeEvent event) {
         if (event.getConnectivityChangeType() == ConnectivityChangeEvent.CONNECTION_FOUND) {
             dismissWarningMessage(BaseActivity.WARNING_OFFLINE);
             mRefreshController.startRefresh(RefreshController.NOT_REQUESTED_BY_USER);
@@ -126,7 +129,8 @@ public abstract class DatafeedActivity extends BaseActivity
      * Receive a notification for an to TBA status
      */
     @SuppressWarnings("unused")
-    public void onEventMainThread(APIStatus tbaStatus) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onApiStatusUpdated(APIStatus tbaStatus) {
         commonStatusUpdate(tbaStatus);
     }
 

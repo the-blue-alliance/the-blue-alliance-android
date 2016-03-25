@@ -1,12 +1,5 @@
 package com.thebluealliance.androidclient.fragments.team;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
@@ -18,20 +11,27 @@ import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
-import com.thebluealliance.androidclient.views.ExpandableListView;
 import com.thebluealliance.androidclient.views.NoDataView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class TeamMediaFragment extends DatafeedFragment<
-  List<Media>,
-  List<ListGroup>,
-  MediaListSubscriber,
-  ExpandableListViewBinder>
-  implements HasYearParam {
+        List<Media>,
+        List<ListGroup>,
+        MediaListSubscriber,
+        ExpandableListViewBinder>
+        implements HasYearParam {
 
     public static final String TEAM_KEY = "team", YEAR = "year";
 
@@ -84,7 +84,9 @@ public class TeamMediaFragment extends DatafeedFragment<
         EventBus.getDefault().register(this);
     }
 
-    public void onEvent(YearChangedEvent event) {
+    @SuppressWarnings("unused")
+    @Subscribe
+    public void onYearChanged(YearChangedEvent event) {
         mYear = event.getYear();
         onRefreshStart(RefreshController.NOT_REQUESTED_BY_USER);
     }

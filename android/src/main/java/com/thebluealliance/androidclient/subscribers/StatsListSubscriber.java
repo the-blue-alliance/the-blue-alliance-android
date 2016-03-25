@@ -17,6 +17,8 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Stat;
 import com.thebluealliance.androidclient.models.Team;
 
+import org.greenrobot.eventbus.EventBus;
+
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -26,8 +28,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
-
-import de.greenrobot.event.EventBus;
 
 public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<ListItem>> {
 
@@ -209,7 +209,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
     private String[] towerKeys = {"challenges", "scales", "captures"};
 
     private void generate2016TowerInsights(JsonObject quals, JsonObject elims) {
-        mEventStats.add(new EventTypeHeader(mResources.getString(R.string.breakdwn2016_tower_stats)));
+        mEventStats.add(new EventTypeHeader(mResources.getString(R.string.breakdown2016_tower_stats)));
         String defenseFormat = mResources.getString(R.string.defense2016_percent_format
         );
         for (int i = 0; i < towerTitles.length; i++) {

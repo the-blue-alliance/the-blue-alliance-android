@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,8 +8,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-
-import de.greenrobot.event.EventBus;
 
 import static org.mockito.Mockito.verify;
 

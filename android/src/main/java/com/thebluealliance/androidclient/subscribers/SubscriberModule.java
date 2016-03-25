@@ -15,11 +15,12 @@ import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
 import com.thebluealliance.androidclient.renderers.RendererModule;
 import com.thebluealliance.androidclient.renderers.TeamRenderer;
 
+import org.greenrobot.eventbus.EventBus;
+
 import android.app.Activity;
 
 import dagger.Module;
 import dagger.Provides;
-import de.greenrobot.event.EventBus;
 
 /**
  * Module that injects {@link BaseAPISubscriber} objects to bind datafeed values to views

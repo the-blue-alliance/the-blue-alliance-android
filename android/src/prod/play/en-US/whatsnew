@@ -1,13 +1,9 @@
-Version 3.3.0:
-    - Beginning of some behind-the-scenes changes to improve the rendering of lists
-    - Improvements to the Recent Notifications list
-    - Fixed reported crashes and bugs
+Version 3.3.0: (2016 Week 4)
+    - Bold favorite teams in notifications as well as subscriptions
+    - Show teams in match score breakdown
+    - Show Ranking Points in match score breakdown
+    - Other bug fixes/app improvements
 
 View the full changelog for this and previous releases on the GitHub page:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
-
-
-
-
-
 

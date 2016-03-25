@@ -2,11 +2,11 @@ package com.thebluealliance.androidclient.eventbus;
 
 import com.thebluealliance.androidclient.models.Event;
 
-public class LiveEventEventUpdateEvent {
+public class LiveEventUpdateEvent {
 
     private Event event;
 
-    public LiveEventEventUpdateEvent(Event event) {
+    public LiveEventUpdateEvent(Event event) {
         this.event = event;
     }
 
