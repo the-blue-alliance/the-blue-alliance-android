@@ -15,9 +15,11 @@ import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.views.MatchView;
 
@@ -39,12 +41,14 @@ import java.util.Date;
 public class ScoreNotification extends BaseNotification {
 
     private final MatchWriter mWriter;
+    private final MatchRenderer mRenderer;
     private String eventName, eventKey, matchKey;
     private Match match;
 
-    public ScoreNotification(String messageData, MatchWriter writer) {
+    public ScoreNotification(String messageData, MatchWriter writer, MatchRenderer matchRenderer) {
         super(NotificationTypes.MATCH_SCORE, messageData);
         mWriter = writer;
+        mRenderer = matchRenderer;
     }
 
     public String getEventName() {
@@ -200,8 +204,11 @@ public class ScoreNotification extends BaseNotification {
         holder.title.setText(c.getString(R.string.notification_score_gameday_title, MatchHelper.getMatchTitleFromMatchKey(c, matchKey)));
         holder.time.setText(getNotificationTimeString(c));
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
-        /** TODO Move to {@link com.thebluealliance.androidclient.renderers.MatchRenderer} */
-        match.render(false, false, false, true).getView(c, inflater, holder.matchView);
+
+        MatchListElement renderedMatch = mRenderer.renderFromModel(match, MatchRenderer.RENDER_NOTIFICATION);
+        if (renderedMatch != null) {
+            renderedMatch.getView(c, inflater, holder.matchView);
+        }
 
         return convertView;
     }

@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.renderers.TeamRenderer;
 import org.greenrobot.eventbus.EventBus;
 
 import android.app.Activity;
+import android.content.res.Resources;
 
 import dagger.Module;
 import dagger.Provides;
@@ -130,19 +131,20 @@ public class SubscriberModule {
 
     @Provides
     MatchInfoSubscriber provideMatchInfoSubscriber(
-      Gson gson,
-      EventBus eventBus,
-      MatchRenderer renderer,
-      MediaRenderer mediaRenderer) {
-        return new MatchInfoSubscriber(gson, eventBus, renderer, mediaRenderer);
+            Gson gson,
+            EventBus eventBus,
+            MatchRenderer renderer,
+            MediaRenderer mediaRenderer,
+            Resources resources) {
+        return new MatchInfoSubscriber(gson, eventBus, renderer, mediaRenderer, resources);
     }
 
     @Provides WebcastListSubscriber provideWebcastListSubscriber(EventRenderer renderer) {
         return new WebcastListSubscriber(renderer);
     }
 
-    @Provides RecentNotificationsSubscriber provideRecentNotificationsSubscriber(DatabaseWriter writer) {
-        return new RecentNotificationsSubscriber(writer);
+    @Provides RecentNotificationsSubscriber provideRecentNotificationsSubscriber(DatabaseWriter writer, MatchRenderer matchRenderer) {
+        return new RecentNotificationsSubscriber(writer, matchRenderer);
     }
 
     @Provides

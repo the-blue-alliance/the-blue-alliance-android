@@ -46,6 +46,7 @@ import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventStatsFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.models.FirebaseNotification;
 import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
@@ -101,6 +102,7 @@ public interface FragmentComponent {
     void inject(GamedayWebcastsFragment gamedayWebcastsFragment);
     void inject(RecentNotificationsFragment recentNotificationsFragment);
     void inject(GamedayTickerFragment gamedayTickerFragment);
+    void inject(FirebaseNotification notification);
 
     void inject(MySubscriptionsFragment mySubscriptionsFragment);
     void inject(MyFavoritesFragment myFavoritesFragment);

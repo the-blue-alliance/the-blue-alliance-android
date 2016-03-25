@@ -135,4 +135,19 @@
     <string name="mytba_settings_updated_successfully">Settings updated successfully</string>
     <string name="mytba_settings_error">Error updating settings</string>
 
+    <!-- Match Type Strings (for match details) -->
+    <string name="match_type_qual">Qual</string>
+    <string name="match_type_octo">Octofinal</string>
+    <string name="match_type_quarter">Quarter</string>
+    <string name="match_type_semis">Semi</string>
+    <string name="match_type_finals">Final</string>
+    <string name="match_type_unknown">Match</string>
+
+    <!-- Match Type Abbreviations -->
+    <string name="match_abbrev_qual">Q</string>
+    <string name="match_abbrev_octo">EF</string>
+    <string name="match_abbrev_quarter">QF</string>
+    <string name="match_abbrev_semi">SF</string>
+    <string name="match_abbrev_final">F</string>
+    <string name="match_abbrev_unknown">M</string>
 </resources>

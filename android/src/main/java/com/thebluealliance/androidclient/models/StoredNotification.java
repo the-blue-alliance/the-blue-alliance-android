@@ -1,11 +1,5 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
@@ -18,6 +12,13 @@ import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import java.util.Date;
 
@@ -127,12 +128,12 @@ public class StoredNotification {
      * You can immediately call {@link BaseNotification#getView(Context, LayoutInflater, View)}
      * @return Appropriate BaseNotification
      */
-    public @Nullable BaseNotification getNotification(DatabaseWriter writer) {
+    public @Nullable BaseNotification getNotification(DatabaseWriter writer, MatchRenderer matchRenderer) {
         BaseNotification notification;
         String data = getMessageData();
         switch (getType()) {
             case NotificationTypes.MATCH_SCORE:
-                notification = new ScoreNotification(data, writer.getMatchWriter().get());
+                notification = new ScoreNotification(data, writer.getMatchWriter().get(), matchRenderer);
                 break;
             case NotificationTypes.UPCOMING_MATCH:
                 notification = new UpcomingMatchNotification(data);

@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.util.Log;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
@@ -9,9 +7,11 @@ import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
 import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +21,13 @@ import javax.inject.Inject;
 public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<StoredNotification>, List<ListItem>> {
 
     private final DatabaseWriter mWriter;
+    private final MatchRenderer mMatchRenderer;
 
     @Inject
-    public RecentNotificationsSubscriber(DatabaseWriter writer) {
+    public RecentNotificationsSubscriber(DatabaseWriter writer, MatchRenderer matchRenderer) {
         super();
         mWriter = writer;
+        mMatchRenderer = matchRenderer;
         mDataToBind = new ArrayList<>();
     }
 
@@ -34,7 +36,7 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
         mDataToBind.clear();
         for (int i = 0; i < mAPIData.size(); i++) {
             StoredNotification notification = mAPIData.get(i);
-            BaseNotification renderable = notification.getNotification(mWriter);
+            BaseNotification renderable = notification.getNotification(mWriter, mMatchRenderer);
             if (renderable != null) {
                 renderable.parseMessageData();
                 if (renderable.shouldShowInRecentNotificationsList()) {

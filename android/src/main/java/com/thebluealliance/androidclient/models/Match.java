@@ -11,10 +11,10 @@ import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.types.ModelType;
 
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -256,14 +256,14 @@ public class Match extends BasicModel<Match> {
         fields.put(MatchesTable.SETNUM, setNumber);
     }
 
-    public String getTitle(boolean lineBreak) {
+    public String getTitle(Resources resources, boolean lineBreak) {
         try {
             int matchNumber = getMatchNumber(),
                     setNumber = getSetNumber();
             if (type == MatchType.QUAL) {
-                return MatchHelper.LONG_TYPES.get(MatchType.QUAL) + (lineBreak ? "\n" : " ") + matchNumber;
+                return resources.getString(type.getTypeName()) + (lineBreak ? "\n" : " ") + matchNumber;
             } else {
-                return MatchHelper.LONG_TYPES.get(type) + (lineBreak ? "\n" : " ") + setNumber + " - " + matchNumber;
+                return resources.getString(type.getTypeName())+ (lineBreak ? "\n" : " ") + setNumber + " -" + matchNumber;
             }
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields for title not present\n" +
@@ -272,15 +272,15 @@ public class Match extends BasicModel<Match> {
         }
     }
 
-    public String getTitle() {
-        return getTitle(false);
+    public String getTitle(Resources resources) {
+        return getTitle(resources, false);
     }
 
     public Integer getDisplayOrder() {
         try {
             int matchNumber = getMatchNumber(),
                     setNumber = getSetNumber();
-            return MatchHelper.PLAY_ORDER.get(type) * 1000000 + setNumber * 1000 + matchNumber;
+            return type.getPlayOrder() * 1000000 + setNumber * 1000 + matchNumber;
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields for display order not present\n" +
                     "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
@@ -292,7 +292,7 @@ public class Match extends BasicModel<Match> {
         try {
             int matchNumber = getMatchNumber(),
                     setNumber = getSetNumber();
-            return MatchHelper.PLAY_ORDER.get(type) * 1000000 + matchNumber * 1000 + setNumber;
+            return type.getPlayOrder() * 1000000 + matchNumber * 1000 + setNumber;
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields for display order not present\n" +
                     "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
@@ -385,78 +385,4 @@ public class Match extends BasicModel<Match> {
             return false;
         }
     }
-
-    /**
-     * Renders a MatchListElement for displaying this match. ASSUMES 3v3 match structure with
-     * red/blue alliances Use different render methods for other structures
-     * @deprecated In favor of {@link com.thebluealliance.androidclient.renderers.MatchRenderer}
-     * @return A MatchListElement to be used to display this match
-     */
-    public MatchListElement render(boolean showVideo, boolean showHeaders, boolean showMatchTitle, boolean clickable) {
-        JsonObject alliances;
-        try {
-            alliances = getAlliances();
-        } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required field for match render: Database.Matches.ALLIANCES");
-            return null;
-        }
-        JsonArray videos;
-        try {
-            videos = getVideos();
-        } catch (FieldNotDefinedException e) {
-            Log.d(Constants.LOG_TAG, "Required field for match render: Database.Matches.VIDEOS. " +
-                    "Defaulting to none.");
-            videos = new JsonArray();
-        }
-        String key = getKey();
-        if (key.isEmpty()) {
-            return null;
-        }
-
-        JsonArray redTeams = getRedTeams(alliances),
-                blueTeams = getBlueTeams(alliances);
-        String redScore = getRedAlliance(alliances).get("score").getAsString(),
-                blueScore = getBlueAlliance(alliances).get("score").getAsString();
-
-        if (Integer.parseInt(redScore) < 0) redScore = "?";
-        if (Integer.parseInt(blueScore) < 0) blueScore = "?";
-
-        String youTubeVideoKey = null;
-        for (int i = 0; i < videos.size(); i++) {
-            JsonObject video = videos.get(i).getAsJsonObject();
-            if (video.get("type").getAsString().equals("youtube")) {
-                youTubeVideoKey = video.get("key").getAsString();
-            }
-        }
-
-        String[] redAlliance, blueAlliance;
-        // Add teams based on alliance size (or none if there isn't for some reason)
-        if (redTeams.size() == 3) {
-            redAlliance = new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3), redTeams.get(2).getAsString().substring(3)};
-        } else if (redTeams.size() == 2) {
-            redAlliance = new String[]{redTeams.get(0).getAsString().substring(3), redTeams.get(1).getAsString().substring(3)};
-        } else {
-            redAlliance = new String[]{"", "", ""};
-        }
-
-        if (blueTeams.size() == 3) {
-            blueAlliance = new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3), blueTeams.get(2).getAsString().substring(3)};
-        } else if (blueTeams.size() == 2) {
-            blueAlliance = new String[]{blueTeams.get(0).getAsString().substring(3), blueTeams.get(1).getAsString().substring(3)};
-        } else {
-            blueAlliance = new String[]{"", "", ""};
-        }
-
-        long matchTime;
-        try {
-            matchTime = getTimeMillis();
-        } catch (FieldNotDefinedException e) {
-            matchTime = -1;
-        }
-
-        return new MatchListElement(youTubeVideoKey, getTitle(true),
-                redAlliance, blueAlliance,
-                redScore, blueScore, key, matchTime, selectedTeam, showVideo, showHeaders, showMatchTitle, clickable);
-    }
-
 }

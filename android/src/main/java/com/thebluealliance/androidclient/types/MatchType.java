@@ -1,5 +1,9 @@
 package com.thebluealliance.androidclient.types;
 
+import com.thebluealliance.androidclient.R;
+
+import android.support.annotation.StringRes;
+
 public enum MatchType {
     NONE,
     QUAL {
@@ -30,6 +34,39 @@ public enum MatchType {
 
     public MatchType get(String str) {
         return valueOf(str);
+    }
+
+    public @StringRes int getTypeName() {
+        switch (this) {
+            case QUAL: return R.string.match_type_qual;
+            case OCTO: return R.string.match_type_octo;
+            case QUARTER: return R.string.match_type_quarter;
+            case SEMI: return R.string.match_type_semis;
+            case FINAL: return R.string.match_type_finals;
+            default: return R.string.match_type_unknown;
+        }
+    }
+
+    public @StringRes int getTypeAbbreviation() {
+        switch (this) {
+            case QUAL: return R.string.match_abbrev_qual;
+            case OCTO: return R.string.match_abbrev_octo;
+            case QUARTER: return R.string.match_abbrev_quarter;
+            case SEMI: return R.string.match_abbrev_semi;
+            case FINAL: return R.string.match_abbrev_final;
+            default: return R.string.match_abbrev_unknown;
+        }
+    }
+
+    public int getPlayOrder() {
+        switch (this) {
+            case QUAL: return 1;
+            case OCTO: return 2;
+            case QUARTER: return 3;
+            case SEMI: return 4;
+            case FINAL: return 5;
+            default: return 0;
+        }
     }
 
     public static MatchType fromShortType(String str) {

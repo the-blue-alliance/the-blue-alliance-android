@@ -34,6 +34,7 @@ import android.accounts.AccountManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
 
 import javax.inject.Singleton;
@@ -59,6 +60,11 @@ public class TBAAndroidModule {
     @Provides
     public Context provideApplicationContext() {
         return mApp.getApplicationContext();
+    }
+
+    @Provides
+    public Resources provideApplicationResources() {
+        return mApp.getResources();
     }
 
     @Provides

@@ -34,6 +34,8 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
+import com.thebluealliance.androidclient.renderers.RendererModule;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -59,6 +61,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     @Inject SharedPreferences mPrefs;
     @Inject EventBus mEventBus;
     @Inject TBAStatusController mStatusController;
+    @Inject MatchRenderer mMatchRenderer;
     @Inject Database mDb;
 
     private NotificationComponent mComponenet;
@@ -82,10 +85,11 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
         if (mComponenet == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponenet = DaggerNotificationComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .build();
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .databaseWriterModule(application.getDatabaseWriterModule())
+                    .rendererModule(new RendererModule())
+                    .build();
         }
     }
 
@@ -144,7 +148,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                     break;
                 case NotificationTypes.MATCH_SCORE:
                 case "score":
-                    notification = new ScoreNotification(messageData, mWriter.getMatchWriter().get());
+                    notification = new ScoreNotification(messageData, mWriter.getMatchWriter().get(), mMatchRenderer);
                     break;
                 case NotificationTypes.UPCOMING_MATCH:
                     notification = new UpcomingMatchNotification(messageData);

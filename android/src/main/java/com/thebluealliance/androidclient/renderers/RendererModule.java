@@ -3,6 +3,8 @@ package com.thebluealliance.androidclient.renderers;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 
+import android.content.res.Resources;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -37,8 +39,8 @@ public class RendererModule {
     }
 
     @Provides @Singleton
-    public MatchRenderer provideMatchRenderer(APICache cache) {
-        return new MatchRenderer(cache);
+    public MatchRenderer provideMatchRenderer(APICache cache, Resources resources) {
+        return new MatchRenderer(cache, resources);
     }
 
     @Provides @Singleton

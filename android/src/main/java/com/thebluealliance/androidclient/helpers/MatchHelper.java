@@ -16,7 +16,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,41 +28,6 @@ import java.util.regex.Pattern;
  * @author Phil Lopreiato
  */
 public class MatchHelper {
-
-    public static final HashMap<MatchType, String> SHORT_TYPES;
-    public static final HashMap<MatchType, String> LONG_TYPES;
-    public static final HashMap<MatchType, String> ABBREV_TYPES;
-    public static final HashMap<MatchType, Integer> PLAY_ORDER;
-
-    static {
-        SHORT_TYPES = new HashMap<>();
-        SHORT_TYPES.put(MatchType.QUAL, "qm");
-        SHORT_TYPES.put(MatchType.OCTO, "qf");
-        SHORT_TYPES.put(MatchType.QUARTER, "qf");
-        SHORT_TYPES.put(MatchType.SEMI, "sf");
-        SHORT_TYPES.put(MatchType.FINAL, "f");
-
-        LONG_TYPES = new HashMap<>(); // TODO: I18N
-        LONG_TYPES.put(MatchType.QUAL, "Quals");
-        LONG_TYPES.put(MatchType.OCTO, "Octofinals");
-        LONG_TYPES.put(MatchType.QUARTER, "Quarters");
-        LONG_TYPES.put(MatchType.SEMI, "Semis");
-        LONG_TYPES.put(MatchType.FINAL, "Finals");
-
-        PLAY_ORDER = new HashMap<>();
-        PLAY_ORDER.put(MatchType.QUAL, 1);
-        PLAY_ORDER.put(MatchType.OCTO, 2);
-        PLAY_ORDER.put(MatchType.QUARTER, 3);
-        PLAY_ORDER.put(MatchType.SEMI, 4);
-        PLAY_ORDER.put(MatchType.FINAL, 5);
-
-        ABBREV_TYPES = new HashMap<>(); // TODO: I18N
-        ABBREV_TYPES.put(MatchType.QUAL, "Q");
-        ABBREV_TYPES.put(MatchType.OCTO, "EF");
-        ABBREV_TYPES.put(MatchType.QUARTER, "QF");
-        ABBREV_TYPES.put(MatchType.SEMI, "SF");
-        ABBREV_TYPES.put(MatchType.FINAL, "F");
-    }
 
     public static boolean validateMatchKey(String key) {
         if (key == null || key.isEmpty()) return false;
@@ -493,7 +457,7 @@ public class MatchHelper {
             String set = null, number;
             String typeCode = m.group(1);
             MatchType type = MatchType.fromShortType(typeCode);
-            String typeName = (abbrev ? ABBREV_TYPES : LONG_TYPES).get(type);
+            String typeName = context.getString(abbrev ? type.getTypeAbbreviation() : type.getTypeName());
 
             // If the match key looks like AA##, then the numbers correspond to the match number.
             // Otherwise, if it looks like AA##m##, then the first group of numbers corresponds
