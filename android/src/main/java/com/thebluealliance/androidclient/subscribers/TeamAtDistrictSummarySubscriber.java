@@ -13,12 +13,12 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 
+import org.greenrobot.eventbus.EventBus;
+
 import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 public class TeamAtDistrictSummarySubscriber
   extends BaseAPISubscriber<DistrictTeam, List<ListItem>> {

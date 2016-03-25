@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
+import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
@@ -34,6 +35,8 @@ import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
+import org.greenrobot.eventbus.EventBus;
+
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -46,8 +49,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import javax.inject.Inject;
-
-import de.greenrobot.event.EventBus;
 
 public class GCMMessageHandler extends IntentService implements FollowsChecker {
 
@@ -90,16 +91,19 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
 
     public boolean followsTeam(Context context, String teamNumber, String matchKey,
                                String notificationType) {
-        String currentUser = AccountHelper.getSelectedAccount(context);
+        String currentUser = AccountHelper.getCurrentUser(mPrefs);
         String teamKey = TeamHelper.baseTeamKey("frc" + teamNumber); // "frc111"
-        String teamSubscriptionKey = MyTBAHelper.createKey(currentUser, teamKey); // "r@gmail.com:frc111"
+        String teamInterestKey = MyTBAHelper.createKey(currentUser, teamKey); // "r@gmail.com:frc111"
         String teamAtEventKey = EventTeamHelper.generateKey(
                 MatchHelper.getEventKeyFromMatchKey(matchKey), teamKey); // "2016calb_frc111"
-        String teamAtEventSubscriptionKey = MyTBAHelper.createKey(currentUser, teamAtEventKey);
+        String teamAtEventInterestKey = MyTBAHelper.createKey(currentUser, teamAtEventKey);
+        FavoritesTable favTable = mDb.getFavoritesTable();
         SubscriptionsTable subTable = mDb.getSubscriptionsTable();
 
-        return subTable.hasNotificationType(teamSubscriptionKey, notificationType)
-                || subTable.hasNotificationType(teamAtEventSubscriptionKey, notificationType);
+        return favTable.exists(teamInterestKey)
+                || favTable.exists(teamAtEventInterestKey)
+                || subTable.hasNotificationType(teamInterestKey, notificationType)
+                || subTable.hasNotificationType(teamAtEventInterestKey, notificationType);
     }
 
     @Override

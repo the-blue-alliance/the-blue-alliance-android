@@ -1,11 +1,5 @@
 package com.thebluealliance.androidclient.fragments.team;
 
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -21,9 +15,19 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
+import javax.inject.Inject;
+
 import rx.Observable;
 
 public class TeamEventsFragment extends ListViewFragment<List<Event>, EventListSubscriber> implements HasYearParam {
@@ -32,6 +36,8 @@ public class TeamEventsFragment extends ListViewFragment<List<Event>, EventListS
 
     private int mYear;
     private String mTeamKey;
+
+    @Inject EventBus mEventBus;
 
     public static TeamEventsFragment newInstance(String teamKey, int year) {
         TeamEventsFragment f = new TeamEventsFragment();
@@ -76,18 +82,20 @@ public class TeamEventsFragment extends ListViewFragment<List<Event>, EventListS
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        EventBus.getDefault().unregister(this);
+    public void onResume() {
+        super.onResume();
+        mEventBus.register(this);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        EventBus.getDefault().register(this);
+    public void onPause() {
+        super.onPause();
+        mEventBus.unregister(this);
     }
 
-    public void onEvent(YearChangedEvent event) {
+    @SuppressWarnings("unused")
+    @Subscribe
+    public void onYearChanged(YearChangedEvent event) {
         mYear = event.getYear();
         onRefreshStart(RefreshController.NOT_REQUESTED_BY_USER);
     }

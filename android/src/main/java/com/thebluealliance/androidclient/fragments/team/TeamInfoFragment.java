@@ -1,30 +1,29 @@
 package com.thebluealliance.androidclient.fragments.team;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
-import com.thebluealliance.androidclient.eventbus.LiveEventEventUpdateEvent;
+import com.thebluealliance.androidclient.eventbus.LiveEventUpdateEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
-import com.thebluealliance.androidclient.listeners.SocialClickListener;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
-import com.thebluealliance.androidclient.views.NoDataView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
-import butterknife.ButterKnife;
 import dagger.Lazy;
 import rx.Observable;
 
@@ -35,6 +34,7 @@ public class TeamInfoFragment
 
     private String mTeamKey;
 
+    @Inject EventBus mEventBus;
     @Inject Lazy<EventRenderer> mEventRenderer;
 
     public static TeamInfoFragment newInstance(String teamKey) {
@@ -66,26 +66,40 @@ public class TeamInfoFragment
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mEventBus.register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mEventBus.unregister(this);
+    }
+
     public void showCurrentEvent(final EventListElement event) {
 
         final FrameLayout eventLayout = (FrameLayout) getView()
                 .findViewById(R.id.team_current_event);
-        final RelativeLayout container = (RelativeLayout) getView()
+        final FrameLayout container = (FrameLayout) getView()
                 .findViewById(R.id.team_current_event_container);
 
         getActivity().runOnUiThread(() -> {
             eventLayout.removeAllViews();
             eventLayout.addView(event.getView(getActivity(),
                     getActivity().getLayoutInflater(), null));
+            eventLayout.setTag(mTeamKey + "@" + event.getEventKey());
+            eventLayout.setOnClickListener(new TeamAtEventClickListener(getActivity()));
 
             container.setVisibility(View.VISIBLE);
-            container.setTag(mTeamKey + "@" + event.getEventKey());
-            container.setOnClickListener(new TeamAtEventClickListener(getActivity()));
+
         });
     }
 
     @SuppressWarnings("unused")
-    public void onEvent(LiveEventEventUpdateEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onLiveEventUpdate(LiveEventUpdateEvent event) {
         if (event.getEvent() != null) {
             showCurrentEvent(mEventRenderer.get().renderFromModel(event.getEvent(), null));
         }

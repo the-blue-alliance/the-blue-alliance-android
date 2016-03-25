@@ -19,6 +19,10 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import android.content.res.Resources;
 import android.util.Log;
 
@@ -26,8 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 import static com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber.Model;
 
@@ -71,13 +73,13 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
         int[] record = MatchHelper.getRecordForTeam(mMatches, mTeamKey);
         String recordString =
-          String.format("%1$d - %2$d - %3$d", record[0], record[1], record[2]);
+                String.format("%1$d - %2$d - %3$d", record[0], record[1], record[2]);
 
         Event event = mAPIData.event;
         int year = event.getEventYear();
         boolean activeEvent = event.isHappeningNow();
         String actionBarTitle =
-          String.format(mResources.getString(R.string.team_actionbar_title), mTeamKey.substring(3));
+                String.format(mResources.getString(R.string.team_actionbar_title), mTeamKey.substring(3));
         String actionBarSubtitle = String.format("@ %1$d %2$s", year, event.getEventShortName());
         EventBus.getDefault().post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
 
@@ -124,8 +126,8 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         // Rank
         if (rank > 0) {
             mDataToBind.add(new LabelValueListItem(
-              mResources.getString(R.string.team_at_event_rank),
-              rank + Utilities.getOrdinalFor(rank)));
+                    mResources.getString(R.string.team_at_event_rank),
+                    rank + Utilities.getOrdinalFor(rank)));
         }
 
         LabelValueListItem rankBreakdownItem = new LabelValueListItem("Ranking Breakdown", rankingString);
@@ -135,7 +137,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             status = MatchHelper.evaluateStatusOfTeam(event, mMatches, mTeamKey);
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.d(Constants.LOG_TAG, "Status could not be evaluated for team; missing fields: "
-              + Arrays.toString(e.getStackTrace()));
+                    + Arrays.toString(e.getStackTrace()));
             status = MatchHelper.EventStatus.NOT_AVAILABLE;
         }
 
@@ -145,26 +147,26 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             /* Don't show for 2015 events, because no wins and such */
             if (year != 2015 && !recordString.equals("0-0-0")) {
                 mDataToBind.add(new LabelValueListItem(
-                  mResources.getString(R.string.team_at_event_record),
-                  recordString));
+                        mResources.getString(R.string.team_at_event_record),
+                        recordString));
             }
 
             // Alliance
             if (status != MatchHelper.EventStatus.PLAYING_IN_QUALS &&
-              status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
+                    status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
                 mDataToBind.add(new LabelValueListItem(
-                  mResources.getString(R.string.team_at_event_alliance),
-                  EventHelper.generateAllianceSummary(
-                    mResources,
-                    allianceNumber,
-                    alliancePick)));
+                        mResources.getString(R.string.team_at_event_alliance),
+                        EventHelper.generateAllianceSummary(
+                                mResources,
+                                allianceNumber,
+                                alliancePick)));
             }
 
             // Status
             if (status != MatchHelper.EventStatus.NOT_PICKED) {
                 mDataToBind.add(new LabelValueListItem(
-                  mResources.getString(R.string.team_at_event_status),
-                  status.getDescriptionString(mResources)));
+                        mResources.getString(R.string.team_at_event_status),
+                        status.getDescriptionString(mResources)));
             }
 
             // Ranking Breakdown
@@ -174,13 +176,13 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
             if (lastMatch != null) {
                 mDataToBind.add(new LabelValueListItem
-                  (mResources.getString(R.string.title_last_match),
-                    mMatchRenderer.renderFromModel(lastMatch, MatchRenderer.RENDER_DEFAULT)));
+                        (mResources.getString(R.string.title_last_match),
+                                mMatchRenderer.renderFromModel(lastMatch, MatchRenderer.RENDER_DEFAULT)));
             }
             if (nextMatch != null) {
                 mDataToBind.add(new LabelValueListItem(
-                  mResources.getString(R.string.title_next_match),
-                  mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));
+                        mResources.getString(R.string.title_next_match),
+                        mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));
             }
         } else if (rank > 0) {
             // Only show ranking breakdown if rankings are available
@@ -195,7 +197,8 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
     }
 
-    @Override public boolean isDataValid() {
+    @Override
+    public boolean isDataValid() {
         return super.isDataValid() && mIsMatchListLoaded && mAPIData.event != null
                 && mAPIData.teamAtEventRank != null;
     }
@@ -204,8 +207,9 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
      * Load matches for team@event
      * Posted by {@link com.thebluealliance.androidclient.fragments.event.EventMatchesFragment}
      */
-    @SuppressWarnings(value = "unused")
-    public void onEventAsync(EventMatchesEvent matches) {
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onEventMatchesLoaded(EventMatchesEvent matches) {
         if (matches == null) {
             return;
         }

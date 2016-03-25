@@ -1,8 +1,9 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import org.greenrobot.eventbus.EventBus;
+
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
 import rx.Subscriber;
 
 /**

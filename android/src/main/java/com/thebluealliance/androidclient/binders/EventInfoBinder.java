@@ -17,6 +17,9 @@ import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.types.WebcastType;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -37,7 +40,6 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.greenrobot.event.EventBus;
 import rx.android.schedulers.AndroidSchedulers;
 
 import static com.thebluealliance.androidclient.renderers.MatchRenderer.RENDER_DEFAULT;
@@ -290,7 +292,8 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     }
 
     @SuppressWarnings("unused")
-    public void onEvent(LiveEventMatchUpdateEvent event) {
+    @Subscribe
+    public void onLiveEventMatchesUpdated(LiveEventMatchUpdateEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mIsLive && event != null && event.getLastMatch() != null) {
                 Log.d(Constants.LOG_TAG, "showing last match");
@@ -310,8 +313,12 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     }
 
     @SuppressWarnings("unused")
-    public void onEvent(EventRankingsEvent event) {
+    @Subscribe
+    public void onEventRankingsUpdated(EventRankingsEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
+            if (topTeamsContainer == null || topTeams == null) {
+                return;
+            }
             topTeamsContainer.setVisibility(View.VISIBLE);
             topTeamsContainer.setOnClickListener(mInfoClickListener);
             topTeams.setText(Html.fromHtml(event.getRankString()));
@@ -319,8 +326,12 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     }
 
     @SuppressWarnings("unused")
-    public void onEvent(EventStatsEvent event) {
+    @Subscribe
+    public void onEventStatsUpdated(EventStatsEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
+            if (topOprsContainer == null || topOprs == null) {
+                return;
+            }
             topOprsContainer.setVisibility(View.VISIBLE);
             topOprsContainer.setOnClickListener(mInfoClickListener);
             topOprs.setText(Html.fromHtml(event.getStatString()));

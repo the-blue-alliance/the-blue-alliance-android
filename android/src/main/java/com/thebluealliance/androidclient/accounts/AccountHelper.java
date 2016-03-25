@@ -22,6 +22,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.IOException;
@@ -63,11 +64,16 @@ public class AccountHelper {
         prefs.edit().putString(PREF_SELECTED_ACCOUNT, accoutName).apply();
     }
 
+    @NonNull
+    public static String getCurrentUser(SharedPreferences prefs) {
+        return prefs.getString(PREF_SELECTED_ACCOUNT, "");
+    }
+
     @Deprecated
     public static String getSelectedAccount(Context context) {
         if (context == null) return "";
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString(PREF_SELECTED_ACCOUNT, "");
+        return getCurrentUser(prefs);
     }
 
     public static Account getCurrentAccount(Context context) {

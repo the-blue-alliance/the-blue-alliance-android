@@ -1,16 +1,16 @@
 package com.thebluealliance.androidclient.binders;
 
-import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.views.ExpandableListView;
+
+import android.support.annotation.Nullable;
+import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,12 +55,16 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
     @Override
     public void updateData(@Nullable List<ListGroup> data) {
         if (data == null || expandableListView == null) {
-            setDataBound(false);
+            if (!isDataBound()) {
+                setDataBound(false);
+            }
             return;
         }
         if (data.isEmpty()) {
             Log.d(Constants.LOG_TAG, "DATA IS EMPTY");
-            setDataBound(false);
+            if (!isDataBound()) {
+                setDataBound(false);
+            }
             return;
         }
 

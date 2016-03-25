@@ -56,6 +56,7 @@ public class EventAwardsFragment extends ListViewFragment<List<Award>, AwardsLis
         mListView.setCacheColorHint(getResources().getColor(android.R.color.transparent));
         mListView.setSelector(R.drawable.transparent);
         mListView.setPadding(0, (int) (8 * getResources().getDisplayMetrics().density), 0, 0);
+        mListView.setClipToPadding(false);
         mListView.setDivider(null);
         return view;
     }
