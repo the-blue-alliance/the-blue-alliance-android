@@ -8,6 +8,7 @@ public enum MatchType {
             return null; // see below for options for this line
         }
     },
+    OCTO,
     QUARTER,
     SEMI,
     FINAL {
@@ -36,6 +37,7 @@ public enum MatchType {
             case "qm":
                 return QUAL;
             case "ef":
+                return OCTO;
             case "qf":
                 return QUARTER;
             case "sf":
@@ -49,7 +51,8 @@ public enum MatchType {
 
     public static MatchType fromKey(String key) {
         if (key.contains("_qm")) return QUAL;
-        if (key.contains("_ef") || key.contains("_qf")) return QUARTER;
+        if (key.contains("_qf")) return QUARTER;
+        if (key.contains("_ef")) return OCTO;
         if (key.contains("_sf")) return SEMI;
         if (key.contains("_f")) return FINAL;
         return NONE;

@@ -1,18 +1,19 @@
 package com.thebluealliance.androidclient.helpers;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.support.annotation.Nullable;
-import android.util.Log;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.types.MatchType;
+
+import android.content.Context;
+import android.content.res.Resources;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,24 +38,28 @@ public class MatchHelper {
     static {
         SHORT_TYPES = new HashMap<>();
         SHORT_TYPES.put(MatchType.QUAL, "qm");
+        SHORT_TYPES.put(MatchType.OCTO, "qf");
         SHORT_TYPES.put(MatchType.QUARTER, "qf");
         SHORT_TYPES.put(MatchType.SEMI, "sf");
         SHORT_TYPES.put(MatchType.FINAL, "f");
 
         LONG_TYPES = new HashMap<>(); // TODO: I18N
         LONG_TYPES.put(MatchType.QUAL, "Quals");
+        LONG_TYPES.put(MatchType.OCTO, "Octofinals");
         LONG_TYPES.put(MatchType.QUARTER, "Quarters");
         LONG_TYPES.put(MatchType.SEMI, "Semis");
         LONG_TYPES.put(MatchType.FINAL, "Finals");
 
         PLAY_ORDER = new HashMap<>();
         PLAY_ORDER.put(MatchType.QUAL, 1);
-        PLAY_ORDER.put(MatchType.QUARTER, 2);
-        PLAY_ORDER.put(MatchType.SEMI, 3);
-        PLAY_ORDER.put(MatchType.FINAL, 4);
+        PLAY_ORDER.put(MatchType.OCTO, 2);
+        PLAY_ORDER.put(MatchType.QUARTER, 3);
+        PLAY_ORDER.put(MatchType.SEMI, 4);
+        PLAY_ORDER.put(MatchType.FINAL, 5);
 
         ABBREV_TYPES = new HashMap<>(); // TODO: I18N
         ABBREV_TYPES.put(MatchType.QUAL, "Q");
+        ABBREV_TYPES.put(MatchType.OCTO, "EF");
         ABBREV_TYPES.put(MatchType.QUARTER, "QF");
         ABBREV_TYPES.put(MatchType.SEMI, "SF");
         ABBREV_TYPES.put(MatchType.FINAL, "F");
