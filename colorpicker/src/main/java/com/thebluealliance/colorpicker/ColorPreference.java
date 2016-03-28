@@ -11,10 +11,10 @@ import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
+import android.support.annotation.ArrayRes;
 import android.support.annotation.ColorInt;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 
 public class ColorPreference extends DialogPreference {
 
@@ -43,6 +43,34 @@ public class ColorPreference extends DialogPreference {
         setWidgetLayoutResource(R.layout.color_preference_widget);
     }
 
+    /**
+     * Sets the colors that will be shown in the color selection dialog.
+     *
+     * @param colors The colors
+     */
+    public void setColors(@ColorInt int[] colors) {
+        mColors = colors;
+    }
+
+    /**
+     * @param colorsResId Resource identifier of an array of colors
+     * @see #setColors(int[])
+     */
+    public void setColors(@ArrayRes int colorsResId) {
+        mColors = getContext().getResources().getIntArray(colorsResId);
+    }
+
+    /**
+     * The colors that will be shown in the color selection dialog
+     *
+     * @return Array of colors
+     */
+    public
+    @ColorInt
+    int[] getColors() {
+        return mColors;
+    }
+
     @Override
     protected void onBindView(View view) {
         super.onBindView(view);
@@ -60,9 +88,13 @@ public class ColorPreference extends DialogPreference {
     }
 
     private void updateColorView() {
+        if (mColorView == null) {
+            return;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             mColorView.setBackground(new ColorCircleDrawable(mCurrentValue));
         } else {
+            // noinspection deprecation
             mColorView.setBackgroundDrawable(new ColorCircleDrawable(mCurrentValue));
         }
     }
@@ -135,20 +167,16 @@ public class ColorPreference extends DialogPreference {
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        // Check whether we saved the state in onSaveInstanceState
         if (state == null || !state.getClass().equals(SavedState.class)) {
-            // Didn't save the state, so call superclass
             super.onRestoreInstanceState(state);
             return;
         }
 
-        // Cast state to custom BaseSavedState and pass to superclass
         SavedState myState = (SavedState) state;
         super.onRestoreInstanceState(myState.getSuperState());
 
-        // Set this Preference's widget to reflect the restored state
         mCurrentValue = myState.value;
-        //mNumberPicker.setValue(myState.value);
+        updateColorView();
     }
 
     private static class SavedState extends BaseSavedState {
@@ -169,7 +197,6 @@ public class ColorPreference extends DialogPreference {
             dest.writeInt(value);
         }
 
-        // Standard creator object using an instance of this class
         public static final Parcelable.Creator<SavedState> CREATOR =
                 new Parcelable.Creator<SavedState>() {
 
