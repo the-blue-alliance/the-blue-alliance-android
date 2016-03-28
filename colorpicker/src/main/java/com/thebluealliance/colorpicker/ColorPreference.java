@@ -40,19 +40,15 @@ public class ColorPreference extends DialogPreference {
         }
 
         setDialogLayoutResource(R.layout.dialog_color_picker);
+        setWidgetLayoutResource(R.layout.color_preference_widget);
     }
 
     @Override
-    protected View onCreateView(ViewGroup parent) {
-        View s = super.onCreateView(parent);
-        mColorView = new View(getContext());
-        int size = getContext().getResources().getDimensionPixelSize(R.dimen.color_preference_color_view_size);
-        mColorView.setLayoutParams(new ViewGroup.LayoutParams(size, size));
+    protected void onBindView(View view) {
+        super.onBindView(view);
+
+        mColorView = view.findViewById(R.id.color_preference_widget);
         updateColorView();
-        ViewGroup w = (ViewGroup) s.findViewById(android.R.id.widget_frame);
-        w.setVisibility(View.VISIBLE);
-        w.addView(mColorView);
-        return s;
     }
 
     @Override
@@ -74,6 +70,10 @@ public class ColorPreference extends DialogPreference {
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
+
+        if (mColors == null) {
+            throw new RuntimeException("ColorPreference requires a colors array");
+        }
 
         mColorPalette = (ColorPalette) view.findViewById(R.id.palette);
         mColorPalette.setColors(mColors);
