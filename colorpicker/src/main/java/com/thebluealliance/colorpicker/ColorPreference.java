@@ -8,8 +8,6 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.support.annotation.ArrayRes;
 import android.support.annotation.ColorInt;
@@ -145,68 +143,5 @@ public class ColorPreference extends DialogPreference {
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
         return a.getInteger(index, DEFAULT_VALUE);
-    }
-
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        final Parcelable superState = super.onSaveInstanceState();
-        // Check whether this Preference is persistent (continually saved)
-        if (isPersistent()) {
-            // No need to save instance state since it's persistent,
-            // use superclass state
-            return superState;
-        }
-
-        // Create instance of custom BaseSavedState
-        final SavedState myState = new SavedState(superState);
-        // Set the state's value with the class member that holds current
-        // setting value
-        myState.value = mCurrentValue;
-        return myState;
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Parcelable state) {
-        if (state == null || !state.getClass().equals(SavedState.class)) {
-            super.onRestoreInstanceState(state);
-            return;
-        }
-
-        SavedState myState = (SavedState) state;
-        super.onRestoreInstanceState(myState.getSuperState());
-
-        mCurrentValue = myState.value;
-        updateColorView();
-    }
-
-    private static class SavedState extends BaseSavedState {
-        int value;
-
-        public SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        public SavedState(Parcel source) {
-            super(source);
-            value = source.readInt();
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            dest.writeInt(value);
-        }
-
-        public static final Parcelable.Creator<SavedState> CREATOR =
-                new Parcelable.Creator<SavedState>() {
-
-                    public SavedState createFromParcel(Parcel in) {
-                        return new SavedState(in);
-                    }
-
-                    public SavedState[] newArray(int size) {
-                        return new SavedState[size];
-                    }
-                };
     }
 }
