@@ -206,6 +206,9 @@ repositories {
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
+    maven {
+        url "http://github.com/wada811/Android-Material-Design-Colors/raw/master/repository/"
+    }
 }
 
 
@@ -256,6 +259,7 @@ dependencies {
     compile 'io.reactivex:rxjava-math:1.0.0'
     compile 'me.relex:circleindicator:1.1.5@aar'
     compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.wada811:android-material-design-colors:2.0.0'
 
     // testing
     testCompile 'org.robolectric:robolectric:3.0'
