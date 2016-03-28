@@ -4,6 +4,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonParseException;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
@@ -81,10 +82,10 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
         if (mComponenet == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponenet = DaggerNotificationComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .build();
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .databaseWriterModule(application.getDatabaseWriterModule())
+                    .build();
         }
     }
 
@@ -224,6 +225,12 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
         }
         if (prefs.getBoolean("notification_tone", true)) {
             built.defaults |= Notification.DEFAULT_SOUND;
+        }
+        if (prefs.getBoolean("notification_led_enabled", true)) {
+            built.ledARGB = prefs.getInt("notification_led_color", c.getResources().getColor(R.color.primary));
+            built.ledOnMS = 1000;
+            built.ledOffMS = 1000;
+            built.flags |= Notification.FLAG_SHOW_LIGHTS;
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {

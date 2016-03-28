@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="enable_notifications"
@@ -14,5 +15,16 @@
             android:defaultValue="true"
             android:key="notification_vibrate"
             android:title="@string/pref_notification_vibrate" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="notification_led_enabled"
+            android:summary="@string/pref_notification_led_enabled_summary"
+            android:title="@string/pref_notification_led_enabled" />
+        <com.thebluealliance.colorpicker.ColorPreference
+            android:defaultValue="@color/material_indigo"
+            android:key="notification_led_color"
+            android:title="Notification LED Color"
+            android:negativeButtonText="@string/cancel"
+            app:colors="@array/led_colors" />
     </PreferenceCategory>
 </PreferenceScreen>
