@@ -2,8 +2,8 @@ package com.thebluealliance.androidclient.datafeed.retrofit;
 
 import com.google.gson.TypeAdapter;
 
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.RequestBody;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -11,7 +11,7 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 
 import okio.Buffer;
-import retrofit.Converter;
+import retrofit2.Converter;
 
 /**
  * A {@linkplain Converter} that uses lenient gson, paired with {@link LenientGsonResponseBodyConverter}

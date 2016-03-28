@@ -1,13 +1,13 @@
 package com.thebluealliance.imgur;
 
-import com.squareup.okhttp.RequestBody;
+import okhttp3.RequestBody;
 import com.thebluealliance.imgur.responses.UploadResponse;
 
-import retrofit.Call;
-import retrofit.http.Header;
-import retrofit.http.Multipart;
-import retrofit.http.POST;
-import retrofit.http.Part;
+import retrofit2.Call;
+import retrofit2.http.Header;
+import retrofit2.http.Multipart;
+import retrofit2.http.POST;
+import retrofit2.http.Part;
 
 /**
  * Retrofit service for the Imgur v3 API

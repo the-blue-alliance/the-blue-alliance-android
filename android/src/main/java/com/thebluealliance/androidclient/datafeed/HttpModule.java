@@ -3,9 +3,10 @@ package com.thebluealliance.androidclient.datafeed;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import com.facebook.stetho.okhttp.StethoInterceptor;
-import com.squareup.okhttp.Cache;
-import com.squareup.okhttp.OkHttpClient;
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
+
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.deserializers.APIStatusDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
@@ -52,13 +53,13 @@ public class HttpModule {
 
     @Provides @Singleton
     public OkHttpClient getOkHttp(Cache responseCache) {
-        OkHttpClient client = new OkHttpClient();
-        client.interceptors().add(new APIv2RequestInterceptor());
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        builder.addInterceptor(new APIv2RequestInterceptor());
         if (Utilities.isDebuggable()) {
-            client.networkInterceptors().add(new StethoInterceptor());
+            builder.addNetworkInterceptor(new StethoInterceptor());
         }
-        client.setCache(responseCache);
-        return client;
+        builder.cache(responseCache);
+        return builder.build();
     }
 
     @Provides @Singleton
