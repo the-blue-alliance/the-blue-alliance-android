@@ -17,9 +17,6 @@ import com.thebluealliance.androidclient.imgur.ImgurModule;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
-import android.support.multidex.MultiDexApplication;
-import android.util.Log;
-
 import javax.inject.Inject;
 
 public class TBAAndroid extends MultiDexApplication {
