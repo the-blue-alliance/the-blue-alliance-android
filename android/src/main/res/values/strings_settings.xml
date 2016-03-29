@@ -51,5 +51,10 @@
     <string name="pref_notification_tone">Play Sound</string>
     <string name="pref_notification_vibrate">Vibrate</string>
 
+    <string name="pref_notification_led_enabled">Flash Notification LED</string>
+    <string name="pref_notification_led_enabled_summary">If your device has a notification LED, it will flash when you receive a new notification.</string>
+    <string name="pref_notification_led_color">Notification LED Color</string>
+    <string name="select_led_color">Select LED Color</string>
+
     <string name="pref_notification_headsup">Heads Up Notifications</string>
 </resources>

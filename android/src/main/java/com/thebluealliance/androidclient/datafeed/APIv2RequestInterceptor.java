@@ -2,10 +2,10 @@ package com.thebluealliance.androidclient.datafeed;
 
 import android.util.Log;
 
-import com.squareup.okhttp.CacheControl;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import okhttp3.CacheControl;
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 
@@ -19,7 +19,7 @@ public class APIv2RequestInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request originalRequest = chain.request();
-        String url = originalRequest.urlString();
+        String url = originalRequest.url().toString();
         Log.d(Constants.LOG_TAG, "FETCHING " + url);
 
         Request.Builder newRequestBuilder = originalRequest.newBuilder()

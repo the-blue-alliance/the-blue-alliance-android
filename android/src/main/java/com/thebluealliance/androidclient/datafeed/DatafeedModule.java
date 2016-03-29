@@ -2,8 +2,8 @@ package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.Gson;
 
-import com.squareup.okhttp.Cache;
-import com.squareup.okhttp.OkHttpClient;
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
@@ -28,8 +28,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import retrofit.Retrofit;
-import retrofit.RxJavaCallAdapterFactory;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 
 @Module(includes = {TBAAndroidModule.class, HttpModule.class})
 public class DatafeedModule {

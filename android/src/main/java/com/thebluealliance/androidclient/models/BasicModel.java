@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.ContentValues;
-
-import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.renderers.ModelRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
+import com.thebluealliance.androidclient.types.ModelType;
+
+import android.content.ContentValues;
 
 public abstract class BasicModel<T extends BasicModel> implements RenderableModel {
 
@@ -39,6 +39,10 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
 
     public ContentValues getParams() {
         return fields;
+    }
+
+    public boolean hasField(String key) {
+        return fields.containsKey(key);
     }
 
     public abstract String getKey();
