@@ -220,7 +220,6 @@ dependencies {
     compile ([group: 'com.google.http-client', name: 'google-http-client-gson', version: googleApiClientVersion])
     compile project(':tbaMobile')
     compile project(':libImgur')
-    compile project(':colorpicker')
 
     // Android support libraries
     compile "com.android.support:support-v13:${supportLibVersion}"
@@ -260,6 +259,7 @@ dependencies {
     compile 'me.relex:circleindicator:1.1.5@aar'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.wada811:android-material-design-colors:2.0.0'
+    compile 'com.thebluealliance:spectrum:0.1.1'
 
     // testing
     testCompile 'org.robolectric:robolectric:3.0'
