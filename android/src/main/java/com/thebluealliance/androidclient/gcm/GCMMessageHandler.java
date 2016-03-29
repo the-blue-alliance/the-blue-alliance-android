@@ -1,24 +1,18 @@
 package com.thebluealliance.androidclient.gcm;
 
-import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
-
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
+import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
+import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DaggerNotificationComponent;
@@ -36,13 +30,28 @@ import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotifi
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.SummaryNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
+
+import org.greenrobot.eventbus.EventBus;
+
+import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
-
-public class GCMMessageHandler extends IntentService {
+public class GCMMessageHandler extends IntentService implements FollowsChecker {
 
     public static final String GROUP_KEY = "tba-android";
 
@@ -51,6 +60,7 @@ public class GCMMessageHandler extends IntentService {
     @Inject SharedPreferences mPrefs;
     @Inject EventBus mEventBus;
     @Inject TBAStatusController mStatusController;
+    @Inject Database mDb;
 
     private NotificationComponent mComponenet;
 
@@ -73,11 +83,28 @@ public class GCMMessageHandler extends IntentService {
         if (mComponenet == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponenet = DaggerNotificationComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .build();
+                    .applicationComponent(application.getComponent())
+                    .datafeedModule(application.getDatafeedModule())
+                    .databaseWriterModule(application.getDatabaseWriterModule())
+                    .build();
         }
+    }
+
+    public boolean followsTeam(Context context, String teamNumber, String matchKey,
+                               String notificationType) {
+        String currentUser = AccountHelper.getCurrentUser(mPrefs);
+        String teamKey = TeamHelper.baseTeamKey("frc" + teamNumber); // "frc111"
+        String teamInterestKey = MyTBAHelper.createKey(currentUser, teamKey); // "r@gmail.com:frc111"
+        String teamAtEventKey = EventTeamHelper.generateKey(
+                MatchHelper.getEventKeyFromMatchKey(matchKey), teamKey); // "2016calb_frc111"
+        String teamAtEventInterestKey = MyTBAHelper.createKey(currentUser, teamAtEventKey);
+        FavoritesTable favTable = mDb.getFavoritesTable();
+        SubscriptionsTable subTable = mDb.getSubscriptionsTable();
+
+        return favTable.exists(teamInterestKey)
+                || favTable.exists(teamAtEventInterestKey)
+                || subTable.hasNotificationType(teamInterestKey, notificationType)
+                || subTable.hasNotificationType(teamAtEventInterestKey, notificationType);
     }
 
     @Override
@@ -160,7 +187,7 @@ public class GCMMessageHandler extends IntentService {
             if (enabled) {
                 Notification built;
 
-                built = notification.buildNotification(c);
+                built = notification.buildNotification(c, this);
                 if (built == null) return;
 
                 /* Update the data coming from this notification in the local db */
@@ -180,7 +207,7 @@ public class GCMMessageHandler extends IntentService {
                 if (notification.shouldShow()) {
                     if (SummaryNotification.isNotificationActive(c)) {
                         notification = new SummaryNotification();
-                        built = notification.buildNotification(c);
+                        built = notification.buildNotification(c, this);
                     }
 
                     setNotificationParams(built, c, messageType, mPrefs);
@@ -202,6 +229,12 @@ public class GCMMessageHandler extends IntentService {
         }
         if (prefs.getBoolean("notification_tone", true)) {
             built.defaults |= Notification.DEFAULT_SOUND;
+        }
+        if (prefs.getBoolean("notification_led_enabled", true)) {
+            built.ledARGB = prefs.getInt("notification_led_color", c.getResources().getColor(R.color.primary));
+            built.ledOnMS = 1000;
+            built.ledOffMS = 1000;
+            built.flags |= Notification.FLAG_SHOW_LIGHTS;
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {

@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 
+import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,8 +24,6 @@ import org.robolectric.annotation.Config;
 import android.content.res.Resources;
 
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;

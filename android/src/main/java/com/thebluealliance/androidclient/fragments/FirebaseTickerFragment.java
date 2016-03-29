@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.fragments;
 
-import com.firebase.client.DataSnapshot;
+import com.google.gson.JsonObject;
+
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
+import com.thebluealliance.androidclient.datafeed.retrofit.FirebaseAPI;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.firebase.FirebaseChildType;
@@ -38,6 +38,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -46,11 +47,17 @@ import rx.schedulers.Schedulers;
 
 public abstract class FirebaseTickerFragment extends Fragment implements Action1<List<FirebaseNotification>>, View.OnClickListener {
 
-    private static final String FIREBASE_URL_DEFAULT = "https://thebluealliance.firebaseio.com/";
-    private static final int FIREBASE_LOAD_DEPTH_DEFAULT = 25;
+    public static final String FIREBASE_URL_DEFAULT = "https://thebluealliance.firebaseio.com/";
+    public static final int FIREBASE_LOAD_DEPTH_DEFAULT = 25;
 
-    @Inject
-    DatabaseWriter mWriter;
+    private enum FirebaseChildNodesState {
+        LOADING,
+        HAS_CHILDREN,
+        NO_CHILDREN
+    }
+
+    @Inject DatabaseWriter mWriter;
+    @Inject @Named("firebase_api") FirebaseAPI mFirebaseApi;
 
     private ListView mListView;
     private ListView mFilterListView;
@@ -61,13 +68,14 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     private Parcelable mListState;
     private int mFirstVisiblePosition;
     private List<FirebaseNotification> mAllNotifications = new ArrayList<>();
+    private boolean mAreFilteredNotificationsVisible = false;
     private ResumeableRxFirebase mFirebaseSubscriber;
 
     private TextView leftButton, rightButton;
     private Set<String> enabledNotifications;
     private boolean filterListShowing;
 
-    private boolean mChildHasBeenAdded = false;
+    private FirebaseChildNodesState mChildNodeState = FirebaseChildNodesState.LOADING;
     private String mFirebaseUrl;
     private int mFirebaseLoadDepth;
 
@@ -105,30 +113,33 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                     mNoDataView.setVisibility(View.VISIBLE);
                     mNoDataView.setText(R.string.firebase_no_matching_items);
                 });
+
         Firebase.setAndroidContext(getActivity());
         Firebase ticker = new Firebase(mFirebaseUrl);
-        ticker.limitToLast(mFirebaseLoadDepth).addChildEventListener(mFirebaseSubscriber);
-        ticker.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getChildrenCount() == 0) {
-                    mNoDataView.setVisibility(View.VISIBLE);
-                    mNoDataView.setText(R.string.firebase_empty_ticker);
-                    mListView.setVisibility(View.GONE);
-                    mProgressBar.setVisibility(View.GONE);
-                } else {
-                    mNoDataView.setVisibility(View.GONE);
-                }
-            }
+        ticker.orderByKey().limitToLast(mFirebaseLoadDepth).addChildEventListener(mFirebaseSubscriber);
 
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                mNoDataView.setVisibility(View.VISIBLE);
-                mNoDataView.setText(R.string.firebase_error);
-                mListView.setVisibility(View.GONE);
-                mProgressBar.setVisibility(View.GONE);
-            }
-        });
+        mFirebaseApi.getOneItemFromNode(getFirebaseUrlSuffix())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    if (result.isJsonNull()) {
+                        mChildNodeState = FirebaseChildNodesState.NO_CHILDREN;
+                    } else if (result.isJsonObject()) {
+                        if (((JsonObject) result).entrySet().size() > 0) {
+                            mChildNodeState = FirebaseChildNodesState.HAS_CHILDREN;
+                        } else {
+                            mChildNodeState = FirebaseChildNodesState.NO_CHILDREN;
+                        }
+                    }
+                    updateViewVisibility();
+                }, throwable -> {
+                    Log.e(Constants.LOG_TAG, "Firebase rest error: " + throwable);
+                    throwable.printStackTrace();
+
+                    // net error getting item count, show no data view
+                    mChildNodeState = FirebaseChildNodesState.NO_CHILDREN;
+                    updateViewVisibility();
+                });
 
         filterListShowing = false;
     }
@@ -153,10 +164,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
 
         mListView = (ListView) v.findViewById(R.id.list);
         mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
-        if (mChildHasBeenAdded) {
-            // If view is being recreated and a child has been added, hide the progress bar
-            mProgressBar.setVisibility(View.GONE);
-        }
+        updateViewVisibility();
 
         if (mNotificationsAdapter != null) {
             mListView.setAdapter(mNotificationsAdapter);
@@ -171,6 +179,39 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         setUpFilterListViews();
 
         return v;
+    }
+
+    private void updateViewVisibility() {
+        if (mAllNotifications.size() > 0) {
+            if (mAreFilteredNotificationsVisible) {
+                // We've received at least one notification from the client library, and it's
+                // visible with the current applied filter. Show the list!
+                mListView.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.GONE);
+                mNoDataView.setVisibility(View.GONE);
+            } else {
+                // We've received at least one notification from the client library, but no
+                // notification are visible with the current applied filter. Show the no data view,
+                // but with a special "none found with that filter" message
+                mListView.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.GONE);
+                mNoDataView.setVisibility(View.VISIBLE);
+                mNoDataView.setText(R.string.firebase_no_matching_items);
+            }
+        } else if (mChildNodeState == FirebaseChildNodesState.NO_CHILDREN) {
+            // We've received the result of the REST call to the server and the list is (at least
+            // for now) definitely empty. Show the no data view
+            mListView.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.GONE);
+            mNoDataView.setVisibility(View.VISIBLE);
+            mNoDataView.setText(R.string.firebase_empty_ticker);
+        } else {
+            // We haven't yet received any notifications from the client library, but we also
+            // aren't certain that the list is empty. Show the spinner.
+            mListView.setVisibility(View.GONE);
+            mProgressBar.setVisibility(View.VISIBLE);
+            mNoDataView.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -288,31 +329,22 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(notificationsList -> {
+                    mAreFilteredNotificationsVisible = !notificationsList.isEmpty();
+
                     if (!FirebaseTickerFragment.this.isResumed() || getView() == null) {
                         return;
                     }
-                    if (notificationsList.isEmpty()) {
-                        // Show the "none found" warning
-                        mProgressBar.setVisibility(View.GONE);
-                        mListView.setVisibility(View.GONE);
-                        mNoDataView.setVisibility(View.VISIBLE);
-                        mNoDataView.setText(R.string.firebase_no_matching_items);
-                    } else {
-                        mNotificationsAdapter.values.clear();
-                        mNotificationsAdapter.values.addAll(notificationsList);
-                        mNotificationsAdapter.notifyDataSetChanged();
-                        mListView.setVisibility(View.VISIBLE);
-                        mNoDataView.setVisibility(View.GONE);
-                        mProgressBar.setVisibility(View.GONE);
-                    }
+
+                    mNotificationsAdapter.clear();
+                    mNotificationsAdapter.addAll(notificationsList);
+                    mNotificationsAdapter.notifyDataSetChanged();
+                    updateViewVisibility();
                 }, throwable -> {
                     Log.e(Constants.LOG_TAG, "Firebase error");
                     throwable.printStackTrace();
                     // Show the "none found" warning
-                    mProgressBar.setVisibility(View.GONE);
-                    mListView.setVisibility(View.GONE);
-                    mNoDataView.setVisibility(View.VISIBLE);
-                    mNoDataView.setText(R.string.firebase_no_matching_items);
+                    mAreFilteredNotificationsVisible = false;
+                    updateViewVisibility();
                 });
     }
 
@@ -332,12 +364,12 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         if (firebaseNotifications.isEmpty()) {
             return;
         }
-        mChildHasBeenAdded = true;
-        mProgressBar.setVisibility(View.GONE);
+
         for (FirebaseNotification firebaseNotification : firebaseNotifications) {
             firebaseNotification.setDatabaseWriter(mWriter);
             mAllNotifications.add(0, firebaseNotification);
         }
+
         updateList();
     }
 

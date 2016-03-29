@@ -12,13 +12,13 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.types.MatchType;
 
+import org.greenrobot.eventbus.EventBus;
+
 import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<ListGroup>> {
 
@@ -65,9 +65,9 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
 
         Event event = mDb.getEventsTable().get(mEventKey);
         if (event != null && event.isHappeningNow()) {
-            Collections.sort(mAPIData, new MatchSortByDisplayOrderComparator());
-        } else {
             Collections.sort(mAPIData, new MatchSortByPlayOrderComparator());
+        } else {
+            Collections.sort(mAPIData, new MatchSortByDisplayOrderComparator());
         }
 
         ListGroup currentGroup = mQualMatches;

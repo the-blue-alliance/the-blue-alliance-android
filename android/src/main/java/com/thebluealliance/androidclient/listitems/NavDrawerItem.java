@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.listitems;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.views.SelectableImageView;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.views.SelectableImageView;
 
 public class NavDrawerItem implements ListItem {
 
@@ -70,7 +70,7 @@ public class NavDrawerItem implements ListItem {
         return id;
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         SelectableImageView image;
         TextView title;
     }

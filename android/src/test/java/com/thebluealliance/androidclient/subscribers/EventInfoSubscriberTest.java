@@ -50,5 +50,6 @@ public class EventInfoSubscriberTest extends TestCase {
         assertEquals(data.dateString, mEvent.getDateString());
         assertEquals(data.isLive, mEvent.isHappeningNow());
         assertEquals(data.titleString, mEvent.getEventYear() + " " + mEvent.getEventShortName());
+        assertEquals(data.webcasts, mEvent.getWebcasts());
     }
 }

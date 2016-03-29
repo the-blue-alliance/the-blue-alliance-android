@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.datafeed.APICache;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
@@ -12,11 +13,11 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
-import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.MediaRenderer;
 import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber.Model;
 
+import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +27,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -51,7 +50,7 @@ public class MatchInfoSubscriberTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        mGson = DatafeedModule.getGson();
+        mGson = HttpModule.getGson();
         mRenderer = spy(new MatchRenderer(mCache));
         mMediaRenderer = spy(new MediaRenderer());
         mSubscriber = new MatchInfoSubscriber(mGson, mEventBus, mRenderer, mMediaRenderer);

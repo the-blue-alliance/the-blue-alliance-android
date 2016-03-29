@@ -4,12 +4,18 @@ import com.facebook.stetho.Stetho;
 import com.thebluealliance.androidclient.binders.BinderModule;
 import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
+import com.thebluealliance.androidclient.datafeed.gce.GceModule;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.di.components.ApplicationComponent;
 import com.thebluealliance.androidclient.di.components.DaggerApplicationComponent;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
+import com.thebluealliance.androidclient.imgur.ImgurModule;
+
+import android.support.multidex.MultiDexApplication;
+import android.util.Log;
 
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
@@ -26,6 +32,10 @@ public class TBAAndroid extends MultiDexApplication {
     private BinderModule mBinderModule;
     private DatabaseWriterModule mDatabaseWriterModule;
     private boolean mShouldBindStetho;
+
+    private HttpModule mHttpModule;
+    private GceModule mGceModule;
+    private ImgurModule mImgurModule;
 
     public TBAAndroid() {
         super();
@@ -64,6 +74,27 @@ public class TBAAndroid extends MultiDexApplication {
             mDatafeedModule = new DatafeedModule();
         }
         return mDatafeedModule;
+    }
+
+    public HttpModule getHttpModule() {
+        if (mHttpModule == null) {
+            mHttpModule = new HttpModule();
+        }
+        return mHttpModule;
+    }
+
+    public GceModule getGceModule() {
+        if (mGceModule == null) {
+            mGceModule = new GceModule();
+        }
+        return mGceModule;
+    }
+
+    public ImgurModule getImgurModule() {
+        if (mImgurModule == null) {
+            mImgurModule = new ImgurModule();
+        }
+        return mImgurModule;
     }
 
     public BinderModule getBinderModule() {

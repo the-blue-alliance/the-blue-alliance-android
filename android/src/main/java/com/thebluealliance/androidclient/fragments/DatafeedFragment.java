@@ -16,13 +16,14 @@ import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
+import org.greenrobot.eventbus.EventBus;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import javax.inject.Inject;
 
 import dagger.Lazy;
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 

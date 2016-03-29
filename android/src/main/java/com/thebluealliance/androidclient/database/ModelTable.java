@@ -1,13 +1,14 @@
 package com.thebluealliance.androidclient.database;
 
+import com.google.common.collect.ImmutableList;
+
+import com.thebluealliance.androidclient.models.BasicModel;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-
-import com.google.common.collect.ImmutableList;
-import com.thebluealliance.androidclient.models.BasicModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public abstract class ModelTable<T extends BasicModel> {
      * {@link SQLiteDatabase#update(String, ContentValues, String, String[])} if an existing row
      * was updated (number of affected rows)
      */
-    public final long add(@Nullable T in) {
+    public long add(@Nullable T in) {
         if (in == null) {
             return -1;
         }
@@ -60,7 +61,7 @@ public abstract class ModelTable<T extends BasicModel> {
      * Adds a List of items to the database via {@link #add(BasicModel)}
      * @param inList List of models to be added
      */
-    public final void add(@Nullable ImmutableList<T> inList){
+    public void add(@Nullable ImmutableList<T> inList){
         if (inList == null) {
             return;
         }
@@ -83,7 +84,7 @@ public abstract class ModelTable<T extends BasicModel> {
      * @return Value from {@link SQLiteDatabase#update(String, ContentValues, String, String[])},
      * or number of rows affected by the query
      */
-    public final int update(@Nullable T in){
+    public int update(@Nullable T in){
         int affectedRows;
         if (in == null) {
             return -1;
@@ -111,7 +112,7 @@ public abstract class ModelTable<T extends BasicModel> {
      * @param key Key to match {@link #getKeyColumn()} on
      * @return An inflated model found with the provided key
      */
-    public final T get(String key) {
+    public T get(String key) {
         return get(key, null);
     }
 
@@ -121,7 +122,7 @@ public abstract class ModelTable<T extends BasicModel> {
      * @param fields String array of database column names to use as a projection
      * @return Inflated model from the first row returned in the query
      */
-    public final T get(String key, String[] fields){
+    public T get(String key, String[] fields){
         Cursor cursor = mDb.query(
                 getTableName(),
                 fields,
@@ -152,7 +153,7 @@ public abstract class ModelTable<T extends BasicModel> {
      * @param limit LIMIT clause
      * @return Cursor with the rows returned by the query
      */
-    public final Cursor query (
+    public Cursor query (
             String[] columns,
             String selection,
             String[] selectionArgs,
@@ -163,7 +164,7 @@ public abstract class ModelTable<T extends BasicModel> {
         return mDb.query(getTableName(), columns, selection, selectionArgs, groupBy, having, orderBy, limit);
     }
 
-    public final List<T> getForQuery (
+    public List<T> getForQuery (
       String[] columns,
       String selection,
       String[] selectionArgs) {
@@ -183,7 +184,7 @@ public abstract class ModelTable<T extends BasicModel> {
      * Equivalent to SELECT * FROM {@link #getTableName()}
      * @return List of all inflated models in the table
      */
-    public final List<T> getAll(){
+    public List<T> getAll(){
         Cursor cursor = mDb.rawQuery("SELECT * FROM " + getTableName(), new String[]{});
         List<T> ret = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
@@ -201,7 +202,7 @@ public abstract class ModelTable<T extends BasicModel> {
      * @param key Key to match {@link #getKeyColumn()} on
      * @return true if a row with the given key exists
      */
-    public final boolean exists(String key){
+    public boolean exists(String key){
         Cursor cursor = mDb.query(
                 getTableName(),
                 new String[]{getKeyColumn()},
@@ -229,7 +230,7 @@ public abstract class ModelTable<T extends BasicModel> {
      * @return Return value from {@link SQLiteDatabase#delete(String, String, String[])}
      * (number of rows affected)
      */
-    public final int delete(T in) {
+    public int delete(T in) {
         int ret;
         mDb.beginTransaction();
         try {
@@ -252,14 +253,14 @@ public abstract class ModelTable<T extends BasicModel> {
      * @return Value from {@link SQLiteDatabase#delete(String, String, String[])}
      * (number of rows affected)
      */
-    public final int delete(String whereClause, String[] whereArgs) {
+    public int delete(String whereClause, String[] whereArgs) {
         return mDb.delete(getTableName(), whereClause, whereArgs);
     }
 
     /**
      * Deletes all rows from this table.
      */
-    public final void deleteAllRows() {
+    public void deleteAllRows() {
         mDb.execSQL("delete from " + getTableName());
         deleteAllCallback();
     }
@@ -270,7 +271,7 @@ public abstract class ModelTable<T extends BasicModel> {
      * @param values A {@link ContentValues} object mapping the column names to be updated to values
      * @return Numbe of rows affected by the query
      */
-    public final int updateField(String key, ContentValues values) {
+    public int updateField(String key, ContentValues values) {
         int returnVal = 0;
         mDb.beginTransaction();
         try {

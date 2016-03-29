@@ -204,7 +204,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         mCurrentSelectedNavigationItemId = id;
 
         // Call this to make sure the toolbar has the correct contents
-        invalidateOptionsMenu();
+        setupToolbarForCurrentMode();
 
         // The Districts & Notifications fragments don't have tabs to set an elevation to, so we
         // have to apply an elevation to the toolbar here
@@ -224,8 +224,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         }
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    private void setupToolbarForCurrentMode() {
         resetActionBar();
         setSearchEnabled(true);
         setRefreshEnabled(true);
@@ -249,13 +248,26 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 break;
             case R.id.nav_item_notifications:
                 getSupportActionBar().setTitle(R.string.notifications);
-                getMenuInflater().inflate(R.menu.recent_notifications_help_menu, menu);
                 setRefreshEnabled(false);
                 mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
                 break;
+            case R.id.nav_item_gameday:
+                getSupportActionBar().setTitle(R.string.title_activity_gameday);
+                mToolbar.setContentInsetsAbsolute(Utilities.getPixelsFromDp(this, 72), 0);
+                break;
+        }
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        switch (mCurrentSelectedNavigationItemId) {
+            case R.id.nav_item_notifications:
+                getMenuInflater().inflate(R.menu.recent_notifications_help_menu, menu);
+                break;
         }
 
-        return super.onPrepareOptionsMenu(menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -356,7 +368,6 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         } else {
             // No intent given. Switch to default mode
             switchToModeForId(mCurrentSelectedNavigationItemId, null);
-            invalidateOptionsMenu();
         }
     }
 

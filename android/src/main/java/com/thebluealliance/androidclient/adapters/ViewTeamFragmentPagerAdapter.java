@@ -13,6 +13,9 @@ import com.thebluealliance.androidclient.interfaces.HasYearParam;
 public class ViewTeamFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private final String[] TITLES = {"Info", "Events", "Media"};
+    public static final int TAB_INFO = 0,
+            TAB_EVENTS = 1,
+            TAB_MEDIA = 2;
 
     private String mTeamKey;
     private int mYear;
@@ -36,14 +39,14 @@ public class ViewTeamFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position) {
-            case 0: // info
-                // This is the info page
+            case TAB_INFO:
                 return TeamInfoFragment.newInstance(mTeamKey);
-            case 1: // events
+            case TAB_EVENTS:
                 return TeamEventsFragment.newInstance(mTeamKey, mYear);
-            case 2: // media
-            default:
+            case TAB_MEDIA:
                 return TeamMediaFragment.newInstance(mTeamKey, mYear);
+            default:
+                return new Fragment();
         }
     }
 

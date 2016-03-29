@@ -14,7 +14,6 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -29,7 +28,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -37,7 +35,6 @@ import android.widget.TextView;
 import com.google.android.gms.plus.model.people.Person;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -99,12 +96,15 @@ public class NavigationDrawerFragment extends Fragment {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
-    private CircleImageView profilePicture;
-    private ImageView coverPhoto;
-    private TextView profileName;
+    private View mNavHeaderWithoutAccount;
+    private View mNavHeaderWithAccount;
+    private CircleImageView mProfilePicture;
+    private TextView mProfileName;
     private View mFragmentContainerView;
     private NavigationDrawerAdapter mNavigationAdapter;
     private NavigationDrawerListener mListener;
+
+    private Picasso mPicasso;
 
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
@@ -126,6 +126,8 @@ public class NavigationDrawerFragment extends Fragment {
         mFromSavedInstanceState = (savedInstanceState == null ? true : false);
 
         mNavigationAdapter = new NavigationDrawerAdapter(getActivity(), NAVIGATION_ITEMS);
+
+        mPicasso = Picasso.with(getActivity());
     }
 
     @Override
@@ -143,75 +145,57 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerListView.setOnItemClickListener((parent, view, position, id) -> navigationItemClicked(position));
         mDrawerListView.setAdapter(mNavigationAdapter);
 
-        View accountDetailsContainer = v.findViewById(R.id.account_details_container);
+        mNavHeaderWithAccount = v.findViewById(R.id.header_with_account);
+        mNavHeaderWithoutAccount = v.findViewById(R.id.header_without_account);
 
-        profileName = (TextView) v.findViewById(R.id.profile_name);
-        profilePicture = (CircleImageView) v.findViewById(R.id.profile_image);
-        coverPhoto = (ImageView) v.findViewById(R.id.profile_cover_image);
-        if (AccountHelper.isMyTBAEnabled(getActivity())) {
-            Log.d("NavDrawerFragment", "MyTBA enabled; configuring navigation drawer");
-            accountDetailsContainer.setVisibility(View.VISIBLE);
-            profilePicture.setVisibility(View.VISIBLE);
-            profileName.setVisibility(View.VISIBLE);
-            setDrawerProfileInfo();
-        } else {
-            Log.d("NavDrawerFragment", "MyTBA not enabled; hiding profile in nav drawer");
-            accountDetailsContainer.setVisibility(View.GONE);
-        }
+        mProfileName = (TextView) v.findViewById(R.id.profile_name);
+        mProfilePicture = (CircleImageView) v.findViewById(R.id.profile_image);
+
+        setupNavDrawerHeader();
 
         return v;
     }
 
-    public void setDrawerProfileInfo() {
-        Picasso picasso = Picasso.with(getActivity());
-        if (PlusHelper.isConnected()) {
-            Person person = PlusHelper.getCurrentPerson();
-            if (person != null) {
-                profileName.setText(person.getDisplayName());
-                String personPhotoUrl = person.getImage().getUrl();
-                personPhotoUrl = personPhotoUrl.substring(0,
-                        personPhotoUrl.length() - 2)
-                        + PROFILE_PIC_SIZE;
+    public void setupNavDrawerHeader() {
 
-                Log.d(Constants.LOG_TAG, "Profile photo url: " + personPhotoUrl);
+        boolean hasAccountDetails = false;
+        if (AccountHelper.isMyTBAEnabled(getActivity())) {
+            if (PlusHelper.isConnected()) {
+                Person person = PlusHelper.getCurrentPerson();
+                if (person != null) {
+                    if (person.hasDisplayName()) {
+                        mProfileName.setText(person.getDisplayName());
+                        hasAccountDetails = true;
+                    }
 
-                if (person.hasImage()) {
-                    //picasso.load(personPhotoUrl).into(profilePicture);
-                    picasso.load(personPhotoUrl).into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            Log.d(Constants.LOG_TAG, "Picasso onBitmapLoaded");
-                            profilePicture.setImageBitmap(bitmap);
-                        }
+                    if (person.hasImage()) {
+                        String personPhotoUrl = person.getImage().getUrl();
+                        personPhotoUrl = personPhotoUrl.substring(0,
+                                personPhotoUrl.length() - 2)
+                                + PROFILE_PIC_SIZE;
 
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-                            Log.d(Constants.LOG_TAG, "Picasso onBitmapFailed");
-                        }
+                        Log.d(Constants.LOG_TAG, "Profile photo url: " + personPhotoUrl);
 
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            Log.d(Constants.LOG_TAG, "Picasso onPrepareLoad");
-                        }
-                    });
-                    Log.d(Constants.LOG_TAG, "Picasso loading profile photo");
+                        mPicasso.load(personPhotoUrl).into(mProfilePicture);
+                        hasAccountDetails = true;
+                    }
                 }
-                if (person.hasCover()) {
-                    picasso.load(person.getCover().getCoverPhoto().getUrl()).transform(new LinearGradientTransformation()).into(coverPhoto);
-                } else {
-                    picasso.load(R.drawable.default_cover).transform(new LinearGradientTransformation()).into(coverPhoto);
+            } else {
+                Log.w(Constants.LOG_TAG, "Plus is not connected. Can't show profile info. Attempting to reconnect...");
+
+                Activity activity = getActivity();
+                if (activity != null && activity instanceof NavigationDrawerActivity) {
+                    PlusHelper.connect(activity, (NavigationDrawerActivity) activity, (NavigationDrawerActivity) activity);
                 }
             }
+        }
+
+        if (hasAccountDetails) {
+            mNavHeaderWithAccount.setVisibility(View.VISIBLE);
+            mNavHeaderWithoutAccount.setVisibility(View.GONE);
         } else {
-            // This is bad. Show some default info.
-            Log.w(Constants.LOG_TAG, "Plus is not connected. Can't show profile info. Attempting to reconnect...");
-            picasso.load(R.drawable.default_cover).transform(new LinearGradientTransformation()).into(coverPhoto);
-            profileName.setText("");
-
-            Activity activity = getActivity();
-            if (activity != null && activity instanceof NavigationDrawerActivity) {
-                PlusHelper.connect(activity, (NavigationDrawerActivity) activity, (NavigationDrawerActivity) activity);
-            }
+            mNavHeaderWithAccount.setVisibility(View.GONE);
+            mNavHeaderWithoutAccount.setVisibility(View.VISIBLE);
         }
     }
 
@@ -434,7 +418,6 @@ public class NavigationDrawerFragment extends Fragment {
             c.drawRect(0, 0, source.getWidth(), source.getHeight(), black);
             c.drawPaint(p);
             source.recycle();
-            Log.d(Constants.LOG_TAG, "Gradient applied!");
             return outBitmap;
         }
 
@@ -449,11 +432,12 @@ public class NavigationDrawerFragment extends Fragment {
      * contents so that they don't flow under the status bar.
      */
     public void onInsetsChanged(Rect insets) {
-        RelativeLayout accountDetailsContainer = (RelativeLayout) getView().findViewById(R.id.account_details_container);
+        RelativeLayout navDrawereHeader = (RelativeLayout) getView().findViewById(R.id.nav_drawer_header);
 
-        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams)
-                accountDetailsContainer.getLayoutParams();
-        lp.topMargin = insets.top;
-        accountDetailsContainer.setLayoutParams(lp);
+        int pBottom = navDrawereHeader.getPaddingBottom();
+        int pLeft = navDrawereHeader.getPaddingLeft();
+        int pRight = navDrawereHeader.getPaddingRight();
+
+        navDrawereHeader.setPadding(pLeft, insets.top, pRight, pBottom);
     }
 }

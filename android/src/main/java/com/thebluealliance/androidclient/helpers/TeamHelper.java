@@ -34,6 +34,16 @@ public class TeamHelper {
     }
 
     /**
+     * Strips off any multi-team key letter suffix to get a valid base team key.
+     */
+    public static String baseTeamKey(@Nullable String teamKey) {
+        if (validateMultiTeamKey(teamKey)) {
+            return teamKey.substring(0, teamKey.length() - 1);
+        }
+        return teamKey;
+    }
+
+    /**
      * Extract the team number from a given key
      * @param key A team key. Assumed to be valid
      * @return the team number in the key, -1 if error

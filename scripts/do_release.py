@@ -6,8 +6,6 @@ import subprocess
 import sys
 import re
 
-from apiclient import sample_tools
-from oauth2client import client
 from subprocess import CalledProcessError
 
 """
@@ -30,6 +28,7 @@ GH_TOKEN = 'scripts/github_token'
 parser = argparse.ArgumentParser(add_help=True)
 parser.add_argument("tag", help="New version number (e.g. 3.1.4)")
 parser.add_argument("--message", "-m", help="Tag message. Defaults to 'Version v<tag>'")
+parser.add_argument("--base-tag", "-b", help="Initial tag to compare against", default=None)
 parser.add_argument("--skip-tag", action="store_true", default=False,
                     help="Do not make a new git tag. Instead, push existing release identified by <tag>")
 parser.add_argument("--dirty-repo", action="store_true", default=False,
@@ -64,8 +63,8 @@ def check_travis_tests(args):
         info = subprocess.check_output(["travis", "show", tag_name])
         regex = re.search(".*State:[ \t]+((\w)*)\n", info)
         status = regex.group(1)
-        regex = re.search(".*Duration:[ \t]+((\w)*)\n", info)
-        duration = regex.group(1)
+        regex = re.search(".*Duration:[ \t]+(([\w\d ])*)", info)
+        duration = regex.group(1) if regex else None
         print "Build Status: {}, duration: {}".format(status, duration)
         if status == "passed" or status == "failed" or status == "errored":
             break
@@ -92,25 +91,25 @@ def check_unittest_local(args):
         sys.exit(1)
 
 
-def update_whatsnew(dry_run):
+def update_whatsnew(args):
     print "Updating whatsnew file ({}). Limit 500 characters".format(CHANGELOG_PATH)
     time.sleep(2)
-    base_tag = subprocess.check_output(["git", "describe", "--tags", "--abbrev=0"]).split()[0]
+    base_tag = subprocess.check_output(["git", "describe", "--tags", "--abbrev=0"]).split()[0] if not args.base_tag else args.base_tag
     commitlog = subprocess.check_output(["git", "shortlog", "{}..HEAD".format(base_tag), "--oneline", "--no-merges"])
     commitlog = '# '.join(('\n' + commitlog.lstrip()).splitlines(True))
 
     # Append commented commitlog to whatsnew file for ease of writing
-    if not dry_run:
+    if not args.dry_run:
         with open(CHANGELOG_PATH, "a") as whatsnew:
             whatsnew.write(commitlog)
 
-    if dry_run:
+    if args.dry_run:
         print "Would edit changelog file: {}".format(CHANGELOG_PATH)
     else:
         subprocess.call(["vim", CHANGELOG_PATH])
 
     # Remove "commented" commitlog lines
-    if not dry_run:
+    if not args.dry_run:
         subprocess.call(["sed", "-i", "/^#/d", CHANGELOG_PATH])
 
     # Check character count
@@ -120,13 +119,13 @@ def update_whatsnew(dry_run):
         sys.exit(1)
 
     # Copy to in-app changelog
-    if not dry_run:
+    if not args.dry_run:
         subprocess.call(["cp", CHANGELOG_PATH, INAPP_CHANGELOG])
     else:
         print "Would move {} to {}".format(CHANGELOG_PATH, INAPP_CHANGELOG)
 
     # Fix line breaks
-    if not dry_run:
+    if not args.dry_run:
         subprocess.call(["sed", "-i", 's/$/<br>/', INAPP_CHANGELOG])
         subprocess.call(["rm", "-f", "{}{}".format(INAPP_CHANGELOG, "bak")])
 
@@ -243,7 +242,7 @@ if __name__ == "__main__":
     if not args.skip_local_tests:
         check_unittest_local(args)
     if not args.skip_tag:
-        update_whatsnew(args.dry_run)
+        update_whatsnew(args)
         commit_whatsnew(args.dry_run)
         create_tag(args)
     if not args.skip_validate:

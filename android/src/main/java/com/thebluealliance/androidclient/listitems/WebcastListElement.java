@@ -38,7 +38,6 @@ public class WebcastListElement extends ListElement {
             holder = new ViewHolder();
             holder.label = (TextView) convertView.findViewById(R.id.label);
             holder.value = (TextView) convertView.findViewById(R.id.value);
-            holder.container = (LinearLayout) convertView.findViewById(R.id.summary_container);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -47,14 +46,12 @@ public class WebcastListElement extends ListElement {
         holder.label.setText(String.format(c.getString(R.string.webcast_event_format), eventName, number));
         final String service = webcast.get("type").getAsString();
         final WebcastType type = WebcastHelper.getType(service);
-        if (holder.container.getChildCount() > 2) {
-            holder.container.removeViewAt(2);
-        }
+
         if (service != null) {
             holder.value.setVisibility(View.VISIBLE);
             holder.value.setText(type.render(c));
             holder.value.setTypeface(null, Typeface.NORMAL);
-            holder.container.setOnClickListener(new WebcastClickListener(c, eventKey, type, webcast, number));
+            convertView.setOnClickListener(new WebcastClickListener(c, eventKey, type, webcast, number));
         } else {
             holder.value.setVisibility(View.GONE);
         }
@@ -65,7 +62,6 @@ public class WebcastListElement extends ListElement {
     private static class ViewHolder {
         TextView label;
         TextView value;
-        LinearLayout container;
     }
 
     @Override

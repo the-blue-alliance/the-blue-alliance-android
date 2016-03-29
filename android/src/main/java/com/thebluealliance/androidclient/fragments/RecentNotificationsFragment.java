@@ -13,15 +13,16 @@ import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.subscribers.RecentNotificationsSubscriber;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
 import rx.Observable;
 
 public class RecentNotificationsFragment
-  extends ListViewFragment<List<StoredNotification>, RecentNotificationsSubscriber> {
+        extends ListViewFragment<List<StoredNotification>, RecentNotificationsSubscriber> {
 
     @Inject Database mDb;
     @Inject EventBus mEventBus;
@@ -32,15 +33,17 @@ public class RecentNotificationsFragment
     }
 
     /**
-     * The recent notifications list has to render things a little differently than the normal list.
+     * The recent notifications list has to render things a little differently than the normal
+     * list.
      * Specifically, we need to remove the dividers between items, adjust the padding, and disable
      * clip-to-padding so that the list's content can scroll beneath the padding. To avoid having
      * to special-case a subclass of DatafeedFragment and inflate a different view, we'll simply
      * override all this stuff programmatically!
      *
-     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param view               The View returned by {@link #onCreateView(LayoutInflater,
+     *                           ViewGroup, Bundle)}.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
+     *                           from a previous saved state as given here.
      */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

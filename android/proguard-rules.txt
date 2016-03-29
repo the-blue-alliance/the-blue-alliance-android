@@ -51,8 +51,9 @@ public static *** d(...);
 -dontwarn com.google.api.client.extensions.android.**
 -dontwarn com.google.api.client.googleapis.extensions.android.**
 -dontwarn com.google.android.gms.**
--dontwarn com.facebook.stetho.**
 -dontwarn com.google.api.client.**
+
+-keep class com.facebook.stetho.** { *; }
 
 -keep class android.support.design.** { *; }
 -keep interface android.support.design.** { *; }
@@ -61,8 +62,10 @@ public static *** d(...);
 -keep class com.firebase.** { *; }
 -dontwarn com.firebase.**
 -keepnames class com.fasterxml.jackson.** { *; }
--keep class com.thebluealliance.androidclient.** { *; }
--keepnames class com.thebluealliance.androidclient.** { *; }
+-keep class com.thebluealliance.** { *; }
+-keepnames class com.thebluealliance.** { *; }
+-keep class com.appspot.tbatv_prod_hrd.** { *; }
+-keepnames class com.appspot.tbatv_prod_hrd.** { *; }
 -keep public class com.thebluealliance.androidclient.models.FirebaseNotification {
     public void set(*);
     public ** get*();

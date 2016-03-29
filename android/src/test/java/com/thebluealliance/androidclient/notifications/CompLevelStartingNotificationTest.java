@@ -1,12 +1,8 @@
 package com.thebluealliance.androidclient.notifications;
 
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
@@ -21,6 +17,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -90,20 +91,20 @@ public class CompLevelStartingNotificationTest {
         when(mContext.getResources()).thenReturn(res);
         when(res.getString(R.string.finals_header)).thenReturn("Finals Matches");
         when(res.getString(R.string.notification_level_starting_with_time, mNotification.getEventName(), "Finals Matches", "15:18:00"))
-          .thenReturn("Finals Matches are scheduled to start at 15:18:00");
-        when(res.getString(R.string.notification_level_starting_title, "HIHO"))
-          .thenReturn("Competition Level Starting HIHO");
+          .thenReturn("Finals Matches are scheduled for 15:18:00");
+        when(res.getString(R.string.notification_level_starting_title, "HIHO", "Finals Matches"))
+          .thenReturn("HIHO Finals Matches Starting");
         when(res.getString(R.string.notification_level_starting, mNotification.getEventName(), "Finals Matches"))
           .thenReturn("Finals Matches starting");
-        Notification notification = mNotification.buildNotification(mContext);
+        Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();
         assertNotNull(stored);
-        assertEquals(stored.getType(), NotificationTypes.LEVEL_STARTING);
-        assertEquals(stored.getTitle(), "Competition Level Starting HIHO");
-        assertEquals(stored.getMessageData(), mData.toString());
-        assertEquals(stored.getIntent(), MyTBAHelper.serializeIntent(mNotification.getIntent(mContext)));
+        assertEquals(NotificationTypes.LEVEL_STARTING, stored.getType());
+        assertEquals("HIHO Finals Matches Starting", stored.getTitle());
+        assertEquals(mData.toString(), stored.getMessageData());
+        assertEquals(MyTBAHelper.serializeIntent(mNotification.getIntent(mContext)), stored.getIntent());
         assertNotNull(stored.getTime());
     }
 
@@ -117,16 +118,16 @@ public class CompLevelStartingNotificationTest {
         when(res.getString(R.string.finals_header)).thenReturn("Finals Matches");
         when(res.getString(R.string.notification_level_starting, mNotification.getEventName(), "Finals Matches"))
           .thenReturn("Finals Matches starting");
-        when(res.getString(R.string.notification_level_starting_title, "HIHO"))
-          .thenReturn("Competition Level Starting HIHO");
-        Notification notification = mNotification.buildNotification(mContext);
+        when(res.getString(R.string.notification_level_starting_title, "HIHO", "Finals Matches"))
+          .thenReturn("HIHO Finals Matches Starting");
+        Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();
         assertNotNull(stored);
-        assertEquals(stored.getType(), NotificationTypes.LEVEL_STARTING);
-        assertEquals(stored.getTitle(), "Competition Level Starting HIHO");
-        assertEquals(stored.getBody(), "Finals Matches starting");
+        assertEquals(NotificationTypes.LEVEL_STARTING, stored.getType());
+        assertEquals("HIHO Finals Matches Starting", stored.getTitle());
+        assertEquals("Finals Matches starting", stored.getBody());
         assertEquals(stored.getMessageData(), mData.toString());
         assertEquals(stored.getIntent(), MyTBAHelper.serializeIntent(mNotification.getIntent(mContext)));
         assertNotNull(stored.getTime());

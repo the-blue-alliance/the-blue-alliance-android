@@ -9,6 +9,7 @@
     <color name="green">#4CAF50</color>
 
     <color name="column_header_gray">#ddd</color>
+    <color name="column_header_total_gray">#ccc</color>
     <color name="white">#FFF</color>
     <color name="black">#000000</color>
     <color name="nav_text_color">#000000</color>
@@ -34,6 +35,9 @@
     <color name="primary_dark">#303f9f</color>
     <color name="accent">#ffd600</color>
     <color name="accent_dark">#e6c100</color>
+    <color name="dark_theme_background">#303030</color>
+    <color name="translucent_black">#77000000</color>
+    <color name="red_500">#F44336</color>
 
     <!-- Gameday ticker header colors -->
     <color name="gameday_ticker_alliance_selection_header">#f44336</color>
@@ -50,5 +54,27 @@
     <color name="google_sign_in_button_pressed">#eeeeee</color>
     <color name="google_sign_in_button_text">#555555</color>
 
+    <array name="led_colors">
+        <item>@color/md_red_500</item>
+        <item>@color/md_pink_500</item>
+        <item>@color/md_purple_500</item>
+        <item>@color/md_deep_purple_500</item>
+        <item>@color/md_indigo_500</item>
+        <item>@color/md_blue_500</item>
+        <item>@color/md_light_blue_500</item>
+        <item>@color/md_cyan_500</item>
+        <item>@color/md_teal_500</item>
+        <item>@color/md_green_500</item>
+        <item>@color/md_light_green_500</item>
+        <item>@color/md_lime_500</item>
+        <item>@color/md_yellow_500</item>
+        <item>@color/md_amber_500</item>
+        <item>@color/md_orange_500</item>
+        <item>@color/md_deep_orange_500</item>
+        <item>@color/md_brown_500</item>
+        <item>@color/md_grey_500</item>
+        <item>@color/md_blue_grey_500</item>
+        <item>@color/md_white</item>
+    </array>
 
 </resources>
