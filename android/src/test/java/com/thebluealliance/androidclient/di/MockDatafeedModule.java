@@ -2,20 +2,20 @@ package com.thebluealliance.androidclient.di;
 
 import com.google.gson.Gson;
 
-import com.squareup.okhttp.Cache;
-import com.squareup.okhttp.OkHttpClient;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
-import com.thebluealliance.androidclient.datafeed.DatafeedModule;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
+import com.thebluealliance.androidclient.datafeed.retrofit.FirebaseAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
+import com.thebluealliance.androidclient.fragments.FirebaseTickerFragment;
 
 import org.mockito.Mockito;
 
@@ -27,8 +27,10 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import retrofit.Retrofit;
-import retrofit.RxJavaCallAdapterFactory;
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 
 import static org.mockito.Mockito.when;
 
@@ -69,16 +71,31 @@ public class MockDatafeedModule {
         return Mockito.mock(GitHubAPI.class);
     }
 
+    @Provides @Singleton @Named("firebase_retrofit")
+    public Retrofit provideFirebaseRetrofit(Context context, Gson gson, OkHttpClient okHttpClient) {
+        String firebaseUrl = FirebaseTickerFragment.FIREBASE_URL_DEFAULT;
+        return new Retrofit.Builder()
+                .baseUrl(firebaseUrl)
+                .client(okHttpClient)
+                .addConverterFactory(LenientGsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+    }
+
+    @Provides @Singleton @Named("firebase_api")
+    public FirebaseAPI provideFirebaseAPI(@Named("firebase_retrofit") Retrofit retrofit) {
+        return Mockito.mock(FirebaseAPI.class);
+    }
 
     @Provides @Singleton
     public Gson provideGson() {
-        return DatafeedModule.getGson();
+        return HttpModule.getGson();
     }
 
 
     @Provides @Singleton
     public Cache provideOkCache(Context context) {
-        return new Cache(context.getCacheDir(), DatafeedModule.CACHE_SIZE);
+        return new Cache(context.getCacheDir(), HttpModule.CACHE_SIZE);
     }
 
     @Provides @Singleton

@@ -10,9 +10,9 @@ import com.thebluealliance.androidclient.di.MockFragmentComponent;
 import com.thebluealliance.androidclient.di.MockSubscriberModule;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 
-import android.support.annotation.VisibleForTesting;
+import org.greenrobot.eventbus.EventBus;
 
-import de.greenrobot.event.EventBus;
+import android.support.annotation.VisibleForTesting;
 
 public class BaseTestActivity extends DatafeedActivity {
 

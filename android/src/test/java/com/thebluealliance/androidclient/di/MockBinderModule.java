@@ -5,6 +5,7 @@ import com.thebluealliance.androidclient.binders.EventInfoBinder;
 import com.thebluealliance.androidclient.binders.EventTabBinder;
 import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
 import com.thebluealliance.androidclient.binders.ListViewBinder;
+import com.thebluealliance.androidclient.binders.MatchBreakdownBinder;
 import com.thebluealliance.androidclient.binders.MatchListBinder;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.binders.StatsListBinder;
@@ -68,6 +69,11 @@ public class MockBinderModule {
     @Provides
     public DistrictPointsListBinder provideDistrictPointsListBinder() {
         return Mockito.mock(DistrictPointsListBinder.class);
+    }
+
+    @Provides
+    public MatchBreakdownBinder provideMatchbreakdownBinder() {
+        return Mockito.mock(MatchBreakdownBinder.class);
     }
 
     @Provides

@@ -26,6 +26,7 @@ import com.thebluealliance.androidclient.database.writers.TeamListWriter;
 import com.thebluealliance.androidclient.database.writers.TeamWriter;
 import com.thebluealliance.androidclient.database.writers.YearsParticipatedWriter;
 
+import org.greenrobot.eventbus.EventBus;
 import org.mockito.Mockito;
 
 import android.content.Context;
@@ -36,7 +37,6 @@ import javax.inject.Singleton;
 import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
-import de.greenrobot.event.EventBus;
 
 import static org.mockito.Mockito.spy;
 

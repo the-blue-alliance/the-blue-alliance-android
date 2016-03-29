@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventTabSubscriber;
 import com.thebluealliance.androidclient.subscribers.FavoriteListSubscriber;
+import com.thebluealliance.androidclient.subscribers.MatchBreakdownSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
@@ -38,13 +39,13 @@ import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamStatsSubscriber;
 import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
 
+import org.greenrobot.eventbus.EventBus;
 import org.mockito.Mockito;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import de.greenrobot.event.EventBus;
 
 @Module(includes = {MockTbaAndroidModule.class, MockRendererModule.class})
 public class MockSubscriberModule {
@@ -178,6 +179,11 @@ public class MockSubscriberModule {
     @Provides
     public ContributorListSubscriber provideContributorListSubscriber() {
         return Mockito.mock(ContributorListSubscriber.class);
+    }
+
+    @Provides
+    public MatchBreakdownSubscriber provideMatchBreakdownSubscriber() {
+        return Mockito.mock(MatchBreakdownSubscriber.class);
     }
 
     @Provides @Singleton

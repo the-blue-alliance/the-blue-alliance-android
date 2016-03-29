@@ -13,11 +13,11 @@ import com.thebluealliance.androidclient.fragments.framework.SimpleBinder;
 import com.thebluealliance.androidclient.fragments.framework.SimpleDatafeedFragment;
 import com.thebluealliance.androidclient.fragments.framework.SimpleSubscriber;
 
+import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import de.greenrobot.event.EventBus;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
