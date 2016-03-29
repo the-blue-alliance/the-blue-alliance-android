@@ -5,22 +5,32 @@ import com.thebluealliance.androidclient.R;
 import android.support.annotation.StringRes;
 
 public enum MatchType {
-    NONE,
-    QUAL {
+    NONE(R.string.match_type_unknown, R.string.match_abbrev_unknown, 0),
+    QUAL(R.string.match_type_qual, R.string.match_abbrev_qual, 1) {
         @Override
         public MatchType previous() {
             return null; // see below for options for this line
         }
     },
-    OCTO,
-    QUARTER,
-    SEMI,
-    FINAL {
+    OCTO(R.string.match_type_octo, R.string.match_abbrev_octo, 2),
+    QUARTER(R.string.match_type_quarter, R.string.match_abbrev_quarter, 3),
+    SEMI(R.string.match_type_semis, R.string.match_abbrev_semi, 4),
+    FINAL(R.string.match_type_finals, R.string.match_abbrev_final, 5) {
         @Override
         public MatchType next() {
             return null; // see below for options for this line
         }
     };
+
+    public @StringRes int typeName;
+    public @StringRes int typeAbbreviation;
+    public int playOrder;
+
+    MatchType(@StringRes int typeName, @StringRes int typeAbbreviation, int playOrder) {
+        this.typeName = typeName;
+        this.typeAbbreviation = typeAbbreviation;
+        this.playOrder = playOrder;
+    }
 
     public MatchType next() {
         // No bounds checking required here, because the last instance overrides
@@ -37,36 +47,15 @@ public enum MatchType {
     }
 
     public @StringRes int getTypeName() {
-        switch (this) {
-            case QUAL: return R.string.match_type_qual;
-            case OCTO: return R.string.match_type_octo;
-            case QUARTER: return R.string.match_type_quarter;
-            case SEMI: return R.string.match_type_semis;
-            case FINAL: return R.string.match_type_finals;
-            default: return R.string.match_type_unknown;
-        }
+        return typeName;
     }
 
     public @StringRes int getTypeAbbreviation() {
-        switch (this) {
-            case QUAL: return R.string.match_abbrev_qual;
-            case OCTO: return R.string.match_abbrev_octo;
-            case QUARTER: return R.string.match_abbrev_quarter;
-            case SEMI: return R.string.match_abbrev_semi;
-            case FINAL: return R.string.match_abbrev_final;
-            default: return R.string.match_abbrev_unknown;
-        }
+        return typeAbbreviation;
     }
 
     public int getPlayOrder() {
-        switch (this) {
-            case QUAL: return 1;
-            case OCTO: return 2;
-            case QUARTER: return 3;
-            case SEMI: return 4;
-            case FINAL: return 5;
-            default: return 0;
-        }
+        return playOrder;
     }
 
     public static MatchType fromShortType(String str) {
