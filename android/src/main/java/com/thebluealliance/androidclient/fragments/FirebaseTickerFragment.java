@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.fragments;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import com.firebase.client.Firebase;
@@ -118,28 +119,30 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         Firebase ticker = new Firebase(mFirebaseUrl);
         ticker.orderByKey().limitToLast(mFirebaseLoadDepth).addChildEventListener(mFirebaseSubscriber);
 
-        mFirebaseApi.getOneItemFromNode(getFirebaseUrlSuffix())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> {
-                    if (result.isJsonNull()) {
-                        mChildNodeState = FirebaseChildNodesState.NO_CHILDREN;
-                    } else if (result.isJsonObject()) {
-                        if (((JsonObject) result).entrySet().size() > 0) {
-                            mChildNodeState = FirebaseChildNodesState.HAS_CHILDREN;
-                        } else {
+        Observable<JsonElement> oneItem = mFirebaseApi.getOneItemFromNode(getFirebaseUrlSuffix());
+        if (oneItem != null) {
+            oneItem.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(result -> {
+                        if (result == null || result.isJsonNull()) {
                             mChildNodeState = FirebaseChildNodesState.NO_CHILDREN;
+                        } else if (result.isJsonObject()) {
+                            if (((JsonObject) result).entrySet().size() > 0) {
+                                mChildNodeState = FirebaseChildNodesState.HAS_CHILDREN;
+                            } else {
+                                mChildNodeState = FirebaseChildNodesState.NO_CHILDREN;
+                            }
                         }
-                    }
-                    updateViewVisibility();
-                }, throwable -> {
-                    Log.e(Constants.LOG_TAG, "Firebase rest error: " + throwable);
-                    throwable.printStackTrace();
+                        updateViewVisibility();
+                    }, throwable -> {
+                        Log.e(Constants.LOG_TAG, "Firebase rest error: " + throwable);
+                        throwable.printStackTrace();
 
-                    // net error getting item count, show no data view
-                    mChildNodeState = FirebaseChildNodesState.NO_CHILDREN;
-                    updateViewVisibility();
-                });
+                        // net error getting item count, show no data view
+                        mChildNodeState = FirebaseChildNodesState.NO_CHILDREN;
+                        updateViewVisibility();
+                    });
+        }
 
         filterListShowing = false;
     }

@@ -28,9 +28,16 @@ public class TBAAndroid extends MultiDexApplication {
     private DatafeedModule mDatafeedModule;
     private BinderModule mBinderModule;
     private DatabaseWriterModule mDatabaseWriterModule;
+    private boolean mShouldBindStetho;
+
     private HttpModule mHttpModule;
     private GceModule mGceModule;
     private ImgurModule mImgurModule;
+
+    public TBAAndroid() {
+        super();
+        mShouldBindStetho = true;
+    }
 
     @Override
     public void onCreate() {
@@ -39,13 +46,17 @@ public class TBAAndroid extends MultiDexApplication {
         getDatafeedComponenet().inject(this);
         registerActivityLifecycleCallbacks(mStatusController);
 
-        if (Utilities.isDebuggable()) {
+        if (Utilities.isDebuggable() && mShouldBindStetho) {
             Stetho.initialize(
                     Stetho.newInitializerBuilder(this)
                             .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                             .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                             .build());
         }
+    }
+
+    public void setShouldBindStetho(boolean shouldBindStetho) {
+        mShouldBindStetho = shouldBindStetho;
     }
 
     public TBAAndroidModule getModule() {

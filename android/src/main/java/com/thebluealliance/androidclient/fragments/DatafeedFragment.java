@@ -45,8 +45,8 @@ public abstract class DatafeedFragment
     @Inject protected NoDataBinder mNoDataBinder;
     @Inject protected RefreshController mRefreshController;
     @Inject protected Tracker mAnalyticsTracker;
+    @Inject protected CacheableDatafeed mDatafeed;
 
-    protected CacheableDatafeed mDatafeed;
     protected Observable<? extends T> mObservable;
     protected FragmentComponent mComponent;
     protected String mRefreshTag;
@@ -61,7 +61,6 @@ public abstract class DatafeedFragment
         inject();
         isCurrentlyVisible = false;
         mRefreshTag = getRefreshTag();
-        mDatafeed = mComponent.datafeed();
         mSubscriber.setConsumer(mBinder);
         mSubscriber.setRefreshController(mRefreshController);
         mSubscriber.setRefreshTag(mRefreshTag);

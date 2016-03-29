@@ -33,6 +33,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.adapters.DialogListWithIconsAdapter;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
+import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
@@ -90,6 +91,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     private int[] mYearsParticipated;
 
     @Inject TBAStatusController mStatusController;
+    @Inject CacheableDatafeed mDatafeed;
 
     // Should come in the format frc####
     private String mTeamKey;
@@ -163,7 +165,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
             showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
 
-        getComponent().datafeed().fetchTeamYearsParticipated(mTeamKey, null)
+        mDatafeed.fetchTeamYearsParticipated(mTeamKey, null)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation())
                 .subscribe(new YearsParticipatedDropdownSubscriber(this));
