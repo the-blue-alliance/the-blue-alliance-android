@@ -17,7 +17,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,12 +37,12 @@ public class TeamMediaFragment extends DatafeedFragment<
     private String mTeamKey;
     private int mYear;
 
-    public static Fragment newInstance(String teamKey, int year) {
+    public static TeamMediaFragment newInstance(String teamKey, int year) {
         Bundle args = new Bundle();
         args.putString(TEAM_KEY, teamKey);
         args.putInt(YEAR, year);
 
-        Fragment f = new TeamMediaFragment();
+        TeamMediaFragment f = new TeamMediaFragment();
         f.setArguments(args);
         return f;
     }

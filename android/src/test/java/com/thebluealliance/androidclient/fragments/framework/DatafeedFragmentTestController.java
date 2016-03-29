@@ -4,18 +4,18 @@ import com.google.common.base.Preconditions;
 
 import com.thebluealliance.androidclient.BaseTestActivity;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
-import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 
 import org.robolectric.Robolectric;
 import org.robolectric.util.ActivityController;
 
 import android.support.annotation.IntDef;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class DatafeedFragmentTestController<F extends DatafeedFragment> {
+public class DatafeedFragmentTestController<F extends Fragment> {
 
     private static final String FRAGMENT_TAG = "fragment";
 
