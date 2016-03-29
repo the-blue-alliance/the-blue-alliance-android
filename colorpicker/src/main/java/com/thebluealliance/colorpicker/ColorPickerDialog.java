@@ -169,6 +169,12 @@ public class ColorPickerDialog extends DialogFragment implements ColorPalette.On
         /**
          * Sets a listener to receive callbacks when the user interacts with the dialog.
          *
+         * If you want this dialog to work properly across orientation changes, you should call
+         * {@link ColorPickerDialog#setColorPickerListener(ColorPickerListener)} when your activity
+         * is recreated. The dialog will persist its initial configuration and state across
+         * configuration changes, but it cannot retain the callback object
+         * (see {@link ColorPickerDialog#onSaveInstanceState(Bundle)}).
+         *
          * @return This {@link Builder} for method chaining
          * @see ColorPickerListener
          */
