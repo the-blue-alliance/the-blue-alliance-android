@@ -1,19 +1,21 @@
 package com.thebluealliance.androidclient.renderers;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datafeed.APICache;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.types.ModelType;
+
+import android.content.res.Resources;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.APICache;
-import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.listitems.MatchListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.Match;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -31,9 +33,11 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
     public static final int RENDER_NOTIFICATION = 2;
 
     private final APICache mDatafeed;
+    private final Resources mResources;
 
-    public MatchRenderer(APICache datafeed) {
+    public MatchRenderer(APICache datafeed, Resources resources) {
         mDatafeed = datafeed;
+        mResources = resources;
     }
 
     @WorkerThread
@@ -125,7 +129,7 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
             matchTime = -1;
         }
 
-        return new MatchListElement(youTubeVideoKey, match.getTitle(true),
+        return new MatchListElement(youTubeVideoKey, match.getTitle(mResources, true),
           redAlliance, blueAlliance,
           redScore, blueScore,
           key, matchTime, match.getSelectedTeam(),

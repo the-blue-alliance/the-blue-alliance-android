@@ -23,6 +23,7 @@ import java.util.List;
 public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<ListGroup>> {
 
     private ListGroup mQualMatches;
+    private ListGroup mOctoMatches;
     private ListGroup mQuarterMatches;
     private ListGroup mSemiMatches;
     private ListGroup mFinalMatches;
@@ -35,6 +36,7 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         super();
         mDataToBind = new ArrayList<>();
         mQualMatches = new ListGroup(resources.getString(R.string.quals_header));
+        mOctoMatches = new ListGroup(resources.getString(R.string.octo_header));
         mQuarterMatches = new ListGroup(resources.getString(R.string.quarters_header));
         mSemiMatches = new ListGroup(resources.getString(R.string.semis_header));
         mFinalMatches = new ListGroup(resources.getString(R.string.finals_header));
@@ -55,6 +57,7 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
         mQualMatches.clear();
+        mOctoMatches.clear();
         mQuarterMatches.clear();
         mSemiMatches.clear();
         mFinalMatches.clear();
@@ -84,6 +87,9 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
                 switch (match.getType()) {
                     case QUAL:
                         currentGroup = mQualMatches;
+                        break;
+                    case OCTO:
+                        currentGroup = mOctoMatches;
                         break;
                     case QUARTER:
                         currentGroup = mQuarterMatches;
@@ -131,6 +137,9 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
 
         if (!mQualMatches.children.isEmpty()) {
             mDataToBind.add(mQualMatches);
+        }
+        if (!mOctoMatches.children.isEmpty()) {
+            mDataToBind.add(mOctoMatches);
         }
         if (!mQuarterMatches.children.isEmpty()) {
             mDataToBind.add(mQuarterMatches);

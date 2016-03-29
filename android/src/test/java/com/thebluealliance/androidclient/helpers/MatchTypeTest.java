@@ -15,7 +15,8 @@ public class MatchTypeTest {
 
     @Test
     public void testNextPlayOrder() {
-        assertEquals(MatchType.QUAL.next(), MatchType.QUARTER);
+        assertEquals(MatchType.QUAL.next(), MatchType.OCTO);
+        assertEquals(MatchType.OCTO.next(), MatchType.QUARTER);
         assertEquals(MatchType.QUARTER.next(), MatchType.SEMI);
         assertEquals(MatchType.SEMI.next(), MatchType.FINAL);
         assertEquals(MatchType.FINAL.next(), null);
@@ -24,7 +25,8 @@ public class MatchTypeTest {
     @Test
     public void testPreviousPlayOrder() {
         assertEquals(MatchType.QUAL.previous(), null);
-        assertEquals(MatchType.QUARTER.previous(), MatchType.QUAL);
+        assertEquals(MatchType.OCTO.previous(), MatchType.QUAL);
+        assertEquals(MatchType.QUARTER.previous(), MatchType.OCTO);
         assertEquals(MatchType.SEMI.previous(), MatchType.QUARTER);
         assertEquals(MatchType.FINAL.previous(), MatchType.SEMI);
     }
@@ -36,8 +38,7 @@ public class MatchTypeTest {
         assertEquals(MatchType.fromShortType("sf"), MatchType.SEMI);
         assertEquals(MatchType.fromShortType("f"), MatchType.FINAL);
 
-        //TODO(#430) proper eighth finals support eventually
-        assertEquals(MatchType.fromShortType("ef"), MatchType.QUARTER);
+        assertEquals(MatchType.fromShortType("ef"), MatchType.OCTO);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -51,6 +52,7 @@ public class MatchTypeTest {
         assertEquals(MatchType.fromKey("2015cthar_qf1m1"), MatchType.QUARTER);
         assertEquals(MatchType.fromKey("2015cthar_sf2m2"), MatchType.SEMI);
         assertEquals(MatchType.fromKey("2015cthar_f1m3"), MatchType.FINAL);
+        assertEquals(MatchType.fromKey("2015micmp_ef1m12"), MatchType.OCTO);
         assertEquals(MatchType.fromKey("21rwewfjsd"), MatchType.NONE);
     }
 }

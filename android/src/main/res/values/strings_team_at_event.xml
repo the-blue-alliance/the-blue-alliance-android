@@ -21,6 +21,9 @@
     <!-- possible statuses -->
     <string name="playing_in_quals">Playing in the qualification matches</string>
     <string name="not_picked">Not picked for an alliance</string>
+    <string name="in_playoffs">In the playoffs</string>
+    <string name="playing_in_octofinals">Playing in the octofinals</string>
+    <string name="eliminated_in_octofinals">Eliminated in the octofinals</string>
     <string name="playing_in_quarterfinals">Playing in the quarterfinals</string>
     <string name="eliminated_in_quarterfinals">Eliminated in the quarterfinals</string>
     <string name="playing_in_semifinals">Playing in the semifinals</string>

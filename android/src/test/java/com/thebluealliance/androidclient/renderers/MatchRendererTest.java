@@ -16,6 +16,8 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.ParameterizedRobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import android.content.res.Resources;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -34,6 +36,7 @@ import static org.mockito.Mockito.when;
 public class MatchRendererTest {
 
     @Mock APICache mDatafeed;
+    @Mock Resources mResources;
 
     private String mMatchKey;
     private Match mMatch;
@@ -56,7 +59,7 @@ public class MatchRendererTest {
     @Before
     public void SetUp() {
         MockitoAnnotations.initMocks(this);
-        mRenderer = new MatchRenderer(mDatafeed);
+        mRenderer = new MatchRenderer(mDatafeed, mResources);
         mMatch = ModelMaker.getModel(Match.class, mMatchKey);
     }
 

@@ -325,7 +325,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         Observable.from(mAllNotifications)
                 .filter(notification -> enabledNotificationKeys.contains(notification.getNotificationType()))
                 .map(firebaseNotification -> {
-                    firebaseNotification.setDatabaseWriter(mWriter);
+                    mComponent.inject(firebaseNotification);
                     return firebaseNotification.getNotification();
                 })
                 .filter(n -> n != null)
@@ -369,7 +369,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         }
 
         for (FirebaseNotification firebaseNotification : firebaseNotifications) {
-            firebaseNotification.setDatabaseWriter(mWriter);
+            mComponent.inject(firebaseNotification);
             mAllNotifications.add(0, firebaseNotification);
         }
 

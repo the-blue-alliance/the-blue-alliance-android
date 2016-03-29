@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
@@ -14,6 +14,8 @@ import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -22,14 +24,17 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
 
+import javax.inject.Inject;
+
 public class FirebaseNotification {
+    @JsonIgnore @Inject DatabaseWriter writer;
+    @JsonIgnore @Inject MatchRenderer matchRenderer;
 
     private String time;
     private Map<String, Object> payload;
 
     @JsonIgnore private String jsonString;
     @JsonIgnore private BaseNotification notification;
-    @JsonIgnore private DatabaseWriter writer;
     @JsonIgnore private static final DateFormat dateFormat;
 
     static {
@@ -40,10 +45,6 @@ public class FirebaseNotification {
     public FirebaseNotification() {
         jsonString = "";
         notification = null;
-    }
-
-    public void setDatabaseWriter(DatabaseWriter writer) {
-        this.writer = writer;
     }
 
     public Map<String, Object> getPayload() {
@@ -82,7 +83,10 @@ public class FirebaseNotification {
         }
         switch (messageType) {
             case NotificationTypes.MATCH_SCORE:
-                notification = new ScoreNotification(messageData, writer.getMatchWriter().get());
+                notification = new ScoreNotification(
+                        messageData,
+                        writer.getMatchWriter().get(),
+                        matchRenderer);
                 break;
             case NotificationTypes.UPCOMING_MATCH:
                 notification = new UpcomingMatchNotification(messageData);
