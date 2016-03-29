@@ -1,5 +1,10 @@
 package com.thebluealliance.androidclient.binders;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datafeed.DataConsumer;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
+import com.thebluealliance.androidclient.views.NoDataView;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,11 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.DataConsumer;
-import com.thebluealliance.androidclient.models.NoDataViewParams;
-import com.thebluealliance.androidclient.views.NoDataView;
 
 /**
  * A class that takes in input data model and updates views accordingly
@@ -22,8 +22,8 @@ import com.thebluealliance.androidclient.views.NoDataView;
  */
 public abstract class AbstractDataBinder<T> implements DataConsumer<T> {
     Activity mActivity;
-    NoDataBinder mNoDataBinder;
-    NoDataViewParams mNoDataParams;
+    protected NoDataBinder mNoDataBinder;
+    protected NoDataViewParams mNoDataParams;
     View mRootView;
 
     private boolean mIsDataBound;
