@@ -92,6 +92,9 @@ public class MatchHelper {
     public enum EventStatus {
         PLAYING_IN_QUALS(R.string.playing_in_quals),
         NOT_PICKED(R.string.not_picked),
+        IN_PLAYOFFS(R.string.in_playoffs),
+        PLAYING_IN_OCTOFINALS(R.string.playing_in_octofinals),
+        ELIMINATED_IN_OCTOFINALS(R.string.eliminated_in_octofinals),
         PLAYING_IN_QUARTERS(R.string.playing_in_quarterfinals),
         ELIMINATED_IN_QUARTERS(R.string.eliminated_in_quarterfinals),
         PLAYING_IN_SEMIS(R.string.playing_in_semifinals),
@@ -219,6 +222,7 @@ public class MatchHelper {
             }
         }
         ArrayList<Match> qualMatches = new ArrayList<>();
+        ArrayList<Match> octoMatches = new ArrayList<>();
         ArrayList<Match> quarterMatches = new ArrayList<>();
         ArrayList<Match> semiMatches = new ArrayList<>();
         ArrayList<Match> finalMatches = new ArrayList<>();
@@ -232,6 +236,7 @@ public class MatchHelper {
 
         boolean elimMatchPlayed = false;
         int qfPlayed = 0;
+        int efPlayed = 0;
         int sfPlayed = 0;
         int fPlayed = 0;
         for (Match match : teamMatches) {
@@ -248,6 +253,10 @@ public class MatchHelper {
 
             if (match.hasBeenPlayed()) {
                 switch (match.getType()) {
+                    case OCTO:
+                        elimMatchPlayed = true;
+                        efPlayed++;
+                        break;
                     case QUARTER:
                         elimMatchPlayed = true;
                         qfPlayed++;
@@ -267,6 +276,9 @@ public class MatchHelper {
                 switch (match.getType()) {
                     case QUAL:
                         currentGroup = qualMatches;
+                        break;
+                    case OCTO:
+                        currentGroup = octoMatches;
                         break;
                     case QUARTER:
                         currentGroup = quarterMatches;
@@ -309,7 +321,8 @@ public class MatchHelper {
             return EventStatus.NOT_AVAILABLE;
         } else if ((allQualMatchesPlayed && !inAlliance) ||
                 (!e.isHappeningNow() &&
-                        (quarterMatches.isEmpty() &&
+                        (octoMatches.isEmpty() &&
+                                quarterMatches.isEmpty() &&
                                 semiMatches.isEmpty() &&
                                 finalMatches.isEmpty()))) {
             return EventStatus.NOT_PICKED;
@@ -337,12 +350,47 @@ public class MatchHelper {
                 } else {
                     return EventStatus.ELIMINATED_IN_SEMIS;
                 }
-            } else {
+            } else if (!quarterMatches.isEmpty()){
                 if (qfPlayed < 2) {
                     return EventStatus.PLAYING_IN_QUARTERS;
                 } else {
                     return EventStatus.ELIMINATED_IN_QUARTERS;
                 }
+            } else if (!octoMatches.isEmpty()){
+                if (efPlayed < 2) {
+                    return EventStatus.PLAYING_IN_OCTOFINALS;
+                } else {
+                    return EventStatus.ELIMINATED_IN_OCTOFINALS;
+                }
+            } else {
+                return EventStatus.IN_PLAYOFFS;
+            }
+        }
+
+        if (!octoMatches.isEmpty()) {
+            int countPlayed = 0, countWon = 0;
+            for (Match match : octoMatches) {
+                if (match.hasBeenPlayed()) {
+                    JsonObject matchAlliances = match.getAlliances();
+                    JsonArray redTeams = Match.getRedTeams(matchAlliances),
+                            blueTeams = Match.getBlueTeams(matchAlliances);
+                    if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
+                        continue;
+                    }
+                    countPlayed++;
+                    if (match.didSelectedTeamWin()) {
+                        countWon++;
+                    }
+                }
+            }
+            if (countPlayed > 1 && countWon > 1) {
+                // Won octofinals
+            } else if ((countPlayed > 1 && countWon == 0) || (countPlayed > 2 && countWon == 1)) {
+                return EventStatus.ELIMINATED_IN_OCTOFINALS;
+            } else if (!e.isHappeningNow() && semiMatches.isEmpty()) {
+                return EventStatus.ELIMINATED_IN_OCTOFINALS;
+            } else {
+                return EventStatus.PLAYING_IN_OCTOFINALS;
             }
         }
 
@@ -374,7 +422,7 @@ public class MatchHelper {
         } else {
             // We've already checked for not picked/no alliance data/etc above, so if the current group is empty,
             // then the team is likely playing the first match of quarters/semis/finals.
-            return EventStatus.PLAYING_IN_QUARTERS;
+            return EventStatus.IN_PLAYOFFS;
         }
 
         if (!semiMatches.isEmpty()) {
