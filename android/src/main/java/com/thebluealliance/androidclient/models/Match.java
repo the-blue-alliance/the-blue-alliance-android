@@ -263,7 +263,8 @@ public class Match extends BasicModel<Match> {
             if (type == MatchType.QUAL) {
                 return resources.getString(type.getTypeName()) + (lineBreak ? "\n" : " ") + matchNumber;
             } else {
-                return resources.getString(type.getTypeName())+ (lineBreak ? "\n" : " ") + setNumber + " -" + matchNumber;
+                return resources.getString(type.getTypeName())+ (lineBreak ? "\n" : " ") +
+                        setNumber + " - " + matchNumber;
             }
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields for title not present\n" +
