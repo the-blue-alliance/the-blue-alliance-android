@@ -1,2 +1,2 @@
-include ':tbaMobile', ':libImgur', ':colorpicker'
+include ':tbaMobile', ':libImgur'
 include 'android'
