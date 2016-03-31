@@ -16,7 +16,7 @@ env:
   matrix:
     - ANDROID_TARGET=android-23  ANDROID_ABI=armeabi-v7a
 
-script: touch android/src/main/assets/tba.properties && ./gradlew testProdDebugUnitTest -i
+script: touch android/src/main/assets/tba.properties && ./gradlew testProdDebugProguardUnitTest -i
 
 after_success:
 - ./gradlew jacocoTestReport coveralls
