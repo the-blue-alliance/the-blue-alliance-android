@@ -6,21 +6,19 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 
 import android.app.Notification;
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 public class EventDownNotification extends GenericNotification {
 
+    String eventKey;
     String eventName;
 
     public EventDownNotification(String messageData) {
         super(NotificationTypes.EVENT_DOWN, messageData);
-    }
-
-    @Override
-    public boolean shouldShowInRecentNotificationsList() {
-        return false;
     }
 
     @Override
@@ -29,6 +27,7 @@ public class EventDownNotification extends GenericNotification {
         if (!jsonData.has("event_key")) {
             throw new JsonParseException("Notification data does not contain 'event_key'");
         }
+        eventKey = jsonData.get("event_key").getAsString();
         eventName = jsonData.has("event_name")
                 ? jsonData.get("event_name").getAsString()
                 : jsonData.get("event_key").getAsString();
@@ -40,5 +39,14 @@ public class EventDownNotification extends GenericNotification {
         message = context.getString(R.string.notification_event_down_content, eventName);
 
         return super.buildNotification(context, followsChecker);
+    }
+
+    @Nullable
+    @Override
+    public GenericNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        String header = getNotificationCardHeader(context, eventName, eventKey);
+        title = context.getString(R.string.notification_event_down);
+        message = context.getString(R.string.notification_event_down_content, eventName);
+        return new GenericNotificationViewModel(header, title, message, getNotificationTimeString(context), getIntent(context));
     }
 }

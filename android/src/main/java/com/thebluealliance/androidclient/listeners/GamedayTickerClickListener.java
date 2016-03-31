@@ -9,18 +9,21 @@ import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 public class GamedayTickerClickListener implements View.OnClickListener {
 
     private Context context;
-    private BaseNotification notification;
+    private Intent intent;
 
     public GamedayTickerClickListener(Context context, BaseNotification notification) {
         this.context = context;
-        this.notification = notification;
+        this.intent = notification.getIntent(context);
     }
 
+    public GamedayTickerClickListener(Context context, Intent intent) {
+        this.context = context;
+        this.intent = intent;
+    }
 
     @Override
     public void onClick(View v) {
-        Intent intent = notification.getIntent(context);
-        if (intent != null) {
+        if (intent != null && context != null) {
             context.startActivity(intent);
         }
     }

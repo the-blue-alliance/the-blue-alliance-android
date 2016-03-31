@@ -21,12 +21,14 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
 
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -38,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ScoreNotification extends BaseNotification {
+public class ScoreNotification extends BaseNotification<ScoreNotificationViewModel> {
 
     private final MatchWriter mWriter;
     private final MatchRenderer mRenderer;
@@ -117,8 +119,8 @@ public class ScoreNotification extends BaseNotification {
         if (blueScore > redScore) {
             scoreString = blueScore + "-" + redScore;
             CharSequence temp = firstTeams;
-            firstTeams        = secondTeams;
-            secondTeams       = temp;
+            firstTeams = secondTeams;
+            secondTeams = temp;
         } else {
             scoreString = redScore + "-" + blueScore;
         }
@@ -211,6 +213,14 @@ public class ScoreNotification extends BaseNotification {
         }
 
         return convertView;
+    }
+
+    @Nullable
+    @Override
+    public ScoreNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        String header = getNotificationCardHeader(context, EventHelper.shortName(eventName), eventKey);
+        String title = context.getString(R.string.notification_score_gameday_title, MatchHelper.getMatchTitleFromMatchKey(context, matchKey));
+        return new ScoreNotificationViewModel(header, title, getNotificationTimeString(context), getIntent(context), match);
     }
 
     private static class ViewHolder {

@@ -6,11 +6,16 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
+import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -27,13 +32,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.thebluealliance.androidclient.datafeed.HttpModule;
-
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public abstract class BaseNotification extends ListElement {
+public abstract class BaseNotification<VIEWMODEL> extends ListElement implements ViewModelRenderer<VIEWMODEL, Void> {
 
     String messageData;
     String messageType;
@@ -101,6 +104,10 @@ public abstract class BaseNotification extends ListElement {
         return convertView;
     }
 
+    /**
+     * Most notifications will build their stored notification in {@code buildNotification}, so
+     * this method should be called after that.
+     */
     public StoredNotification getStoredNotification() {
         return stored;
     }
@@ -176,10 +183,16 @@ public abstract class BaseNotification extends ListElement {
         return finalBitmap;
     }
 
-    protected String getNotificationTimeString(Context c) {
+    public String getNotificationTimeString(Context c) {
         DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(c);
         DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(c);
         if (notificationTime == null) return "";
         return dateFormat.format(notificationTime) + " " + timeFormat.format(notificationTime);
+    }
+
+    public String getNotificationCardHeader(Context context, String eventName, String eventKey) {
+        String shortName = EventHelper.shortName(eventName);
+        String shortCode = EventHelper.getShortCodeForEventKey(eventKey).toUpperCase();
+        return context.getString(R.string.gameday_ticker_event_title_format, shortName, shortCode);
     }
 }

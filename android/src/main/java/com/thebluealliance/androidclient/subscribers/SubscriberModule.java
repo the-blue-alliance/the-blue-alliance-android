@@ -150,7 +150,7 @@ public class SubscriberModule {
     }
 
     @Provides RecentNotificationsSubscriber provideRecentNotificationsSubscriber(DatabaseWriter writer, MatchRenderer matchRenderer) {
-        return new RecentNotificationsSubscriber(writer, matchRenderer);
+        return new RecentNotificationsSubscriber(writer, mActivity, matchRenderer);
     }
 
     @Provides

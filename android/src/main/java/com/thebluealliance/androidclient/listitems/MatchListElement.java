@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.listitems;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.views.MatchView;
@@ -18,7 +19,7 @@ public class MatchListElement extends ListElement implements Serializable {
 
     // utility constructor for rendering UpcomingMatchNotification
     public MatchListElement(String[] redTeams, String[] blueTeams, String matchKey, long time, String selectedTeamKey) {
-        this("", "", redTeams, blueTeams, "?", "?", matchKey, time, selectedTeamKey, false, false, false, true);
+        this("", "", redTeams, blueTeams, "?", "?", matchKey, time, selectedTeamKey, false, false, false, false);
     }
 
     public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey, long time, String selectedTeamKey, boolean showVideoIcon, boolean showColumnHeaders, boolean showMatchTitle, boolean clickable) {
