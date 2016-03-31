@@ -22,4 +22,11 @@ public class NoDataViewParams {
     public @StringRes int getTextResId() {
         return mTextResId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof NoDataViewParams)
+                && mTextResId == ((NoDataViewParams) o).getTextResId()
+                && mImageResId == ((NoDataViewParams) o).getImageResId();
+    }
 }

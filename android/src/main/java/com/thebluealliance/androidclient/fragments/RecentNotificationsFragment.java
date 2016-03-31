@@ -109,8 +109,7 @@ public class RecentNotificationsFragment
         return "recentNotifications";
     }
 
-    @Override
-    protected NoDataViewParams getNoDataParams() {
+    @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_notifications_black_48dp, R.string.no_recent_notifications);
     }
 

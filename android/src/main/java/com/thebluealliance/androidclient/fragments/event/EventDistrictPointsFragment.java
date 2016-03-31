@@ -104,8 +104,7 @@ public class EventDistrictPointsFragment
         return String.format("eventDistrictPoints_%1$s", mEventKey);
     }
 
-    @Override
-    protected NoDataViewParams getNoDataParams() {
+    @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_recent_actors_black_48dp, R.string.no_district_points);
     }
 }

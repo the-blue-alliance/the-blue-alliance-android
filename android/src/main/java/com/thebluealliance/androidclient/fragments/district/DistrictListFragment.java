@@ -51,8 +51,7 @@ public class DistrictListFragment
         return String.format("districtList_$1%d", mYear);
     }
 
-    @Override
-    protected NoDataViewParams getNoDataParams() {
+    @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_assignment_black_48dp, R.string.no_district_list);
     }
 }

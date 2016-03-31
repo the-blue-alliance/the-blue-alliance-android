@@ -80,8 +80,7 @@ public class EventAwardsFragment extends ListViewFragment<List<Award>, AwardsLis
         return String.format("eventAwards_%1$s_%2$s", mEventKey, mTeamKey);
     }
 
-    @Override
-    protected NoDataViewParams getNoDataParams() {
+    @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_trophy_black_48dp, R.string.no_awards_data);
     }
 }
