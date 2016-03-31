@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
@@ -9,7 +8,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -66,11 +64,16 @@ public class RecentNotificationsListBinder extends RecyclerViewBinder {
     }
 
     private void showNewNotificationIndicator(boolean animate) {
-        Log.d(Constants.LOG_TAG, "show notification!");
         if (mIsNotificationIndicatorVisible || mNewNotificationCount == 0) {
             return;
         }
         mIsNotificationIndicatorVisible = true;
+
+
+        // Defaults to invisible in the layout file so it doesn't show while the activity is
+        // launching; this will only have an effect the first time it's called
+        mNewNotificationIndicator.setVisibility(View.VISIBLE);
+
         if (animate) {
             if (mNewNotificationIndicator.getAnimation() != null) {
                 mNewNotificationIndicator.getAnimation().cancel();
@@ -92,7 +95,6 @@ public class RecentNotificationsListBinder extends RecyclerViewBinder {
     }
 
     private void hideNewNotificationIndicator(boolean animate) {
-        Log.d(Constants.LOG_TAG, "hide notification!");
         if (!mIsNotificationIndicatorVisible) {
             return;
         }
@@ -112,20 +114,15 @@ public class RecentNotificationsListBinder extends RecyclerViewBinder {
 
             mNewNotificationIndicator.setTranslationY(0.0f);
             mNewNotificationIndicator.startAnimation(anim);
-
-            Log.d(Constants.LOG_TAG, "hide animation started");
         } else {
             mNewNotificationIndicator.setTranslationY(-1.5f * mNewNotificationIndicator.getHeight());
-            Log.d(Constants.LOG_TAG, "hidden without animation");
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNotificationReceived(NotificationsUpdatedEvent event) {
-        Log.d(Constants.LOG_TAG, "Updating notification list");
         BaseNotification notification = event.getNotification();
         notification.parseMessageData();
-        Log.d(Constants.LOG_TAG, "Adding notificatin to list");
         addItemToBeginningOfList(notification.renderToViewModel(mActivity, null));
         if (mRecyclerView.computeVerticalScrollOffset() == 0) {
             mNewNotificationCount = 0;

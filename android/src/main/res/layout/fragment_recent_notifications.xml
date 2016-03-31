@@ -47,6 +47,7 @@
         android:drawablePadding="8dp"
         android:drawableRight="@drawable/ic_keyboard_arrow_up_white_24dp"
         android:gravity="center_vertical"
+        android:visibility="invisible"
         android:padding="8dp"
         tools:text="1 new"
         android:textColor="@color/white"
