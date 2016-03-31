@@ -1,4 +1,4 @@
-Version 3.3.1: (2016 Week 5)
+Version 3.3.2: (2016 Week 5)
     - Add support for octofinal matches
     - Fix issues linking to YouTube videos with time data
     - Add support for flashing LED for incoming notifications
@@ -7,3 +7,4 @@ Version 3.3.1: (2016 Week 5)
 
 View the full changelog for this and previous releases on the GitHub page:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
+
