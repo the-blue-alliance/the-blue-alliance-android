@@ -68,7 +68,8 @@ public class MatchBreakdownFragment extends DatafeedFragment<Match, MatchBreakdo
         return String.format("matchBreakdown_%1$s", mMatchKey);
     }
 
-    @Override public NoDataViewParams getNoDataParams() {
+    @Override
+    protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_poll_black_48dp, R.string.no_match_breakdown);
     }
 

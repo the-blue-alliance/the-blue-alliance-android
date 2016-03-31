@@ -77,7 +77,8 @@ public class EventInfoFragment
         return String.format("eventInfo_%1$s", mEventKey);
     }
 
-    @Override public NoDataViewParams getNoDataParams() {
+    @Override
+    protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_info_black_48dp, R.string.no_event_info);
     }
 }

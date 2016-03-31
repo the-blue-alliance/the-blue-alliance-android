@@ -39,7 +39,7 @@ public class TestTbaAndroid extends TBAAndroid {
 
     public MockBinderModule getMockBinderModule() {
         if (mBinderModule == null) {
-            mBinderModule = new MockBinderModule(getApplicationContext());
+            mBinderModule = new MockBinderModule();
         }
         return mBinderModule;
     }

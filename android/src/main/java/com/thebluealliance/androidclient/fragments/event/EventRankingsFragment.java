@@ -86,7 +86,8 @@ public class EventRankingsFragment extends ListViewFragment<JsonElement, Ranking
         return String.format("eventRankings_%1$s", mEventKey);
     }
 
-    @Override public NoDataViewParams getNoDataParams() {
+    @Override
+    protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_poll_black_48dp, R.string.no_ranking_data);
     }
 }

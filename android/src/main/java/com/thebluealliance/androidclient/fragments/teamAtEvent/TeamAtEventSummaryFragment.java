@@ -76,7 +76,8 @@ public class TeamAtEventSummaryFragment
         return true;
     }
 
-    @Override public NoDataViewParams getNoDataParams() {
+    @Override
+    protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_info_black_48dp, R.string.no_team_at_event_summary_data);
     }
 }

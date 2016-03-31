@@ -21,8 +21,6 @@ import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 
 import org.mockito.Mockito;
 
-import android.content.Context;
-
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -30,13 +28,6 @@ import dagger.Provides;
 
 @Module(includes = {MockRendererModule.class, MockClickListenerModule.class})
 public class MockBinderModule {
-
-    private Context mContext;
-
-    public MockBinderModule(Context context) {
-        mContext = context;
-    }
-
     @Provides
     public FragmentBinder provideFragmentBinder() {
         return Mockito.mock(FragmentBinder.class);
@@ -44,42 +35,42 @@ public class MockBinderModule {
 
     @Provides
     public EventInfoBinder provideEventInfoBinder(MatchRenderer renderer, SocialClickListener socialClickListener, EventInfoContainerClickListener eventInfoContainerClickListener) {
-        return Mockito.spy(new EventInfoBinder(renderer, socialClickListener, eventInfoContainerClickListener));
+        return Mockito.mock(EventInfoBinder.class);
     }
 
     @Provides
     public TeamInfoBinder provideTeamInfoBinder(SocialClickListener socialClickListener) {
-        return Mockito.spy(new TeamInfoBinder(socialClickListener));
+        return Mockito.mock(TeamInfoBinder.class);
     }
 
     @Provides
     public ListViewBinder provideListviewBinder() {
-        return Mockito.spy(new ListViewBinder());
+        return Mockito.mock(ListViewBinder.class);
     }
 
     @Provides
     public RecyclerViewBinder provideRecyclerViewBinder() {
-        return Mockito.spy(new RecyclerViewBinder());
+        return Mockito.mock(RecyclerViewBinder.class);
     }
 
     @Provides
     public RecentNotificationsListBinder provideRecentNotificationsListBinder() {
-        return Mockito.spy(new RecentNotificationsListBinder());
+        return Mockito.mock(RecentNotificationsListBinder.class);
     }
 
     @Provides
     public ExpandableListViewBinder provideExpandableListBinder(ModelRendererSupplier supplier) {
-        return Mockito.spy(new ExpandableListViewBinder(supplier));
+        return Mockito.mock(ExpandableListViewBinder.class);
     }
 
     @Provides
     public StatsListBinder provideStatsListBinder() {
-        return Mockito.spy(new StatsListBinder());
+        return Mockito.mock(StatsListBinder.class);
     }
 
     @Provides
     public MatchListBinder provideMatchListBinder(ModelRendererSupplier supplier) {
-        return Mockito.spy(new MatchListBinder(supplier));
+        return Mockito.mock(MatchListBinder.class);
     }
 
     @Provides
@@ -89,17 +80,17 @@ public class MockBinderModule {
 
     @Provides
     public DistrictPointsListBinder provideDistrictPointsListBinder() {
-        return Mockito.spy(new DistrictPointsListBinder(mContext.getResources()));
+        return Mockito.mock(DistrictPointsListBinder.class);
     }
 
     @Provides
     public MatchBreakdownBinder provideMatchbreakdownBinder() {
-        return Mockito.spy(new MatchBreakdownBinder());
+        return Mockito.mock(MatchBreakdownBinder.class);
     }
 
     @Provides
     public NoDataBinder provideNoDataBinder() {
-        return Mockito.spy(new NoDataBinder());
+        return Mockito.mock(NoDataBinder.class);
     }
 
     @Provides @Singleton

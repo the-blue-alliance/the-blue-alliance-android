@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.fragments.event;
 
 import com.thebluealliance.androidclient.IntegrationRobolectricRunner;
-import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.framework.FragmentTestDriver;
 
 import org.junit.Before;
@@ -21,10 +20,5 @@ public class EventDistrictPointsFragmentTest {
     @Test
     public void testLifecycle() {
         FragmentTestDriver.testLifecycle(mFragment);
-    }
-
-    @Test
-    public void testNoDataBinding() {
-        FragmentTestDriver.testNoDataBindings(mFragment, R.id.no_data);
     }
 }

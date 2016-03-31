@@ -110,7 +110,8 @@ public class TeamMediaFragment extends DatafeedFragment<
         return String.format("teamMedia_%1$s_%2$d", mTeamKey, mYear);
     }
 
-    @Override public NoDataViewParams getNoDataParams() {
+    @Override
+    protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_photo_camera_black_48dp, R.string.no_media_data);
     }
 }

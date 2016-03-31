@@ -1,18 +1,17 @@
 package com.thebluealliance.androidclient.views;
 
-import com.thebluealliance.androidclient.R;
-
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.StringRes;
-import android.support.annotation.VisibleForTesting;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import android.support.annotation.*;
+
+import com.thebluealliance.androidclient.R;
 
 public class NoDataView extends RelativeLayout {
     private ImageView mImageView;
@@ -52,15 +51,5 @@ public class NoDataView extends RelativeLayout {
 
     public void setImageVisisble(boolean visible) {
         mImageView.setVisibility(visible ? View.VISIBLE : View.GONE);
-    }
-
-    @VisibleForTesting
-    public CharSequence getText() {
-        return mTextView != null ? mTextView.getText() : null;
-    }
-
-    @VisibleForTesting
-    public Drawable getImage() {
-        return mImageView.getDrawable();
     }
 }
