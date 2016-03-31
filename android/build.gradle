@@ -71,16 +71,6 @@ android {
                 manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
             }
 
-            debugProguard {
-                applicationIdSuffix ".development"
-                testCoverageEnabled = true
-                manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
-                minifyEnabled true
-                zipAlignEnabled true
-                proguardFiles 'proguard-rules.txt'
-                testProguardFile 'proguard-rules.txt'
-            }
-
             // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
             // the apk will be in android/build/apk and you can install it by running
             // 'adb install -r <file name>'

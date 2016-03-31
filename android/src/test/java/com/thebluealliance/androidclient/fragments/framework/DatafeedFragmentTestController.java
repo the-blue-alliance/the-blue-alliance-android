@@ -52,9 +52,15 @@ public class DatafeedFragmentTestController<F extends Fragment> {
         return mFragment;
     }
 
+    public DatafeedFragmentTestController<F> withDatafeed(CacheableDatafeed datafeed) {
+        mDatafeed = datafeed;
+        return this;
+    }
 
-    public BaseTestActivity getActivity() {
-        return mActivity;
+    public DatafeedFragmentTestController<F> withActivityController
+            (ActivityController<BaseTestActivity> activityController) {
+        mActivityController = activityController;
+        return this;
     }
 
     public DatafeedFragmentTestController<F> makeTestActivityController() {
@@ -104,5 +110,8 @@ public class DatafeedFragmentTestController<F extends Fragment> {
         return this;
     }
 
+    public BaseTestActivity getActivity() {
+        return mActivity;
+    }
 
 }

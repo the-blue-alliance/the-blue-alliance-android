@@ -31,7 +31,8 @@ public class MyFavoritesFragment extends ListViewFragment<List<Favorite>, Favori
         return "myFavorites";
     }
 
-    @Override public NoDataViewParams getNoDataParams() {
+    @Override
+    protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_star_black_48dp, R.string.no_favorites_data);
     }
 }

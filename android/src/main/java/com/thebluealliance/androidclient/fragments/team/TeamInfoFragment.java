@@ -1,5 +1,12 @@
 package com.thebluealliance.androidclient.fragments.team;
 
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
 import com.thebluealliance.androidclient.eventbus.LiveEventUpdateEvent;
@@ -14,12 +21,6 @@ import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import javax.inject.Inject;
 
@@ -119,7 +120,8 @@ public class TeamInfoFragment
         return String.format("teamInfo_%1$s", mTeamKey);
     }
 
-    @Override public NoDataViewParams getNoDataParams() {
+    @Override
+    protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_info_black_48dp, R.string.no_team_info);
     }
 }

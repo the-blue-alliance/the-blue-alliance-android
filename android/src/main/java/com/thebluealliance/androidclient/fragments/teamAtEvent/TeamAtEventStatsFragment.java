@@ -63,7 +63,8 @@ public class TeamAtEventStatsFragment extends ListViewFragment<JsonElement, Team
         return String.format("teamAtEventStats_%1$s_%2$s", mTeamKey, mEventKey);
     }
 
-    @Override public NoDataViewParams getNoDataParams() {
+    @Override
+    protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_poll_black_48dp, R.string.no_stats_data);
     }
 }

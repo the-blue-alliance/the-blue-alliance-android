@@ -1,5 +1,12 @@
 package com.thebluealliance.androidclient.fragments.event;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
@@ -12,13 +19,6 @@ import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.renderers.TeamRenderer;
 import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.List;
 
@@ -78,7 +78,8 @@ public class EventTeamsFragment extends ListViewFragment<List<Team>, TeamListSub
         return String.format("eventTeams_%1$s", mEventKey);
     }
 
-    @Override public NoDataViewParams getNoDataParams() {
+    @Override
+    protected NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_group_black_48dp, R.string.no_team_data);
     }
 }
