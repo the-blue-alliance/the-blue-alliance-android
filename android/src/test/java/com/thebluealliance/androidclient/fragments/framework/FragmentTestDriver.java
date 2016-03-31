@@ -68,6 +68,7 @@ public class FragmentTestDriver {
         ShadowActivity shadowActivity = Shadows.shadowOf(activity);
 
         shadowList.performItemClick(0);
+        assertNotNull(shadowActivity.peekNextStartedActivity());
         assertEquals(shadowActivity.peekNextStartedActivity().getComponent(),
                 new ComponentName(activity, expectedActivity));
     }
