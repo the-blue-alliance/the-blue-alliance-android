@@ -28,8 +28,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import retrofit.Call;
-import retrofit.Response;
+import retrofit2.Call;
+import retrofit2.Response;
 import rx.schedulers.Schedulers;
 
 public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, Void> {
@@ -88,7 +88,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
         try {
             Call<APIStatus> statusCall = datafeed.statusCall();
             Response<APIStatus> statusResponse = statusCall.execute();
-            if (!statusResponse.isSuccess() || statusResponse.body() == null) {
+            if (!statusResponse.isSuccessful() || statusResponse.body() == null) {
                 onConnectionError();
                 return null;
             }
@@ -112,7 +112,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                             datafeed.fetchTeamPageCall(pageNum, APIv2.TBA_CACHE_WEB);
                     Response<List<Team>> teamListResponse = teamListCall.execute();
                     if (teamListResponse == null
-                            || !teamListResponse.isSuccess()
+                            || !teamListResponse.isSuccessful()
                             || teamListResponse.body() == null) {
                         onConnectionError();
                         return null;
@@ -139,7 +139,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                             datafeed.fetchEventsInYearCall(year, APIv2.TBA_CACHE_WEB);
                     Response<List<Event>> eventListResponse = eventListCall.execute();
                     if (eventListResponse == null
-                            || !eventListResponse.isSuccess()
+                            || !eventListResponse.isSuccessful()
                             || eventListResponse.body() == null) {
                         onConnectionError();
                         return null;
@@ -164,7 +164,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                             datafeed.fetchDistrictListCall(year, APIv2.TBA_CACHE_WEB);
                     Response<List<District>> districtListResponse = districtListCall.execute();
                     if (districtListResponse == null
-                            || !districtListResponse.isSuccess()
+                            || !districtListResponse.isSuccessful()
                             || districtListResponse.body() == null) {
                         onConnectionError();
                         return null;

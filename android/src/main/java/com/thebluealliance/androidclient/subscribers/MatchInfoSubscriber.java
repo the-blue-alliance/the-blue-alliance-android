@@ -15,6 +15,8 @@ import com.thebluealliance.androidclient.renderers.MediaRenderer;
 
 import org.greenrobot.eventbus.EventBus;
 
+import android.content.res.Resources;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,20 +34,23 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
         }
     }
 
-    private Gson mGson;
-    private EventBus mEventBus;
-    private MatchRenderer mRenderer;
-    private MediaRenderer mMediaRenderer;
+    private final Gson mGson;
+    private final EventBus mEventBus;
+    private final MatchRenderer mRenderer;
+    private final MediaRenderer mMediaRenderer;
+    private final Resources mResources;
     private String mMatchTitle;
     private String mMatchKey;
 
-    public MatchInfoSubscriber(Gson gson, EventBus eventBus, MatchRenderer renderer, MediaRenderer mediaRenderer) {
+    public MatchInfoSubscriber(Gson gson, EventBus eventBus, MatchRenderer renderer,
+                               MediaRenderer mediaRenderer, Resources resources) {
         super();
         mDataToBind = new ArrayList<>();
         mGson = gson;
         mEventBus = eventBus;
         mRenderer = renderer;
         mMediaRenderer = mediaRenderer;
+        mResources = resources;
         mMatchTitle = null;
         mMatchKey = null;
     }
@@ -56,7 +61,7 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
 
         mDataToBind.add(mRenderer.renderFromModel(mAPIData.match, MatchRenderer.RENDER_MATCH_INFO));
 
-        mMatchTitle = mAPIData.match.getTitle();
+        mMatchTitle = mAPIData.match.getTitle(mResources);
         mMatchKey = mAPIData.match.getKey();
         JsonArray matchVideos = mAPIData.match.getVideos();
         for (int i = 0; i < matchVideos.size(); i++) {

@@ -26,6 +26,8 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import android.content.res.Resources;
+
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -40,6 +42,7 @@ public class MatchInfoSubscriberTest {
 
     @Mock EventBus mEventBus;
     @Mock APICache mCache;
+    @Mock Resources mResources;
 
     private MatchInfoSubscriber mSubscriber;
     private Gson mGson;
@@ -51,9 +54,9 @@ public class MatchInfoSubscriberTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         mGson = HttpModule.getGson();
-        mRenderer = spy(new MatchRenderer(mCache));
+        mRenderer = spy(new MatchRenderer(mCache, mResources));
         mMediaRenderer = spy(new MediaRenderer());
-        mSubscriber = new MatchInfoSubscriber(mGson, mEventBus, mRenderer, mMediaRenderer);
+        mSubscriber = new MatchInfoSubscriber(mGson, mEventBus, mRenderer, mMediaRenderer, mResources);
         mData = new Model(
           ModelMaker.getModel(Match.class, "2015necmp_f1m1"),
           ModelMaker.getModel(Event.class, "2015necmp"));

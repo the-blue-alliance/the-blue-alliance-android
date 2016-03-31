@@ -127,7 +127,7 @@ public class CompLevelStartingNotification extends BaseNotification<CompLevelSta
                 compLevel = r.getString(R.string.quals_header);
                 break;
             case "ef":
-                compLevel = r.getString(R.string.eigths_header);
+                compLevel = r.getString(R.string.octo_header);
                 break;
             case "qf":
                 compLevel = r.getString(R.string.quarters_header);

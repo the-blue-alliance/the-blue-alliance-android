@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.imgur;
 
 import com.google.gson.Gson;
 
-import com.squareup.okhttp.OkHttpClient;
+import okhttp3.OkHttpClient;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.imgur.ImgurApi;
@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import retrofit.Retrofit;
+import retrofit2.Retrofit;
 
 @Module(includes = HttpModule.class)
 public class ImgurModule {

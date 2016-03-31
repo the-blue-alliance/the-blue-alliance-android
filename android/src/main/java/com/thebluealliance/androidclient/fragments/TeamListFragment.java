@@ -13,6 +13,11 @@ import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.subscribers.TeamListRecyclerSubscriber;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import java.util.List;
 
 import io.nlopez.smartadapters.SmartAdapter;
@@ -62,8 +67,12 @@ public class TeamListFragment extends RecyclerViewFragment<List<Team>, TeamListR
 
     @Override
     protected Observable<List<Team>> getObservable(String tbaCacheHeader) {
-        return mDatafeed.fetchTeamPage(mPageStart, tbaCacheHeader)
-                .zipWith(mDatafeed.fetchTeamPage(mPageStart + 1, tbaCacheHeader), mCombiner);
+        Observable<List<Team>> teamPage = mDatafeed.fetchTeamPage(mPageStart, tbaCacheHeader);
+        if (teamPage != null) {
+            return teamPage.zipWith(mDatafeed.fetchTeamPage(mPageStart + 1, tbaCacheHeader),
+                    mCombiner);
+        }
+        return null;
     }
 
     @Override

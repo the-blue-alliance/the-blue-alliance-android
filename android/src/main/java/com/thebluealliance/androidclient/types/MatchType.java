@@ -1,21 +1,36 @@
 package com.thebluealliance.androidclient.types;
 
+import com.thebluealliance.androidclient.R;
+
+import android.support.annotation.StringRes;
+
 public enum MatchType {
-    NONE,
-    QUAL {
+    NONE(R.string.match_type_unknown, R.string.match_abbrev_unknown, 0),
+    QUAL(R.string.match_type_qual, R.string.match_abbrev_qual, 1) {
         @Override
         public MatchType previous() {
             return null; // see below for options for this line
         }
     },
-    QUARTER,
-    SEMI,
-    FINAL {
+    OCTO(R.string.match_type_octo, R.string.match_abbrev_octo, 2),
+    QUARTER(R.string.match_type_quarter, R.string.match_abbrev_quarter, 3),
+    SEMI(R.string.match_type_semis, R.string.match_abbrev_semi, 4),
+    FINAL(R.string.match_type_finals, R.string.match_abbrev_final, 5) {
         @Override
         public MatchType next() {
             return null; // see below for options for this line
         }
     };
+
+    public @StringRes int typeName;
+    public @StringRes int typeAbbreviation;
+    public int playOrder;
+
+    MatchType(@StringRes int typeName, @StringRes int typeAbbreviation, int playOrder) {
+        this.typeName = typeName;
+        this.typeAbbreviation = typeAbbreviation;
+        this.playOrder = playOrder;
+    }
 
     public MatchType next() {
         // No bounds checking required here, because the last instance overrides
@@ -31,11 +46,24 @@ public enum MatchType {
         return valueOf(str);
     }
 
+    public @StringRes int getTypeName() {
+        return typeName;
+    }
+
+    public @StringRes int getTypeAbbreviation() {
+        return typeAbbreviation;
+    }
+
+    public int getPlayOrder() {
+        return playOrder;
+    }
+
     public static MatchType fromShortType(String str) {
         switch (str) {
             case "qm":
                 return QUAL;
             case "ef":
+                return OCTO;
             case "qf":
                 return QUARTER;
             case "sf":
@@ -49,7 +77,8 @@ public enum MatchType {
 
     public static MatchType fromKey(String key) {
         if (key.contains("_qm")) return QUAL;
-        if (key.contains("_ef") || key.contains("_qf")) return QUARTER;
+        if (key.contains("_qf")) return QUARTER;
+        if (key.contains("_ef")) return OCTO;
         if (key.contains("_sf")) return SEMI;
         if (key.contains("_f")) return FINAL;
         return NONE;

@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotifica
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
@@ -54,6 +55,7 @@ import static org.mockito.Mockito.when;
 public class RecentNotificationsSubscriberTest {
 
     @Mock Database mDb;
+    @Mock MatchRenderer mRenderer;
 
     private RecentNotificationsSubscriber mSubscriber;
     private List<StoredNotification> mNotifications;
@@ -71,7 +73,7 @@ public class RecentNotificationsSubscriberTest {
 
         DatabaseMocker.mockNotificationsTable(mDb);
         DatabaseWriter writer = mockDatabaseWriter();
-        mSubscriber = new RecentNotificationsSubscriber(writer, mContext);
+        mSubscriber = new RecentNotificationsSubscriber(writer, mContext, mRenderer);
         List<JsonObject> notificationData = ModelMaker.getMultiModelList(JsonObject.class,
           "notification_alliance_selection",
           "notification_awards_posted",

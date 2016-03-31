@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.datafeed.status;
 
 import com.google.gson.Gson;
 
-import com.squareup.okhttp.Cache;
+import okhttp3.Cache;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
