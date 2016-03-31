@@ -66,8 +66,7 @@ public class DistrictEventsFragment extends ListViewFragment<List<Event>, EventL
         return String.format("districtEvents_%1$s_%2$d", mShort, mYear);
     }
 
-    @Override
-    protected NoDataViewParams getNoDataParams() {
+    @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_event_black_48dp, R.string.no_event_data);
     }
 }
