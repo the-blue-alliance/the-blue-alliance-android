@@ -27,7 +27,13 @@ buildscript {
 
         // auto-push releases
         classpath 'com.github.triplet.gradle:play-publisher:1.1.4'
+
+        // Retrolambda + Lint fixes
+        classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
     }
+
+    // Exclude the linter version that the android plugin depends on.
+    configurations.classpath.exclude group: 'com.android.tools.external.lombok'
 }
 
 
