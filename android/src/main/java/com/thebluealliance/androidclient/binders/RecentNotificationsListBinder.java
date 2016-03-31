@@ -5,6 +5,9 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -117,7 +120,8 @@ public class RecentNotificationsListBinder extends RecyclerViewBinder {
         }
     }
 
-    public void onEventMainThread(NotificationsUpdatedEvent event) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNotificationReceived(NotificationsUpdatedEvent event) {
         Log.d(Constants.LOG_TAG, "Updating notification list");
         BaseNotification notification = event.getNotification();
         notification.parseMessageData();

@@ -8,6 +8,8 @@ import com.thebluealliance.androidclient.binders.ListViewBinder;
 import com.thebluealliance.androidclient.binders.MatchBreakdownBinder;
 import com.thebluealliance.androidclient.binders.MatchListBinder;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
+import com.thebluealliance.androidclient.binders.RecentNotificationsListBinder;
+import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.binders.StatsListBinder;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
 import com.thebluealliance.androidclient.fragments.framework.SimpleBinder;
@@ -44,6 +46,16 @@ public class MockBinderModule {
     @Provides
     public ListViewBinder provideListviewBinder() {
         return Mockito.mock(ListViewBinder.class);
+    }
+
+    @Provides
+    public RecyclerViewBinder provideRecyclerViewBinder() {
+        return Mockito.mock(RecyclerViewBinder.class);
+    }
+
+    @Provides
+    public RecentNotificationsListBinder provideRecentNotificationsListBinder() {
+        return Mockito.mock(RecentNotificationsListBinder.class);
     }
 
     @Provides

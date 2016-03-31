@@ -1,20 +1,15 @@
 package com.thebluealliance.androidclient.itemviews;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
-import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import butterknife.Bind;
@@ -28,8 +23,11 @@ public class ScoreNotificationItemView extends BindableFrameLayout<ScoreNotifica
     @Bind(R.id.notification_time) TextView time;
     @Bind(R.id.summary_container) ViewGroup summaryContainer;
 
+    MatchRenderer mRenderer;
+
     public ScoreNotificationItemView(Context context) {
         super(context);
+        mRenderer = new MatchRenderer(null, getResources());
     }
 
     @Override
@@ -49,6 +47,9 @@ public class ScoreNotificationItemView extends BindableFrameLayout<ScoreNotifica
         time.setText(model.getNotificationTime());
         summaryContainer.setOnClickListener(new GamedayTickerClickListener(getContext(), model.getIntent()));
 
-        model.getMatch().render(false, false, false, false).getView(getContext(), LayoutInflater.from(getContext()), matchView);
+        MatchListElement renderedMatch = mRenderer.renderFromModel(model.getMatch(), MatchRenderer.RENDER_NOTIFICATION);
+        if (renderedMatch != null) {
+            renderedMatch.getView(getContext(), LayoutInflater.from(getContext()), matchView);
+        }
     }
 }

@@ -45,7 +45,6 @@ import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventStatsF
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.models.FirebaseNotification;
-
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 import javax.inject.Singleton;

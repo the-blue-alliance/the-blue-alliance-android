@@ -149,7 +149,7 @@ public class SubscriberModule {
         return new WebcastListSubscriber(renderer);
     }
 
-    @Provides RecentNotificationsSubscriber provideRecentNotificationsSubscriber(DatabaseWriter writer) {
+    @Provides RecentNotificationsSubscriber provideRecentNotificationsSubscriber(DatabaseWriter writer, MatchRenderer matchRenderer) {
         return new RecentNotificationsSubscriber(writer, mActivity, matchRenderer);
     }
 
