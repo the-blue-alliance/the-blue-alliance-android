@@ -69,8 +69,7 @@ public class TeamAtDistrictBreakdownFragment
         return String.format("teamAtDistrictBreakdown_%1$s_%2$s_%3$d", mTeamKey, mDistrictShort, mYear);
     }
 
-    @Override
-    protected NoDataViewParams getNoDataParams() {
+    @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_assignment_black_48dp, R.string.no_team_district_breakdown);
     }
 }

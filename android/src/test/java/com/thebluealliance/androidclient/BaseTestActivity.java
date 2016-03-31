@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient;
 
 
 import com.thebluealliance.androidclient.activities.DatafeedActivity;
+import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.DaggerMockFragmentComponent;
@@ -14,9 +15,13 @@ import org.greenrobot.eventbus.EventBus;
 
 import android.support.annotation.VisibleForTesting;
 
+import javax.inject.Inject;
+
 public class BaseTestActivity extends DatafeedActivity {
 
     private MockFragmentComponent mMockComponent;
+
+    @Inject CacheableDatafeed mDatafeed;
 
     @Override
     public void inject() {
@@ -53,5 +58,10 @@ public class BaseTestActivity extends DatafeedActivity {
     @VisibleForTesting
     public EventBus getEventBus() {
         return mEventBus;
+    }
+
+    @VisibleForTesting
+    public CacheableDatafeed getDatafeed() {
+        return mDatafeed;
     }
 }

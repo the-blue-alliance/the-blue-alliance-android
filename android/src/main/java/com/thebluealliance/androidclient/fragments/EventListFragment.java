@@ -98,8 +98,7 @@ public class EventListFragment extends ListViewFragment<List<Event>, EventListSu
         }
     }
 
-    @Override
-    protected NoDataViewParams getNoDataParams() {
+    @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_event_black_48dp, R.string.no_events_found);
     }
 }
