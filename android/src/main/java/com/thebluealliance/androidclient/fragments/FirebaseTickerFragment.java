@@ -7,6 +7,7 @@ import com.firebase.client.Firebase;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.ViewUtilities;
 import com.thebluealliance.androidclient.adapters.AnimatedRecyclerMultiAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -36,6 +37,8 @@ import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.NoDataView;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -47,6 +50,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -62,8 +66,6 @@ import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import io.nlopez.smartadapters.SmartAdapter;
-import io.nlopez.smartadapters.adapters.RecyclerMultiAdapter;
 import io.nlopez.smartadapters.utils.Mapper;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -74,6 +76,8 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
 
     public static final String FIREBASE_URL_DEFAULT = "https://thebluealliance.firebaseio.com/";
     public static final int FIREBASE_LOAD_DEPTH_DEFAULT = 25;
+
+    private static final int ANIMATION_DURATION = 300;
 
     private enum FirebaseChildNodesState {
         LOADING,
@@ -86,10 +90,12 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
 
     @Bind(R.id.list) RecyclerView mNotificationsRecyclerView;
     @Bind(R.id.filter_list) ListView mFilterListView;
+    @Bind(R.id.filter_list_container) View mFilterListContainer;
     @Bind(R.id.no_data) NoDataView mNoDataView;
     @Bind(R.id.progress) ProgressBar mProgressBar;
-    @Bind(R.id.left_button) TextView leftButton;
-    @Bind(R.id.right_button) TextView rightButton;
+    @Bind(R.id.left_button) TextView mLeftButton;
+    @Bind(R.id.right_button) TextView mRightButton;
+    @Bind(R.id.filter_shadow) View mShadow;
 
     private AnimatedRecyclerMultiAdapter mNotificationsAdapter;
     private ListViewAdapter mNotificationFilterAdapter;
@@ -104,10 +110,6 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     private String mFirebaseUrl;
     private int mFirebaseLoadDepth;
     protected FragmentComponent mComponent;
-
-    protected abstract void inject();
-
-    protected abstract String getFirebaseUrlSuffix();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -183,8 +185,8 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         }
         mFilterListView.setAdapter(mNotificationFilterAdapter);
 
-        leftButton.setOnClickListener(this);
-        rightButton.setOnClickListener(this);
+        mLeftButton.setOnClickListener(this);
+        mRightButton.setOnClickListener(this);
 
         mNotificationsRecyclerView.setHasFixedSize(true);
         mNotificationsRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -200,10 +202,16 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
             mNotificationsRecyclerView.setAdapter(mNotificationsAdapter);
         }
 
-        setUpFilterListViews();
         updateViewVisibility();
+        // Do this after layout so that the filter container will have a defined height
+        ViewUtilities.runOnceAfterLayout(mFilterListContainer, () -> hideFilter(false, null));
 
         return v;
+    }
+
+    @Override public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        hideFilter(false, null);
     }
 
     private void updateViewVisibility() {
@@ -261,35 +269,101 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         int id = v.getId();
         if (id == R.id.right_button) {
             if (!filterListShowing) {
-                filterListShowing = true;
-                setUpFilterListViews();
-                // Save the initially checked items
+                showFilter(true);
                 enabledNotifications = getEnabledNotificationKeys();
             } else {
-                filterListShowing = false;
-                setUpFilterListViews();
-                // Apply the filter
-                updateList();
+                hideFilter(true, this::updateList);
             }
         } else if (id == R.id.left_button) {
-            filterListShowing = false;
-            setUpFilterListViews();
-            // Reset the filter options
-            mNotificationFilterAdapter = createFilterListAdapter(enabledNotifications);
-            mFilterListView.setAdapter(mNotificationFilterAdapter);
+            // Don't reset the adapter until the list is closed
+            // This prevents the checkboxes from briefly flashing to their default state before
+            // the list is hidden
+            hideFilter(true, () -> {
+                mNotificationFilterAdapter = createFilterListAdapter(enabledNotifications);
+                mFilterListView.setAdapter(mNotificationFilterAdapter);
+            });
         }
     }
 
-    private void setUpFilterListViews() {
-        if (filterListShowing) {
-            mFilterListView.setVisibility(View.VISIBLE);
-            leftButton.setVisibility(View.VISIBLE);
-            leftButton.setText(R.string.firebase_cancel);
-            rightButton.setText(R.string.firebase_apply_filter);
+    private void showFilter(boolean animate) {
+        filterListShowing = true;
+
+        mFilterListContainer.setVisibility(View.VISIBLE);
+        mLeftButton.setVisibility(View.VISIBLE);
+        mLeftButton.setText(R.string.firebase_cancel);
+        mRightButton.setText(R.string.firebase_apply_filter);
+        mShadow.setVisibility(View.GONE);
+
+        int viewHeight = getView().getHeight();
+
+        if (animate) {
+            mFilterListContainer.setTranslationY(viewHeight);
+            mFilterListView.setAlpha(0.0f);
+            mFilterListView.animate()
+                    .alpha(1.0f)
+                    .setDuration(ANIMATION_DURATION)
+                    .setStartDelay(ANIMATION_DURATION)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override public void onAnimationEnd(Animator animation) {
+                            mFilterListView.setAlpha(1.0f);
+                        }
+                    }).start();
+            mFilterListContainer.animate()
+                    .translationY(0)
+                    .setDuration(ANIMATION_DURATION)
+                    .setStartDelay(0)
+                    .setInterpolator(new AccelerateDecelerateInterpolator())
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override public void onAnimationEnd(Animator animation) {
+                            mFilterListContainer.setTranslationY(0);
+                        }
+                    }).start();
         } else {
-            mFilterListView.setVisibility(View.GONE);
-            leftButton.setVisibility(View.GONE);
-            rightButton.setText(R.string.firebase_filter);
+            mFilterListContainer.setTranslationY(0);
+        }
+    }
+
+    private void hideFilter(boolean animate, Runnable onHidden) {
+        filterListShowing = false;
+
+        mLeftButton.setVisibility(View.GONE);
+        mRightButton.setText(R.string.firebase_filter);
+
+        int viewHeight = getView().getHeight();
+
+        if (animate) {
+            mFilterListContainer.setTranslationY(0);
+            mFilterListView.setAlpha(1.0f);
+            mFilterListView.animate()
+                    .alpha(0.0f)
+                    .setDuration(ANIMATION_DURATION)
+                    .setStartDelay(0)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override public void onAnimationEnd(Animator animation) {
+                            mFilterListView.setAlpha(0.0f);
+                        }
+                    }).start();
+            mFilterListContainer.animate()
+                    .translationY(viewHeight)
+                    .setDuration(ANIMATION_DURATION)
+                    .setStartDelay(ANIMATION_DURATION)
+                    .setInterpolator(new AccelerateDecelerateInterpolator())
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override public void onAnimationEnd(Animator animation) {
+                            mFilterListContainer.setTranslationY(viewHeight);
+                            mFilterListContainer.setVisibility(View.GONE);
+                            mShadow.setVisibility(View.VISIBLE);
+                            if (onHidden != null) {
+                                onHidden.run();
+                            }
+                        }
+                    }).start();
+        } else {
+            mFilterListContainer.setTranslationY(mFilterListContainer.getHeight());
+            mShadow.setVisibility(View.VISIBLE);
+            if (onHidden != null) {
+                onHidden.run();
+            }
         }
     }
 
@@ -408,4 +482,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         return mapper;
     }
 
+    protected abstract void inject();
+
+    protected abstract String getFirebaseUrlSuffix();
 }
