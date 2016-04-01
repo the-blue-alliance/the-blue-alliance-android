@@ -99,6 +99,7 @@ public class DatafeedFragmentTestController<F extends Fragment> {
 
     public DatafeedFragmentTestController<F> destroy() {
         Preconditions.checkState(mState == STATE_STOPPED, "Must have stopped to destroy");
+        mActivity.finish();
         mActivityController.destroy();
         mState = STATE_DESTROYED;
         return this;

@@ -71,6 +71,8 @@ public class FragmentTestDriver {
         assertNotNull(shadowActivity.peekNextStartedActivity());
         assertEquals(shadowActivity.peekNextStartedActivity().getComponent(),
                 new ComponentName(activity, expectedActivity));
+
+        activity.finish();
     }
 
     public static <F extends DatafeedFragment<T, V, S, B>, T, V, S extends BaseAPISubscriber<T, V>,
@@ -91,5 +93,7 @@ public class FragmentTestDriver {
         assertNotNull(params);
 
         verify(binder).setNoDataParams(params);
+
+        controller.pause().stop().destroy();
     }
 }
