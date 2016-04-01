@@ -74,9 +74,10 @@ public class FragmentTestDriver {
 
     public static <F extends DatafeedFragment<T, V, S, B>, T, V, S extends BaseAPISubscriber<T, V>,
             B extends AbstractDataBinder<V>> void testNoDataBindings(F fragment, @IdRes int noDataViewRes) {
-        /*DatafeedFragmentTestController<F> controller = getController(fragment);
+        DatafeedFragmentTestController<F> controller = getController(fragment);
         controller.makeTestActivityController().makeActivity().attach();
 
+        /*
         NoDataBinder noDataBinder = (NoDataBinder) Whitebox.getInternalState(fragment, "mNoDataBinder");
         B binder = (B) Whitebox.getInternalState(fragment, "mBinder");
         assertNotNull(noDataBinder);
@@ -90,7 +91,7 @@ public class FragmentTestDriver {
         assertNotNull(params);
 
         verify(binder).setNoDataParams(params);
-
-        controller.pause().stop().destroy();*/
+        */
+        controller.pause().stop().destroy();
     }
 }
