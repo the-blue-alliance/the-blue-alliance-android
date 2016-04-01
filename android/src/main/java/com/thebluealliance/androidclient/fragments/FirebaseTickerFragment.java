@@ -60,6 +60,8 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import io.nlopez.smartadapters.SmartAdapter;
 import io.nlopez.smartadapters.adapters.RecyclerMultiAdapter;
 import io.nlopez.smartadapters.utils.Mapper;
@@ -82,27 +84,25 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     @Inject DatabaseWriter mWriter;
     @Inject @Named("firebase_api") FirebaseAPI mFirebaseApi;
 
-    private RecyclerView mNotificationsRecyclerView;
-    private ListView mFilterListView;
-    private NoDataView mNoDataView;
-    private ProgressBar mProgressBar;
+    @Bind(R.id.list) RecyclerView mNotificationsRecyclerView;
+    @Bind(R.id.filter_list) ListView mFilterListView;
+    @Bind(R.id.no_data) NoDataView mNoDataView;
+    @Bind(R.id.progress) ProgressBar mProgressBar;
+    @Bind(R.id.left_button) TextView leftButton;
+    @Bind(R.id.right_button) TextView rightButton;
+
     private AnimatedRecyclerMultiAdapter mNotificationsAdapter;
     private ListViewAdapter mNotificationFilterAdapter;
     private List<BaseNotification> mAllNotifications = new ArrayList<>();
     private boolean mAreFilteredNotificationsVisible = false;
     private ResumeableRxFirebase mFirebaseSubscriber;
     private LinearLayoutManager mLayoutManager;
-
     private Parcelable mListState;
-
-    private TextView leftButton, rightButton;
     private Set<String> enabledNotifications;
     private boolean filterListShowing;
-
     private FirebaseChildNodesState mChildNodeState = FirebaseChildNodesState.LOADING;
     private String mFirebaseUrl;
     private int mFirebaseLoadDepth;
-
     protected FragmentComponent mComponent;
 
     protected abstract void inject();
@@ -173,9 +173,9 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_firebase_ticker, null);
-        mFilterListView = (ListView) v.findViewById(R.id.filter_list);
 
-        mNoDataView = (NoDataView) v.findViewById(R.id.no_data);
+        ButterKnife.bind(this, v);
+
         mNoDataView.setImage(R.drawable.ic_notifications_black_48dp);
 
         if (mNotificationFilterAdapter == null) {
@@ -183,19 +183,13 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         }
         mFilterListView.setAdapter(mNotificationFilterAdapter);
 
-        leftButton = (TextView) v.findViewById(R.id.left_button);
-        rightButton = (TextView) v.findViewById(R.id.right_button);
         leftButton.setOnClickListener(this);
         rightButton.setOnClickListener(this);
 
-        mNotificationsRecyclerView = (RecyclerView) v.findViewById(R.id.list);
         mNotificationsRecyclerView.setHasFixedSize(true);
         mNotificationsRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
         mLayoutManager = new LinearLayoutManager(getContext());
         mNotificationsRecyclerView.setLayoutManager(mLayoutManager);
-        mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
-        updateViewVisibility();
 
         if (mNotificationsAdapter != null) {
             mNotificationsRecyclerView.setAdapter(mNotificationsAdapter);
@@ -207,6 +201,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         }
 
         setUpFilterListViews();
+        updateViewVisibility();
 
         return v;
     }
