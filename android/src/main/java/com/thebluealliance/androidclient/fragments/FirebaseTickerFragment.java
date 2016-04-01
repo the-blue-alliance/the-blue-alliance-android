@@ -14,16 +14,35 @@ import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.firebase.FirebaseChildType;
 import com.thebluealliance.androidclient.firebase.ResumeableRxFirebase;
+import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
+import com.thebluealliance.androidclient.itemviews.AllianceSelectionNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.AwardsPostedNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.CompLevelStartingNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.GenericNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.ScheduleUpdatedNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.ScoreNotificationItemView;
+import com.thebluealliance.androidclient.itemviews.UpcomingMatchNotificationItemView;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.gameday.GamedayTickerFilterCheckbox;
 import com.thebluealliance.androidclient.models.FirebaseNotification;
+import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.ScheduleUpdatedNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
+import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.NoDataView;
 
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +60,8 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.nlopez.smartadapters.SmartAdapter;
+import io.nlopez.smartadapters.adapters.RecyclerMultiAdapter;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -60,17 +81,18 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     @Inject DatabaseWriter mWriter;
     @Inject @Named("firebase_api") FirebaseAPI mFirebaseApi;
 
-    private ListView mListView;
+    private RecyclerView mNotificationsRecyclerView;
     private ListView mFilterListView;
     private NoDataView mNoDataView;
     private ProgressBar mProgressBar;
-    private ListViewAdapter mNotificationsAdapter;
+    private RecyclerMultiAdapter mNotificationsAdapter;
     private ListViewAdapter mNotificationFilterAdapter;
-    private Parcelable mListState;
-    private int mFirstVisiblePosition;
-    private List<FirebaseNotification> mAllNotifications = new ArrayList<>();
+    private List<BaseNotification> mAllNotifications = new ArrayList<>();
     private boolean mAreFilteredNotificationsVisible = false;
     private ResumeableRxFirebase mFirebaseSubscriber;
+    private LinearLayoutManager mLayoutManager;
+
+    private Parcelable mListState;
 
     private TextView leftButton, rightButton;
     private Set<String> enabledNotifications;
@@ -110,7 +132,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                     throwable.printStackTrace();
                     // Show the "none found" warning
                     mProgressBar.setVisibility(View.GONE);
-                    mListView.setVisibility(View.GONE);
+                    mNotificationsRecyclerView.setVisibility(View.GONE);
                     mNoDataView.setVisibility(View.VISIBLE);
                     mNoDataView.setText(R.string.firebase_no_matching_items);
                 });
@@ -165,18 +187,23 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         leftButton.setOnClickListener(this);
         rightButton.setOnClickListener(this);
 
-        mListView = (ListView) v.findViewById(R.id.list);
+        mNotificationsRecyclerView = (RecyclerView) v.findViewById(R.id.list);
+        mNotificationsRecyclerView.setHasFixedSize(true);
+        mNotificationsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mNotificationsRecyclerView.setLayoutManager(mLayoutManager);
         mProgressBar = (ProgressBar) v.findViewById(R.id.progress);
         updateViewVisibility();
 
         if (mNotificationsAdapter != null) {
-            mListView.setAdapter(mNotificationsAdapter);
-            mListView.onRestoreInstanceState(mListState);
-            mListView.setSelection(mFirstVisiblePosition);
+            mNotificationsRecyclerView.setAdapter(mNotificationsAdapter);
+            mLayoutManager.onRestoreInstanceState(mListState);
             Log.d("onCreateView", "using existing adapter");
         } else {
-            mNotificationsAdapter = new ListViewAdapter(getActivity(), new ArrayList<>());
-            mListView.setAdapter(mNotificationsAdapter);
+            SmartAdapter.MultiAdaptersCreator creator = SmartAdapter.items(new ArrayList<>());
+            initializeMaps(creator);
+            mNotificationsAdapter = creator.into(mNotificationsRecyclerView);
         }
 
         setUpFilterListViews();
@@ -189,14 +216,14 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
             if (mAreFilteredNotificationsVisible) {
                 // We've received at least one notification from the client library, and it's
                 // visible with the current applied filter. Show the list!
-                mListView.setVisibility(View.VISIBLE);
+                mNotificationsRecyclerView.setVisibility(View.VISIBLE);
                 mProgressBar.setVisibility(View.GONE);
                 mNoDataView.setVisibility(View.GONE);
             } else {
                 // We've received at least one notification from the client library, but no
                 // notification are visible with the current applied filter. Show the no data view,
                 // but with a special "none found with that filter" message
-                mListView.setVisibility(View.GONE);
+                mNotificationsRecyclerView.setVisibility(View.GONE);
                 mProgressBar.setVisibility(View.GONE);
                 mNoDataView.setVisibility(View.VISIBLE);
                 mNoDataView.setText(R.string.firebase_no_matching_items);
@@ -204,14 +231,14 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         } else if (mChildNodeState == FirebaseChildNodesState.NO_CHILDREN) {
             // We've received the result of the REST call to the server and the list is (at least
             // for now) definitely empty. Show the no data view
-            mListView.setVisibility(View.GONE);
+            mNotificationsRecyclerView.setVisibility(View.GONE);
             mProgressBar.setVisibility(View.GONE);
             mNoDataView.setVisibility(View.VISIBLE);
             mNoDataView.setText(R.string.firebase_empty_ticker);
         } else {
             // We haven't yet received any notifications from the client library, but we also
             // aren't certain that the list is empty. Show the spinner.
-            mListView.setVisibility(View.GONE);
+            mNotificationsRecyclerView.setVisibility(View.GONE);
             mProgressBar.setVisibility(View.VISIBLE);
             mNoDataView.setVisibility(View.GONE);
         }
@@ -226,11 +253,10 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     @Override
     public void onPause() {
         super.onPause();
-        if (mListView != null) {
+        if (mNotificationsRecyclerView != null) {
             Log.d("onPause", "saving adapter");
-            mNotificationsAdapter = (ListViewAdapter) mListView.getAdapter();
-            mListState = mListView.onSaveInstanceState();
-            mFirstVisiblePosition = mListView.getFirstVisiblePosition();
+            mNotificationsAdapter = (RecyclerMultiAdapter) mNotificationsRecyclerView.getAdapter();
+            mListState = mLayoutManager.onSaveInstanceState();
         }
         mFirebaseSubscriber.pauseDelivery();
     }
@@ -261,19 +287,13 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
 
     private void setUpFilterListViews() {
         if (filterListShowing) {
-            // Show the filter list
             mFilterListView.setVisibility(View.VISIBLE);
-            // Show the left button
             leftButton.setVisibility(View.VISIBLE);
             leftButton.setText(R.string.firebase_cancel);
-            // Set up right button
             rightButton.setText(R.string.firebase_apply_filter);
         } else {
-            // Hide the filter list
             mFilterListView.setVisibility(View.GONE);
-            // Hide the left button
             leftButton.setVisibility(View.GONE);
-            // Update the right button
             rightButton.setText(R.string.firebase_filter);
         }
     }
@@ -324,11 +344,11 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
 
         Observable.from(mAllNotifications)
                 .filter(notification -> enabledNotificationKeys.contains(notification.getNotificationType()))
-                .map(firebaseNotification -> {
-                    mComponent.inject(firebaseNotification);
-                    return firebaseNotification.getNotification();
-                })
                 .filter(n -> n != null)
+                .map(notification -> {
+                    notification.parseMessageData();
+                    return notification.renderToViewModel(getContext(), null);
+                })
                 .toList()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(notificationsList -> {
@@ -338,8 +358,8 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                         return;
                     }
 
-                    mNotificationsAdapter.clear();
-                    mNotificationsAdapter.addAll(notificationsList);
+                    mNotificationsAdapter.clearItems();
+                    mNotificationsAdapter.addItems(notificationsList);
                     mNotificationsAdapter.notifyDataSetChanged();
                     updateViewVisibility();
                 }, throwable -> {
@@ -370,10 +390,20 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
 
         for (FirebaseNotification firebaseNotification : firebaseNotifications) {
             mComponent.inject(firebaseNotification);
-            mAllNotifications.add(0, firebaseNotification);
+            mAllNotifications.add(0, firebaseNotification.getNotification());
         }
 
         updateList();
+    }
+
+    public void initializeMaps(SmartAdapter.MultiAdaptersCreator creator) {
+        creator.map(AllianceSelectionNotificationViewModel.class, AllianceSelectionNotificationItemView.class)
+                .map(AwardsPostedNotificationViewModel.class, AwardsPostedNotificationItemView.class)
+                .map(CompLevelStartingNotificationViewModel.class, CompLevelStartingNotificationItemView.class)
+                .map(UpcomingMatchNotificationViewModel.class, UpcomingMatchNotificationItemView.class)
+                .map(ScoreNotificationViewModel.class, ScoreNotificationItemView.class)
+                .map(ScheduleUpdatedNotificationViewModel.class, ScheduleUpdatedNotificationItemView.class)
+                .map(GenericNotificationViewModel.class, GenericNotificationItemView.class);
     }
 
 }

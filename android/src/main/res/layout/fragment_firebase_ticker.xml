@@ -11,18 +11,12 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/footer">
 
-        <!-- This ListView displays cards that should have a spacing of 8dp between the
-        cards. The cards have a bottom margin of 8dp to provide the spacing. However, that means
-        that the first card will be placed touching the top of the list. To add the appropriate padding,
-        we'll add a paddingTop of 8dp to the list and the disable clipping to padding so that content
-        can scroll over the padding. -->
-        <ListView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
-            android:divider="@null"
-            android:dividerHeight="0dp"
+            android:scrollbars="vertical"
             android:paddingTop="8dp" />
 
         <ProgressBar
