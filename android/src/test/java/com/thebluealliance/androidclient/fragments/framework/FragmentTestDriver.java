@@ -92,6 +92,7 @@ public class FragmentTestDriver {
 
         verify(binder).setNoDataParams(params);
         */
+        controller.getActivity().finish();
         controller.pause().stop().destroy();
     }
 }
