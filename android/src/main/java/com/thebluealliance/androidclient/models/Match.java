@@ -98,7 +98,7 @@ public class Match extends BasicModel<Match> {
         fields.put(MatchesTable.TIME, timestamp);
     }
 
-    public MatchType getType() throws FieldNotDefinedException {
+    public MatchType getMatchType() throws FieldNotDefinedException {
         if (type == MatchType.NONE) {
             throw new FieldNotDefinedException("Field Database.Matches.KEY is not defined");
         }

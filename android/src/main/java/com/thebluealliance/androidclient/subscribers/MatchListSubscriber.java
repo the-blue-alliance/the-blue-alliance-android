@@ -82,9 +82,9 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         }
         for (int i = 0; i < mAPIData.size(); i++) {
             Match match = mAPIData.get(i);
-            MatchType currentType = match.getType();
+            MatchType currentType = match.getMatchType();
             if (lastType != currentType) {
-                switch (match.getType()) {
+                switch (match.getMatchType()) {
                     case QUAL:
                         currentGroup = mQualMatches;
                         break;

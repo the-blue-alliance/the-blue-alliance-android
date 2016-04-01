@@ -2,7 +2,9 @@ package com.thebluealliance.androidclient.viewmodels;
 
 import android.content.Intent;
 
-public class UpcomingMatchNotificationViewModel {
+import java.util.Arrays;
+
+public class UpcomingMatchNotificationViewModel extends BaseViewModel {
 
     private String mHeader;
     private String mTitle;
@@ -55,5 +57,25 @@ public class UpcomingMatchNotificationViewModel {
 
     public String[] getBlueTeams() {
         return mBlueTeams;
+    }
+
+    @Override public boolean equals(Object o) {
+        if (!(o instanceof UpcomingMatchNotificationViewModel)) {
+            return false;
+        }
+
+        UpcomingMatchNotificationViewModel model = (UpcomingMatchNotificationViewModel) o;
+
+        return mHeader.equals(model.getHeader())
+                && mTitle.equals(model.getTitle())
+                && mNotificationTime.equals(model.getNotificationTime())
+                && mMatchKey.equals(model.getMatchKey())
+                && mMatchTime == model.getMatchTime()
+                && Arrays.equals(mRedTeams, model.getRedTeams())
+                && Arrays.equals(mBlueTeams, model.getBlueTeams());
+    }
+
+    @Override public int hashCode() {
+        return hashFromValues(mHeader, mTitle, mNotificationTime, mMatchKey, mMatchTime, mRedTeams, mBlueTeams);
     }
 }

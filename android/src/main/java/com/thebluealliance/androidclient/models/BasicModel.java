@@ -8,6 +8,8 @@ import com.thebluealliance.androidclient.types.ModelType;
 
 import android.content.ContentValues;
 
+import java.util.Objects;
+
 public abstract class BasicModel<T extends BasicModel> implements RenderableModel {
 
     /* Map of the requested fields for this object
@@ -33,12 +35,16 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
         }
     }
 
-    public String getTable(){
+    public String getTable() {
         return table;
     }
 
     public ContentValues getParams() {
         return fields;
+    }
+
+    public ModelType getType() {
+        return type;
     }
 
     public boolean hasField(String key) {
@@ -51,7 +57,7 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
     @SuppressWarnings("unchecked")
     public ListElement render(ModelRendererSupplier supplier) {
         ModelRenderer<T, ?> renderer = supplier.getRendererForType(type);
-        return renderer != null ? renderer.renderFromModel((T)this, null) : null;
+        return renderer != null ? renderer.renderFromModel((T) this, null) : null;
     }
 
     /*
@@ -68,5 +74,23 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
         public FieldNotDefinedException(String message, Throwable t) {
             super(message, t);
         }
+    }
+
+    @Override public boolean equals(Object o) {
+        if (!(o instanceof BasicModel)) {
+            return false;
+        }
+        BasicModel model = (BasicModel) o;
+        if (model.getType() != getType()) {
+            return false;
+        }
+        return fields.equals(model.getParams());
+    }
+
+    @Override public int hashCode() {
+        int hashCode = 1;
+        hashCode = 31 * hashCode + type.hashCode();
+        hashCode = 31 * hashCode + fields.hashCode();
+        return hashCode;
     }
 }
