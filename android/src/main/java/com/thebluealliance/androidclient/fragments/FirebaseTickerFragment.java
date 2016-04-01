@@ -78,6 +78,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     public static final int FIREBASE_LOAD_DEPTH_DEFAULT = 25;
 
     private static final int ANIMATION_DURATION = 300;
+    private static final float DIMMED_ALPHA = 0.6f;
 
     private enum FirebaseChildNodesState {
         LOADING,
@@ -96,6 +97,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     @Bind(R.id.left_button) TextView mLeftButton;
     @Bind(R.id.right_button) TextView mRightButton;
     @Bind(R.id.filter_shadow) View mShadow;
+    @Bind(R.id.foreground_dim) View mForegroundDim;
 
     private AnimatedRecyclerMultiAdapter mNotificationsAdapter;
     private ListViewAdapter mNotificationFilterAdapter;
@@ -299,6 +301,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         if (animate) {
             mFilterListContainer.setTranslationY(viewHeight);
             mFilterListView.setAlpha(0.0f);
+            mForegroundDim.setAlpha(0.0f);
             mFilterListView.animate()
                     .alpha(1.0f)
                     .setDuration(ANIMATION_DURATION)
@@ -308,6 +311,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                             mFilterListView.setAlpha(1.0f);
                         }
                     }).start();
+
             mFilterListContainer.animate()
                     .translationY(0)
                     .setDuration(ANIMATION_DURATION)
@@ -318,8 +322,20 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                             mFilterListContainer.setTranslationY(0);
                         }
                     }).start();
+
+            mForegroundDim.animate()
+                    .alpha(DIMMED_ALPHA)
+                    .setDuration(ANIMATION_DURATION)
+                    .setStartDelay(0)
+                    .setInterpolator(new AccelerateDecelerateInterpolator())
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override public void onAnimationEnd(Animator animation) {
+                            mForegroundDim.setAlpha(DIMMED_ALPHA);
+                        }
+                    }).start();
         } else {
             mFilterListContainer.setTranslationY(0);
+            mForegroundDim.setAlpha(DIMMED_ALPHA);
         }
     }
 
@@ -334,6 +350,8 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         if (animate) {
             mFilterListContainer.setTranslationY(0);
             mFilterListView.setAlpha(1.0f);
+            mForegroundDim.setAlpha(DIMMED_ALPHA);
+
             mFilterListView.animate()
                     .alpha(0.0f)
                     .setDuration(ANIMATION_DURATION)
@@ -343,6 +361,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                             mFilterListView.setAlpha(0.0f);
                         }
                     }).start();
+
             mFilterListContainer.animate()
                     .translationY(viewHeight)
                     .setDuration(ANIMATION_DURATION)
@@ -358,9 +377,21 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                             }
                         }
                     }).start();
+
+            mForegroundDim.animate()
+                    .alpha(0.0f)
+                    .setDuration(ANIMATION_DURATION)
+                    .setStartDelay(ANIMATION_DURATION)
+                    .setInterpolator(new AccelerateDecelerateInterpolator())
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override public void onAnimationEnd(Animator animation) {
+                            mForegroundDim.setAlpha(0.0f);
+                        }
+                    }).start();
         } else {
             mFilterListContainer.setTranslationY(mFilterListContainer.getHeight());
             mShadow.setVisibility(View.VISIBLE);
+            mForegroundDim.setAlpha(0.0f);
             if (onHidden != null) {
                 onHidden.run();
             }
