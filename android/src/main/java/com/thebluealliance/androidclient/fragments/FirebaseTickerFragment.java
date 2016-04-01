@@ -7,6 +7,7 @@ import com.firebase.client.Firebase;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.adapters.AnimatedRecyclerMultiAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.retrofit.FirebaseAPI;
@@ -26,7 +27,6 @@ import com.thebluealliance.androidclient.itemviews.UpcomingMatchNotificationItem
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.gameday.GamedayTickerFilterCheckbox;
 import com.thebluealliance.androidclient.models.FirebaseNotification;
-import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
@@ -62,6 +62,7 @@ import javax.inject.Named;
 
 import io.nlopez.smartadapters.SmartAdapter;
 import io.nlopez.smartadapters.adapters.RecyclerMultiAdapter;
+import io.nlopez.smartadapters.utils.Mapper;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -85,7 +86,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     private ListView mFilterListView;
     private NoDataView mNoDataView;
     private ProgressBar mProgressBar;
-    private RecyclerMultiAdapter mNotificationsAdapter;
+    private AnimatedRecyclerMultiAdapter mNotificationsAdapter;
     private ListViewAdapter mNotificationFilterAdapter;
     private List<BaseNotification> mAllNotifications = new ArrayList<>();
     private boolean mAreFilteredNotificationsVisible = false;
@@ -201,9 +202,8 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
             mLayoutManager.onRestoreInstanceState(mListState);
             Log.d("onCreateView", "using existing adapter");
         } else {
-            SmartAdapter.MultiAdaptersCreator creator = SmartAdapter.items(new ArrayList<>());
-            initializeMaps(creator);
-            mNotificationsAdapter = creator.into(mNotificationsRecyclerView);
+            mNotificationsAdapter = new AnimatedRecyclerMultiAdapter(createAdapterMapper(), new ArrayList<>());
+            mNotificationsRecyclerView.setAdapter(mNotificationsAdapter);
         }
 
         setUpFilterListViews();
@@ -255,7 +255,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         super.onPause();
         if (mNotificationsRecyclerView != null) {
             Log.d("onPause", "saving adapter");
-            mNotificationsAdapter = (RecyclerMultiAdapter) mNotificationsRecyclerView.getAdapter();
+            mNotificationsAdapter = (AnimatedRecyclerMultiAdapter) mNotificationsRecyclerView.getAdapter();
             mListState = mLayoutManager.onSaveInstanceState();
         }
         mFirebaseSubscriber.pauseDelivery();
@@ -358,9 +358,14 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                         return;
                     }
 
-                    mNotificationsAdapter.clearItems();
-                    mNotificationsAdapter.addItems(notificationsList);
-                    mNotificationsAdapter.notifyDataSetChanged();
+                    mNotificationsAdapter.animateTo(notificationsList);
+
+                    // If we're at the top of the list, maintain our position so any new items
+                    // above our current first item will animate into view
+                    if (mNotificationsRecyclerView.computeVerticalScrollOffset() == 0) {
+                        mNotificationsRecyclerView.scrollToPosition(0);
+                    }
+
                     updateViewVisibility();
                 }, throwable -> {
                     Log.e(Constants.LOG_TAG, "Firebase error");
@@ -396,14 +401,16 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         updateList();
     }
 
-    public void initializeMaps(SmartAdapter.MultiAdaptersCreator creator) {
-        creator.map(AllianceSelectionNotificationViewModel.class, AllianceSelectionNotificationItemView.class)
-                .map(AwardsPostedNotificationViewModel.class, AwardsPostedNotificationItemView.class)
-                .map(CompLevelStartingNotificationViewModel.class, CompLevelStartingNotificationItemView.class)
-                .map(UpcomingMatchNotificationViewModel.class, UpcomingMatchNotificationItemView.class)
-                .map(ScoreNotificationViewModel.class, ScoreNotificationItemView.class)
-                .map(ScheduleUpdatedNotificationViewModel.class, ScheduleUpdatedNotificationItemView.class)
-                .map(GenericNotificationViewModel.class, GenericNotificationItemView.class);
+    public Mapper createAdapterMapper() {
+        Mapper mapper = new Mapper();
+        mapper.add(AllianceSelectionNotificationViewModel.class, AllianceSelectionNotificationItemView.class)
+                .add(AwardsPostedNotificationViewModel.class, AwardsPostedNotificationItemView.class)
+                .add(CompLevelStartingNotificationViewModel.class, CompLevelStartingNotificationItemView.class)
+                .add(UpcomingMatchNotificationViewModel.class, UpcomingMatchNotificationItemView.class)
+                .add(ScoreNotificationViewModel.class, ScoreNotificationItemView.class)
+                .add(ScheduleUpdatedNotificationViewModel.class, ScheduleUpdatedNotificationItemView.class)
+                .add(GenericNotificationViewModel.class, GenericNotificationItemView.class);
+        return mapper;
     }
 
 }
