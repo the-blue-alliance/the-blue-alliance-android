@@ -38,14 +38,15 @@ public class FragmentTestDriver {
         controller.attach().pause().stop().destroy();
     }
 
-
-    B binder = (B) Whitebox.getInternalState(fragment, "mBinder");
-    assertNotNullpublic static <F extends DatafeedFragment<T, V, S, B>, T, V, S extends BaseAPISubscriber<T, V>, B extends AbstractDataBinder<V>> Activity
+    public static <F extends DatafeedFragment<T, V, S, B>, T, V, S extends BaseAPISubscriber<T, V>, B extends AbstractDataBinder<V>> Activity
     bindData(F fragment, V bindData) {
         DatafeedFragmentTestController<F> controller = getController(fragment);
         controller.makeTestActivityController().makeActivity();
 
         controller.attach();
+
+        B binder = (B) Whitebox.getInternalState(fragment, "mBinder");
+        assertNotNull(binder);
 
         // Bind given data(binder);
         binder.bindViews();
