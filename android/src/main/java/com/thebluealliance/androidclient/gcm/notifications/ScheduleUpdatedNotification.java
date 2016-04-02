@@ -63,9 +63,6 @@ public class ScheduleUpdatedNotification extends BaseNotification<ScheduleUpdate
         }
         eventKey = jsonData.get("event_key").getAsString();
 
-        if (!jsonData.has("first_match_time")) {
-            throw new JsonParseException("Notification data does not contain 'first_match_time");
-        }
         matchTime = jsonData.get("first_match_time");
     }
 

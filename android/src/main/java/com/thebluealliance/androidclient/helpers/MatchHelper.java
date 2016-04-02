@@ -130,7 +130,7 @@ public class MatchHelper {
         }
         for (Match match : teamMatches) {
             try {
-                if (match.getType() == MatchType.QUARTER) {
+                if (match.getMatchType() == MatchType.QUARTER) {
                     JsonObject matchAlliances = match.getAlliances();
                     JsonArray redTeams = Match.getRedTeams(matchAlliances);
                     Boolean isRed = Match.hasTeam(redTeams, teamKey);
@@ -252,7 +252,7 @@ public class MatchHelper {
             }
 
             if (match.hasBeenPlayed()) {
-                switch (match.getType()) {
+                switch (match.getMatchType()) {
                     case OCTO:
                         elimMatchPlayed = true;
                         efPlayed++;
@@ -272,8 +272,8 @@ public class MatchHelper {
                 }
             }
 
-            if (lastType != match.getType()) {
-                switch (match.getType()) {
+            if (lastType != match.getMatchType()) {
+                switch (match.getMatchType()) {
                     case QUAL:
                         currentGroup = qualMatches;
                         break;

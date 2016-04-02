@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.viewmodels;
 
 import android.content.Intent;
 
-public class AwardsPostedNotificationViewModel {
+public class AwardsPostedNotificationViewModel extends BaseViewModel {
 
     private String mEventKey;
     private String mEventName;
@@ -30,5 +30,21 @@ public class AwardsPostedNotificationViewModel {
 
     public Intent getIntent() {
         return mIntent;
+    }
+
+    @Override public boolean equals(Object o) {
+        if(!(o instanceof  AwardsPostedNotificationViewModel)) {
+            return false;
+        }
+
+        AwardsPostedNotificationViewModel model = (AwardsPostedNotificationViewModel) o;
+
+        return mEventKey.equals(model.getEventKey())
+                && mEventName.equals(model.getEventName())
+                && mTimeString.equals(model.getTimeString());
+    }
+
+    @Override public int hashCode() {
+        return hashFromValues(mEventKey, mEventName, mTimeString);
     }
 }

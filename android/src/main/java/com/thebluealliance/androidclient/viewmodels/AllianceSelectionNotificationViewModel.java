@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.viewmodels;
 
 import android.content.Intent;
 
-public class AllianceSelectionNotificationViewModel {
+public class AllianceSelectionNotificationViewModel extends BaseViewModel {
 
     private String mTitle;
     private String mTimeString;
@@ -24,5 +24,20 @@ public class AllianceSelectionNotificationViewModel {
 
     public Intent getIntent() {
         return mIntent;
+    }
+
+    @Override public boolean equals(Object o) {
+        if (!(o instanceof AllianceSelectionNotificationViewModel)) {
+            return false;
+        }
+
+        AllianceSelectionNotificationViewModel model = (AllianceSelectionNotificationViewModel) o;
+
+        return mTitle.equals(model.getTitle())
+                && mTimeString.equals(model.getTimeString());
+    }
+
+    @Override public int hashCode() {
+        return hashFromValues(mTitle, mTimeString);
     }
 }

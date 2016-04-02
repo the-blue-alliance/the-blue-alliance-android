@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.viewmodels;
 
-public class TeamViewModel {
+public class TeamViewModel extends BaseViewModel {
 
     private String mTeamKey;
     private int mTeamNumber;
@@ -47,5 +47,24 @@ public class TeamViewModel {
 
     public boolean shouldShowMyTbaDetails() {
         return mShowMyTbaDetails;
+    }
+
+    @Override public boolean equals(Object o) {
+        if(!(o instanceof  TeamViewModel)) {
+            return false;
+        }
+
+        TeamViewModel model = (TeamViewModel) o;
+
+        return mTeamKey.equals(model.getTeamKey())
+                && mTeamNumber == model.getTeamNumber()
+                && mTeamName.equals(model.getTeamName())
+                && mTeamLocation.equals(model.getTeamLocation())
+                && mShowLinkToTeamDetails == model.shouldShowLinkToTeamDetails()
+                && mShowMyTbaDetails == model.shouldShowMyTbaDetails();
+    }
+
+    @Override public int hashCode() {
+        return hashFromValues(mTeamKey, mTeamNumber, mTeamName, mTeamLocation, mShowLinkToTeamDetails, mShowMyTbaDetails);
     }
 }

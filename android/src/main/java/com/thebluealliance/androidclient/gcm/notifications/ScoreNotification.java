@@ -127,7 +127,7 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
 
         boolean useSpecial2015Format;
         try {
-            useSpecial2015Format = match.getYear() == 2015 && match.getType() != MatchType.FINAL;
+            useSpecial2015Format = match.getYear() == 2015 && match.getMatchType() != MatchType.FINAL;
         } catch (BasicModel.FieldNotDefinedException e) {
             useSpecial2015Format = false;
             Log.w(Constants.LOG_TAG, "Couldn't determine if we should use 2015 score format. Defaulting to no");
