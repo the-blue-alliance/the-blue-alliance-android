@@ -304,12 +304,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         mRightButton.setText(R.string.firebase_apply_filter);
         mShadow.setVisibility(View.GONE);
 
-        int viewHeight = getView().getHeight();
-
         if (animate) {
-            //mFilterListContainer.setTranslationY(viewHeight);
-            //mFilterListView.setAlpha(0.0f);
-            //mForegroundDim.setAlpha(0.0f);
             mFilterListView.animate()
                     .alpha(1.0f)
                     .setDuration(ANIMATION_DURATION)
@@ -344,6 +339,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         } else {
             mFilterListContainer.setTranslationY(0);
             mForegroundDim.setAlpha(DIMMED_ALPHA);
+            mFilterListView.setAlpha(1.0f);
         }
     }
 
@@ -356,10 +352,6 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         int viewHeight = getView().getHeight();
 
         if (animate) {
-            //mFilterListContainer.setTranslationY(0);
-            //mFilterListView.setAlpha(1.0f);
-            //mForegroundDim.setAlpha(DIMMED_ALPHA);
-
             mFilterListView.animate()
                     .alpha(0.0f)
                     .setDuration(ANIMATION_DURATION)
@@ -398,6 +390,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                     }).start();
         } else {
             mFilterListContainer.setTranslationY(mFilterListContainer.getHeight());
+            mFilterListView.setAlpha(0.0f);
             mShadow.setVisibility(View.VISIBLE);
             mForegroundDim.setAlpha(0.0f);
             if (onHidden != null) {
