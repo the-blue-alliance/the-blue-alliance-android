@@ -221,31 +221,39 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
             if (mAreFilteredNotificationsVisible) {
                 // We've received at least one notification from the client library, and it's
                 // visible with the current applied filter. Show the list!
-                mNotificationsRecyclerView.setVisibility(View.VISIBLE);
-                mProgressBar.setVisibility(View.GONE);
-                mNoDataView.setVisibility(View.GONE);
+                ViewCrossfader.create(ANIMATION_DURATION)
+                        .fadeIn(mNotificationsRecyclerView)
+                        .fadeOut(mProgressBar)
+                        .fadeOut(mNoDataView)
+                        .start();
             } else {
                 // We've received at least one notification from the client library, but no
                 // notification are visible with the current applied filter. Show the no data view,
                 // but with a special "none found with that filter" message
-                mNotificationsRecyclerView.setVisibility(View.GONE);
-                mProgressBar.setVisibility(View.GONE);
-                mNoDataView.setVisibility(View.VISIBLE);
                 mNoDataView.setText(R.string.firebase_no_matching_items);
+                ViewCrossfader.create(ANIMATION_DURATION)
+                        .fadeOut(mNotificationsRecyclerView)
+                        .fadeOut(mProgressBar)
+                        .fadeIn(mNoDataView)
+                        .start();
             }
         } else if (mChildNodeState == FirebaseChildNodesState.NO_CHILDREN) {
             // We've received the result of the REST call to the server and the list is (at least
             // for now) definitely empty. Show the no data view
-            mNotificationsRecyclerView.setVisibility(View.GONE);
-            mProgressBar.setVisibility(View.GONE);
-            mNoDataView.setVisibility(View.VISIBLE);
             mNoDataView.setText(R.string.firebase_empty_ticker);
+            ViewCrossfader.create(ANIMATION_DURATION)
+                    .fadeOut(mNotificationsRecyclerView)
+                    .fadeOut(mProgressBar)
+                    .fadeIn(mNoDataView)
+                    .start();
         } else {
             // We haven't yet received any notifications from the client library, but we also
             // aren't certain that the list is empty. Show the spinner.
-            mNotificationsRecyclerView.setVisibility(View.GONE);
-            mProgressBar.setVisibility(View.VISIBLE);
-            mNoDataView.setVisibility(View.GONE);
+            ViewCrossfader.create(ANIMATION_DURATION)
+                    .fadeOut(mNotificationsRecyclerView)
+                    .fadeIn(mProgressBar)
+                    .fadeOut(mNoDataView)
+                    .start();
         }
     }
 
@@ -299,9 +307,9 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         int viewHeight = getView().getHeight();
 
         if (animate) {
-            mFilterListContainer.setTranslationY(viewHeight);
-            mFilterListView.setAlpha(0.0f);
-            mForegroundDim.setAlpha(0.0f);
+            //mFilterListContainer.setTranslationY(viewHeight);
+            //mFilterListView.setAlpha(0.0f);
+            //mForegroundDim.setAlpha(0.0f);
             mFilterListView.animate()
                     .alpha(1.0f)
                     .setDuration(ANIMATION_DURATION)
@@ -348,9 +356,9 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         int viewHeight = getView().getHeight();
 
         if (animate) {
-            mFilterListContainer.setTranslationY(0);
-            mFilterListView.setAlpha(1.0f);
-            mForegroundDim.setAlpha(DIMMED_ALPHA);
+            //mFilterListContainer.setTranslationY(0);
+            //mFilterListView.setAlpha(1.0f);
+            //mForegroundDim.setAlpha(DIMMED_ALPHA);
 
             mFilterListView.animate()
                     .alpha(0.0f)
@@ -443,8 +451,8 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         final Set<String> enabledNotificationKeys = getEnabledNotificationKeys();
 
         Observable.from(mAllNotifications)
-                .filter(notification -> enabledNotificationKeys.contains(notification.getNotificationType()))
                 .filter(n -> n != null)
+                .filter(notification -> enabledNotificationKeys.contains(notification.getNotificationType()))
                 .map(notification -> {
                     notification.parseMessageData();
                     return notification.renderToViewModel(getContext(), null);
@@ -516,4 +524,55 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     protected abstract void inject();
 
     protected abstract String getFirebaseUrlSuffix();
+
+    private static class ViewCrossfader {
+        private List<View> mFadeIn, mFadeOut;
+        private int mDuration;
+
+        private ViewCrossfader(int duration) {
+            mDuration = duration;
+            mFadeIn = new ArrayList<>();
+            mFadeOut = new ArrayList<>();
+        }
+
+        public static ViewCrossfader create(int duration) {
+            return new ViewCrossfader(duration);
+        }
+
+        public ViewCrossfader fadeIn(View v) {
+            mFadeIn.add(v);
+            return this;
+        }
+
+        public ViewCrossfader fadeOut(View v) {
+            mFadeOut.add(v);
+            return this;
+        }
+
+        public void start() {
+            for (View fadeOut : mFadeOut) {
+                fadeOut.animate()
+                        .alpha(0.0f)
+                        .setDuration(mDuration)
+                        .setStartDelay(0)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override public void onAnimationEnd(Animator animation) {
+                                fadeOut.setVisibility(View.GONE);
+                            }
+                        }).start();
+            }
+
+            for (View fadeIn : mFadeIn) {
+                fadeIn.animate()
+                        .alpha(1.0f)
+                        .setDuration(mDuration)
+                        .setStartDelay(mDuration)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override public void onAnimationStart(Animator animation) {
+                                fadeIn.setVisibility(View.VISIBLE);
+                            }
+                        }).start();
+            }
+        }
+    }
 }
