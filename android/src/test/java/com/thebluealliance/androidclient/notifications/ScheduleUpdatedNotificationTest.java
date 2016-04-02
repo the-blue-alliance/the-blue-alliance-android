@@ -65,13 +65,6 @@ public class ScheduleUpdatedNotificationTest {
         mNotification.parseMessageData();
     }
 
-    @Test(expected = JsonParseException.class)
-    public void testNoMatchTime() {
-        mData.remove("first_match_time");
-        mNotification = new ScheduleUpdatedNotification(mData.toString());
-        mNotification.parseMessageData();
-    }
-
     @Test
     public void testBuildNotification() {
         mNotification.parseMessageData();
