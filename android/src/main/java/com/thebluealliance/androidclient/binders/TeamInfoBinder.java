@@ -129,7 +129,6 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
             teamFullName.setEllipsize(TextUtils.TruncateAt.END);
 
             teamFullNameContainer.setOnClickListener((view) -> {
-                Log.d(Constants.LOG_TAG, "team full name clicked!");
                 toggleFullTeamNameExpanded();
             });
         }
