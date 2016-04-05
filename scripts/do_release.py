@@ -169,7 +169,7 @@ def create_tag(args):
     print("To skip creating a new tag, run with --skip_tag")
     time.sleep(2)
     if not args.dry_run:
-        subprocess.call(["git", "tag", "-a", "v{}".format(args.tag), "-m", name])
+        subprocess.call(["git", "tag", "-s", "v{}".format(args.tag), "-m", name])
 
 
 def validate_build(dry_run):
