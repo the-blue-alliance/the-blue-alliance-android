@@ -120,8 +120,7 @@ public class TeamEventsFragment extends ListViewFragment<List<Event>, EventListS
         return String.format("teamEvents_%1$s_%2$d", mTeamKey, mYear);
     }
 
-    @Override
-    protected NoDataViewParams getNoDataParams() {
+    @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_event_black_48dp, R.string.no_event_data);
     }
 }

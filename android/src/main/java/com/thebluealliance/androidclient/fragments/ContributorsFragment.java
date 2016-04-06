@@ -50,8 +50,7 @@ public class ContributorsFragment extends ListViewFragment<JsonElement, Contribu
         return "app-contributors";
     }
 
-    @Override
-    protected NoDataViewParams getNoDataParams() {
+    @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_info_black_48dp, R.string.no_contributors_list);
     }
 }

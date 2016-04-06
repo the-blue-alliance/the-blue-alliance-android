@@ -58,8 +58,7 @@ public class DistrictRankingsFragment
         return String.format("districtRankings_%1$s_%2$d", mShort, mYear);
     }
 
-    @Override
-    protected NoDataViewParams getNoDataParams() {
+    @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_poll_black_48dp, R.string.no_ranking_data);
     }
 }

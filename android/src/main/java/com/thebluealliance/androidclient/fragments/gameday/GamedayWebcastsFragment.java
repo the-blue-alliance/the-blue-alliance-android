@@ -1,9 +1,6 @@
 package com.thebluealliance.androidclient.fragments.gameday;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -47,8 +44,7 @@ public class GamedayWebcastsFragment extends ListViewFragment<List<Event>, Webca
         return String.format("gamedayWebcasts_%1$d_%2$d", mYear, mWeek);
     }
 
-    @Override
-    protected NoDataViewParams getNoDataParams() {
+    @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_videocam_black_48dp, R.string.no_webcast_data_found);
     }
 }

@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import org.greenrobot.eventbus.EventBus;
 
 import android.os.Bundle;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
 
 import javax.inject.Inject;
@@ -195,7 +196,8 @@ public abstract class DatafeedFragment
      */
     protected abstract String getRefreshTag();
 
-    protected NoDataViewParams getNoDataParams() {
+    @VisibleForTesting
+    public NoDataViewParams getNoDataParams() {
         return null;
     }
 

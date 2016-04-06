@@ -20,7 +20,7 @@ buildscript {
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.8'
 
         // code coverage testing
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.6.3'
 
         // versioning
         classpath 'com.palantir:gradle-gitsemver:0.6.0'
@@ -50,5 +50,9 @@ allprojects {
         retrofitVersion = '2.0.0'
         rxJavaVersion = '1.0.1'
         gsonVersion = '2.3.1'
+
+        travisBuild = System.getenv("TRAVIS") == "true"
+        // allows for -Dpre-dex=false to be set
+        preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
     }
 }
