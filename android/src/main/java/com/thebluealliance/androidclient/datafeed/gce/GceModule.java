@@ -7,7 +7,7 @@ import com.appspot.tbatv_prod_hrd.Model;
 import com.appspot.tbatv_prod_hrd.Subscriptions;
 import com.appspot.tbatv_prod_hrd.Tbamobile;
 import com.appspot.tbatv_prod_hrd.TeamMedia;
-import com.squareup.okhttp.OkHttpClient;
+import okhttp3.OkHttpClient;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
@@ -21,7 +21,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import retrofit.Retrofit;
+import retrofit2.Retrofit;
 
 /**
  * Dagger Module for Google Cloud Endpoints and their related things

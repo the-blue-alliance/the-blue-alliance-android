@@ -1,12 +1,17 @@
 package com.thebluealliance.androidclient.binders;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
@@ -19,6 +24,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
+
+    private static final int TEAM_FULL_NAME_COLLAPSED_MAX_LINES = 3;
 
     @Inject SocialClickListener mSocialClickListener;
 
@@ -118,6 +125,12 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
             string.setSpan(new TextAppearanceSpan(mActivity,
                     R.style.InfoItemLabelStyle), 0, 3, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
             teamFullName.setText(string);
+            teamFullName.setMaxLines(TEAM_FULL_NAME_COLLAPSED_MAX_LINES);
+            teamFullName.setEllipsize(TextUtils.TruncateAt.END);
+
+            teamFullNameContainer.setOnClickListener((view) -> {
+                toggleFullTeamNameExpanded();
+            });
         }
 
         teamNextMatchLabel.setVisibility(View.GONE);
@@ -129,7 +142,6 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
         content.setVisibility(View.VISIBLE);
         mNoDataBinder.unbindData();
         setDataBound(true);
-
     }
 
     @Override
@@ -163,6 +175,55 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void toggleFullTeamNameExpanded() {
+        int currentMaxLines = teamFullName.getMaxLines();
+        if (currentMaxLines == TEAM_FULL_NAME_COLLAPSED_MAX_LINES) {
+            // The text view is collapsed, expand it
+
+            final int height = teamFullName.getMeasuredHeight();
+
+            teamFullName.setMaxLines(Integer.MAX_VALUE);
+            teamFullName.measure(
+                    View.MeasureSpec.makeMeasureSpec(teamFullName.getMeasuredWidth(), View.MeasureSpec.AT_MOST),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            final int newHeight = teamFullName.getMeasuredHeight();
+
+            ObjectAnimator animation = ObjectAnimator.ofInt(teamFullName, "height", height, newHeight);
+            animation.setDuration(500);
+            animation.addListener(new AnimatorListenerAdapter() {
+                @Override public void onAnimationEnd(Animator animation) {
+                    teamFullName.setMaxLines(Integer.MAX_VALUE);
+                    teamFullName.setMinHeight(0);
+                }
+            });
+            animation.start();
+        } else {
+            // We need to collapse the text view
+
+            final int height = teamFullName.getMeasuredHeight();
+
+            // Only set max lines while we measure; max lines will be permanently
+            // reduced one the animation completes
+            teamFullName.setMaxLines(TEAM_FULL_NAME_COLLAPSED_MAX_LINES);
+            teamFullName.measure(
+                    View.MeasureSpec.makeMeasureSpec(teamFullName.getMeasuredWidth(), View.MeasureSpec.AT_MOST),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            teamFullName.setMaxLines(Integer.MAX_VALUE);
+
+            final int newHeight = teamFullName.getMeasuredHeight();
+            ObjectAnimator animation = ObjectAnimator.ofInt(teamFullName, "height", height, newHeight);
+            animation.setDuration(500);
+            animation.addListener(new AnimatorListenerAdapter() {
+                @Override public void onAnimationEnd(Animator animation) {
+                    teamFullName.setMaxLines(TEAM_FULL_NAME_COLLAPSED_MAX_LINES);
+                    teamFullName.setMinHeight(0);
+                }
+            });
+            animation.start();
+        }
+
     }
 
     @Override

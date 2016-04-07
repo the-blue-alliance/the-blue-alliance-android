@@ -26,6 +26,6 @@ repositories {
 dependencies {
     compile ([group: 'com.google.api-client', name: 'google-api-client', version: googleApiClientVersion])
     compile "io.reactivex:rxjava:${rxJavaVersion}"
-    compile "com.squareup.retrofit:retrofit:${retrofitVersion}"
+    compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     compile "com.google.code.gson:gson:${gsonVersion}"
 }

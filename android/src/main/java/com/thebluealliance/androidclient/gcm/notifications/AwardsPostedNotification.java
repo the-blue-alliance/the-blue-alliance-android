@@ -18,10 +18,12 @@ import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
 
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +35,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class AwardsPostedNotification extends BaseNotification {
+public class AwardsPostedNotification extends BaseNotification<AwardsPostedNotificationViewModel> {
 
     private final AwardListWriter mWriter;
     private String eventName, eventKey;
@@ -151,6 +153,12 @@ public class AwardsPostedNotification extends BaseNotification {
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
 
         return convertView;
+    }
+
+    @Nullable
+    @Override
+    public AwardsPostedNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        return new AwardsPostedNotificationViewModel(eventKey, eventName, getNotificationTimeString(context), getIntent(context));
     }
 
     private static class ViewHolder {

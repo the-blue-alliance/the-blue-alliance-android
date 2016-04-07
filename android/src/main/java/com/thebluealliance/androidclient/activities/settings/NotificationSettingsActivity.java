@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.activities.settings;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 
+import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -19,16 +20,22 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new NotificationSettingsFragment())
-                .commit();
+
+        Fragment existingFragment = getFragmentManager().findFragmentById(android.R.id.content);
+        if (existingFragment == null || !existingFragment.getClass().equals(NotificationSettingsFragment.class)) {
+            // Display the fragment as the main content.
+            getFragmentManager().beginTransaction()
+                    .replace(android.R.id.content, new NotificationSettingsFragment())
+                    .commit();
+        }
     }
 
     public static class NotificationSettingsFragment extends PreferenceFragment {
 
         private static Preference notificationTone;
         private static Preference notificationVibrate;
-        private static @Nullable Preference  notificationVisibility;
+        private static CheckBoxPreference notificationLedEnabled;
+        private static Preference notificationLedColor;
         private static @Nullable Preference notificationHeadsup;
 
         @Override
@@ -39,32 +46,42 @@ public class NotificationSettingsActivity extends AppCompatActivity {
                 addPreferencesFromResource(R.xml.notification_preferences_lollipop);
             }
 
-            CheckBoxPreference enableNotifications = (CheckBoxPreference) findPreference("enable_notifications");
             notificationTone = findPreference("notification_tone");
             notificationVibrate = findPreference("notification_vibrate");
-            notificationVisibility = null;
             notificationHeadsup = null;
             if (Utilities.hasLApis()) {
-                notificationVisibility = findPreference("notification_visibility");
                 notificationHeadsup = findPreference("notification_headsup");
             }
+            notificationLedEnabled = (CheckBoxPreference) findPreference("notification_led_enabled");
+            notificationLedColor = findPreference("notification_led_color");
 
+            CheckBoxPreference enableNotifications = (CheckBoxPreference) findPreference("enable_notifications");
             boolean currentlyEnabled = enableNotifications.isChecked();
-            notificationTone.setEnabled(currentlyEnabled);
-            notificationVibrate.setEnabled(currentlyEnabled);
+            setPreferencesEnabled(currentlyEnabled);
 
             enableNotifications.setOnPreferenceChangeListener((preference, newValue) -> {
-                boolean value = (Boolean) newValue;
-                notificationTone.setEnabled(value);
-                notificationVibrate.setEnabled(value);
-                if (notificationVisibility != null) {
-                    notificationVisibility.setEnabled(value);
-                }
-                if (notificationHeadsup != null) {
-                    notificationHeadsup.setEnabled(value);
-                }
+                boolean enabled = (Boolean) newValue;
+                setPreferencesEnabled(enabled);
                 return true;
             });
+
+            notificationLedColor.setEnabled(notificationLedEnabled.isChecked());
+
+            notificationLedEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
+                boolean enabled = (Boolean) newValue;
+                notificationLedColor.setEnabled(enabled);
+                return true;
+            });
+        }
+
+        private void setPreferencesEnabled(boolean enabled) {
+            notificationTone.setEnabled(enabled);
+            notificationVibrate.setEnabled(enabled);
+            notificationLedEnabled.setEnabled(enabled);
+            notificationLedColor.setEnabled(enabled);
+            if (notificationHeadsup != null) {
+                notificationHeadsup.setEnabled(enabled);
+            }
         }
 
         @Override

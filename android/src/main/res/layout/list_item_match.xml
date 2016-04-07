@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout android:id="@+id/match_container"
-              xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="?android:attr/selectableItemBackground"
-              android:baselineAligned="false"
-              android:clickable="true"
-              android:orientation="horizontal"
-              android:padding="8dp" xmlns:tools="http://schemas.android.com/tools">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:baselineAligned="false"
+    android:clickable="true"
+    android:orientation="horizontal"
+    android:padding="8dp">
 
     <RelativeLayout
         android:id="@+id/match_title_container"
@@ -130,8 +131,8 @@
                         android:layout_weight="1.5"
                         android:background="@color/light_red"
                         android:gravity="center_vertical|center_horizontal"
-                        tools:text="Red Score"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        tools:text="Red Score" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -175,8 +176,8 @@
                         android:layout_weight="1.5"
                         android:background="@color/light_blue"
                         android:gravity="center_vertical|center_horizontal"
-                        tools:text="Blue Score"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        tools:text="Blue Score" />
 
                 </LinearLayout>
             </LinearLayout>

@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.JsonParseException;
@@ -18,7 +19,7 @@ import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
 
 import java.util.List;
 
-public class SummaryNotification extends BaseNotification {
+public class SummaryNotification extends BaseNotification<Void> {
     /**
      * Limit the summary's list to avoid taking up the whole notification shade and to work around
      * <a hreaf="https://code.google.com/p/android/issues/detail?id=168890">an Android 5.1 bug</a>.
@@ -95,5 +96,11 @@ public class SummaryNotification extends BaseNotification {
         NotificationsTable table = Database.getInstance(context).getNotificationsTable();
         return table.getActive().size() > 1;
         // The newest notification has already been added to the table, so we're checking if there are 2+ active
+    }
+
+    @Nullable
+    @Override
+    public Void renderToViewModel(Context context, @Nullable Void aVoid) {
+        return null;
     }
 }

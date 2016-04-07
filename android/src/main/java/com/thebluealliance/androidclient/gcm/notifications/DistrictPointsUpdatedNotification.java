@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.gson.JsonObject;
@@ -19,7 +20,7 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DistrictPointsUpdatedNotification extends BaseNotification {
+public class DistrictPointsUpdatedNotification extends BaseNotification<Void> {
 
     private String districtName, districtKey;
 
@@ -92,4 +93,9 @@ public class DistrictPointsUpdatedNotification extends BaseNotification {
         return (new Date().getTime() + ":" + getNotificationType() + ":" + districtKey).hashCode();
     }
 
+    @Nullable
+    @Override
+    public Void renderToViewModel(Context context, @Nullable Void aVoid) {
+        return null;
+    }
 }

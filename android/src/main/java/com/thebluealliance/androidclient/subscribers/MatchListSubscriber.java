@@ -1,28 +1,36 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
+import com.thebluealliance.androidclient.firebase.AllianceAdvancementEvent;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
 import org.greenrobot.eventbus.EventBus;
 
 import android.content.res.Resources;
+import android.support.annotation.VisibleForTesting;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<ListGroup>> {
 
     private ListGroup mQualMatches;
+    private ListGroup mOctoMatches;
     private ListGroup mQuarterMatches;
     private ListGroup mSemiMatches;
     private ListGroup mFinalMatches;
@@ -30,14 +38,17 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
     private String mEventKey;
     private Database mDb;
     private EventBus mEventBus;
+    private HashMap<String, PlayoffAdvancement> mAdvancement;
 
     public MatchListSubscriber(Resources resources, Database db, EventBus eventBus) {
         super();
         mDataToBind = new ArrayList<>();
         mQualMatches = new ListGroup(resources.getString(R.string.quals_header));
+        mOctoMatches = new ListGroup(resources.getString(R.string.octo_header));
         mQuarterMatches = new ListGroup(resources.getString(R.string.quarters_header));
         mSemiMatches = new ListGroup(resources.getString(R.string.semis_header));
         mFinalMatches = new ListGroup(resources.getString(R.string.finals_header));
+        mAdvancement = new HashMap<>();
         mDb = db;
         mEventBus = eventBus;
         mTeamKey = null;
@@ -55,6 +66,7 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
         mQualMatches.clear();
+        mOctoMatches.clear();
         mQuarterMatches.clear();
         mSemiMatches.clear();
         mFinalMatches.clear();
@@ -74,16 +86,22 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         MatchType lastType = null;
         Match previousIteration = null;
         boolean lastMatchPlayed = false;
+        int redFinalsWon = 0;
+        int blueFinalsWon = 0;
         if (mAPIData.size() > 0) {
             nextMatch = mAPIData.get(0);
         }
         for (int i = 0; i < mAPIData.size(); i++) {
             Match match = mAPIData.get(i);
-            MatchType currentType = match.getType();
+            MatchType currentType = match.getMatchType();
+            JsonObject alliances = match.getAlliances();
             if (lastType != currentType) {
-                switch (match.getType()) {
+                switch (match.getMatchType()) {
                     case QUAL:
                         currentGroup = mQualMatches;
+                        break;
+                    case OCTO:
+                        currentGroup = mOctoMatches;
                         break;
                     case QUARTER:
                         currentGroup = mQuarterMatches;
@@ -104,6 +122,26 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
                 nextMatch = match;
             }
 
+            /* Track alliance advancement, indexed by captain team key */
+            if (match.getMatchType() == MatchType.FINAL && match.hasBeenPlayed()) {
+                // Need to ensure we can differentiate who won the finals
+                if (Match.getRedScore(alliances) > Match.getBlueScore(alliances)) {
+                    redFinalsWon++;
+                } else if (Match.getBlueScore(alliances) > Match.getRedScore(alliances)) {
+                    blueFinalsWon++;
+                }
+            }
+            if (match.getMatchType().isPlayoff()) {
+                addAllianceTeams(
+                        mAdvancement,
+                        Match.getRedTeams(alliances),
+                        PlayoffAdvancement.fromMatchType(match.getMatchType()));
+                addAllianceTeams(
+                        mAdvancement,
+                        Match.getBlueTeams(alliances),
+                        PlayoffAdvancement.fromMatchType(match.getMatchType()));
+            }
+
             /**
              * the only reason this isn't moved to PopulateTeamAtEvent is that if so,
              * we'd have to iterate through every match again to calculate the
@@ -116,12 +154,22 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
             previousIteration = match;
             lastMatchPlayed = match.hasBeenPlayed();
         }
+
         if (lastMatch == null && !mAPIData.isEmpty()) {
             Match last = mAPIData.get(mAPIData.size() - 1);
             if (last.hasBeenPlayed()) {
                 lastMatch = last;
             }
         }
+
+        if (lastMatch != null && lastMatch.getMatchType() == MatchType.FINAL) {
+            if (redFinalsWon >= 2) {
+                addAllianceTeams(mAdvancement, Match.getRedTeams(lastMatch.getAlliances()), PlayoffAdvancement.WINNER);
+            } else if (blueFinalsWon >= 2) {
+                addAllianceTeams(mAdvancement, Match.getBlueTeams(lastMatch.getAlliances()), PlayoffAdvancement.WINNER);
+            }
+        }
+
         if (nextMatch != null && nextMatch.hasBeenPlayed()) {
             // Avoids bug where matches loop over when all played
             // Because nextMatch is initialized to the first qual match
@@ -131,6 +179,9 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
 
         if (!mQualMatches.children.isEmpty()) {
             mDataToBind.add(mQualMatches);
+        }
+        if (!mOctoMatches.children.isEmpty()) {
+            mDataToBind.add(mOctoMatches);
         }
         if (!mQuarterMatches.children.isEmpty()) {
             mDataToBind.add(mQuarterMatches);
@@ -143,10 +194,26 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         }
 
         mEventBus.post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
+        mEventBus.post(new AllianceAdvancementEvent(mAdvancement));
+    }
+
+    private void addAllianceTeams(
+            HashMap<String, PlayoffAdvancement> advancement,
+            JsonArray teams,
+            PlayoffAdvancement level) {
+        for (int i = 0; i < teams.size(); i++) {
+            String teamKey = teams.get(i).getAsString();
+            advancement.put(teamKey, level);
+        }
     }
 
     @Override public boolean isDataValid() {
         return super.isDataValid() && !mAPIData.isEmpty();
+    }
+
+    @VisibleForTesting
+    public HashMap<String, PlayoffAdvancement> getAdvancement() {
+        return mAdvancement;
     }
 
     @Override

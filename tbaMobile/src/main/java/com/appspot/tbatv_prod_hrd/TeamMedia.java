@@ -3,10 +3,10 @@ package com.appspot.tbatv_prod_hrd;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesMediaSuggestionMessage;
 
-import retrofit.Call;
-import retrofit.http.Body;
-import retrofit.http.Header;
-import retrofit.http.POST;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.Header;
+import retrofit2.http.POST;
 import rx.Observable;
 
 public interface TeamMedia {

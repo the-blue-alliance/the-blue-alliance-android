@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.renderers.TeamRenderer;
 import org.greenrobot.eventbus.EventBus;
 
 import android.app.Activity;
+import android.content.res.Resources;
 
 import dagger.Module;
 import dagger.Provides;
@@ -94,35 +95,40 @@ public class SubscriberModule {
         return new AwardsListSubscriber(db, renderer);
     }
 
-    @Provides TeamStatsSubscriber provideTeamStatsSubscriber() {
+    @Provides
+    public TeamStatsSubscriber provideTeamStatsSubscriber() {
         return new TeamStatsSubscriber(mActivity.getResources());
     }
 
     @Provides
-    TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(MatchRenderer renderer) {
+    public TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(MatchRenderer renderer) {
         return new TeamAtEventSummarySubscriber(mActivity.getResources(), renderer);
     }
 
-    @Provides EventTabSubscriber provideEventTabsSubscriber() {
+    @Provides
+    public EventTabSubscriber provideEventTabsSubscriber() {
         return new EventTabSubscriber();
     }
 
     @Provides
-    DistrictListSubscriber provideDistrictListSubscriber(Database db, DistrictRenderer renderer) {
+    public DistrictListSubscriber provideDistrictListSubscriber(Database db, DistrictRenderer renderer) {
         return new DistrictListSubscriber(db, renderer);
     }
 
-    @Provides DistrictRankingsSubscriber provideDistrictRankingsSubscriber(Database db) {
+    @Provides
+    public DistrictRankingsSubscriber provideDistrictRankingsSubscriber(Database db) {
         return new DistrictRankingsSubscriber(db);
     }
 
-    @Provides TeamAtDistrictSummarySubscriber provideTeamAtDistrictSummarySubscriber(
+    @Provides
+    public TeamAtDistrictSummarySubscriber provideTeamAtDistrictSummarySubscriber(
       Database db,
       EventBus eventBus) {
         return new TeamAtDistrictSummarySubscriber(db, mActivity.getResources(), eventBus);
     }
 
-    @Provides TeamAtDistrictBreakdownSubscriber provideTeamAtDistrictBreakdownSubscriber(
+    @Provides
+    public TeamAtDistrictBreakdownSubscriber provideTeamAtDistrictBreakdownSubscriber(
       Database db,
       Gson gson) {
         return new TeamAtDistrictBreakdownSubscriber(mActivity.getResources(), db, gson);
@@ -130,28 +136,30 @@ public class SubscriberModule {
 
     @Provides
     MatchInfoSubscriber provideMatchInfoSubscriber(
-      Gson gson,
-      EventBus eventBus,
-      MatchRenderer renderer,
-      MediaRenderer mediaRenderer) {
-        return new MatchInfoSubscriber(gson, eventBus, renderer, mediaRenderer);
-    }
-
-    @Provides WebcastListSubscriber provideWebcastListSubscriber(EventRenderer renderer) {
-        return new WebcastListSubscriber(renderer);
-    }
-
-    @Provides RecentNotificationsSubscriber provideRecentNotificationsSubscriber(DatabaseWriter writer) {
-        return new RecentNotificationsSubscriber(writer);
+            Gson gson,
+            EventBus eventBus,
+            MatchRenderer renderer,
+            MediaRenderer mediaRenderer,
+            Resources resources) {
+        return new MatchInfoSubscriber(gson, eventBus, renderer, mediaRenderer, resources);
     }
 
     @Provides
-    SubscriptionListSubscriber provideSubscriptionListSubscriber(MyTbaModelRenderer renderer) {
+    public WebcastListSubscriber provideWebcastListSubscriber(EventRenderer renderer) {
+        return new WebcastListSubscriber(renderer);
+    }
+
+    @Provides RecentNotificationsSubscriber provideRecentNotificationsSubscriber(DatabaseWriter writer, MatchRenderer matchRenderer) {
+        return new RecentNotificationsSubscriber(writer, mActivity, matchRenderer);
+    }
+
+    @Provides
+    public SubscriptionListSubscriber provideSubscriptionListSubscriber(MyTbaModelRenderer renderer) {
         return new SubscriptionListSubscriber(renderer);
     }
 
     @Provides
-    FavoriteListSubscriber provideFavoriteListSubscriber(MyTbaModelRenderer renderer) {
+    public FavoriteListSubscriber provideFavoriteListSubscriber(MyTbaModelRenderer renderer) {
         return new FavoriteListSubscriber(renderer);
     }
 

@@ -6,14 +6,13 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
@@ -44,8 +43,6 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     SearchView searchView;
     Toolbar toolbar;
 
-    int closeButtonId;
-
     private SearchResultsHeaderListElement teamsHeader, eventsHeader;
     private String currentQuery;
 
@@ -72,31 +69,15 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         searchView.setIconifiedByDefault(false);
         searchView.setIconified(false);
         searchView.setQueryHint(getString(R.string.search_hint));
-        // Prevent the "X" from iconifying the SearchView
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                return true;
-            }
-        });
-        // The SearchView is empty; hide the close/clear button.
-        // This will be shown once there is text in the field
-        closeButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
-        searchView.findViewById(closeButtonId).setVisibility(View.GONE);
-        ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.FILL_PARENT, ActionBar.LayoutParams.FILL_PARENT);
+
+        // Hide the magnifying glass icon
+        searchView.findViewById(android.support.v7.appcompat.R.id.search_mag_icon).setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+
+        ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(searchView, layoutParams);
 
-        // Hide the magnifying glass icon
-        int searchIconId = searchView.getContext().getResources().getIdentifier("android:id/search_mag_icon", null, null);
-        searchView.findViewById(searchIconId).setLayoutParams(new LinearLayout.LayoutParams(0, 0));
-
-        // Change search hint text color
-        int searchTextId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
-        ((TextView) searchView.findViewById(searchTextId)).setHintTextColor(getResources().getColor(R.color.search_hint));
-
         // Check if we got a search as the intent
-
         handleIntent(getIntent());
     }
 
@@ -119,7 +100,6 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     @Override
     protected void onPause() {
         super.onPause();
-
         AnalyticsHelper.sendSearchUpdate(this, currentQuery);
     }
 
@@ -271,8 +251,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         // Search is already handled by onQueryTextChange,
         // but hide the soft keyboard regardless when the user hits the search button.
         // Also return true.
-        searchView.setVisibility(View.INVISIBLE);
-        searchView.setVisibility(View.VISIBLE);
+        searchView.clearFocus();
         return true;
     }
 
@@ -281,12 +260,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         if (query.isEmpty()) {
             // If the user clears the search results, remove the adapter
             resultsList.setAdapter(null);
-            // Hide the close button so the SearchView can't be iconified
-            searchView.findViewById(closeButtonId).setVisibility(View.GONE);
             return true;
         } else {
-            // Show the close button so the SearchView can be cleared
-            searchView.findViewById(closeButtonId).setVisibility(View.VISIBLE);
             updateQuery(query);
             return true;
         }

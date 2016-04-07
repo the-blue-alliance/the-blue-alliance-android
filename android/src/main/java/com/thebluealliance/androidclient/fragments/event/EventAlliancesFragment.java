@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import rx.Observable;
 
@@ -50,6 +50,11 @@ public class EventAlliancesFragment extends ListViewFragment<Event, AllianceList
     }
 
     @Override
+    protected boolean shouldRegisterSubscriberToEventBus() {
+        return true;
+    }
+
+    @Override
     protected Observable<Event> getObservable(String tbaCacheHeader) {
         return mDatafeed.fetchEvent(mEventKey, tbaCacheHeader);
     }
@@ -59,8 +64,7 @@ public class EventAlliancesFragment extends ListViewFragment<Event, AllianceList
         return String.format("eventAlliances_%1$s", mEventKey);
     }
 
-    @Override
-    protected NoDataViewParams getNoDataParams() {
+    @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_handshake_black_48dp, R.string.no_alliance_data);
     }
 }

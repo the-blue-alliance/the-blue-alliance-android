@@ -12,11 +12,13 @@ import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,7 +28,7 @@ import android.widget.TextView;
 import java.util.Calendar;
 import java.util.Date;
 
-public class GenericNotification extends BaseNotification {
+public class GenericNotification extends BaseNotification<GenericNotificationViewModel> {
 
     public static final String TITLE = "title";
     public static final String DESC = "desc";
@@ -38,16 +40,6 @@ public class GenericNotification extends BaseNotification {
 
     public GenericNotification(String type, String messageData) {
         super(type, messageData);
-    }
-
-    @Override
-    public boolean shouldShowInRecentNotificationsList() {
-        if (getNotificationType().equals(NotificationTypes.BROADCAST)) {
-            return true;
-        }
-
-        // False for pings
-        return false;
     }
 
     public String getTitle() {
@@ -89,15 +81,12 @@ public class GenericNotification extends BaseNotification {
 
     @Override
     public Notification buildNotification(Context context, FollowsChecker followsChecker) {
-        if (getNotificationType().equals(NotificationTypes.BROADCAST)) {
-            // Only store broadcasts, not pings
-            stored = new StoredNotification();
-            stored.setType(getNotificationType());
-            stored.setTitle(title);
-            stored.setBody(message);
-            stored.setMessageData(messageData);
-            stored.setTime(Calendar.getInstance().getTime());
-        }
+        stored = new StoredNotification();
+        stored.setType(getNotificationType());
+        stored.setTitle(title);
+        stored.setBody(message);
+        stored.setMessageData(messageData);
+        stored.setTime(Calendar.getInstance().getTime());
 
         Intent intent = getIntent(context);
 
@@ -166,6 +155,20 @@ public class GenericNotification extends BaseNotification {
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
 
         return convertView;
+    }
+
+    @Nullable
+    @Override
+    public GenericNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        String header;
+        if (getNotificationType().equals(NotificationTypes.BROADCAST)) {
+            header = context.getString(R.string.notification_broadcast_header);
+        } else if (getNotificationType().equals(NotificationTypes.PING)) {
+            header = context.getString(R.string.notification_ping_header);
+        } else {
+            header = "";
+        }
+        return new GenericNotificationViewModel(header, title, message, getNotificationTimeString(context), getIntent(context));
     }
 
     private static class ViewHolder {

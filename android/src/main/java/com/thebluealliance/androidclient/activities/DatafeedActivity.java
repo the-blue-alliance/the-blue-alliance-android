@@ -30,9 +30,9 @@ import org.greenrobot.eventbus.ThreadMode;
 public abstract class DatafeedActivity extends BaseActivity
         implements HasFragmentComponent, InvalidateHost {
 
-    @Inject RefreshController mRefreshController;
-    @Inject TBAStatusController mStatusController;
-    @Inject EventBus mEventBus;
+    @Inject protected RefreshController mRefreshController;
+    @Inject protected TBAStatusController mStatusController;
+    @Inject protected EventBus mEventBus;
 
     protected FragmentComponent mComponent;
     protected Menu mOptionsMenu;

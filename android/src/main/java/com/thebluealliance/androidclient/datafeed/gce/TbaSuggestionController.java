@@ -11,10 +11,10 @@ import android.support.annotation.WorkerThread;
 
 import javax.inject.Inject;
 
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 /**
  * Class that interfaces Suggestions with GCE
@@ -48,13 +48,12 @@ public class TbaSuggestionController {
         Call<ModelsMobileApiMessagesBaseResponse> request = mTeamMediaApi.suggestion(authHeader, message);
         request.enqueue(new Callback<ModelsMobileApiMessagesBaseResponse>() {
             @Override
-            public void onResponse(Response<ModelsMobileApiMessagesBaseResponse> response,
-                                   Retrofit retrofit) {
+            public void onResponse(Call<ModelsMobileApiMessagesBaseResponse> call, Response<ModelsMobileApiMessagesBaseResponse> response) {
                 //TODO stuff
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<ModelsMobileApiMessagesBaseResponse> call, Throwable t) {
                 //TODO stuff
             }
         });

@@ -13,11 +13,16 @@ import com.thebluealliance.androidclient.types.ModelType;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public class MediaRenderer implements ModelRenderer<Media, Void> {
+
+    private static final Pattern YOUTUBE_KEY_PATTERN = Pattern.compile("^([a-zA-Z0-9_-]*)");
 
     @Inject
     public MediaRenderer() {
@@ -36,6 +41,7 @@ public class MediaRenderer implements ModelRenderer<Media, Void> {
         try {
             MediaType mediaType = media.getMediaType();
             String foreignKey = media.getForeignKey();
+            String keyForUrl = foreignKey;
 
             /* Build the link of the remote image based on foreign key */
             switch (mediaType) {
@@ -45,6 +51,15 @@ public class MediaRenderer implements ModelRenderer<Media, Void> {
                             details.get("image_partial").getAsString().replace("_l.jpg", "_m.jpg"));
                     break;
                 case YOUTUBE:
+                    /* Need to account for timestamps in youtube foreign key
+                     * Can be like <key>?start=1h15m3s or <key>?t=time or <key>#t=time
+                     * Since foreign key is first param in yt.com/watch?v=blah, others need to be &
+                     */
+                    keyForUrl = foreignKey.replace('?', '&').replace('#','&');
+                    Matcher m = YOUTUBE_KEY_PATTERN.matcher(foreignKey);
+                    String cleanKey = m.find() ? m.group(1) : foreignKey;
+                    imageUrl = String.format(mediaType.getImageUrlPattern(), cleanKey);
+                    break;
                 case IMGUR:
                     imageUrl = String.format(mediaType.getImageUrlPattern(), foreignKey);
                     break;
@@ -52,8 +67,8 @@ public class MediaRenderer implements ModelRenderer<Media, Void> {
                     imageUrl = "";
             }
             Boolean isVideo = mediaType == MediaType.YOUTUBE;
-            return new ImageListElement(imageUrl,
-              String.format(mediaType.getLinkUrlPattern(), foreignKey), isVideo);
+            String linkUrl = String.format(mediaType.getLinkUrlPattern(), keyForUrl);
+            return new ImageListElement(imageUrl, linkUrl, isVideo);
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Required fields not defined for rendering. \n" +
               "Fields Required: Database.Medias.TYPE, Database.Medias.DETAILS, Database.Medias.FOREIGNKEY");

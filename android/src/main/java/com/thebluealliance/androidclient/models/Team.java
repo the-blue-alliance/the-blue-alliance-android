@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.Context;
+import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.JsonArray;
@@ -9,8 +12,20 @@ import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
+import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
 
-public class Team extends BasicModel<Team> {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+public class Team extends BasicModel<Team> implements ViewModelRenderer<TeamViewModel, Integer> {
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({RENDER_BASIC, RENDER_DETAILS_BUTTON, RENDER_MYTBA_DETAILS})
+    public @interface RenderType{}
+    public static final int RENDER_BASIC = 0;
+    public static final int RENDER_DETAILS_BUTTON = 1;
+    public static final int RENDER_MYTBA_DETAILS = 2;
 
     public static final String[] NOTIFICATION_TYPES = {
             NotificationTypes.UPCOMING_MATCH,
@@ -144,4 +159,28 @@ public class Team extends BasicModel<Team> {
         fields.put(TeamsTable.MOTTO, motto);
     }
 
+    @Nullable
+    @Override
+    public TeamViewModel renderToViewModel(Context context, @Nullable @RenderType Integer renderType) {
+        try {
+            int safeRenderType = renderType == null ? RENDER_BASIC : renderType;
+            TeamViewModel model = new TeamViewModel(getKey(), getTeamNumber(), getNickname(), getLocation());
+            model.setShowLinkToTeamDetails(false);
+            model.setShowMyTbaDetails(false);
+            switch (safeRenderType) {
+                case RENDER_BASIC:
+                    break;
+                case RENDER_DETAILS_BUTTON:
+                    model.setShowLinkToTeamDetails(true);
+                    break;
+                case RENDER_MYTBA_DETAILS:
+                    model.setShowMyTbaDetails(true);
+                    break;
+            }
+            return model;
+        } catch (FieldNotDefinedException e) {
+            Log.w(Constants.LOG_TAG, "Team missing field required for rendering.");
+            return null;
+        }
+    }
 }

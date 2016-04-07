@@ -6,8 +6,8 @@ import com.google.gson.JsonPrimitive;
 import com.appspot.tbatv_prod_hrd.TeamMedia;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesMediaSuggestionMessage;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.RequestBody;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
@@ -28,7 +28,7 @@ import java.io.File;
 
 import javax.inject.Inject;
 
-import retrofit.Response;
+import retrofit2.Response;
 
 /**
  * An {@link IntentService} that takes details about an image stored locally, uploads it to imgur,
@@ -145,7 +145,7 @@ public class ImgurSuggestionService extends IntentService {
 
             Response<UploadResponse> response = mImgurApi.uploadImage(authToken, titlePart, descPart, body).execute();
 
-            if (response != null && response.isSuccess()) {
+            if (response != null && response.isSuccessful()) {
                 UploadResponse uploadResponse = response.body();
                 Log.d(Constants.LOG_TAG, "Uploaded imgur image: " + uploadResponse.data.link);
 
@@ -162,7 +162,7 @@ public class ImgurSuggestionService extends IntentService {
                         link,
                         deletehash);
                 Response<ModelsMobileApiMessagesBaseResponse> suggestionResponse = mTeamMediaApi.suggestion(authHeader, message).execute();
-                if (suggestionResponse != null && suggestionResponse.isSuccess()) {
+                if (suggestionResponse != null && suggestionResponse.isSuccessful()) {
                     // Yay, everything worked!
                 } else {
                     // Crap

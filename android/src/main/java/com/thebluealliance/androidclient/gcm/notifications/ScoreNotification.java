@@ -15,16 +15,20 @@ import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
+import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
 
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -36,15 +40,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ScoreNotification extends BaseNotification {
+public class ScoreNotification extends BaseNotification<ScoreNotificationViewModel> {
 
     private final MatchWriter mWriter;
+    private final MatchRenderer mRenderer;
     private String eventName, eventKey, matchKey;
     private Match match;
 
-    public ScoreNotification(String messageData, MatchWriter writer) {
+    public ScoreNotification(String messageData, MatchWriter writer, MatchRenderer matchRenderer) {
         super(NotificationTypes.MATCH_SCORE, messageData);
         mWriter = writer;
+        mRenderer = matchRenderer;
     }
 
     public String getEventName() {
@@ -113,15 +119,15 @@ public class ScoreNotification extends BaseNotification {
         if (blueScore > redScore) {
             scoreString = blueScore + "-" + redScore;
             CharSequence temp = firstTeams;
-            firstTeams        = secondTeams;
-            secondTeams       = temp;
+            firstTeams = secondTeams;
+            secondTeams = temp;
         } else {
             scoreString = redScore + "-" + blueScore;
         }
 
         boolean useSpecial2015Format;
         try {
-            useSpecial2015Format = match.getYear() == 2015 && match.getType() != MatchType.FINAL;
+            useSpecial2015Format = match.getYear() == 2015 && match.getMatchType() != MatchType.FINAL;
         } catch (BasicModel.FieldNotDefinedException e) {
             useSpecial2015Format = false;
             Log.w(Constants.LOG_TAG, "Couldn't determine if we should use 2015 score format. Defaulting to no");
@@ -200,10 +206,21 @@ public class ScoreNotification extends BaseNotification {
         holder.title.setText(c.getString(R.string.notification_score_gameday_title, MatchHelper.getMatchTitleFromMatchKey(c, matchKey)));
         holder.time.setText(getNotificationTimeString(c));
         holder.summaryContainer.setOnClickListener(new GamedayTickerClickListener(c, this));
-        /** TODO Move to {@link com.thebluealliance.androidclient.renderers.MatchRenderer} */
-        match.render(false, false, false, true).getView(c, inflater, holder.matchView);
+
+        MatchListElement renderedMatch = mRenderer.renderFromModel(match, MatchRenderer.RENDER_NOTIFICATION);
+        if (renderedMatch != null) {
+            renderedMatch.getView(c, inflater, holder.matchView);
+        }
 
         return convertView;
+    }
+
+    @Nullable
+    @Override
+    public ScoreNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        String header = getNotificationCardHeader(context, EventHelper.shortName(eventName), eventKey);
+        String title = context.getString(R.string.notification_score_gameday_title, MatchHelper.getMatchTitleFromMatchKey(context, matchKey));
+        return new ScoreNotificationViewModel(header, title, getNotificationTimeString(context), getIntent(context), match);
     }
 
     private static class ViewHolder {

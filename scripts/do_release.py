@@ -60,7 +60,13 @@ def check_travis_tests(args):
     status = "created"
     duration = ""
     while status == "created" or status == "started":
-        info = subprocess.check_output(["travis", "show", tag_name])
+        try:
+            info = subprocess.check_output(["travis", "show", tag_name])
+        except CalledProcessError:
+            try:
+                input("Error getting travis status. Press Enter to continue...")
+            except SyntaxError:
+                pass
         regex = re.search(".*State:[ \t]+((\w)*)\n", info)
         status = regex.group(1)
         regex = re.search(".*Duration:[ \t]+(([\w\d ])*)", info)
@@ -163,7 +169,7 @@ def create_tag(args):
     print("To skip creating a new tag, run with --skip_tag")
     time.sleep(2)
     if not args.dry_run:
-        subprocess.call(["git", "tag", "-a", "v{}".format(args.tag), "-m", name])
+        subprocess.call(["git", "tag", "-s", "v{}".format(args.tag), "-m", name])
 
 
 def validate_build(dry_run):
