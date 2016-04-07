@@ -312,7 +312,9 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
         final Dialog dialog = makeDialogForYearSelection(R.string.select_year, mDistrictsDropdownItems);
 
         mYearSelectorContainer.setOnClickListener(v -> dialog.show());
-        if (mCurrentSelectedYearPosition >= 0 && mCurrentSelectedYearPosition < mEventsDropdownItems.length) {
+        if (mCurrentSelectedYearPosition >= 0
+                && mCurrentSelectedYearPosition < mEventsDropdownItems.length
+                && mCurrentSelectedYearPosition < mDistrictsDropdownItems.length) {
             onYearSelected(mCurrentSelectedYearPosition);
             updateDistrictsYearSelector(mCurrentSelectedYearPosition);
         } else {
