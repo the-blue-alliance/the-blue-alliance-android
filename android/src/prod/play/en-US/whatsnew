@@ -1,10 +1,8 @@
-Version 3.3.2: (2016 Week 5)
-    - Add support for octofinal matches
-    - Fix issues linking to YouTube videos with time data
-    - Add support for flashing LED for incoming notifications
-    - Improve Recent Notification view performance
+Version 3.3.3: (2016 Week 6)
+    - Show playoff advancement in alliances list
+    - Make long team names expandable
+    - Improve performance of live tickers
     - Other bug fixes/app improvements
 
 View the full changelog for this and previous releases on the GitHub page:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
-
