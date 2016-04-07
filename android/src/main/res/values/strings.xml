@@ -150,4 +150,5 @@
     <string name="match_abbrev_semi">SF</string>
     <string name="match_abbrev_final">F</string>
     <string name="match_abbrev_unknown">M</string>
+    <string name="match_abbrev_winner">W</string>
 </resources>

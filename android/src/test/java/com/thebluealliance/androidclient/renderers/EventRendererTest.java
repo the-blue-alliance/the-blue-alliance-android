@@ -94,7 +94,7 @@ public class EventRendererTest  {
     @Test
     public void testRenderAlliancesWithList() throws FieldNotDefinedException {
         List<ListItem> elements = new ArrayList<>();
-        mRenderer.renderAlliances(mEvent, elements);
+        mRenderer.renderAlliances(mEvent, elements, null);
         assertAllianceList(elements);
     }
 

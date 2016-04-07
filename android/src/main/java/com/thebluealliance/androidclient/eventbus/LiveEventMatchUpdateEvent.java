@@ -18,4 +18,11 @@ public class LiveEventMatchUpdateEvent {
     public Match getNextMatch() {
         return nextMatch;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof LiveEventMatchUpdateEvent)
+                && (((LiveEventMatchUpdateEvent) o).lastMatch == lastMatch)
+                && (((LiveEventMatchUpdateEvent) o).nextMatch == nextMatch);
+    }
 }

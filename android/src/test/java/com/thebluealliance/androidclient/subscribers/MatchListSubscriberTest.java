@@ -6,6 +6,7 @@ import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
+import com.thebluealliance.androidclient.firebase.AllianceAdvancementEvent;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -26,7 +27,7 @@ import android.support.annotation.StringRes;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -70,7 +71,8 @@ public class MatchListSubscriberTest {
     @Test
     public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mMatches);
-        verify(mEventBus).post(any(LiveEventMatchUpdateEvent.class));
+        verify(mEventBus).post(eq(new LiveEventMatchUpdateEvent(mMatches.get(5), null)));
+        verify(mEventBus).post(eq(new AllianceAdvancementEvent(mSubscriber.getAdvancement())));
     }
 
     @Test

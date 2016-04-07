@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import rx.Observable;
 
@@ -47,6 +47,11 @@ public class EventAlliancesFragment extends ListViewFragment<Event, AllianceList
     @Override
     protected void inject() {
         mComponent.inject(this);
+    }
+
+    @Override
+    protected boolean shouldRegisterSubscriberToEventBus() {
+        return true;
     }
 
     @Override

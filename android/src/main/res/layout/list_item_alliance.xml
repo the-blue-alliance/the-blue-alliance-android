@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="48dp"
@@ -9,12 +10,21 @@
     android:paddingRight="8dp">
 
     <TextView
+            android:id="@+id/alliance_advancement"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:gravity="center"
+            tools:text="W"
+            android:textSize="14sp"/>
+
+    <TextView
         android:id="@+id/alliance_name"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1.5"
         android:gravity="center"
-        android:text="Alliance #1:"
+        tools:text="Alliance #1:"
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -26,7 +36,7 @@
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:gravity="center"
-        android:text="254"
+        tools:text="254"
         android:textSize="16sp" />
 
     <TextView
@@ -37,7 +47,7 @@
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:gravity="center"
-        android:text="469"
+        tools:text="469"
         android:textSize="16sp" />
 
     <TextView
@@ -48,7 +58,7 @@
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:gravity="center"
-        android:text="2848"
+        tools:text="2848"
         android:textSize="16sp" />
 
     <TextView
@@ -59,7 +69,7 @@
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:gravity="center"
-        android:text="74"
+        tools:text="74"
         android:textSize="16sp"
         android:visibility="gone" />
 

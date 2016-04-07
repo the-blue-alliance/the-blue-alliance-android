@@ -5,31 +5,33 @@ import com.thebluealliance.androidclient.R;
 import android.support.annotation.StringRes;
 
 public enum MatchType {
-    NONE(R.string.match_type_unknown, R.string.match_abbrev_unknown, 0),
-    QUAL(R.string.match_type_qual, R.string.match_abbrev_qual, 1) {
+    NONE(R.string.match_type_unknown, R.string.match_abbrev_unknown, 0, false),
+    QUAL(R.string.match_type_qual, R.string.match_abbrev_qual, 1, false) {
         @Override
         public MatchType previous() {
             return null; // see below for options for this line
         }
     },
-    OCTO(R.string.match_type_octo, R.string.match_abbrev_octo, 2),
-    QUARTER(R.string.match_type_quarter, R.string.match_abbrev_quarter, 3),
-    SEMI(R.string.match_type_semis, R.string.match_abbrev_semi, 4),
-    FINAL(R.string.match_type_finals, R.string.match_abbrev_final, 5) {
+    OCTO(R.string.match_type_octo, R.string.match_abbrev_octo, 2, true),
+    QUARTER(R.string.match_type_quarter, R.string.match_abbrev_quarter, 3, true),
+    SEMI(R.string.match_type_semis, R.string.match_abbrev_semi, 4, true),
+    FINAL(R.string.match_type_finals, R.string.match_abbrev_final, 5, true) {
         @Override
         public MatchType next() {
             return null; // see below for options for this line
         }
     };
 
-    public @StringRes int typeName;
-    public @StringRes int typeAbbreviation;
-    public int playOrder;
+    private final @StringRes int typeName;
+    private final @StringRes int typeAbbreviation;
+    private final int playOrder;
+    private final boolean isPlayoff;
 
-    MatchType(@StringRes int typeName, @StringRes int typeAbbreviation, int playOrder) {
+    MatchType(@StringRes int typeName, @StringRes int typeAbbreviation, int playOrder, boolean playoff) {
         this.typeName = typeName;
         this.typeAbbreviation = typeAbbreviation;
         this.playOrder = playOrder;
+        this.isPlayoff = playoff;
     }
 
     public MatchType next() {
@@ -56,6 +58,10 @@ public enum MatchType {
 
     public int getPlayOrder() {
         return playOrder;
+    }
+
+    public boolean isPlayoff() {
+        return isPlayoff;
     }
 
     public static MatchType fromShortType(String str) {
