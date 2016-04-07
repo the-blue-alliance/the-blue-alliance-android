@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.listitems.WebcastListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
@@ -90,16 +91,16 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
     }
 
     @WorkerThread
-    public void renderAlliances(Event event, List<ListItem> destList, HashMap<String, Integer> advancement) {
+    public void renderAlliances(Event event, List<ListItem> destList, HashMap<String, PlayoffAdvancement> advancement) {
         try {
             JsonArray alliances = event.getAlliances();
             int counter = 1;
             for (JsonElement alliance : alliances) {
                 JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
-                int advancementRes = advancement != null
-                        ? getAdvancementRes(advancement, teams)
-                        : -1;
-                destList.add(new AllianceListElement(event.getKey(), counter, teams, advancementRes));
+                PlayoffAdvancement adv = advancement != null
+                        ? getAdvancement(advancement, teams)
+                        : PlayoffAdvancement.NONE;
+                destList.add(new AllianceListElement(event.getKey(), counter, teams, adv));
                 counter++;
             }
         } catch (BasicModel.FieldNotDefinedException e) {
@@ -110,13 +111,19 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
         }
     }
 
-    private static int getAdvancementRes(HashMap<String, Integer> advancement, JsonArray teams) {
+    private static PlayoffAdvancement getAdvancement(HashMap<String, PlayoffAdvancement> advancement, JsonArray teams) {
+        PlayoffAdvancement adv = PlayoffAdvancement.NONE;
+        int level = 0;
         for (int i = 0; i < teams.size(); i++) {
             String teamKey = teams.get(i).getAsString();
             if (advancement.containsKey(teamKey)) {
-                return advancement.get(teamKey);
+                PlayoffAdvancement next = advancement.get(teamKey);
+                if (next.getLevel() > level) {
+                    adv = next;
+                    level = next.getLevel();
+                }
             }
         }
-        return -1;
+        return adv;
     }
 }

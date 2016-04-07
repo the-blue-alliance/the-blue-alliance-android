@@ -6,6 +6,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
+import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
 import android.content.Context;
 import android.text.SpannableString;
@@ -17,14 +18,14 @@ import android.widget.TextView;
 public class AllianceListElement extends ListElement implements RenderableModel {
 
     public final int number;
-    public final int advancementRes;
+    public final PlayoffAdvancement advancement;
     public final JsonArray teams;
     public final String eventKey;
 
-    public AllianceListElement(String eventKey, int number, JsonArray teams, int advancementString) {
+    public AllianceListElement(String eventKey, int number, JsonArray teams, PlayoffAdvancement advancement) {
         if (teams.size() < 2) throw new IllegalArgumentException("Alliances have >= 2 members");
         this.number = number;
-        this.advancementRes = advancementString;
+        this.advancement = advancement;
         this.teams = teams;
         this.eventKey = eventKey;
     }
@@ -49,11 +50,12 @@ public class AllianceListElement extends ListElement implements RenderableModel 
 
         holder.allianceName.setText(String.format(c.getString(R.string.alliance_title), number));
 
-        if (advancementRes != -1) {
+        if (advancement != PlayoffAdvancement.NONE) {
             holder.advancement.setVisibility(View.VISIBLE);
-            holder.advancement.setText(advancementRes);
+            holder.advancement.setText(advancement.getAbbreviation());
         } else {
-            holder.advancement.setVisibility(View.GONE);
+            holder.advancement.setVisibility(View.VISIBLE);
+            holder.advancement.setText("");
         }
 
         TeamAtEventClickListener listener = new TeamAtEventClickListener(c);

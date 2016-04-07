@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -37,7 +38,7 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
     private String mEventKey;
     private Database mDb;
     private EventBus mEventBus;
-    private HashMap<String, Integer> mAdvancement;
+    private HashMap<String, PlayoffAdvancement> mAdvancement;
 
     public MatchListSubscriber(Resources resources, Database db, EventBus eventBus) {
         super();
@@ -131,8 +132,14 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
                 }
             }
             if (match.getMatchType().isPlayoff()) {
-                addAllianceTeams(mAdvancement, Match.getRedTeams(alliances), match.getMatchType().getTypeAbbreviation());
-                addAllianceTeams(mAdvancement, Match.getBlueTeams(alliances), match.getMatchType().getTypeAbbreviation());
+                addAllianceTeams(
+                        mAdvancement,
+                        Match.getRedTeams(alliances),
+                        PlayoffAdvancement.fromMatchType(match.getMatchType()));
+                addAllianceTeams(
+                        mAdvancement,
+                        Match.getBlueTeams(alliances),
+                        PlayoffAdvancement.fromMatchType(match.getMatchType()));
             }
 
             /**
@@ -157,9 +164,9 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
 
         if (lastMatch != null && lastMatch.getMatchType() == MatchType.FINAL) {
             if (redFinalsWon >= 2) {
-                addAllianceTeams(mAdvancement, Match.getRedTeams(lastMatch.getAlliances()), R.string.match_abbrev_winner);
+                addAllianceTeams(mAdvancement, Match.getRedTeams(lastMatch.getAlliances()), PlayoffAdvancement.WINNER);
             } else if (blueFinalsWon >= 2) {
-                addAllianceTeams(mAdvancement, Match.getBlueTeams(lastMatch.getAlliances()), R.string.match_abbrev_winner);
+                addAllianceTeams(mAdvancement, Match.getBlueTeams(lastMatch.getAlliances()), PlayoffAdvancement.WINNER);
             }
         }
 
@@ -190,10 +197,13 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         mEventBus.post(new AllianceAdvancementEvent(mAdvancement));
     }
 
-    private void addAllianceTeams(HashMap<String, Integer> advancement, JsonArray teams, int res) {
+    private void addAllianceTeams(
+            HashMap<String, PlayoffAdvancement> advancement,
+            JsonArray teams,
+            PlayoffAdvancement level) {
         for (int i = 0; i < teams.size(); i++) {
             String teamKey = teams.get(i).getAsString();
-            advancement.put(teamKey, res);
+            advancement.put(teamKey, level);
         }
     }
 
@@ -202,7 +212,7 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
     }
 
     @VisibleForTesting
-    public HashMap<String, Integer> getAdvancement() {
+    public HashMap<String, PlayoffAdvancement> getAdvancement() {
         return mAdvancement;
     }
 

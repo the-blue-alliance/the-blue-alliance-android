@@ -5,6 +5,7 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
+import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -17,7 +18,7 @@ public class AllianceListSubscriber extends BaseAPISubscriber<Event, List<ListIt
 
     EventRenderer mRenderer;
     private boolean mIsAdvancementLoaded;
-    private HashMap<String, Integer> mAdvancement;
+    private HashMap<String, PlayoffAdvancement> mAdvancement;
 
     public AllianceListSubscriber(EventRenderer renderer) {
         super();
