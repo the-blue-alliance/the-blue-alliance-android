@@ -1,11 +1,15 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
+import com.thebluealliance.androidclient.firebase.AllianceAdvancementEvent;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -18,6 +22,7 @@ import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<ListGroup>> {
@@ -77,12 +82,16 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         MatchType lastType = null;
         Match previousIteration = null;
         boolean lastMatchPlayed = false;
+        int redFinalsWon = 0;
+        int blueFinalsWon = 0;
+        HashMap<String, Integer> advancement = new HashMap<>();
         if (mAPIData.size() > 0) {
             nextMatch = mAPIData.get(0);
         }
         for (int i = 0; i < mAPIData.size(); i++) {
             Match match = mAPIData.get(i);
             MatchType currentType = match.getMatchType();
+            JsonObject alliances = match.getAlliances();
             if (lastType != currentType) {
                 switch (match.getMatchType()) {
                     case QUAL:
@@ -110,6 +119,20 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
                 nextMatch = match;
             }
 
+            /* Track alliance advancement, indexed by captain team key */
+            if (match.getMatchType() == MatchType.FINAL && match.hasBeenPlayed()) {
+                // Need to ensure we can differentiate who won the finals
+                if (Match.getRedScore(alliances) > Match.getBlueScore(alliances)) {
+                    redFinalsWon++;
+                } else if (Match.getBlueScore(alliances) > Match.getRedScore(alliances)) {
+                    blueFinalsWon++;
+                }
+            }
+            if (match.getMatchType().isPlayoff()) {
+                addAllianceTeams(advancement, Match.getRedTeams(alliances), match.getMatchType().getTypeAbbreviation());
+                addAllianceTeams(advancement, Match.getBlueTeams(alliances), match.getMatchType().getTypeAbbreviation());
+            }
+
             /**
              * the only reason this isn't moved to PopulateTeamAtEvent is that if so,
              * we'd have to iterate through every match again to calculate the
@@ -122,12 +145,22 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
             previousIteration = match;
             lastMatchPlayed = match.hasBeenPlayed();
         }
+
         if (lastMatch == null && !mAPIData.isEmpty()) {
             Match last = mAPIData.get(mAPIData.size() - 1);
             if (last.hasBeenPlayed()) {
                 lastMatch = last;
             }
         }
+
+        if (lastMatch != null && lastMatch.getMatchType() == MatchType.FINAL) {
+            if (redFinalsWon >= 2) {
+                addAllianceTeams(advancement, Match.getRedTeams(lastMatch.getAlliances()), R.string.match_abbrev_winner);
+            } else if (blueFinalsWon >= 2) {
+                addAllianceTeams(advancement, Match.getBlueTeams(lastMatch.getAlliances()), R.string.match_abbrev_winner);
+            }
+        }
+
         if (nextMatch != null && nextMatch.hasBeenPlayed()) {
             // Avoids bug where matches loop over when all played
             // Because nextMatch is initialized to the first qual match
@@ -152,6 +185,14 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         }
 
         mEventBus.post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
+        mEventBus.post(new AllianceAdvancementEvent(advancement));
+    }
+
+    private void addAllianceTeams(HashMap<String, Integer> advancement, JsonArray teams, int res) {
+        for (int i = 0; i < teams.size(); i++) {
+            String teamKey = teams.get(i).getAsString();
+            advancement.put(teamKey, res);
+        }
     }
 
     @Override public boolean isDataValid() {
