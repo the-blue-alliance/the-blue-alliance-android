@@ -257,8 +257,8 @@ dependencies {
     compile "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
 
-    compile 'com.google.dagger:dagger:2.0.2'
-    apt 'com.google.dagger:dagger-compiler:2.0.2'
+    compile "com.google.dagger:dagger:${daggerVersion}"
+    apt "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // Other third party libraries
     compile "com.google.code.gson:gson:${gsonVersion}"
@@ -283,5 +283,5 @@ dependencies {
     testCompile "org.robolectric:shadows-multidex:3.0"
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.0.31-beta'
-    testApt 'com.google.dagger:dagger-compiler:2.0.1'
+    testApt "com.google.dagger:dagger-compiler:${daggerVersion}"
 }
