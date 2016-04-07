@@ -177,13 +177,6 @@ public class Match extends BasicModel<Match> {
         return getBlueAlliance(alliances).getAsJsonArray("teams");
     }
 
-    public static String getAllianceCaptain(JsonObject alliance) {
-        if (!alliance.has("picks") || alliance.getAsJsonArray("picks").size() == 0) {
-            return "";
-        }
-        return alliance.getAsJsonArray("picks").get(0).getAsString();
-    }
-
     /** @return team keys from {@link #getRedTeams} or {@link #getBlueTeams}. */
     @NonNull
     public static ArrayList<String> teamKeys(JsonArray teamsJson) {

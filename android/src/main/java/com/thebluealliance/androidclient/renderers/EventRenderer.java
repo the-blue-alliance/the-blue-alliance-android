@@ -11,7 +11,6 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.WebcastListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.types.ModelType;
 
 import android.support.annotation.Nullable;
@@ -97,9 +96,8 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
             int counter = 1;
             for (JsonElement alliance : alliances) {
                 JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
-                String captain = Match.getAllianceCaptain(alliance.getAsJsonObject());
-                int advancementRes = advancement != null && advancement.containsKey(captain)
-                        ? advancement.get(captain)
+                int advancementRes = advancement != null
+                        ? getAdvancementRes(advancement, teams)
                         : -1;
                 destList.add(new AllianceListElement(event.getKey(), counter, teams, advancementRes));
                 counter++;
@@ -110,5 +108,15 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
         } catch (IllegalArgumentException e) {
             Log.w(Constants.LOG_TAG, "Invalid alliance size. Can't render");
         }
+    }
+
+    private static int getAdvancementRes(HashMap<String, Integer> advancement, JsonArray teams) {
+        for (int i = 0; i < teams.size(); i++) {
+            String teamKey = teams.get(i).getAsString();
+            if (advancement.containsKey(teamKey)) {
+                return advancement.get(teamKey);
+            }
+        }
+        return -1;
     }
 }
