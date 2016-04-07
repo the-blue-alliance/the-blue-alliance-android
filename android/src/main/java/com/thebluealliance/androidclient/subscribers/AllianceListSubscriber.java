@@ -46,10 +46,10 @@ public class AllianceListSubscriber extends BaseAPISubscriber<Event, List<ListIt
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onAllianceAdvancementLoaded(AllianceAdvancementEvent advancementEvent) {
+        mIsAdvancementLoaded = true;
         if (advancementEvent == null) {
             return;
         }
-        mIsAdvancementLoaded = true;
         mAdvancement = advancementEvent.advancement;
         try {
             if (isDataValid()) {

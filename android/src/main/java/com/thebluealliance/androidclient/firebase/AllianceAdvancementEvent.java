@@ -8,4 +8,10 @@ public class AllianceAdvancementEvent {
     public AllianceAdvancementEvent(HashMap<String, Integer> advancement) {
         this.advancement = advancement;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof AllianceAdvancementEvent)
+                && (((AllianceAdvancementEvent) o).advancement == advancement);
+    }
 }

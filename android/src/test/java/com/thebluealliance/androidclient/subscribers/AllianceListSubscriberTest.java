@@ -39,18 +39,21 @@ public class AllianceListSubscriberTest extends TestCase {
 
     @Test
     public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+        mSubscriber.onAllianceAdvancementLoaded(null);
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
     public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+        mSubscriber.onAllianceAdvancementLoaded(null);
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mEvent);
     }
 
     @Test
     public void testParse() throws BasicModel.FieldNotDefinedException {
+        mSubscriber.onAllianceAdvancementLoaded(null);
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvent);
 
-        verify(mRenderer).renderAlliances(mEvent, data);
+        verify(mRenderer).renderAlliances(mEvent, data, null);
     }
 }
