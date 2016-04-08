@@ -4,6 +4,7 @@ import com.thebluealliance.androidclient.IntegrationRobolectricRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.fragments.framework.BaseFragmentTest;
 import com.thebluealliance.androidclient.fragments.framework.FragmentTestDriver;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Team;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(IntegrationRobolectricRunner.class)
-public class EventTeamsFragmentTest {
+public class EventTeamsFragmentTest extends BaseFragmentTest {
 
     EventTeamsFragment mFragment;
     List<ListItem> mTeams;
