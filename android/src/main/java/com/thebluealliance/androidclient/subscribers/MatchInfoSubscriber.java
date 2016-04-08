@@ -86,4 +86,9 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
             mEventBus.post(new ActionBarTitleEvent(mMatchTitle, subtitle));
         }
     }
+
+    @Override
+    protected boolean shouldPostToEventBus() {
+        return true;
+    }
 }

@@ -310,6 +310,7 @@ public class MatchBreakdownView2016 extends FrameLayout {
             findViewById(R.id.breakdown2016_rp_header).setVisibility(GONE);
         }
 
+        breakdownContainer.setVisibility(VISIBLE);
         return true;
     }
 
