@@ -67,13 +67,13 @@ android {
         buildTypes {
             debug {
                 applicationIdSuffix ".development"
-                testCoverageEnabled = true
+                testCoverageEnabled true
                 manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
             }
 
             debugProguard {
                 applicationIdSuffix ".development"
-                testCoverageEnabled = true
+                testCoverageEnabled true
                 manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
                 minifyEnabled true
                 zipAlignEnabled true
