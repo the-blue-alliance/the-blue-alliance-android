@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.IntegrationRobolectricRunner;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
+import com.thebluealliance.androidclient.fragments.framework.BaseFragmentTest;
 import com.thebluealliance.androidclient.fragments.framework.DatafeedFragmentTestController;
 import com.thebluealliance.androidclient.fragments.framework.FragmentTestDriver;
 import com.thebluealliance.androidclient.fragments.framework.SimpleBinder;
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(IntegrationRobolectricRunner.class)
-public class TestDatafeedFragment {
+public class TestDatafeedFragment extends BaseFragmentTest {
 
     private SimpleDatafeedFragment mFragment;
     private DatafeedFragmentTestController<SimpleDatafeedFragment> mController;

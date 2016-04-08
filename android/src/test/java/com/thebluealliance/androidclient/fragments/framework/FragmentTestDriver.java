@@ -2,10 +2,13 @@ package com.thebluealliance.androidclient.fragments.framework;
 
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 import com.thebluealliance.androidclient.binders.ListViewBinder;
+import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
+import com.thebluealliance.androidclient.views.NoDataView;
 
 import org.mockito.internal.util.reflection.Whitebox;
 import org.robolectric.Shadows;
@@ -22,6 +25,7 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.verify;
 
 public class FragmentTestDriver {
 
@@ -74,9 +78,6 @@ public class FragmentTestDriver {
 
     public static <F extends DatafeedFragment<T, V, S, B>, T, V, S extends BaseAPISubscriber<T, V>,
             B extends AbstractDataBinder<V>> void testNoDataBindings(F fragment, @IdRes int noDataViewRes) {
-        /*
-         * TODO enabling this causes Robolectric to OOM. It's a bug, not a feature :/
-         * https://github.com/robolectric/robolectric/issues/2068
         DatafeedFragmentTestController<F> controller = getController(fragment);
         controller.makeTestActivityController().makeActivity().attach();
 
@@ -95,6 +96,5 @@ public class FragmentTestDriver {
         verify(binder).setNoDataParams(params);
         controller.getActivity().finish();
         controller.pause().stop().destroy();
-        */
     }
 }
