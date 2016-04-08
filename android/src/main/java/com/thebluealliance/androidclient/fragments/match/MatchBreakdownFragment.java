@@ -60,7 +60,8 @@ public class MatchBreakdownFragment extends DatafeedFragment<Match, MatchBreakdo
 
     @Override
     protected Observable<Match> getObservable(String tbaCacheHeader) {
-        return mDatafeed.fetchMatch(mMatchKey, tbaCacheHeader);
+        // Load data only from local db, MatchInfo fragment will send updated info via EventBus
+        return mDatafeed.getCache().fetchMatch(mMatchKey);
     }
 
     @Override
@@ -72,4 +73,8 @@ public class MatchBreakdownFragment extends DatafeedFragment<Match, MatchBreakdo
         return new NoDataViewParams(R.drawable.ic_poll_black_48dp, R.string.no_match_breakdown);
     }
 
+    @Override
+    protected boolean shouldRegisterSubscriberToEventBus() {
+        return true;
+    }
 }
