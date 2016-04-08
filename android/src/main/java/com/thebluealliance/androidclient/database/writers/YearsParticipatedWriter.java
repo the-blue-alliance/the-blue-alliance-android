@@ -1,10 +1,11 @@
 package com.thebluealliance.androidclient.database.writers;
 
-import android.support.annotation.WorkerThread;
-
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Team;
+
+import android.support.annotation.WorkerThread;
 
 import javax.inject.Inject;
 
@@ -24,7 +25,7 @@ public class YearsParticipatedWriter extends BaseDbWriter<YearsParticipatedInfo>
     @WorkerThread
     public void write(YearsParticipatedInfo yearsParticipatedInfo) {
         Team team = mDb.getTeamsTable().get(yearsParticipatedInfo.teamKey);
-        if (team != null) {
+        if (team != null && yearsParticipatedInfo.yearsParticipated != null) {
             team.setYearsParticipated(yearsParticipatedInfo.yearsParticipated);
             mTeamWriter.write(team);
         }

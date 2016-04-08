@@ -74,9 +74,8 @@ public class FragmentTestDriver {
 
     public static <F extends DatafeedFragment<T, V, S, B>, T, V, S extends BaseAPISubscriber<T, V>,
             B extends AbstractDataBinder<V>> void testNoDataBindings(F fragment, @IdRes int noDataViewRes) {
-        /*
-         * TODO enabling this causes Robolectric to OOM. It's a bug, not a feature :/
-         * https://github.com/robolectric/robolectric/issues/2068
+        /**
+         * Still having OOM issues
         DatafeedFragmentTestController<F> controller = getController(fragment);
         controller.makeTestActivityController().makeActivity().attach();
 

@@ -6,6 +6,9 @@ import com.thebluealliance.androidclient.binders.MatchBreakdownBinder;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 public class MatchBreakdownSubscriber extends BaseAPISubscriber<Match, MatchBreakdownBinder.Model> {
 
     @Override
@@ -26,6 +29,23 @@ public class MatchBreakdownSubscriber extends BaseAPISubscriber<Match, MatchBrea
             }
         } else {
             mDataToBind = null;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onMatchUpdated(Match match) {
+        if (match == null) {
+            return;
+        }
+        mAPIData = match;
+        try {
+            if (isDataValid()) {
+                parseData();
+                bindData();
+            }
+        } catch (BasicModel.FieldNotDefinedException e) {
+            e.printStackTrace();
         }
     }
 }

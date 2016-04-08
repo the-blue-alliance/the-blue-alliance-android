@@ -67,13 +67,13 @@ android {
         buildTypes {
             debug {
                 applicationIdSuffix ".development"
-                testCoverageEnabled = true
+                testCoverageEnabled true
                 manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
             }
 
             debugProguard {
                 applicationIdSuffix ".development"
-                testCoverageEnabled = true
+                testCoverageEnabled true
                 manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
                 minifyEnabled true
                 zipAlignEnabled true
@@ -257,8 +257,8 @@ dependencies {
     compile "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
 
-    compile 'com.google.dagger:dagger:2.0.2'
-    apt 'com.google.dagger:dagger-compiler:2.0.2'
+    compile "com.google.dagger:dagger:${daggerVersion}"
+    apt "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // Other third party libraries
     compile "com.google.code.gson:gson:${gsonVersion}"
@@ -268,7 +268,8 @@ dependencies {
     compile 'com.facebook.stetho:stetho:1.3.1'
     compile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
     compile 'com.firebase:firebase-client-android:2.5.2'
-    compile "io.reactivex:rxandroid:${rxJavaVersion}"
+    compile "io.reactivex:rxandroid:${rxAndroidVersion}"
+    compile "io.reactivex:rxjava:${rxJavaVersion}"
     compile 'io.reactivex:rxjava-math:1.0.0'
     compile 'me.relex:circleindicator:1.1.5@aar'
     compile 'com.jakewharton:butterknife:7.0.1'
@@ -283,5 +284,5 @@ dependencies {
     testCompile "org.robolectric:shadows-multidex:3.0"
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.0.31-beta'
-    testApt 'com.google.dagger:dagger-compiler:2.0.1'
+    testApt "com.google.dagger:dagger-compiler:${daggerVersion}"
 }
