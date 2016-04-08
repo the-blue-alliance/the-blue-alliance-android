@@ -37,7 +37,12 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
         }
         long startTime = System.currentTimeMillis();
         Log.d(Constants.LOG_TAG, "BINDING DATA");
-        breakdown.initWithData(mMatchType, data.allianceData, data.scoreData);
+        boolean success = breakdown.initWithData(mMatchType, data.allianceData, data.scoreData);
+
+        if (!success) {
+            setDataBound(false);
+            return;
+        }
 
         if (progressBar != null) {
             progressBar.setVisibility(View.GONE);
