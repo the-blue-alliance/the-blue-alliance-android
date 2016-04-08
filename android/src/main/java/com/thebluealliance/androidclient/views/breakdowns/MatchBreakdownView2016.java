@@ -145,11 +145,11 @@ public class MatchBreakdownView2016 extends FrameLayout {
         blueRanking = (TextView) findViewById(R.id.breakdown2016_blue_rp);
     }
 
-    public void initWithData(MatchType matchType, JsonObject allianceData, JsonObject scoredata) {
+    public boolean initWithData(MatchType matchType, JsonObject allianceData, JsonObject scoredata) {
         if (scoredata == null || scoredata.entrySet().isEmpty()
                 || allianceData == null || !allianceData.has("red") || !allianceData.has("blue")) {
             breakdownContainer.setVisibility(GONE);
-            return;
+            return false;
         }
 
         int redRp = 0;
@@ -309,6 +309,8 @@ public class MatchBreakdownView2016 extends FrameLayout {
             blueRanking.setVisibility(GONE);
             findViewById(R.id.breakdown2016_rp_header).setVisibility(GONE);
         }
+
+        return true;
     }
 
     private static String getIntDefault(JsonObject data, String key) {
