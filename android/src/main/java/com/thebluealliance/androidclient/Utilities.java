@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient;
 
 import com.google.common.base.Predicate;
 
-import com.thebluealliance.androidclient.activities.GamedayActivity;
 import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
@@ -180,7 +179,7 @@ public class Utilities {
                     }
                     break;
                 case "gameday":
-                    intent = GamedayActivity.newInstance(c);
+                    intent = HomeActivity.newInstance(c, R.id.nav_item_gameday);
                     break;
                 default:
                     intent = null;
