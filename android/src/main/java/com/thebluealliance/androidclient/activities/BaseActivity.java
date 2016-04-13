@@ -1,5 +1,15 @@
 package com.thebluealliance.androidclient.activities;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.PlusHelper;
+import com.thebluealliance.androidclient.gcm.GCMHelper;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
+import com.thebluealliance.androidclient.types.ModelType;
+
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,15 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.accounts.PlusHelper;
-import com.thebluealliance.androidclient.gcm.GCMHelper;
-import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
-import com.thebluealliance.androidclient.types.ModelType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -50,6 +51,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     public Set<Integer> activeMessages = new HashSet<>();
 
     String beamUri;
+    String shareUri;
     boolean searchEnabled = true;
     String modelKey = "";
     ModelType modelType;
@@ -76,8 +78,9 @@ public abstract class BaseActivity extends NavigationDrawerActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (searchEnabled) {
-            getMenuInflater().inflate(R.menu.search_menu, menu);
+        getMenuInflater().inflate(R.menu.base_menu, menu);
+        if (!searchEnabled) {
+            menu.findItem(R.id.search).setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -87,6 +90,13 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         switch (item.getItemId()) {
             case R.id.search:
                 startActivity(new Intent(this, SearchResultsActivity.class));
+                return true;
+            case R.id.share:
+                if (shareUri == null) return true;
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareUri);
+                startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_prompt)));
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -198,6 +208,10 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         }
 
         return highestPriority;
+    }
+
+    public void setShareUri(String uri) {
+        shareUri = uri;
     }
 
     public void setBeamUri(String uri) {

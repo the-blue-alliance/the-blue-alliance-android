@@ -108,6 +108,9 @@
     <!-- Warnings -->
     <string name="warning_unable_to_load">Unable to load data. Check your internet connection.</string>
 
+    <string name="share_title">Share</string>
+    <string name="share_prompt">Share via</string>
+
     <!-- Search -->
     <string name="search_title">Search</string>
     <string name="search_hint">Search teams and events</string>
