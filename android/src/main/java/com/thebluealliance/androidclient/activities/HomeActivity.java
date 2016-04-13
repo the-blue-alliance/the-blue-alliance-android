@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
+import com.thebluealliance.androidclient.fragments.GamedayFragment;
 import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment;
@@ -195,8 +196,11 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 fragment = new RecentNotificationsFragment();
                 break;
             case R.id.nav_item_gameday:
-                startActivity(GamedayActivity.newInstance(this));
-                return;
+                int gamedayTab = savedInstanceState != null
+                        ? savedInstanceState.getInt(GamedayFragment.SELECTED_TAB, 0)
+                        : 0;
+                fragment = GamedayFragment.newInstance(gamedayTab);
+                break;
         }
         fragment.setRetainInstance(true);
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
