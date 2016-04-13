@@ -18,8 +18,32 @@ import butterknife.ButterKnife;
 
 public class GamedayFragment extends Fragment {
 
+    public static final String SELECTED_TAB = "selected_tab";
+
     @Bind(R.id.pager) ViewPager mViewPager;
     @Bind(R.id.tabs) SlidingTabs mTabs;
+
+    private int mInitialTab;
+
+    public static GamedayFragment newInstance(int tab) {
+        GamedayFragment f = new GamedayFragment();
+        Bundle args = new Bundle();
+        args.putInt(SELECTED_TAB, tab);
+        f.setArguments(args);
+        return f;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            mInitialTab = savedInstanceState.getInt(SELECTED_TAB, 0);
+        } else if (getArguments() != null) {
+            mInitialTab = getArguments().getInt(SELECTED_TAB, 0);
+        } else {
+            mInitialTab = 0;
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,8 +64,15 @@ public class GamedayFragment extends Fragment {
         mViewPager.post(() -> {
             mViewPager.setAdapter(new GamedayFragmentPagerAdapter(getChildFragmentManager()));
             mTabs.setViewPager(mViewPager);
+            mViewPager.setCurrentItem(mInitialTab);
         });
 
         return v;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SELECTED_TAB, mViewPager.getCurrentItem());
     }
 }

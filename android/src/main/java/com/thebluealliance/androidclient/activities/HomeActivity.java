@@ -196,7 +196,10 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 fragment = new RecentNotificationsFragment();
                 break;
             case R.id.nav_item_gameday:
-                fragment = new GamedayFragment();
+                int gamedayTab = savedInstanceState != null
+                        ? savedInstanceState.getInt(GamedayFragment.SELECTED_TAB, 0)
+                        : 0;
+                fragment = GamedayFragment.newInstance(gamedayTab);
                 break;
         }
         fragment.setRetainInstance(true);
