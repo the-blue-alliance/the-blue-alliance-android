@@ -75,12 +75,14 @@ public class StatsListBinder extends ListViewBinder implements RadioGroup.OnChec
     @UiThread
     public void setSelectedList(@ListPair.ListOption int option) {
         if (mData != null) {
-            MenuItem sortItem = mMenu.findItem(R.id.action_sort_by);
             mData.setSelectedList(option);
             mAdapter.notifyDataSetChanged();
             listView.setClickable(option == ListPair.LIST0);
-            if (sortItem != null) {
-                sortItem.setVisible(option == ListPair.LIST0);
+            if (mMenu != null) {
+                MenuItem sortItem = mMenu.findItem(R.id.action_sort_by);
+                if (sortItem != null) {
+                    sortItem.setVisible(option == ListPair.LIST0);
+                }
             }
 
             if (mData.isEmpty()) {
