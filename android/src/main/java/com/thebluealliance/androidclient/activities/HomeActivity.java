@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.activities;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.ShareUris;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
@@ -21,7 +20,6 @@ import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
-import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +31,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -178,36 +177,30 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                         ? savedInstanceState.getInt(EventsByWeekFragment.TAB, -1)
                         : -1;
                 fragment = EventsByWeekFragment.newInstance(year, weekTab);
-                setShareUri(String.format(ShareUris.URI_EVENT_LIST, year));
                 break;
             case R.id.nav_item_districts:
                 fragment = DistrictListFragment.newInstance(year);
-                setShareUri(String.format(ShareUris.URI_EVENT_LIST, year));
                 break;
             case R.id.nav_item_teams:
                 int teamTab = savedInstanceState != null
                         ? savedInstanceState.getInt(AllTeamsListFragment.SELECTED_TAB, 0)
                         : 0;
-                setShareUri(ShareUris.URI_TEAM_LIST);
                 fragment = AllTeamsListFragment.newInstance(teamTab);
                 break;
             case R.id.nav_item_my_tba:
                 fragment = new MyTBAFragment();
-                setShareUri(ShareUris.URI_MYTBA);
                 break;
             case R.id.nav_item_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 return;
             case R.id.nav_item_notifications:
                 fragment = new RecentNotificationsFragment();
-                setShareUri(null);
                 break;
             case R.id.nav_item_gameday:
                 int gamedayTab = savedInstanceState != null
                         ? savedInstanceState.getInt(GamedayFragment.SELECTED_TAB, 0)
                         : 0;
                 fragment = GamedayFragment.newInstance(gamedayTab);
-                setShareUri(ShareUris.URI_GAMEDAY);
                 break;
         }
         fragment.setRetainInstance(true);

@@ -125,6 +125,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         }
 
         setModelKey(mTeamKey, ModelType.TEAM);
+        setShareEnabled(true);
         setContentView(R.layout.activity_view_team);
 
         ButterKnife.bind(this);
@@ -189,6 +190,12 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
                 }
             }).show();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setShareUri(String.format(ShareUris.URI_TEAM, TeamHelper.getTeamNumber(mTeamKey), mYear));
     }
 
     @Override

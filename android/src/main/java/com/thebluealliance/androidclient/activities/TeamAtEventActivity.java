@@ -72,6 +72,7 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
 
         String eventTeamKey = EventTeamHelper.generateKey(mEventKey, mTeamKey);
         setModelKey(eventTeamKey, ModelType.EVENTTEAM);
+        setShareEnabled(true);
         setContentView(R.layout.activity_team_at_event);
 
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);

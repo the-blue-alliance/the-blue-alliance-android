@@ -83,6 +83,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
         mSelectedTab = extras.getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
 
         setModelKey(mEventKey, ModelType.EVENT);
+        setShareEnabled(true);
         setContentView(R.layout.activity_view_event);
 
         pager = (ViewPager) findViewById(R.id.view_pager);

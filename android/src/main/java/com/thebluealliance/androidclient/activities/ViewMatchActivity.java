@@ -64,6 +64,7 @@ public class ViewMatchActivity extends MyTBASettingsActivity
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
         setModelKey(mMatchKey, ModelType.MATCH);
+        setShareEnabled(true);
         setContentView(R.layout.activity_view_match);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));

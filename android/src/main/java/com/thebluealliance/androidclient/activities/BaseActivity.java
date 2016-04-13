@@ -53,6 +53,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     String beamUri;
     String shareUri;
     boolean searchEnabled = true;
+    boolean shareEnabled = false;
     String modelKey = "";
     ModelType modelType;
 
@@ -81,6 +82,9 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         getMenuInflater().inflate(R.menu.base_menu, menu);
         if (!searchEnabled) {
             menu.findItem(R.id.search).setVisible(false);
+        }
+        if (!shareEnabled) {
+            menu.findItem(R.id.share).setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -212,6 +216,10 @@ public abstract class BaseActivity extends NavigationDrawerActivity
 
     public void setShareUri(String uri) {
         shareUri = uri;
+    }
+
+    public void setShareEnabled(boolean enabled) {
+        shareEnabled = enabled;
     }
 
     public void setBeamUri(String uri) {
