@@ -31,8 +31,6 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
     @Bind(R.id.expandable_list) ExpandableListView expandableListView;
     @Bind(R.id.progress) ProgressBar progressBar;
 
-    private ExpandableListViewAdapter mAdapter;
-
     private short mExpandMode;
     protected ModelRendererSupplier mRendererSupplier;
 
@@ -68,13 +66,13 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
             return;
         }
 
-        if (mAdapter == null) {
-            mAdapter = newAdapter(new ArrayList<>(data));
-            expandableListView.setAdapter(mAdapter);
+        if (expandableListView.getExpandableListAdapter() == null) {
+            expandableListView.setAdapter(newAdapter(new ArrayList<>(data)));
         } else {
-            mAdapter.removeAllGroups();
-            mAdapter.addAllGroups(new ArrayList<>(data));
-            mAdapter.notifyDataSetChanged();
+            ExpandableListViewAdapter adapter = (ExpandableListViewAdapter) expandableListView.getExpandableListAdapter();
+            adapter.removeAllGroups();
+            adapter.addAllGroups(new ArrayList<>(data));
+            adapter.notifyDataSetChanged();
         }
 
         expandableListView.setVisibility(View.VISIBLE);
