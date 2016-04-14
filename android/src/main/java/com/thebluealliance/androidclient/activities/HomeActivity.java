@@ -20,7 +20,6 @@ import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
-import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +31,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -169,16 +169,17 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
     private void switchToModeForId(int id, Bundle savedInstanceState) {
         Fragment fragment;
+        int year = mMaxCompYear - mCurrentSelectedYearPosition;
         switch (id) {
             default:
             case R.id.nav_item_events:
                 int weekTab = savedInstanceState != null
                         ? savedInstanceState.getInt(EventsByWeekFragment.TAB, -1)
                         : -1;
-                fragment = EventsByWeekFragment.newInstance(mMaxCompYear - mCurrentSelectedYearPosition, weekTab);
+                fragment = EventsByWeekFragment.newInstance(year, weekTab);
                 break;
             case R.id.nav_item_districts:
-                fragment = DistrictListFragment.newInstance(mMaxCompYear - mCurrentSelectedYearPosition);
+                fragment = DistrictListFragment.newInstance(year);
                 break;
             case R.id.nav_item_teams:
                 int teamTab = savedInstanceState != null

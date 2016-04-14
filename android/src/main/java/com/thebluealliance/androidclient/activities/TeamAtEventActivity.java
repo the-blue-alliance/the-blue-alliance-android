@@ -1,5 +1,29 @@
 package com.thebluealliance.androidclient.activities;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.NfcUris;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.ShareUris;
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
+import com.thebluealliance.androidclient.di.components.FragmentComponent;
+import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
+import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
+import com.thebluealliance.androidclient.helpers.TeamHelper;
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
+import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
+import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.androidclient.views.SlidingTabs;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,27 +35,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.NfcUris;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
-import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
-import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.helpers.EventTeamHelper;
-import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.listeners.ClickListenerModule;
-import com.thebluealliance.androidclient.models.APIStatus;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
-import com.thebluealliance.androidclient.views.SlidingTabs;
-
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Arrays;
 
@@ -69,6 +72,7 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
 
         String eventTeamKey = EventTeamHelper.generateKey(mEventKey, mTeamKey);
         setModelKey(eventTeamKey, ModelType.EVENTTEAM);
+        setShareEnabled(true);
         setContentView(R.layout.activity_team_at_event);
 
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
@@ -92,6 +96,11 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
         }
 
         setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, mEventKey, mTeamKey));
+        setShareUri(String.format(
+                ShareUris.URI_TEAM_AT_EVENT,
+                TeamHelper.getTeamNumber(mTeamKey),
+                EventHelper.getYear(mEventKey),
+                mEventKey));
 
         setSettingsToolbarTitle("Team at Event Settings");
     }

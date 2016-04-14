@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.activities;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.ShareUris;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewMatchFragmentPagerAdapter;
@@ -63,6 +64,7 @@ public class ViewMatchActivity extends MyTBASettingsActivity
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
         setModelKey(mMatchKey, ModelType.MATCH);
+        setShareEnabled(true);
         setContentView(R.layout.activity_view_match);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
@@ -121,6 +123,7 @@ public class ViewMatchActivity extends MyTBASettingsActivity
     protected void onResume() {
         super.onResume();
         setBeamUri(String.format(NfcUris.URI_MATCH, mMatchKey));
+        setShareUri(String.format(ShareUris.URI_MATCH, mMatchKey));
     }
 
     @Override
