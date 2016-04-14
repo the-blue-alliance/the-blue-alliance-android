@@ -25,9 +25,15 @@ public class StatsListBinder extends ListViewBinder implements RadioGroup.OnChec
 
     private ListPair<ListItem> mData;
     private Menu mMenu;
+    private @ListPair.ListOption int mSelectedList;
+
+    public StatsListBinder() {
+        mSelectedList = ListPair.LIST0;
+    }
 
     public void setMenu(Menu menu) {
         mMenu = menu;
+        syncSortMenuItemState(mSelectedList);
     }
 
     @Override
@@ -74,22 +80,27 @@ public class StatsListBinder extends ListViewBinder implements RadioGroup.OnChec
 
     @UiThread
     public void setSelectedList(@ListPair.ListOption int option) {
+        mSelectedList = option;
         if (mData != null) {
             mData.setSelectedList(option);
             mAdapter.notifyDataSetChanged();
             listView.setClickable(option == ListPair.LIST0);
-            if (mMenu != null) {
-                MenuItem sortItem = mMenu.findItem(R.id.action_sort_by);
-                if (sortItem != null) {
-                    sortItem.setVisible(option == ListPair.LIST0);
-                }
-            }
+            syncSortMenuItemState(option);
 
             if (mData.isEmpty()) {
                 bindNoDataView();
             } else {
                 listView.setVisibility(View.VISIBLE);
                 mNoDataBinder.unbindData();
+            }
+        }
+    }
+
+    private void syncSortMenuItemState(@ListPair.ListOption int option) {
+        if (mMenu != null) {
+            MenuItem sortItem = mMenu.findItem(R.id.action_sort_by);
+            if (sortItem != null) {
+                sortItem.setVisible(option == ListPair.LIST0);
             }
         }
     }
