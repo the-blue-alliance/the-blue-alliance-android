@@ -4,6 +4,8 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
 
+import android.text.TextUtils;
+
 public class EventTeamHelper {
     public static EventTeam fromEvent(String teamKey, Event in) throws BasicModel.FieldNotDefinedException {
         EventTeam eventTeam = new EventTeam();
@@ -28,9 +30,12 @@ public class EventTeamHelper {
     }
 
     public static boolean validateEventTeamKey(String key) {
+        if (key == null || TextUtils.isEmpty(key)) {
+            return false;
+        }
         String[] split = key.split("_");
         return split.length == 2 &&
                 EventHelper.validateEventKey(split[0]) &&
-                TeamHelper.validateTeamKey(split[1]);
+                (TeamHelper.validateTeamKey(split[1]) ^ TeamHelper.validateMultiTeamKey(split[1]));
     }
 }
