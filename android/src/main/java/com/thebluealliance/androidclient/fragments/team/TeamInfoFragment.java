@@ -4,7 +4,8 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
 import com.thebluealliance.androidclient.eventbus.LiveEventUpdateEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
-import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
+import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.Team;
@@ -88,8 +89,8 @@ public class TeamInfoFragment
             eventLayout.removeAllViews();
             eventLayout.addView(event.getView(getActivity(),
                     getActivity().getLayoutInflater(), null));
-            eventLayout.setTag(mTeamKey + "@" + event.getEventKey());
-            eventLayout.setOnClickListener(new TeamAtEventClickListener(getActivity()));
+            eventLayout.setTag(EventTeamHelper.generateKey(event.getEventKey(), mTeamKey));
+            eventLayout.setOnClickListener(new EventTeamClickListener(getActivity()));
 
             container.setVisibility(View.VISIBLE);
 

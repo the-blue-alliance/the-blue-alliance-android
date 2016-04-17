@@ -1,5 +1,13 @@
 package com.thebluealliance.androidclient.views;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
+import com.thebluealliance.androidclient.listeners.MatchClickListener;
+import com.thebluealliance.androidclient.types.MatchType;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -10,16 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.EventTeamHelper;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.helpers.TeamHelper;
-import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
-import com.thebluealliance.androidclient.types.MatchType;
-import com.thebluealliance.androidclient.listeners.MatchClickListener;
-import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
