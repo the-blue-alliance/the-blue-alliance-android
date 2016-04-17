@@ -70,7 +70,7 @@ public class AwardsListSubscriberTest {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mAwards);
         CardedAwardListElement element = (CardedAwardListElement) data.get(0);
 
-        assertEquals(element.selectedTeamNum, "195");
+        assertEquals(element.mSelectedTeamNum, "195");
     }
 
     @Test
@@ -98,9 +98,9 @@ public class AwardsListSubscriberTest {
         CardedAwardListElement element = (CardedAwardListElement) data.get(index);
         Award award = mAwards.get(index);
 
-        assertEquals(element.awardName, award.getName());
-        assertEquals(element.eventKey, award.getEventKey());
-        assertEquals(element.selectedTeamNum, "");
-        assertTrue(element.awardWinners.equals(award.getWinners()));
+        assertEquals(element.mAwardName, award.getName());
+        assertEquals(element.mEventKey, award.getEventKey());
+        assertEquals(element.mSelectedTeamNum, "");
+        assertTrue(element.mAwardWinners.equals(award.getWinners()));
     }
 }
