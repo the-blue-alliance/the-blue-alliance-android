@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ScrollView
         android:id="@+id/content"
@@ -90,27 +91,28 @@
                     </FrameLayout>
 
                     <FrameLayout
-                            android:id="@+id/event_webcast_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:visibility="gone"
-                            tools:visibility="visible">
+                        android:id="@+id/event_webcast_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
                         <View style="@style/InfoItemDividerStyle" />
 
-                        <Button android:id="@+id/event_webcast_button"
+                        <Button
+                            android:id="@+id/event_webcast_button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
+                            android:layout_margin="8dp"
                             android:background="@color/primary"
+                            android:padding="12dp"
                             android:textColor="@color/white"
                             android:textSize="14sp"
-                            android:padding="12dp"
-                            android:layout_margin="8dp"
-                            tools:text="View Broadcast on Twitch"/>
+                            tools:text="View Broadcast on Twitch" />
                     </FrameLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
@@ -346,11 +348,16 @@
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
+            <!-- Provides padding after the last list item -->
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
 
             <!-- Provides padding for the FAB -->
             <Space
-                android:layout_width="0dp"
-                android:layout_height="88dp" />
+                android:id="@+id/fab_padding"
+                android:layout_width="match_parent"
+                android:layout_height="80dp" />
         </LinearLayout>
     </ScrollView>
 
