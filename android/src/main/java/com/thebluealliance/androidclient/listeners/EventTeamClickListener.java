@@ -38,19 +38,19 @@ import android.widget.AdapterView;
  * key (such as 2016cmp_frc254). If the key is just a team key, a valid event key should be
  * provided in the constructor.
  */
-public class TeamAtEventClickListenerV2 implements View.OnClickListener, View.OnLongClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class EventTeamClickListener implements View.OnClickListener, View.OnLongClickListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private Context mContext;
     private String mEventKey, mTeamKey;
 
-    public TeamAtEventClickListenerV2(@NonNull Context c) {
+    public EventTeamClickListener(@NonNull Context c) {
         super();
         mContext = c;
         mEventKey = null;
         mTeamKey = null;
     }
 
-    public TeamAtEventClickListenerV2(@NonNull Context c, @NonNull String eventTeamKey) {
+    public EventTeamClickListener(@NonNull Context c, @NonNull String eventTeamKey) {
         super();
         mContext = c;
         if (EventTeamHelper.validateEventTeamKey(eventTeamKey)) {
@@ -63,7 +63,7 @@ public class TeamAtEventClickListenerV2 implements View.OnClickListener, View.On
         }
     }
 
-    public TeamAtEventClickListenerV2(@NonNull Context c, @NonNull String eventKey, @Nullable String teamKey) {
+    public EventTeamClickListener(@NonNull Context c, @NonNull String eventKey, @Nullable String teamKey) {
         super();
         mContext = c;
         mEventKey = eventKey;

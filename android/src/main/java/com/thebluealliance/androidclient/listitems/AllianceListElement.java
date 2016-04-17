@@ -5,8 +5,7 @@ import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
-import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
-import com.thebluealliance.androidclient.listeners.TeamAtEventClickListenerV2;
+import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
@@ -60,7 +59,7 @@ public class AllianceListElement extends ListElement implements RenderableModel 
             holder.advancement.setText("");
         }
 
-        TeamAtEventClickListenerV2 listener = new TeamAtEventClickListenerV2(c);
+        EventTeamClickListener listener = new EventTeamClickListener(c);
 
         String team1Key = teams.get(0).getAsString();
         SpannableString underLine = new SpannableString(team1Key.substring(3));

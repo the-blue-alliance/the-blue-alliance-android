@@ -14,7 +14,7 @@ import static org.junit.Assert.assertArrayEquals;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
-public class TeamAtEventClickListenerTest {
+public class EventTeamClickListenerTest {
 
     private Context mContext;
 
@@ -25,12 +25,12 @@ public class TeamAtEventClickListenerTest {
 
     @Test
     public void testGetKeysFromTag() {
-        TeamAtEventClickListenerV2 listener = new TeamAtEventClickListenerV2(mContext);
+        EventTeamClickListener listener = new EventTeamClickListener(mContext);
         assertArrayEquals(new Object[]{"2015arc", "frc254"}, listener.getKeysFromTag("2015arc_frc254"));
         assertArrayEquals(new Object[]{"2015arc", "frc254B"}, listener.getKeysFromTag("2015arc_frc254B"));
         assertArrayEquals(new Object[]{null, null}, listener.getKeysFromTag(null));
 
-        listener = new TeamAtEventClickListenerV2(mContext, "2015arc_frc254");
+        listener = new EventTeamClickListener(mContext, "2015arc_frc254");
         assertArrayEquals(new Object[]{"2015arc", "frc254"}, listener.getKeysFromTag("2015arc_frc254"));
         assertArrayEquals(new Object[]{"2015arc", "frc254B"}, listener.getKeysFromTag("2015arc_frc254B"));
         assertArrayEquals(new Object[]{"2015gal", "frc254"}, listener.getKeysFromTag("2015gal_frc254"));
@@ -39,7 +39,7 @@ public class TeamAtEventClickListenerTest {
         assertArrayEquals(new Object[]{"2015arc", "frc254B"}, listener.getKeysFromTag("frc254B"));
         assertArrayEquals(new Object[]{"2015arc", "frc254"}, listener.getKeysFromTag(null));
 
-        listener = new TeamAtEventClickListenerV2(mContext, "2015arc", null);
+        listener = new EventTeamClickListener(mContext, "2015arc", null);
         assertArrayEquals(new Object[]{"2015arc", "frc254"}, listener.getKeysFromTag("2015arc_frc254"));
         assertArrayEquals(new Object[]{"2015arc", "frc254B"}, listener.getKeysFromTag("2015arc_frc254B"));
         assertArrayEquals(new Object[]{"2015gal", "frc254"}, listener.getKeysFromTag("2015gal_frc254"));
@@ -48,7 +48,7 @@ public class TeamAtEventClickListenerTest {
         assertArrayEquals(new Object[]{"2015arc", "frc111B"}, listener.getKeysFromTag("frc111B"));
         assertArrayEquals(new Object[]{"2015arc", null}, listener.getKeysFromTag(null));
 
-        listener = new TeamAtEventClickListenerV2(mContext, "2015arc", "frc254");
+        listener = new EventTeamClickListener(mContext, "2015arc", "frc254");
         assertArrayEquals(new Object[]{"2015arc", "frc254"}, listener.getKeysFromTag("2015arc_frc254"));
         assertArrayEquals(new Object[]{"2015arc", "frc254B"}, listener.getKeysFromTag("2015arc_frc254B"));
         assertArrayEquals(new Object[]{"2015gal", "frc254"}, listener.getKeysFromTag("2015gal_frc254"));
