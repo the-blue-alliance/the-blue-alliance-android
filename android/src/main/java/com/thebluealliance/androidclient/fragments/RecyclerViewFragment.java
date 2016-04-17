@@ -71,7 +71,7 @@ public abstract class RecyclerViewFragment<T, S extends BaseAPISubscriber<T, Lis
     }
 
     protected boolean shouldShowDividers() {
-        return false;
+        return true;
     }
 
     protected boolean shouldShowScrollbars() {

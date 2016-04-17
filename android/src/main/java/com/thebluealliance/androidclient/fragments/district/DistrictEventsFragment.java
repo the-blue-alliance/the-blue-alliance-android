@@ -1,23 +1,26 @@
 package com.thebluealliance.androidclient.fragments.district;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
+import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
-import com.thebluealliance.androidclient.listeners.EventClickListener;
+import com.thebluealliance.androidclient.itemviews.EventItemView;
+import com.thebluealliance.androidclient.itemviews.ListSectionHeaderItemView;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
+import com.thebluealliance.androidclient.subscribers.EventListRecyclerSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
+import com.thebluealliance.androidclient.viewmodels.EventViewModel;
+import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
+
+import android.os.Bundle;
 
 import java.util.List;
 
+import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
-public class DistrictEventsFragment extends ListViewFragment<List<Event>, EventListSubscriber> {
+public class DistrictEventsFragment extends RecyclerViewFragment<List<Event>, EventListRecyclerSubscriber, RecyclerViewBinder> {
 
     public static final String KEY = "districtKey";
 
@@ -41,14 +44,7 @@ public class DistrictEventsFragment extends ListViewFragment<List<Event>, EventL
         mShort = key.substring(4);
         mYear = Integer.parseInt(key.substring(0, 4));
         super.onCreate(savedInstanceState);
-        mSubscriber.setRenderMode(EventListSubscriber.MODE_DISTRICT);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = super.onCreateView(inflater, container, savedInstanceState);
-        mListView.setOnItemClickListener(new EventClickListener(getActivity(), null));
-        return v;
+        mSubscriber.setRenderMode(EventListRecyclerSubscriber.MODE_DISTRICT);
     }
 
     @Override
@@ -68,5 +64,10 @@ public class DistrictEventsFragment extends ListViewFragment<List<Event>, EventL
 
     @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_event_black_48dp, R.string.no_event_data);
+    }
+
+    @Override public void initializeMaps(SmartAdapter.MultiAdaptersCreator creator) {
+        creator.map(EventViewModel.class, EventItemView.class);
+        creator.map(ListSectionHeaderViewModel.class, ListSectionHeaderItemView.class);
     }
 }
