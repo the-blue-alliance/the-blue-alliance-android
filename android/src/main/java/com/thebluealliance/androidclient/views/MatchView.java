@@ -132,7 +132,7 @@ public class MatchView extends FrameLayout {
         matchTitle.setText(title);
 
         TeamAtEventClickListener listener = new TeamAtEventClickListener(getContext());
-        String eventKey = matchKey.split("_")[0];
+        String eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
 
         // Set team text depending on alliance size.
         if (redTeams.length == 0) {
