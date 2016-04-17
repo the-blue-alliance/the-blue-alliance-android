@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.helpers;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
 
@@ -15,6 +16,7 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.renderers.ModelRenderer;
 import com.thebluealliance.androidclient.types.EventType;
+import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -188,8 +190,8 @@ public class EventHelper {
      * @param events a list of events to render
      * @param output list to render events into
      */
-    public static void renderEventListForTeam(List<Event> events, List<ListItem> output, ModelRenderer<Event, ?> renderer) {
-        renderEventListWithComparator(events, output, new EventSortByTypeAndDateComparator(), renderer);
+    public static void renderEventListForTeam(Context context,List<Event> events, List<Object> output) {
+        renderEventListWithComparator(context, events, output, new EventSortByTypeAndDateComparator());
     }
 
     /**
@@ -199,15 +201,15 @@ public class EventHelper {
      * @param events a list of events to render
      * @param output list to render events into
      */
-    public static void renderEventListForWeek(List<Event> events, List<ListItem> output, ModelRenderer<Event, ?> renderer) {
-        renderEventListWithComparator(events, output, new EventSortByTypeAndDateComparator(), renderer);
+    public static void renderEventListForWeek(Context context, List<Event> events, List<Object> output) {
+        renderEventListWithComparator(context, events, output, new EventSortByTypeAndDateComparator());
     }
 
     private static void renderEventListWithComparator(
+            Context context,
             List<Event> events,
-            List<ListItem> output,
-            Comparator<Event> comparator,
-            ModelRenderer<Event, ?> renderer) {
+            List<Object> output,
+            Comparator<Event> comparator) {
         Collections.sort(events, comparator);
         EventType lastType = null, currentType = null;
         int lastDistrict = -1, currentDistrict = -1;
@@ -216,16 +218,14 @@ public class EventHelper {
                 currentType = event.getEventType();
                 currentDistrict = event.getDistrictEnum();
                 if (currentType != lastType ||
-                        (currentType == EventType.DISTRICT
-                                && currentDistrict != lastDistrict)) {
+                        (currentType == EventType.DISTRICT && currentDistrict != lastDistrict)) {
                     if (currentType == EventType.DISTRICT) {
-                        output.add(
-                                new EventTypeHeader(event.getDistrictTitle() + " District Events"));
+                        output.add(new ListSectionHeaderViewModel(event.getDistrictTitle() + " District Events"));
                     } else {
-                        output.add(new EventTypeHeader(currentType.toString()));
+                        output.add(new ListSectionHeaderViewModel(currentType.toString()));
                     }
                 }
-                output.add(renderer.renderFromModel(event, null));
+                output.add(event.renderToViewModel(context, Event.RENDER_BASIC));
 
                 if (event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
@@ -242,18 +242,18 @@ public class EventHelper {
     }
 
     public static void renderEventListForDistrict(
+            Context context,
             List<Event> events,
-            List<ListItem> output,
-            ModelRenderer<Event, ?> renderer) {
+            List<Object> output) {
         Collections.sort(events, new EventSortByDateComparator());
         String lastHeader = null, currentHeader = null;
         for (Event event : events) {
             try {
                 currentHeader = weekLabelFromNum(event.getEventYear(), event.getCompetitionWeek());
                 if (!currentHeader.equals(lastHeader)) {
-                    output.add(new EventTypeHeader(currentHeader + " Events"));
+                    output.add(new ListSectionHeaderViewModel(currentHeader + " Events"));
                 }
-                output.add(renderer.renderFromModel(event, null));
+                output.add(event.renderToViewModel(context, Event.RENDER_BASIC));
 
                 if (event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up

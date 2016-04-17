@@ -1,36 +1,33 @@
 package com.thebluealliance.androidclient.fragments.team;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
-import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
 import com.thebluealliance.androidclient.interfaces.HasYearParam;
-import com.thebluealliance.androidclient.listitems.EventListElement;
-import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.itemviews.EventItemView;
+import com.thebluealliance.androidclient.itemviews.ListSectionHeaderItemView;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
-import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
+import com.thebluealliance.androidclient.subscribers.EventListRecyclerSubscriber;
+import com.thebluealliance.androidclient.viewmodels.EventViewModel;
+import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
-public class TeamEventsFragment extends ListViewFragment<List<Event>, EventListSubscriber> implements HasYearParam {
+public class TeamEventsFragment extends RecyclerViewFragment<List<Event>, EventListRecyclerSubscriber, RecyclerViewBinder> implements HasYearParam {
     public static final String YEAR = "YEAR";
     public static final String TEAM_KEY = "TEAM_KEY";
 
@@ -58,27 +55,7 @@ public class TeamEventsFragment extends ListViewFragment<List<Event>, EventListS
         mTeamKey = getArguments().getString(TEAM_KEY);
         super.onCreate(savedInstanceState);
 
-        mSubscriber.setRenderMode(EventListSubscriber.MODE_TEAM);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = super.onCreateView(inflater, container, savedInstanceState);
-        mListView.setOnItemClickListener((parent, view, position, id) -> {
-            if (!(parent.getAdapter() instanceof ListViewAdapter)) {
-                //safety check. Shouldn't ever be tripped unless someone messed up in code somewhere
-                Log.w(Constants.LOG_TAG, "Someone done goofed. A ListView adapter doesn't extend ListViewAdapter. Try again...");
-                return;
-            }
-            Object item = ((ListViewAdapter) parent.getAdapter()).getItem(position);
-            if (item != null && item instanceof EventListElement) {
-                String eventKey = ((ListElement) item).getKey();
-                startActivity(TeamAtEventActivity.newInstance(getActivity(), eventKey, mTeamKey));
-            } else {
-                Log.d(Constants.LOG_TAG, "ListHeader clicked. Ignore...");
-            }
-        });
-        return v;
+        mSubscriber.setRenderMode(EventListRecyclerSubscriber.MODE_TEAM);
     }
 
     @Override
@@ -122,5 +99,10 @@ public class TeamEventsFragment extends ListViewFragment<List<Event>, EventListS
 
     @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_event_black_48dp, R.string.no_event_data);
+    }
+
+    @Override public void initializeMaps(SmartAdapter.MultiAdaptersCreator creator) {
+        creator.map(EventViewModel.class, EventItemView.class);
+        creator.map(ListSectionHeaderViewModel.class, ListSectionHeaderItemView.class);
     }
 }
