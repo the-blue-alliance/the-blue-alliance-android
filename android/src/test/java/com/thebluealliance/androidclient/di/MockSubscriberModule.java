@@ -20,7 +20,7 @@ import com.thebluealliance.androidclient.subscribers.DistrictListSubscriber;
 import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.DistrictRankingsSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
-import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
+import com.thebluealliance.androidclient.subscribers.EventListRecyclerSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventTabSubscriber;
 import com.thebluealliance.androidclient.subscribers.FavoriteListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchBreakdownSubscriber;
@@ -42,6 +42,8 @@ import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
 import org.greenrobot.eventbus.EventBus;
 import org.mockito.Mockito;
 
+import android.content.Context;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -56,8 +58,8 @@ public class MockSubscriberModule {
     }
 
     @Provides
-    public EventListSubscriber provideEventListSubscriber(EventRenderer renderer) {
-        return Mockito.mock(EventListSubscriber.class);
+    public EventListRecyclerSubscriber providesEventListRecyclerSubscriber(Context context) {
+        return Mockito.mock(EventListRecyclerSubscriber.class);
     }
 
     @Provides
