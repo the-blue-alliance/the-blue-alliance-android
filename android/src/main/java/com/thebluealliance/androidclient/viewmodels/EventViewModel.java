@@ -66,7 +66,18 @@ public class EventViewModel extends BaseViewModel {
     }
 
     @Override public boolean equals(Object o) {
-        return false;
+        if (!(o instanceof EventViewModel)) {
+            return false;
+        }
+
+        EventViewModel model = (EventViewModel) o;
+
+        return mKey.equals(model.getKey())
+                && mYear == model.getYear()
+                && mShortName.equals(model.getShortName())
+                && mDateString.equals(model.getDateString())
+                && mLocation.equals(model.getLocation())
+                && mShowMyTbaSettings == shouldShowMyTbaSettings();
     }
 
     @Override public int hashCode() {

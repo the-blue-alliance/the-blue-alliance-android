@@ -17,11 +17,15 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
@@ -29,17 +33,20 @@ public class EventListSubscriberTest {
 
     @Mock APICache mCache;
 
-    private EventListSubscriber mSubscriber;
+    private EventListRecyclerSubscriber mSubscriber;
+    private Context mContext;
     private EventRenderer mRenderer;
     private List<Event> mEvents;
-    private List<ListItem> mExpected;
+    private List<Object> mExpected;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        mContext = mock(Context.class, RETURNS_DEEP_STUBS);
+
         mEvents = ModelMaker.getModelList(Event.class, "2015_events");
         mRenderer = new EventRenderer(mCache);
-        mSubscriber = new EventListSubscriber(mRenderer);
+        mSubscriber = new EventListRecyclerSubscriber(mContext);
         mExpected = new ArrayList<>();
     }
 
@@ -55,32 +62,32 @@ public class EventListSubscriberTest {
 
     @Test
     public void testParseWeek() throws BasicModel.FieldNotDefinedException {
-        mSubscriber.setRenderMode(EventListSubscriber.MODE_WEEK);
-        List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvents);
-        EventHelper.renderEventListForWeek(mEvents, mExpected, mRenderer);
+        mSubscriber.setRenderMode(EventListRecyclerSubscriber.MODE_WEEK);
+        List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvents);
+        EventHelper.renderEventListForWeek(mContext, mEvents, mExpected);
 
         assertListsEqual(data);
     }
 
     @Test
     public void testParseTeam() throws BasicModel.FieldNotDefinedException {
-        mSubscriber.setRenderMode(EventListSubscriber.MODE_TEAM);
-        List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvents);
-        EventHelper.renderEventListForWeek(mEvents, mExpected, mRenderer);
+        mSubscriber.setRenderMode(EventListRecyclerSubscriber.MODE_TEAM);
+        List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvents);
+        EventHelper.renderEventListForWeek(mContext, mEvents, mExpected);
 
         assertListsEqual(data);
     }
 
     @Test
     public void testParseDistrict() throws BasicModel.FieldNotDefinedException {
-        mSubscriber.setRenderMode(EventListSubscriber.MODE_DISTRICT);
-        List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvents);
-        EventHelper.renderEventListForDistrict(mEvents, mExpected, mRenderer);
+        mSubscriber.setRenderMode(EventListRecyclerSubscriber.MODE_DISTRICT);
+        List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvents);
+        EventHelper.renderEventListForDistrict(mContext, mEvents, mExpected);
 
         assertListsEqual(data);
     }
 
-    private void assertListsEqual(List<ListItem> actual) {
+    private void assertListsEqual(List<Object> actual) {
         assertEquals(actual.size(), mExpected.size());
         for (int i = 0; i < actual.size(); i++) {
             assertTrue(actual.get(i).equals(mExpected.get(i)));
