@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.listitems;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.EventClickListener;
 import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 
 import android.content.Context;
@@ -63,7 +64,7 @@ public class LabelValueDetailListItem extends ListElement {
             holder.container.addView(listItem.getView(c, inflater, null), 2);
         }
 
-        holder.detail.setOnClickListener(new TeamAtEventClickListener(c, key));
+        holder.detail.setOnClickListener(new EventClickListener(c, key));
 
         return convertView;
     }
