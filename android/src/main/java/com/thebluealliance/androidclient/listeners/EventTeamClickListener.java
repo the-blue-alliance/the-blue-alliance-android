@@ -57,7 +57,7 @@ public class EventTeamClickListener implements View.OnClickListener, View.OnLong
             mEventKey = EventTeamHelper.getEventKey(eventTeamKey);
             mTeamKey = EventTeamHelper.getTeamKey(eventTeamKey);
         } else {
-            Log.w(Constants.LOG_TAG, "TeamAtEventClickListener created with invalid EventTeam key! " + eventTeamKey);
+            Log.w(Constants.LOG_TAG, "EventTeamClickListener created with invalid EventTeam key! " + eventTeamKey);
             mEventKey = null;
             mTeamKey = null;
         }
@@ -144,7 +144,7 @@ public class EventTeamClickListener implements View.OnClickListener, View.OnLong
                 eventKey = mEventKey;
                 teamKey = tag;
             } else {
-                Log.w(Constants.LOG_TAG, "TeamAtEventClickListener received invalid EventTeam Key! " + tag);
+                Log.w(Constants.LOG_TAG, "EventTeamClickListener received invalid EventTeam Key! " + tag);
                 // Use defaults provided in constructor
                 eventKey = mEventKey;
                 teamKey = mTeamKey;
