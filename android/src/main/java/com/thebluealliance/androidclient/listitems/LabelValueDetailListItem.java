@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.listitems;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listeners.EventClickListener;
-import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 
 import android.content.Context;
 import android.view.LayoutInflater;
