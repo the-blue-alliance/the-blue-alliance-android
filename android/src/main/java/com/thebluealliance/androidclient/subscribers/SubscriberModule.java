@@ -44,8 +44,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public EventListRecyclerSubscriber provideEventListRecyclerSubscriber(Context context) {
-        return new EventListRecyclerSubscriber(context);
+    public EventListSubscriber provideEventListRecyclerSubscriber(Context context) {
+        return new EventListSubscriber(context);
     }
 
     @Provides

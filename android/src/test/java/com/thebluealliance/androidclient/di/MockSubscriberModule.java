@@ -20,7 +20,7 @@ import com.thebluealliance.androidclient.subscribers.DistrictListSubscriber;
 import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.DistrictRankingsSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
-import com.thebluealliance.androidclient.subscribers.EventListRecyclerSubscriber;
+import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 import com.thebluealliance.androidclient.subscribers.EventTabSubscriber;
 import com.thebluealliance.androidclient.subscribers.FavoriteListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchBreakdownSubscriber;
@@ -58,8 +58,8 @@ public class MockSubscriberModule {
     }
 
     @Provides
-    public EventListRecyclerSubscriber providesEventListRecyclerSubscriber(Context context) {
-        return Mockito.mock(EventListRecyclerSubscriber.class);
+    public EventListSubscriber providesEventListRecyclerSubscriber(Context context) {
+        return Mockito.mock(EventListSubscriber.class);
     }
 
     @Provides

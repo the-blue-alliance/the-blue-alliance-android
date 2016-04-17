@@ -11,7 +11,7 @@ import com.thebluealliance.androidclient.itemviews.EventItemView;
 import com.thebluealliance.androidclient.itemviews.ListSectionHeaderItemView;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
-import com.thebluealliance.androidclient.subscribers.EventListRecyclerSubscriber;
+import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
 import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
 
@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
-public class TeamEventsFragment extends RecyclerViewFragment<List<Event>, EventListRecyclerSubscriber, RecyclerViewBinder> implements HasYearParam {
+public class TeamEventsFragment extends RecyclerViewFragment<List<Event>, EventListSubscriber, RecyclerViewBinder> implements HasYearParam {
     public static final String YEAR = "YEAR";
     public static final String TEAM_KEY = "TEAM_KEY";
 
@@ -55,7 +55,7 @@ public class TeamEventsFragment extends RecyclerViewFragment<List<Event>, EventL
         mTeamKey = getArguments().getString(TEAM_KEY);
         super.onCreate(savedInstanceState);
 
-        mSubscriber.setRenderMode(EventListRecyclerSubscriber.MODE_TEAM);
+        mSubscriber.setRenderMode(EventListSubscriber.MODE_TEAM);
     }
 
     @Override

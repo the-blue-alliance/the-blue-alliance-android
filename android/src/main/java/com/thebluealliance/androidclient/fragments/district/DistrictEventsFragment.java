@@ -8,7 +8,7 @@ import com.thebluealliance.androidclient.itemviews.EventItemView;
 import com.thebluealliance.androidclient.itemviews.ListSectionHeaderItemView;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
-import com.thebluealliance.androidclient.subscribers.EventListRecyclerSubscriber;
+import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
 import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
 
@@ -19,7 +19,7 @@ import java.util.List;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
-public class DistrictEventsFragment extends RecyclerViewFragment<List<Event>, EventListRecyclerSubscriber, RecyclerViewBinder> {
+public class DistrictEventsFragment extends RecyclerViewFragment<List<Event>, EventListSubscriber, RecyclerViewBinder> {
 
     public static final String KEY = "districtKey";
 
@@ -43,7 +43,7 @@ public class DistrictEventsFragment extends RecyclerViewFragment<List<Event>, Ev
         mShort = key.substring(4);
         mYear = Integer.parseInt(key.substring(0, 4));
         super.onCreate(savedInstanceState);
-        mSubscriber.setRenderMode(EventListRecyclerSubscriber.MODE_DISTRICT);
+        mSubscriber.setRenderMode(EventListSubscriber.MODE_DISTRICT);
     }
 
     @Override

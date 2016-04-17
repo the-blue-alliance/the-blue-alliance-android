@@ -4,7 +4,6 @@ import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
@@ -33,7 +32,7 @@ public class EventListSubscriberTest {
 
     @Mock APICache mCache;
 
-    private EventListRecyclerSubscriber mSubscriber;
+    private EventListSubscriber mSubscriber;
     private Context mContext;
     private EventRenderer mRenderer;
     private List<Event> mEvents;
@@ -46,7 +45,7 @@ public class EventListSubscriberTest {
 
         mEvents = ModelMaker.getModelList(Event.class, "2015_events");
         mRenderer = new EventRenderer(mCache);
-        mSubscriber = new EventListRecyclerSubscriber(mContext);
+        mSubscriber = new EventListSubscriber(mContext);
         mExpected = new ArrayList<>();
     }
 
@@ -62,7 +61,7 @@ public class EventListSubscriberTest {
 
     @Test
     public void testParseWeek() throws BasicModel.FieldNotDefinedException {
-        mSubscriber.setRenderMode(EventListRecyclerSubscriber.MODE_WEEK);
+        mSubscriber.setRenderMode(EventListSubscriber.MODE_WEEK);
         List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvents);
         EventHelper.renderEventListForWeek(mContext, mEvents, mExpected);
 
@@ -71,7 +70,7 @@ public class EventListSubscriberTest {
 
     @Test
     public void testParseTeam() throws BasicModel.FieldNotDefinedException {
-        mSubscriber.setRenderMode(EventListRecyclerSubscriber.MODE_TEAM);
+        mSubscriber.setRenderMode(EventListSubscriber.MODE_TEAM);
         List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvents);
         EventHelper.renderEventListForWeek(mContext, mEvents, mExpected);
 
@@ -80,7 +79,7 @@ public class EventListSubscriberTest {
 
     @Test
     public void testParseDistrict() throws BasicModel.FieldNotDefinedException {
-        mSubscriber.setRenderMode(EventListRecyclerSubscriber.MODE_DISTRICT);
+        mSubscriber.setRenderMode(EventListSubscriber.MODE_DISTRICT);
         List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvents);
         EventHelper.renderEventListForDistrict(mContext, mEvents, mExpected);
 

@@ -16,7 +16,7 @@ import javax.inject.Inject;
 /**
  * Bind a list of events to a {@link ListViewAdapter}
  */
-public class EventListRecyclerSubscriber extends BaseAPISubscriber<List<Event>, List<Object>> {
+public class EventListSubscriber extends BaseAPISubscriber<List<Event>, List<Object>> {
 
     public static final int
       MODE_WEEK = 0,
@@ -27,7 +27,7 @@ public class EventListRecyclerSubscriber extends BaseAPISubscriber<List<Event>, 
     private Context mContext;
 
     @Inject
-    public EventListRecyclerSubscriber(Context context) {
+    public EventListSubscriber(Context context) {
         super();
         mContext = context;
         mDataToBind = new ArrayList<>();
