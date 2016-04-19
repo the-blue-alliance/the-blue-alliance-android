@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.fragments.event;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.models.Event;
@@ -46,6 +47,10 @@ public class EventInfoFragment
         mBinder.setInflater(inflater);
         mBinder.setRootView(view);
         mBinder.setNoDataView((NoDataView) view.findViewById(R.id.no_data));
+
+        // Only show space for the FAB if the FAB is visible
+        boolean myTbaEnabled = AccountHelper.isMyTBAEnabled(getActivity());
+        view.findViewById(R.id.fab_padding).setVisibility(myTbaEnabled ? View.VISIBLE : View.GONE);
 
         return view;
     }
