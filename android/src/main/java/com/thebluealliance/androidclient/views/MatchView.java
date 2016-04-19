@@ -1,5 +1,13 @@
 package com.thebluealliance.androidclient.views;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
+import com.thebluealliance.androidclient.listeners.MatchClickListener;
+import com.thebluealliance.androidclient.types.MatchType;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -10,13 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.types.MatchType;
-import com.thebluealliance.androidclient.listeners.MatchClickListener;
-import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -131,8 +132,8 @@ public class MatchView extends FrameLayout {
 
         matchTitle.setText(title);
 
-        TeamAtEventClickListener listener = new TeamAtEventClickListener(getContext());
-        String eventKey = matchKey.split("_")[0];
+        String eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
+        EventTeamClickListener listener = new EventTeamClickListener(getContext(), eventKey, null);
 
         // Set team text depending on alliance size.
         if (redTeams.length == 0) {
@@ -142,8 +143,9 @@ public class MatchView extends FrameLayout {
         } else {
             red1.setVisibility(View.VISIBLE);
             red1.setText(redTeams[0]);
-            red1.setTag("frc" + redTeams[0] + "@" + eventKey);
+            red1.setTag(EventTeamHelper.generateKey(eventKey, "frc" + redTeams[0]));
             red1.setOnClickListener(listener);
+            red1.setOnLongClickListener(listener);
             if (selectedTeamNumber.equals(redTeams[0])) {
                 red1.setTypeface(Typeface.DEFAULT_BOLD);
             } else {
@@ -157,8 +159,9 @@ public class MatchView extends FrameLayout {
         } else {
             red2.setVisibility(View.VISIBLE);
             red2.setText(redTeams[1]);
-            red2.setTag("frc" + redTeams[1] + "@" + eventKey);
+            red2.setTag(EventTeamHelper.generateKey(eventKey, "frc" + redTeams[1]));
             red2.setOnClickListener(listener);
+            red2.setOnLongClickListener(listener);
             if (selectedTeamNumber.equals(redTeams[1])) {
                 red2.setTypeface(Typeface.DEFAULT_BOLD);
             } else {
@@ -171,8 +174,9 @@ public class MatchView extends FrameLayout {
         } else {
             red3.setVisibility(View.VISIBLE);
             red3.setText(redTeams[2]);
-            red3.setTag("frc" + redTeams[2] + "@" + eventKey);
+            red3.setTag(EventTeamHelper.generateKey(eventKey, "frc" + redTeams[2]));
             red3.setOnClickListener(listener);
+            red3.setOnLongClickListener(listener);
             if (selectedTeamNumber.equals(redTeams[2])) {
                 red3.setTypeface(Typeface.DEFAULT_BOLD);
             } else {
@@ -187,8 +191,9 @@ public class MatchView extends FrameLayout {
         } else {
             blue1.setVisibility(View.VISIBLE);
             blue1.setText(blueTeams[0]);
-            blue1.setTag("frc" + blueTeams[0] + "@" + eventKey);
+            blue1.setTag(EventTeamHelper.generateKey(eventKey, "frc" + blueTeams[0]));
             blue1.setOnClickListener(listener);
+            blue1.setOnLongClickListener(listener);
             if (selectedTeamNumber.equals(blueTeams[0])) {
                 blue1.setTypeface(Typeface.DEFAULT_BOLD);
             } else {
@@ -201,8 +206,9 @@ public class MatchView extends FrameLayout {
             } else {
                 blue2.setVisibility(View.VISIBLE);
                 blue2.setText(blueTeams[1]);
-                blue2.setTag("frc" + blueTeams[1] + "@" + eventKey);
+                blue2.setTag(EventTeamHelper.generateKey(eventKey, "frc" + blueTeams[1]));
                 blue2.setOnClickListener(listener);
+                blue2.setOnLongClickListener(listener);
                 if (selectedTeamNumber.equals(blueTeams[1])) {
                     blue2.setTypeface(Typeface.DEFAULT_BOLD);
                 } else {
@@ -214,8 +220,9 @@ public class MatchView extends FrameLayout {
                 } else {
                     blue3.setVisibility(View.VISIBLE);
                     blue3.setText(blueTeams[2]);
-                    blue3.setTag("frc" + blueTeams[2] + "@" + eventKey);
+                    blue3.setTag(EventTeamHelper.generateKey(eventKey, "frc" + blueTeams[2]));
                     blue3.setOnClickListener(listener);
+                    blue3.setOnLongClickListener(listener);
                     if (selectedTeamNumber.equals(blueTeams[2])) {
                         blue3.setTypeface(Typeface.DEFAULT_BOLD);
                     } else {

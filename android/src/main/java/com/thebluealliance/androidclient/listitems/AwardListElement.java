@@ -1,19 +1,21 @@
 package com.thebluealliance.androidclient.listitems;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datafeed.APICache;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
+import com.thebluealliance.androidclient.models.Team;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datafeed.APICache;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
-import com.thebluealliance.androidclient.models.Team;
 
 import java.util.HashMap;
 
@@ -59,11 +61,11 @@ public class AwardListElement extends ListElement {
             } else {
                 teamNumber = winner.get("team_number").getAsString();
                 if (!mSelectedTeamNum.equals(teamNumber)) {
-                    winnerView.setOnClickListener(new TeamAtEventClickListener(context));
+                    winnerView.setOnClickListener(new EventTeamClickListener(context));
                 } else {
                     winnerView.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));  // disable touch feedback
                 }
-                winnerView.setTag("frc" + teamNumber + "@" + mEventKey);
+                winnerView.setTag(EventTeamHelper.generateKey(mEventKey, "frc" + teamNumber));
             }
             if (JSONHelper.isNull(winner.get("awardee"))) {
                 awardee = "";
