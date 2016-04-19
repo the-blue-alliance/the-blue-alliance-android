@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:background="?android:attr/selectableItemBackground"
     android:minHeight="72dp"
     android:padding="16dp">
 
@@ -12,9 +15,9 @@
         android:layout_alignParentTop="true"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="Title"
         android:textColor="@color/primary_text_color"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        tools:text="Title" />
 
     <TextView
         android:id="@+id/event_dates"
@@ -22,9 +25,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@id/event_name"
-        android:text="Dates"
         android:textColor="@color/secondary_text_color"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        tools:text="Dates" />
 
     <TextView
         android:id="@+id/event_location"
@@ -35,15 +38,15 @@
         android:layout_toLeftOf="@id/event_dates"
         android:ellipsize="end"
         android:singleLine="true"
-        android:text="Location"
         android:textColor="@color/secondary_text_color"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        tools:text="Location" />
 
     <ImageView
         android:id="@+id/model_settings"
         style="@style/ListItemButtonStyle"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:visibility="gone"
-        android:src="@drawable/ic_settings_black_24dp" />
+        android:src="@drawable/ic_settings_black_24dp"
+        android:visibility="gone" />
 </RelativeLayout>
