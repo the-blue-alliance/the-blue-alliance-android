@@ -5,23 +5,29 @@ import com.thebluealliance.androidclient.R;
 import android.support.annotation.StringRes;
 
 public enum PlayoffAdvancement {
-    NONE(R.string.match_abbrev_unknown, 0),
-    OCTO(R.string.match_abbrev_octo, 1),
-    QUARTER(R.string.match_abbrev_quarter, 2),
-    SEMI(R.string.match_abbrev_semi, 3),
-    FINAL(R.string.match_abbrev_final, 4),
-    WINNER(R.string.match_abbrev_winner, 5);
+    NONE(R.string.match_abbrev_unknown, R.string.playoff_advancement_none, 0),
+    OCTO(R.string.match_abbrev_octo, R.string.playoff_advancement_octo, 1),
+    QUARTER(R.string.match_abbrev_quarter, R.string.playoff_advancement_quarter, 2),
+    SEMI(R.string.match_abbrev_semi, R.string.playoff_advancement_semi, 3),
+    FINAL(R.string.match_abbrev_final, R.string.playoff_advancement_final, 4),
+    WINNER(R.string.match_abbrev_winner, R.string.playoff_advancement_winner, 5);
 
-    private @StringRes int abbreviation;
-    private int level;
+    private final @StringRes int abbreviation;
+    private final @StringRes int details;
+    private final int level;
 
-    PlayoffAdvancement(@StringRes int abbreviation, int level) {
+    PlayoffAdvancement(@StringRes int abbreviation, @StringRes int details, int level) {
         this.abbreviation = abbreviation;
         this.level = level;
+        this.details = details;
     }
 
     public @StringRes int getAbbreviation() {
         return abbreviation;
+    }
+
+    public @StringRes int getDetails() {
+        return details;
     }
 
     public int getLevel() {

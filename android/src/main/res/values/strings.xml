@@ -154,4 +154,13 @@
     <string name="match_abbrev_final">F</string>
     <string name="match_abbrev_unknown">M</string>
     <string name="match_abbrev_winner">W</string>
+
+    <!-- Playoff Advancement Strings -->
+    <string name="playoff_advancement_title">Playoff Advancement</string>
+    <string name="playoff_advancement_none">We have no idea how this alliance did</string>
+    <string name="playoff_advancement_octo">This alliance made to the Octofinals</string>
+    <string name="playoff_advancement_quarter">This alliance made it to the Quarterfinals</string>
+    <string name="playoff_advancement_semi">This alliance made it to the Semifinals</string>
+    <string name="playoff_advancement_final">This alliance made it to the Finals</string>
+    <string name="playoff_advancement_winner">This alliance won the event</string>
 </resources>

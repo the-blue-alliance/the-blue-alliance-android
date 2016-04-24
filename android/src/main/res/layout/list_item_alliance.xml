@@ -16,6 +16,8 @@
             android:layout_weight="0.3"
             android:gravity="center"
             tools:text="W"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
             android:textSize="14sp"/>
 
     <TextView

@@ -6,6 +6,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
+import com.thebluealliance.androidclient.listeners.PlayoffAdvancementClickListener;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
@@ -54,9 +55,13 @@ public class AllianceListElement extends ListElement implements RenderableModel 
         if (advancement != PlayoffAdvancement.NONE) {
             holder.advancement.setVisibility(View.VISIBLE);
             holder.advancement.setText(advancement.getAbbreviation());
+            holder.advancement.setClickable(true);
+            holder.advancement.setOnClickListener(new PlayoffAdvancementClickListener(c, advancement));
         } else {
             holder.advancement.setVisibility(View.VISIBLE);
             holder.advancement.setText("");
+            holder.advancement.setOnClickListener(null);
+            holder.advancement.setClickable(false);
         }
 
         EventTeamClickListener listener = new EventTeamClickListener(c);
