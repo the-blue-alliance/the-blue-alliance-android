@@ -201,8 +201,8 @@ public class EventsByWeekFragment
         List<EventWeekTab> tabs = ((EventsByWeekFragmentPagerAdapter) mViewPager.getAdapter())
                 .getTabs();
         for (int i = 0; i < tabs.size(); i++) {
-            if (tabs.get(i).getWeek() > week) {
-                return i-1;
+            if (tabs.get(i).getWeek() >= week) {
+                return i;
             }
         }
         return -1;
