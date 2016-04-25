@@ -19,7 +19,7 @@
 
     <string name="title_activity_gameday">GameDay</string>
     <string name="title_activity_update_required">UpdateRequiredActivity</string>
-<string name="title_activity_confirm_image_suggestion">Confirm Suggestion</string>
+    <string name="title_activity_confirm_image_suggestion">Confirm Suggestion</string>
 
     <!-- View Event -->
     <string name="view_event_website">View event\'s website</string>
@@ -100,6 +100,11 @@
     <string name="submatch_title_abbrev_format">%1$s%2$s-%3$s</string>
     <string name="match_tab_results">Results</string>
     <string name="match_tab_breakdown">Breakdown</string>
+
+    <!-- Awards -->
+    <string name="awards_header">Awards</string>
+    <string name="team_at_event_awards_format_one">Won 1 award</string>
+    <string name="team_at_event_awards_format">Won %1$d awards</string>
 
     <!-- Team Media -->
     <string name="media_images_header">Photos</string>
