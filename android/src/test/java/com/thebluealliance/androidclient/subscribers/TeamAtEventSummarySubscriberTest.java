@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -28,6 +29,7 @@ public class TeamAtEventSummarySubscriberTest {
     @Mock Resources mResources;
     @Mock Event mEvent;
     @Mock EventMatchesEvent mMatchesEvent;
+    @Mock EventAwardsEvent mAwardsEvent;
     @Mock MatchRenderer mMatchRenderer;
 
     TeamAtEventSummarySubscriber mSubscriber;
@@ -52,6 +54,7 @@ public class TeamAtEventSummarySubscriberTest {
     @Test
     public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
         mSubscriber.onEventMatchesLoaded(mMatchesEvent);
+        mSubscriber.onEventAwardsLoaded(mAwardsEvent);
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mData);
     }
 }
