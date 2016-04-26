@@ -1,12 +1,9 @@
 package com.thebluealliance.androidclient.helpers;
 
-import com.google.api.client.json.Json;
-
 import com.thebluealliance.androidclient.R;
 
 import android.content.Context;
 import android.util.JsonReader;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

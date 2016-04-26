@@ -65,6 +65,41 @@
 
                     </RelativeLayout>
 
+                    <!-- This is wrapped in a FrameLayout so that the divider will
+                    hide when the container is hidden -->
+                    <FrameLayout
+                        android:id="@+id/champs_pit_location_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone">
+
+                        <View style="@style/InfoItemDividerStyle" />
+
+                        <RelativeLayout style="@style/InfoItemStyle">
+
+                            <com.thebluealliance.androidclient.views.RecoloredImageView
+                                android:id="@+id/champs_pit_location_icon"
+                                style="@style/InfoItemImageStyle"
+                                android:src="@drawable/ic_beenhere_black_24dp"
+                                app:tintColor="@color/primary" />
+
+                            <TextView
+                                android:id="@+id/champs_pit_location_label"
+                                style="@style/InfoItemSecondaryTextStyle"
+                                android:layout_centerVertical="false"
+                                android:layout_toRightOf="@id/champs_pit_location_icon"
+                                android:text="Pit Location" />
+
+                            <TextView
+                                android:id="@+id/champs_pit_location"
+                                style="@style/InfoItemTextStyle"
+                                android:layout_below="@id/champs_pit_location_label"
+                                android:layout_centerVertical="false"
+                                android:layout_toRightOf="@id/champs_pit_location_icon"
+                                tools:text="Q16 (Tesla)" />
+                        </RelativeLayout>
+                    </FrameLayout>
+
 
                     <!-- This is wrapped in a FrameLayout so that the divider will
                     hide when the container is hidden -->
