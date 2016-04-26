@@ -4,6 +4,7 @@ import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
@@ -39,6 +40,7 @@ public class StatusRefreshService extends IntentService {
     @Inject @Named("tba_api") APIv2 mRetrofitAPI;
     @Inject SharedPreferences mPrefs;
     @Inject EventBus mEventBus;
+    @Inject OkHttpClient mHttpClient;
 
     public StatusRefreshService() {
         super("API Status Refresh");
@@ -84,13 +86,12 @@ public class StatusRefreshService extends IntentService {
         /* Update Champs pit locations if necessary */
         if (PitLocationHelper.shouldUpdateFromRemoteUrl(getApplicationContext(), status)) {
             try {
-                OkHttpClient client = new OkHttpClient();
                 Request request = new Request.Builder()
                         .url(status.getChampsPitLocationsUrl())
                         .cacheControl(CacheControl.FORCE_NETWORK)
                         .build();
 
-                okhttp3.Response champsPitLocation = client.newCall(request).execute();
+                okhttp3.Response champsPitLocation = mHttpClient.newCall(request).execute();
                 String responseString = champsPitLocation.body().string();
                 PitLocationHelper.updateFromRemoteUrl(getApplicationContext(), responseString, status.getChampsPitLocationsUpdateTime());
             } catch (Exception e) {
@@ -109,6 +110,7 @@ public class StatusRefreshService extends IntentService {
         return DaggerDatafeedComponent.builder()
                 .applicationComponent(application.getComponent())
                 .datafeedModule(application.getDatafeedModule())
+                .httpModule(application.getHttpModule())
                 .build();
     }
 }
