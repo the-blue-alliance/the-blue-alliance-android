@@ -16,6 +16,7 @@
         <item quantity="one">%d contribution</item>
         <item quantity="other">%d contributions</item>
     </plurals>
+    <string name="championship_pit_location">Championship Pit Location</string>
 
     <string name="title_activity_gameday">GameDay</string>
     <string name="title_activity_update_required">UpdateRequiredActivity</string>

@@ -88,7 +88,7 @@
                                 style="@style/InfoItemSecondaryTextStyle"
                                 android:layout_centerVertical="false"
                                 android:layout_toRightOf="@id/champs_pit_location_icon"
-                                android:text="Pit Location" />
+                                android:text="@string/championship_pit_location" />
 
                             <TextView
                                 android:id="@+id/champs_pit_location"

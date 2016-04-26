@@ -170,7 +170,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
                     && PitLocationHelper.shouldShowPitLocation(mContext, mTeamKey)) {
                 PitLocationHelper.TeamPitLocation location = PitLocationHelper.getPitLocation(mContext, mTeamKey);
                 if (location != null) {
-                    mDataToBind.add(new LabelValueListItem("Pit Location", location.getAddressString()));
+                    mDataToBind.add(new LabelValueListItem(mResources.getString(R.string.championship_pit_location), location.getAddressString()));
                 }
             }
         } catch (BasicModel.FieldNotDefinedException e) {
