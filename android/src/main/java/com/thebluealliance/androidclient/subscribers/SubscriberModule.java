@@ -103,7 +103,7 @@ public class SubscriberModule {
 
     @Provides
     public TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(MatchRenderer renderer) {
-        return new TeamAtEventSummarySubscriber(mActivity.getResources(), renderer);
+        return new TeamAtEventSummarySubscriber(mActivity, renderer);
     }
 
     @Provides
