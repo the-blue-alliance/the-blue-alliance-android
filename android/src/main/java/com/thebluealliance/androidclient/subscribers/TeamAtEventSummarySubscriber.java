@@ -164,13 +164,17 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
                     awardsString));
         }
 
-        Log.d("pit_location", "should show pit location? " + PitLocationHelper.shouldShowPitLocation(mContext, mTeamKey));
-        Log.d("pit_location", "pit location: " + PitLocationHelper.getPitLocation(mContext, mTeamKey));
-        if (PitLocationHelper.shouldShowPitLocation(mContext, mTeamKey)) {
-            PitLocationHelper.TeamPitLocation location = PitLocationHelper.getPitLocation(mContext, mTeamKey);
-            if (location != null) {
-                mDataToBind.add(new LabelValueListItem("Pit Location", location.getAddressString()));
+        try {
+            if (event.isChampsEvent()
+                    && event.getEventYear() == 2016
+                    && PitLocationHelper.shouldShowPitLocation(mContext, mTeamKey)) {
+                PitLocationHelper.TeamPitLocation location = PitLocationHelper.getPitLocation(mContext, mTeamKey);
+                if (location != null) {
+                    mDataToBind.add(new LabelValueListItem("Pit Location", location.getAddressString()));
+                }
             }
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.d(Constants.LOG_TAG, "Could not determine if pit locations should be shown. Hiding by default.");
         }
 
         if (status != MatchHelper.EventStatus.NOT_AVAILABLE) {
