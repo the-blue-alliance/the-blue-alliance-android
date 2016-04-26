@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.Context;
 import android.content.res.Resources;
 
 import com.google.gson.JsonArray;
@@ -21,12 +22,14 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class TeamAtEventSummarySubscriberTest {
-    @Mock Resources mResources;
+    @Mock Context mContext;
     @Mock Event mEvent;
     @Mock EventMatchesEvent mMatchesEvent;
     @Mock EventAwardsEvent mAwardsEvent;
@@ -38,8 +41,9 @@ public class TeamAtEventSummarySubscriberTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        when(mResources.getString(anyInt())).thenReturn("");
-        mSubscriber = new TeamAtEventSummarySubscriber(mResources, mMatchRenderer);
+        mContext = mock(Context.class, RETURNS_DEEP_STUBS);
+        when(mContext.getResources().getString(anyInt())).thenReturn("");
+        mSubscriber = new TeamAtEventSummarySubscriber(mContext, mMatchRenderer);
         mSubscriber.setTeamKey("frc1519");
         mData = new Model(
           ModelMaker.getModel(JsonArray.class, "2015necmp_rankings"),

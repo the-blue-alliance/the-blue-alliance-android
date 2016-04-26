@@ -56,6 +56,8 @@ public class APIStatusDeserializerTest {
         assertEquals("This is only a test", mStatus.getMessageText());
         assertEquals(new Date(1449698422l * 1000), mStatus.getMessageExipration());
         assertEquals(1449698422, mStatus.getLastOkHttpCacheClear());
+        assertEquals("https://www.thebluealliance.com", mStatus.getChampsPitLocationsUrl());
+        assertEquals(12345678, mStatus.getChampsPitLocationsUpdateTime());
 
         List<String> downKeys = mStatus.getDownEvents();
         assertNotNull(downKeys);
@@ -172,5 +174,19 @@ public class APIStatusDeserializerTest {
         mJsonData.remove(APIStatusDeserializer.LAST_OKHTTP_CACHE_CLEAR);
         mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
         assertEquals(-1, mStatus.getLastOkHttpCacheClear());
+    }
+
+    @Test
+    public void testNoChampsPitLocationsUrl() {
+        mJsonData.remove(APIStatusDeserializer.CHAMPS_PIT_LOCATIONS_URL);
+        mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+        assertEquals(null, mStatus.getChampsPitLocationsUrl());
+    }
+
+    @Test
+    public void testNoChampsPitLocationsUpdateTime() {
+        mJsonData.remove(APIStatusDeserializer.CHAMPS_PIT_LOCATIONS_UPDATE_TIME);
+        mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+        assertEquals(-1, mStatus.getChampsPitLocationsUpdateTime());
     }
 }
