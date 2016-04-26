@@ -3,12 +3,15 @@ package com.thebluealliance.androidclient.subscribers;
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRenderer;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +53,18 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
         }
     }
 
-    @Override public boolean isDataValid() {
+    @Override
+    public boolean isDataValid() {
         return super.isDataValid() && !mAPIData.isEmpty();
+    }
+
+    @Override
+    protected boolean shouldPostToEventBus() {
+        return true;
+    }
+
+    @Override
+    protected void postToEventBus(EventBus eventBus) {
+        eventBus.post(new EventAwardsEvent(mAPIData));
     }
 }
