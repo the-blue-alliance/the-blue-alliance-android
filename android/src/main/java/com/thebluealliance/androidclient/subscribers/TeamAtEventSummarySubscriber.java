@@ -12,6 +12,8 @@ import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper.CaseInsensitiveMap;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.helpers.PitLocationHelper;
+import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.listitems.EmptyListElement;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -25,6 +27,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
 
@@ -48,6 +51,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
     }
 
     private String mTeamKey;
+    private Context mContext;
     private Resources mResources;
     private MatchRenderer mMatchRenderer;
     private boolean mIsMatchListLoaded;
@@ -57,9 +61,10 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
     private List<Match> mMatches;
     private List<Award> mAwards;
 
-    public TeamAtEventSummarySubscriber(Resources resources, MatchRenderer matchRenderer) {
+    public TeamAtEventSummarySubscriber(Context context, MatchRenderer matchRenderer) {
         super();
-        mResources = resources;
+        mContext = context;
+        mResources = context.getResources();
         mMatchRenderer = matchRenderer;
         mIsMatchListLoaded = false;
         mIsAwardListLoaded = false;
@@ -157,6 +162,19 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             mDataToBind.add(new LabelValueListItem(
                     mResources.getString(R.string.awards_header),
                     awardsString));
+        }
+
+        try {
+            if (event.isChampsEvent()
+                    && event.getEventYear() == 2016
+                    && PitLocationHelper.shouldShowPitLocation(mContext, mTeamKey)) {
+                PitLocationHelper.TeamPitLocation location = PitLocationHelper.getPitLocation(mContext, mTeamKey);
+                if (location != null) {
+                    mDataToBind.add(new LabelValueListItem(mResources.getString(R.string.championship_pit_location), location.getAddressString()));
+                }
+            }
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.d(Constants.LOG_TAG, "Could not determine if pit locations should be shown. Hiding by default.");
         }
 
         if (status != MatchHelper.EventStatus.NOT_AVAILABLE) {

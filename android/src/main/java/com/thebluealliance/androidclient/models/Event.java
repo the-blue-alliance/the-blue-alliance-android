@@ -421,6 +421,11 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
         throw new FieldNotDefinedException("Field Database.Events.OFFICIAL is not defined");
     }
 
+    public boolean isChampsEvent() throws FieldNotDefinedException {
+        EventType type = getEventType();
+        return (type == EventType.CMP_DIVISION || type == EventType.CMP_FINALS);
+    }
+
     public void setOfficial(boolean official) {
         fields.put(EventsTable.OFFICIAL, official ? 1 : 0);
     }
