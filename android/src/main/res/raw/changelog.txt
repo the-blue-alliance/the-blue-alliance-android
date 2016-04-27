@@ -1,4 +1,5 @@
-Version 3.3.5: (Championship 2016)<br>
+Version 3.4.6: (Championship 2016)<br>
+    - Find your favorite team's pit address!<br>
     - Show number of awards on team@event summary<br>
     - Add info dialogs for alliance advancement<br>
     - Long-press on teams in alliance view to see full team details<br>
