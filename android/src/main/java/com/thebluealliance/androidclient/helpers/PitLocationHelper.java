@@ -30,6 +30,8 @@ public class PitLocationHelper {
 
     private static Map<String, TeamPitLocation> sTeamLocationCache = new HashMap<>();
 
+
+    // TODO improve in the future; perhaps read dates/events from the Status API?
     public static boolean shouldShowPitLocation(Context context, String teamKey) {
         Date champsStart = new GregorianCalendar(2016, GregorianCalendar.APRIL, 25).getTime();
         Date champsEnd = new GregorianCalendar(2016, GregorianCalendar.MAY, 1).getTime();
