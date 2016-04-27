@@ -43,7 +43,7 @@ import rx.Observable;
 
 public class RecentNotificationsFragment
         extends DatafeedFragment<List<StoredNotification>, List<Object>, RecentNotificationsSubscriber, RecentNotificationsListBinder>
-        implements RecyclerViewBinder.RecyclerViewBinderMapper {
+        implements RecyclerViewBinder.RecyclerViewAdapterCreatorInitializer {
 
     @Inject Database mDb;
 
@@ -114,7 +114,7 @@ public class RecentNotificationsFragment
     }
 
     @Override
-    public void initializeMaps(SmartAdapter.MultiAdaptersCreator creator) {
+    public void initializeAdapterCreator(SmartAdapter.MultiAdaptersCreator creator) {
         creator.map(AllianceSelectionNotificationViewModel.class, AllianceSelectionNotificationItemView.class)
                 .map(AwardsPostedNotificationViewModel.class, AwardsPostedNotificationItemView.class)
                 .map(CompLevelStartingNotificationViewModel.class, CompLevelStartingNotificationItemView.class)

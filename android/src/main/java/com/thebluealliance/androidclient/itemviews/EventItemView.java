@@ -1,12 +1,10 @@
 package com.thebluealliance.androidclient.itemviews;
 
+import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listeners.EventClickListener;
 import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
-import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
-import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 
 import android.content.Context;
 import android.view.View;
@@ -42,7 +40,7 @@ public class EventItemView extends BindableFrameLayout<EventViewModel> {
 
     @Override
     public void bind(EventViewModel model) {
-        this.setOnClickListener(new EventClickListener(getContext(), model.getKey()));
+        this.setOnClickListener(v -> notifyItemAction(Interactions.EVENT_CLICKED));
         this.setClickable(true);
         this.setFocusable(true);
 
