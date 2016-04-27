@@ -19,7 +19,7 @@ import com.thebluealliance.androidclient.views.NoDataView;
 import java.util.List;
 
 public abstract class RecyclerViewFragment<T, S extends BaseAPISubscriber<T, List<Object>>, B extends RecyclerViewBinder>
-        extends DatafeedFragment<T, List<Object>, S, B> implements RecyclerViewBinder.RecyclerViewBinderMapper {
+        extends DatafeedFragment<T, List<Object>, S, B> implements RecyclerViewBinder.RecyclerViewAdapterCreatorInitializer {
 
     private Parcelable mListState;
     private RecyclerView.Adapter mAdapter;

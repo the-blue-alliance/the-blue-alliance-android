@@ -1,6 +1,8 @@
 package com.thebluealliance.androidclient.fragments;
 
+import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.itemviews.EventItemView;
@@ -97,8 +99,15 @@ public class EventListFragment extends RecyclerViewFragment<List<Event>, EventLi
         return new NoDataViewParams(R.drawable.ic_event_black_48dp, R.string.no_events_found);
     }
 
-    @Override public void initializeMaps(SmartAdapter.MultiAdaptersCreator creator) {
+    @Override public void initializeAdapterCreator(SmartAdapter.MultiAdaptersCreator creator) {
         creator.map(EventViewModel.class, EventItemView.class);
         creator.map(ListSectionHeaderViewModel.class, ListSectionHeaderItemView.class);
+
+        creator.listener((actionId, item, position, view) -> {
+            if (actionId == Interactions.EVENT_CLICKED && item instanceof EventViewModel) {
+                EventViewModel event = (EventViewModel) item;
+                startActivity(ViewEventActivity.newInstance(getContext(), event.getKey()));
+            }
+        });
     }
 }
