@@ -166,7 +166,7 @@ public class PitLocationHelper {
                             String name = reader.nextName();
                             if (name.equals("div")) {
                                 division = reader.nextString();
-                            } else if (name.equals("addr")) {
+                            } else if (name.equals("loc")) {
                                 location = reader.nextString();
                             } else {
                                 reader.skipValue();
