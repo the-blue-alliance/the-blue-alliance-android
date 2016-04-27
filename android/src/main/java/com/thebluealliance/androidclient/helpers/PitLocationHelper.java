@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.helpers;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.models.APIStatus;
 
@@ -7,6 +8,7 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.JsonReader;
+import android.util.Log;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -87,9 +89,9 @@ public class PitLocationHelper {
         long lastUpdateTime = PreferenceManager.getDefaultSharedPreferences(context).getLong(LAST_UPDATED_PREF_KEY, -1);
         long remoteUpdateTime = status.getChampsPitLocationsUpdateTime();
         // TODO better URL validation
-        boolean validUrl = TextUtils.isEmpty(status.getChampsPitLocationsUrl())
-                && (status.getChampsPitLocationsUrl().startsWith("http://")
-                || status.getChampsPitLocationsUrl().startsWith("https://"));
+        boolean validUrl = !TextUtils.isEmpty(status.getChampsPitLocationsUrl())
+                && (status.getChampsPitLocationsUrl().startsWith("http://the-blue-alliance.github.io")
+                || status.getChampsPitLocationsUrl().startsWith("https://the-blue-alliance.github.io"));
         return validUrl && (lastUpdateTime == -1 || remoteUpdateTime > lastUpdateTime);
     }
 
@@ -129,7 +131,9 @@ public class PitLocationHelper {
      *
      * The file should be in the following format:
      *
-     * {"frc111": {"div": "Tesla", "addr": "Q16"}, "frc254": {...}, ...}
+     * {"locations": { "frc111": {"div": "Tesla", "addr": "Q16"}, "frc254": {...}, ...} }
+     *
+     * In the future, the root object may contain additional properties.
      *
      * @param teamKey the team key to search for in the locations dict (frcXXXX)
      * @return the location object if one was found
@@ -143,30 +147,41 @@ public class PitLocationHelper {
             reader = new JsonReader(new FileReader(getLocationsFile(context)));
             reader.beginObject();
             while (reader.hasNext()) {
-                String currentTeamKey = reader.nextName();
-                if (!currentTeamKey.equals(teamKey)) {
+                String section = reader.nextName();
+                if (!section.equals("locations")) {
                     reader.skipValue();
-                } else {
-                    // We found the team!
-                    reader.beginObject();
-                    String location = null, division = null;
-                    while (reader.hasNext()) {
-                        String name = reader.nextName();
-                        if (name.equals("div")) {
-                            division = reader.nextString();
-                        } else if (name.equals("addr")) {
-                            location = reader.nextString();
-                        } else {
-                            reader.skipValue();
+                    continue;
+                }
+                reader.beginObject();
+                while(reader.hasNext()) {
+                    String currentTeamKey = reader.nextName();
+                    Log.d(Constants.LOG_TAG, "reading team: " + currentTeamKey);
+                    if (!currentTeamKey.equals(teamKey)) {
+                        reader.skipValue();
+                    } else {
+                        // We found the team!
+                        reader.beginObject();
+                        String location = null, division = null;
+                        while (reader.hasNext()) {
+                            String name = reader.nextName();
+                            if (name.equals("div")) {
+                                division = reader.nextString();
+                            } else if (name.equals("addr")) {
+                                location = reader.nextString();
+                            } else {
+                                reader.skipValue();
+                            }
+                        }
+                        if (location != null && division != null) {
+                            TeamPitLocation loc = new TeamPitLocation(division, location);
+                            sTeamLocationCache.put(currentTeamKey, loc);
+                            return loc;
                         }
                     }
-                    if (location != null && division != null) {
-                        TeamPitLocation loc = new TeamPitLocation(division, location);
-                        sTeamLocationCache.put(currentTeamKey, loc);
-                        return loc;
-                    }
                 }
+                reader.endObject();
             }
+            reader.endObject();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
