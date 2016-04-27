@@ -5,6 +5,7 @@ import com.thebluealliance.androidclient.models.APIStatus;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.JsonReader;
 
 import java.io.BufferedWriter;
@@ -85,7 +86,11 @@ public class PitLocationHelper {
     public static boolean shouldUpdateFromRemoteUrl(Context context, APIStatus status) {
         long lastUpdateTime = PreferenceManager.getDefaultSharedPreferences(context).getLong(LAST_UPDATED_PREF_KEY, -1);
         long remoteUpdateTime = status.getChampsPitLocationsUpdateTime();
-        return (lastUpdateTime == -1 || remoteUpdateTime > lastUpdateTime);
+        // TODO better URL validation
+        boolean validUrl = TextUtils.isEmpty(status.getChampsPitLocationsUrl())
+                && (status.getChampsPitLocationsUrl().startsWith("http://")
+                || status.getChampsPitLocationsUrl().startsWith("https://"));
+        return validUrl && (lastUpdateTime == -1 || remoteUpdateTime > lastUpdateTime);
     }
 
     private static void populateLocationsFileFromPackagedResourceIfNeeded(Context context) {
