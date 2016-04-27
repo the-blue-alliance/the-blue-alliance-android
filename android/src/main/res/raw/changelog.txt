@@ -1,4 +1,4 @@
-Version 3.4.6: (Championship 2016)<br>
+Version 3.4.7: (Championship 2016)<br>
     - Find your favorite team's pit address!<br>
     - Show number of awards on team@event summary<br>
     - Add info dialogs for alliance advancement<br>
@@ -7,3 +7,4 @@ Version 3.4.6: (Championship 2016)<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>
+<br>
