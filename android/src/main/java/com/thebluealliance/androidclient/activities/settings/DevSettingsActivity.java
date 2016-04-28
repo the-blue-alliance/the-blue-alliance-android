@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.activities.settings;
 
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
@@ -117,8 +115,10 @@ public class DevSettingsActivity extends AppCompatActivity {
             gcmRegister.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    GoogleAccountCredential credential = AccountHelper.getSelectedAccountCredential(getActivity());
+                    //TODO
+                    /*GoogleAccountCredential credential = AccountHelper.getSelectedAccountCredential(getActivity());
                     getActivity().startActivity(credential.newChooseAccountIntent());
+                    */
                     return false;
                 }
             });

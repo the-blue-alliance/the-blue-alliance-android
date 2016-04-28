@@ -6,9 +6,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
-import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
-import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesModelPreferenceMessage;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -60,7 +57,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
         String user = AccountHelper.getSelectedAccount(context);
         String key = MyTBAHelper.createKey(user, modelKey);
         ModelType modelType = settings.modelType;
-
+/*
         ModelsMobileApiMessagesModelPreferenceMessage request = new ModelsMobileApiMessagesModelPreferenceMessage();
         request.setModelKey(modelKey);
         request.setDeviceKey(GCMAuthHelper.getRegistrationId(context));
@@ -151,6 +148,8 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
                 return Result.ERROR;
             }
         }
+        */
+        return null;
     }
 
     @Override

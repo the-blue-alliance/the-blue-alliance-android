@@ -228,10 +228,6 @@ ext {
 }
 
 dependencies {
-
-    // Google Cloud Endpoints Library
-    compile ([group: 'com.google.api-client', name: 'google-api-client-android', version: googleApiClientVersion])
-    compile ([group: 'com.google.http-client', name: 'google-http-client-gson', version: googleApiClientVersion])
     compile project(':tbaMobile')
     compile project(':libImgur')
 
@@ -246,6 +242,7 @@ dependencies {
 
     // Play Services Libraries
     // See http://developer.android.com/google/play-services/setup.html
+    compile 'com.google.collections:google-collections:1.0-rc2'
     compile "com.google.android.gms:play-services-base:${playServicesVersion}"
     compile "com.google.android.gms:play-services-plus:${playServicesVersion}"
     compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"

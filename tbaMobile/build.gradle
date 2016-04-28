@@ -7,8 +7,6 @@ version = 'v9-1.21.0-SNAPSHOT'
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
-jar.manifest.attributes("Built-By": "Google")
-jar.manifest.attributes("Build-Jdk": "1.6.x")
 
 task sourceJar(type: Jar) {
   classifier = 'sources'
@@ -24,7 +22,6 @@ repositories {
 }
 
 dependencies {
-    compile ([group: 'com.google.api-client', name: 'google-api-client', version: googleApiClientVersion])
     compile "io.reactivex:rxjava:${rxJavaVersion}"
     compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     compile "com.google.code.gson:gson:${gsonVersion}"

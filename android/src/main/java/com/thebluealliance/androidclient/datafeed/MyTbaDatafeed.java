@@ -7,11 +7,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
-import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesFavoriteCollection;
-import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesFavoriteMessage;
-import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesSubscriptionCollection;
-import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesSubscriptionMessage;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
@@ -64,6 +59,7 @@ public class MyTbaDatafeed {
             return;
         }
 
+        /*
         Log.d(Constants.LOG_TAG, "Updating myTBA favorites");
         TbaMobile service = AccountHelper.getAuthedTbaMobile(mApplicationContext);
         if (service == null) {
@@ -97,6 +93,7 @@ public class MyTbaDatafeed {
         }
 
         mPrefs.edit().putLong(prefString, new Date().getTime()).apply();
+        */
     }
 
     public void updateUserSubscriptions() {
@@ -116,7 +113,7 @@ public class MyTbaDatafeed {
         if (!ConnectionDetector.isConnectedToInternet(mApplicationContext)) {
             return;
         }
-
+/*
         Log.d(Constants.LOG_TAG, "Updating myTBA subscriptions");
         TbaMobile service = AccountHelper.getAuthedTbaMobile(mApplicationContext);
         if (service == null) {
@@ -151,5 +148,6 @@ public class MyTbaDatafeed {
 
         Log.d(Constants.LOG_TAG, "Added " + subscriptionCollection.size() + " subscriptions");
         mPrefs.edit().putLong(prefString, new Date().getTime()).apply();
+        */
     }
 }

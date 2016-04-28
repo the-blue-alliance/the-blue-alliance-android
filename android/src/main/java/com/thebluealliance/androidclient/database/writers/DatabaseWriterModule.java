@@ -120,4 +120,9 @@ public class DatabaseWriterModule {
       EventWriter eventWriter) {
         return new EventDistrictPointsWriter(db, eventWriter);
     }
+
+    @Provides @Singleton
+    public FavoriteCollectionWriter provideFavoriteCollectionWriter(Database db) {
+        return new FavoriteCollectionWriter(db);
+    }
 }

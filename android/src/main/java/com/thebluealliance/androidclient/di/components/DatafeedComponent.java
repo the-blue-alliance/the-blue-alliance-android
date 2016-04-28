@@ -22,7 +22,6 @@ public interface DatafeedComponent {
     CacheableDatafeed datafeed();
 
     void inject(StatusRefreshService statusRefreshService);
-    void inject(MyTbaUpdateService myTbaUpdateService);
 
     void inject(TBAAndroid tbaAndroid);
     void inject(HomeActivity homeActivity);
