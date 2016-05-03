@@ -6,6 +6,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.background.mytba.DisableMyTBA;
+import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -22,7 +23,9 @@ public class AccountHelper {
     public static final String PREF_MYTBA_ENABLED = "mytba_enabled";
     public static final String PREF_SELECTED_ACCOUNT = "selected_account";
 
-    public static void enableMyTBA(Context context, boolean enabled) {
+
+
+    public static void enableMyTBA(Context context, MyTbaDatafeed datafeed, boolean enabled) {
         Log.d(Constants.LOG_TAG, "Enabling myTBA: " + enabled);
         if (enabled) {
             // enable myTBA
@@ -34,7 +37,7 @@ public class AccountHelper {
             if (!currentUser.isEmpty()) {
                 Log.d(Constants.LOG_TAG, "removing: " + currentUser);
                 //Remove all local content and deregister from GCM
-                new DisableMyTBA(context).execute(currentUser);
+                new DisableMyTBA(datafeed).execute();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 prefs.edit().putBoolean(PREF_MYTBA_ENABLED, false).apply();
             }

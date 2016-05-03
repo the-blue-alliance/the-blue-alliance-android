@@ -6,6 +6,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
+import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 import com.thebluealliance.androidclient.types.ModelType;
@@ -32,6 +33,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer, a search
  * button, and the ability to show and hide warning messages. Also provides Android Beam
@@ -49,6 +52,8 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     public static final int WARNING_EVENT_DOWN = 1;
 
     public Set<Integer> activeMessages = new HashSet<>();
+
+    @Inject MyTbaDatafeed mMyTbaDatafeed;
 
     String beamUri;
     String shareUri;
@@ -255,7 +260,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
         AccountHelper.setSelectedAccount(this, accountName);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit().putBoolean(AccountHelper.PREF_MYTBA_ENABLED, true).apply();
-        GCMHelper.registerGCMIfNeeded(this);
+        GCMHelper.registerGCMIfNeeded(this, mMyTbaDatafeed);
         startService(new Intent(this, MyTbaUpdateService.class));
     }
 

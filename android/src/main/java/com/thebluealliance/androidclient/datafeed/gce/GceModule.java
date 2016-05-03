@@ -7,9 +7,10 @@ import com.appspot.tbatv_prod_hrd.Model;
 import com.appspot.tbatv_prod_hrd.Subscriptions;
 import com.appspot.tbatv_prod_hrd.Tbamobile;
 import com.appspot.tbatv_prod_hrd.TeamMedia;
-import okhttp3.OkHttpClient;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
+import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 
 import android.accounts.AccountManager;
@@ -21,6 +22,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 
 /**
@@ -83,5 +85,18 @@ public class GceModule {
     @Provides @Singleton
     public TeamMedia provideTeamMediaApi(@Named("gce_retrofit") Retrofit retrofit) {
         return retrofit.create(TeamMedia.class);
+    }
+
+    @Provides @Singleton
+    public MyTbaDatafeed provideMyTbaDatafeed(Context context,
+            GceAuthController authController,
+            Tbamobile tbamobile,
+            Favorites favoriteApi,
+            Subscriptions subscriptionApi,
+            SharedPreferences prefs,
+            Database
+            db) {
+        return new MyTbaDatafeed(context, authController, tbamobile, favoriteApi, subscriptionApi,
+                context.getResources(), prefs, db);
     }
 }

@@ -1,22 +1,26 @@
 package com.thebluealliance.androidclient.background.mytba;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
+import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
+import com.thebluealliance.androidclient.gcm.GCMHelper;
+
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
-import com.thebluealliance.androidclient.gcm.GCMHelper;
 
 import java.io.IOException;
 
 public class RegisterGCM extends AsyncTask<Void, Void, Void> {
 
-    private Context context;
+    private final Context context;
+    private final MyTbaDatafeed datafeed;
 
-    public RegisterGCM(Context context) {
+    public RegisterGCM(Context context, MyTbaDatafeed datafeed) {
         this.context = context;
+        this.datafeed = datafeed;
     }
 
     @Override
@@ -29,7 +33,7 @@ public class RegisterGCM extends AsyncTask<Void, Void, Void> {
 
             Log.d(Constants.LOG_TAG, "Device registered with GCM, ID: " + regid);
 
-            boolean storeOnServer = GCMAuthHelper.sendRegistrationToBackend(context, regid);
+            boolean storeOnServer = datafeed.register(regid);
             if (storeOnServer) {
                 Log.d(Constants.LOG_TAG, "Storing registration ID");
                 // we had success on the server. Now store locally

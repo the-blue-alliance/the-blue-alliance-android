@@ -30,19 +30,6 @@ public class PlusHelper {
                 .build();
     }
 
-    public static GoogleApiClient getApiClient(Context context,
-                                               GoogleApiClient.ConnectionCallbacks connectionCallbacks,
-                                               GoogleApiClient.OnConnectionFailedListener connectionFailedListener) {
-        if (mApiClient == null) {
-            buildPlusClient(context, connectionCallbacks, connectionFailedListener);
-        }
-        return mApiClient;
-    }
-
-    public static void setApiClientClient(GoogleApiClient mApiClient) {
-        PlusHelper.mApiClient = mApiClient;
-    }
-
     public static boolean isConnected() {
         return mApiClient != null && mApiClient.isConnected();
     }
