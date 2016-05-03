@@ -3,7 +3,6 @@ package com.appspot.tbatv_prod_hrd;
 import com.appspot.tbatv_prod_hrd.model.*;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
