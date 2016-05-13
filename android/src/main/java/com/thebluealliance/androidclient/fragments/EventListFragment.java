@@ -1,22 +1,26 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
+import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.activities.ViewEventActivity;
+import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.listeners.EventClickListener;
+import com.thebluealliance.androidclient.itemviews.EventItemView;
+import com.thebluealliance.androidclient.itemviews.ListSectionHeaderItemView;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
+import com.thebluealliance.androidclient.viewmodels.EventViewModel;
+import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
+
+import android.os.Bundle;
 
 import java.util.List;
 
+import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
-public class EventListFragment extends ListViewFragment<List<Event>, EventListSubscriber> {
+public class EventListFragment extends RecyclerViewFragment<List<Event>, EventListSubscriber, RecyclerViewBinder> {
 
     public static final String YEAR = "YEAR";
     public static final String WEEK = "WEEK";
@@ -67,13 +71,6 @@ public class EventListFragment extends ListViewFragment<List<Event>, EventListSu
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = super.onCreateView(inflater, container, savedInstanceState);
-        mListView.setOnItemClickListener(new EventClickListener(getActivity(), null));
-        return v;
-    }
-
-    @Override
     protected void inject() {
         mComponent.inject(this);
     }
@@ -100,5 +97,17 @@ public class EventListFragment extends ListViewFragment<List<Event>, EventListSu
 
     @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_event_black_48dp, R.string.no_events_found);
+    }
+
+    @Override public void initializeAdapterCreator(SmartAdapter.MultiAdaptersCreator creator) {
+        creator.map(EventViewModel.class, EventItemView.class);
+        creator.map(ListSectionHeaderViewModel.class, ListSectionHeaderItemView.class);
+
+        creator.listener((actionId, item, position, view) -> {
+            if (actionId == Interactions.EVENT_CLICKED && item instanceof EventViewModel) {
+                EventViewModel event = (EventViewModel) item;
+                startActivity(ViewEventActivity.newInstance(getContext(), event.getKey()));
+            }
+        });
     }
 }

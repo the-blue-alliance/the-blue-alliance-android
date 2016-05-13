@@ -67,6 +67,18 @@
         <item name="android:layout_centerVertical">true</item>
     </style>
 
+    <!-- marginLeft is (72dp - 8dp) to account for the fact that this view is always wrapped
+    in a card with a left margin of 8dp; this keeps text aligned to the 72dp keyline -->
+    <style name="InfoItemSecondaryTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">64dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/secondary_text_color</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
     <style name="InfoItemImageStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>

@@ -3,8 +3,10 @@ package com.thebluealliance.androidclient.listitems;
 import com.google.gson.JsonArray;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
-import com.thebluealliance.androidclient.listeners.TeamAtEventClickListener;
+import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
+import com.thebluealliance.androidclient.listeners.PlayoffAdvancementClickListener;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
@@ -53,39 +55,47 @@ public class AllianceListElement extends ListElement implements RenderableModel 
         if (advancement != PlayoffAdvancement.NONE) {
             holder.advancement.setVisibility(View.VISIBLE);
             holder.advancement.setText(advancement.getAbbreviation());
+            holder.advancement.setClickable(true);
+            holder.advancement.setOnClickListener(new PlayoffAdvancementClickListener(c, advancement));
         } else {
             holder.advancement.setVisibility(View.VISIBLE);
             holder.advancement.setText("");
+            holder.advancement.setOnClickListener(null);
+            holder.advancement.setClickable(false);
         }
 
-        TeamAtEventClickListener listener = new TeamAtEventClickListener(c);
+        EventTeamClickListener listener = new EventTeamClickListener(c);
 
         String team1Key = teams.get(0).getAsString();
         SpannableString underLine = new SpannableString(team1Key.substring(3));
         underLine.setSpan(new UnderlineSpan(), 0, underLine.length(), 0);
         holder.memberOne.setText(underLine);
-        holder.memberOne.setTag(team1Key + "@" + eventKey);
+        holder.memberOne.setTag(EventTeamHelper.generateKey(eventKey, team1Key));
         holder.memberOne.setOnClickListener(listener);
+        holder.memberOne.setOnLongClickListener(listener);
 
         String team2Key = teams.get(1).getAsString();
         holder.memberTwo.setText(team2Key.substring(3));
-        holder.memberTwo.setTag(team2Key + "@" + eventKey);
+        holder.memberTwo.setTag(EventTeamHelper.generateKey(eventKey, team2Key));
         holder.memberTwo.setOnClickListener(listener);
+        holder.memberTwo.setOnLongClickListener(listener);
 
         if (teams.size() >= 3) {
             String team3Key = teams.get(2).getAsString();
             holder.memberThree.setText(team3Key.substring(3));
-            holder.memberThree.setTag(team3Key + "@" + eventKey);
+            holder.memberThree.setTag(EventTeamHelper.generateKey(eventKey, team3Key));
             holder.memberThree.setVisibility(View.VISIBLE);
             holder.memberThree.setOnClickListener(listener);
+            holder.memberThree.setOnLongClickListener(listener);
         }
 
         if (teams.size() >= 4) {
             String team4Key = teams.get(3).getAsString();
             holder.memberFour.setText(team4Key.substring(3));
-            holder.memberFour.setTag(team4Key + "@" + eventKey);
+            holder.memberFour.setTag(EventTeamHelper.generateKey(eventKey, team4Key));
             holder.memberFour.setVisibility(View.VISIBLE);
             holder.memberFour.setOnClickListener(listener);
+            holder.memberFour.setOnLongClickListener(listener);
         }
         return convertView;
     }
@@ -111,7 +121,7 @@ public class AllianceListElement extends ListElement implements RenderableModel 
         }
         AllianceListElement other = (AllianceListElement) o;
         return number == other.number
-          && teams.equals(other.teams)
-          && eventKey.equals(other.eventKey);
+                && teams.equals(other.teams)
+                && eventKey.equals(other.eventKey);
     }
 }

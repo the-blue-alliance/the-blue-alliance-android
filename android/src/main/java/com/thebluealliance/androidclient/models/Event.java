@@ -1,26 +1,43 @@
 package com.thebluealliance.androidclient.models;
 
-import android.util.Log;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
+import com.thebluealliance.androidclient.listitems.EventListElement;
+import com.thebluealliance.androidclient.types.EventType;
+import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.androidclient.viewmodels.EventViewModel;
+import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
 
+import android.content.Context;
+import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
+import android.util.Log;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
 
-public class Event extends BasicModel<Event> {
+public class Event extends BasicModel<Event> implements ViewModelRenderer<EventViewModel, Integer> {
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({RENDER_BASIC, RENDER_MYTBA_BUTTON})
+    public @interface RenderType {
+    }
+
+    public static final int RENDER_BASIC = 0;
+    public static final int RENDER_MYTBA_BUTTON = 1;
 
     public static final String[] NOTIFICATION_TYPES = {
             NotificationTypes.UPCOMING_MATCH,
@@ -328,8 +345,8 @@ public class Event extends BasicModel<Event> {
         }
         try {
             fields.put(
-              EventsTable.END,
-              ThreadSafeFormatters.parseEventDate(endString).getTime());
+                    EventsTable.END,
+                    ThreadSafeFormatters.parseEventDate(endString).getTime());
         } catch (ParseException ex) {
             //can't parse the date
             throw new IllegalArgumentException("Invalid date format. Should be like yyyy-MM-dd");
@@ -404,6 +421,11 @@ public class Event extends BasicModel<Event> {
         throw new FieldNotDefinedException("Field Database.Events.OFFICIAL is not defined");
     }
 
+    public boolean isChampsEvent() throws FieldNotDefinedException {
+        EventType type = getEventType();
+        return (type == EventType.CMP_DIVISION || type == EventType.CMP_FINALS);
+    }
+
     public void setOfficial(boolean official) {
         fields.put(EventsTable.OFFICIAL, official ? 1 : 0);
     }
@@ -437,7 +459,7 @@ public class Event extends BasicModel<Event> {
                 return ThreadSafeFormatters.renderEventDate(startDate);
             }
             return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to " +
-              ThreadSafeFormatters.renderEventDate(endDate);
+                    ThreadSafeFormatters.renderEventDate(endDate);
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for getting date string. \n" +
                     "Required fields: Database.Events.START, Database.Events.END");
@@ -449,4 +471,23 @@ public class Event extends BasicModel<Event> {
         return getKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getEventShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
     }
 
+    @Nullable @Override public EventViewModel renderToViewModel(Context context, @Nullable @RenderType Integer renderType) {
+        EventViewModel model;
+        try {
+            model = new EventViewModel(getKey(), getEventYear(), getEventShortName(), getDateString(), getLocation());
+
+
+            switch (renderType) {
+                case RENDER_MYTBA_BUTTON:
+                    model.setShowMyTbaSettings(true);
+            }
+        } catch (BasicModel.FieldNotDefinedException e) {
+            e.printStackTrace();
+            Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n" +
+                    "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
+            return null;
+        }
+
+        return model;
+    }
 }

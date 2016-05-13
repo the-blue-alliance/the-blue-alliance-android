@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
+import com.thebluealliance.androidclient.fragments.GamedayFragment;
 import com.thebluealliance.androidclient.fragments.RecentNotificationsFragment;
 import com.thebluealliance.androidclient.fragments.district.DistrictListFragment;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment;
@@ -19,7 +20,6 @@ import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
-import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +31,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -168,16 +169,17 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
     private void switchToModeForId(int id, Bundle savedInstanceState) {
         Fragment fragment;
+        int year = mMaxCompYear - mCurrentSelectedYearPosition;
         switch (id) {
             default:
             case R.id.nav_item_events:
                 int weekTab = savedInstanceState != null
                         ? savedInstanceState.getInt(EventsByWeekFragment.TAB, -1)
                         : -1;
-                fragment = EventsByWeekFragment.newInstance(mMaxCompYear - mCurrentSelectedYearPosition, weekTab);
+                fragment = EventsByWeekFragment.newInstance(year, weekTab);
                 break;
             case R.id.nav_item_districts:
-                fragment = DistrictListFragment.newInstance(mMaxCompYear - mCurrentSelectedYearPosition);
+                fragment = DistrictListFragment.newInstance(year);
                 break;
             case R.id.nav_item_teams:
                 int teamTab = savedInstanceState != null
@@ -195,8 +197,11 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 fragment = new RecentNotificationsFragment();
                 break;
             case R.id.nav_item_gameday:
-                startActivity(GamedayActivity.newInstance(this));
-                return;
+                int gamedayTab = savedInstanceState != null
+                        ? savedInstanceState.getInt(GamedayFragment.SELECTED_TAB, 0)
+                        : 0;
+                fragment = GamedayFragment.newInstance(gamedayTab);
+                break;
         }
         fragment.setRetainInstance(true);
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();

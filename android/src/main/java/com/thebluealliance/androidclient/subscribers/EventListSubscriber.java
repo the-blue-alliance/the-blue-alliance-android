@@ -6,13 +6,17 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.renderers.ModelRenderer;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Bind a list of events to a {@link ListViewAdapter}
  */
-public class EventListSubscriber extends BaseAPISubscriber<List<Event>, List<ListItem>> {
+public class EventListSubscriber extends BaseAPISubscriber<List<Event>, List<Object>> {
 
     public static final int
       MODE_WEEK = 0,
@@ -20,11 +24,12 @@ public class EventListSubscriber extends BaseAPISubscriber<List<Event>, List<Lis
       MODE_DISTRICT = 2;
 
     private int mRenderMode;
-    private ModelRenderer<Event, ?> mRenderer;
+    private Context mContext;
 
-    public EventListSubscriber(ModelRenderer<Event, ?> renderer) {
+    @Inject
+    public EventListSubscriber(Context context) {
         super();
-        mRenderer = renderer;
+        mContext = context;
         mDataToBind = new ArrayList<>();
         mRenderMode = MODE_WEEK;
     }
@@ -39,13 +44,13 @@ public class EventListSubscriber extends BaseAPISubscriber<List<Event>, List<Lis
         switch (mRenderMode) {
             case MODE_WEEK:
             default:
-                EventHelper.renderEventListForWeek(mAPIData, mDataToBind, mRenderer);
+                EventHelper.renderEventListForWeek(mContext, mAPIData, mDataToBind);
                 break;
             case MODE_TEAM:
-                EventHelper.renderEventListForTeam(mAPIData, mDataToBind, mRenderer);
+                EventHelper.renderEventListForTeam(mContext, mAPIData, mDataToBind);
                 break;
             case MODE_DISTRICT:
-                EventHelper.renderEventListForDistrict(mAPIData, mDataToBind, mRenderer);
+                EventHelper.renderEventListForDistrict(mContext, mAPIData, mDataToBind);
                 break;
         }
     }

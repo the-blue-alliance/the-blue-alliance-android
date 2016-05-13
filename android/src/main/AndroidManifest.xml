@@ -132,14 +132,6 @@
                 android:value="com.thebluealliance.androidclient.activities.ViewDistrictActivity" />
         </activity>
         <activity
-            android:name=".activities.GamedayActivity"
-            android:parentActivityName=".activities.HomeActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
-        </activity>
-        <activity
             android:name=".activities.settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity

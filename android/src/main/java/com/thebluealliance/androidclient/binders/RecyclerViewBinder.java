@@ -8,8 +8,6 @@ import android.widget.ProgressBar;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.listitems.ListItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +22,12 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
     @Bind(R.id.list) RecyclerView mRecyclerView;
     @Bind(R.id.progress) ProgressBar mProgressBar;
 
-    protected RecyclerViewBinderMapper mMapper;
+    protected RecyclerViewAdapterCreatorInitializer mMapper;
     protected RecyclerMultiAdapter mAdapter;
 
     protected List<Object> mList;
 
-    public void setRecyclerViewBinderMapper(RecyclerViewBinderMapper mapper) {
+    public void setRecyclerViewBinderMapper(RecyclerViewAdapterCreatorInitializer mapper) {
         mMapper = mapper;
     }
 
@@ -50,7 +48,7 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
             return;
         }
         if (mMapper == null) {
-            throw new RuntimeException(this.getClass().getName() + " does not have a RecyclerViewBinderMapper set!");
+            throw new RuntimeException(this.getClass().getName() + " does not have a RecyclerViewAdapterCreatorInitializer set!");
         }
 
         if (mAdapter == null) {
@@ -118,11 +116,11 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
 
     protected void createAndInitializeAdapterForData(List<Object> data) {
         SmartAdapter.MultiAdaptersCreator creator = SmartAdapter.items(new ArrayList<>(data));
-        mMapper.initializeMaps(creator);
+        mMapper.initializeAdapterCreator(creator);
         mAdapter = creator.into(mRecyclerView);
     }
 
-    public interface RecyclerViewBinderMapper {
-        void initializeMaps(SmartAdapter.MultiAdaptersCreator creator);
+    public interface RecyclerViewAdapterCreatorInitializer {
+        void initializeAdapterCreator(SmartAdapter.MultiAdaptersCreator creator);
     }
 }

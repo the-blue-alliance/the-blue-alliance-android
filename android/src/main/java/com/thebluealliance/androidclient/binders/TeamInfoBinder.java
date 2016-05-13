@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
 
 import javax.inject.Inject;
@@ -48,6 +49,8 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     @Bind(R.id.progress) View progress;
     @Bind(R.id.team_motto_container) View teamMottoContainer;
     @Bind(R.id.team_motto) TextView teamMotto;
+    @Bind(R.id.champs_pit_location_container) View champsPitLocationContainer;
+    @Bind(R.id.champs_pit_location) TextView champsPitLocation;
 
     @Inject
     public TeamInfoBinder(SocialClickListener socialClickListener) {
@@ -131,6 +134,15 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
             teamFullNameContainer.setOnClickListener((view) -> {
                 toggleFullTeamNameExpanded();
             });
+        }
+
+        champsPitLocationContainer.setVisibility(View.GONE);
+        if (PitLocationHelper.shouldShowPitLocation(mActivity, data.teamKey)) {
+            PitLocationHelper.TeamPitLocation loc = PitLocationHelper.getPitLocation(mActivity, data.teamKey);
+            if (loc != null){
+                champsPitLocationContainer.setVisibility(View.VISIBLE);
+                champsPitLocation.setText(loc.getAddressString());
+            }
         }
 
         teamNextMatchLabel.setVisibility(View.GONE);

@@ -5,12 +5,14 @@ import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
 
+import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +25,10 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
@@ -62,6 +68,12 @@ public class AwardsListSubscriberTest {
         for (int i = 0; i < data.size(); i++) {
             assertTrue(data.get(i) instanceof CardedAwardListElement);
         }
+
+        // Test EventBus posting
+        assertTrue(mSubscriber.shouldPostToEventBus());
+        EventBus eventBus = mock(EventBus.class);
+        mSubscriber.postToEventBus(eventBus);
+        verify(eventBus).post(any(EventAwardsEvent.class));
     }
 
     @Test
@@ -70,7 +82,7 @@ public class AwardsListSubscriberTest {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mAwards);
         CardedAwardListElement element = (CardedAwardListElement) data.get(0);
 
-        assertEquals(element.selectedTeamNum, "195");
+        assertEquals(element.mSelectedTeamNum, "195");
     }
 
     @Test
@@ -98,9 +110,9 @@ public class AwardsListSubscriberTest {
         CardedAwardListElement element = (CardedAwardListElement) data.get(index);
         Award award = mAwards.get(index);
 
-        assertEquals(element.awardName, award.getName());
-        assertEquals(element.eventKey, award.getEventKey());
-        assertEquals(element.selectedTeamNum, "");
-        assertTrue(element.awardWinners.equals(award.getWinners()));
+        assertEquals(element.mAwardName, award.getName());
+        assertEquals(element.mEventKey, award.getEventKey());
+        assertEquals(element.mSelectedTeamNum, "");
+        assertTrue(element.mAwardWinners.equals(award.getWinners()));
     }
 }

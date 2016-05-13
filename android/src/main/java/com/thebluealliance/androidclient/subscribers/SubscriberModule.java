@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.renderers.TeamRenderer;
 import org.greenrobot.eventbus.EventBus;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 
 import dagger.Module;
@@ -43,8 +44,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public EventListSubscriber provideEventListSubscriber(EventRenderer renderer) {
-        return new EventListSubscriber(renderer);
+    public EventListSubscriber provideEventListRecyclerSubscriber(Context context) {
+        return new EventListSubscriber(context);
     }
 
     @Provides
@@ -102,7 +103,7 @@ public class SubscriberModule {
 
     @Provides
     public TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(MatchRenderer renderer) {
-        return new TeamAtEventSummarySubscriber(mActivity.getResources(), renderer);
+        return new TeamAtEventSummarySubscriber(mActivity, renderer);
     }
 
     @Provides

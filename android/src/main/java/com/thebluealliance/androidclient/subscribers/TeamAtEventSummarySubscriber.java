@@ -7,13 +7,17 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
+import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper.CaseInsensitiveMap;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.helpers.PitLocationHelper;
+import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.listitems.EmptyListElement;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
@@ -23,6 +27,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
 
@@ -46,18 +51,23 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
     }
 
     private String mTeamKey;
+    private Context mContext;
     private Resources mResources;
     private MatchRenderer mMatchRenderer;
     private boolean mIsMatchListLoaded;
+    private boolean mIsAwardListLoaded;
 
     // Data loaded from other sources
     private List<Match> mMatches;
+    private List<Award> mAwards;
 
-    public TeamAtEventSummarySubscriber(Resources resources, MatchRenderer matchRenderer) {
+    public TeamAtEventSummarySubscriber(Context context, MatchRenderer matchRenderer) {
         super();
-        mResources = resources;
+        mContext = context;
+        mResources = context.getResources();
         mMatchRenderer = matchRenderer;
         mIsMatchListLoaded = false;
+        mIsAwardListLoaded = false;
         mDataToBind = new ArrayList<>();
     }
 
@@ -141,6 +151,32 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             status = MatchHelper.EventStatus.NOT_AVAILABLE;
         }
 
+        // Number of awards, only if nonzero
+        if (mAwards.size() > 0) {
+            String awardsString;
+            if (mAwards.size() == 1) {
+                awardsString = mResources.getString(R.string.team_at_event_awards_format_one);
+            } else {
+                awardsString = mResources.getString(R.string.team_at_event_awards_format, mAwards.size());
+            }
+            mDataToBind.add(new LabelValueListItem(
+                    mResources.getString(R.string.awards_header),
+                    awardsString));
+        }
+
+        try {
+            if (event.isChampsEvent()
+                    && event.getEventYear() == 2016
+                    && PitLocationHelper.shouldShowPitLocation(mContext, mTeamKey)) {
+                PitLocationHelper.TeamPitLocation location = PitLocationHelper.getPitLocation(mContext, mTeamKey);
+                if (location != null) {
+                    mDataToBind.add(new LabelValueListItem(mResources.getString(R.string.championship_pit_location), location.getAddressString()));
+                }
+            }
+        } catch (BasicModel.FieldNotDefinedException e) {
+            Log.d(Constants.LOG_TAG, "Could not determine if pit locations should be shown. Hiding by default.");
+        }
+
         if (status != MatchHelper.EventStatus.NOT_AVAILABLE) {
 
             // Record
@@ -199,8 +235,8 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
     @Override
     public boolean isDataValid() {
-        return super.isDataValid() && mIsMatchListLoaded && mAPIData.event != null
-                && mAPIData.teamAtEventRank != null;
+        return super.isDataValid() && mIsMatchListLoaded && mIsAwardListLoaded
+                && mAPIData.event != null && mAPIData.teamAtEventRank != null;
     }
 
     /**
@@ -213,8 +249,30 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         if (matches == null) {
             return;
         }
-        mIsMatchListLoaded = true;
+        mIsAwardListLoaded = true;
         mMatches = new ArrayList<>(matches.getMatches());
+        try {
+            if (isDataValid()) {
+                parseData();
+                bindData();
+            }
+        } catch (BasicModel.FieldNotDefinedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Load awards for team@event
+     * Posted by {@link com.thebluealliance.androidclient.fragments.event.EventAwardsFragment}
+     */
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onEventAwardsLoaded(EventAwardsEvent awards) {
+        if (awards == null) {
+            return;
+        }
+        mIsMatchListLoaded = true;
+        mAwards = new ArrayList<>(awards.getAwards());
         try {
             if (isDataValid()) {
                 parseData();

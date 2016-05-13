@@ -81,7 +81,7 @@ public class TeamListFragment extends RecyclerViewFragment<List<Team>, TeamListR
     }
 
     @Override
-    public void initializeMaps(SmartAdapter.MultiAdaptersCreator creator) {
+    public void initializeAdapterCreator(SmartAdapter.MultiAdaptersCreator creator) {
         creator.map(TeamViewModel.class, TeamItemView.class);
     }
 

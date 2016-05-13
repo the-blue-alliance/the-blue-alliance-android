@@ -42,6 +42,8 @@ import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
 import org.greenrobot.eventbus.EventBus;
 import org.mockito.Mockito;
 
+import android.content.Context;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -56,7 +58,7 @@ public class MockSubscriberModule {
     }
 
     @Provides
-    public EventListSubscriber provideEventListSubscriber(EventRenderer renderer) {
+    public EventListSubscriber providesEventListRecyclerSubscriber(Context context) {
         return Mockito.mock(EventListSubscriber.class);
     }
 

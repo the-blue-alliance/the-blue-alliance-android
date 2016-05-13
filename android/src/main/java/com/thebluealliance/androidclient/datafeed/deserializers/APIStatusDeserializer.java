@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
+
 import com.thebluealliance.androidclient.models.APIStatus;
 
 import java.lang.reflect.Type;
@@ -27,10 +28,12 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
     public static final String MESSAGE_TEXT = "text";
     public static final String MESSAGE_EXPIRATION = "expiration";
     public static final String LAST_OKHTTP_CACHE_CLEAR = "last_cache_clear";
+    public static final String CHAMPS_PIT_LOCATIONS_URL = "cmp_pit_locations_url";
+    public static final String CHAMPS_PIT_LOCATIONS_UPDATE_TIME = "cmp_pit_locations_update_time";
 
     @Override
     public APIStatus deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-      throws JsonParseException {
+            throws JsonParseException {
         if (!json.isJsonObject()) {
             throw new JsonParseException("Data is not JsonObject");
         }
@@ -86,7 +89,7 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
             JsonElement messageText = adminMessage.get(MESSAGE_TEXT);
             JsonElement messageExpiration = adminMessage.get(MESSAGE_EXPIRATION);
             if (messageText == null || messageText.isJsonNull()
-              || messageExpiration == null || messageExpiration.isJsonNull()) {
+                    || messageExpiration == null || messageExpiration.isJsonNull()) {
                 throw new JsonParseException("Message requires text and expiration");
             }
             status.setHasMessage(true);
@@ -103,6 +106,20 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
             status.setLastOkHttpCacheClear(lastTimestamp);
         } else {
             status.setLastOkHttpCacheClear(-1);
+        }
+
+        JsonElement champsPitLocationsUrl = data.get(CHAMPS_PIT_LOCATIONS_URL);
+        if (champsPitLocationsUrl != null && !champsPitLocationsUrl.isJsonNull()) {
+            status.setChampsPitLocationsUrl(champsPitLocationsUrl.getAsString());
+        } else {
+            status.setChampsPitLocationsUrl(null);
+        }
+
+        JsonElement champsPitLocationsUpdateTime = data.get(CHAMPS_PIT_LOCATIONS_UPDATE_TIME);
+        if (champsPitLocationsUpdateTime != null && !champsPitLocationsUpdateTime.isJsonNull()) {
+            status.setChampsPitLocationsUpdateTime(champsPitLocationsUpdateTime.getAsLong());
+        } else {
+            status.setChampsPitLocationsUpdateTime(-1);
         }
 
         status.setJsonBlob(json.toString());

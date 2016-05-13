@@ -16,10 +16,11 @@
         <item quantity="one">%d contribution</item>
         <item quantity="other">%d contributions</item>
     </plurals>
+    <string name="championship_pit_location">Championship Pit Location</string>
 
     <string name="title_activity_gameday">GameDay</string>
     <string name="title_activity_update_required">UpdateRequiredActivity</string>
-<string name="title_activity_confirm_image_suggestion">Confirm Suggestion</string>
+    <string name="title_activity_confirm_image_suggestion">Confirm Suggestion</string>
 
     <!-- View Event -->
     <string name="view_event_website">View event\'s website</string>
@@ -101,12 +102,20 @@
     <string name="match_tab_results">Results</string>
     <string name="match_tab_breakdown">Breakdown</string>
 
+    <!-- Awards -->
+    <string name="awards_header">Awards</string>
+    <string name="team_at_event_awards_format_one">Won 1 award</string>
+    <string name="team_at_event_awards_format">Won %1$d awards</string>
+
     <!-- Team Media -->
     <string name="media_images_header">Photos</string>
     <string name="media_videos_header">YouTube Videos</string>
 
     <!-- Warnings -->
     <string name="warning_unable_to_load">Unable to load data. Check your internet connection.</string>
+
+    <string name="share_title">Share</string>
+    <string name="share_prompt">Share via</string>
 
     <!-- Search -->
     <string name="search_title">Search</string>
@@ -151,4 +160,13 @@
     <string name="match_abbrev_final">F</string>
     <string name="match_abbrev_unknown">M</string>
     <string name="match_abbrev_winner">W</string>
+
+    <!-- Playoff Advancement Strings -->
+    <string name="playoff_advancement_title">Playoff Advancement</string>
+    <string name="playoff_advancement_none">We have no idea how this alliance did</string>
+    <string name="playoff_advancement_octo">This alliance made to the Octofinals</string>
+    <string name="playoff_advancement_quarter">This alliance made it to the Quarterfinals</string>
+    <string name="playoff_advancement_semi">This alliance made it to the Semifinals</string>
+    <string name="playoff_advancement_final">This alliance made it to the Finals</string>
+    <string name="playoff_advancement_winner">This alliance won the event</string>
 </resources>

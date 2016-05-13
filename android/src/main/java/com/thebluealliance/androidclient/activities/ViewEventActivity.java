@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.activities;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.ShareUris;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
@@ -82,6 +83,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
         mSelectedTab = extras.getInt(TAB, ViewEventFragmentPagerAdapter.TAB_INFO);
 
         setModelKey(mEventKey, ModelType.EVENT);
+        setShareEnabled(true);
         setContentView(R.layout.activity_view_event);
 
         pager = (ViewPager) findViewById(R.id.view_pager);
@@ -155,6 +157,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
     protected void onResume() {
         super.onResume();
         setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
+        setShareUri(String.format(ShareUris.URI_EVENT, mEventKey));
 
         if (mOnNewIntentRunnable != null) {
             mOnNewIntentRunnable.run();

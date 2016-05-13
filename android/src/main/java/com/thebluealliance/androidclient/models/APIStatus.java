@@ -11,6 +11,8 @@ public class APIStatus {
     private long lastOkHttpCacheClear;
     private List<String> downEvents;
     private String jsonBlob;
+    private String champsPitLocationsUrl;
+    private long champsPitLocationsUpdateTime;
 
     /* Admin Message */
     private boolean hasMessage;
@@ -67,6 +69,22 @@ public class APIStatus {
 
     public void setJsonBlob(String jsonBlob) {
         this.jsonBlob = jsonBlob;
+    }
+
+    public String getChampsPitLocationsUrl() {
+        return champsPitLocationsUrl;
+    }
+
+    public void setChampsPitLocationsUrl(String url) {
+        this.champsPitLocationsUrl = url;
+    }
+
+    public long getChampsPitLocationsUpdateTime() {
+        return champsPitLocationsUpdateTime;
+    }
+
+    public void setChampsPitLocationsUpdateTime(long time) {
+        this.champsPitLocationsUpdateTime = time;
     }
 
     public boolean hasMessage() {
