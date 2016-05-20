@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient;
 
 import com.facebook.stetho.Stetho;
+import com.squareup.leakcanary.LeakCanary;
 import com.thebluealliance.androidclient.binders.BinderModule;
 import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
@@ -52,6 +53,10 @@ public class TBAAndroid extends MultiDexApplication {
                             .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                             .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                             .build());
+        }
+
+        if (Utilities.isDebuggable()) {
+            LeakCanary.install(this);
         }
     }
 
