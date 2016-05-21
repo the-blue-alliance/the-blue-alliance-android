@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class RankingsListRecyclerSubscriber extends BaseAPISubscriber<JsonElement, List<Object>> {
+public class RankingsListSubscriber extends BaseAPISubscriber<JsonElement, List<Object>> {
 
     private Database mDb;
     private EventBus mEventBus;
 
-    public RankingsListRecyclerSubscriber(Database db, EventBus eventBus) {
+    public RankingsListSubscriber(Database db, EventBus eventBus) {
         super();
         mDb = db;
         mDataToBind = new ArrayList<>();

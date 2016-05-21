@@ -10,7 +10,7 @@ import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.itemviews.TeamRankingItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
-import com.thebluealliance.androidclient.subscribers.RankingsListRecyclerSubscriber;
+import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
 import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
 
 import android.os.Bundle;
@@ -25,7 +25,7 @@ import rx.Observable;
  * @author Bryce Matsuda
  * @author Nathan Walters
  */
-public class EventRankingsFragment extends RecyclerViewFragment<JsonElement, RankingsListRecyclerSubscriber, RecyclerViewBinder> {
+public class EventRankingsFragment extends RecyclerViewFragment<JsonElement, RankingsListSubscriber, RecyclerViewBinder> {
 
     private static final String KEY = "eventKey";
 

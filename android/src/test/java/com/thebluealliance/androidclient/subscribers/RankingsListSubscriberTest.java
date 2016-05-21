@@ -7,8 +7,6 @@ import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.listitems.RankingListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
 
@@ -34,7 +32,7 @@ public class RankingsListSubscriberTest {
     @Mock Database mDb;
     @Mock EventBus mEventBus;
 
-    RankingsListRecyclerSubscriber mSubscriber;
+    RankingsListSubscriber mSubscriber;
     JsonArray mRankings;
     // Includes a team with a number like "####B"
     JsonArray mRankingsMultiTeam;
@@ -44,7 +42,7 @@ public class RankingsListSubscriberTest {
         MockitoAnnotations.initMocks(this);
         DatabaseMocker.mockTeamsTable(mDb);
 
-        mSubscriber = new RankingsListRecyclerSubscriber(mDb, mEventBus);
+        mSubscriber = new RankingsListSubscriber(mDb, mEventBus);
         mRankings = ModelMaker.getModel(JsonArray.class, "2015necmp_rankings");
         mRankingsMultiTeam = ModelMaker.getModel(JsonArray.class, "2015ohri_rankings");
     }
