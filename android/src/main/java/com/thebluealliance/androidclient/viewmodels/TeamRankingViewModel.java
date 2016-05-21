@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.viewmodels;
 
-public class TeamRankingViewModel {
+public class TeamRankingViewModel extends BaseViewModel {
 
     private String mTeamKey;
     private String mTeamNickname;
-    private int mTeamNumber;
+    private String mTeamNumber;
     private int mRank;
     private String mRecord;
     private String mRankingBreakdown;
 
-    public TeamRankingViewModel(String teamKey, String teamNickname, int teamNumber, int rank, String record, String rankingBreakdown) {
+    public TeamRankingViewModel(String teamKey, String teamNickname, String teamNumber, int rank, String record, String rankingBreakdown) {
         mTeamKey = teamKey;
         mTeamNickname = teamNickname;
         mTeamNumber = teamNumber;
@@ -34,11 +34,11 @@ public class TeamRankingViewModel {
         mTeamNickname = teamNickname;
     }
 
-    public int getTeamNumber() {
+    public String getTeamNumber() {
         return mTeamNumber;
     }
 
-    public void setTeamNumber(int teamNumber) {
+    public void setTeamNumber(String teamNumber) {
         mTeamNumber = teamNumber;
     }
 
@@ -64,5 +64,24 @@ public class TeamRankingViewModel {
 
     public void setRankingBreakdown(String rankingBreakdown) {
         mRankingBreakdown = rankingBreakdown;
+    }
+
+    @Override public boolean equals(Object o) {
+        if (!(o instanceof TeamRankingViewModel)) {
+            return false;
+        }
+
+        TeamRankingViewModel model = (TeamRankingViewModel) o;
+
+        return mTeamKey.equals(model.getTeamKey())
+                && mTeamNickname.equals(model.getTeamNickname())
+                && mTeamNumber.equals(model.getTeamNumber())
+                && mRank == model.getRank()
+                && mRecord.equals(model.getRecord())
+                && mRankingBreakdown.equals(model.getRankingBreakdown());
+    }
+
+    @Override public int hashCode() {
+        return hashFromValues(mTeamKey, mTeamNickname, mTeamNumber, mRank, mRecord, mRankingBreakdown);
     }
 }

@@ -80,7 +80,7 @@ public class RankingsListRecyclerSubscriber extends BaseAPISubscriber<JsonElemen
                     new TeamRankingViewModel(
                             teamKey,
                             nickname,
-                            row.get(1).getAsInt(), // team number
+                            row.get(1).getAsString(), // team number
                             row.get(0).getAsInt(), // rank
                             record,
                             rankingString));
