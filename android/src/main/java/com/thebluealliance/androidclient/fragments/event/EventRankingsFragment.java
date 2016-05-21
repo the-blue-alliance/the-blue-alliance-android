@@ -1,21 +1,21 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.google.gson.JsonElement;
+
+import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
+import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.itemviews.TeamRankingItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
+import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
 
+import android.os.Bundle;
+
+import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
 /**
@@ -25,7 +25,7 @@ import rx.Observable;
  * @author Bryce Matsuda
  * @author Nathan Walters
  */
-public class EventRankingsFragment extends ListViewFragment<JsonElement, RankingsListSubscriber> {
+public class EventRankingsFragment extends RecyclerViewFragment<JsonElement, RankingsListSubscriber, RecyclerViewBinder> {
 
     private static final String KEY = "eventKey";
 
@@ -55,23 +55,6 @@ public class EventRankingsFragment extends ListViewFragment<JsonElement, Ranking
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = super.onCreateView(inflater, container, savedInstanceState);
-        mListView.setOnItemClickListener((adapterView, view, position, id) -> {
-            String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter())
-              .getItem(position)).getKey();
-            Intent intent = TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey);
-
-             /* Track the call */
-            AnalyticsHelper.sendClickUpdate(
-              getActivity(), "team@event_click", "EventRankingsFragment", mEventKey);
-
-            startActivity(intent);
-        });
-        return v;
-    }
-
-    @Override
     protected void inject() {
         mComponent.inject(this);
     }
@@ -88,5 +71,19 @@ public class EventRankingsFragment extends ListViewFragment<JsonElement, Ranking
 
     @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_poll_black_48dp, R.string.no_ranking_data);
+    }
+
+    @Override public void initializeAdapterCreator(SmartAdapter.MultiAdaptersCreator creator) {
+        creator.map(TeamRankingViewModel.class, TeamRankingItemView.class);
+
+        creator.listener((actionId, item, position, view) -> {
+            if (actionId == Interactions.TEAM_RANKING_CLICKED && item instanceof TeamRankingViewModel) {
+                TeamRankingViewModel ranking = (TeamRankingViewModel) item;
+                startActivity(TeamAtEventActivity.newInstance(getContext(), mEventKey, ranking.getTeamKey()));
+
+                /* Track the call */
+                AnalyticsHelper.sendClickUpdate(getActivity(), "team@event_click", "EventRankingsFragment", mEventKey);
+            }
+        });
     }
 }
