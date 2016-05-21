@@ -68,6 +68,10 @@ public class SubscriberModule {
         return new RankingsListSubscriber(db, eventBus);
     }
 
+    @Provides RankingsListRecyclerSubscriber provideRankingsListRecyclerSubscriber(Database db, EventBus eventBus) {
+        return new RankingsListRecyclerSubscriber(db, eventBus);
+    }
+
     @Provides
     public MatchListSubscriber provideMatchListSubscriber(Database db, EventBus eventBus) {
         return new MatchListSubscriber(mActivity.getResources(), db, eventBus);

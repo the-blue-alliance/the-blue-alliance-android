@@ -27,6 +27,7 @@ import com.thebluealliance.androidclient.subscribers.MatchBreakdownSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
 import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
+import com.thebluealliance.androidclient.subscribers.RankingsListRecyclerSubscriber;
 import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.RecentNotificationsSubscriber;
 import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
@@ -80,6 +81,11 @@ public class MockSubscriberModule {
     @Provides
     public RankingsListSubscriber provideRankingsListSubscriber(Database db, EventBus eventBus) {
         return Mockito.mock(RankingsListSubscriber.class);
+    }
+
+    @Provides
+    public RankingsListRecyclerSubscriber provideRankingsListRecyclerSubscriber(Database db, EventBus eventBus) {
+        return Mockito.mock(RankingsListRecyclerSubscriber.class);
     }
 
     @Provides
