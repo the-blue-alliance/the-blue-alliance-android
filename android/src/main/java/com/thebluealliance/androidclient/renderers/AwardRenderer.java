@@ -1,18 +1,17 @@
 package com.thebluealliance.androidclient.renderers;
 
-import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
-import android.util.Log;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APICache;
-import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.listitems.AwardListElement;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.types.ModelType;
+
+import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -25,10 +24,9 @@ import javax.inject.Singleton;
 public class AwardRenderer implements ModelRenderer<Award, AwardRenderer.RenderArgs> {
 
    @Retention(RetentionPolicy.SOURCE)
-   @IntDef({RENDER_CARDED, RENDER_NONCARDED})
+   @IntDef({RENDER_CARDED})
    public @interface RenderType{}
     public static final int RENDER_CARDED = 0;
-    public static final int RENDER_NONCARDED = 1;
 
     private APICache mDatafeed;
 
@@ -54,8 +52,6 @@ public class AwardRenderer implements ModelRenderer<Award, AwardRenderer.RenderA
                       award.getWinners(),
                       args.teams,
                       args.selectedTeamKey);
-                case RENDER_NONCARDED:
-                    return new AwardListElement(mDatafeed, award.getName(), award.getWinners());
             }
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Unable to render award: " + award.getKey());
@@ -68,15 +64,6 @@ public class AwardRenderer implements ModelRenderer<Award, AwardRenderer.RenderA
         public final @RenderType int renderType;
         public final Map<String, Team> teams;
         public final String selectedTeamKey;
-
-        /**
-         * Constructor to render old, non-carded element
-         */
-        public RenderArgs() {
-            renderType = RENDER_NONCARDED;
-            teams = null;
-            selectedTeamKey = null;
-        }
 
         /**
          * Constructor to render carded element
