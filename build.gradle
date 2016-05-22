@@ -30,6 +30,9 @@ buildscript {
 
         // Retrolambda + Lint fixes
         classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
+
+        // Automated Screenshot Testing
+        classpath 'com.facebook.testing.screenshot:plugin:0.4.1'
     }
 
     // Exclude the linter version that the android plugin depends on.
