@@ -109,7 +109,7 @@ android {
         versionName version.toString()
         multiDexEnabled true
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.thebluealliance.androidclient.testing.TbaInstrumentationRunner"
 
         // Needed for support lib 23.2.0+ on pre-L devices
         vectorDrawables.useSupportLibrary = true
@@ -172,6 +172,11 @@ play {
     serviceAccountEmail = 'some-email-address'
     pk12File = file("somefile.p12")
     track = 'beta'
+}
+
+screenshots {
+    testApkTarget = 'packageDevDebugAndroidTest'
+    connectedAndroidTestTarget = 'connectedDevDebugAndroidTest'
 }
 
 println "Version: " + android.defaultConfig.versionName + "/" + android.defaultConfig.versionCode

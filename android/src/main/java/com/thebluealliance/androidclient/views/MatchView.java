@@ -24,10 +24,11 @@ import java.util.Date;
 
 public class MatchView extends FrameLayout {
 
-    TextView matchTitle, red1, red2, red3, blue1, blue2, blue3, redScore, blueScore, time;
-    View matchContainer, matchTitleContainer, columnHeadersContainer, teamsHeader, scoreHeader, timeHeader, redAlliance, blueAlliance, videoIcon;
+    private TextView matchTitle, red1, red2, red3, blue1, blue2, blue3, redScore, blueScore, time;
+    private View matchContainer, matchTitleContainer, columnHeadersContainer, teamsHeader,
+            scoreHeader, timeHeader, redAlliance, blueAlliance, videoIcon;
 
-    boolean showColumnHeaders, showScores, showTime;
+    private boolean showColumnHeaders, showScores, showTime;
 
     public MatchView(Context context) {
         super(context);
