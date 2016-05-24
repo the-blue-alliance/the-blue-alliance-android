@@ -42,6 +42,7 @@ Severity: EASY
 
     <module name="TreeWalker">
 
+        <module name="FileContentsHolder"/>
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sourceforge.net/config_javadoc.html -->
         <module name="JavadocMethod">

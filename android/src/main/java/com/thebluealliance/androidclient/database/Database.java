@@ -25,7 +25,8 @@ import android.util.Log;
 import java.util.Map;
 
 
-public final class Database extends SQLiteOpenHelper {
+//SUPPRESS CHECKSTYLE FinalClass
+public class Database extends SQLiteOpenHelper {
 
     public static final String ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE = "all_teams_loaded_for_page_";
     public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
