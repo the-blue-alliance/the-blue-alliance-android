@@ -12,7 +12,7 @@ android:
     - extra-google-m2repository
     - extra-google-google_play_services
 
-script: mkdir android/src/main/assets && touch android/src/main/assets/tba.properties && ./gradlew testProdDebugProguardUnitTest --stacktrace
+script: mkdir android/src/main/assets && touch android/src/main/assets/tba.properties &&  ./gradlew androidCheckstyle && ./gradlew testProdDebugProguardUnitTest --stacktrace
 
 after_success:
 - ./gradlew jacocoTestReport coveralls
