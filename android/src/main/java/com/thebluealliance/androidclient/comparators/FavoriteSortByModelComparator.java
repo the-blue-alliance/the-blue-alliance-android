@@ -1,9 +1,9 @@
 package com.thebluealliance.androidclient.comparators;
 
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.Favorite;
+import com.thebluealliance.androidclient.types.ModelType;
 
 import java.util.Comparator;
 

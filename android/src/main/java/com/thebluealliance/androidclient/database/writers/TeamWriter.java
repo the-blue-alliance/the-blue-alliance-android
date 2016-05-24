@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.database.writers;
 
 
-import android.support.annotation.WorkerThread;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Team;
+
+import android.support.annotation.WorkerThread;
 
 import javax.inject.Inject;
 

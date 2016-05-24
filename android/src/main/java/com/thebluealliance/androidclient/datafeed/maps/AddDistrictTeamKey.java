@@ -14,7 +14,7 @@ public class AddDistrictTeamKey implements Func1<List<DistrictTeam>, List<Distri
     private String mDistrictShort;
     private int mYear;
 
-    public AddDistrictTeamKey (String districtShort, int year) {
+    public AddDistrictTeamKey(String districtShort, int year) {
         mDistrictShort = districtShort;
         mYear = year;
     }

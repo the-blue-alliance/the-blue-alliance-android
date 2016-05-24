@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.accounts;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import android.app.Activity;
 import android.content.IntentSender;
 import android.os.Bundle;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 public class PlusManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 

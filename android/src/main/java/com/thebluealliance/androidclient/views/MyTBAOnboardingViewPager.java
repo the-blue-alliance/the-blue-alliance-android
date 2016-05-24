@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.views;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.adapters.MyTBAOnboardingPagerAdapter;
+
 import android.content.Context;
 import android.support.annotation.StringRes;
 import android.support.v4.view.ViewPager;
@@ -8,9 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.adapters.MyTBAOnboardingPagerAdapter;
 
 import me.relex.circleindicator.CircleIndicator;
 

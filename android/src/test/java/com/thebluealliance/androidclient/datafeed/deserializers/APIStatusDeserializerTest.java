@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.APIStatus;
 
@@ -54,7 +55,7 @@ public class APIStatusDeserializerTest {
         assertEquals(mStatus.getJsonBlob(), mJsonData.toString());
         assertTrue(mStatus.hasMessage());
         assertEquals("This is only a test", mStatus.getMessageText());
-        assertEquals(new Date(1449698422l * 1000), mStatus.getMessageExipration());
+        assertEquals(new Date(1449698422L * 1000), mStatus.getMessageExipration());
         assertEquals(1449698422, mStatus.getLastOkHttpCacheClear());
         assertEquals("https://www.thebluealliance.com", mStatus.getChampsPitLocationsUrl());
         assertEquals(12345678, mStatus.getChampsPitLocationsUpdateTime());

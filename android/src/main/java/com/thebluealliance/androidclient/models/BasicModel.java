@@ -8,8 +8,6 @@ import com.thebluealliance.androidclient.types.ModelType;
 
 import android.content.ContentValues;
 
-import java.util.Objects;
-
 public abstract class BasicModel<T extends BasicModel> implements RenderableModel {
 
     /* Map of the requested fields for this object

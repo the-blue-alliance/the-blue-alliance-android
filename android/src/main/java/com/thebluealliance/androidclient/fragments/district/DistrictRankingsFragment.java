@@ -1,13 +1,13 @@
 package com.thebluealliance.androidclient.fragments.district;
 
-import android.os.Bundle;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.DistrictRankingsSubscriber;
+
+import android.os.Bundle;
 
 import java.util.List;
 

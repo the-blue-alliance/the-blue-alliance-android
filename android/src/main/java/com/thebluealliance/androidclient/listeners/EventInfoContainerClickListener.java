@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.listeners;
 
-import android.content.Context;
-import android.view.View;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
+
+import android.content.Context;
+import android.view.View;
 
 import javax.inject.Inject;
 
@@ -16,8 +16,8 @@ public class EventInfoContainerClickListener implements View.OnClickListener {
     @Inject
     public EventInfoContainerClickListener(Context context) {
         if (!(context instanceof ViewEventActivity)) {
-            throw new IllegalArgumentException("EventInfoContainerClickListener must be used" +
-              "with a ViewEventActivity");
+            throw new IllegalArgumentException("EventInfoContainerClickListener must be used"
+              + "with a ViewEventActivity");
         }
         mActivity = (ViewEventActivity) context;
     }

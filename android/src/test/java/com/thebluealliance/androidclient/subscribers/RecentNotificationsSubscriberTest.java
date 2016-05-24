@@ -1,8 +1,5 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.Context;
-import android.content.res.Resources;
-
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
@@ -11,14 +8,7 @@ import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
-import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
-import com.thebluealliance.androidclient.gcm.notifications.CompLevelStartingNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
-import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
-import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
-import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
-import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
@@ -37,6 +27,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Date;

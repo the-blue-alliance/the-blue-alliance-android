@@ -14,7 +14,6 @@ import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -176,7 +175,8 @@ public abstract class DatafeedFragment
      * Fragments should inject themselves (to preserve Dagger's strong typing)
      * They just need to have the following line: mComponent.inject(this);
      * Plus, whatever else they want
-     * If the types don't match, add the fragment to {@link SubscriberModule} and rebuild
+     * If the types don't match, add the fragment to
+     * {@link com.thebluealliance.androidclient.subscribers.SubscriberModule} and rebuild
      * Called in {@link #onCreate(Bundle)}
      */
     protected abstract void inject();

@@ -1,20 +1,21 @@
 package com.thebluealliance.androidclient.listitems;
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
 import com.thebluealliance.androidclient.models.Team;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class CardedAwardListElement extends ListElement {
         this.mAwardWinners = winners;
         this.mAwardTeams = teams;
         this.mSelectedTeamNum = (selectedTeamKey == null || selectedTeamKey.length() < 4)
-          ? "" 
+          ? ""
           : selectedTeamKey.substring(3);
     }
 

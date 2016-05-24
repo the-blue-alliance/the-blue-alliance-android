@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.helpers.JSONHelper;

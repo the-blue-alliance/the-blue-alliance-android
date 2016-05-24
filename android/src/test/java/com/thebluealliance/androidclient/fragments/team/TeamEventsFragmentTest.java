@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.fragments.team;
 
 import com.thebluealliance.androidclient.IntegrationRobolectricRunner;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.fragments.framework.BaseFragmentTest;
 import com.thebluealliance.androidclient.fragments.framework.FragmentTestDriver;

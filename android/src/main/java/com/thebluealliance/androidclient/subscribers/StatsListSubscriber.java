@@ -65,9 +65,9 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mTeamStats.clear();
         JsonObject statsData = mAPIData.getAsJsonObject();
-        if (!statsData.has("oprs") || !statsData.get("oprs").isJsonObject() ||
-          !statsData.has("dprs") ||!statsData.get("dprs").isJsonObject() ||
-          !statsData.has("ccwms") || !statsData.get("ccwms").isJsonObject()) {
+        if (!statsData.has("oprs") || !statsData.get("oprs").isJsonObject()
+          || !statsData.has("dprs") ||!statsData.get("dprs").isJsonObject()
+          || !statsData.has("ccwms") || !statsData.get("ccwms").isJsonObject()) {
             return;
         }
 
@@ -160,9 +160,10 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
                     .get(0).getAsInt(), elimHigh.get(2).getAsString());
         }
         mEventStats.add(new LabelValueListItem(mResources.getString(R.string
-                .breakdown2016_high_score), combineQualAndElimStat
-                (qualHighScore, elimHighScore), true));
-        
+                                                                            .breakdown2016_high_score),
+                                               combineQualAndElimStat(qualHighScore, elimHighScore),
+                                               true));
+
         for (int i = 0; i < matchKeys.length; i++) {
             String qualStat = null, elimStat = null;
             if (quals.has(matchKeys[i]) && quals.get(matchKeys[i]).isJsonPrimitive()) {

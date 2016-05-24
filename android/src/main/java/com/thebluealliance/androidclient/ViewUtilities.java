@@ -4,7 +4,12 @@ import android.os.Build;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
-public class ViewUtilities {
+public final class ViewUtilities {
+
+    private ViewUtilities() {
+        // unused
+    }
+
     public static void runOnceAfterLayout(View view, Runnable run) {
         if (run == null) {
             return;

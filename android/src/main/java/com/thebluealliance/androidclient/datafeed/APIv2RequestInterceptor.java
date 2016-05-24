@@ -1,15 +1,16 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
+
 import android.util.Log;
+
+import java.io.IOException;
 
 import okhttp3.CacheControl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
-
-import java.io.IOException;
 
 /**
  * Class to intercept Retrofit requests and add appropriate API headers

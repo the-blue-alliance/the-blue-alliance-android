@@ -13,7 +13,6 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper.CaseInsensitiveMap;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
-import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.listitems.EmptyListElement;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -188,8 +187,8 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             }
 
             // Alliance
-            if (status != MatchHelper.EventStatus.PLAYING_IN_QUALS &&
-                    status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
+            if (status != MatchHelper.EventStatus.PLAYING_IN_QUALS
+                    && status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
                 mDataToBind.add(new LabelValueListItem(
                         mResources.getString(R.string.team_at_event_alliance),
                         EventHelper.generateAllianceSummary(
@@ -211,8 +210,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             }
 
             if (lastMatch != null) {
-                mDataToBind.add(new LabelValueListItem
-                        (mResources.getString(R.string.title_last_match),
+                mDataToBind.add(new LabelValueListItem(mResources.getString(R.string.title_last_match),
                                 mMatchRenderer.renderFromModel(lastMatch, MatchRenderer.RENDER_DEFAULT)));
             }
             if (nextMatch != null) {

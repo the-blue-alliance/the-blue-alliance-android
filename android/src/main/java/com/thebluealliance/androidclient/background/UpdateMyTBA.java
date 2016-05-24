@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.background;
 
-import android.os.AsyncTask;
-import android.util.Log;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
+
+import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.Arrays;
 import java.util.List;

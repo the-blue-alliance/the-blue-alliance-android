@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.fragments;
 
-
 import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;

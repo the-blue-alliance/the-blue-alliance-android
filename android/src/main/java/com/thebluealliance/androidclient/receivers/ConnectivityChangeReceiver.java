@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.receivers;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
+
+import org.greenrobot.eventbus.EventBus;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
-
-import org.greenrobot.eventbus.EventBus;
 
 public class ConnectivityChangeReceiver extends BroadcastReceiver {
 

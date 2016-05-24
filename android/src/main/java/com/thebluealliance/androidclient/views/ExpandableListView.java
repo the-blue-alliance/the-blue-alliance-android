@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.views;
 
+import com.thebluealliance.androidclient.Utilities;
+
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-
-import com.thebluealliance.androidclient.Utilities;
 
 /**
  * This class puts the expand/collapse indicators on the right side of the group headers instead of

@@ -58,8 +58,8 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
               safeMyTba);
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n" +
-              "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
+            Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n"
+              + "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
             return null;
         }
     }
@@ -104,8 +104,8 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
                 counter++;
             }
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering alliances.\n" +
-              "Required field: Database.Events.ALLIANCES");
+            Log.w(Constants.LOG_TAG, "Missing fields for rendering alliances.\n"
+              + "Required field: Database.Events.ALLIANCES");
         } catch (IllegalArgumentException e) {
             Log.w(Constants.LOG_TAG, "Invalid alliance size. Can't render");
         }

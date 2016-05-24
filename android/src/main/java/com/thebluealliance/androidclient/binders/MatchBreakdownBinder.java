@@ -28,8 +28,8 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
 
     @Override
     public void updateData(@Nullable MatchBreakdownBinder.Model data) {
-        if (data == null || data.allianceData == null || data.scoreData == null ||
-                breakdown == null) {
+        if (data == null || data.allianceData == null || data.scoreData == null
+                || breakdown == null) {
             if (!isDataBound()) {
                 setDataBound(false);
             }

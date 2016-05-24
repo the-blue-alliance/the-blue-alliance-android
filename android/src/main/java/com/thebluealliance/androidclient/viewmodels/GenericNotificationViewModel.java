@@ -2,8 +2,6 @@ package com.thebluealliance.androidclient.viewmodels;
 
 import android.content.Intent;
 
-import java.util.Arrays;
-
 public class GenericNotificationViewModel extends BaseViewModel {
 
     private String mHeader;

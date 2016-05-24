@@ -1,28 +1,29 @@
 package com.thebluealliance.androidclient.accounts;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.util.Log;
-import android.widget.Toast;
+import com.google.gson.JsonObject;
 
 import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesModelPreferenceMessage;
-import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
-import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Subscription;
+import com.thebluealliance.androidclient.types.ModelType;
+
+import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
