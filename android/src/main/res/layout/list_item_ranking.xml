@@ -3,6 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
     android:minHeight="88dp"
     android:paddingBottom="20dp"
     android:paddingLeft="16dp"
@@ -39,9 +40,9 @@
         android:id="@id/team_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/team_number"
         android:ellipsize="end"
         android:lines="1"
-        android:layout_toRightOf="@id/team_number"
         android:text="Teh Chezy Pofs"
         android:textSize="16sp"
         android:textStyle="bold" />

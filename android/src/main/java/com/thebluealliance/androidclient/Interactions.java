@@ -7,4 +7,7 @@ public class Interactions {
 
     /** TEAMS **/
     public static final int TEAM_ITEM_CLICKED = 2000;
+
+    /** RANKINGS **/
+    public static final int TEAM_RANKING_CLICKED = 3000;
 }
