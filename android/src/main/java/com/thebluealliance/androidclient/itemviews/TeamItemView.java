@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.itemviews;
 
+import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
@@ -40,7 +41,7 @@ public class TeamItemView extends BindableFrameLayout<TeamViewModel> {
 
     @Override
     public void bind(TeamViewModel model) {
-        this.setOnClickListener(new TeamClickListener(getContext(), model.getTeamKey()));
+        this.setOnClickListener(v -> notifyItemAction(Interactions.TEAM_ITEM_CLICKED));
         this.setClickable(true);
         this.setFocusable(true);
 

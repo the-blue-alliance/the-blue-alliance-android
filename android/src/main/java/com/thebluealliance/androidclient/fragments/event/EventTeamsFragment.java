@@ -1,30 +1,27 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
+import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
-import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.itemviews.TeamItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.Team;
-import com.thebluealliance.androidclient.renderers.TeamRenderer;
-import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
+import com.thebluealliance.androidclient.subscribers.TeamListRecyclerSubscriber;
+import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.List;
 
+import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
-public class EventTeamsFragment extends ListViewFragment<List<Team>, TeamListSubscriber> {
+public class EventTeamsFragment extends RecyclerViewFragment<List<Team>, TeamListRecyclerSubscriber, RecyclerViewBinder> {
 
     private static final String KEY = "event_key";
 
@@ -44,23 +41,7 @@ public class EventTeamsFragment extends ListViewFragment<List<Team>, TeamListSub
             mEventKey = getArguments().getString(KEY, "");
         }
         super.onCreate(savedInstanceState);
-        mSubscriber.setRenderMode(TeamRenderer.RENDER_DETAILS_BUTTON);
-    }
-
-    @Override
-    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        mListView.setOnItemClickListener((adapterView, view1, position, id) -> {
-            Log.d(Constants.LOG_TAG, "Team clicked!");
-            String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();
-            Intent intent = TeamAtEventActivity.newInstance(getActivity(), mEventKey, teamKey);
-
-            /* Track the call */
-            AnalyticsHelper.sendClickUpdate(getActivity(), "team@event_click", "EventTeamsFragment", EventTeamHelper.generateKey(mEventKey, teamKey));
-
-            startActivity(intent);
-        });
-        return view;
+        mSubscriber.setRenderMode(Team.RENDER_DETAILS_BUTTON);
     }
 
     @Override
@@ -80,5 +61,21 @@ public class EventTeamsFragment extends ListViewFragment<List<Team>, TeamListSub
 
     @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_group_black_48dp, R.string.no_team_data);
+    }
+
+    @Override public void initializeAdapterCreator(SmartAdapter.MultiAdaptersCreator creator) {
+        creator.map(TeamViewModel.class, TeamItemView.class);
+
+        creator.listener((actionId, item, position, view) -> {
+            if (actionId == Interactions.TEAM_ITEM_CLICKED && item instanceof TeamViewModel) {
+                TeamViewModel team = (TeamViewModel) item;
+                Intent intent = TeamAtEventActivity.newInstance(getActivity(), mEventKey, team.getTeamKey());
+                startActivity(intent);
+
+                // Track the call
+                AnalyticsHelper.sendClickUpdate(getActivity(), "team@event_click", "EventTeamsFragment", EventTeamHelper.generateKey(mEventKey, team.getTeamKey()));
+
+            }
+        });
     }
 }
