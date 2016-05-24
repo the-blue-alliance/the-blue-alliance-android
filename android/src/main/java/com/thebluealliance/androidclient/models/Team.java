@@ -1,11 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
-import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
-import android.util.Log;
-
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
@@ -14,6 +10,11 @@ import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
+
+import android.content.Context;
+import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -142,8 +143,8 @@ public class Team extends BasicModel<Team> implements ViewModelRenderer<TeamView
         try {
             return getKey() + "," + getNickname() + "," + getTeamNumber();
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for creating search titles\n" +
-                    "Required: Database.Teams.KEY, Database.Teams.SHORTNAME, Database.Teams.NUMBER");
+            Log.w(Constants.LOG_TAG, "Missing fields for creating search titles\n"
+                    + "Required: Database.Teams.KEY, Database.Teams.SHORTNAME, Database.Teams.NUMBER");
             return null;
         }
     }

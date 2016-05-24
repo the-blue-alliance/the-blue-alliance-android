@@ -1,11 +1,6 @@
 package com.thebluealliance.androidclient.fragments;
 
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamPageCombiner;
 import com.thebluealliance.androidclient.itemviews.TeamItemView;

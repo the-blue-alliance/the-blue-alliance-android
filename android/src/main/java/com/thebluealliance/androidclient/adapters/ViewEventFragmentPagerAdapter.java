@@ -1,10 +1,5 @@
 package com.thebluealliance.androidclient.adapters;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-
 import com.thebluealliance.androidclient.fragments.event.EventAlliancesFragment;
 import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventDistrictPointsFragment;
@@ -15,6 +10,11 @@ import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventTeamsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventTickerFragment;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,8 @@ public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
     private List<WeakReference<Fragment>> mFragments = new ArrayList<>();
     private FragmentManager mFragmentManager;
 
-    public final String[] TITLES = {"Ticker", "Info", "Teams", "Rankings", "Matches", "Alliances", "District Points", "Stats", "Awards"};
+    public static final String[] TITLES = {"Ticker", "Info", "Teams", "Rankings", "Matches",
+            "Alliances", "District Points", "Stats", "Awards"};
     public static final int TAB_TICKER = 0,
             TAB_INFO = 1,
             TAB_TEAMS = 2,

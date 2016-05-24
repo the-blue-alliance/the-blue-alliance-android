@@ -1,9 +1,9 @@
 package com.thebluealliance.androidclient.adapters;
 
-import android.content.Context;
-
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
+
+import android.content.Context;
 
 import java.util.List;
 

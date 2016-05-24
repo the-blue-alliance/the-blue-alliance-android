@@ -1,6 +1,10 @@
 package com.thebluealliance.androidclient;
 
-public class Interactions {
+public final class Interactions {
+
+    private Interactions() {
+        // unused
+    }
 
     public static final int EVENT_CLICKED = 1000;
 

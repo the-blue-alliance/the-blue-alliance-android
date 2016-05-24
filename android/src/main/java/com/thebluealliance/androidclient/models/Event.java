@@ -11,7 +11,6 @@ import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
-import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
@@ -395,8 +394,8 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             Date now = new Date();
             return now.after(startDate) && now.before(endDate);
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields to determine if event is happening now.\n" +
-                    "Required fields: Database.Events.START and Database.Events.END");
+            Log.w(Constants.LOG_TAG, "Missing fields to determine if event is happening now.\n"
+                    + "Required fields: Database.Events.START and Database.Events.END");
             return false;
         }
     }
@@ -408,8 +407,8 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             Date now = new Date();
             return now.after(startDate);
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields to determine if event has started.\n" +
-                    "Required fields: Database.Events.START");
+            Log.w(Constants.LOG_TAG, "Missing fields to determine if event has started.\n"
+                    + "Required fields: Database.Events.START");
             return false;
         }
     }
@@ -458,11 +457,11 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             if (startDate.equals(endDate)) {
                 return ThreadSafeFormatters.renderEventDate(startDate);
             }
-            return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to " +
-                    ThreadSafeFormatters.renderEventDate(endDate);
+            return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to "
+                    + ThreadSafeFormatters.renderEventDate(endDate);
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for getting date string. \n" +
-                    "Required fields: Database.Events.START, Database.Events.END");
+            Log.w(Constants.LOG_TAG, "Missing fields for getting date string. \n"
+                    + "Required fields: Database.Events.START, Database.Events.END");
             return "";
         }
     }
@@ -483,8 +482,8 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             }
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n" +
-                    "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
+            Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n"
+                    + "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
             return null;
         }
 

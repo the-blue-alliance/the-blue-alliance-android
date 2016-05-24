@@ -1,11 +1,8 @@
 package com.thebluealliance.androidclient.notifications;
 
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
@@ -20,6 +17,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

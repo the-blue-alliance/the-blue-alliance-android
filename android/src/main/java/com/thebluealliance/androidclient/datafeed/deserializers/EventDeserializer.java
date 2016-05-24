@@ -1,15 +1,16 @@
 package com.thebluealliance.androidclient.datafeed.deserializers;
 
-import android.util.Log;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.Event;
+
+import android.util.Log;
 
 import java.lang.reflect.Type;
 

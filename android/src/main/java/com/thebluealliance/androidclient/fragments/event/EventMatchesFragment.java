@@ -1,12 +1,5 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
@@ -18,6 +11,13 @@ import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.MatchListSubscriber;
 import com.thebluealliance.androidclient.views.ExpandableListView;
 import com.thebluealliance.androidclient.views.NoDataView;
+
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import java.util.List;
 

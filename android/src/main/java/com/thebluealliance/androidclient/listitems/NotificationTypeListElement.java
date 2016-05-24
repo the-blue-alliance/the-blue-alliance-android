@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.listitems;
 
+import com.thebluealliance.androidclient.R;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckedTextView;
-
-import com.thebluealliance.androidclient.R;
 
 public class NotificationTypeListElement extends ListElement {
 

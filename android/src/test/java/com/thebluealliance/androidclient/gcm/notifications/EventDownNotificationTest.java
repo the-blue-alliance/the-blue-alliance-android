@@ -1,8 +1,7 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
-import android.content.Context;
-
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 
@@ -12,8 +11,9 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import android.content.Context;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

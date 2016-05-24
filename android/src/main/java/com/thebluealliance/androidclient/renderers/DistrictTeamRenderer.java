@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.renderers;
 
-import android.support.annotation.Nullable;
-import android.util.Log;
-
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.types.ModelType;
+
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

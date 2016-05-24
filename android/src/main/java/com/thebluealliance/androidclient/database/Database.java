@@ -25,7 +25,7 @@ import android.util.Log;
 import java.util.Map;
 
 
-public class Database extends SQLiteOpenHelper {
+public final class Database extends SQLiteOpenHelper {
 
     public static final String ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE = "all_teams_loaded_for_page_";
     public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
@@ -50,7 +50,7 @@ public class Database extends SQLiteOpenHelper {
             TABLE_SEARCH_EVENTS = "search_events",
             TABLE_NOTIFICATIONS = "notifications";
 
-    String CREATE_TEAMS = "CREATE TABLE IF NOT EXISTS " + TABLE_TEAMS + "("
+    private static final String CREATE_TEAMS = "CREATE TABLE IF NOT EXISTS " + TABLE_TEAMS + "("
             + TeamsTable.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + TeamsTable.NUMBER + " INTEGER NOT NULL, "
             + TeamsTable.NAME + " TEXT DEFAULT '', "
@@ -60,7 +60,7 @@ public class Database extends SQLiteOpenHelper {
             + TeamsTable.YEARS_PARTICIPATED + " TEXT DEFAULT '', "
             + TeamsTable.MOTTO + " TEXT DEFAULT '' "
             + ")";
-    String CREATE_EVENTS = "CREATE TABLE IF NOT EXISTS " + TABLE_EVENTS + "("
+    private static final String CREATE_EVENTS = "CREATE TABLE IF NOT EXISTS " + TABLE_EVENTS + "("
             + EventsTable.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + EventsTable.YEAR + " INTEGER NOT NULL, "
             + EventsTable.NAME + " TEXT DEFAULT '', "
@@ -82,7 +82,7 @@ public class Database extends SQLiteOpenHelper {
             + EventsTable.STATS + " TEXT DEFAULT '', "
             + EventsTable.WEBSITE + " TEXT DEFAULT '' "
             + ")";
-    String CREATE_AWARDS = "CREATE TABLE IF NOT EXISTS " + TABLE_AWARDS + "("
+    private static final String CREATE_AWARDS = "CREATE TABLE IF NOT EXISTS " + TABLE_AWARDS + "("
             + AwardsTable.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + AwardsTable.ENUM + " INTEGER DEFAULT -1, "
             + AwardsTable.EVENTKEY + " TEXT DEFAULT '', "
@@ -90,7 +90,7 @@ public class Database extends SQLiteOpenHelper {
             + AwardsTable.YEAR + " INTEGER DEFAULT -1, "
             + AwardsTable.WINNERS + " TEXT DEFAULT '' "
             + ")";
-    String CREATE_MATCHES = "CREATE TABLE IF NOT EXISTS " + TABLE_MATCHES + "("
+    private static final String CREATE_MATCHES = "CREATE TABLE IF NOT EXISTS " + TABLE_MATCHES + "("
             + MatchesTable.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + MatchesTable.SETNUM + " INTEGER DEFAULT -1,"
             + MatchesTable.MATCHNUM + " INTEGER DEFAULT -1,"
@@ -101,28 +101,31 @@ public class Database extends SQLiteOpenHelper {
             + MatchesTable.VIDEOS + " TEXT DEFAULT '', "
             + MatchesTable.BREAKDOWN + " TEXT DEFAULT '' "
             + ")";
-    String CREATE_MEDIAS = "CREATE TABLE IF NOT EXISTS " + TABLE_MEDIAS + "("
+    private static final String CREATE_MEDIAS = "CREATE TABLE IF NOT EXISTS " + TABLE_MEDIAS + "("
             + MediasTable.TYPE + " TEXT DEFAULT '', "
             + MediasTable.FOREIGNKEY + " TEXT DEFAULT '', "
             + MediasTable.TEAMKEY + " TEXT DEFAULT '', "
             + MediasTable.DETAILS + " TEXT DEFAULT '', "
             + MediasTable.YEAR + " INTEGER  DEFAULT -1"
             + ")";
-    String CREATE_EVENTTEAMS = "CREATE TABLE IF NOT EXISTS " + TABLE_EVENTTEAMS + "("
+    private static final String CREATE_EVENTTEAMS = "CREATE TABLE IF NOT EXISTS "
+            + TABLE_EVENTTEAMS + "("
             + EventTeamsTable.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + EventTeamsTable.TEAMKEY + " TEXT DEFAULT '', "
             + EventTeamsTable.EVENTKEY + " TEXT DEFAULT '', "
             + EventTeamsTable.YEAR + " INTEGER DEFAULT -1, "
             + EventTeamsTable.COMPWEEK + " INTEGER DEFAULT -1 "
             + ")";
-    String CREATE_DISTRICTS = "CREATE TABLE IF NOT EXISTS " + TABLE_DISTRICTS + "("
+    private static final String CREATE_DISTRICTS = "CREATE TABLE IF NOT EXISTS "
+            + TABLE_DISTRICTS + "("
             + DistrictsTable.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + DistrictsTable.ABBREV + " TEXT NOT NULL, "
             + DistrictsTable.YEAR + " INTEGER NOT NULL, "
             + DistrictsTable.ENUM + " INTEGER NOT NULL,"
             + DistrictsTable.NAME + " TEXT DEFAULT ''"
             + ")";
-    String CREATE_DISTRICTTEAMS = "CREATE TABLE IF NOT EXISTS " + TABLE_DISTRICTTEAMS + "("
+    private static final String CREATE_DISTRICTTEAMS = "CREATE TABLE IF NOT EXISTS "
+            + TABLE_DISTRICTTEAMS + "("
             + DistrictTeamsTable.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + DistrictTeamsTable.TEAM_KEY + " TEXT NOT NULL, "
             + DistrictTeamsTable.DISTRICT_KEY + " TEXT NOT NULL, "
@@ -139,43 +142,46 @@ public class Database extends SQLiteOpenHelper {
             + DistrictTeamsTable.TOTAL_POINTS + " INTEGER DEFAULT 0, "
             + DistrictTeamsTable.JSON + " TEXT DEFAULT '' "
             + ")";
-    String CREATE_FAVORITES = "CREATE TABLE IF NOT EXISTS " + TABLE_FAVORITES + "("
+    private static final String CREATE_FAVORITES = "CREATE TABLE IF NOT EXISTS "
+            + TABLE_FAVORITES + "("
             + FavoritesTable.KEY + " TEXT PRIMARY KEY NOT NULL,"
             + FavoritesTable.USER_NAME + " TEXT NOT NULL, "
             + FavoritesTable.MODEL_KEY + " TEXT NOT NULL,"
             + FavoritesTable.MODEL_ENUM + " INTEGER NOT NULL"
             + ")";
-    String CREATE_SUBSCRIPTIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_SUBSCRIPTIONS + "("
+    private static final String CREATE_SUBSCRIPTIONS = "CREATE TABLE IF NOT EXISTS "
+            + TABLE_SUBSCRIPTIONS + "("
             + SubscriptionsTable.KEY + " TEXT PRIMARY KEY NOT NULL,"
             + SubscriptionsTable.USER_NAME + " TEXT NOT NULL,"
             + SubscriptionsTable.MODEL_KEY + " TEXT NOT NULL,"
             + SubscriptionsTable.MODEL_ENUM + " INTEGER NOT NULL,"
             + SubscriptionsTable.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]'"
             + ")";
-    String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_TEAMS +
-            " USING fts3 (" +
-            SearchTeam.KEY + " TEXT PRIMARY KEY, " +
-            SearchTeam.TITLES + " TEXT, " +
-            SearchTeam.NUMBER + " TEXT, " +
-            ")";
+    private static final String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE IF NOT EXISTS "
+            + TABLE_SEARCH_TEAMS + " USING fts3 ("
+            + SearchTeam.KEY + " TEXT PRIMARY KEY, "
+            + SearchTeam.TITLES + " TEXT, "
+            + SearchTeam.NUMBER + " TEXT, "
+            + ")";
 
-    String CREATE_SEARCH_EVENTS = "CREATE VIRTUAL TABLE IF NOT EXISTS " + TABLE_SEARCH_EVENTS +
-            " USING fts3 (" +
-            SearchEvent.KEY + " TEXT PRIMARY KEY, " +
-            SearchEvent.TITLES + " TEXT, " +
-            SearchEvent.YEAR + " TEXT,  " +
-            ")";
+    private static final String CREATE_SEARCH_EVENTS = "CREATE VIRTUAL TABLE IF NOT EXISTS "
+            + TABLE_SEARCH_EVENTS + " USING fts3 ("
+            + SearchEvent.KEY + " TEXT PRIMARY KEY, "
+            + SearchEvent.TITLES + " TEXT, "
+            + SearchEvent.YEAR + " TEXT,  "
+            + ")";
 
-    String CREATE_NOTIFICATIONS = "CREATE TABLE IF NOT EXISTS " + TABLE_NOTIFICATIONS + "(" +
-            NotificationsTable.ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-            NotificationsTable.TYPE + " TEXT NOT NULL, " +
-            NotificationsTable.TITLE + " TEXT DEFAULT '', " +
-            NotificationsTable.BODY + " TEXT DEFAULT '', " +
-            NotificationsTable.INTENT + " TEXT DEFAULT '', " +
-            NotificationsTable.TIME + " TIMESTAMP, " +
-            NotificationsTable.SYSTEM_ID + " INTEGER NOT NULL, " +
-            NotificationsTable.ACTIVE + " INTEGER DEFAULT 1, " +
-            NotificationsTable.MSG_DATA + " TEXT DEFAULT '')";
+    private static final String CREATE_NOTIFICATIONS = "CREATE TABLE IF NOT EXISTS "
+            + TABLE_NOTIFICATIONS + "("
+            + NotificationsTable.ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+            + NotificationsTable.TYPE + " TEXT NOT NULL, "
+            + NotificationsTable.TITLE + " TEXT DEFAULT '', "
+            + NotificationsTable.BODY + " TEXT DEFAULT '', "
+            + NotificationsTable.INTENT + " TEXT DEFAULT '', "
+            + NotificationsTable.TIME + " TIMESTAMP, "
+            + NotificationsTable.SYSTEM_ID + " INTEGER NOT NULL, "
+            + NotificationsTable.ACTIVE + " INTEGER DEFAULT 1, "
+            + NotificationsTable.MSG_DATA + " TEXT DEFAULT '')";
 
     protected SQLiteDatabase mDb;
     private static Database sDatabaseInstance;
@@ -275,14 +281,16 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_SUBSCRIPTIONS);
         db.execSQL(CREATE_NOTIFICATIONS);
 
+        String createEvents = CREATE_SEARCH_EVENTS;
+        String createTeams = CREATE_SEARCH_TEAMS;
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             // bugfix for Android 4.0.x versions, using 'IF NOT EXISTS' throws errors
             // http://stackoverflow.com/questions/19849068/near-not-syntax-error-while-compiling-create-virtual-table-if-not-exists
-            CREATE_SEARCH_EVENTS = CREATE_SEARCH_EVENTS.replace("IF NOT EXISTS", "");
-            CREATE_SEARCH_TEAMS = CREATE_SEARCH_TEAMS.replace("IF NOT EXISTS", "");
+            createEvents = CREATE_SEARCH_EVENTS.replace("IF NOT EXISTS", "");
+            createTeams = CREATE_SEARCH_TEAMS.replace("IF NOT EXISTS", "");
         }
-        db.execSQL(CREATE_SEARCH_TEAMS);
-        db.execSQL(CREATE_SEARCH_EVENTS);
+        db.execSQL(createEvents);
+        db.execSQL(createTeams);
     }
 
     @Override
@@ -419,9 +427,9 @@ public class Database extends SQLiteOpenHelper {
         // Clear the data-related shared prefs
         Map<String, ?> allEntries = PreferenceManager.getDefaultSharedPreferences(context).getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            if (entry.getKey().contains(ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR) ||
-                    entry.getKey().contains(ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE) ||
-                    entry.getKey().contains(ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR)) {
+            if (entry.getKey().contains(ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR)
+                    || entry.getKey().contains(ALL_TEAMS_LOADED_TO_DATABASE_FOR_PAGE)
+                    || entry.getKey().contains(ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR)) {
                 PreferenceManager.getDefaultSharedPreferences(context).edit().
                         remove(entry.getKey()).commit();
             }
@@ -433,18 +441,26 @@ public class Database extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public class SearchTeam {
+    public final class SearchTeam {
         public static final String
                 KEY = "key",
                 TITLES = "titles",
                 NUMBER = "number";
+
+        private SearchTeam() {
+            // unused
+        }
     }
 
-    public class SearchEvent {
+    public final class SearchEvent {
         public static final String
                 KEY = "key",
                 TITLES = "titles",
                 YEAR = "year";
+
+        private SearchEvent() {
+            // unused
+        }
     }
 
     public Cursor getMatchesForTeamQuery(String query) {

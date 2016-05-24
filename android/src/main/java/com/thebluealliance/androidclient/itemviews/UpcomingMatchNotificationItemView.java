@@ -1,10 +1,8 @@
 package com.thebluealliance.androidclient.itemviews;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
-import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
 

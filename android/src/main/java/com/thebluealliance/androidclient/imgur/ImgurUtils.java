@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.imgur;
 
+import com.thebluealliance.androidclient.Constants;
+
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.util.Log;
-
-import com.thebluealliance.androidclient.Constants;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,7 +14,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class ImgurUtils {
+public final class ImgurUtils {
+
+    private ImgurUtils() {
+        // unused
+    }
 
     public static File createFile(Uri uri, Context context) {
         Log.d(Constants.LOG_TAG, "URI: " + uri);
@@ -26,7 +30,7 @@ public class ImgurUtils {
             File tempFile = new File(cacheDir, timeStamp + ".png");
 
             OutputStream out = new FileOutputStream(tempFile);
-            byte buffer[] = new byte[1024];
+            byte[] buffer = new byte[1024];
             int length = 0;
 
             while ((length = in.read(buffer)) > 0) {

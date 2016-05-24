@@ -1,6 +1,11 @@
 package com.thebluealliance.androidclient;
 
-public class ShareUris {
+public final class ShareUris {
+
+    private ShareUris() {
+        // unused
+    }
+
     public static final String BASE_URI = "https://thebluealliance.com";
 
     // Format with event key

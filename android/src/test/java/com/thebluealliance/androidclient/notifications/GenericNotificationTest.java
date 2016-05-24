@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.notifications;
 
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;

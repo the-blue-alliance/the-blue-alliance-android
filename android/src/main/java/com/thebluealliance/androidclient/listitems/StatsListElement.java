@@ -97,10 +97,10 @@ public class StatsListElement extends ListElement {
             return false;
         }
         StatsListElement element = (StatsListElement) o;
-        return teamName.equals(element.teamName) &&
-          teamNumber.equals(element.teamNumber) &&
-          opr.equals(element.opr) &&
-          dpr.equals(element.dpr) &&
-          ccwm.equals(element.ccwm);
+        return teamName.equals(element.teamName)
+          && teamNumber.equals(element.teamNumber)
+          && opr.equals(element.opr)
+          && dpr.equals(element.dpr)
+          && ccwm.equals(element.ccwm);
     }
 }

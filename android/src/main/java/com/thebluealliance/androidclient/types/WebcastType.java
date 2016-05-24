@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.types;
 
-import android.content.Context;
-
 import com.thebluealliance.androidclient.R;
+
+import android.content.Context;
 
 public enum WebcastType {
     YOUTUBE,

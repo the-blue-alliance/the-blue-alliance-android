@@ -1,17 +1,18 @@
 package com.thebluealliance.androidclient.activities;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.PlusManager;
+import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.PlusManager;
-import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 
 public class MyTBAOnboardingActivity extends AppCompatActivity implements View.OnClickListener, PlusManager.Callbacks, MyTBAOnboardingViewPager.Callbacks {
 

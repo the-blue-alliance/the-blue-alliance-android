@@ -99,8 +99,12 @@ Severity: EASY
         <module name="LineLength">
             <property name="severity" value="ignore" />
         </module>
-        <module name="MethodLength" />
-        <module name="ParameterNumber" />
+        <module name="MethodLength" >
+            <property name="severity" value="ignore" />
+        </module>
+        <module name="ParameterNumber" >
+            <property name="severity" value="ignore" />
+        </module>
 
 
         <!-- Checks for whitespace                               -->
@@ -190,11 +194,11 @@ Severity: EASY
         <module name="ArrayTypeStyle" />
         <module name="TodoComment">
             <property name="format" value="(?i)\s+TODO\s+" />
-            <property name="severity" value="info" />
+            <property name="severity" value="ignore" />
         </module>
         <module name="TodoComment">
             <property name="format" value="(?i)\s+CR\s+" />
-            <property name="severity" value="info" />
+            <property name="severity" value="ignore" />
         </module>
         <module name="UpperEll" />
 

@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.datafeed.status;
 
 import com.google.gson.Gson;
 
-import okhttp3.Cache;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -30,6 +29,7 @@ import java.util.Date;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import okhttp3.Cache;
 import rx.schedulers.Schedulers;
 
 /**
@@ -149,8 +149,8 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     @Override
     public void onActivityResumed(Activity activity) {
         /* Update myTBA Status */
-        double timeout = mUserIsLoggedIn ? UPDATE_TIMEOUT_LOGGED_IN_NS :
-                UPDATE_TIMEOUT_LOGGED_OUT_NS;
+        double timeout = mUserIsLoggedIn ? UPDATE_TIMEOUT_LOGGED_IN_NS
+                : UPDATE_TIMEOUT_LOGGED_OUT_NS;
         if (mLastUpdateTime + timeout < System.nanoTime()) {
             scheduleStatusUpdate(activity);
             mLastUpdateTime = System.nanoTime();

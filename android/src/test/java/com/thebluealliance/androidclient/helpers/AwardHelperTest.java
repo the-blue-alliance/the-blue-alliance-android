@@ -24,8 +24,8 @@ public class AwardHelperTest {
 
     @Test
     public void testValidateKey() {
-        String validKeys[] = new String[]{"2015cthar:12", "2015necmp:1"};
-        String invalidKeys[] = new String[]{"asldf:5", "2015cthar:foo", "2015cthar", null};
+        String[] validKeys = new String[]{"2015cthar:12", "2015necmp:1"};
+        String[] invalidKeys = new String[]{"asldf:5", "2015cthar:foo", "2015cthar", null};
 
         for (String key : validKeys) {
             assertTrue(AwardHelper.validateAwardKey(key));

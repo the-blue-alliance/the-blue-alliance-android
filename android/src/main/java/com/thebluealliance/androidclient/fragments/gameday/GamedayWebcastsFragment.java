@@ -1,13 +1,13 @@
 package com.thebluealliance.androidclient.fragments.gameday;
 
-import android.os.Bundle;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
+
+import android.os.Bundle;
 
 import java.util.List;
 

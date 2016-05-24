@@ -1,14 +1,15 @@
 package com.thebluealliance.androidclient.listeners;
 
+import com.google.gson.JsonObject;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.WebcastHelper;
+import com.thebluealliance.androidclient.types.WebcastType;
+
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
-
-import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.WebcastHelper;
-import com.thebluealliance.androidclient.types.WebcastType;
 
 public class WebcastClickListener implements View.OnClickListener {
 

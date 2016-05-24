@@ -11,8 +11,6 @@ import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
 import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;

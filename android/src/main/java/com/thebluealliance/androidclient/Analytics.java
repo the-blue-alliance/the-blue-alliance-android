@@ -1,15 +1,20 @@
 package com.thebluealliance.androidclient;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
+
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Tracker;
-
 import java.util.HashMap;
 
-public class Analytics {
+public final class Analytics {
+
+    private Analytics() {
+        // unused
+    }
+
     private static final String PROD_ANALYTICS_KEY = "analytics.id";
     static HashMap<GAnalyticsTracker, Tracker> mTrackers = new HashMap<>();
     private static GoogleAnalytics analytics;

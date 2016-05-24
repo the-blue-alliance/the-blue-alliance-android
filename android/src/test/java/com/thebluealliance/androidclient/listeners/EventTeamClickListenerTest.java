@@ -8,9 +8,9 @@ import org.robolectric.annotation.Config;
 
 import android.content.Context;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
-import static org.junit.Assert.assertArrayEquals;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)

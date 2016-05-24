@@ -1,12 +1,5 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.os.Handler;
-import android.util.Log;
-import android.widget.Toast;
-
 import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesFavoriteCollection;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesFavoriteMessage;
@@ -21,6 +14,13 @@ import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Subscription;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.os.Handler;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,11 +1,5 @@
 package com.thebluealliance.androidclient.background.mytba;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.util.Log;
-import android.widget.Toast;
-
 import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesRegistrationRequest;
@@ -18,6 +12,12 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
+
+import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 

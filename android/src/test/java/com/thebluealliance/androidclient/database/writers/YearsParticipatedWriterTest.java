@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.database.writers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;

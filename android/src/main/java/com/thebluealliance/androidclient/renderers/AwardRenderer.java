@@ -1,18 +1,18 @@
 package com.thebluealliance.androidclient.renderers;
 
-import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
-import android.util.Log;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APICache;
-import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.types.ModelType;
+
+import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

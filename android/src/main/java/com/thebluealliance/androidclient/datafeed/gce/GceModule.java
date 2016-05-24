@@ -7,7 +7,6 @@ import com.appspot.tbatv_prod_hrd.Model;
 import com.appspot.tbatv_prod_hrd.Subscriptions;
 import com.appspot.tbatv_prod_hrd.Tbamobile;
 import com.appspot.tbatv_prod_hrd.TeamMedia;
-import okhttp3.OkHttpClient;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
@@ -21,6 +20,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 
 /**
