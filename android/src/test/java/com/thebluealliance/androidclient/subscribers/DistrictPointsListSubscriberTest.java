@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.datafeed.HttpModule;

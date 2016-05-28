@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.receivers;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.NotificationsTable;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 
 /**
  * Android is predictably stupid when it comes to handling notifications. Specifically, clicking

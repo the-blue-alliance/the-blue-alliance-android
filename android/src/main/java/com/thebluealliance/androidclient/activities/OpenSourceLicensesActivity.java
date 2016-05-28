@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.activities;
 
+import com.thebluealliance.androidclient.R;
+
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.MenuItem;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.R;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

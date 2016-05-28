@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.adapters;
 
+import com.thebluealliance.androidclient.R;
+
 import android.app.Activity;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.thebluealliance.androidclient.R;
 
 public class FirstLaunchPagerAdapter extends PagerAdapter {
 

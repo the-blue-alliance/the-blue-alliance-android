@@ -153,7 +153,7 @@ public abstract class ModelTable<T extends BasicModel> {
      * @param limit LIMIT clause
      * @return Cursor with the rows returned by the query
      */
-    public Cursor query (
+    public Cursor query(
             String[] columns,
             String selection,
             String[] selectionArgs,
@@ -164,7 +164,7 @@ public abstract class ModelTable<T extends BasicModel> {
         return mDb.query(getTableName(), columns, selection, selectionArgs, groupBy, having, orderBy, limit);
     }
 
-    public List<T> getForQuery (
+    public List<T> getForQuery(
       String[] columns,
       String selection,
       String[] selectionArgs) {

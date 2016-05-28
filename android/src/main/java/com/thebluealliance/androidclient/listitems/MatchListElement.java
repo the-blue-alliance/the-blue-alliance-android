@@ -1,28 +1,47 @@
 package com.thebluealliance.androidclient.listitems;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.views.MatchView;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.views.MatchView;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
 public class MatchListElement extends ListElement implements Serializable {
 
-    public final String videoKey, matchTitle, redTeams[], blueTeams[], matchKey, redScore, blueScore, selectedTeamKey;
+    public final String videoKey, matchTitle, matchKey, redScore, blueScore, selectedTeamKey;
+    public final String[] redTeams, blueTeams;
     public final long time;
     public final boolean showVideoIcon, showColumnHeaders, showMatchTitle, clickable;
 
     // utility constructor for rendering UpcomingMatchNotification
-    public MatchListElement(String[] redTeams, String[] blueTeams, String matchKey, long time, String selectedTeamKey) {
-        this("", "", redTeams, blueTeams, "?", "?", matchKey, time, selectedTeamKey, false, false, false, false);
+    public MatchListElement(
+            String[] redTeams,
+            String[] blueTeams,
+            String matchKey,
+            long time,
+            String selectedTeamKey) {
+        this("", "", redTeams, blueTeams, "?", "?", matchKey, time, selectedTeamKey,
+             false, false, false, false);
     }
 
-    public MatchListElement(String youTubeVideoKey, String matchTitle, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey, long time, String selectedTeamKey, boolean showVideoIcon, boolean showColumnHeaders, boolean showMatchTitle, boolean clickable) {
+    public MatchListElement(
+            String youTubeVideoKey,
+            String matchTitle,
+            String[] redTeams,
+            String[] blueTeams,
+            String redScore,
+            String blueScore,
+            String matchKey,
+            long time,
+            String selectedTeamKey,
+            boolean showVideoIcon,
+            boolean showColumnHeaders,
+            boolean showMatchTitle,
+            boolean clickable) {
         super(matchKey);
         this.videoKey = youTubeVideoKey;
         this.matchTitle = matchTitle;
@@ -74,20 +93,20 @@ public class MatchListElement extends ListElement implements Serializable {
         }
         MatchListElement element = (MatchListElement) o;
 
-        return videoKey.equals(element.videoKey) &&
-          matchTitle.equals(element.matchTitle) &&
-          Arrays.equals(redTeams, element.redTeams) &&
-          Arrays.equals(blueTeams, element.blueTeams) &&
-          redScore.equals(element.redScore) &&
-          blueScore.equals(element.blueScore) &&
-          matchKey.equals(element.matchKey) &&
-          selectedTeamKey == null
+        return videoKey.equals(element.videoKey)
+          && matchTitle.equals(element.matchTitle)
+          && Arrays.equals(redTeams, element.redTeams)
+          && Arrays.equals(blueTeams, element.blueTeams)
+          && redScore.equals(element.redScore)
+          && blueScore.equals(element.blueScore)
+          && matchKey.equals(element.matchKey)
+          && selectedTeamKey == null
             ? element.selectedTeamKey == null
-            : selectedTeamKey.equals(element.selectedTeamKey) &&
-          time == element.time &&
-          showVideoIcon == element.showVideoIcon &&
-          showColumnHeaders == element.showColumnHeaders &&
-          showMatchTitle == element.showMatchTitle &&
-          clickable == element.clickable;
+            : selectedTeamKey.equals(element.selectedTeamKey)
+          && time == element.time
+          && showVideoIcon == element.showVideoIcon
+          && showColumnHeaders == element.showColumnHeaders
+          && showMatchTitle == element.showMatchTitle
+          && clickable == element.clickable;
     }
 }

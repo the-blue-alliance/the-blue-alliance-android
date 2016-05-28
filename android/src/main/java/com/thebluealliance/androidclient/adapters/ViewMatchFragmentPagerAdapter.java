@@ -12,11 +12,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class ViewMatchFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    public final @StringRes int[] TITLE_IDS = {R.string.match_tab_results,
+    public static final @StringRes int[] TITLE_IDS = {R.string.match_tab_results,
             R.string.match_tab_breakdown};
-    public final String[] TITLES;
     public static final int TAB_RESULT = 0,
             TAB_BREAKDOWN = 1;
+    private final String[] mTitles;
 
     private String mMatchKey;
 
@@ -24,20 +24,20 @@ public class ViewMatchFragmentPagerAdapter extends FragmentPagerAdapter {
         super(fm);
         mMatchKey = matchKey;
 
-        TITLES = new String[TITLE_IDS.length];
+        mTitles = new String[TITLE_IDS.length];
         for (int i = 0; i < TITLE_IDS.length; i++) {
-            TITLES[i] = resources.getString(TITLE_IDS[i]);
+            mTitles[i] = resources.getString(TITLE_IDS[i]);
         }
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return TITLES[position];
+        return mTitles[position];
     }
 
     @Override
     public int getCount() {
-        return TITLES.length;
+        return mTitles.length;
     }
 
     @Override

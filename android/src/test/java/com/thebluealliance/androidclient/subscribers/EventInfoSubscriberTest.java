@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
-import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Event;
 
 import junit.framework.TestCase;
 

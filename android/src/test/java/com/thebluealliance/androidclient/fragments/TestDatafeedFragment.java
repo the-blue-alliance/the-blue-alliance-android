@@ -95,11 +95,6 @@ public class TestDatafeedFragment extends BaseFragmentTest {
 
     }
 
-    // TODO push something to subject and test subscriber receives
-    // TODO test commonStatus update when things are down
-    // TODO test setting shouldRegisterSubscriberToEventBus
-    // TODO test instance saving
-
     private void getInjectedFragmentParams() {
         mSubscriber = mFragment.getSubscriber();
         mBinder = mFragment.getBinder();

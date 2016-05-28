@@ -1,19 +1,18 @@
 package com.thebluealliance.androidclient.listeners;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
+import com.thebluealliance.androidclient.activities.ViewEventActivity;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
+import com.thebluealliance.androidclient.listitems.ListElement;
+
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
-import com.thebluealliance.androidclient.activities.ViewEventActivity;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.fragments.mytba.MyFavoritesFragment;
-import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.helpers.EventTeamHelper;
-import com.thebluealliance.androidclient.listitems.ListElement;
 
 public class EventClickListener implements AdapterView.OnItemClickListener, View.OnClickListener {
 
@@ -57,7 +56,9 @@ public class EventClickListener implements AdapterView.OnItemClickListener, View
     }
 
     /**
-     * When called from a view, from {@link MyFavoritesFragment} with different listeners
+     * When called from a view, from
+     * {@link com.thebluealliance.androidclient.fragments.mytba.MyFavoritesFragment} with
+     * different listeners
      * required for the different elements in the list
      * Assume {@code mKey} is the event key to open
      */

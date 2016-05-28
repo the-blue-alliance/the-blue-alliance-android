@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.adapters;
 
+import com.thebluealliance.androidclient.fragments.gameday.GamedayTickerFragment;
+import com.thebluealliance.androidclient.fragments.gameday.GamedayWebcastsFragment;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.thebluealliance.androidclient.fragments.gameday.GamedayTickerFragment;
-import com.thebluealliance.androidclient.fragments.gameday.GamedayWebcastsFragment;
-
 public class GamedayFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    public final String[] TITLES = {"Live Ticker", "Webcasts"};
+    public static final String[] TITLES = {"Live Ticker", "Webcasts"};
     public static final int TAB_TICKER = 0,
             TAB_WEBCASTS = 1;
 

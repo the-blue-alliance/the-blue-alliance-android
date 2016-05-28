@@ -1,16 +1,16 @@
 package com.thebluealliance.androidclient.fragments.teamAtEvent;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamAtEventSummaryCombiner;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber.Model;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import rx.Observable;
 

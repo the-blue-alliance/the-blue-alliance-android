@@ -3,16 +3,16 @@ package com.thebluealliance.androidclient.subscribers;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.binders.ListViewBinder;
+
 import com.thebluealliance.androidclient.comparators.PointBreakdownComparater;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
+import com.thebluealliance.androidclient.types.DistrictType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,8 +83,8 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement,
     }
 
     /**
-     * Custom bind datatype, extend List<ListItem> in order to use {@link ListViewBinder} within
-     * the fragment.
+     * Custom bind datatype, extend List<ListItem> in order to use
+     * {@link com.thebluealliance.androidclient.binders.ListViewBinder} within the fragment.
      */
     public static class Type extends ArrayList<ListItem> {
         public boolean isDistrict;

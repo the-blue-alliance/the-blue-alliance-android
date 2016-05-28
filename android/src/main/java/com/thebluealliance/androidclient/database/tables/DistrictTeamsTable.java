@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.database.tables;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
 import com.thebluealliance.androidclient.models.DistrictTeam;
+
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 public class DistrictTeamsTable extends ModelTable<DistrictTeam> {
 

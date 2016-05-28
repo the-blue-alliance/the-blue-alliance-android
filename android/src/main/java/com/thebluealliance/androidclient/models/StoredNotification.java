@@ -16,10 +16,7 @@ import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotifica
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
 
 import java.util.Date;
 
@@ -126,7 +123,8 @@ public class StoredNotification {
 
     /**
      * Gets the related renderable notification
-     * You can immediately call {@link BaseNotification#getView(Context, LayoutInflater, View)}
+     * You can immediately call
+     * {@link BaseNotification#getView(android.content.Context, android.view.LayoutInflater, android.view.View)}
      * @return Appropriate BaseNotification
      */
     public @Nullable BaseNotification getNotification(DatabaseWriter writer, MatchRenderer matchRenderer) {

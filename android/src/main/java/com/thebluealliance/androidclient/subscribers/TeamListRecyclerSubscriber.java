@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.Context;
-
 import com.thebluealliance.androidclient.comparators.TeamSortByNumberComparator;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
+
+import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -3,11 +3,10 @@ package com.thebluealliance.androidclient.datafeed.retrofit;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 
-import okhttp3.ResponseBody;
-
 import java.io.IOException;
 import java.io.Reader;
 
+import okhttp3.ResponseBody;
 import retrofit2.Converter;
 
 /**

@@ -30,6 +30,9 @@ buildscript {
 
         // Retrolambda + Lint fixes
         classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
+
+        // Static code check things
+        classpath 'com.noveogroup.android:check:1.2.3'
     }
 
     // Exclude the linter version that the android plugin depends on.

@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.listitems.gameday;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listitems.ListElement;
+
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listitems.ListElement;
 
 public class GamedayTickerFilterCheckbox extends ListElement {
 

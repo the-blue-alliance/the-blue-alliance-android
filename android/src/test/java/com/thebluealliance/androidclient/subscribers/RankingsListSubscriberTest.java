@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.listitems.RankingListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
@@ -66,7 +66,7 @@ public class RankingsListSubscriberTest {
 
     @Test
     public void testParsedData() throws BasicModel.FieldNotDefinedException {
-        List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mRankings);
+        List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mRankings);
         EventHelper.CaseInsensitiveMap<String> rankingElements = new EventHelper.CaseInsensitiveMap<>();
         for (int j = 2; j < mRankings.get(0).getAsJsonArray().size(); j++) {
             rankingElements.put(
@@ -74,8 +74,7 @@ public class RankingsListSubscriberTest {
               mRankings.get(1).getAsJsonArray().get(j).getAsString());
         }
         String breakdown = EventHelper.createRankingBreakdown(rankingElements);
-        RankingListElement expected =
-          new RankingListElement("frc1519", "1519", "Team 1519", 1, "", breakdown);
+        TeamRankingViewModel expected = new TeamRankingViewModel("frc1519", "Team 1519", "1519", 1, "", breakdown);
 
         assertEquals(1, data.size());
         assertEquals(expected, data.get(0));
@@ -83,7 +82,7 @@ public class RankingsListSubscriberTest {
 
     @Test
     public void testParsedDataWithMultiTeam() throws BasicModel.FieldNotDefinedException {
-        List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mRankingsMultiTeam);
+        List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mRankingsMultiTeam);
         EventHelper.CaseInsensitiveMap<String> rankingElements = new EventHelper.CaseInsensitiveMap<>();
         for (int j = 2; j < mRankingsMultiTeam.get(0).getAsJsonArray().size(); j++) {
             rankingElements.put(
@@ -91,8 +90,7 @@ public class RankingsListSubscriberTest {
                     mRankingsMultiTeam.get(1).getAsJsonArray().get(j).getAsString());
         }
         String breakdown = EventHelper.createRankingBreakdown(rankingElements);
-        RankingListElement expected =
-                new RankingListElement("frc1038B", "1038B", "Team 1038B", 30, "", breakdown);
+        TeamRankingViewModel expected = new TeamRankingViewModel("frc1038B", "Team 1038B", "1038B", 30, "", breakdown);
 
         assertEquals(1, data.size());
         assertEquals(expected, data.get(0));

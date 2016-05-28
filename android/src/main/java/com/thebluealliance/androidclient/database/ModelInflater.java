@@ -29,7 +29,11 @@ import android.util.Log;
 
 import java.util.Date;
 
-public class ModelInflater {
+public final class ModelInflater {
+
+    private ModelInflater() {
+        // unused
+    }
 
     /**
      * Inflate an award model from a single row of a cursor returned by a database query.

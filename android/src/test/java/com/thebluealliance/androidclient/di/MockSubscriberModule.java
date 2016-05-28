@@ -78,7 +78,7 @@ public class MockSubscriberModule {
     }
 
     @Provides
-    public RankingsListSubscriber provideRankingsListSubscriber(Database db, EventBus eventBus) {
+    public RankingsListSubscriber provideRankingsListRecyclerSubscriber(Database db, EventBus eventBus) {
         return Mockito.mock(RankingsListSubscriber.class);
     }
 

@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.renderers;
 
-import android.support.annotation.Nullable;
-
 import com.thebluealliance.androidclient.types.ModelType;
+
+import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

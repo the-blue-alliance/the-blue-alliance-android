@@ -1,11 +1,10 @@
 package com.thebluealliance.androidclient.helpers;
 
-import android.support.annotation.NonNull;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 
@@ -14,6 +13,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +30,10 @@ import static org.mockito.Mockito.when;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class MatchHelperTest {
-    private static final String ALLIANCES_2009 = "{" +
-            "\"red\":  {\"score\": 81, \"teams\": [\"frc68\", \"frc217\", \"frc247\"]}," +
-            "\"blue\": {\"score\": 98, \"teams\": [\"frc111\", \"frc971\", \"frc67\"]}" +
-            "}";
+    private static final String ALLIANCES_2009 = "{"
+            + "\"red\":  {\"score\": 81, \"teams\": [\"frc68\", \"frc217\", \"frc247\"]},"
+            + "\"blue\": {\"score\": 98, \"teams\": [\"frc111\", \"frc971\", \"frc67\"]}"
+            + "}";
     private JsonObject alliances;
 
     @Before

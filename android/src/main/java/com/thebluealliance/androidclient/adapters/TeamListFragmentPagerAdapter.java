@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.adapters;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.fragments.TeamListFragment;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.fragments.TeamListFragment;
 
 public class TeamListFragmentPagerAdapter extends FragmentPagerAdapter {
 

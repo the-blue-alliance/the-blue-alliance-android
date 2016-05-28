@@ -26,7 +26,11 @@ import java.util.Map;
 /**
  * Encapsulation of special-cased stuff for showing pit locations at 2016 Champs
  */
-public class PitLocationHelper {
+public final class PitLocationHelper {
+
+    private PitLocationHelper() {
+        // unused
+    }
 
     private static final String LAST_UPDATED_PREF_KEY = "cmp_pit_locations_update_time";
     private static final String PIT_LOCATIONS_FILENAME = "2016_pit_locations.json";

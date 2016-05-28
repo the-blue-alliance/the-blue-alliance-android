@@ -1,10 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.renderers.ModelRenderer;
 
 import android.content.Context;
 
@@ -14,7 +11,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 /**
- * Bind a list of events to a {@link ListViewAdapter}
+ * Bind a list of events to a {@link com.thebluealliance.androidclient.adapters.ListViewAdapter}
  */
 public class EventListSubscriber extends BaseAPISubscriber<List<Event>, List<Object>> {
 

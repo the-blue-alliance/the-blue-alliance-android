@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.listitems;
 
+import com.thebluealliance.androidclient.R;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-
-import com.thebluealliance.androidclient.R;
 
 public class DividerListItem implements ListItem {
     @Override

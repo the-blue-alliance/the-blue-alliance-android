@@ -1,10 +1,5 @@
 package com.thebluealliance.androidclient.fragments.district;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
 import com.thebluealliance.androidclient.fragments.ExpandableListViewFragment;
@@ -12,6 +7,11 @@ import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamAtDistrictBreakdownSubscriber;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import rx.Observable;
 

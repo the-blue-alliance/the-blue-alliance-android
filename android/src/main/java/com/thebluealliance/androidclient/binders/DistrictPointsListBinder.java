@@ -1,13 +1,13 @@
 package com.thebluealliance.androidclient.binders;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber.Type;
+
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber.Type;
 
 import java.util.List;
 
