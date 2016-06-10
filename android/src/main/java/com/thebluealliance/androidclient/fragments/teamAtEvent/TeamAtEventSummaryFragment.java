@@ -4,7 +4,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamAtEventSummaryCombiner;
-import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
 import com.thebluealliance.androidclient.itemviews.LabelValueItemView;
 import com.thebluealliance.androidclient.itemviews.LabeledMatchItemView;
@@ -16,10 +15,7 @@ import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
