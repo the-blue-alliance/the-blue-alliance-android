@@ -68,7 +68,7 @@ public class StatsListElement extends ListElement {
     }
 
     public String getFormattedOpr() {
-        return ThreadSafeFormatters.formatStat(opr);
+        return ThreadSafeFormatters.formatDoubleTwoPlaces(opr);
     }
 
     public Double getDpr() {
@@ -76,7 +76,7 @@ public class StatsListElement extends ListElement {
     }
 
     public String getFormattedDpr() {
-        return ThreadSafeFormatters.formatStat(dpr);
+        return ThreadSafeFormatters.formatDoubleTwoPlaces(dpr);
     }
 
     public Double getCcwm() {
@@ -84,7 +84,7 @@ public class StatsListElement extends ListElement {
     }
 
     public String getFormattedCcwm() {
-        return ThreadSafeFormatters.formatStat(ccwm);
+        return ThreadSafeFormatters.formatDoubleTwoPlaces(ccwm);
     }
 
     public String getTeamNumberString() {

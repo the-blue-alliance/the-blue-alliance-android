@@ -55,8 +55,4 @@ public final class ThreadSafeFormatters {
     public static synchronized String formatDoubleTwoPlaces(double input) {
         return DOUBLE_TWO_PLACES_FORMAT.format(input);
     }
-
-    public static synchronized String formatStat(double stat) {
-        return DOUBLE_TWO_PLACES_FORMAT.format(stat);
-    }
 }

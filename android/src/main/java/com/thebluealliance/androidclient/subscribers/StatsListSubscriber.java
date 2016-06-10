@@ -84,9 +84,9 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
             double ccwm = ccwms.has(stat.getKey()) ? ccwms.get(stat.getKey()).getAsDouble() : 0;
             String displayString = mResources.getString(
                     R.string.stats_format,
-                    ThreadSafeFormatters.formatStat(opr),
-                    ThreadSafeFormatters.formatStat(dpr),
-                    ThreadSafeFormatters.formatStat(ccwm));
+                    ThreadSafeFormatters.formatDoubleTwoPlaces(opr),
+                    ThreadSafeFormatters.formatDoubleTwoPlaces(dpr),
+                    ThreadSafeFormatters.formatDoubleTwoPlaces(ccwm));
             mTeamStats.add(new StatsListElement(
                     teamKey,
                     stat.getKey(),

@@ -30,17 +30,17 @@ public class TeamStatsSubscriber extends BaseAPISubscriber<JsonElement, List<Obj
         if (statsData.has("opr")) {
             mDataToBind.add(new LabelValueViewModel(
               mResources.getString(R.string.opr_no_colon),
-              ThreadSafeFormatters.formatStat(statsData.get("opr").getAsDouble())));
+              ThreadSafeFormatters.formatDoubleTwoPlaces(statsData.get("opr").getAsDouble())));
         }
         if (statsData.has("dpr")) {
             mDataToBind.add(new LabelValueViewModel(
               mResources.getString(R.string.dpr_no_colon),
-              ThreadSafeFormatters.formatStat(statsData.get("dpr").getAsDouble())));
+              ThreadSafeFormatters.formatDoubleTwoPlaces(statsData.get("dpr").getAsDouble())));
         }
         if (statsData.has("ccwm")) {
             mDataToBind.add(new LabelValueViewModel(
               mResources.getString(R.string.ccwm_no_colon),
-              ThreadSafeFormatters.formatStat(statsData.get("ccwm").getAsDouble())));
+              ThreadSafeFormatters.formatDoubleTwoPlaces(statsData.get("ccwm").getAsDouble())));
         }
     }
 
