@@ -15,12 +15,12 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.listitems.EmptyListElement;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
-import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
+import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -37,7 +37,7 @@ import java.util.List;
 
 import static com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber.Model;
 
-public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<ListItem>> {
+public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<Object>> {
 
     public static class Model {
         public final JsonArray teamAtEventRank;
@@ -134,12 +134,12 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
         // Rank
         if (rank > 0) {
-            mDataToBind.add(new LabelValueListItem(
+            mDataToBind.add(new LabelValueViewModel(
                     mResources.getString(R.string.team_at_event_rank),
                     rank + Utilities.getOrdinalFor(rank)));
         }
 
-        LabelValueListItem rankBreakdownItem = new LabelValueListItem("Ranking Breakdown", rankingString);
+        LabelValueViewModel rankBreakdownItem = new LabelValueViewModel("Ranking Breakdown", rankingString);
 
         MatchHelper.EventStatus status;
         try {
@@ -158,7 +158,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             } else {
                 awardsString = mResources.getString(R.string.team_at_event_awards_format, mAwards.size());
             }
-            mDataToBind.add(new LabelValueListItem(
+            mDataToBind.add(new LabelValueViewModel(
                     mResources.getString(R.string.awards_header),
                     awardsString));
         }
@@ -169,7 +169,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
                     && PitLocationHelper.shouldShowPitLocation(mContext, mTeamKey)) {
                 PitLocationHelper.TeamPitLocation location = PitLocationHelper.getPitLocation(mContext, mTeamKey);
                 if (location != null) {
-                    mDataToBind.add(new LabelValueListItem(mResources.getString(R.string.championship_pit_location), location.getAddressString()));
+                    mDataToBind.add(new LabelValueViewModel(mResources.getString(R.string.championship_pit_location), location.getAddressString()));
                 }
             }
         } catch (BasicModel.FieldNotDefinedException e) {
@@ -181,7 +181,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             // Record
             /* Don't show for 2015 events, because no wins and such */
             if (year != 2015 && !recordString.equals("0-0-0")) {
-                mDataToBind.add(new LabelValueListItem(
+                mDataToBind.add(new LabelValueViewModel(
                         mResources.getString(R.string.team_at_event_record),
                         recordString));
             }
@@ -189,7 +189,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             // Alliance
             if (status != MatchHelper.EventStatus.PLAYING_IN_QUALS
                     && status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
-                mDataToBind.add(new LabelValueListItem(
+                mDataToBind.add(new LabelValueViewModel(
                         mResources.getString(R.string.team_at_event_alliance),
                         EventHelper.generateAllianceSummary(
                                 mResources,
@@ -199,7 +199,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
             // Status
             if (status != MatchHelper.EventStatus.NOT_PICKED) {
-                mDataToBind.add(new LabelValueListItem(
+                mDataToBind.add(new LabelValueViewModel(
                         mResources.getString(R.string.team_at_event_status),
                         status.getDescriptionString(mResources)));
             }
@@ -210,25 +210,18 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             }
 
             if (lastMatch != null) {
-                mDataToBind.add(new LabelValueListItem(mResources.getString(R.string.title_last_match),
-                                mMatchRenderer.renderFromModel(lastMatch, MatchRenderer.RENDER_DEFAULT)));
+                /*mDataToBind.add(new LabelValueListItem(mResources.getString(R.string.title_last_match),
+                                mMatchRenderer.renderFromModel(lastMatch, MatchRenderer.RENDER_DEFAULT)));*/
             }
             if (nextMatch != null) {
-                mDataToBind.add(new LabelValueListItem(
+                /*mDataToBind.add(new LabelValueViewModel(
                         mResources.getString(R.string.title_next_match),
-                        mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));
+                        mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));*/
             }
         } else if (rank > 0) {
             // Only show ranking breakdown if rankings are available
             mDataToBind.add(rankBreakdownItem);
         }
-
-        if (mDataToBind.size() > 0) {
-            // If there is data to add, then add an empty item next to it so we can scroll
-            // all the way down and not have the FAB overlap with anything
-            mDataToBind.add(new EmptyListElement(""));
-        }
-
     }
 
     @Override
