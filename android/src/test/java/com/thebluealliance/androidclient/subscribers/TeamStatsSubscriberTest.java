@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -58,19 +59,19 @@ public class TeamStatsSubscriberTest {
 
     @Test
     public void testParsedData() throws BasicModel.FieldNotDefinedException {
-        List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mStats);
+        List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mStats);
 
         assertEquals(3, data.size());
-        LabelValueListItem opr = getItem(0, data);
-        LabelValueListItem dpr = getItem(1, data);
-        LabelValueListItem ccwm = getItem(2, data);
+        LabelValueViewModel opr = getItem(0, data);
+        LabelValueViewModel dpr = getItem(1, data);
+        LabelValueViewModel ccwm = getItem(2, data);
 
-        assertEquals(new LabelValueListItem("Stat", "87.96"), opr);
-        assertEquals(new LabelValueListItem("Stat", "50.89"), dpr);
-        assertEquals(new LabelValueListItem("Stat", "37.07"), ccwm);
+        assertEquals(new LabelValueViewModel("Stat", "87.96"), opr);
+        assertEquals(new LabelValueViewModel("Stat", "50.89"), dpr);
+        assertEquals(new LabelValueViewModel("Stat", "37.07"), ccwm);
     }
 
-    private static LabelValueListItem getItem(int position, List<ListItem> data) {
-        return (LabelValueListItem) data.get(position);
+    private static LabelValueViewModel getItem(int position, List<Object> data) {
+        return (LabelValueViewModel) data.get(position);
     }
 }

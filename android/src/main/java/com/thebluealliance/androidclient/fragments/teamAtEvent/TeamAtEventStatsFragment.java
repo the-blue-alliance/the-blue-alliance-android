@@ -3,18 +3,23 @@ package com.thebluealliance.androidclient.fragments.teamAtEvent;
 import com.google.gson.JsonElement;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
+import com.thebluealliance.androidclient.itemviews.LabelValueItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamStatsSubscriber;
+import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
-public class TeamAtEventStatsFragment extends ListViewFragment<JsonElement, TeamStatsSubscriber> {
+public class TeamAtEventStatsFragment extends RecyclerViewFragment<JsonElement, TeamStatsSubscriber, RecyclerViewBinder> {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 
@@ -41,15 +46,6 @@ public class TeamAtEventStatsFragment extends ListViewFragment<JsonElement, Team
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = super.onCreateView(inflater, container, savedInstanceState);
-        //disable touch feedback (you can't click the elements here...)
-        mListView.setCacheColorHint(getResources().getColor(android.R.color.transparent));
-        mListView.setSelector(R.drawable.transparent);
-        return v;
-    }
-
-    @Override
     protected void inject() {
         mComponent.inject(this);
     }
@@ -66,5 +62,9 @@ public class TeamAtEventStatsFragment extends ListViewFragment<JsonElement, Team
 
     @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_poll_black_48dp, R.string.no_stats_data);
+    }
+
+    @Override public void initializeAdapterCreator(SmartAdapter.MultiAdaptersCreator creator) {
+        creator.map(LabelValueViewModel.class, LabelValueItemView.class);
     }
 }
