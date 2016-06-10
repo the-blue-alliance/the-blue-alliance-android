@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.binders.ListPair;
 import com.thebluealliance.androidclient.comparators.StatListElementComparator;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventStatsEvent;
-import com.thebluealliance.androidclient.helpers.StatsHelper;
+import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -84,9 +84,9 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
             double ccwm = ccwms.has(stat.getKey()) ? ccwms.get(stat.getKey()).getAsDouble() : 0;
             String displayString = mResources.getString(
                     R.string.stats_format,
-                    StatsHelper.formatStat(opr),
-                    StatsHelper.formatStat(dpr),
-                    StatsHelper.formatStat(ccwm));
+                    ThreadSafeFormatters.formatStat(opr),
+                    ThreadSafeFormatters.formatStat(dpr),
+                    ThreadSafeFormatters.formatStat(ccwm));
             mTeamStats.add(new StatsListElement(
                     teamKey,
                     stat.getKey(),

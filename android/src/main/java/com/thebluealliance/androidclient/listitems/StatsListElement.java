@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.listitems;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.StatsHelper;
+import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -68,7 +68,7 @@ public class StatsListElement extends ListElement {
     }
 
     public String getFormattedOpr() {
-        return StatsHelper.formatStat(opr);
+        return ThreadSafeFormatters.formatStat(opr);
     }
 
     public Double getDpr() {
@@ -76,7 +76,7 @@ public class StatsListElement extends ListElement {
     }
 
     public String getFormattedDpr() {
-        return StatsHelper.formatStat(dpr);
+        return ThreadSafeFormatters.formatStat(dpr);
     }
 
     public Double getCcwm() {
@@ -84,7 +84,7 @@ public class StatsListElement extends ListElement {
     }
 
     public String getFormattedCcwm() {
-        return StatsHelper.formatStat(ccwm);
+        return ThreadSafeFormatters.formatStat(ccwm);
     }
 
     public String getTeamNumberString() {

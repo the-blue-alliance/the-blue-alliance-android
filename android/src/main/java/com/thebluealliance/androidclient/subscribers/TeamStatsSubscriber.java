@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.StatsHelper;
+import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 
@@ -30,17 +30,17 @@ public class TeamStatsSubscriber extends BaseAPISubscriber<JsonElement, List<Obj
         if (statsData.has("opr")) {
             mDataToBind.add(new LabelValueViewModel(
               mResources.getString(R.string.opr_no_colon),
-              StatsHelper.formatStat(statsData.get("opr").getAsDouble())));
+              ThreadSafeFormatters.formatStat(statsData.get("opr").getAsDouble())));
         }
         if (statsData.has("dpr")) {
             mDataToBind.add(new LabelValueViewModel(
               mResources.getString(R.string.dpr_no_colon),
-              StatsHelper.formatStat(statsData.get("dpr").getAsDouble())));
+              ThreadSafeFormatters.formatStat(statsData.get("dpr").getAsDouble())));
         }
         if (statsData.has("ccwm")) {
             mDataToBind.add(new LabelValueViewModel(
               mResources.getString(R.string.ccwm_no_colon),
-              StatsHelper.formatStat(statsData.get("ccwm").getAsDouble())));
+              ThreadSafeFormatters.formatStat(statsData.get("ccwm").getAsDouble())));
         }
     }
 
