@@ -7,13 +7,16 @@ import com.thebluealliance.androidclient.datafeed.combiners.TeamAtEventSummaryCo
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
 import com.thebluealliance.androidclient.itemviews.LabelValueItemView;
+import com.thebluealliance.androidclient.itemviews.LabeledMatchItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber.Model;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
+import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,5 +94,6 @@ public class TeamAtEventSummaryFragment extends RecyclerViewFragment<Model, Team
 
     @Override public void initializeAdapterCreator(SmartAdapter.MultiAdaptersCreator creator) {
         creator.map(LabelValueViewModel.class, LabelValueItemView.class);
+        creator.map(LabeledMatchViewModel.class, LabeledMatchItemView.class);
     }
 }

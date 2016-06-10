@@ -1,9 +1,12 @@
 package com.thebluealliance.androidclient.viewmodels;
 
-public class LabelValueViewModel extends BaseViewModel{
+import android.view.View;
+
+public class LabelValueViewModel extends BaseViewModel {
 
     private String mLabel;
     private String mValue;
+    private View mValueView;
 
     public LabelValueViewModel(String label, String value) {
         mLabel = label;

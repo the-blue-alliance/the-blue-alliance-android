@@ -13,14 +13,13 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper.CaseInsensitiveMap;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
-import com.thebluealliance.androidclient.listitems.EmptyListElement;
-import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
+import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -210,13 +209,14 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             }
 
             if (lastMatch != null) {
-                /*mDataToBind.add(new LabelValueListItem(mResources.getString(R.string.title_last_match),
-                                mMatchRenderer.renderFromModel(lastMatch, MatchRenderer.RENDER_DEFAULT)));*/
+                mDataToBind.add(new LabeledMatchViewModel(
+                        mResources.getString(R.string.title_last_match),
+                        mMatchRenderer.renderFromModel(lastMatch, MatchRenderer.RENDER_DEFAULT)));
             }
             if (nextMatch != null) {
-                /*mDataToBind.add(new LabelValueViewModel(
+                mDataToBind.add(new LabeledMatchViewModel(
                         mResources.getString(R.string.title_next_match),
-                        mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));*/
+                        mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));
             }
         } else if (rank > 0) {
             // Only show ranking breakdown if rankings are available
@@ -240,7 +240,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         if (matches == null) {
             return;
         }
-        mIsAwardListLoaded = true;
+        mIsMatchListLoaded = true;
         mMatches = new ArrayList<>(matches.getMatches());
         try {
             if (isDataValid()) {
@@ -262,7 +262,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         if (awards == null) {
             return;
         }
-        mIsMatchListLoaded = true;
+        mIsAwardListLoaded = true;
         mAwards = new ArrayList<>(awards.getAwards());
         try {
             if (isDataValid()) {
