@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
-import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
 import com.thebluealliance.androidclient.itemviews.LabelValueItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
@@ -12,9 +11,6 @@ import com.thebluealliance.androidclient.subscribers.TeamStatsSubscriber;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
