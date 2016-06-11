@@ -34,6 +34,11 @@ case "$1" in
         filter_code
         ;;
 
+    "SCREENSHOT")
+        echo "Running project screenshot tests"
+        ./gradlew verifyMode screenshotTests
+        ;;
+
     *)
         echo "Unknown job type $JOB"
         exit -1

@@ -11,18 +11,19 @@ android:
     - extra-android-m2repository
     - extra-google-m2repository
     - extra-google-google_play_services
+    - sys-img-armeabi-v7a-android-23
 
 env:
   - JOB=UNIT
   - JOB=COVERAGE
   - JOB=CHECKSTYLE
+  - JOB=SCREENSHOT
 
 before_script:
-  - mkdir android/src/main/assets
-  - touch android/src/main/assets/tba.properties
+  - ./scripts/travis/travis-before.sh $JOB
 
 script:
-  - ./scripts/travis-worker.sh $JOB
+  - ./scripts/travis/travis-worker.sh $JOB
 
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
