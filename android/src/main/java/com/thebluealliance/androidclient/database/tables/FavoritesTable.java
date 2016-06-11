@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.database.tables;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.models.Favorite;
+
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;

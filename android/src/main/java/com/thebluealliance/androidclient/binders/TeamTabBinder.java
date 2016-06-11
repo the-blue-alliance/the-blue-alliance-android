@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.binders;
 
+import com.thebluealliance.androidclient.adapters.TeamListFragmentPagerAdapter;
+import com.thebluealliance.androidclient.views.SlidingTabs;
+
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-
-import com.thebluealliance.androidclient.adapters.TeamListFragmentPagerAdapter;
-import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import javax.inject.Inject;
 

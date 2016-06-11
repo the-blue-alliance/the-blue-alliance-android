@@ -1,5 +1,13 @@
 package com.thebluealliance.androidclient.fragments.mytba;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPanel;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
+import com.thebluealliance.androidclient.types.ModelType;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -9,14 +17,6 @@ import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
 import android.util.Log;
 import android.view.View;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPanel;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
-import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.helpers.MyTBAHelper;
-import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 
 import java.util.ArrayList;
 import java.util.Set;

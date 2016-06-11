@@ -1,5 +1,10 @@
 package com.thebluealliance.androidclient.binders;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.PitLocationHelper;
+import com.thebluealliance.androidclient.listeners.SocialClickListener;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -11,13 +16,7 @@ import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.PitLocationHelper;
-import com.thebluealliance.androidclient.listeners.SocialClickListener;
 
 import javax.inject.Inject;
 

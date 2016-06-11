@@ -1,5 +1,9 @@
 package com.thebluealliance.androidclient.listitems;
 
+import com.squareup.picasso.Picasso;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -8,10 +12,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
-import com.squareup.picasso.Picasso;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 
 public class ImageListElement extends ListElement {
 
@@ -30,9 +30,9 @@ public class ImageListElement extends ListElement {
             return false;
         }
         ImageListElement element = (ImageListElement) o;
-        return imageUrl.equals(element.imageUrl) &&
-          linkUrl.equals(element.linkUrl) &&
-          isVideo == element.isVideo;
+        return imageUrl.equals(element.imageUrl)
+          && linkUrl.equals(element.linkUrl)
+          && isVideo == element.isVideo;
     }
 
     @Override
@@ -41,10 +41,10 @@ public class ImageListElement extends ListElement {
         if (convertView == null || !(convertView.getTag() instanceof ViewHolder)) {
             convertView = inflater.inflate(R.layout.list_item_image, null);
             holder = new ViewHolder();
-            holder.image_item = (RelativeLayout) convertView.findViewById(R.id.image_item);
-            holder.image_container = (FrameLayout) convertView.findViewById(R.id.image_container);
+            holder.imageItem = (RelativeLayout) convertView.findViewById(R.id.image_item);
+            holder.imageContainer = (FrameLayout) convertView.findViewById(R.id.image_container);
             holder.image = (ImageView) convertView.findViewById(R.id.image);
-            holder.youtube_play_icon = (ImageView) convertView.findViewById(R.id.youtube_play_icon);
+            holder.youtubePlayIcon = (ImageView) convertView.findViewById(R.id.youtube_play_icon);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -53,28 +53,25 @@ public class ImageListElement extends ListElement {
         Picasso picasso = Picasso.with(c);
         picasso.load(imageUrl).into(holder.image);
         if (isVideo) {
-            holder.youtube_play_icon.setVisibility(View.VISIBLE);
+            holder.youtubePlayIcon.setVisibility(View.VISIBLE);
         } else {
-            holder.youtube_play_icon.setVisibility(View.GONE);
+            holder.youtubePlayIcon.setVisibility(View.GONE);
         }
 
-        holder.image_item.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Track Click
-                AnalyticsHelper.sendSocialUpdate(c, isVideo ? "youtube" : "cd", linkUrl);
-                c.startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(linkUrl)));
-            }
+        holder.imageItem.setOnClickListener(v -> {
+            //Track Click
+            AnalyticsHelper.sendSocialUpdate(c, isVideo ? "youtube" : "cd", linkUrl);
+            c.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(linkUrl)));
         });
 
         return convertView;
     }
 
     private static class ViewHolder {
-        RelativeLayout image_item;
-        FrameLayout image_container;
+        RelativeLayout imageItem;
+        FrameLayout imageContainer;
         ImageView image;
-        ImageView youtube_play_icon;
+        ImageView youtubePlayIcon;
     }
 
 }

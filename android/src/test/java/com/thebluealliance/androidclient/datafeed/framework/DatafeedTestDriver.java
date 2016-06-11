@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.datafeed.framework;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
+
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
@@ -9,7 +10,11 @@ import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class DatafeedTestDriver {
+public final class DatafeedTestDriver {
+
+    private DatafeedTestDriver() {
+        // unused
+    }
 
     public static <API, VIEW> SubscriberTestController<API, VIEW> getSubscriberController(
       BaseAPISubscriber<API, VIEW> subscriber) {

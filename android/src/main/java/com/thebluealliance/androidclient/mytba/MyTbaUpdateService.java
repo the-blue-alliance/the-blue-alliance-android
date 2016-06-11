@@ -1,11 +1,5 @@
 package com.thebluealliance.androidclient.mytba;
 
-import android.app.IntentService;
-import android.content.Intent;
-import android.os.Handler;
-import android.util.Log;
-import android.widget.Toast;
-
 import com.appspot.tbatv_prod_hrd.tbaMobile.TbaMobile;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesFavoriteCollection;
 import com.appspot.tbatv_prod_hrd.tbaMobile.model.ModelsMobileApiMessagesFavoriteMessage;
@@ -23,6 +17,12 @@ import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Subscription;
+
+import android.app.IntentService;
+import android.content.Intent;
+import android.os.Handler;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,7 +56,6 @@ public class MyTbaUpdateService extends IntentService {
 
         List<Favorite> favoriteModels = new ArrayList<>();
         List<Subscription> subscriptionModels = new ArrayList<>();
-        // TODO this endpoint needs some caching so we keep load off the server
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             return;
         }

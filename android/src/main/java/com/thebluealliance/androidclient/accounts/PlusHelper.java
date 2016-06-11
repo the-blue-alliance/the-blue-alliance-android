@@ -1,16 +1,21 @@
 package com.thebluealliance.androidclient.accounts;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.model.people.Person;
+
+import com.thebluealliance.androidclient.gcm.GCMHelper;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.model.people.Person;
-import com.thebluealliance.androidclient.gcm.GCMHelper;
-import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
+public final class PlusHelper {
 
-public class PlusHelper {
+    private PlusHelper() {
+        // unused
+    }
 
     // This is the helper object that connects to Google Play Services.
     private static GoogleApiClient mApiClient = null;

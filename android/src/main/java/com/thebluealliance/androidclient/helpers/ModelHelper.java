@@ -1,9 +1,5 @@
 package com.thebluealliance.androidclient.helpers;
 
-import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.activities.TeamAtDistrictActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
@@ -18,7 +14,15 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.ModelType;
 
-public class ModelHelper {
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
+public final class ModelHelper {
+
+    private ModelHelper() {
+        // unused
+    }
 
     public static ModelType getModelFromEnum(int model_enum) {
         return ModelType.values()[model_enum];

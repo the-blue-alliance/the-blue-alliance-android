@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;

@@ -1,5 +1,16 @@
 package com.thebluealliance.androidclient.fragments.event;
 
+import com.google.gson.JsonElement;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.binders.DistrictPointsListBinder;
+import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
+import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber;
+import com.thebluealliance.androidclient.views.NoDataView;
+
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -10,16 +21,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import com.google.gson.JsonElement;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.binders.DistrictPointsListBinder;
-import com.thebluealliance.androidclient.fragments.DatafeedFragment;
-import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.NoDataViewParams;
-import com.thebluealliance.androidclient.subscribers.DistrictPointsListSubscriber;
-import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 

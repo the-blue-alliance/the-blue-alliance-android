@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.adapters;
 
+import com.thebluealliance.androidclient.fragments.district.TeamAtDistrictBreakdownFragment;
+import com.thebluealliance.androidclient.fragments.district.TeamAtDistrictSummaryFragment;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.thebluealliance.androidclient.fragments.district.TeamAtDistrictBreakdownFragment;
-import com.thebluealliance.androidclient.fragments.district.TeamAtDistrictSummaryFragment;
-
 public class TeamAtDistrictFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    public final String[] TITLES = {"Summary", "Breakdown"};
+    public static final String[] TITLES = {"Summary", "Breakdown"};
 
     private String mDistrictKey, mTeamKey;
 

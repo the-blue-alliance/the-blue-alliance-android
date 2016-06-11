@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.database;
 
-import android.database.sqlite.SQLiteDatabase;
-
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
@@ -12,13 +10,19 @@ import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
 
+import android.database.sqlite.SQLiteDatabase;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
  * A class that mocks the classes surrounding database tables
  */
-public class DatabaseMocker {
+public final class DatabaseMocker {
+
+    private DatabaseMocker() {
+        // unused
+    }
 
     public static TeamsTable mockTeamsTable(Database database) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);

@@ -35,11 +35,11 @@ public class FirebaseNotification {
 
     @JsonIgnore private String jsonString;
     @JsonIgnore private BaseNotification notification;
-    @JsonIgnore private static final DateFormat dateFormat;
+    @JsonIgnore private static final DateFormat DATE_FORMAT;
 
     static {
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     public FirebaseNotification() {
@@ -76,7 +76,7 @@ public class FirebaseNotification {
         String messageData = message.get("message_data").toString();
         Date date = null;
         try {
-            date = dateFormat.parse(getTime());
+            date = DATE_FORMAT.parse(getTime());
         } catch (ParseException e) {
             // Improper date format
             e.printStackTrace();

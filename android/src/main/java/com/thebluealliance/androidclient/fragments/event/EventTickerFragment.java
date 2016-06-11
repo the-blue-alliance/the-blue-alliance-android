@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import android.os.Bundle;
-
 import com.thebluealliance.androidclient.fragments.FirebaseTickerFragment;
+
+import android.os.Bundle;
 
 public class EventTickerFragment extends FirebaseTickerFragment {
 

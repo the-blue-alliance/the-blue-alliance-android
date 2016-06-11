@@ -1,13 +1,14 @@
 package com.thebluealliance.androidclient.background.mytba;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
-
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
+
+import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 

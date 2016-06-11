@@ -1,11 +1,7 @@
 package com.thebluealliance.androidclient.fragments;
 
-
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
+import com.thebluealliance.androidclient.Interactions;
+import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamPageCombiner;
 import com.thebluealliance.androidclient.itemviews.TeamItemView;
@@ -83,10 +79,12 @@ public class TeamListFragment extends RecyclerViewFragment<List<Team>, TeamListR
     @Override
     public void initializeAdapterCreator(SmartAdapter.MultiAdaptersCreator creator) {
         creator.map(TeamViewModel.class, TeamItemView.class);
-    }
 
-    @Override
-    protected boolean shouldShowDividers() {
-        return true;
+        creator.listener((actionId, item, position, view) -> {
+            if (actionId == Interactions.TEAM_ITEM_CLICKED && item instanceof TeamViewModel) {
+                TeamViewModel team = (TeamViewModel) item;
+                startActivity(ViewTeamActivity.newInstance(getActivity(), team.getTeamKey()));
+            }
+        });
     }
 }

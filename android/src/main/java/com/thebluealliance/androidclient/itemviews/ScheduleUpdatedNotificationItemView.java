@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.itemviews;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
-import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.ScheduleUpdatedNotificationViewModel;
 
 import android.content.Context;

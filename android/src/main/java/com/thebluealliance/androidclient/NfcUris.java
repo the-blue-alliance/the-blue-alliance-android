@@ -1,6 +1,10 @@
 package com.thebluealliance.androidclient;
 
-public class NfcUris {
+public final class NfcUris {
+
+    private NfcUris() {
+        // unused
+    }
 
     // Formatted as event/EVENT_KEY
     public static final String URI_EVENT = "event/%1$s";

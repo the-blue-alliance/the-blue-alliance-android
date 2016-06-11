@@ -33,6 +33,9 @@ buildscript {
 
         // Automated Screenshot Testing
         classpath 'com.facebook.testing.screenshot:plugin:0.4.1'
+
+        // Static code check things
+        classpath 'com.noveogroup.android:check:1.2.3'
     }
 
     // Exclude the linter version that the android plugin depends on.

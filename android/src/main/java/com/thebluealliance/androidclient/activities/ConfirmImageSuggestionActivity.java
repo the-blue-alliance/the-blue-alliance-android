@@ -1,5 +1,11 @@
 package com.thebluealliance.androidclient.activities;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.TeamHelper;
+import com.thebluealliance.androidclient.imgur.ImgurSuggestionService;
+import com.thebluealliance.androidclient.imgur.ImgurUtils;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,12 +23,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.TeamHelper;
-import com.thebluealliance.androidclient.imgur.ImgurSuggestionService;
-import com.thebluealliance.androidclient.imgur.ImgurUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;

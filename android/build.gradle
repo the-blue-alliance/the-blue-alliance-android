@@ -4,6 +4,7 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'gitsemver'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'com.facebook.testing.screenshot'
+apply plugin: 'com.noveogroup.android.check'
 
 apply from: "../code_coverage.gradle"
 
@@ -228,6 +229,10 @@ repositories {
     maven {
         url "http://github.com/wada811/Android-Material-Design-Colors/raw/master/repository/"
     }
+}
+
+check {
+    abortOnError true
 }
 
 ext {

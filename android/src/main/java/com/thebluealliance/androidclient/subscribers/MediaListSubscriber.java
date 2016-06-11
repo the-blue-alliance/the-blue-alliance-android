@@ -8,8 +8,6 @@ import com.thebluealliance.androidclient.types.MediaType;
 
 import android.content.res.Resources;
 
-import android.content.res.Resources;
-
 import java.util.ArrayList;
 import java.util.List;
 

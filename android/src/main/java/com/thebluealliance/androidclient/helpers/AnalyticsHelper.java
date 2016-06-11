@@ -1,15 +1,20 @@
 package com.thebluealliance.androidclient.helpers;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+import com.thebluealliance.androidclient.Analytics;
+
 import android.content.Context;
 import android.util.Log;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.thebluealliance.androidclient.Analytics;
-
 import java.util.Map;
 
-public class AnalyticsHelper {
+public final class AnalyticsHelper {
+
+    private AnalyticsHelper() {
+        // unused
+    }
 
     public static boolean ANALYTICS_ENABLED = true;
 

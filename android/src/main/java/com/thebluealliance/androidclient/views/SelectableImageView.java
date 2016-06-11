@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.views;
 
+import com.thebluealliance.androidclient.R;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.widget.ImageView;
-
-import com.thebluealliance.androidclient.R;
 
 /**
  * @author Adam Corpstein

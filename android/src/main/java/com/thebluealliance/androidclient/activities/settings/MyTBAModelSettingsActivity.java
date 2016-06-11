@@ -1,5 +1,15 @@
 package com.thebluealliance.androidclient.activities.settings;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.activities.BaseActivity;
+import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
+import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
+import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
+import com.thebluealliance.androidclient.types.ModelType;
+
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
@@ -15,16 +25,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.activities.BaseActivity;
-import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
-import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
-import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
 public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
@@ -112,7 +112,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
 
         // Create drawable for the FAB
         Resources res = getResources();
-        Drawable backgrounds[] = new Drawable[]{res.getDrawable(R.drawable.ic_check_white_24dp), res.getDrawable(R.drawable.ic_error_white_24dp)};
+        Drawable[] backgrounds = new Drawable[]{res.getDrawable(R.drawable.ic_check_white_24dp), res.getDrawable(R.drawable.ic_error_white_24dp)};
         fabDrawable = new TransitionDrawable(backgrounds);
         fabDrawable.setCrossFadeEnabled(true);
         saveModelPreferencesFab.setImageDrawable(fabDrawable);

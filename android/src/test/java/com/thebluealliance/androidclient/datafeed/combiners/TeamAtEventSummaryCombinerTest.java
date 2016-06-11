@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.datafeed.combiners;
 
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber;

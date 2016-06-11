@@ -3,8 +3,6 @@ package com.thebluealliance.androidclient.datafeed.retrofit;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
-import okhttp3.CacheControl;
-import com.thebluealliance.androidclient.datafeed.APIv2RequestInterceptor;
 import com.thebluealliance.androidclient.models.APIStatus;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
@@ -33,8 +31,9 @@ public interface APIv2 {
 
     /**
      * Here's how we can force data to be loaded from either the cache or the web
-     * We pass a custom header (that'll be removed in {@link APIv2RequestInterceptor}) which
-     * we use to construct the proper {@link CacheControl} to be used with the request
+     * We pass a custom header (that'll be removed in
+     * {@link com.thebluealliance.androidclient.datafeed.APIv2RequestInterceptor}) which
+     * we use to construct the proper {@link okhttp3.CacheControl} to be used with the request
      */
     String TBA_CACHE_HEADER = "X-TBA-Cache";
     String TBA_CACHE_WEB = "web";

@@ -2,8 +2,6 @@ package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.Gson;
 
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
@@ -28,6 +26,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 

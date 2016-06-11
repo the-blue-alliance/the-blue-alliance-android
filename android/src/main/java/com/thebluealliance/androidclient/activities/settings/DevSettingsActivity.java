@@ -39,8 +39,8 @@ public class DevSettingsActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.dev_preferences);
 
-            Preference analytics_dryRyn = findPreference("analytics_dry_run");
-            analytics_dryRyn.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            Preference analyticsDryRun = findPreference("analytics_dry_run");
+            analyticsDryRun.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Analytics.setAnalyticsDryRun(getActivity(), (boolean) newValue);
