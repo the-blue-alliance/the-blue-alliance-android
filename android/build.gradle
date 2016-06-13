@@ -164,7 +164,6 @@ android {
     dexOptions {
         incremental true
         javaMaxHeapSize "2048M"
-        preDexLibraries = preDexEnabled && !travisBuild
     }
 
 }

@@ -18,25 +18,25 @@ case "$1" in
 
     "UNIT")
         echo "Running project unit tests"
-        ./gradlew testProdDebugProguardUnitTest --stacktrace
+        ./gradlew testProdDebugProguardUnitTest --stacktrace -PdisablePreDex
         filter_code
         ;;
 
     "COVERAGE")
         echo "Generating project code coverage"
-        ./gradlew jacocoTestReport coveralls
+        ./gradlew jacocoTestReport coveralls -PdisablePreDex
         filter_code
         ;;
 
     "CHECKSTYLE")
         echo "Running project checkstyle"
-        ./gradlew androidCheckstyle
+        ./gradlew androidCheckstyle -PdisablePreDex
         filter_code
         ;;
 
     "SCREENSHOT")
         echo "Running project screenshot tests"
-        ./gradlew verifyMode screenshotTests
+        ./gradlew verifyMode screenshotTests -PdisablePreDex
         ;;
 
     *)

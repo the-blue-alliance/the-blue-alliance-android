@@ -58,9 +58,16 @@ allprojects {
         rxAndroidVersion = '1.1.0'
         gsonVersion = '2.6.2'
         daggerVersion = '2.2'
+        preDexLibs = !project.hasProperty('disablePreDex')
+    }
 
-        travisBuild = System.getenv("TRAVIS") == "true"
-        // allows for -Dpre-dex=false to be set
-        preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
+    subprojects {
+        project.plugins.whenPluginAdded { plugin ->
+            if ("com.android.build.gradle.AppPlugin".equals(plugin.class.name)) {
+                project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
+            } else if ("com.android.build.gradle.LibraryPlugin".equals(plugin.class.name)) {
+                project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
+            }
+        }
     }
 }
