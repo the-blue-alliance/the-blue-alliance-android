@@ -26,7 +26,7 @@ import rx.Observable;
 public abstract class ModelTable<T extends BasicModel> {
 
     protected SQLiteDatabase mDb;
-    private BriteDatabase mBriteDb;
+    protected BriteDatabase mBriteDb;
 
     public ModelTable(SQLiteDatabase db, BriteDatabase briteDb) {
         mDb = db;
@@ -49,12 +49,10 @@ public abstract class ModelTable<T extends BasicModel> {
             return -1;
         }
 
-        //mDb.beginTransaction();
-        BriteDatabase.Transaction transaction = mBriteDb.newTransaction();
         long rowId = -1;
+        BriteDatabase.Transaction transaction = mBriteDb.newTransaction();
         try {
             if (!exists(in.getKey())) {
-                //rowId = mDb.insert(getTableName(), null, in.getParams());
                 rowId = mBriteDb.insert(getTableName(), in.getParams(), SQLiteDatabase.CONFLICT_IGNORE);
                 if (rowId != -1) {
                     insertCallback(in);
@@ -63,10 +61,8 @@ public abstract class ModelTable<T extends BasicModel> {
                 rowId = update(in);
             }
 
-            //mDb.setTransactionSuccessful();
             transaction.markSuccessful();
         } finally {
-            //mDb.endTransaction();
             transaction.end();
         }
         return rowId;
@@ -82,17 +78,14 @@ public abstract class ModelTable<T extends BasicModel> {
             return;
         }
 
-        //mDb.beginTransaction();
         BriteDatabase.Transaction transaction = mBriteDb.newTransaction();
         try {
             for (T in : inList) {
                 add(in);
             }
 
-            //mDb.setTransactionSuccessful();
             transaction.markSuccessful();
         } finally {
-            //mDb.endTransaction();
             transaction.end();
         }
     }
@@ -112,14 +105,8 @@ public abstract class ModelTable<T extends BasicModel> {
         }
 
         int affectedRows;
-        //mDb.beginTransaction();
         BriteDatabase.Transaction transaction = mBriteDb.newTransaction();
         try {
-            /*affectedRows = mDb.update(
-                    getTableName(),
-                    in.getParams(),
-                    getKeyColumn() + "=?",
-                    new String[]{in.getKey()});*/
             affectedRows = mBriteDb.update(
                     getTableName(),
                     in.getParams(),
@@ -129,10 +116,8 @@ public abstract class ModelTable<T extends BasicModel> {
                 updateCallback(in);
             }
 
-            //mDb.setTransactionSuccessful();
             transaction.markSuccessful();
         } finally {
-            //mDb.endTransaction();
             transaction.end();
         }
         return affectedRows;
@@ -271,26 +256,18 @@ public abstract class ModelTable<T extends BasicModel> {
             String[] columns,
             String selection,
             String[] selectionArgs) {
-        String sql = SQLiteQueryBuilder.buildQueryString(
-                true,
-                getTableName(),
-                columns,
-                selection,
-                null,
-                null,
-                null,
-                null);
-        return mBriteDb.createQuery(getTableName(), sql, selectionArgs).map((query) -> {
-            Cursor cursor = query.run();
-            List<T> models = new ArrayList<>(cursor == null ? 0 : cursor.getCount());
-            if (cursor == null || !cursor.moveToFirst()) {
-                return models;
-            }
-            do {
-                models.add(inflate(cursor));
-            } while (cursor.moveToNext());
-            return models;
-        });
+        return observableQuery(true, columns, selection, selectionArgs, null, null, null, null)
+                .map((query) -> {
+                    Cursor cursor = query.run();
+                    List<T> models = new ArrayList<>(cursor == null ? 0 : cursor.getCount());
+                    if (cursor == null || !cursor.moveToFirst()) {
+                        return models;
+                    }
+                    do {
+                        models.add(inflate(cursor));
+                    } while (cursor.moveToNext());
+                    return models;
+                });
     }
 
     /**
@@ -364,19 +341,15 @@ public abstract class ModelTable<T extends BasicModel> {
      */
     public int delete(T in) {
         int numRowsAffected;
-        //mDb.beginTransaction();
         BriteDatabase.Transaction transaction = mBriteDb.newTransaction();
         try {
-            //numRowsAffected = mDb.delete(getTableName(), getKeyColumn() + " = ?", new String[]{in.getKey()});
             numRowsAffected = mBriteDb.delete(getTableName(), getKeyColumn() + " = ?", in.getKey());
             if (numRowsAffected > 0) {
                 deleteCallback(in);
             }
 
-            //mDb.setTransactionSuccessful();
             transaction.markSuccessful();
         } finally {
-            //mDb.endTransaction();
             transaction.end();
         }
         return numRowsAffected;
@@ -392,7 +365,6 @@ public abstract class ModelTable<T extends BasicModel> {
      * (number of rows affected)
      */
     public int delete(String whereClause, String[] whereArgs) {
-        //mDb.delete(getTableName(), whereClause, whereArgs);
         return mBriteDb.delete(getTableName(), whereClause, whereArgs);
     }
 
@@ -400,7 +372,6 @@ public abstract class ModelTable<T extends BasicModel> {
      * Deletes all rows from this table.
      */
     public void deleteAllRows() {
-        //mDb.execSQL("delete from " + getTableName());
         mBriteDb.delete(getTableName(), null, null);
         deleteAllCallback();
     }
@@ -415,16 +386,12 @@ public abstract class ModelTable<T extends BasicModel> {
      */
     public int updateFields(String key, ContentValues values) {
         int returnVal = 0;
-        //mDb.beginTransaction();
         BriteDatabase.Transaction transaction = mBriteDb.newTransaction();
         try {
-            //returnVal = mDb.update(getTableName(), values, getKeyColumn() + " = ?", new String[]{key});
             returnVal = mBriteDb.update(getTableName(), values, getKeyColumn() + " = ?", key);
 
-            //mDb.setTransactionSuccessful();
             transaction.markSuccessful();
         } finally {
-            //mDb.endTransaction();
             transaction.end();
         }
         return returnVal;
