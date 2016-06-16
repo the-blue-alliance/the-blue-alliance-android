@@ -87,7 +87,7 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
         return "";
     }
 
-    public int getEventYear() throws FieldNotDefinedException {
+    public int getYear() throws FieldNotDefinedException {
         if (fields.containsKey(EventsTable.YEAR) && fields.get(EventsTable.YEAR) instanceof Integer) {
             return (Integer) fields.get(EventsTable.YEAR);
         } else {
@@ -177,36 +177,37 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
         return getKey().replaceAll("[0-9]", "");
     }
 
-    public void setEventKey(String eventKey) {
-        if (!EventHelper.validateEventKey(eventKey))
-            throw new IllegalArgumentException("Invalid event key: " + eventKey + " Should be format <year><event>, like 2014cthar");
-        fields.put(EventsTable.KEY, eventKey);
-        fields.put(EventsTable.YEAR, Integer.parseInt(eventKey.substring(0, 4)));
+    public void setKey(String key) {
+        if (!EventHelper.validateEventKey(key)) {
+            throw new IllegalArgumentException("Invalid event key: " + key + " Should be format <year><event>, like 2014cthar");
+        }
+        fields.put(EventsTable.KEY, key);
+        fields.put(EventsTable.YEAR, Integer.parseInt(key.substring(0, 4)));
     }
 
-    public String getEventName() throws FieldNotDefinedException {
+    public String getName() throws FieldNotDefinedException {
         if (fields.containsKey(EventsTable.NAME) && fields.get(EventsTable.NAME) instanceof String) {
             return (String) fields.get(EventsTable.NAME);
         }
         throw new FieldNotDefinedException("Field Database.Events.NAME is not defined");
     }
 
-    public void setEventName(String eventName) {
-        fields.put(EventsTable.NAME, eventName);
+    public void setName(String name) {
+        fields.put(EventsTable.NAME, name);
     }
 
-    public String getEventShortName() throws FieldNotDefinedException {
+    public String getShortName() throws FieldNotDefinedException {
         if (fields.containsKey(EventsTable.SHORTNAME) && fields.get(EventsTable.SHORTNAME) instanceof String) {
             String shortName = (String) fields.get(EventsTable.SHORTNAME);
             if (shortName != null && !shortName.isEmpty()) {
                 return shortName;
             }
         }
-        return getEventName();
+        return getName();
     }
 
-    public void setEventShortName(String eventShortName) {
-        fields.put(EventsTable.SHORTNAME, eventShortName);
+    public void setShortName(String shortName) {
+        fields.put(EventsTable.SHORTNAME, shortName);
     }
 
     public String getLocation() throws FieldNotDefinedException {
@@ -467,13 +468,13 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
     }
 
     public String getSearchTitles() throws FieldNotDefinedException {
-        return getKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getEventShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
+        return getKey() + "," + getYear() + " " + getName() + "," + getYear() + " " + getShortName() + "," + getYearAgnosticEventKey() + " " + getYear();
     }
 
     @Nullable @Override public EventViewModel renderToViewModel(Context context, @Nullable @RenderType Integer renderType) {
         EventViewModel model;
         try {
-            model = new EventViewModel(getKey(), getEventYear(), getEventShortName(), getDateString(), getLocation());
+            model = new EventViewModel(getKey(), getYear(), getShortName(), getDateString(), getLocation());
 
 
             switch (renderType) {

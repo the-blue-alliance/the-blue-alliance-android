@@ -97,7 +97,7 @@ public class EventsTable extends ModelTable<Event> {
         try {
             cv.put(Database.SearchEvent.KEY, event.getKey());
             cv.put(Database.SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
-            cv.put(Database.SearchEvent.YEAR, event.getEventYear());
+            cv.put(Database.SearchEvent.YEAR, event.getYear());
             mDb.insert(Database.TABLE_SEARCH_EVENTS, null, cv);
 
         } catch (BasicModel.FieldNotDefinedException e) {
@@ -114,7 +114,7 @@ public class EventsTable extends ModelTable<Event> {
             ContentValues cv = new ContentValues();
             cv.put(Database.SearchEvent.KEY, event.getKey());
             cv.put(Database.SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
-            cv.put(Database.SearchEvent.YEAR, event.getEventYear());
+            cv.put(Database.SearchEvent.YEAR, event.getYear());
 
             mDb.update(Database.TABLE_SEARCH_EVENTS, cv, Database.SearchEvent.KEY + "=?", new String[]{event.getKey()});
         } catch (BasicModel.FieldNotDefinedException e) {

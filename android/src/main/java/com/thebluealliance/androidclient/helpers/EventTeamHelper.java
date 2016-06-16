@@ -15,7 +15,7 @@ public final class EventTeamHelper {
     public static EventTeam fromEvent(String teamKey, Event in) throws BasicModel.FieldNotDefinedException {
         EventTeam eventTeam = new EventTeam();
         eventTeam.setEventKey(in.getKey());
-        eventTeam.setYear(in.getEventYear());
+        eventTeam.setYear(in.getYear());
         eventTeam.setCompWeek(in.getCompetitionWeek());
         eventTeam.setTeamKey(teamKey);
         eventTeam.setKey(EventTeamHelper.generateKey(in.getKey(), teamKey));

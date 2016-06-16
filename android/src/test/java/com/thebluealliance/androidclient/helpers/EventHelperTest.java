@@ -364,7 +364,7 @@ public class EventHelperTest {
 
     private static Event mockRegularEvent(EventType type, int year, int week) throws BasicModel.FieldNotDefinedException {
         Event event = mockEventType(type);
-        when(event.getEventYear()).thenReturn(year);
+        when(event.getYear()).thenReturn(year);
         when(event.getCompetitionWeek()).thenReturn(week);
         return event;
     }
