@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.models.Favorite;
@@ -17,9 +18,11 @@ public class FavoritesTable {
             MODEL_ENUM = "model_enum";
 
     private SQLiteDatabase mDb;
+    private BriteDatabase mBriteDb;
 
-    public FavoritesTable(SQLiteDatabase db) {
-        this.mDb = db;
+    public FavoritesTable(SQLiteDatabase db, BriteDatabase briteDb) {
+        mDb = db;
+        mBriteDb = briteDb;
     }
 
     public long add(Favorite in) {

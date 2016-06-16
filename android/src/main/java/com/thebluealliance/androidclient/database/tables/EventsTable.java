@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
@@ -39,11 +40,8 @@ public class EventsTable extends ModelTable<Event> {
             STATS = "stats",
             WEBSITE = "website";
 
-    private SQLiteDatabase mDb;
-
-    public EventsTable(SQLiteDatabase db) {
-        super(db);
-        mDb = db;
+    public EventsTable(SQLiteDatabase db, BriteDatabase briteDb) {
+        super(db, briteDb);
     }
 
     /**

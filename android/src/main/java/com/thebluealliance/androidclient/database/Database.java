@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.database;
 
+import com.squareup.sqlbrite.BriteDatabase;
+import com.squareup.sqlbrite.SqlBrite;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
@@ -23,6 +25,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.Map;
+
+import rx.schedulers.Schedulers;
 
 
 //SUPPRESS CHECKSTYLE FinalClass
@@ -185,6 +189,7 @@ public class Database extends SQLiteOpenHelper {
             + NotificationsTable.MSG_DATA + " TEXT DEFAULT '')";
 
     protected SQLiteDatabase mDb;
+    protected BriteDatabase mBriteDb;
     private static Database sDatabaseInstance;
 
     private TeamsTable mTeamsTable;
@@ -203,17 +208,18 @@ public class Database extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
         mDb = getWritableDatabase();
-        mTeamsTable = new TeamsTable(mDb);
-        mEventsTable = new EventsTable(mDb);
-        mAwardsTable = new AwardsTable(mDb);
-        mMatchesTable = new MatchesTable(mDb);
-        mMediasTable = new MediasTable(mDb);
-        mEventTeamsTable = new EventTeamsTable(mDb);
-        mDistrictsTable = new DistrictsTable(mDb);
-        mDistrictTeamsTable = new DistrictTeamsTable(mDb);
-        mFavoritesTable = new FavoritesTable(mDb);
-        mSubscriptionsTable = new SubscriptionsTable(mDb);
-        mNotificationsTable = new NotificationsTable(mDb);
+        mBriteDb = SqlBrite.create().wrapDatabaseHelper(this, Schedulers.io());
+        mTeamsTable = new TeamsTable(mDb, mBriteDb);
+        mEventsTable = new EventsTable(mDb, mBriteDb);
+        mAwardsTable = new AwardsTable(mDb, mBriteDb);
+        mMatchesTable = new MatchesTable(mDb, mBriteDb);
+        mMediasTable = new MediasTable(mDb, mBriteDb);
+        mEventTeamsTable = new EventTeamsTable(mDb, mBriteDb);
+        mDistrictsTable = new DistrictsTable(mDb, mBriteDb);
+        mDistrictTeamsTable = new DistrictTeamsTable(mDb, mBriteDb);
+        mFavoritesTable = new FavoritesTable(mDb, mBriteDb);
+        mSubscriptionsTable = new SubscriptionsTable(mDb, mBriteDb);
+        mNotificationsTable = new NotificationsTable(mDb, mBriteDb);
     }
 
     public static synchronized Database getInstance(Context context) {

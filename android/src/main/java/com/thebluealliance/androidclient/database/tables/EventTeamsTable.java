@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -21,11 +22,8 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
             YEAR = "year",
             COMPWEEK = "week";
 
-    private SQLiteDatabase mDb;
-
-    public EventTeamsTable(SQLiteDatabase db) {
-        super(db);
-        this.mDb = db;
+    public EventTeamsTable(SQLiteDatabase db, BriteDatabase briteDb) {
+        super(db, briteDb);
     }
 
     /**

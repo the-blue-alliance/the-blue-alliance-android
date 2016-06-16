@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
@@ -26,7 +27,8 @@ public final class DatabaseMocker {
 
     public static TeamsTable mockTeamsTable(Database database) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        TeamsTable table = new TeamsTable(db);
+        BriteDatabase briteDb = mock(BriteDatabase.class);
+        TeamsTable table = new TeamsTable(db, briteDb);
         when(database.getTeamsTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
@@ -34,21 +36,25 @@ public final class DatabaseMocker {
 
     public static EventsTable mockEventsTable(Database database) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        EventsTable table = new EventsTable(db);
+        BriteDatabase briteDb = mock(BriteDatabase.class);
+        EventsTable table = new EventsTable(db, briteDb);
         when(database.getEventsTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
     }
 
     public static NotificationsTable mockNotificationsTable(Database database) {
-        NotificationsTable table = new NotificationsTable(mock(SQLiteDatabase.class));
+        SQLiteDatabase db = mock(SQLiteDatabase.class);
+        BriteDatabase briteDb = mock(BriteDatabase.class);
+        NotificationsTable table = new NotificationsTable(db, briteDb);
         when(database.getNotificationsTable()).thenReturn(table);
         return table;
     }
 
     public static AwardsTable mockAwardsTable(Database database) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        AwardsTable table = new AwardsTable(db);
+        BriteDatabase briteDb = mock(BriteDatabase.class);
+        AwardsTable table = new AwardsTable(db, briteDb);
         when(database.getAwardsTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
@@ -56,7 +62,8 @@ public final class DatabaseMocker {
 
     public static DistrictsTable mockDistrictsTable(Database database) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        DistrictsTable table = new DistrictsTable(db);
+        BriteDatabase briteDb = mock(BriteDatabase.class);
+        DistrictsTable table = new DistrictsTable(db, briteDb);
         when(database.getDistrictsTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
@@ -64,7 +71,8 @@ public final class DatabaseMocker {
 
     public static DistrictTeamsTable mockDistrictTeamsTable(Database database) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        DistrictTeamsTable table = new DistrictTeamsTable(db);
+        BriteDatabase briteDb = mock(BriteDatabase.class);
+        DistrictTeamsTable table = new DistrictTeamsTable(db, briteDb);
         when(database.getDistrictTeamsTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
@@ -72,7 +80,8 @@ public final class DatabaseMocker {
 
     public static EventTeamsTable mockEventTeamsTable(Database database) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        EventTeamsTable table = new EventTeamsTable(db);
+        BriteDatabase briteDb = mock(BriteDatabase.class);
+        EventTeamsTable table = new EventTeamsTable(db, briteDb);
         when(database.getEventTeamsTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
@@ -80,7 +89,8 @@ public final class DatabaseMocker {
 
     public static MatchesTable mockMatchesTable(Database database) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        MatchesTable table = new MatchesTable(db);
+        BriteDatabase briteDb = mock(BriteDatabase.class);
+        MatchesTable table = new MatchesTable(db, briteDb);
         when(database.getMatchesTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
@@ -88,7 +98,8 @@ public final class DatabaseMocker {
 
     public static MediasTable mockMediasTable(Database database) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        MediasTable table = new MediasTable(db);
+        BriteDatabase briteDb = mock(BriteDatabase.class);
+        MediasTable table = new MediasTable(db, briteDb);
         when(database.getMediasTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;

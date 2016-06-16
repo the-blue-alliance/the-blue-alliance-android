@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.models.Subscription;
@@ -18,9 +19,11 @@ public class SubscriptionsTable {
             NOTIFICATION_SETTINGS = "settings";
 
     private SQLiteDatabase mDb;
+    private BriteDatabase mBriteDb;
 
-    public SubscriptionsTable(SQLiteDatabase db) {
-        this.mDb = db;
+    public SubscriptionsTable(SQLiteDatabase db, BriteDatabase briteDb) {
+        mDb = db;
+        mBriteDb = briteDb;
     }
 
     public long add(Subscription in) {

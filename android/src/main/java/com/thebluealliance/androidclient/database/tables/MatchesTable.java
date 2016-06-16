@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -22,11 +23,8 @@ public class MatchesTable extends ModelTable<Match> {
             VIDEOS = "videos",
             BREAKDOWN = "breakdown";
 
-    private SQLiteDatabase mDb;
-
-    public MatchesTable(SQLiteDatabase db){
-        super(db);
-        this.mDb = db;
+    public MatchesTable(SQLiteDatabase db, BriteDatabase briteDb) {
+        super(db, briteDb);
     }
 
     @Override

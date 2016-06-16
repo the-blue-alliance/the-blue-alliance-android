@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -24,9 +25,11 @@ public class NotificationsTable {
             MSG_DATA = "msg_data";
 
     private SQLiteDatabase mDb;
+    private BriteDatabase mBriteDb;
 
-    public NotificationsTable(SQLiteDatabase db) {
-        this.mDb = db;
+    public NotificationsTable(SQLiteDatabase db, BriteDatabase briteDb) {
+        mDb = db;
+        mBriteDb = briteDb;
     }
 
     public void add(StoredNotification... in) {

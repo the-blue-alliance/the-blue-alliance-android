@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -15,11 +16,8 @@ public class MediasTable extends ModelTable<Media> {
             DETAILS = "details",
             YEAR = "year";
 
-    private SQLiteDatabase mDb;
-
-    public MediasTable(SQLiteDatabase db){
-        super(db);
-        this.mDb = db;
+    public MediasTable(SQLiteDatabase db, BriteDatabase briteDb) {
+        super(db, briteDb);
     }
 
     @Override

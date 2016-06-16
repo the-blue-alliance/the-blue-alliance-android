@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -19,11 +20,8 @@ public class AwardsTable extends ModelTable<Award> {
             YEAR = "year",
             WINNERS = "winners";
 
-    private SQLiteDatabase mDb;
-
-    public AwardsTable(SQLiteDatabase db){
-        super(db);
-        this.mDb = db;
+    public AwardsTable(SQLiteDatabase db, BriteDatabase briteDb) {
+        super(db, briteDb);
     }
 
     @Override
