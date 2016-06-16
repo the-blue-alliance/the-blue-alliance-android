@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.fragments.mytba;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPanel;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
@@ -17,6 +18,8 @@ import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -74,11 +77,14 @@ public class MyTBASettingsFragment extends PreferenceFragment {
         // Create the list of preferences
         new CreateSubscriptionPanel(getActivity(), this, savedStateBundle, modelType).execute(modelKey);
 
-        // Remove padding from the list view
+        // Setup padding on the view. Padding is needed at the bottom to account for the FAB.
         if (getView() != null) {
-            View listView = getView().findViewById(android.R.id.list);
+            ListView listView = (ListView) getView().findViewById(android.R.id.list);
             if (listView != null) {
-                listView.setPadding(0, 0, 0, 0);
+                listView.setPadding(0, 0, 0, getResources().getDimensionPixelSize(R.dimen.fab_list_padding));
+                listView.setClipToPadding(false);
+                // Scrollbar gets janky with padding in a listview. Just hide it.
+                listView.setVerticalScrollBarEnabled(false);
             }
         }
     }

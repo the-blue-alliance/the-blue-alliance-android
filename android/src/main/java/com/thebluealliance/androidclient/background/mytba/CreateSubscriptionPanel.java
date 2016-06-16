@@ -109,10 +109,6 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
                 preference.setPersistent(false);
                 notificationSettingsCategory.addPreference(preference);
             }
-
-            Preference buffer = new Preference(context);
-            buffer.setLayoutResource(R.layout.buffer_preference);
-            notificationSettingsCategory.addPreference(buffer);
         }
         fragment.setPreferencesLoaded();
 
