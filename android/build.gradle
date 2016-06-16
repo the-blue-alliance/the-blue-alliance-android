@@ -261,6 +261,7 @@ dependencies {
     compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     compile "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    compile 'com.squareup.sqlbrite:sqlbrite:0.6.3'
 
     compile "com.google.dagger:dagger:${daggerVersion}"
     apt "com.google.dagger:dagger-compiler:${daggerVersion}"
