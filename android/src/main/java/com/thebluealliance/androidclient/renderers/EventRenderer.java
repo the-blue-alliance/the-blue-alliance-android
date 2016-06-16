@@ -51,8 +51,8 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
         try {
             return new EventListElement(
               event.getKey(),
-              event.getEventYear(),
-              event.getEventShortName(),
+              event.getYear(),
+              event.getShortName(),
               event.getDateString(),
               event.getLocation(),
               safeMyTba);
@@ -71,7 +71,7 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
             int i = 1;
             for (JsonElement webcast : event.getWebcasts()) {
                 try {
-                    webcasts.add(new WebcastListElement(event.getKey(), event.getEventShortName(), webcast.getAsJsonObject(), i));
+                    webcasts.add(new WebcastListElement(event.getKey(), event.getShortName(), webcast.getAsJsonObject(), i));
                     i++;
                 } catch (BasicModel.FieldNotDefinedException e) {
                     Log.w(Constants.LOG_TAG, "Missing fields for rendering event webcasts: KEY, SHORTNAME");

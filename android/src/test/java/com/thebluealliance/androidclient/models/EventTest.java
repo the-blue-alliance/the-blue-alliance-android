@@ -35,14 +35,14 @@ public class EventTest {
         assertEquals(mEvent.getWebsite(), "http://www.nefirst.org/");
         assertTrue(mEvent.isOfficial());
         assertEquals(mEvent.getCompetitionWeek(), 5);
-        assertEquals(mEvent.getEventName(), "NE District - Hartford Event");
-        assertEquals(mEvent.getEventShortName(), "Hartford");
+        assertEquals(mEvent.getName(), "NE District - Hartford Event");
+        assertEquals(mEvent.getShortName(), "Hartford");
         assertEquals(mEvent.getDistrictEnum(),
                      DistrictType.NEW_ENGLAND.ordinal());
         assertEquals(mEvent.getVenue(), "Hartford Public High School\n55 Forest Street\nHartford, CT 06105\nUSA");
         assertEquals(mEvent.getLocation(), "Hartford, CT, USA");
         assertEquals(mEvent.getYearAgnosticEventKey(), "cthar");
-        assertEquals(mEvent.getEventYear(), 2015);
+        assertEquals(mEvent.getYear(), 2015);
         assertEquals(mEvent.getEventType(),
                      EventType.DISTRICT);
         assertFalse(mEvent.getWebcasts().isJsonNull());

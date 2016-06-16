@@ -27,10 +27,10 @@ public class EventListElement extends ListElement implements Serializable {
     public EventListElement(Event event) throws BasicModel.FieldNotDefinedException {
         super(event.getKey());
         eventKey = "";
-        eventName = event.getEventName();
+        eventName = event.getName();
         eventDates = event.getDateString();
         eventLocation = event.getLocation();
-        eventYear = event.getEventYear();
+        eventYear = event.getYear();
         this.showMyTba = false;
     }
 

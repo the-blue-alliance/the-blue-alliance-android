@@ -56,7 +56,7 @@ public class TeamAtDistrictSummarySubscriber
         if (mAPIData.hasField(DistrictTeamsTable.EVENT1_KEY)
                 && mAPIData.hasField(DistrictTeamsTable.EVENT1_POINTS)) {
             Event event1 = eventsTable.get(mAPIData.getEvent1Key());
-            String event1Name = event1 != null ? event1.getEventShortName() : mAPIData.getEvent1Key();
+            String event1Name = event1 != null ? event1.getShortName() : mAPIData.getEvent1Key();
             mDataToBind.add(new LabelValueDetailListItem(event1Name,
                     String.format(
                             mResources.getString(R.string.district_points_format), mAPIData.getEvent1Points()),
@@ -66,7 +66,7 @@ public class TeamAtDistrictSummarySubscriber
         if (mAPIData.hasField(DistrictTeamsTable.EVENT2_KEY)
                 && mAPIData.hasField(DistrictTeamsTable.EVENT2_POINTS)) {
             Event event2 = eventsTable.get(mAPIData.getEvent2Key());
-            String event2Name = event2 != null ? event2.getEventShortName() : mAPIData.getEvent2Key();
+            String event2Name = event2 != null ? event2.getShortName() : mAPIData.getEvent2Key();
             mDataToBind.add(new LabelValueDetailListItem(event2Name,
                     String.format(
                             mResources.getString(R.string.district_points_format), mAPIData.getEvent2Points()),
@@ -76,7 +76,7 @@ public class TeamAtDistrictSummarySubscriber
         if (mAPIData.hasField(DistrictTeamsTable.CMP_KEY)
                 && mAPIData.hasField(DistrictTeamsTable.CMP_POINTS)) {
             Event districtCmp = eventsTable.get(mAPIData.getCmpKey());
-            String cmpName = districtCmp != null ? districtCmp.getEventShortName() : mAPIData.getCmpKey();
+            String cmpName = districtCmp != null ? districtCmp.getShortName() : mAPIData.getCmpKey();
             mDataToBind.add(new LabelValueDetailListItem(cmpName,
                     String.format(
                             mResources.getString(R.string.district_points_format), mAPIData.getCmpPoints()),

@@ -39,8 +39,8 @@ public class TBAApiTest {
             assertEquals(event.getKey(), "2014ctgro");
             assertEquals(event.getStartDate(), new Date(114, 2, 8));
             assertEquals(event.getEndDate(), new Date(114, 2, 9));
-            assertEquals(event.getEventName(), "Groton District Event");
-            assertEquals(event.getEventShortName(), "Groton");
+            assertEquals(event.getName(), "Groton District Event");
+            assertEquals(event.getShortName(), "Groton");
             assertEquals(event.isOfficial(), true);
             assertEquals(event.getLocation(), "Groton, CT, USA");
             assertEquals(event.getEventType(), EventType.DISTRICT);
@@ -70,7 +70,7 @@ public class TBAApiTest {
             assertEquals(team.getWebsite(), "http://www.uberbots.org");
             assertEquals(team.getFullName(), "UTC Fire and Security & Avon High School");
             assertEquals(team.getLocation(), "Avon, CT, USA");
-            assertEquals((int) team.getTeamNumber(), 1124);
+            assertEquals((int) team.getNumber(), 1124);
             assertEquals(team.getKey(), "frc1124");
             assertEquals(team.getNickname(), "ÜberBots");
         } catch (BasicModel.FieldNotDefinedException e) {

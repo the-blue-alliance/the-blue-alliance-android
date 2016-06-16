@@ -74,8 +74,8 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
                     }
                     text = String.format("%1$s @ %2$d %3$s",
                       eTeam.getNickname(),
-                      eEvent.getEventYear(),
-                      eEvent.getEventShortName());
+                      eEvent.getYear(),
+                      eEvent.getShortName());
                     return new ModelListElement(text, key, type);
                 case DISTRICT:
                     DistrictListElement element = mDistrictRenderer.renderFromKey(

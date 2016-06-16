@@ -17,7 +17,7 @@ public class TeamInfoSubscriber extends BaseAPISubscriber<Team, TeamInfoBinder.M
         mDataToBind.teamKey = mAPIData.getKey();
         mDataToBind.fullName = mAPIData.getFullName();
         mDataToBind.nickname = mAPIData.getNickname();
-        mDataToBind.teamNumber = mAPIData.getTeamNumber();
+        mDataToBind.teamNumber = mAPIData.getNumber();
         mDataToBind.location = mAPIData.getLocation();
         if (mAPIData.getParams().containsKey(TeamsTable.WEBSITE)) {
             mDataToBind.website = mAPIData.getWebsite();

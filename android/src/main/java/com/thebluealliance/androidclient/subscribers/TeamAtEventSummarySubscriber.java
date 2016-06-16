@@ -84,11 +84,11 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
                 String.format("%1$d - %2$d - %3$d", record[0], record[1], record[2]);
 
         Event event = mAPIData.event;
-        int year = event.getEventYear();
+        int year = event.getYear();
         boolean activeEvent = event.isHappeningNow();
         String actionBarTitle =
                 String.format(mResources.getString(R.string.team_actionbar_title), mTeamKey.substring(3));
-        String actionBarSubtitle = String.format("@ %1$d %2$s", year, event.getEventShortName());
+        String actionBarSubtitle = String.format("@ %1$d %2$s", year, event.getShortName());
         EventBus.getDefault().post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
 
         if (activeEvent) {
@@ -164,7 +164,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
 
         try {
             if (event.isChampsEvent()
-                    && event.getEventYear() == 2016
+                    && event.getYear() == 2016
                     && PitLocationHelper.shouldShowPitLocation(mContext, mTeamKey)) {
                 PitLocationHelper.TeamPitLocation location = PitLocationHelper.getPitLocation(mContext, mTeamKey);
                 if (location != null) {
