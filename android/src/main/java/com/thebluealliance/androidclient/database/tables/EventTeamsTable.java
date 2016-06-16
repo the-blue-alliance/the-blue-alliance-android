@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import com.squareup.sqlbrite.BriteDatabase;
+import com.squareup.sqlbrite.SqlBrite;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -13,6 +14,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.Observable;
 
 public class EventTeamsTable extends ModelTable<EventTeam> {
 
@@ -33,7 +36,13 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
         // INNER JOIN EventTeams + Events on KEY, select where teamKey and year = args
         String query = String.format("SELECT %1$s FROM %2$s JOIN %3$s ON %2$s.%4$s = %3$s.%5$s "
                         + "WHERE %2$s.%6$s = ? AND %2$s.%7$s = ?",
-                EventsTable.getAllColumnsForJoin(), Database.TABLE_EVENTTEAMS, Database.TABLE_EVENTS, EVENTKEY, EventsTable.KEY, TEAMKEY, YEAR);
+                EventsTable.getAllColumnsForJoin(),
+                Database.TABLE_EVENTTEAMS,
+                Database.TABLE_EVENTS,
+                EVENTKEY, EventsTable.KEY,
+                TEAMKEY,
+                YEAR);
+
         Cursor cursor = mDb.rawQuery(query, new String[]{teamKey, Integer.toString(year)});
         ArrayList<Event> results = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
@@ -44,6 +53,35 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
         return results;
     }
 
+    public Observable<List<Event>> getEventsObservable(String teamKey, int year) {
+        // INNER JOIN EventTeams + Events on KEY, select where teamKey and year = args
+        String sql = String.format("SELECT %1$s FROM %2$s JOIN %3$s ON %2$s.%4$s = %3$s.%5$s "
+                        + "WHERE %2$s.%6$s = ? AND %2$s.%7$s = ?",
+                EventsTable.getAllColumnsForJoin(),
+                Database.TABLE_EVENTTEAMS,
+                Database.TABLE_EVENTS,
+                EVENTKEY,
+                EventsTable.KEY,
+                TEAMKEY,
+                YEAR);
+
+        List<String> tables = new ArrayList<>();
+        tables.add(Database.TABLE_EVENTTEAMS);
+        tables.add(Database.TABLE_EVENTS);
+
+        Observable<SqlBrite.Query> briteQuery = mBriteDb.createQuery(tables, sql, teamKey, Integer.toString(year));
+        return briteQuery.map(query -> {
+            Cursor cursor = query.run();
+            ArrayList<Event> results = new ArrayList<>();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    results.add(ModelInflater.inflateEvent(cursor));
+                } while (cursor.moveToNext());
+            }
+            return results;
+        });
+    }
+
     /**
      * Get a list of {@link Team} models for a given event
      */
@@ -51,7 +89,11 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
         // INNER JOIN EventTeams + TEAMS on KEY, select where eventKey = args
         String query = String.format("SELECT * FROM %1$s JOIN %2$s ON %1$s.%3$s = %2$s.%4$s "
                         + "WHERE %1$s.%3$s = ?",
-                Database.TABLE_EVENTTEAMS, Database.TABLE_TEAMS, TEAMKEY, TeamsTable.KEY);
+                Database.TABLE_EVENTTEAMS,
+                Database.TABLE_TEAMS,
+                TEAMKEY,
+                TeamsTable.KEY);
+
         Cursor cursor = mDb.rawQuery(query, new String[]{eventKey});
         ArrayList<Team> results = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
@@ -60,6 +102,32 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
             } while (cursor.moveToNext());
         }
         return results;
+    }
+
+    public Observable<List<Team>> getTeamsObservable(String eventKey) {
+        // INNER JOIN EventTeams + TEAMS on KEY, select where eventKey = args
+        String sql = String.format("SELECT * FROM %1$s JOIN %2$s ON %1$s.%3$s = %2$s.%4$s "
+                        + "WHERE %1$s.%3$s = ?",
+                Database.TABLE_EVENTTEAMS,
+                Database.TABLE_TEAMS,
+                TEAMKEY,
+                TeamsTable.KEY);
+
+        List<String> tables = new ArrayList<>();
+        tables.add(Database.TABLE_EVENTTEAMS);
+        tables.add(Database.TABLE_EVENTS);
+
+        Observable<SqlBrite.Query> briteQuery = mBriteDb.createQuery(tables, sql, eventKey);
+        return briteQuery.map(query -> {
+            Cursor cursor = query.run();
+            ArrayList<Team> results = new ArrayList<>();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    results.add(ModelInflater.inflateTeam(cursor));
+                } while (cursor.moveToNext());
+            }
+            return results;
+        });
     }
 
     @Override
