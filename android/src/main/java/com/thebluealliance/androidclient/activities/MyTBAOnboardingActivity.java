@@ -98,7 +98,7 @@ public class MyTBAOnboardingActivity extends AppCompatActivity implements View.O
                     finish();
                 } else {
                     // On other pages, the "continue" button becomes a "skip intro" button
-                    mMyTBAOnboardingViewPager.scrollToLoginPage();
+                    mMyTBAOnboardingViewPager.scrollToLoginPage(true);
                 }
                 break;
         }
