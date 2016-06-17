@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import com.squareup.sqlbrite.BriteDatabase;
+import com.squareup.sqlbrite.SqlBrite;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -8,9 +9,12 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.Observable;
 
 public class NotificationsTable {
     public static final String
@@ -33,12 +37,12 @@ public class NotificationsTable {
     }
 
     public void add(StoredNotification... in) {
-        mDb.beginTransaction();
+        BriteDatabase.Transaction transaction = mBriteDb.newTransaction();
         for (StoredNotification notification : in) {
-            mDb.insert(Database.TABLE_NOTIFICATIONS, null, notification.getParams());
+            mBriteDb.insert(Database.TABLE_NOTIFICATIONS, notification.getParams());
         }
-        mDb.setTransactionSuccessful();
-        mDb.endTransaction();
+        transaction.markSuccessful();
+        transaction.end();
     }
 
     public List<StoredNotification> get() {
@@ -53,6 +57,21 @@ public class NotificationsTable {
         return out;
     }
 
+    public Observable<List<StoredNotification>> getObservable() {
+        Observable<SqlBrite.Query> briteQuery = mBriteDb.createQuery(Database.TABLE_NOTIFICATIONS, "SELECT * FROM " + Database.TABLE_NOTIFICATIONS + " ORDER BY " + ID + " DESC");
+        return briteQuery.map(query -> {
+            Cursor cursor = query.run();
+            List<StoredNotification> out = new ArrayList<>();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    out.add(ModelInflater.inflateStoredNotification(cursor));
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+            return out;
+        });
+    }
+
     public List<StoredNotification> getActive() {
         ArrayList<StoredNotification> out = new ArrayList<>();
         Cursor cursor = mDb.query(Database.TABLE_NOTIFICATIONS, null, ACTIVE + " = 1", null, null, null, ID + " DESC", null);
@@ -65,25 +84,50 @@ public class NotificationsTable {
         return out;
     }
 
+    public Observable<List<StoredNotification>> getActiveObservable() {
+        Observable<SqlBrite.Query> briteQuery = mBriteDb.createQuery(Database.TABLE_NOTIFICATIONS, "SELECT * FROM " + Database.TABLE_NOTIFICATIONS + " WHERE " + ACTIVE + " = 1 ORDER BY " + ID + " DESC");
+        return briteQuery.map(query -> {
+            Cursor cursor = query.run();
+            List<StoredNotification> out = new ArrayList<>();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    out.add(ModelInflater.inflateStoredNotification(cursor));
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+            return out;
+        });
+    }
+
     public void dismissAll() {
         ContentValues cv = new ContentValues();
         cv.put(ACTIVE, 0);
-        mDb.update(Database.TABLE_NOTIFICATIONS, cv, ACTIVE + "= 1", null);
+        mBriteDb.update(Database.TABLE_NOTIFICATIONS, cv, ACTIVE + " = 1");
     }
 
     private void delete(int id) {
-        mDb.delete(Database.TABLE_NOTIFICATIONS, ID + " = ? ", new String[]{Integer.toString(id)});
+        mBriteDb.delete(Database.TABLE_NOTIFICATIONS, ID + " = ?", String.valueOf(id));
     }
 
     // Only allow 50 notifications to be stored
     public void prune() {
-        mDb.beginTransaction();
+        BriteDatabase.Transaction transaction = mBriteDb.newTransaction();
         try {
-            Cursor cursor = mDb.query(Database.TABLE_NOTIFICATIONS, new String[]{ID}, "", new String[]{}, null, null, ID + " ASC", null);
+            String sql = SQLiteQueryBuilder.buildQueryString(
+                    false,
+                    Database.TABLE_NOTIFICATIONS,
+                    new String[]{ID},
+                    "",
+                    null,
+                    null,
+                    ID + " ASC",
+                    null);
+            Cursor cursor = mBriteDb.query(sql);
+
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     for (int i = cursor.getCount(); i > 50; i--) {
-                        mDb.delete(Database.TABLE_NOTIFICATIONS, ID + " = ?", new String[]{cursor.getString(cursor.getColumnIndex(ID))});
+                        delete(cursor.getInt(cursor.getColumnIndex(ID)));
                         if (!cursor.moveToNext()) {
                             break;
                         }
@@ -91,9 +135,9 @@ public class NotificationsTable {
                 }
                 cursor.close();
             }
-            mDb.setTransactionSuccessful();
+            transaction.markSuccessful();
         } finally {
-            mDb.endTransaction();
+            transaction.end();
         }
     }
 }
