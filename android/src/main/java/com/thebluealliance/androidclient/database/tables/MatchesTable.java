@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import com.squareup.sqlbrite.BriteDatabase;
+import com.squareup.sqlbrite.SqlBrite;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -8,9 +9,12 @@ import com.thebluealliance.androidclient.models.Match;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.Observable;
 
 public class MatchesTable extends ModelTable<Match> {
     public static final String KEY = "key",
@@ -53,5 +57,25 @@ public class MatchesTable extends ModelTable<Match> {
             models.add(inflate(cursor));
         } while (cursor.moveToNext());
         return models;
+    }
+
+    public Observable<List<Match>> getTeamAtEventMatchesObservable(String teamKey, String eventKey) {
+        String sql = String.format("SELECT * FROM %1$s WHERE %2$s = ? AND %3$s LIKE '%%\"%4$s\"%%'",
+                Database.TABLE_MATCHES,
+                EVENT,
+                ALLIANCES,
+                teamKey);
+        Observable<SqlBrite.Query> briteQuery = mBriteDb.createQuery(getTableName(), sql, eventKey);
+        return briteQuery.map(query -> {
+            Cursor cursor = query.run();
+            List<Match> models = new ArrayList<>(cursor == null ? 0 : cursor.getCount());
+            if (cursor == null || !cursor.moveToFirst()) {
+                return models;
+            }
+            do {
+                models.add(inflate(cursor));
+            } while (cursor.moveToNext());
+            return models;
+        });
     }
 }
