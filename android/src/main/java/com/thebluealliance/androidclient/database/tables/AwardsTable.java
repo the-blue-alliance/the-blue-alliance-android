@@ -60,7 +60,7 @@ public class AwardsTable extends ModelTable<Award> {
 
     public Observable<List<Award>> getTeamAtEventAwardsObservable(String teamKey, String eventKey) {
         Observable<SqlBrite.Query> briteQuery = mBriteDb.createQuery(getTableName(), "SELECT * FROM `" + Database.TABLE_AWARDS + "` WHERE `" + EVENTKEY
-                + "` = ? AND `" + WINNERS + "` LIKE '%" + teamKey + "," + "%'", eventKey);
+                + "` = ? AND `" + WINNERS + "` LIKE '%\"" + teamKey + "\"%'", eventKey);
         return briteQuery.map(query -> {
             Cursor cursor = query.run();
             List<Award> models = new ArrayList<>(cursor == null ? 0 : cursor.getCount());
