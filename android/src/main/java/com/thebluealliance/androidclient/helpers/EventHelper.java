@@ -121,7 +121,7 @@ public final class EventHelper {
                  * Week 1 is actually Week 0.5, everything else is one less
                  * See http://www.usfirst.org/roboticsprograms/frc/blog-The-Palmetto-Regional
                  */
-                if (e.getEventYear() == 2016) {
+                if (e.getYear() == 2016) {
                     int week = e.getCompetitionWeek();
                     if (week == 1) {
                         return String.format(FLOAT_REGIONAL_LABEL, 0.5);
@@ -250,7 +250,7 @@ public final class EventHelper {
         String lastHeader = null, currentHeader = null;
         for (Event event : events) {
             try {
-                currentHeader = weekLabelFromNum(event.getEventYear(), event.getCompetitionWeek());
+                currentHeader = weekLabelFromNum(event.getYear(), event.getCompetitionWeek());
                 if (!currentHeader.equals(lastHeader)) {
                     output.add(new ListSectionHeaderViewModel(currentHeader + " Events"));
                 }

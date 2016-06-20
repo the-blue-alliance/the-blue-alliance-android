@@ -30,6 +30,6 @@ public class TeamTest {
         assertEquals("UberBots", mTeam.getNickname());
         assertEquals("http://www.uberbots.org", mTeam.getWebsite());
         assertEquals("Avon, Connecticut, USA", mTeam.getLocation());
-        assertEquals(1124, (int)mTeam.getTeamNumber());
+        assertEquals(1124, (int)mTeam.getNumber());
     }
 }
