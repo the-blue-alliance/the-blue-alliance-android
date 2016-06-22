@@ -7,6 +7,8 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
+import com.thebluealliance.androidclient.helpers.RankingsHelper;
+import com.thebluealliance.androidclient.helpers.StatsHelper;
 import com.thebluealliance.androidclient.helpers.WebcastHelper;
 import com.thebluealliance.androidclient.listeners.EventInfoContainerClickListener;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
@@ -25,6 +27,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -205,6 +208,19 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
             hideNextMatch();
         }
 
+        if (topTeamsContainer != null && topTeams != null && RankingsHelper.canGenerateTopRanksString(data.rankings)) {
+            topTeamsContainer.setVisibility(View.VISIBLE);
+            topTeamsContainer.setOnClickListener(mInfoClickListener);
+            topTeams.setText(Html.fromHtml(RankingsHelper.generateTopRanksString(data.rankings, 5)));
+        }
+
+        if (topOprsContainer != null && topOprs != null && StatsHelper.canGenerateTopOprsString(data.stats)) {
+            topOprsContainer.setVisibility(View.VISIBLE);
+            topOprsContainer.setOnClickListener(mInfoClickListener);
+            topOprs.setText(Html.fromHtml(StatsHelper.generateTopOprsString(data.stats, 5)));
+        }
+
+
         content.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
 
@@ -266,6 +282,8 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         public String eventWebsite;
         public boolean isLive;
         public JsonArray webcasts;
+        public JsonArray rankings;
+        public JsonObject stats;
         public Match lastMatch;
         public Match nextMatch;
     }
@@ -303,53 +321,6 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         }
         nextMatchContainer.setVisibility(View.GONE);
     }
-
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onLiveEventMatchesUpdated(LiveEventMatchUpdateEvent event) {
-       /* AndroidSchedulers.mainThread().createWorker().schedule(() -> {
-            if (mIsLive && event != null && event.getLastMatch() != null) {
-                Log.d(Constants.LOG_TAG, "showing last match");
-                showLastMatch(mMatchRenderer.renderFromModel(event.getLastMatch(), RENDER_DEFAULT));
-            } else {
-                Log.d(Constants.LOG_TAG, "hiding last match");
-                hideLastMatch();
-            }
-            if (mIsLive && event != null && event.getNextMatch() != null) {
-                Log.d(Constants.LOG_TAG, "showing next match");
-                showNextMatch(mMatchRenderer.renderFromModel(event.getNextMatch(), RENDER_DEFAULT));
-            } else {
-                Log.d(Constants.LOG_TAG, "hiding next match");
-                hideNextMatch();
-            }
-        });*/
-    }
-
-    /*@SuppressWarnings("unused")
-    @Subscribe
-    public void onEventRankingsUpdated(EventRankingsEvent event) {
-        AndroidSchedulers.mainThread().createWorker().schedule(() -> {
-            if (topTeamsContainer == null || topTeams == null) {
-                return;
-            }
-            topTeamsContainer.setVisibility(View.VISIBLE);
-            topTeamsContainer.setOnClickListener(mInfoClickListener);
-            topTeams.setText(Html.fromHtml(event.getRankString()));
-        });
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onEventStatsUpdated(EventStatsEvent event) {
-        AndroidSchedulers.mainThread().createWorker().schedule(() -> {
-            if (topOprsContainer == null || topOprs == null) {
-                return;
-            }
-            topOprsContainer.setVisibility(View.VISIBLE);
-            topOprsContainer.setOnClickListener(mInfoClickListener);
-            topOprs.setText(Html.fromHtml(event.getStatString()));
-        });
-    }*/
 
     private Dialog buildMultiWebcastDialog(final JsonArray webcasts, final String eventKey) {
         String[] choices = new String[webcasts.size()];
