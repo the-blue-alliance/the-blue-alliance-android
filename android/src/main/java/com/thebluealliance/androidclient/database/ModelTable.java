@@ -135,6 +135,20 @@ public abstract class ModelTable<T extends BasicModel> {
     }
 
     /**
+     * Returns an observable that will fire once with the model as it exists at the time of the
+     * method call and again when any changes are made to the model. Uses SqlBrite to receive
+     * change notifications.
+     *
+     * Wrapper for {@link #getObservable(String, String[])}, with null as the second parameter
+     *
+     * @param key Key to match {@link #getKeyColumn()} on
+     * @return An {@link Observable}
+     */
+    public Observable<T> getObservable(String key) {
+        return getObservable(key, null);
+    }
+
+    /**
      * Fetch a model with the given fields from the database by key
      *
      * @param key    Key to match {@link #getKeyColumn()} on

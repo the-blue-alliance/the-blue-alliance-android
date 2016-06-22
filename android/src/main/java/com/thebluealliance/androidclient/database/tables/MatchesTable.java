@@ -78,4 +78,29 @@ public class MatchesTable extends ModelTable<Match> {
             return models;
         });
     }
+
+    public Observable<List<Match>> getEventMatchesObservable(String eventKey) {
+        String sql = SQLiteQueryBuilder.buildQueryString(
+                true,
+                getTableName(),
+                null,
+                EVENT + " = ?",
+                null,
+                null,
+                null,
+                null);
+        return mBriteDb.createQuery(getTableName(), sql, eventKey).map((query) -> {
+            Cursor cursor = query.run();
+            List<Match> matches = new ArrayList<>();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    matches.add(inflate(cursor));
+                } while (cursor.moveToNext());
+                cursor.close();
+                return matches;
+            } else {
+                return null;
+            }
+        });
+    }
 }

@@ -1,10 +1,12 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.binders.EventInfoBinder.Model;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventInfo;
 
-public class EventInfoSubscriber extends BaseAPISubscriber<Event, Model> {
+public class EventInfoSubscriber extends BaseAPISubscriber<EventInfo, Model> {
 
     public EventInfoSubscriber() {
         mDataToBind = null;
@@ -13,15 +15,21 @@ public class EventInfoSubscriber extends BaseAPISubscriber<Event, Model> {
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind = new Model();
-        mDataToBind.eventKey = mAPIData.getKey();
-        mDataToBind.nameString = mAPIData.getName();
-        mDataToBind.actionBarTitle = mAPIData.getShortName();
-        mDataToBind.actionBarSubtitle = String.valueOf(mAPIData.getYear());
-        mDataToBind.venueString = mAPIData.getVenue();
-        mDataToBind.locationString = mAPIData.getLocation();
-        mDataToBind.eventWebsite = mAPIData.getWebsite();
-        mDataToBind.dateString = mAPIData.getDateString();
-        mDataToBind.isLive = mAPIData.isHappeningNow();
-        mDataToBind.webcasts = mAPIData.getWebcasts();
+
+        Event event = mAPIData.event;
+        mDataToBind.eventKey = event.getKey();
+        mDataToBind.nameString = event.getName();
+        mDataToBind.actionBarTitle = event.getShortName();
+        mDataToBind.actionBarSubtitle = String.valueOf(event.getYear());
+        mDataToBind.venueString = event.getVenue();
+        mDataToBind.locationString = event.getLocation();
+        mDataToBind.eventWebsite = event.getWebsite();
+        mDataToBind.dateString = event.getDateString();
+        mDataToBind.isLive = event.isHappeningNow();
+        mDataToBind.webcasts = event.getWebcasts();
+
+        MatchHelper.sortByPlayOrder(mAPIData.matches);
+        mDataToBind.lastMatch = MatchHelper.getLastMatchPlayed(mAPIData.matches);
+        mDataToBind.nextMatch = MatchHelper.getNextMatchPlayed(mAPIData.matches);
     }
 }

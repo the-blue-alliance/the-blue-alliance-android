@@ -6,14 +6,13 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
-import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
-import com.thebluealliance.androidclient.eventbus.EventStatsEvent;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.helpers.WebcastHelper;
 import com.thebluealliance.androidclient.listeners.EventInfoContainerClickListener;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
 import com.thebluealliance.androidclient.listeners.WebcastClickListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
+import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.types.WebcastType;
 
@@ -26,7 +25,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +38,6 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import rx.android.schedulers.AndroidSchedulers;
 
 import static com.thebluealliance.androidclient.renderers.MatchRenderer.RENDER_DEFAULT;
 
@@ -194,6 +191,20 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
             webcastContainer.setVisibility(View.VISIBLE);
         }
 
+        if (data.lastMatch != null) {
+            //noinspection WrongThread
+            showLastMatch(mMatchRenderer.renderFromModel(data.lastMatch, RENDER_DEFAULT));
+        } else {
+            hideLastMatch();
+        }
+
+        if (data.nextMatch != null) {
+            //noinspection WrongThread
+            showNextMatch(mMatchRenderer.renderFromModel(data.nextMatch, RENDER_DEFAULT));
+        } else {
+            hideNextMatch();
+        }
+
         content.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
 
@@ -255,6 +266,8 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         public String eventWebsite;
         public boolean isLive;
         public JsonArray webcasts;
+        public Match lastMatch;
+        public Match nextMatch;
     }
 
     protected void showLastMatch(MatchListElement match) {
@@ -294,7 +307,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @SuppressWarnings("unused")
     @Subscribe
     public void onLiveEventMatchesUpdated(LiveEventMatchUpdateEvent event) {
-        AndroidSchedulers.mainThread().createWorker().schedule(() -> {
+       /* AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mIsLive && event != null && event.getLastMatch() != null) {
                 Log.d(Constants.LOG_TAG, "showing last match");
                 showLastMatch(mMatchRenderer.renderFromModel(event.getLastMatch(), RENDER_DEFAULT));
@@ -309,10 +322,10 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
                 Log.d(Constants.LOG_TAG, "hiding next match");
                 hideNextMatch();
             }
-        });
+        });*/
     }
 
-    @SuppressWarnings("unused")
+    /*@SuppressWarnings("unused")
     @Subscribe
     public void onEventRankingsUpdated(EventRankingsEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
@@ -336,7 +349,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
             topOprsContainer.setOnClickListener(mInfoClickListener);
             topOprs.setText(Html.fromHtml(event.getStatString()));
         });
-    }
+    }*/
 
     private Dialog buildMultiWebcastDialog(final JsonArray webcasts, final String eventKey) {
         String[] choices = new String[webcasts.size()];

@@ -3,8 +3,10 @@ package com.thebluealliance.androidclient.fragments.event;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
+import com.thebluealliance.androidclient.fragments.BriteDatafeedFragment;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventInfo;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
@@ -19,7 +21,7 @@ import android.view.ViewGroup;
 import rx.Observable;
 
 public class EventInfoFragment
-  extends DatafeedFragment<Event, EventInfoBinder.Model, EventInfoSubscriber, EventInfoBinder> {
+  extends BriteDatafeedFragment<EventInfo, EventInfoBinder.Model, EventInfoSubscriber, EventInfoBinder> {
 
     private static final String KEY = "eventKey";
 
@@ -72,9 +74,12 @@ public class EventInfoFragment
         mComponent.inject(this);
     }
 
-    @Override
-    protected Observable<Event> getObservable(String tbaCacheHeader) {
-        return mDatafeed.fetchEvent(mEventKey, tbaCacheHeader);
+    @Override protected Observable<EventInfo> getObservable() {
+        return mDatafeed.getEventInfo(mEventKey);
+    }
+
+    @Override protected void beginDataUpdate(String tbaCacheHeader) {
+
     }
 
     @Override

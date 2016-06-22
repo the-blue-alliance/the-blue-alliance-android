@@ -5,6 +5,8 @@ import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
+import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
@@ -16,6 +18,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,6 +48,14 @@ public final class MatchHelper {
         } else {
             return matchKey;
         }
+    }
+
+    public static void sortByPlayOrder(List<Match> matches) {
+        Collections.sort(matches, new MatchSortByPlayOrderComparator());
+    }
+
+    public static void sortByDisplayOrder(List<Match> matches) {
+        Collections.sort(matches, new MatchSortByDisplayOrderComparator());
     }
 
     /**
