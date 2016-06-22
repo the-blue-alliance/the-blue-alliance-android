@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.Gson;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
@@ -96,6 +97,11 @@ public class DatafeedModule {
       DatabaseWriter writer,
       RetrofitResponseMap responseMap) {
         return new CacheableDatafeed(retrofit, cache, writer, responseMap);
+    }
+
+    @Provides @Singleton
+    public BriteDatafeed provideBriteDatafeed(Database db) {
+        return new BriteDatafeed(db);
     }
 
     @Provides @Singleton

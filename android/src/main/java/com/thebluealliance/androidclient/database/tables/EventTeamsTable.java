@@ -107,15 +107,16 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
     public Observable<List<Team>> getTeamsObservable(String eventKey) {
         // INNER JOIN EventTeams + TEAMS on KEY, select where eventKey = args
         String sql = String.format("SELECT * FROM %1$s JOIN %2$s ON %1$s.%3$s = %2$s.%4$s "
-                        + "WHERE %1$s.%3$s = ?",
+                        + "WHERE %1$s.%5$s = ?",
                 Database.TABLE_EVENTTEAMS,
                 Database.TABLE_TEAMS,
                 TEAMKEY,
-                TeamsTable.KEY);
+                TeamsTable.KEY,
+                EVENTKEY);
 
         List<String> tables = new ArrayList<>();
         tables.add(Database.TABLE_EVENTTEAMS);
-        tables.add(Database.TABLE_EVENTS);
+        tables.add(Database.TABLE_TEAMS);
 
         Observable<SqlBrite.Query> briteQuery = mBriteDb.createQuery(tables, sql, eventKey);
         return briteQuery.map(query -> {

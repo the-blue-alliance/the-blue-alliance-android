@@ -114,7 +114,9 @@ public class RefreshController {
 
     public void registerRefreshable(String refreshTag, Refreshable refreshable) {
         // Default to "not refreshing"
-        mRefreshableStates.put(refreshTag, new RefreshWrapper(refreshable, false));
+        if(!mRefreshableStates.containsKey(refreshTag)) {
+            mRefreshableStates.put(refreshTag, new RefreshWrapper(refreshable, false));
+        }
     }
 
     public void unregisterRefreshable(String refreshTag) {

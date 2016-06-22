@@ -1,10 +1,11 @@
 package com.thebluealliance.androidclient.fragments.event;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
-import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
+import com.thebluealliance.androidclient.fragments.BriteRecyclerViewFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.itemviews.TeamItemView;
@@ -15,13 +16,14 @@ import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.util.List;
 
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
-public class EventTeamsFragment extends RecyclerViewFragment<List<Team>, TeamListRecyclerSubscriber, RecyclerViewBinder> {
+public class EventTeamsFragment extends BriteRecyclerViewFragment<List<Team>, TeamListRecyclerSubscriber, RecyclerViewBinder> {
 
     private static final String KEY = "event_key";
 
@@ -49,9 +51,12 @@ public class EventTeamsFragment extends RecyclerViewFragment<List<Team>, TeamLis
         mComponent.inject(this);
     }
 
-    @Override
-    protected Observable<List<Team>> getObservable(String tbaCacheHeader) {
-        return mDatafeed.fetchEventTeams(mEventKey, tbaCacheHeader);
+    @Override protected Observable<? extends List<Team>> getObservable() {
+        return mDatafeed.getEventTeams(mEventKey);
+    }
+
+    @Override protected void beginDataUpdate(String tbaCacheHeader) {
+        Log.d(Constants.LOG_TAG, "BEGINNING DATA UPDATE FOR " + getClass().getName());
     }
 
     @Override
