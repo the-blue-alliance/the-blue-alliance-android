@@ -29,7 +29,11 @@ import android.util.Log;
 
 import java.util.Date;
 
-public class ModelInflater {
+public final class ModelInflater {
+
+    private ModelInflater() {
+        // unused
+    }
 
     /**
      * Inflate an award model from a single row of a cursor returned by a database query.
@@ -76,13 +80,13 @@ public class ModelInflater {
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
                 case EventsTable.KEY:
-                    event.setEventKey(data.getString(i));
+                    event.setKey(data.getString(i));
                     break;
                 case EventsTable.NAME:
-                    event.setEventName(data.getString(i));
+                    event.setName(data.getString(i));
                     break;
                 case EventsTable.SHORTNAME:
-                    event.setEventShortName(data.getString(i));
+                    event.setShortName(data.getString(i));
                     break;
                 case EventsTable.LOCATION:
                     event.setLocation(data.getString(i));
@@ -217,10 +221,10 @@ public class ModelInflater {
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
                 case TeamsTable.KEY:
-                    team.setTeamKey(data.getString(i));
+                    team.setKey(data.getString(i));
                     break;
                 case TeamsTable.NUMBER:
-                    team.setTeamNumber(data.getInt(i));
+                    team.setNumber(data.getInt(i));
                     break;
                 case TeamsTable.SHORTNAME:
                     team.setNickname(data.getString(i));

@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.helpers;
 
-import android.os.Bundle;
-
 import com.thebluealliance.androidclient.types.ModelType;
+
+import android.os.Bundle;
 
 import java.util.ArrayList;
 

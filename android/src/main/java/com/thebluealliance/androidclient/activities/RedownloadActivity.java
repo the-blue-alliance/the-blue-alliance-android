@@ -1,24 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ValueAnimator;
-import android.support.v7.app.AlertDialog;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -31,6 +12,25 @@ import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
+
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
+import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

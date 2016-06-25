@@ -9,7 +9,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-public class WebcastHelper {
+public final class WebcastHelper {
+
+    private WebcastHelper() {
+        // unused
+    }
 
     public static WebcastType getType(String typeString) {
         switch (typeString) {

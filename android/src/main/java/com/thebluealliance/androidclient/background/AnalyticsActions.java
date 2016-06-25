@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.background;
 
-import android.app.Activity;
-
 import com.google.android.gms.analytics.GoogleAnalytics;
+
+import android.app.Activity;
 
 public class AnalyticsActions {
 

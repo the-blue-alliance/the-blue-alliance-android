@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.fragments.tasks;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-
 import com.thebluealliance.androidclient.accounts.UpdateUserModelSettings;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 public class UpdateUserModelSettingsTaskFragment extends Fragment {
 

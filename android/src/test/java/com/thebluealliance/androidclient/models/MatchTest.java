@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 
 import org.junit.Before;

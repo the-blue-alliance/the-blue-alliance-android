@@ -3,9 +3,6 @@ package com.thebluealliance.androidclient.datafeed;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
-
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.deserializers.APIStatusDeserializer;
@@ -35,6 +32,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
 
 /**
  * Dagger module that handles OkHttp and Gson

@@ -6,7 +6,6 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APISubscriber;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
-import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 
@@ -31,7 +30,8 @@ import rx.android.schedulers.AndroidSchedulers;
  * initialize {@link #mDataToBind} in their constructors, as it's possible that the variable
  * is accessed before {@link #parseData()} is called
  *
- * @param <APIType>  Datatype to be returned from the API (one from {@link APIv2}
+ * @param <APIType>  Datatype to be returned from the API (one from
+ * {@link com.thebluealliance.androidclient.datafeed.retrofit.APIv2}
  * @param <BindType> Datatype to be returned for binding to views
  */
 public abstract class BaseAPISubscriber<APIType, BindType>

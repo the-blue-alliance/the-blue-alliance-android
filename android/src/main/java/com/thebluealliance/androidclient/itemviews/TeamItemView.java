@@ -1,16 +1,17 @@
 package com.thebluealliance.androidclient.itemviews;
 
-import android.content.Context;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
+import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
+
+import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -40,7 +41,7 @@ public class TeamItemView extends BindableFrameLayout<TeamViewModel> {
 
     @Override
     public void bind(TeamViewModel model) {
-        this.setOnClickListener(new TeamClickListener(getContext(), model.getTeamKey()));
+        this.setOnClickListener(v -> notifyItemAction(Interactions.TEAM_ITEM_CLICKED));
         this.setClickable(true);
         this.setFocusable(true);
 

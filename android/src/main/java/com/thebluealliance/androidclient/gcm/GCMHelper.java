@@ -5,14 +5,17 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 
 import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class GCMHelper {
+public final class GCMHelper {
+
+    private GCMHelper() {
+        // unused
+    }
 
     private static String senderId;
 

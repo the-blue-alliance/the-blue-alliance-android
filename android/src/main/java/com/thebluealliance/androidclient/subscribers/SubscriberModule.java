@@ -63,8 +63,7 @@ public class SubscriberModule {
         return new TeamListSubscriber(renderer);
     }
 
-    @Provides
-    public RankingsListSubscriber provideRankingsListSubscriber(Database db, EventBus eventBus) {
+    @Provides RankingsListSubscriber provideRankingsListRecyclerSubscriber(Database db, EventBus eventBus) {
         return new RankingsListSubscriber(db, eventBus);
     }
 

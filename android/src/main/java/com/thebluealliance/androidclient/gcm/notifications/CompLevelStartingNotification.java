@@ -14,7 +14,6 @@ import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
-import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 
 import android.app.Notification;
 import android.content.Context;

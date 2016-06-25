@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.listeners;
 
-import android.content.Context;
-import android.content.Intent;
-import android.view.View;
-
 import com.thebluealliance.androidclient.activities.TeamAtDistrictActivity;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
+
+import android.content.Context;
+import android.content.Intent;
+import android.view.View;
 
 public class TeamAtDistrictClickListener implements View.OnClickListener {
 

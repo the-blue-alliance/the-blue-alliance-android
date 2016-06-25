@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.JsonElement;
+
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
@@ -41,8 +42,8 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
         for (int i = 0; i < mAPIData.size(); i++) {
             Award award = mAPIData.get(i);
             for (JsonElement winner : award.getWinners()) {
-                if (winner.isJsonObject() &&
-                  !winner.getAsJsonObject().get("team_number").isJsonNull()) {
+                if (winner.isJsonObject()
+                  && !winner.getAsJsonObject().get("team_number").isJsonNull()) {
                     String teamKey = "frc" + winner.getAsJsonObject().get("team_number");
                     Team team = mDb.getTeamsTable().get(teamKey);
                     teams.put(teamKey, team);

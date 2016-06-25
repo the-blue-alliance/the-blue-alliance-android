@@ -51,15 +51,15 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
         try {
             return new EventListElement(
               event.getKey(),
-              event.getEventYear(),
-              event.getEventShortName(),
+              event.getYear(),
+              event.getShortName(),
               event.getDateString(),
               event.getLocation(),
               safeMyTba);
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n" +
-              "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
+            Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n"
+              + "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
             return null;
         }
     }
@@ -71,7 +71,7 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
             int i = 1;
             for (JsonElement webcast : event.getWebcasts()) {
                 try {
-                    webcasts.add(new WebcastListElement(event.getKey(), event.getEventShortName(), webcast.getAsJsonObject(), i));
+                    webcasts.add(new WebcastListElement(event.getKey(), event.getShortName(), webcast.getAsJsonObject(), i));
                     i++;
                 } catch (BasicModel.FieldNotDefinedException e) {
                     Log.w(Constants.LOG_TAG, "Missing fields for rendering event webcasts: KEY, SHORTNAME");
@@ -104,8 +104,8 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
                 counter++;
             }
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering alliances.\n" +
-              "Required field: Database.Events.ALLIANCES");
+            Log.w(Constants.LOG_TAG, "Missing fields for rendering alliances.\n"
+              + "Required field: Database.Events.ALLIANCES");
         } catch (IllegalArgumentException e) {
             Log.w(Constants.LOG_TAG, "Invalid alliance size. Can't render");
         }

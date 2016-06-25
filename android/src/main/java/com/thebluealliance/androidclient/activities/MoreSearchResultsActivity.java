@@ -1,5 +1,14 @@
 package com.thebluealliance.androidclient.activities;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.adapters.EventCursorAdapter;
+import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
+import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
+import com.thebluealliance.androidclient.background.AnalyticsActions;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
+
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -10,19 +19,8 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.adapters.EventCursorAdapter;
-import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
-import com.thebluealliance.androidclient.adapters.TeamCursorAdapter;
-import com.thebluealliance.androidclient.background.AnalyticsActions;
-import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 
 public class MoreSearchResultsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 

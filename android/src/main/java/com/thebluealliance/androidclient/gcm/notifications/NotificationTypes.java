@@ -3,7 +3,12 @@ package com.thebluealliance.androidclient.gcm.notifications;
 /**
  * Notification type strings, found in dicts received from GCM
  */
-public class NotificationTypes {
+public final class NotificationTypes {
+
+    private NotificationTypes() {
+        // unused
+    }
+
     public static final String
             UPCOMING_MATCH = "upcoming_match",
             MATCH_SCORE = "match_score",

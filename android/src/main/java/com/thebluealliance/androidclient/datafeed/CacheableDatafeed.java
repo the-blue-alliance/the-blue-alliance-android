@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.EventsTable;

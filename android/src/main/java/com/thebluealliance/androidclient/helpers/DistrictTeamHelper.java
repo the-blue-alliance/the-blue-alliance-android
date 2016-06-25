@@ -1,6 +1,10 @@
 package com.thebluealliance.androidclient.helpers;
 
-public class DistrictTeamHelper {
+public final class DistrictTeamHelper {
+
+    private DistrictTeamHelper() {
+        // unused
+    }
 
     public static boolean validateDistrictTeamKey(String key) {
         if (key == null || key.isEmpty() || !key.contains("_")) {

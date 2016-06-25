@@ -1,13 +1,5 @@
 package com.thebluealliance.androidclient.fragments;
 
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
 import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
@@ -16,9 +8,15 @@ import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 import com.thebluealliance.androidclient.views.ExpandableListView;
 import com.thebluealliance.androidclient.views.NoDataView;
 
-import java.util.List;
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
-import butterknife.ButterKnife;
+import java.util.List;
 
 public abstract class ExpandableListViewFragment<T, S extends BaseAPISubscriber<T, List<ListGroup>>>
   extends DatafeedFragment<T, List<ListGroup>, S, ExpandableListViewBinder> {

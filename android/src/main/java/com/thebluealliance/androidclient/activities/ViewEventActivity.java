@@ -256,6 +256,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onActionBarTitleUpdated(ActionBarTitleEvent event) {
         setActionBarTitle(event.getTitle());
+        setActionBarSubtitle(event.getSubtitle());
     }
 
     public FragmentComponent getComponent() {

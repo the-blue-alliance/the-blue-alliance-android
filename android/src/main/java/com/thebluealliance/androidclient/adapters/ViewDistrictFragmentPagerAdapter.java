@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.adapters;
 
+import com.thebluealliance.androidclient.fragments.district.DistrictEventsFragment;
+import com.thebluealliance.androidclient.fragments.district.DistrictRankingsFragment;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.thebluealliance.androidclient.fragments.district.DistrictEventsFragment;
-import com.thebluealliance.androidclient.fragments.district.DistrictRankingsFragment;
-
 public class ViewDistrictFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    public final String[] TITLES = {"Events", "Rankings"};
+    public static final String[] TITLES = {"Events", "Rankings"};
 
     private String mDistrictKey;
 

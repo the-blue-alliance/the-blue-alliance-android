@@ -49,6 +49,7 @@ git apply $TBA_ANDROID_HOME/scripts/patches/endpoints_remove_sitevar.patch
 
 # Generate discovery document
 # $GAE_HOME/endpointscfg.py get_client_lib java -o $TBA_ANDROID_HOME -bs gradle mobile_main.MobileAPI
+echo "Getting discovery.json for $TBA_APP_ID"
 $GAE_HOME/endpointscfg.py get_discovery_doc -o $TBA_ANDROID_HOME/gce/ mobile_main.MobileAPI
 RES="$?"
 
@@ -67,6 +68,6 @@ echo "Renaming discovery document to gce/gce_discovery.json"
 mv gce/tbaMobile-v*.discovery gce/gce_discovery.json
 
 echo "Generating retrofit services"
-java -jar gce/gce2retrofit.jar gce/gce_discovery.json ./tbaMobile/src/main/java/ -methods sync,async,reactive
+java -jar gce/gce2retrofit.jar gce/gce_discovery.json ./tbaMobile/src/main/java/ -methods async,reactive
 
 exit $RES

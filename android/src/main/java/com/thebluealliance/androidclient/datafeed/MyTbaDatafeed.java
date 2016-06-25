@@ -41,8 +41,8 @@ import retrofit2.Response;
 
 @Singleton
 public class MyTbaDatafeed {
-    public static final String LAST_FAVORITES_UPDATE = "last_mytba_favorites_update_%s";
-    public static final String LAST_SUBSCRIPTIONS_UPDATE = "last_mytba_subscriptions_update_%s";
+    private static final String LAST_FAVORITES_UPDATE = "last_mytba_favorites_update_%s";
+    private static final String LAST_SUBSCRIPTIONS_UPDATE = "last_mytba_subscriptions_update_%s";
 
     private final Context mApplicationContext;
     private final Resources mRes;

@@ -7,7 +7,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-public class GCMAuthHelper {
+public final class GCMAuthHelper {
+
+    private GCMAuthHelper() {
+        // unused
+    }
 
     public static final String OS_ANDROID = "android";
     public static final String PROPERTY_GCM_REG_ID = "gcm_registration_id";

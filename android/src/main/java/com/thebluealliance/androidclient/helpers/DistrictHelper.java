@@ -3,7 +3,11 @@ package com.thebluealliance.androidclient.helpers;
 
 import com.thebluealliance.androidclient.types.DistrictType;
 
-public class DistrictHelper {
+public final class DistrictHelper {
+
+    private DistrictHelper() {
+        // unused
+    }
 
     public static boolean validateDistrictKey(String key) {
         if (key == null || key.length() <= 4) {

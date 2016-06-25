@@ -1,15 +1,16 @@
 package com.thebluealliance.androidclient.datafeed.deserializers;
 
-import android.util.Log;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.Event;
+
+import android.util.Log;
 
 import java.lang.reflect.Type;
 
@@ -30,11 +31,11 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         final Event event = new Event();
 
         if (object.has("key")) {
-            event.setEventKey(object.get("key").getAsString());
+            event.setKey(object.get("key").getAsString());
         }
 
         if (object.has("name")) {
-            event.setEventName(object.get("name").getAsString());
+            event.setName(object.get("name").getAsString());
         }
 
         if (isNull(object.get("location"))) {
@@ -75,9 +76,9 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         // "short_name" is not a required field in the API response.
         // If it is null, simply use the event name as the short name
         if (isNull(object.get("short_name"))) {
-            event.setEventShortName("");
+            event.setShortName("");
         } else {
-            event.setEventShortName(object.get("short_name").getAsString());
+            event.setShortName(object.get("short_name").getAsString());
         }
 
         if (!isNull(object.get("website"))) {

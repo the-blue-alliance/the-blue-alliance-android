@@ -1,24 +1,21 @@
 package com.thebluealliance.androidclient.helpers;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.util.Log;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.eventbus.LiveEventUpdateEvent;
-import com.thebluealliance.androidclient.listitems.EventTypeHeader;
-import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.renderers.ModelRenderer;
 import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
 
 import org.greenrobot.eventbus.EventBus;
+
+import android.content.Context;
+import android.content.res.Resources;
+import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -33,7 +30,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class EventHelper {
+public final class EventHelper {
 
     public static final String CHAMPIONSHIP_LABEL = "Championship Event";
     public static final String REGIONAL_LABEL = "Week %1$d";
@@ -41,13 +38,17 @@ public class EventHelper {
     public static final String WEEKLESS_LABEL = "Other Official Events";
     public static final String OFFSEASON_LABEL = "%1$s Offseason Events";
     public static final String PRESEASON_LABEL = "Preseason Events";
-    private static final Pattern eventKeyPattern = Pattern.compile("[a-zA-Z]+");
+    private static final Pattern EVENT_KEY_PATTERN = Pattern.compile("[a-zA-Z]+");
 
-    private static final Pattern districtEventNamePattern = Pattern.compile("[A-Z]{2,3} District -(.+)");
-    private static final Pattern eventEventNamePattern = Pattern.compile("(.+)Event");
-    private static final Pattern regionalEventNamePattern =
+    private static final Pattern DISTRICT_EVENT_NAME_PATTERN = Pattern.compile("[A-Z]{2,3} District -(.+)");
+    private static final Pattern EVENT_EVENT_NAME_PATTERN = Pattern.compile("(.+)Event");
+    private static final Pattern REGIONAL_EVENT_NAME_PATTERN =
             Pattern.compile("\\s*(?:MAR |PNW |)(?:FIRST Robotics|FRC|)(.+)(?:(?:District|Regional|Region|State|Tournament|FRC|Field)\\b)");
-    private static final Pattern frcEventNamePattern = Pattern.compile("(.+)(?:FIRST Robotics|FRC)");
+    private static final Pattern FRC_EVENT_NAME_PATTERN = Pattern.compile("(.+)(?:FIRST Robotics|FRC)");
+
+    private EventHelper() {
+        // not used
+    }
 
     public static boolean validateEventKey(String key) {
         if (key == null || key.isEmpty()) return false;
@@ -62,20 +63,20 @@ public class EventHelper {
      * >the server's event_helper.py</a>.
      */
     public static String shortName(String eventName) {
-        Matcher m1 = districtEventNamePattern.matcher(eventName); // XYZ District - NAME
+        Matcher m1 = DISTRICT_EVENT_NAME_PATTERN.matcher(eventName); // XYZ District - NAME
         if (m1.matches()) {
             String partial = m1.group(1).trim();
-            Matcher m2 = eventEventNamePattern.matcher(partial); // NAME Event...
+            Matcher m2 = EVENT_EVENT_NAME_PATTERN.matcher(partial); // NAME Event...
             if (m2.lookingAt()) {
                 return m2.group(1).trim();
             }
             return partial;
         }
 
-        Matcher m3 = regionalEventNamePattern.matcher(eventName); // ... NAME Regional...
+        Matcher m3 = REGIONAL_EVENT_NAME_PATTERN.matcher(eventName); // ... NAME Regional...
         if (m3.lookingAt()) {
             String partial = m3.group(1);
-            Matcher m4 = frcEventNamePattern.matcher(partial); // NAME FIRST Robotics/FRC...
+            Matcher m4 = FRC_EVENT_NAME_PATTERN.matcher(partial); // NAME FIRST Robotics/FRC...
             if (m4.lookingAt()) {
                 return m4.group(1).trim();
             } else {
@@ -120,7 +121,7 @@ public class EventHelper {
                  * Week 1 is actually Week 0.5, everything else is one less
                  * See http://www.usfirst.org/roboticsprograms/frc/blog-The-Palmetto-Regional
                  */
-                if (e.getEventYear() == 2016) {
+                if (e.getYear() == 2016) {
                     int week = e.getCompetitionWeek();
                     if (week == 1) {
                         return String.format(FLOAT_REGIONAL_LABEL, 0.5);
@@ -217,8 +218,8 @@ public class EventHelper {
             try {
                 currentType = event.getEventType();
                 currentDistrict = event.getDistrictEnum();
-                if (currentType != lastType ||
-                        (currentType == EventType.DISTRICT && currentDistrict != lastDistrict)) {
+                if (currentType != lastType
+                        || (currentType == EventType.DISTRICT && currentDistrict != lastDistrict)) {
                     if (currentType == EventType.DISTRICT) {
                         output.add(new ListSectionHeaderViewModel(event.getDistrictTitle() + " District Events"));
                     } else {
@@ -249,7 +250,7 @@ public class EventHelper {
         String lastHeader = null, currentHeader = null;
         for (Event event : events) {
             try {
-                currentHeader = weekLabelFromNum(event.getEventYear(), event.getCompetitionWeek());
+                currentHeader = weekLabelFromNum(event.getYear(), event.getCompetitionWeek());
                 if (!currentHeader.equals(lastHeader)) {
                     output.add(new ListSectionHeaderViewModel(currentHeader + " Events"));
                 }
@@ -272,8 +273,8 @@ public class EventHelper {
         if (startDate.equals(endDate)) {
             return ThreadSafeFormatters.renderEventDate(startDate);
         }
-        return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to " +
-                ThreadSafeFormatters.renderEventDate(endDate);
+        return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to "
+                + ThreadSafeFormatters.renderEventDate(endDate);
     }
 
     public static String extractRankingString(CaseInsensitiveMap rankingElements) {
@@ -380,7 +381,7 @@ public class EventHelper {
      * the argument doesn't parse as containing an event/district code.
      */
     public static String getEventCode(String matchOrEventOrDistrictKey) {
-        Matcher m = eventKeyPattern.matcher(matchOrEventOrDistrictKey);
+        Matcher m = EVENT_KEY_PATTERN.matcher(matchOrEventOrDistrictKey);
 
         return m.find() ? m.group().toUpperCase(Locale.US) : "";
     }

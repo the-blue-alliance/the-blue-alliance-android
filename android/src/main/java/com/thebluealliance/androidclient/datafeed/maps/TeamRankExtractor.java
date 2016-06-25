@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.datafeed.maps;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 
 import rx.functions.Func1;

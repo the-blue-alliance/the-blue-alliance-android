@@ -8,7 +8,12 @@ import android.support.annotation.Nullable;
  * @author Phil Lopreiato
  * @author Bryce Matsuda
  */
-public class TeamHelper {
+public final class TeamHelper {
+
+    private TeamHelper() {
+        // unused
+    }
+
     /**
      * Checks if a team key is valid.
      *

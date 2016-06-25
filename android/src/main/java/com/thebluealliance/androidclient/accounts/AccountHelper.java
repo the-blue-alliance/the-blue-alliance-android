@@ -18,7 +18,13 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-public class AccountHelper {
+import java.io.IOException;
+
+public final class AccountHelper {
+
+    private AccountHelper() {
+        // unused
+    }
 
     public static final String PREF_MYTBA_ENABLED = "mytba_enabled";
     public static final String PREF_SELECTED_ACCOUNT = "selected_account";
@@ -102,9 +108,9 @@ public class AccountHelper {
         return true;
     }
 
+    private static final int REQUEST_GOOGLE_PLAY_SERVICES = 0;
     public static void showGooglePlayServicesAvailabilityErrorDialog(final Activity activity,
                                                                      final int connectionStatusCode) {
-        final int REQUEST_GOOGLE_PLAY_SERVICES = 0;
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {

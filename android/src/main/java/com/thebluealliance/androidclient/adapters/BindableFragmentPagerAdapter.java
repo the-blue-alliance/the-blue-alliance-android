@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.adapters;
 
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.Fragment;
-import android.view.ViewGroup;
-
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.interfaces.BindableAdapter;
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.view.ViewGroup;
 
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;

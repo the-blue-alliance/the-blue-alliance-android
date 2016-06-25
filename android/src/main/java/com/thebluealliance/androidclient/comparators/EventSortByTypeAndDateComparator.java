@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.comparators;
 
-import android.util.Log;
-
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.types.EventType;
+
+import android.util.Log;
 
 import java.util.Comparator;
 
@@ -19,7 +19,7 @@ public class EventSortByTypeAndDateComparator implements Comparator<Event> {
                 if (districtSort == 0) {
                     int eventSort = event.getStartDate().compareTo(event2.getStartDate());
                     if (eventSort == 0) {
-                        return event.getEventShortName().compareTo(event2.getEventShortName());
+                        return event.getShortName().compareTo(event2.getShortName());
                     } else {
                         return eventSort;
                     }

@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.mytba;
 
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.di.components.MyTbaComponent;
 
 import android.app.IntentService;

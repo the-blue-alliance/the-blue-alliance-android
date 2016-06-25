@@ -1,17 +1,17 @@
 package com.thebluealliance.androidclient.listitems;
 
-import android.content.Context;
-import android.graphics.Typeface;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.WebcastHelper;
 import com.thebluealliance.androidclient.listeners.WebcastClickListener;
 import com.thebluealliance.androidclient.types.WebcastType;
+
+import android.content.Context;
+import android.graphics.Typeface;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 public class WebcastListElement extends ListElement {
 
@@ -70,9 +70,9 @@ public class WebcastListElement extends ListElement {
             return false;
         }
         WebcastListElement element = (WebcastListElement) o;
-        return eventKey.equals(element.eventKey) &&
-          eventName.equals(element.eventName) &&
-          webcast.equals(element.webcast) &&
-          number == element.number;
+        return eventKey.equals(element.eventKey)
+          && eventName.equals(element.eventName)
+          && webcast.equals(element.webcast)
+          && number == element.number;
     }
 }

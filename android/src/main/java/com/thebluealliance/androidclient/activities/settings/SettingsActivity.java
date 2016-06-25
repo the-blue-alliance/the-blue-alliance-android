@@ -58,8 +58,8 @@ public class SettingsActivity extends AppCompatActivity {
             appVersion.setSummary(versionInfo);
             appVersion.setIntent(new Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/" +
-                            "commit/" + commit)));
+                    Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/"
+                            + "commit/" + commit)));
 
             Preference githubLink = findPreference("github_link");
             githubLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/")));
@@ -76,16 +76,16 @@ public class SettingsActivity extends AppCompatActivity {
             Preference changelog = findPreference("changelog");
             changelog.setIntent(new Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/" +
-                            "releases/tag/v" + versionName)));
+                    Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/"
+                            + "releases/tag/v" + versionName)));
 
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
 
-            final SwitchPreference enable_mytba = (SwitchPreference) findPreference("mytba_enabled");
+            final SwitchPreference mytbaEnabled = (SwitchPreference) findPreference("mytba_enabled");
             final Activity activity = getActivity();
-            enable_mytba.setChecked(AccountHelper.isMyTBAEnabled(activity));
-            enable_mytba.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            mytbaEnabled.setChecked(AccountHelper.isMyTBAEnabled(activity));
+            mytbaEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     boolean enabled = AccountHelper.isMyTBAEnabled(activity);
@@ -124,8 +124,8 @@ public class SettingsActivity extends AppCompatActivity {
             super.onResume();
 
             // Enable might have failed; update the state of the switch when we resume
-            SwitchPreference enable_mytba = (SwitchPreference) findPreference("mytba_enabled");
-            enable_mytba.setChecked(AccountHelper.isMyTBAEnabled(getActivity()));
+            SwitchPreference mytbaEnabled = (SwitchPreference) findPreference("mytba_enabled");
+            mytbaEnabled.setChecked(AccountHelper.isMyTBAEnabled(getActivity()));
         }
     }
 

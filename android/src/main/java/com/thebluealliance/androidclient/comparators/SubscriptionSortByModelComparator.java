@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.comparators;
 
-import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.Subscription;
+import com.thebluealliance.androidclient.types.ModelType;
 
 import java.util.Comparator;
 

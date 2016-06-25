@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.datafeed.combiners;
 
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.datafeed.KeyAndJson;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 
