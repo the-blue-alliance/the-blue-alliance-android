@@ -64,7 +64,7 @@ public class OnboardingActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPlusManager = new PlusManager(this, this);
+        mPlusManager = new PlusManager(this, null, this);
 
         setContentView(R.layout.activity_onboarding);
 

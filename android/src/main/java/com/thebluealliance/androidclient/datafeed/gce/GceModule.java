@@ -32,28 +32,28 @@ import retrofit2.Retrofit;
 public class GceModule {
 
     // Format with app engine project ID
-    public static final String GCE_URL_FORMAT = "https://%1$s.appspot.com";
+    private static final String GCE_URL_FORMAT = "https://%1$s.appspot.com";
 
     public GceModule() {
     }
 
-    @Provides @Singleton
-    public TbaSuggestionController provideTbaSuggestionController(
+    @Provides @Singleton TbaSuggestionController provideTbaSuggestionController(
             TeamMedia teamMedia,
             GceAuthController gceAuthController) {
         return new TbaSuggestionController(teamMedia, gceAuthController);
     }
 
-    @Provides
-    public GceAuthController provideGceAuthController(
+    @Provides GceAuthController provideGceAuthController(
             Context context,
             SharedPreferences sharedPreferences,
             AccountManager accountManager) {
         return new GceAuthController(context, sharedPreferences, accountManager);
     }
 
-    @Provides @Singleton @Named("gce_retrofit")
-    public Retrofit provideGceRetrofit(Context context, Gson gson, OkHttpClient okHttpClient) {
+    @Provides @Singleton @Named("gce_retrofit") Retrofit provideGceRetrofit(
+            Context context,
+            Gson gson,
+            OkHttpClient okHttpClient) {
         String appspotId = Utilities.readLocalProperty(context, "appspot.projectId", "tbatv-prod-hrd");
         return new Retrofit.Builder()
                 .baseUrl(String.format(GCE_URL_FORMAT, appspotId))
@@ -62,40 +62,37 @@ public class GceModule {
                 .build();
     }
 
-    @Provides @Singleton
-    public Tbamobile provideTbaMobileApi(@Named("gce_retrofit") Retrofit retrofit) {
+    @Provides @Singleton Tbamobile provideTbaMobileApi(@Named("gce_retrofit") Retrofit retrofit) {
         return retrofit.create(Tbamobile.class);
     }
 
     @Provides @Singleton
-    public Favorites provideTbaMobileFavoritesApi(@Named("gce_retrofit") Retrofit retrofit) {
+    Favorites provideTbaMobileFavoritesApi(@Named("gce_retrofit") Retrofit retrofit) {
         return retrofit.create(Favorites.class);
     }
 
     @Provides @Singleton
-    public Subscriptions provideTbaMobileSubscriptionsApi(@Named("gce_retrofit") Retrofit retrofit) {
+    Subscriptions provideTbaMobileSubscriptionsApi(@Named("gce_retrofit") Retrofit retrofit) {
         return retrofit.create(Subscriptions.class);
     }
 
     @Provides @Singleton
-    public Model provideTbaMobileModelPrefsApi(@Named("gce_retrofit") Retrofit retrofit) {
+    Model provideTbaMobileModelPrefsApi(@Named("gce_retrofit") Retrofit retrofit) {
         return retrofit.create(Model.class);
     }
 
-    @Provides @Singleton
-    public TeamMedia provideTeamMediaApi(@Named("gce_retrofit") Retrofit retrofit) {
+    @Provides @Singleton TeamMedia provideTeamMediaApi(@Named("gce_retrofit") Retrofit retrofit) {
         return retrofit.create(TeamMedia.class);
     }
 
-    @Provides @Singleton
-    public MyTbaDatafeed provideMyTbaDatafeed(Context context,
+    @Provides @Singleton MyTbaDatafeed provideMyTbaDatafeed(
+            Context context,
             GceAuthController authController,
             Tbamobile tbamobile,
             Favorites favoriteApi,
             Subscriptions subscriptionApi,
             SharedPreferences prefs,
-            Database
-            db) {
+            Database db) {
         return new MyTbaDatafeed(context, authController, tbamobile, favoriteApi, subscriptionApi,
                 context.getResources(), prefs, db);
     }

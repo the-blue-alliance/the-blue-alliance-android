@@ -33,8 +33,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 /**
  * Provides the features that should be in every activity in the app: a navigation drawer, a search
  * button, and the ability to show and hide warning messages. Also provides Android Beam
@@ -53,7 +51,7 @@ public abstract class BaseActivity extends NavigationDrawerActivity
 
     public Set<Integer> activeMessages = new HashSet<>();
 
-    @Inject MyTbaDatafeed mMyTbaDatafeed;
+    /*@Inject*/ MyTbaDatafeed mMyTbaDatafeed;
 
     String beamUri;
     String shareUri;

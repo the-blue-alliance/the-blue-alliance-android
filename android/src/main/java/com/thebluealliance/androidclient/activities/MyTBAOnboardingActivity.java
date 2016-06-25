@@ -29,7 +29,7 @@ public class MyTBAOnboardingActivity extends AppCompatActivity implements View.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPlusManager = new PlusManager(this, this);
+        mPlusManager = new PlusManager(this, null, this);
 
         setContentView(R.layout.activity_mytba_onboarding);
 

@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.mytba;
 
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
+import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.di.components.MyTbaComponent;
 
 import android.app.IntentService;
@@ -38,9 +39,8 @@ public class MyTbaUpdateService extends IntentService {
     private MyTbaComponent getComponenet() {
         TBAAndroid application = ((TBAAndroid) getApplication());
         return DaggerMyTbaComponent.builder()
-          .applicationComponent(application.getComponent())
-          .gceModule(application.getGceModule())
-          .datafeedModule(application.getDatafeedModule())
-          .build();
+                                   .applicationComponent(application.getComponent())
+                                   .gceModule(application.getGceModule())
+                                   .build();
     }
 }

@@ -4,6 +4,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 
+import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.gcm.GCMHelper;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 
@@ -54,12 +55,12 @@ public final class PlusHelper {
         }
     }
 
-    public static void onConnectCommon(Activity activity) {
+    public static void onConnectCommon(Activity activity, MyTbaDatafeed datafeed) {
         String accountName = PlusHelper.getAccountName();
         AccountHelper.setSelectedAccount(activity, accountName);
-        AccountHelper.enableMyTBA(activity, true);
+        AccountHelper.enableMyTBA(activity, datafeed, true);
         AccountHelper.setSelectedAccount(activity, PlusHelper.getAccountName());
-        GCMHelper.registerGCMIfNeeded(activity);
+        GCMHelper.registerGCMIfNeeded(activity, datafeed);
         activity.startService(new Intent(activity, MyTbaUpdateService.class));
 
         AccountHelper.registerSystemAccount(activity, accountName);

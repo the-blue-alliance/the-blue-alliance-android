@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.PlusHelper;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
+import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
@@ -46,6 +47,8 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
     private boolean mEncourageLearning = false;
 
     protected Handler handler;
+
+    private MyTbaDatafeed mMyTbaDatafeed;
 
     /**
      * Tells the activity whether or not to use the action bar toggle for the navigation drawer.
@@ -280,7 +283,7 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
     /* Plus callbacks */
     @Override
     public void onConnected(Bundle connectionHint) {
-        PlusHelper.onConnectCommon(this);
+        PlusHelper.onConnectCommon(this, mMyTbaDatafeed);
         if (mNavDrawerFragment != null) {
             mNavDrawerFragment.setupNavDrawerHeader();
         }

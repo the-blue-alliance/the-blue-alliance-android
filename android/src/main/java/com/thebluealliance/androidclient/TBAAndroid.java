@@ -111,7 +111,6 @@ public class TBAAndroid extends MultiDexApplication {
     public ApplicationComponent getComponent() {
         if (mComponent == null) {
             mComponent = DaggerApplicationComponent.builder()
-              .tBAAndroidModule(getModule())
               .build();
         }
         return mComponent;

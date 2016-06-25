@@ -5,6 +5,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 
 import android.app.Activity;
 import android.content.Context;

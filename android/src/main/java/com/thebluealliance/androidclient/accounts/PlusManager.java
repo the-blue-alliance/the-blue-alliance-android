@@ -3,6 +3,8 @@ package com.thebluealliance.androidclient.accounts;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
+
 import android.app.Activity;
 import android.content.IntentSender;
 import android.os.Bundle;
@@ -23,11 +25,13 @@ public class PlusManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     // If this IS null, then the connect method is still running.
     private ConnectionResult mConnectionResult;
 
-    private Callbacks mCallbacks;
-    private Activity mActivity;
+    private final Callbacks mCallbacks;
+    private final Activity mActivity;
+    private final MyTbaDatafeed mMyTbaDatafeed;
 
-    public PlusManager(Activity activity, Callbacks callbacks) {
+    public PlusManager(Activity activity, MyTbaDatafeed datafeed, Callbacks callbacks) {
         mCallbacks = callbacks;
+        mMyTbaDatafeed = datafeed;
         mActivity = activity;
     }
 
@@ -161,7 +165,7 @@ public class PlusManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     public void onConnected(Bundle connectionHint) {
         setProgressBarVisible(false);
 
-        PlusHelper.onConnectCommon(mActivity);
+        PlusHelper.onConnectCommon(mActivity, mMyTbaDatafeed);
 
         if (mCallbacks != null) {
             mCallbacks.onPlusClientSignIn();

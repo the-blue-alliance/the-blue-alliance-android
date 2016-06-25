@@ -176,7 +176,7 @@ public abstract class PlusBaseActivity extends Activity
         updateConnectButtonState();
         setProgressBarVisible(false);
 
-        PlusHelper.onConnectCommon(this);
+        PlusHelper.onConnectCommon(this, null);
 
         onPlusClientSignIn();
     }

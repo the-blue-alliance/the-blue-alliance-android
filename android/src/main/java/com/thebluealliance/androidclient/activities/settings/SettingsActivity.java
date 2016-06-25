@@ -90,11 +90,7 @@ public class SettingsActivity extends AppCompatActivity {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     boolean enabled = AccountHelper.isMyTBAEnabled(activity);
                     Log.d(Constants.LOG_TAG, "myTBA is: " + enabled);
-                    if (!enabled) {
-                        activity.startActivity(new Intent(getActivity(), MyTBAOnboardingActivity.class));
-                    } else {
-                        AccountHelper.enableMyTBA(activity, false);
-                    }
+                    activity.startActivity(new Intent(getActivity(), MyTBAOnboardingActivity.class));
                     return true;
                 }
             });

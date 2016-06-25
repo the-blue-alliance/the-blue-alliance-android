@@ -88,7 +88,6 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             mComponenet = DaggerNotificationComponent.builder()
                     .applicationComponent(application.getComponent())
                     .datafeedModule(application.getDatafeedModule())
-                    .databaseWriterModule(application.getDatabaseWriterModule())
                     .rendererModule(new RendererModule())
                     .build();
         }
