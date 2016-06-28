@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
@@ -16,7 +15,6 @@ import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import java.util.List;
 
@@ -51,12 +49,12 @@ public class EventTeamsFragment extends BriteRecyclerViewFragment<List<Team>, Te
         mComponent.inject(this);
     }
 
-    @Override protected Observable<? extends List<Team>> getObservable() {
+    @Override protected Observable<List<Team>> getObservable() {
         return mDatafeed.getEventTeams(mEventKey);
     }
 
     @Override protected void beginDataUpdate(String tbaCacheHeader) {
-        Log.d(Constants.LOG_TAG, "BEGINNING DATA UPDATE FOR " + getClass().getName());
+        mDatabaseUpdater.updateEventTeams(mEventKey, tbaCacheHeader);
     }
 
     @Override

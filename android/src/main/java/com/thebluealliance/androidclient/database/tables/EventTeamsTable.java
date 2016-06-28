@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.database.tables;
 
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -11,6 +12,7 @@ import com.thebluealliance.androidclient.models.Team;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,6 +102,7 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
             do {
                 results.add(ModelInflater.inflateTeam(cursor));
             } while (cursor.moveToNext());
+            cursor.close();
         }
         return results;
     }
@@ -121,12 +124,16 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
         Observable<SqlBrite.Query> briteQuery = mBriteDb.createQuery(tables, sql, eventKey);
         return briteQuery.map(query -> {
             Cursor cursor = query.run();
+            Log.d(Constants.LOG_TAG, "Running eventteams query for " + eventKey);
+
             ArrayList<Team> results = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     results.add(ModelInflater.inflateTeam(cursor));
                 } while (cursor.moveToNext());
+                cursor.close();
             }
+            Log.d(Constants.LOG_TAG, "found " + results.size() + " teams for " + eventKey);
             return results;
         });
     }

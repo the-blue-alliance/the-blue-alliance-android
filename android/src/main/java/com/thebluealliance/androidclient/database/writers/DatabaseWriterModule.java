@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
@@ -12,112 +13,114 @@ import dagger.Provides;
 public class DatabaseWriterModule {
 
     @Provides @Singleton
-    public AwardListWriter awardListWriter(Database db) {
-        return new AwardListWriter(db);
+    public AwardListWriter awardListWriter(Database db, BriteDatabase briteDb) {
+        return new AwardListWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public AwardWriter awardWriter(Database db) {
-        return new AwardWriter(db);
+    public AwardWriter awardWriter(Database db, BriteDatabase briteDb) {
+        return new AwardWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public DistrictListWriter districtListWriter(Database db) {
-        return new DistrictListWriter(db);
+    public DistrictListWriter districtListWriter(Database db, BriteDatabase briteDb) {
+        return new DistrictListWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public DistrictTeamListWriter districtTeamListWriter(Database db) {
-        return new DistrictTeamListWriter(db);
+    public DistrictTeamListWriter districtTeamListWriter(Database db, BriteDatabase briteDb) {
+        return new DistrictTeamListWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public DistrictTeamWriter districtTeamWriter(Database db) {
-        return new DistrictTeamWriter(db);
+    public DistrictTeamWriter districtTeamWriter(Database db, BriteDatabase briteDb) {
+        return new DistrictTeamWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public DistrictWriter districtWriter(Database db) {
-        return new DistrictWriter(db);
+    public DistrictWriter districtWriter(Database db, BriteDatabase briteDb) {
+        return new DistrictWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public EventListWriter eventListWriter(Database db) {
-        return new EventListWriter(db);
+    public EventListWriter eventListWriter(Database db, BriteDatabase briteDb) {
+        return new EventListWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public EventTeamListWriter eventTeamListWriter(Database db) {
-        return new EventTeamListWriter(db);
+    public EventTeamListWriter eventTeamListWriter(Database db, BriteDatabase briteDb) {
+        return new EventTeamListWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public EventTeamWriter eventTeamWriter(Database db) {
-        return new EventTeamWriter(db);
+    public EventTeamWriter eventTeamWriter(Database db, BriteDatabase briteDb) {
+        return new EventTeamWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public EventWriter eventWriter(Database db) {
-        return new EventWriter(db);
+    public EventWriter eventWriter(Database db, BriteDatabase briteDb) {
+        return new EventWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public MatchListWriter matchListWriter(Database db) {
-        return new MatchListWriter(db);
+    public MatchListWriter matchListWriter(Database db, BriteDatabase briteDb) {
+        return new MatchListWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public MatchWriter matchWriter(Database db) {
-        return new MatchWriter(db);
+    public MatchWriter matchWriter(Database db, BriteDatabase briteDb) {
+        return new MatchWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public MediaListWriter mediaListWriter(Database db) {
-        return new MediaListWriter(db);
+    public MediaListWriter mediaListWriter(Database db, BriteDatabase briteDb) {
+        return new MediaListWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public MediaWriter mediaWriter(Database db) {
-        return new MediaWriter(db);
+    public MediaWriter mediaWriter(Database db, BriteDatabase briteDb) {
+        return new MediaWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public TeamListWriter teamListWriter(Database db) {
-        return new TeamListWriter(db);
+    public TeamListWriter teamListWriter(Database db, BriteDatabase briteDb) {
+        return new TeamListWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public TeamWriter teamWriter(Database db) {
-        return new TeamWriter(db);
+    public TeamWriter teamWriter(Database db, BriteDatabase briteDb) {
+        return new TeamWriter(db, briteDb);
     }
 
     @Provides @Singleton
-    public YearsParticipatedWriter yearsParticipatedWriter(Database db, TeamWriter teamWriter) {
-        return new YearsParticipatedWriter(db, teamWriter);
+    public YearsParticipatedWriter yearsParticipatedWriter(Database db, BriteDatabase briteDb, TeamWriter teamWriter) {
+        return new YearsParticipatedWriter(db, briteDb, teamWriter);
     }
 
     @Provides @Singleton
     public EventTeamAndTeamListWriter provideEventTeamAndTeamListWriter(
-      Database database,
-      EventTeamListWriter eventTeamListWriter,
-      TeamListWriter teamListWriter) {
-        return new EventTeamAndTeamListWriter(database, eventTeamListWriter, teamListWriter);
+            Database db,
+            BriteDatabase briteDb,
+            EventTeamListWriter eventTeamListWriter,
+            TeamListWriter teamListWriter) {
+        return new EventTeamAndTeamListWriter(db, briteDb, eventTeamListWriter, teamListWriter);
     }
 
     @Provides @Singleton
-    public EventRankingsWriter provideEventRankingsWriter(Database db, EventWriter eventWriter) {
-        return new EventRankingsWriter(db, eventWriter);
+    public EventRankingsWriter provideEventRankingsWriter(Database db, BriteDatabase briteDb, EventWriter eventWriter) {
+        return new EventRankingsWriter(db, briteDb, eventWriter);
     }
 
     @Provides @Singleton
-    public EventStatsWriter provideEventStatsWriter(Database db, EventWriter eventWriter) {
-        return new EventStatsWriter(db, eventWriter);
+    public EventStatsWriter provideEventStatsWriter(Database db, BriteDatabase briteDb, EventWriter eventWriter) {
+        return new EventStatsWriter(db, briteDb, eventWriter);
     }
 
     @Provides @Singleton
     public EventDistrictPointsWriter provideEventDistrictPointsWriter(
-      Database db,
-      EventWriter eventWriter) {
-        return new EventDistrictPointsWriter(db, eventWriter);
+            Database db,
+            BriteDatabase briteDb,
+            EventWriter eventWriter) {
+        return new EventDistrictPointsWriter(db, briteDb, eventWriter);
     }
 }

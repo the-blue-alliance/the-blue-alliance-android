@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController.RefreshType;
 import com.thebluealliance.androidclient.datafeed.refresh.Refreshable;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
+import com.thebluealliance.androidclient.datafeed.status.DatabaseUpdater;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
@@ -25,6 +26,7 @@ import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Observable;
+import rx.Subscription;
 import rx.schedulers.Schedulers;
 
 /**
@@ -47,8 +49,10 @@ public abstract class BriteDatafeedFragment
     @Inject protected RefreshController mRefreshController;
     @Inject protected Tracker mAnalyticsTracker;
     @Inject protected BriteDatafeed mDatafeed;
+    @Inject protected DatabaseUpdater mDatabaseUpdater;
 
     protected Observable<? extends T> mObservable;
+    protected Subscription mSubscription;
     protected FragmentComponent mComponent;
     protected String mRefreshTag;
 
@@ -71,7 +75,6 @@ public abstract class BriteDatafeedFragment
 
     @Override public void onStart() {
         super.onStart();
-        getNewObservables();
         mRefreshController.registerRefreshable(mRefreshTag, this);
         onRefreshStart(RefreshController.NOT_REQUESTED_BY_USER);
     }
@@ -79,7 +82,7 @@ public abstract class BriteDatafeedFragment
     @Override
     public void onResume() {
         super.onResume();
-        //getNewObservables(RefreshController.NOT_REQUESTED_BY_USER);
+        getNewObservable();
         mRefreshController.registerRefreshable(mRefreshTag, this);
         if (shouldRegisterSubscriberToEventBus()) {
             mEventBus.register(mSubscriber);
@@ -93,6 +96,9 @@ public abstract class BriteDatafeedFragment
     public void onPause() {
         super.onPause();
         mRefreshController.unregisterRefreshable(mRefreshTag);
+        if (mSubscription != null) {
+            mSubscription.unsubscribe();
+        }
         if (mSubscriber != null) {
             if (shouldRegisterSubscriberToEventBus()) {
                 mEventBus.unregister(mSubscriber);
@@ -147,11 +153,11 @@ public abstract class BriteDatafeedFragment
     /**
      * Registers and subscribes new observables
      */
-    private void getNewObservables() {
+    private void getNewObservable() {
         if (mSubscriber != null) {
             mObservable = getObservable();
             if (mObservable != null) {
-                mObservable.subscribeOn(Schedulers.io())
+                mSubscription = mObservable.subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.computation())
                         .subscribe(mSubscriber);
             }
@@ -167,7 +173,7 @@ public abstract class BriteDatafeedFragment
                     ? APIv2.TBA_CACHE_WEB
                     : null);
             mSubscriber.onRefreshStart(refreshType);
-            //getNewObservables(RefreshController.REQUESTED_BY_USER);
+            //getNewObservable(RefreshController.REQUESTED_BY_USER);
         }
     }
 
@@ -188,7 +194,8 @@ public abstract class BriteDatafeedFragment
     protected abstract Observable<? extends T> getObservable();
 
     /**
-     * Brite data fragments separate loading data from the web and displaying it. All displayed data
+     * Brite data fragments separate loading data from the web and displaying it. All displayed
+     * data
      * is loaded from the internal database and is updated automatically whenever data in the
      * database changes. This class will be called whenever this fragment should kick off an update
      * of the data it displays by telling another to component to push new data from the web into

@@ -60,13 +60,11 @@ public class EventInfoFragment
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(mBinder);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(mBinder);
     }
 
     @Override

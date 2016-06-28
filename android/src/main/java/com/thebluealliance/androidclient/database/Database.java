@@ -230,6 +230,10 @@ public class Database extends SQLiteOpenHelper {
         return sDatabaseInstance;
     }
 
+    public BriteDatabase getBriteDatabase() {
+        return mBriteDb;
+    }
+
     public TeamsTable getTeamsTable() {
         return mTeamsTable;
     }

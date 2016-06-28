@@ -1,11 +1,13 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.comparators.TeamSortByNumberComparator;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,6 +39,7 @@ public class TeamListRecyclerSubscriber extends BaseAPISubscriber<List<Team>, Li
     @Override
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mDataToBind.clear();
+        Log.d(Constants.LOG_TAG, "parsing " + mAPIData.size() + " teams");
         Collections.sort(mAPIData, mComparator);
         for (int i = 0; i < mAPIData.size(); i++) {
             Team team = mAPIData.get(i);

@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.database.writers;
 
 import com.google.common.collect.ImmutableList;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -14,8 +15,8 @@ import javax.inject.Inject;
 
 public class TeamListWriter extends BaseDbWriter<List<Team>> {
     @Inject
-    public TeamListWriter(Database db) {
-        super(db);
+    public TeamListWriter(Database db, BriteDatabase briteDb) {
+        super(db, briteDb);
     }
 
     @Override

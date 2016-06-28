@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelTable;
 
@@ -16,9 +17,11 @@ import rx.schedulers.Schedulers;
 public abstract class BaseDbWriter<T> implements Action4<String, String, String[], T> {
 
     protected final Database mDb;
+    protected final BriteDatabase mBriteDb;
 
-    public BaseDbWriter(Database db) {
+    public BaseDbWriter(Database db, BriteDatabase briteDb) {
         mDb = db;
+        mBriteDb = briteDb;
     }
 
     /**
@@ -60,13 +63,13 @@ public abstract class BaseDbWriter<T> implements Action4<String, String, String[
             return;
         }
         Schedulers.io().createWorker().schedule(() -> {
-            mDb.getWritableDatabase().beginTransaction();
+            BriteDatabase.Transaction transaction = mBriteDb.newTransaction();
             try {
                 clear(dbTable, sqlWhere, whereArgs);
                 write(newModels);
-                mDb.getWritableDatabase().setTransactionSuccessful();
+                transaction.markSuccessful();
             } finally {
-                mDb.getWritableDatabase().endTransaction();
+                transaction.end();
             }
         });
     }
