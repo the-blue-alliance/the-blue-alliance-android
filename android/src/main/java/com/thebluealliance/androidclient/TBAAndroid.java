@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient;
 
 import com.facebook.stetho.Stetho;
+import com.thebluealliance.androidclient.auth.AuthModule;
 import com.thebluealliance.androidclient.binders.BinderModule;
 import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
@@ -28,6 +29,7 @@ public class TBAAndroid extends MultiDexApplication {
     private DatafeedModule mDatafeedModule;
     private BinderModule mBinderModule;
     private DatabaseWriterModule mDatabaseWriterModule;
+    private AuthModule mAuthModule;
     private boolean mShouldBindStetho;
 
     private HttpModule mHttpModule;
@@ -108,9 +110,17 @@ public class TBAAndroid extends MultiDexApplication {
         return mDatabaseWriterModule;
     }
 
+    public AuthModule getAuthModule() {
+        if (mAuthModule == null) {
+            mAuthModule = new AuthModule();
+        }
+        return mAuthModule;
+    }
+
     public ApplicationComponent getComponent() {
         if (mComponent == null) {
             mComponent = DaggerApplicationComponent.builder()
+              .tBAAndroidModule(new TBAAndroidModule(this))
               .build();
         }
         return mComponent;
