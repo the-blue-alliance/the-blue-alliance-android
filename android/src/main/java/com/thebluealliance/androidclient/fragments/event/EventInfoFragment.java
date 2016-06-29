@@ -77,7 +77,13 @@ public class EventInfoFragment
     }
 
     @Override protected void beginDataUpdate(String tbaCacheHeader) {
-
+        mDatabaseUpdater.updateEvent(mEventKey, tbaCacheHeader);
+        // For showing next/last match
+        mDatabaseUpdater.updateEventMatches(mEventKey, tbaCacheHeader);
+        // For showing top teams by ranking
+        mDatabaseUpdater.updateEventRankings(mEventKey, tbaCacheHeader);
+        // For showing top teams by OPR
+        mDatabaseUpdater.updateEventStats(mEventKey, tbaCacheHeader);
     }
 
     @Override
