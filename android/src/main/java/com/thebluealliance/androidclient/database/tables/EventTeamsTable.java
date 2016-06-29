@@ -124,7 +124,6 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
         Observable<SqlBrite.Query> briteQuery = mBriteDb.createQuery(tables, sql, eventKey);
         return briteQuery.map(query -> {
             Cursor cursor = query.run();
-            Log.d(Constants.LOG_TAG, "Running eventteams query for " + eventKey);
 
             ArrayList<Team> results = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
@@ -133,7 +132,6 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
                 } while (cursor.moveToNext());
                 cursor.close();
             }
-            Log.d(Constants.LOG_TAG, "found " + results.size() + " teams for " + eventKey);
             return results;
         });
     }
