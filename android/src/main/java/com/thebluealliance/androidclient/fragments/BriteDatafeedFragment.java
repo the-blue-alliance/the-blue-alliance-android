@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController.RefreshType;
 import com.thebluealliance.androidclient.datafeed.refresh.Refreshable;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
-import com.thebluealliance.androidclient.datafeed.status.DatabaseUpdater;
+import com.thebluealliance.androidclient.datafeed.DatabaseUpdater;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.models.NoDataViewParams;

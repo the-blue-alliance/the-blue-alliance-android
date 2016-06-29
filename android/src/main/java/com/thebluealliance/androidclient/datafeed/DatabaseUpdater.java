@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.datafeed.status;
+package com.thebluealliance.androidclient.datafeed;
 
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamAndEventTeamCombiner;

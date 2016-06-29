@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.Gson;
 
-import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
@@ -13,7 +12,6 @@ import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.datafeed.retrofit.FirebaseAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
-import com.thebluealliance.androidclient.datafeed.status.DatabaseUpdater;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.fragments.FirebaseTickerFragment;
