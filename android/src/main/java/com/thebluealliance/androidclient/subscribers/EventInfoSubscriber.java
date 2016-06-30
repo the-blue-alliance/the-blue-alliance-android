@@ -42,4 +42,8 @@ public class EventInfoSubscriber extends BaseAPISubscriber<EventInfo, Model> {
             mDataToBind.nextMatch = MatchHelper.getNextMatchPlayed(matches);
         }
     }
+
+    @Override public boolean isDataValid() {
+        return mAPIData != null && mAPIData.event != null;
+    }
 }
