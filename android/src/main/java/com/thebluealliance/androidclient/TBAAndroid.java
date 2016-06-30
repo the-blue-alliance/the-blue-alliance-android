@@ -14,6 +14,9 @@ import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.imgur.ImgurModule;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.EventBusBuilder;
+
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
@@ -37,6 +40,11 @@ public class TBAAndroid extends MultiDexApplication {
     public TBAAndroid() {
         super();
         mShouldBindStetho = true;
+
+        // Build custom EventBus that doesn't lon "No subscibers registered" messages
+        EventBusBuilder builder = EventBus.builder();
+        builder.logNoSubscriberMessages(false);
+        builder.installDefaultEventBus();
     }
 
     @Override
