@@ -1,14 +1,19 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.writers.BaseDbWriter;
+
+import android.util.Log;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import retrofit2.Response;
 import rx.Observable;
+import rx.Single;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import rx.subjects.BehaviorSubject;
 
 /**
  * A class that extracts the body from a Retrofit {@link Response} and calls an action (for use
@@ -43,6 +48,12 @@ public class RetrofitResponseMap {
         writeResponseBody(response, writer, null, null, null);
     }
 
+    public synchronized <T> Single<Void> writeResponseBodyWithRequestStatusObservable(
+            Observable<Response<T>> response,
+            BaseDbWriter<T> writer) {
+        return writeResponseBodyWithRequestStatusObservable(response, writer, null, null, null);
+    }
+
     /**
      * If the response is successful (HTTP code between [200...300)), then call the provided
      * db writer (which should write to the db) on the body
@@ -68,12 +79,37 @@ public class RetrofitResponseMap {
             String dbTable,
             String sqlWhere,
             String[] whereArgs) {
-        response.subscribeOn(Schedulers.io()).subscribe(response1 -> {
+        response.subscribe(response1 -> {
             T data = response1.body();
             if (shouldWriteData(response1)) {
                 writer.call(dbTable, sqlWhere, whereArgs, data);
             }
+        }, error -> {
+            Log.d(Constants.LOG_TAG, "writeResponseBody error received");
+            error.printStackTrace();
         });
+    }
+
+    public synchronized <T> Single<Void> writeResponseBodyWithRequestStatusObservable(
+            Observable<Response<T>> response,
+            BaseDbWriter<T> writer,
+            String dbTable,
+            String sqlWhere,
+            String[] whereArgs) {
+        BehaviorSubject<Void> subject = BehaviorSubject.create();
+        response.subscribe(response1 -> {
+            T data = response1.body();
+            if (shouldWriteData(response1)) {
+                writer.call(dbTable, sqlWhere, whereArgs, data);
+            }
+            subject.onNext(null);
+            subject.onCompleted();
+        }, error -> {
+            Log.d(Constants.LOG_TAG, "writeResponseBody error received");
+            error.printStackTrace();
+            subject.onError(error);
+        });
+        return subject.toSingle();
     }
 
     /**
@@ -91,6 +127,13 @@ public class RetrofitResponseMap {
             Func1<T, W> writerMap,
             BaseDbWriter<W> writer) {
         writeMappedResponseBody(response, writerMap, writer, null, null, null);
+    }
+
+    public synchronized <T, W> Single<Void> writeMappedResponseBodyWithRequestStatusObservable(
+            Observable<Response<T>> response,
+            Func1<T, W> writerMap,
+            BaseDbWriter<W> writer) {
+        return writeMappedResponseBodyWithRequestStatusObservable(response, writerMap, writer, null, null, null);
     }
 
     /**
@@ -121,14 +164,38 @@ public class RetrofitResponseMap {
             String dbTable,
             String sqlWhere,
             String[] whereArgs) {
-        response.subscribeOn(Schedulers.io()).subscribe(response1 -> {
+        response.subscribe(response1 -> {
             T data = response1.body();
             if (shouldWriteData(response1)) {
                 writer.call(dbTable, sqlWhere, whereArgs, writerMap.call(data));
             }
         }, error -> {
+            Log.d(Constants.LOG_TAG, "writeMappedResponseBody error received");
             error.printStackTrace();
         });
+    }
+
+    public synchronized <T, W> Single<Void> writeMappedResponseBodyWithRequestStatusObservable(
+            Observable<Response<T>> response,
+            Func1<T, W> writerMap,
+            BaseDbWriter<W> writer,
+            String dbTable,
+            String sqlWhere,
+            String[] whereArgs) {
+        BehaviorSubject<Void> subject = BehaviorSubject.create();
+        response.subscribeOn(Schedulers.io()).subscribe(response1 -> {
+            T data = response1.body();
+            if (shouldWriteData(response1)) {
+                writer.call(dbTable, sqlWhere, whereArgs, writerMap.call(data));
+            }
+            subject.onNext(null);
+            subject.onCompleted();
+        }, error -> {
+            Log.d(Constants.LOG_TAG, "writeMappedResponseBody error received");
+            error.printStackTrace();
+            subject.onError(error);
+        });
+        return subject.toSingle();
     }
 
     /**

@@ -30,6 +30,7 @@ import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import rx.schedulers.Schedulers;
 
 @Module(includes = {TBAAndroidModule.class, HttpModule.class})
 public class DatafeedModule {
@@ -54,7 +55,7 @@ public class DatafeedModule {
                 .baseUrl("https://api.github.com/")
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build();
     }
 
@@ -65,7 +66,7 @@ public class DatafeedModule {
                 .baseUrl(firebaseUrl)
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build();
     }
 
@@ -139,7 +140,7 @@ public class DatafeedModule {
                 .baseUrl(baseUrl)
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build();
     }
 }

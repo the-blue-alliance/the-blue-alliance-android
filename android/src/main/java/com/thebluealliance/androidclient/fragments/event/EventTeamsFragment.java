@@ -10,18 +10,21 @@ import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.itemviews.TeamItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.subscribers.BriteTeamListRecyclerSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamListRecyclerSubscriber;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 
 import android.content.Intent;
 import android.os.Bundle;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
+import rx.Single;
 
-public class EventTeamsFragment extends BriteRecyclerViewFragment<List<Team>, TeamListRecyclerSubscriber, RecyclerViewBinder> {
+public class EventTeamsFragment extends BriteRecyclerViewFragment<List<Team>, BriteTeamListRecyclerSubscriber, RecyclerViewBinder> {
 
     private static final String KEY = "event_key";
 
@@ -53,8 +56,10 @@ public class EventTeamsFragment extends BriteRecyclerViewFragment<List<Team>, Te
         return mDatafeed.getEventTeams(mEventKey);
     }
 
-    @Override protected void beginDataUpdate(String tbaCacheHeader) {
-        mDatabaseUpdater.updateEventTeams(mEventKey, tbaCacheHeader);
+    @Override protected List<Single<Void>> beginDataUpdate(String tbaCacheHeader) {
+        List<Single<Void>> observables = new ArrayList<>();
+        observables.add(mDatabaseUpdater.updateEventTeams(mEventKey, tbaCacheHeader));
+        return observables;
     }
 
     @Override

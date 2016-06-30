@@ -22,6 +22,7 @@ import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.EventBusBuilder;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 

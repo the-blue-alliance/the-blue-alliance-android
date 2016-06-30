@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.models.Match;
 
 import java.util.List;
 
-public class EventInfoSubscriber extends BaseAPISubscriber<EventInfo, Model> {
+public class EventInfoSubscriber extends BriteBaseAPISubscriber<EventInfo, Model> {
 
     public EventInfoSubscriber() {
         mDataToBind = null;

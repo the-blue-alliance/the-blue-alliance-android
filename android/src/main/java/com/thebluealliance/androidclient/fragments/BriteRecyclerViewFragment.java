@@ -4,6 +4,7 @@ import com.thebluealliance.androidclient.DividerItemDecoration;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
+import com.thebluealliance.androidclient.subscribers.BriteBaseAPISubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
 
 import android.os.Bundle;
@@ -18,7 +19,7 @@ import android.widget.ProgressBar;
 
 import java.util.List;
 
-public abstract class BriteRecyclerViewFragment<T, S extends BaseAPISubscriber<T, List<Object>>, B extends RecyclerViewBinder>
+public abstract class BriteRecyclerViewFragment<T, S extends BriteBaseAPISubscriber<T, List<Object>>, B extends RecyclerViewBinder>
         extends BriteDatafeedFragment<T, List<Object>, S, B> implements RecyclerViewBinder.RecyclerViewAdapterCreatorInitializer {
 
     private Parcelable mListState;

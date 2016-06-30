@@ -31,6 +31,7 @@ import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import rx.schedulers.Schedulers;
 
 import static org.mockito.Mockito.when;
 
@@ -45,7 +46,7 @@ public class MockDatafeedModule {
                 .baseUrl(APIv2.TBA_URL)
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build();
     }
 
@@ -57,7 +58,7 @@ public class MockDatafeedModule {
                 .baseUrl("https://api.github.com/")
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build();
     }
 
@@ -78,7 +79,7 @@ public class MockDatafeedModule {
                 .baseUrl(firebaseUrl)
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build();
     }
 

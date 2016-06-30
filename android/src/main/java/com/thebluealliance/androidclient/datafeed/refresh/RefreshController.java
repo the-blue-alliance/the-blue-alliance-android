@@ -1,16 +1,19 @@
 package com.thebluealliance.androidclient.datafeed.refresh;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.UiThread;
 import android.support.v4.util.ArrayMap;
+import android.util.Log;
 import android.view.MenuItem;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -185,10 +188,11 @@ public class RefreshController {
      */
     @UiThread
     private boolean updateRefreshingState() {
-        Collection<RefreshWrapper> refreshingStates = mRefreshableStates.values();
-        for (RefreshWrapper wrapper : refreshingStates) {
-            if (wrapper.getRefreshState()) {
+        Set<Map.Entry<String, RefreshWrapper>> refreshingStates = mRefreshableStates.entrySet();
+        for (Map.Entry<String, RefreshWrapper> entry : refreshingStates) {
+            if (entry.getValue().getRefreshState()) {
                 mIsRefreshing = true;
+                Log.d(Constants.LOG_TAG, entry.getKey() + " is still refreshing!");
                 return true;
             }
         }

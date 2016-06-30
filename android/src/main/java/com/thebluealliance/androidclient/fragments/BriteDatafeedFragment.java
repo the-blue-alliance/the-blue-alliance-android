@@ -5,6 +5,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.datafeed.BriteDatafeed;
+import com.thebluealliance.androidclient.datafeed.NetworkRequestStatusAggregator;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController.RefreshType;
 import com.thebluealliance.androidclient.datafeed.refresh.Refreshable;
@@ -14,6 +15,7 @@ import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
+import com.thebluealliance.androidclient.subscribers.BriteBaseAPISubscriber;
 import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
 
 import org.greenrobot.eventbus.EventBus;
@@ -22,10 +24,13 @@ import android.os.Bundle;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import dagger.Lazy;
 import rx.Observable;
+import rx.Single;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 
@@ -38,7 +43,7 @@ import rx.schedulers.Schedulers;
  * @param <B> {@link AbstractDataBinder} that will take prepared data -> view
  */
 public abstract class BriteDatafeedFragment
-        <T, V, S extends BaseAPISubscriber<T, V>, B extends AbstractDataBinder<V>>
+        <T, V, S extends BriteBaseAPISubscriber<T, V>, B extends AbstractDataBinder<V>>
         extends Fragment implements Refreshable {
 
     @Inject protected S mSubscriber;
@@ -168,10 +173,13 @@ public abstract class BriteDatafeedFragment
     @Override
     public void onRefreshStart(@RefreshType int refreshType) {
         if (mSubscriber != null && mBinder != null) {
-            mBinder.unbind(false);
-            beginDataUpdate(refreshType == RefreshController.REQUESTED_BY_USER
-                    ? APIv2.TBA_CACHE_WEB
-                    : null);
+            List<Single<Void>> observables = beginDataUpdate(
+                    refreshType == RefreshController.REQUESTED_BY_USER
+                            ? APIv2.TBA_CACHE_WEB
+                            : null);
+            NetworkRequestStatusAggregator aggregator = new NetworkRequestStatusAggregator();
+            aggregator.addAllRequestStatusObservables(observables);
+            mSubscriber.subscribeAndStartNetworkRequestStatusAggregator(aggregator);
             mSubscriber.onRefreshStart(refreshType);
         }
     }
@@ -204,7 +212,7 @@ public abstract class BriteDatafeedFragment
      *                       {@link APIv2#TBA_CACHE_WEB}, {@link APIv2#TBA_CACHE_LOCAL}, or {@code
      *                       null} for regular usage
      */
-    protected abstract void beginDataUpdate(String tbaCacheHeader);
+    protected abstract List<Single<Void>> beginDataUpdate(String tbaCacheHeader);
 
     /**
      * @return A string identifying what data this fragment is loading

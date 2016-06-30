@@ -12,6 +12,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import rx.Single;
+
 @Singleton
 public class DatabaseUpdater {
 
@@ -29,35 +31,35 @@ public class DatabaseUpdater {
         mResponseMap = responseMap;
     }
 
-    public void updateEventTeams(String eventKey, String cacheHeader) {
-        mResponseMap.writeMappedResponseBody(
+    public Single<Void> updateEventTeams(String eventKey, String cacheHeader) {
+        return mResponseMap.writeMappedResponseBodyWithRequestStatusObservable(
                 mRetrofitAPI.fetchEventTeams(eventKey, cacheHeader),
                 new TeamAndEventTeamCombiner(eventKey),
                 mWriter.getEventTeamAndTeamListWriter().get());
     }
 
-    public void updateEvent(String eventKey, String cacheHeader) {
-        mResponseMap.writeResponseBody(
+    public Single<Void> updateEvent(String eventKey, String cacheHeader) {
+        return mResponseMap.writeResponseBodyWithRequestStatusObservable(
                 mRetrofitAPI.fetchEvent(eventKey, cacheHeader),
                 mWriter.getEventWriter().get());
     }
 
-    public void updateEventMatches(String eventKey, String cacheHeader) {
-        mResponseMap.writeResponseBody(
+    public Single<Void> updateEventMatches(String eventKey, String cacheHeader) {
+        return mResponseMap.writeResponseBodyWithRequestStatusObservable(
                 mRetrofitAPI.fetchEventMatches(eventKey, cacheHeader),
                 mWriter.getMatchListWriter().get(),
                 Database.TABLE_MATCHES, MatchesTable.EVENT + " = ?", new String[]{eventKey});
     }
 
-    public void updateEventRankings(String eventKey, String cacheHeader) {
-        mResponseMap.getAndWriteMappedResponseBody(
+    public Single<Void> updateEventRankings(String eventKey, String cacheHeader) {
+        return mResponseMap.writeMappedResponseBodyWithRequestStatusObservable(
                 mRetrofitAPI.fetchEventRankings(eventKey, cacheHeader),
                 new JsonAndKeyCombiner(eventKey),
                 mWriter.getEventRankingsWriter().get());
     }
 
-    public void updateEventStats(String eventKey, String cacheHeader) {
-        mResponseMap.getAndWriteMappedResponseBody(
+    public Single<Void> updateEventStats(String eventKey, String cacheHeader) {
+        return mResponseMap.writeMappedResponseBodyWithRequestStatusObservable(
                 mRetrofitAPI.fetchEventStats(eventKey, cacheHeader),
                 new JsonAndKeyCombiner(eventKey),
                 mWriter.getEventStatsWriter().get());
