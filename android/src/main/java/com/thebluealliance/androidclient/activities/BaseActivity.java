@@ -79,7 +79,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.clear();
         getMenuInflater().inflate(R.menu.base_menu, menu);
         if (!searchEnabled) {
             menu.findItem(R.id.search).setVisible(false);
