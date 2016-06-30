@@ -173,7 +173,6 @@ public abstract class BriteDatafeedFragment
                     ? APIv2.TBA_CACHE_WEB
                     : null);
             mSubscriber.onRefreshStart(refreshType);
-            //getNewObservable(RefreshController.REQUESTED_BY_USER);
         }
     }
 
