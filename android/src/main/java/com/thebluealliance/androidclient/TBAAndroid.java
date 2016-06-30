@@ -41,7 +41,7 @@ public class TBAAndroid extends MultiDexApplication {
         super();
         mShouldBindStetho = true;
 
-        // Build custom EventBus that doesn't lon "No subscibers registered" messages
+        // Build custom EventBus that doesn't log "No subscribers registered" messages
         EventBusBuilder builder = EventBus.builder();
         builder.logNoSubscriberMessages(false);
         builder.installDefaultEventBus();
