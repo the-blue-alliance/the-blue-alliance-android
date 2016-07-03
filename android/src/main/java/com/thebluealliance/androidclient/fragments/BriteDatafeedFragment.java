@@ -14,7 +14,6 @@ import com.thebluealliance.androidclient.datafeed.DatabaseUpdater;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
-import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 import com.thebluealliance.androidclient.subscribers.BriteBaseAPISubscriber;
 import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
 

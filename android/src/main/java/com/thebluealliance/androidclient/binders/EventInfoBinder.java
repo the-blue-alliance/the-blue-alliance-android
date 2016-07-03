@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
-import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.helpers.RankingsHelper;
 import com.thebluealliance.androidclient.helpers.StatsHelper;
 import com.thebluealliance.androidclient.helpers.WebcastHelper;
@@ -19,7 +18,6 @@ import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.types.WebcastType;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;

@@ -7,7 +7,6 @@ import rx.Observable;
 import rx.Observer;
 import rx.Single;
 import rx.Subscription;
-import rx.functions.Action1;
 import rx.subjects.BehaviorSubject;
 
 public class NetworkRequestStatusAggregator {

@@ -1,22 +1,15 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
-import com.thebluealliance.androidclient.datafeed.NetworkRequestStatusAggregator;
 import com.thebluealliance.androidclient.fragments.BriteDatafeedFragment;
-import com.thebluealliance.androidclient.fragments.DatafeedFragment;
-import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventInfo;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
 
-import org.greenrobot.eventbus.EventBus;
-
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

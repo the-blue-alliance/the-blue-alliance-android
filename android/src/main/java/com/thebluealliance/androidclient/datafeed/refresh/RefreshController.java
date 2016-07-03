@@ -11,7 +11,6 @@ import android.view.MenuItem;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 

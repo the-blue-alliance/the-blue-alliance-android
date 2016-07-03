@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.fragments;
 import com.thebluealliance.androidclient.DividerItemDecoration;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
-import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 import com.thebluealliance.androidclient.subscribers.BriteBaseAPISubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
 

@@ -11,7 +11,6 @@ import com.thebluealliance.androidclient.itemviews.TeamItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.subscribers.BriteTeamListRecyclerSubscriber;
-import com.thebluealliance.androidclient.subscribers.TeamListRecyclerSubscriber;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 
 import android.content.Intent;

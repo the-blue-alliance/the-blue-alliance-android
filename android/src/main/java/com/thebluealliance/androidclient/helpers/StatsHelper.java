@@ -3,17 +3,10 @@ package com.thebluealliance.androidclient.helpers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.comparators.StatListElementComparator;
-import com.thebluealliance.androidclient.eventbus.EventStatsEvent;
-import com.thebluealliance.androidclient.listitems.StatsListElement;
-import com.thebluealliance.androidclient.models.Team;
-
 import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
