@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.accounts;
 
 import com.thebluealliance.androidclient.LocalProperties;
+import com.thebluealliance.androidclient.auth.User;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -66,7 +67,13 @@ public class AccountController {
         return null;
     }
 
-    public boolean registerSystemAccount(String accountName) {
+    public void onAccountConnect(User user) {
+        setMyTbaEnabled(true);
+        registerSystemAccount(user.getEmail());
+        setSelectedAccount(user.getEmail());
+    }
+
+    private boolean registerSystemAccount(String accountName) {
         if (mAccountManager.getAccountsByType(mAccountType).length == 0) {
             Account account = new Account(accountName, mAccountType);
             return mAccountManager.addAccountExplicitly(account, null, null);
