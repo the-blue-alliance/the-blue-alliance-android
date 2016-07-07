@@ -17,7 +17,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.datafeed.gce.GceAuthController;
-import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
+import com.thebluealliance.androidclient.gcm.GcmController;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Subscription;
@@ -54,11 +54,13 @@ public class MyTbaDatafeed {
     private final Subscriptions mSubscriptionApi;
     private final GceAuthController mAuthController;
     private final AccountController mAccountController;
+    private final GcmController mGcmController;
 
     @Inject
     public MyTbaDatafeed(
             Context context,
             GceAuthController authController,
+            GcmController gcmController,
             Tbamobile tbaMobile,
             Favorites favoriteApi,
             Subscriptions subscriptionApi,
@@ -68,6 +70,7 @@ public class MyTbaDatafeed {
             Database db) {
         mApplicationContext = context.getApplicationContext();
         mAuthController = authController;
+        mGcmController = gcmController;
         mTbaMobile = tbaMobile;
         mFavoriteApi = favoriteApi;
         mSubscriptionApi = subscriptionApi;
@@ -86,7 +89,7 @@ public class MyTbaDatafeed {
         String authHeader = mAuthController.getAuthHeader();
         ModelsMobileApiMessagesRegistrationRequest request = new ModelsMobileApiMessagesRegistrationRequest();
         request.mobile_id = regId;
-        request.operating_system = GCMAuthHelper.OS_ANDROID;
+        request.operating_system = GcmController.OS_ANDROID;
         request.device_uuid = Utilities.getDeviceUUID(mApplicationContext);
 
         Response<ModelsMobileApiMessagesBaseResponse> response = null;
@@ -107,8 +110,8 @@ public class MyTbaDatafeed {
 
         String authHeader = mAuthController.getAuthHeader();
         ModelsMobileApiMessagesRegistrationRequest request = new ModelsMobileApiMessagesRegistrationRequest();
-        request.mobile_id = GCMAuthHelper.getRegistrationId(mApplicationContext);
-        request.operating_system = GCMAuthHelper.OS_ANDROID;
+        request.mobile_id = mGcmController.getRegistrationId();
+        request.operating_system = GcmController.OS_ANDROID;
         request.device_uuid = Utilities.getDeviceUUID(mApplicationContext);
 
         Response<ModelsMobileApiMessagesBaseResponse> response = null;

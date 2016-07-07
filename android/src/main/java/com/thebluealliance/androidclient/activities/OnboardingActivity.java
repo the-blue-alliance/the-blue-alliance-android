@@ -172,7 +172,7 @@ public class OnboardingActivity extends AppCompatActivity
                             Log.d(Constants.LOG_TAG, "User logged in: " + user.getEmail());
                             mMyTBAOnboardingViewPager.setUpForLoginSuccess();
                             isMyTBALoginComplete = true;
-                            mAccountController.onAccountConnect(user);
+                            mAccountController.onAccountConnect(OnboardingActivity.this, user);
                         }, throwable -> {
                             Log.e(Constants.LOG_TAG, "Error logging in");
                             throwable.printStackTrace();

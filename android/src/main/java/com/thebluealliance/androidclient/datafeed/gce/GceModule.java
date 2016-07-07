@@ -14,6 +14,8 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
+import com.thebluealliance.androidclient.gcm.GcmController;
+import com.thebluealliance.androidclient.gcm.GcmModule;
 
 import android.accounts.AccountManager;
 import android.content.Context;
@@ -30,7 +32,7 @@ import retrofit2.Retrofit;
 /**
  * Dagger Module for Google Cloud Endpoints and their related things
  */
-@Module(includes = {HttpModule.class, AccountModule.class})
+@Module(includes = {HttpModule.class, AccountModule.class, GcmModule.class})
 public class GceModule {
 
     // Format with app engine project ID
@@ -90,13 +92,15 @@ public class GceModule {
     @Provides @Singleton MyTbaDatafeed provideMyTbaDatafeed(
             Context context,
             GceAuthController authController,
+            GcmController gcmController,
             Tbamobile tbamobile,
             Favorites favoriteApi,
             Subscriptions subscriptionApi,
             SharedPreferences prefs,
             AccountController accountController,
             Database db) {
-        return new MyTbaDatafeed(context, authController, tbamobile, favoriteApi, subscriptionApi,
-                context.getResources(), prefs, accountController, db);
+        return new MyTbaDatafeed(context, authController, gcmController, tbamobile, favoriteApi,
+                                 subscriptionApi, context.getResources(), prefs, accountController,
+                                 db);
     }
 }

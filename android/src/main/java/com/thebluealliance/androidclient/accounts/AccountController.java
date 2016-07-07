@@ -2,9 +2,13 @@ package com.thebluealliance.androidclient.accounts;
 
 import com.thebluealliance.androidclient.LocalProperties;
 import com.thebluealliance.androidclient.auth.User;
+import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 
@@ -67,10 +71,16 @@ public class AccountController {
         return null;
     }
 
-    public void onAccountConnect(User user) {
+    public void onAccountConnect(Context context, User user) {
         setMyTbaEnabled(true);
         registerSystemAccount(user.getEmail());
         setSelectedAccount(user.getEmail());
+        registerForGcm(context);
+        loadMyTbaData(context);
+    }
+
+    public String getWebClientId() {
+        return mLocalProperties.readLocalProperty("appspot.webClientId");
     }
 
     private boolean registerSystemAccount(String accountName) {
@@ -83,7 +93,13 @@ public class AccountController {
         return true;
     }
 
-    public String getWebClientId() {
-        return mLocalProperties.readLocalProperty("appspot.webClientId");
+    private void registerForGcm(Context context) {
+        context.startService(new Intent(context, MyTbaRegistrationService.class));
     }
+
+    private void loadMyTbaData(Context context) {
+        Intent intent = MyTbaUpdateService.newInstance(context, true, true);
+        context.startService(intent);
+    }
+
 }

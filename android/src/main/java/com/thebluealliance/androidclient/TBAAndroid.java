@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.di.components.ApplicationComponent;
 import com.thebluealliance.androidclient.di.components.DaggerApplicationComponent;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
+import com.thebluealliance.androidclient.gcm.GcmModule;
 import com.thebluealliance.androidclient.imgur.ImgurModule;
 
 import android.support.multidex.MultiDexApplication;
@@ -37,6 +38,7 @@ public class TBAAndroid extends MultiDexApplication {
     private GceModule mGceModule;
     private ImgurModule mImgurModule;
     private AccountModule mAccountModule;
+    private GcmModule mGcmModule;
 
     public TBAAndroid() {
         super();
@@ -124,6 +126,13 @@ public class TBAAndroid extends MultiDexApplication {
             mAccountModule = new AccountModule();
         }
         return mAccountModule;
+    }
+
+    public GcmModule getGcmModule() {
+        if (mGcmModule == null) {
+            mGcmModule = new GcmModule();
+        }
+        return mGcmModule;
     }
 
     public ApplicationComponent getComponent() {
