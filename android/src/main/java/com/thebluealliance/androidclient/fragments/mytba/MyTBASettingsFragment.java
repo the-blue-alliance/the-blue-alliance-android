@@ -71,6 +71,8 @@ public class MyTBASettingsFragment extends PreferenceFragment {
         DaggerMyTbaComponent.builder()
                 .tBAAndroidModule(application.getModule())
                 .accountModule(application.getAccountModule())
+                .authModule(application.getAuthModule())
+                .applicationComponent(application.getComponent())
                 .build()
                 .inject(this);
         modelKey = getArguments().getString(MODEL_KEY);

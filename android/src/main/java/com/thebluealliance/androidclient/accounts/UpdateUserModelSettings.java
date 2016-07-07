@@ -1,30 +1,31 @@
 package com.thebluealliance.androidclient.accounts;
 
+import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
+import com.thebluealliance.androidclient.mytba.ModelPrefsResult;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
-public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserModelSettings.Result> {
+public class UpdateUserModelSettings extends AsyncTask<String, Void, ModelPrefsResult> {
 
-    protected enum Result {
-        SUCCESS, NOOP, ERROR
-    }
-
-    private Context context;
-    private ModelNotificationFavoriteSettings settings;
+    private final Context mContext;
+    private final ModelNotificationFavoriteSettings mSettings;
+    private final MyTbaDatafeed mMyTbaDatafeed;
 
     // We use a WeakReference so that the Activity can be garbage-collected if need be.
     private WeakReference<ModelSettingsCallbacks> callbacks;
 
-    public UpdateUserModelSettings(Context context, ModelNotificationFavoriteSettings settings) {
-        this.context = context;
-        this.settings = settings;
+    public UpdateUserModelSettings(Context context,
+                                   MyTbaDatafeed myTbaDatafeed,
+                                   ModelNotificationFavoriteSettings settings) {
+        mContext = context;
+        mSettings = settings;
+        mMyTbaDatafeed = myTbaDatafeed;
     }
 
     public void setCallbacks(ModelSettingsCallbacks callbacks) {
@@ -32,111 +33,12 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
     }
 
     @Override
-    protected Result doInBackground(String... params) {
-        String modelKey = settings.modelKey;
-        List<String> notifications = settings.enabledNotifications;
-        boolean isFavorite = settings.isFavorite;
-
-/*
-        String user = AccountHelper.getSelectedAccount(context);
-        String key = MyTBAHelper.createKey(user, modelKey);
-        ModelType modelType = settings.modelType;
-        ModelsMobileApiMessagesModelPreferenceMessage request = new ModelsMobileApiMessagesModelPreferenceMessage();
-        request.setModelKey(modelKey);
-        request.setDeviceKey(GCMAuthHelper.getRegistrationId(context));
-        request.setNotifications(notifications);
-        request.setFavorite(isFavorite);
-        request.setModelType(Long.valueOf(settings.modelType.getEnum()));
-
-        SubscriptionsTable subscriptionsTable = Database.getInstance(context).getSubscriptionsTable();
-        FavoritesTable favoritesTable = Database.getInstance(context).getFavoritesTable();
-
-        // Determine if we have to do anything
-        List<String> existingNotificationsList = new ArrayList<>();
-        Subscription existingSubscription = subscriptionsTable.get(key);
-        if (existingSubscription != null) {
-            existingNotificationsList = existingSubscription.getNotificationList();
-        }
-
-        Collections.sort(notifications);
-        Collections.sort(existingNotificationsList);
-
-        Log.d(Constants.LOG_TAG, "New notifications: " + notifications.toString());
-        Log.d(Constants.LOG_TAG, "Existing notifications: " + existingNotificationsList.toString());
-
-        boolean notificationsHaveChanged = !(notifications.equals(existingNotificationsList));
-
-        // If the user is requesting a favorite and is already a favorite,
-        // or if the user is requesting an unfavorite and it is already not a favorite,
-        // and if the existing notification settings equal the new ones, do nothing.
-        if (((isFavorite && favoritesTable.exists(key)) || (!isFavorite && !favoritesTable.exists(key))) && !notificationsHaveChanged) {
-            // nothing has changed, no-op
-            return Result.NOOP;
-        } else {
-            try {
-                TbaMobile service = AccountHelper.getAuthedTbaMobile(context);
-                if (service == null) {
-                    Log.e(Constants.LOG_TAG, "Couldn't get TBA Mobile Service");
-                    Handler mainHandler = new Handler(context.getMainLooper());
-                    mainHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(context, context.getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    return Result.ERROR;
-                }
-                ModelsMobileApiMessagesBaseResponse response = service.model().setPreferences(request).execute();
-                Log.d(Constants.LOG_TAG, "Result: " + response.getCode() + "/" + response.getMessage());
-                if (response.getCode() == 401) {
-                    Log.e(Constants.LOG_TAG, response.getMessage());
-                    return Result.ERROR;
-                }
-                JsonObject responseJson = JSONHelper.getasJsonObject(response.getMessage());
-                JsonObject fav = responseJson.get("favorite").getAsJsonObject(),
-                        sub = responseJson.get("subscription").getAsJsonObject();
-                int favCode = fav.get("code").getAsInt(),
-                        subCode = sub.get("code").getAsInt();
-                if (subCode == 200) {
-                    // Request was successful, update the local databases
-                    if (notifications.isEmpty()) {
-                        subscriptionsTable.remove(key);
-                    } else if (subscriptionsTable.exists(key)) {
-                        subscriptionsTable.update(key, new Subscription(user, modelKey, notifications, modelType.getEnum()));
-                    } else {
-                        subscriptionsTable.add(new Subscription(user, modelKey, notifications, modelType.getEnum()));
-                    }
-                } else if (subCode == 500) {
-                    Toast.makeText(context, String.format(context.getString(R.string.mytba_error), subCode, sub.get("message").getAsString()), Toast.LENGTH_SHORT).show();
-                }
-                // otherwise, we tried to add a favorite that already exists or remove one that didn't
-                // so the database doesn't need to be changed
-
-                if (favCode == 200) {
-                    if (!isFavorite) {
-                        favoritesTable.remove(key);
-                    } else if (favoritesTable.exists(key)) {
-                        // Already favorited, do nothing
-                    } else {
-                        favoritesTable.add(new Favorite(user, modelKey, modelType.getEnum()));
-                    }
-                } else if (favCode == 500) {
-                    Toast.makeText(context, String.format(context.getString(R.string.mytba_error), favCode, fav.get("message").getAsString()), Toast.LENGTH_SHORT).show();
-                }
-                return Result.SUCCESS;
-
-            } catch (IOException e) {
-                Log.e(Constants.LOG_TAG, "IO Exception while updating model preferences!");
-                e.printStackTrace();
-                return Result.ERROR;
-            }
-        }
-        */
-        return null;
+    protected ModelPrefsResult doInBackground(String... params) {
+        return mMyTbaDatafeed.updateModelSettings(mContext, mSettings);
     }
 
     @Override
-    protected void onPostExecute(Result result) {
+    protected void onPostExecute(ModelPrefsResult result) {
         super.onPostExecute(result);
 
         if (callbacks.get() != null) {
@@ -153,7 +55,7 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
                     break;
             }
         } else {
-            Toast.makeText(context, "Callbacks were null", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Callbacks were null", Toast.LENGTH_SHORT).show();
         }
     }
 }

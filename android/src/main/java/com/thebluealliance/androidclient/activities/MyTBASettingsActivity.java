@@ -94,6 +94,8 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         DaggerMyTbaComponent.builder()
                 .tBAAndroidModule(application.getModule())
                 .accountModule(application.getAccountModule())
+                .authModule(application.getAuthModule())
+                .applicationComponent(application.getComponent())
                 .build()
                 .inject(this);
 
@@ -189,8 +191,12 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
                 }
 
                 if (mSaveSettingsTaskFragment == null) {
-                    mSaveSettingsTaskFragment = new UpdateUserModelSettingsTaskFragment(mSettingsFragment.getSettings());
-                    getSupportFragmentManager().beginTransaction().add(mSaveSettingsTaskFragment, SAVE_SETTINGS_TASK_FRAGMENT_TAG).commit();
+                    mSaveSettingsTaskFragment = UpdateUserModelSettingsTaskFragment
+                            .newInstance(mSettingsFragment.getSettings());
+                    getSupportFragmentManager().beginTransaction()
+                                               .add(mSaveSettingsTaskFragment,
+                                                    SAVE_SETTINGS_TASK_FRAGMENT_TAG)
+                                               .commit();
                     mSaveInProgress = true;
 
                     final android.support.v4.app.FragmentManager fm = getSupportFragmentManager();

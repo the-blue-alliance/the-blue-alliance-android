@@ -26,6 +26,7 @@ import com.thebluealliance.androidclient.models.Team;
 
 import android.util.Log;
 
+@Deprecated
 public final class JSONHelper {
     private static Gson gson;
     private static JsonParser parser;
@@ -66,6 +67,7 @@ public final class JSONHelper {
         return gson;
     }
 
+    @Deprecated
     public static JsonObject getasJsonObject(String input) {
         if (input == null || input.equals(""))
             return new JsonObject();
@@ -86,6 +88,7 @@ public final class JSONHelper {
         }
     }
 
+    @Deprecated
     public static JsonArray getasJsonArray(String input) {
         if (input == null || input.equals(""))
             return new JsonArray();

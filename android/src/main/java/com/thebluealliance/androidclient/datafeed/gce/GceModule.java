@@ -96,11 +96,12 @@ public class GceModule {
             Tbamobile tbamobile,
             Favorites favoriteApi,
             Subscriptions subscriptionApi,
+            Model modelApi,
             SharedPreferences prefs,
             AccountController accountController,
             Database db) {
         return new MyTbaDatafeed(context, authController, gcmController, tbamobile, favoriteApi,
-                                 subscriptionApi, context.getResources(), prefs, accountController,
-                                 db);
+                                 subscriptionApi, modelApi, context.getResources(), prefs,
+                                 accountController, db);
     }
 }
