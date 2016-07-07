@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.database.writers;
 
 import com.squareup.sqlbrite.BriteDatabase;
-import com.thebluealliance.androidclient.RobolectricPowerMockTest;
+import com.thebluealliance.androidclient.RobolectricPowerMockTestBase;
 import com.thebluealliance.androidclient.database.BriteDatabaseMocker;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
@@ -10,14 +10,8 @@ import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Event;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import android.database.sqlite.SQLiteDatabase;
@@ -27,7 +21,7 @@ import static org.mockito.Mockito.verify;
 
 @Config(manifest = Config.NONE)
 @PrepareForTest(BriteDatabase.class)
-public class EventWriterTest extends RobolectricPowerMockTest {
+public class EventWriterTest extends RobolectricPowerMockTestBase {
 
     Database mDb;
     BriteDatabase mBriteDb;

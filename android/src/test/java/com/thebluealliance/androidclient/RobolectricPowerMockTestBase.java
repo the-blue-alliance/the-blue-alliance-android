@@ -10,7 +10,7 @@ import org.robolectric.annotation.Config;
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class)
 @PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*", "org.powermock.*"})
-public abstract class RobolectricPowerMockTest {
+public abstract class RobolectricPowerMockTestBase {
 
     @Rule public PowerMockRule rule = new PowerMockRule();
 }
