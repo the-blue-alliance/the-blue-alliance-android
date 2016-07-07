@@ -19,7 +19,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.annotation.Config;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 @Config(manifest = Config.NONE)
 @PrepareForTest(BriteDatabase.class)
