@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.User;
 import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
+import com.thebluealliance.androidclient.di.components.HasMyTbaComponent;
 import com.thebluealliance.androidclient.listitems.DividerListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
@@ -54,6 +55,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import dagger.Lazy;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -115,7 +117,7 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mUseActionBarToggle;
 
     @Inject AccountController mAccountController;
-    @Inject @Named("firebase_auth") AuthProvider mAuthProvider;
+    @Inject @Named("firebase_auth") AuthProvider mAuthProviderLazy;
 
     // Required empty constructor
     public NavigationDrawerFragment() {
@@ -124,14 +126,10 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TBAAndroid application = (TBAAndroid) getActivity().getApplication();
-        DaggerMyTbaComponent.builder()
-                .tBAAndroidModule(application.getModule())
-                .accountModule(application.getAccountModule())
-                .authModule(application.getAuthModule())
-                .applicationComponent(application.getComponent())
-                .build()
-                .inject(this);
+        Activity activity = getActivity();
+        if (activity instanceof HasMyTbaComponent) {
+            ((HasMyTbaComponent) activity).getMyTbaComponent().inject(this);
+        }
 
         // Read in the flag indicating whether or not the user has demonstrated awareness of the
         // drawer. See PREF_USER_LEARNED_DRAWER for details.
@@ -175,7 +173,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         boolean hasAccountDetails = false;
         if (mAccountController.isMyTbaEnabled()) {
-            User currentUser = mAuthProvider.getCurrentUser();
+            User currentUser = mAuthProviderLazy.getCurrentUser();
             if (currentUser != null) {
                 String displayName = currentUser.getName();
                 if (!displayName.isEmpty()) {

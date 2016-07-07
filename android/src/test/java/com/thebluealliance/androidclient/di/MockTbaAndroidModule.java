@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.di;
 
 import com.google.android.gms.analytics.Tracker;
 
+import com.google.android.gms.plus.Account;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.writers.AwardListWriter;
@@ -29,6 +30,7 @@ import com.thebluealliance.androidclient.database.writers.YearsParticipatedWrite
 import org.greenrobot.eventbus.EventBus;
 import org.mockito.Mockito;
 
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -71,6 +73,11 @@ public class MockTbaAndroidModule  {
     @Singleton
     public Tracker provideAndroidTracker(Context context) {
         return Mockito.mock(Tracker.class);
+    }
+
+    @Provides @Singleton
+    public AccountManager provideAccountManager() {
+        return Mockito.mock(AccountManager.class);
     }
 
     @Provides

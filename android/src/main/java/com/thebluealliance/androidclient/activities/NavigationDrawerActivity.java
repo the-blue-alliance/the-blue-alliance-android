@@ -1,7 +1,11 @@
 package com.thebluealliance.androidclient.activities;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
+import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
+import com.thebluealliance.androidclient.di.components.HasMyTbaComponent;
+import com.thebluealliance.androidclient.di.components.MyTbaComponent;
 import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
@@ -22,7 +26,7 @@ import android.widget.FrameLayout;
  */
 
 public abstract class NavigationDrawerActivity extends AppCompatActivity
-        implements NavigationDrawerFragment.NavigationDrawerListener {
+        implements NavigationDrawerFragment.NavigationDrawerListener, HasMyTbaComponent {
 
     private static final String IS_DRAWER_OPEN = "is_drawer_open";
 
@@ -74,7 +78,9 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        mNavDrawerFragment.setupNavDrawerHeader();
+        if (mNavDrawerFragment != null) {
+            mNavDrawerFragment.setupNavDrawerHeader();
+        }
     }
 
     /**
@@ -276,4 +282,14 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public MyTbaComponent getMyTbaComponent() {
+        TBAAndroid application = (TBAAndroid) getApplication();
+        return DaggerMyTbaComponent.builder()
+                .tBAAndroidModule(application.getModule())
+                .accountModule(application.getAccountModule())
+                .authModule(application.getAuthModule())
+                .applicationComponent(application.getComponent())
+                .build();
+    }
 }

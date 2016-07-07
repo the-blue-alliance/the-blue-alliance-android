@@ -125,11 +125,6 @@ public class MockDatafeedModule {
     }
 
     @Provides @Singleton
-    public MyTbaDatafeed provideMyTbaDatafeed(Context context, SharedPreferences prefs, Database db) {
-        return Mockito.mock(MyTbaDatafeed.class);
-    }
-
-    @Provides @Singleton
     public TBAStatusController provideTbaStatusController(SharedPreferences prefs, Gson gson,
                                                           Cache cache, Context context) {
         return Mockito.mock(TBAStatusController.class);
