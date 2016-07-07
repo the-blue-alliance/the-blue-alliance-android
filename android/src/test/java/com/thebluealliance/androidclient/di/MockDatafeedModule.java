@@ -5,7 +5,9 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.APICache;
+import com.thebluealliance.androidclient.datafeed.BriteDatafeed;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.DatabaseUpdater;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
@@ -118,6 +120,19 @@ public class MockDatafeedModule {
         CacheableDatafeed df = Mockito.mock(CacheableDatafeed.class);
         when(df.getCache()).thenReturn(cache);
         return df;
+    }
+
+    @Provides @Singleton
+    public BriteDatafeed provideBriteDatafeed(Database db) {
+        return Mockito.mock(BriteDatafeed.class);
+    }
+
+        @Provides @Singleton
+    public DatabaseUpdater provideDatabaseUpdater(
+            @Named("tba_api") APIv2 retrofit,
+            DatabaseWriter writer,
+            RetrofitResponseMap responseMap) {
+        return Mockito.mock(DatabaseUpdater.class);
     }
 
     @Provides @Singleton
