@@ -26,6 +26,6 @@ public class EventInfoFragmentTest extends BaseFragmentTest {
 
     @Test
     public void testNoDataBinding() {
-        FragmentTestDriver.testNoDataBindings(mFragment, R.id.no_data);
+        FragmentTestDriver.testBriteNoDataBindings(mFragment, R.id.no_data);
     }
 }

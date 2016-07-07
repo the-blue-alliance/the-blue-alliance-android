@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.squareup.sqlbrite.BriteDatabase;
+import com.thebluealliance.androidclient.RobolectricPowerMockTest;
+import com.thebluealliance.androidclient.database.BriteDatabaseMocker;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
@@ -13,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -22,14 +26,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @Config(manifest = Config.NONE)
-@RunWith(RobolectricTestRunner.class)
-public class EventTeamAndTeamListWriterTest {
+@PrepareForTest(BriteDatabase.class)
+public class EventTeamAndTeamListWriterTest extends RobolectricPowerMockTest {
 
-    @Mock Database mDb;
-    @Mock EventTeamsTable mTable;
-    @Mock TeamsTable mTeamsTable;
-    @Mock TeamListWriter mTeamListWriter;
-    @Mock EventTeamListWriter mEventTeamListWriter;
+    Database mDb;
+    BriteDatabase mBriteDb;
+    EventTeamsTable mTable;
+    TeamsTable mTeamsTable;
+    TeamListWriter mTeamListWriter;
+    EventTeamListWriter mEventTeamListWriter;
 
     private EventTeamAndTeam mData;
     private EventTeamAndTeamListWriter mWriter;
@@ -37,13 +42,14 @@ public class EventTeamAndTeamListWriterTest {
     @Before
     public void setUp() {
         mDb = mock(Database.class);
+        mBriteDb = BriteDatabaseMocker.mockDatabase();
         mTeamListWriter = mock(TeamListWriter.class);
         mEventTeamListWriter = mock(EventTeamListWriter.class);
-        mTable = DatabaseMocker.mockEventTeamsTable(mDb);
-        mTeamsTable = DatabaseMocker.mockTeamsTable(mDb);
+        mTable = DatabaseMocker.mockEventTeamsTable(mDb, mBriteDb);
+        mTeamsTable = DatabaseMocker.mockTeamsTable(mDb, mBriteDb);
         List<Team> teams = ModelMaker.getModelList(Team.class, "2015necmp_teams");
         mData = new TeamAndEventTeamCombiner("2015necmp").call(teams);
-        mWriter = new EventTeamAndTeamListWriter(mDb, mEventTeamListWriter, mTeamListWriter);
+        mWriter = new EventTeamAndTeamListWriter(mDb, mBriteDb, mEventTeamListWriter, mTeamListWriter);
     }
 
     @Test

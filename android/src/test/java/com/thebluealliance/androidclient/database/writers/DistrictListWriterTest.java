@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.squareup.sqlbrite.BriteDatabase;
+import com.thebluealliance.androidclient.RobolectricPowerMockTest;
+import com.thebluealliance.androidclient.database.BriteDatabaseMocker;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
@@ -10,6 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -21,11 +26,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @Config(manifest = Config.NONE)
-@RunWith(RobolectricTestRunner.class)
-public class DistrictListWriterTest {
+@PrepareForTest(BriteDatabase.class)
+public class DistrictListWriterTest extends RobolectricPowerMockTest{
 
-    @Mock Database mDb;
-    @Mock DistrictsTable mDistrictsTable;
+    Database mDb;
+    BriteDatabase mBriteDb;
+    DistrictsTable mDistrictsTable;
 
     private List<District> mDistricts;
     private DistrictListWriter mWriter;
@@ -33,9 +39,10 @@ public class DistrictListWriterTest {
     @Before
     public void setUp() {
         mDb = mock(Database.class);
-        mDistrictsTable = DatabaseMocker.mockDistrictsTable(mDb);
+        mBriteDb = BriteDatabaseMocker.mockDatabase();
+        mDistrictsTable = DatabaseMocker.mockDistrictsTable(mDb, mBriteDb);
         mDistricts = ModelMaker.getModelList(District.class, "2015_districts");
-        mWriter = new DistrictListWriter(mDb);
+        mWriter = new DistrictListWriter(mDb, mBriteDb);
     }
 
     @Test
@@ -44,7 +51,8 @@ public class DistrictListWriterTest {
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         for (District district : mDistricts) {
-            verify(db).insert(Database.TABLE_DISTRICTS, null, district.getParams());
+            //verify(db).insert(Database.TABLE_DISTRICTS, null, district.getParams());
+            verify(mBriteDb).insert(Database.TABLE_DISTRICTS, district.getParams(), SQLiteDatabase.CONFLICT_IGNORE);
         }
     }
 

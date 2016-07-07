@@ -44,7 +44,7 @@ public class StatsListSubscriberTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        DatabaseMocker.mockTeamsTable(mDb);
+        DatabaseMocker.mockTeamsTable(mDb, null);
         when(mResources.getString(R.string.stats_format, 87.96, 50.89, 37.07))
           .thenReturn("Stats");
 

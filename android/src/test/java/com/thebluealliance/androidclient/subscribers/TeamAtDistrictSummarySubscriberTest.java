@@ -45,7 +45,7 @@ public class TeamAtDistrictSummarySubscriberTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        DatabaseMocker.mockEventsTable(mDb);
+        DatabaseMocker.mockEventsTable(mDb, null);
         when(mResources.getString(R.string.district_point_rank)).thenReturn("District Rank");
         when(mResources.getString(R.string.district_points_format)).thenReturn("%d Points");
         when(mResources.getString(R.string.total_district_points)).thenReturn("Total Points");

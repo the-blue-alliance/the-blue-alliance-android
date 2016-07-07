@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
@@ -11,10 +12,15 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -25,8 +31,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @Config(manifest = Config.NONE)
+@PrepareForTest(BriteDatabase.class)
 @RunWith(RobolectricTestRunner.class)
+@PowerMockIgnore({ "org.mockito.*", "org.robolectric.*", "android.*" })
 public class DistrictRankingsSubscriberTest {
+
+    @Rule public PowerMockRule rule = new PowerMockRule();
 
     @Mock public Database mDb;
 
@@ -36,7 +46,8 @@ public class DistrictRankingsSubscriberTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        DatabaseMocker.mockTeamsTable(mDb);
+        BriteDatabase briteDb = PowerMockito.mock(BriteDatabase.class);
+        DatabaseMocker.mockTeamsTable(mDb, briteDb);
 
         AddDistrictTeamKey keyAdder = new AddDistrictTeamKey("ne", 2015);
         mSubscriber = new DistrictRankingsSubscriber(mDb);

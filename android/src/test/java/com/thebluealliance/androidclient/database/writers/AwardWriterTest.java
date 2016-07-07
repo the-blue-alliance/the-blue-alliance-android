@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.squareup.sqlbrite.BriteDatabase;
+import com.thebluealliance.androidclient.RobolectricPowerMockTest;
+import com.thebluealliance.androidclient.database.BriteDatabaseMocker;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
@@ -10,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -19,11 +23,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @Config(manifest = Config.NONE)
-@RunWith(RobolectricTestRunner.class)
-public class AwardWriterTest  {
+@PrepareForTest(BriteDatabase.class)
+public class AwardWriterTest extends RobolectricPowerMockTest {
 
-    @Mock Database mDb;
-    @Mock AwardsTable mAwardsTable;
+    Database mDb;
+    BriteDatabase mBriteDb;
+    AwardsTable mAwardsTable;
 
     private Award mAward;
     private AwardWriter mWriter;
@@ -31,16 +36,16 @@ public class AwardWriterTest  {
     @Before
     public void setUp() {
         mDb = mock(Database.class);
-        mAwardsTable = DatabaseMocker.mockAwardsTable(mDb);
+        mBriteDb = BriteDatabaseMocker.mockDatabase();
+        mAwardsTable = DatabaseMocker.mockAwardsTable(mDb, mBriteDb);
         mAward = ModelMaker.getModel(Award.class, "award_team");
-        mWriter = new AwardWriter(mDb);
+        mWriter = new AwardWriter(mDb, mBriteDb);
     }
 
     @Test
     public void testAwardWriter() {
         mWriter.write(mAward);
 
-        SQLiteDatabase db =  mDb.getWritableDatabase();
-        verify(db).insert(Database.TABLE_AWARDS, null, mAward.getParams());
+        verify(mBriteDb).insert(Database.TABLE_AWARDS, mAward.getParams(), SQLiteDatabase.CONFLICT_IGNORE);
     }
 }

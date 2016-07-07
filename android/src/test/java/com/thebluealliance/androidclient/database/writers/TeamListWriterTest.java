@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.squareup.sqlbrite.BriteDatabase;
+import com.thebluealliance.androidclient.RobolectricPowerMockTest;
+import com.thebluealliance.androidclient.database.BriteDatabaseMocker;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
@@ -10,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -21,11 +25,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @Config(manifest = Config.NONE)
-@RunWith(RobolectricTestRunner.class)
-public class TeamListWriterTest {
+@PrepareForTest(BriteDatabase.class)
+public class TeamListWriterTest extends RobolectricPowerMockTest {
 
-    @Mock Database mDb;
-    @Mock TeamsTable mTable;
+    Database mDb;
+    BriteDatabase mBriteDb;
+    TeamsTable mTable;
 
     private List<Team> mTeams;
     private TeamListWriter mWriter;
@@ -33,18 +38,18 @@ public class TeamListWriterTest {
     @Before
     public void setUp() {
         mDb = mock(Database.class);
-        mTable = DatabaseMocker.mockTeamsTable(mDb);
+        mBriteDb = BriteDatabaseMocker.mockDatabase();
+        mTable = DatabaseMocker.mockTeamsTable(mDb, mBriteDb);
         mTeams = ModelMaker.getModelList(Team.class, "2015necmp_teams");
-        mWriter = new TeamListWriter(mDb);
+        mWriter = new TeamListWriter(mDb, mBriteDb);
     }
 
     @Test
     public void testTeamListWriter() {
         mWriter.write(mTeams);
 
-        SQLiteDatabase db = mDb.getWritableDatabase();
         for (Team team : mTeams) {
-            verify(db).insert(Database.TABLE_TEAMS, null, team.getParams());
+            verify(mBriteDb).insert(Database.TABLE_TEAMS, team.getParams(), SQLiteDatabase.CONFLICT_IGNORE);
         }
     }
 }

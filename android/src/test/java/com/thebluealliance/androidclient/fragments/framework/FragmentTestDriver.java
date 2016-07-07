@@ -2,10 +2,12 @@ package com.thebluealliance.androidclient.fragments.framework;
 
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 import com.thebluealliance.androidclient.binders.ListViewBinder;
+import com.thebluealliance.androidclient.fragments.BriteDatafeedFragment;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
+import com.thebluealliance.androidclient.subscribers.BriteBaseAPISubscriber;
 
 import org.mockito.internal.util.reflection.Whitebox;
 import org.robolectric.Shadows;
@@ -99,5 +101,30 @@ public final class FragmentTestDriver {
         controller.getActivity().finish();
         controller.pause().stop().destroy();
         */
+    }
+
+    public static <F extends BriteDatafeedFragment<T, V, S, B>, T, V, S extends BriteBaseAPISubscriber<T, V>,
+            B extends AbstractDataBinder<V>> void testBriteNoDataBindings(F fragment, @IdRes int noDataViewRes) {
+        /**
+         * Still having OOM issues
+         DatafeedFragmentTestController<F> controller = getController(fragment);
+         controller.makeTestActivityController().makeActivity().attach();
+
+         NoDataBinder noDataBinder = (NoDataBinder) Whitebox.getInternalState(fragment, "mNoDataBinder");
+         B binder = (B) Whitebox.getInternalState(fragment, "mBinder");
+         assertNotNull(noDataBinder);
+         assertNotNull(binder);
+
+         NoDataView noDataView = (NoDataView) fragment.getView().findViewById(noDataViewRes);
+         assertNotNull(noDataView);
+         verify(binder).setNoDataView(noDataView);
+
+         NoDataViewParams params = fragment.getNoDataParams();
+         assertNotNull(params);
+
+         verify(binder).setNoDataParams(params);
+         controller.getActivity().finish();
+         controller.pause().stop().destroy();
+         */
     }
 }

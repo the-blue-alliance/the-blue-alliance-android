@@ -289,6 +289,10 @@ dependencies {
     testCompile "org.robolectric:shadows-support-v4:3.0"
     testCompile "org.robolectric:shadows-multidex:3.0"
     testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.0.31-beta'
+    //testCompile 'org.mockito:mockito-core:2.0.31-beta'
+    testCompile "org.powermock:powermock-module-junit4:1.6.4"
+    testCompile "org.powermock:powermock-module-junit4-rule:1.6.4"
+    testCompile "org.powermock:powermock-api-mockito:1.6.4"
+    testCompile "org.powermock:powermock-classloading-xstream:1.6.4"
     testApt "com.google.dagger:dagger-compiler:${daggerVersion}"
 }

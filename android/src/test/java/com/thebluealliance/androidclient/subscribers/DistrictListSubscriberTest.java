@@ -38,7 +38,7 @@ public class DistrictListSubscriberTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        DatabaseMocker.mockEventsTable(mDb);
+        DatabaseMocker.mockEventsTable(mDb, null);
         AddDistrictKeys keyAdder = new AddDistrictKeys(2015);
         mSubscriber = new DistrictListSubscriber(mDb, mRenderer);
         mDistricts = ModelMaker.getModelList(District.class, "2015_districts");

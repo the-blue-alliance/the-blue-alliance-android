@@ -46,7 +46,7 @@ public class AwardsListSubscriberTest {
         mRenderer = new AwardRenderer(mCache);
         mSubscriber = new AwardsListSubscriber(mDb, mRenderer);
         mAwards = ModelMaker.getModelList(Award.class, "2015necmp_awards");
-        DatabaseMocker.mockTeamsTable(mDb);
+        DatabaseMocker.mockTeamsTable(mDb, null);
     }
 
     @Test

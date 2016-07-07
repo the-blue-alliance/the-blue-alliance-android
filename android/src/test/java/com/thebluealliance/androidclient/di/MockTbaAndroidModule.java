@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.di;
 
 import com.google.android.gms.analytics.Tracker;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.writers.AwardListWriter;
@@ -53,6 +54,12 @@ public class MockTbaAndroidModule  {
     @Singleton
     public Database provideDatabase() {
         return Mockito.mock(Database.class);
+    }
+
+    @Provides
+    @Singleton
+    public BriteDatabase provideBriteDatabase() {
+        return Mockito.mock(BriteDatabase.class);
     }
 
     @Provides

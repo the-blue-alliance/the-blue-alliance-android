@@ -25,80 +25,71 @@ public final class DatabaseMocker {
         // unused
     }
 
-    public static TeamsTable mockTeamsTable(Database database) {
+    public static TeamsTable mockTeamsTable(Database database, BriteDatabase briteDb) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        BriteDatabase briteDb = mock(BriteDatabase.class);
         TeamsTable table = new TeamsTable(db, briteDb);
         when(database.getTeamsTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
     }
 
-    public static EventsTable mockEventsTable(Database database) {
+    public static EventsTable mockEventsTable(Database database, BriteDatabase briteDb) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        BriteDatabase briteDb = mock(BriteDatabase.class);
         EventsTable table = new EventsTable(db, briteDb);
         when(database.getEventsTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
     }
 
-    public static NotificationsTable mockNotificationsTable(Database database) {
+    public static NotificationsTable mockNotificationsTable(Database database, BriteDatabase briteDb) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        BriteDatabase briteDb = mock(BriteDatabase.class);
         NotificationsTable table = new NotificationsTable(db, briteDb);
         when(database.getNotificationsTable()).thenReturn(table);
         return table;
     }
 
-    public static AwardsTable mockAwardsTable(Database database) {
+    public static AwardsTable mockAwardsTable(Database database, BriteDatabase briteDb) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        BriteDatabase briteDb = mock(BriteDatabase.class);
         AwardsTable table = new AwardsTable(db, briteDb);
         when(database.getAwardsTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
     }
 
-    public static DistrictsTable mockDistrictsTable(Database database) {
+    public static DistrictsTable mockDistrictsTable(Database database, BriteDatabase briteDb) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        BriteDatabase briteDb = mock(BriteDatabase.class);
         DistrictsTable table = new DistrictsTable(db, briteDb);
         when(database.getDistrictsTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
     }
 
-    public static DistrictTeamsTable mockDistrictTeamsTable(Database database) {
+    public static DistrictTeamsTable mockDistrictTeamsTable(Database database, BriteDatabase briteDb) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        BriteDatabase briteDb = mock(BriteDatabase.class);
         DistrictTeamsTable table = new DistrictTeamsTable(db, briteDb);
         when(database.getDistrictTeamsTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
     }
 
-    public static EventTeamsTable mockEventTeamsTable(Database database) {
+    public static EventTeamsTable mockEventTeamsTable(Database database, BriteDatabase briteDb) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        BriteDatabase briteDb = mock(BriteDatabase.class);
         EventTeamsTable table = new EventTeamsTable(db, briteDb);
         when(database.getEventTeamsTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
     }
 
-    public static MatchesTable mockMatchesTable(Database database) {
+    public static MatchesTable mockMatchesTable(Database database, BriteDatabase briteDb) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        BriteDatabase briteDb = mock(BriteDatabase.class);
         MatchesTable table = new MatchesTable(db, briteDb);
         when(database.getMatchesTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
     }
 
-    public static MediasTable mockMediasTable(Database database) {
+    public static MediasTable mockMediasTable(Database database, BriteDatabase briteDb) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        BriteDatabase briteDb = mock(BriteDatabase.class);
         MediasTable table = new MediasTable(db, briteDb);
         when(database.getMediasTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);

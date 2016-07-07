@@ -40,8 +40,8 @@ public class DistrictPointsListSubscriberTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        DatabaseMocker.mockEventsTable(mDb);
-        DatabaseMocker.mockTeamsTable(mDb);
+        DatabaseMocker.mockEventsTable(mDb, null);
+        DatabaseMocker.mockTeamsTable(mDb, null);
         DistrictPointBreakdownRenderer renderer = new DistrictPointBreakdownRenderer();
         mSubscriber = new DistrictPointsListSubscriber(mDb, HttpModule.getGson(), renderer);
         mPoints = ModelMaker.getModel(JsonObject.class, "2015necmp_points");
