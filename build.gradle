@@ -56,7 +56,6 @@ allprojects {
         rxAndroidVersion = '1.1.0'
         gsonVersion = '2.6.2'
         daggerVersion = '2.2'
-        firebaseUIVersion = '0.4.1'
         firebaseVersion = '9.2.0'
 
         travisBuild = System.getenv("TRAVIS") == "true"

@@ -1,7 +1,9 @@
 package com.thebluealliance.androidclient.activities;
 
+import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.di.components.AuthComponent;
 import com.thebluealliance.androidclient.di.components.DaggerAuthComponent;
@@ -11,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +41,7 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
     private boolean isMyTBALoginComplete = false;
 
     @Inject @Named("firebase_auth") AuthProvider mAuthProvider;
+    @Inject AccountController mAccountController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +88,17 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SIGNIN_CODE) {
             if (resultCode == RESULT_OK) {
-                mMyTBAOnboardingViewPager.setUpForLoginSuccess();
-                isMyTBALoginComplete = true;
+                mAuthProvider.userFromSignInResult(requestCode, resultCode, data)
+                        .subscribe(user -> {
+                            Log.d(Constants.LOG_TAG, "User logged in: " + user.getEmail());
+                            mMyTBAOnboardingViewPager.setUpForLoginSuccess();
+                            isMyTBALoginComplete = true;
+                            mAccountController.setMyTbaEnabled(true);
+                        }, throwable -> {
+                            Log.e(Constants.LOG_TAG, "Error logging in");
+                            throwable.printStackTrace();
+                            mAccountController.setMyTbaEnabled(false);
+                        });
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_LONG).show();
                 mMyTBAOnboardingViewPager.setUpForLoginPrompt();
@@ -124,7 +137,8 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
     private AuthComponent getComponent() {
         TBAAndroid application = (TBAAndroid) getApplication();
         return DaggerAuthComponent.builder()
-                .authModule(application.getAuthModule())
-                .build();
+                                  .authModule(application.getAuthModule())
+                                  .accountModule(application.getAccountModule())
+                                  .build();
     }
 }

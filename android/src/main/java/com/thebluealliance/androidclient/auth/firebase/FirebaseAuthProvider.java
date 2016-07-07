@@ -1,27 +1,42 @@
 package com.thebluealliance.androidclient.auth.firebase;
 
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import com.firebase.client.annotations.Nullable;
-import com.firebase.ui.auth.AuthUI;
-import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.User;
+import com.thebluealliance.androidclient.auth.google.GoogleAuthProvider;
+import com.thebluealliance.androidclient.auth.google.GoogleSignInUser;
 
 import android.content.Intent;
 
 import javax.inject.Singleton;
 
+import rx.Observable;
+import rx.Subscriber;
+
 @Singleton
 public class FirebaseAuthProvider implements AuthProvider {
 
     private final FirebaseAuth mFirebaseAuth;
-    private final AuthUI mAuthUI;
+    private final AuthProvider mGoogleAuthProvider;
 
-    public FirebaseAuthProvider(FirebaseAuth firebaseAuth, AuthUI authUI) {
+    public FirebaseAuthProvider(FirebaseAuth firebaseAuth, GoogleAuthProvider googleProvider) {
         mFirebaseAuth = firebaseAuth;
-        mAuthUI = authUI;
+        mGoogleAuthProvider = googleProvider;
+    }
+
+    @Override
+    public void onStart() {
+        mGoogleAuthProvider.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        mGoogleAuthProvider.onStop();
     }
 
     @Override
@@ -36,17 +51,39 @@ public class FirebaseAuthProvider implements AuthProvider {
             return null;
         }
 
-        return new User(firebaseUser.getDisplayName(),
-                        firebaseUser.getEmail(),
-                        firebaseUser.getPhotoUrl());
+        return new FirebaseSignInUser(firebaseUser);
     }
 
     @Override
     public Intent buildSignInIntent() {
-        return mAuthUI.createSignInIntentBuilder()
-                .setProviders(AuthUI.GOOGLE_PROVIDER)
-                .setLogo(R.drawable.ic_launcher)
-                .build();
+        return mGoogleAuthProvider.buildSignInIntent();
     }
 
+    @Override
+    public Observable<FirebaseSignInUser> userFromSignInResult(int requestCode, int resultCode, Intent data) {
+        Observable<? extends User> googleUser = mGoogleAuthProvider.userFromSignInResult(requestCode, resultCode, data);
+        return googleUser.switchMap(user -> {
+            if (!(user instanceof GoogleSignInUser)) {
+                return Observable.empty();
+            }
+
+            GoogleSignInUser googleSignInUser = (GoogleSignInUser) user;
+            AuthCredential credential = com.google.firebase.auth.GoogleAuthProvider
+                .getCredential(googleSignInUser.getIdToken(), null);
+            return Observable.create(new Observable.OnSubscribe<FirebaseSignInUser>() {
+                @Override
+                public void call(Subscriber<? super FirebaseSignInUser> subscriber) {
+                    mFirebaseAuth.signInWithCredential(credential)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                AuthResult result = task.getResult();
+                                subscriber.onNext(new FirebaseSignInUser(result.getUser()));
+                            }
+                            subscriber.onCompleted();
+                        })
+                        .addOnFailureListener(subscriber::onError);
+                }
+            });
+        });
+    }
 }

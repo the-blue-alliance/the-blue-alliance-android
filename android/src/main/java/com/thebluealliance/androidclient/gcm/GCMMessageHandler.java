@@ -6,7 +6,7 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.background.UpdateMyTBA;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -64,6 +64,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     @Inject TBAStatusController mStatusController;
     @Inject MatchRenderer mMatchRenderer;
     @Inject Database mDb;
+    @Inject AccountController mAccountController;
 
     private NotificationComponent mComponenet;
 
@@ -96,7 +97,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     @Override
     public boolean followsTeam(Context context, String teamNumber, String matchKey,
                                String notificationType) {
-        String currentUser = AccountHelper.getCurrentUser(mPrefs);
+        String currentUser = mAccountController.getSelectedAccount();
         String teamKey = TeamHelper.baseTeamKey("frc" + teamNumber); // "frc111"
         String teamInterestKey = MyTBAHelper.createKey(currentUser, teamKey); // "r@gmail.com:frc111"
         String teamAtEventKey = EventTeamHelper.generateKey(

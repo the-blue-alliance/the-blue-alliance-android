@@ -2,7 +2,10 @@ package com.thebluealliance.androidclient.fragments.mytba;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPanel;
+import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -23,6 +26,8 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 public class MyTBASettingsFragment extends PreferenceFragment {
 
     public static final String MODEL_KEY = "model_key";
@@ -35,6 +40,8 @@ public class MyTBASettingsFragment extends PreferenceFragment {
     private LoadModelSettingsCallback loadCallback;
 
     private boolean preferencesLoaded = false;
+
+    @Inject AccountController mAccountController;
 
     public static MyTBASettingsFragment newInstance(String modelKey, ModelType modelType, Bundle savedStateBundle) {
         MyTBASettingsFragment fragment = new MyTBASettingsFragment();
@@ -60,6 +67,12 @@ public class MyTBASettingsFragment extends PreferenceFragment {
         if (getArguments() == null || !getArguments().containsKey(MODEL_KEY)) {
             throw new IllegalArgumentException("MyTBASettingsFragment must be constructed with a model key");
         }
+        TBAAndroid application = (TBAAndroid) getActivity().getApplication();
+        DaggerMyTbaComponent.builder()
+                .tBAAndroidModule(application.getModule())
+                .accountModule(application.getAccountModule())
+                .build()
+                .inject(this);
         modelKey = getArguments().getString(MODEL_KEY);
         modelType = ModelHelper.getModelFromEnum(getArguments().getInt(MODEL_TYPE));
         savedStateBundle = getArguments().getBundle(SAVED_STATE_BUNDLE);
@@ -74,7 +87,7 @@ public class MyTBASettingsFragment extends PreferenceFragment {
         this.setPreferenceScreen(p);
 
         // Create the list of preferences
-        new CreateSubscriptionPanel(getActivity(), this, savedStateBundle, modelType).execute(modelKey);
+        new CreateSubscriptionPanel(getActivity(), mAccountController, this, savedStateBundle, modelType).execute(modelKey);
 
         // Setup padding on the view. Padding is needed at the bottom to account for the FAB.
         if (getView() != null) {
@@ -174,6 +187,7 @@ public class MyTBASettingsFragment extends PreferenceFragment {
     }
 
     public void refreshSettingsFromDatabase() {
-        new CreateSubscriptionPanel(getActivity(), this, savedStateBundle, modelType).execute(modelKey);
+        new CreateSubscriptionPanel(getActivity(), mAccountController, this, savedStateBundle,
+                                    modelType).execute(modelKey);
     }
 }

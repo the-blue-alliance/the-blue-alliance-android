@@ -8,6 +8,8 @@ import com.appspot.tbatv_prod_hrd.Subscriptions;
 import com.appspot.tbatv_prod_hrd.Tbamobile;
 import com.appspot.tbatv_prod_hrd.TeamMedia;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.accounts.AccountModule;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
@@ -28,7 +30,7 @@ import retrofit2.Retrofit;
 /**
  * Dagger Module for Google Cloud Endpoints and their related things
  */
-@Module(includes = HttpModule.class)
+@Module(includes = {HttpModule.class, AccountModule.class})
 public class GceModule {
 
     // Format with app engine project ID
@@ -92,8 +94,9 @@ public class GceModule {
             Favorites favoriteApi,
             Subscriptions subscriptionApi,
             SharedPreferences prefs,
+            AccountController accountController,
             Database db) {
         return new MyTbaDatafeed(context, authController, tbamobile, favoriteApi, subscriptionApi,
-                context.getResources(), prefs, db);
+                context.getResources(), prefs, accountController, db);
     }
 }

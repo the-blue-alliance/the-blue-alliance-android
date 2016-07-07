@@ -12,7 +12,7 @@ import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesSubscriptionMessa
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
@@ -38,6 +38,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import retrofit2.Response;
+import rx.Observable;
 
 @Singleton
 public class MyTbaDatafeed {
@@ -52,6 +53,7 @@ public class MyTbaDatafeed {
     private final Favorites mFavoriteApi;
     private final Subscriptions mSubscriptionApi;
     private final GceAuthController mAuthController;
+    private final AccountController mAccountController;
 
     @Inject
     public MyTbaDatafeed(
@@ -62,6 +64,7 @@ public class MyTbaDatafeed {
             Subscriptions subscriptionApi,
             Resources res,
             SharedPreferences prefs,
+            AccountController accountController,
             Database db) {
         mApplicationContext = context.getApplicationContext();
         mAuthController = authController;
@@ -71,6 +74,7 @@ public class MyTbaDatafeed {
         mRes = res;
         mPrefs = prefs;
         mDb = db;
+        mAccountController = accountController;
     }
 
     public boolean register(String regId) {
@@ -119,7 +123,7 @@ public class MyTbaDatafeed {
 
     public void updateUserFavorites() {
         List<Favorite> favoriteModels = new ArrayList<>();
-        String currentUser = AccountHelper.getSelectedAccount(mApplicationContext);
+        String currentUser = mAccountController.getSelectedAccount();
         String prefString = String.format(LAST_FAVORITES_UPDATE, currentUser);
 
         Date now = new Date();
@@ -133,7 +137,7 @@ public class MyTbaDatafeed {
         }
 
         Log.d(Constants.LOG_TAG, "Updating myTBA favorites");
-        if (!AccountHelper.isMyTBAEnabled(mApplicationContext)) {
+        if (!mAccountController.isMyTbaEnabled()) {
             Log.e(Constants.LOG_TAG, "MyTBA is not enabled");
             Handler mainHandler = new Handler(mApplicationContext.getMainLooper());
             mainHandler.post(() -> Toast.makeText(mApplicationContext, mRes.getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show());
@@ -168,7 +172,7 @@ public class MyTbaDatafeed {
     }
 
     public void updateUserSubscriptions() {
-        String currentUser = AccountHelper.getSelectedAccount(mApplicationContext);
+        String currentUser = mAccountController.getSelectedAccount();
         String prefString = String.format(LAST_SUBSCRIPTIONS_UPDATE, currentUser);
 
         Date now = new Date();
@@ -182,7 +186,7 @@ public class MyTbaDatafeed {
         }
 
         Log.d(Constants.LOG_TAG, "Updating myTBA subscriptions");
-        if (!AccountHelper.isMyTBAEnabled(mApplicationContext)) {
+        if (!mAccountController.isMyTbaEnabled()) {
             Log.e(Constants.LOG_TAG, "MyTBA is not enabled");
             Handler mainHandler = new Handler(mApplicationContext.getMainLooper());
             mainHandler.post(() -> Toast.makeText(mApplicationContext, mRes.getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show());
@@ -215,5 +219,32 @@ public class MyTbaDatafeed {
         }
 
         mPrefs.edit().putLong(prefString, now.getTime()).apply();
+    }
+
+
+    public Observable<List<Subscription>> fetchLocalSubscriptions() {
+        return Observable.create((observer) -> {
+            try {
+                String account = mAccountController.getSelectedAccount();
+                List<Subscription> subscriptions = mDb.getSubscriptionsTable().getForUser(account);
+                observer.onNext(subscriptions);
+                observer.onCompleted();
+            } catch (Exception e) {
+                observer.onError(e);
+            }
+        });
+    }
+
+    public Observable<List<Favorite>> fetchLocalFavorites() {
+        return Observable.create((observer) -> {
+            try {
+                String account = mAccountController.getSelectedAccount();
+                List<Favorite> favorites = mDb.getFavoritesTable().getForUser(account);
+                observer.onNext(favorites);
+                observer.onCompleted();
+            } catch (Exception e) {
+                observer.onError(e);
+            }
+        });
     }
 }

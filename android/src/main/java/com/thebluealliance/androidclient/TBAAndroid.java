@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient;
 
 import com.facebook.stetho.Stetho;
+import com.thebluealliance.androidclient.accounts.AccountModule;
 import com.thebluealliance.androidclient.auth.AuthModule;
 import com.thebluealliance.androidclient.binders.BinderModule;
 import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
@@ -35,6 +36,7 @@ public class TBAAndroid extends MultiDexApplication {
     private HttpModule mHttpModule;
     private GceModule mGceModule;
     private ImgurModule mImgurModule;
+    private AccountModule mAccountModule;
 
     public TBAAndroid() {
         super();
@@ -112,9 +114,16 @@ public class TBAAndroid extends MultiDexApplication {
 
     public AuthModule getAuthModule() {
         if (mAuthModule == null) {
-            mAuthModule = new AuthModule();
+            mAuthModule = new AuthModule(this);
         }
         return mAuthModule;
+    }
+
+    public AccountModule getAccountModule() {
+        if (mAccountModule == null) {
+            mAccountModule = new AccountModule();
+        }
+        return mAccountModule;
     }
 
     public ApplicationComponent getComponent() {

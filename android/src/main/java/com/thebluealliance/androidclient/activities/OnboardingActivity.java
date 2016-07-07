@@ -1,16 +1,15 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.accounts.PlusManager;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
+import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
+import com.thebluealliance.androidclient.di.components.DaggerAuthComponent;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
@@ -34,22 +33,41 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class OnboardingActivity extends AppCompatActivity
-  implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks, PlusManager.Callbacks,
+  implements LoadTBAData.LoadTBADataCallbacks,
   MyTBAOnboardingViewPager.Callbacks, HasDatafeedComponent {
 
     private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";
     private static final String LOADING_COMPLETE = "loading_complete";
     private static final String MYTBA_LOGIN_COMPLETE = "mytba_login_complete";
     private static final String LOAD_FRAGMENT_TAG = "loadFragment";
+    private static final int SIGNIN_CODE = 254;
 
     private DatafeedComponent mComponent;
-    private DisableSwipeViewPager viewPager;
-    private MyTBAOnboardingViewPager mMyTBAOnboardingViewPager;
-    private TextView loadingMessage;
-    private ProgressBar loadingProgressBar;
-    private View continueToEndButton;
+
+    @Bind(R.id.view_pager)
+    DisableSwipeViewPager viewPager;
+
+    @Bind(R.id.mytba_view_pager)
+    MyTBAOnboardingViewPager mMyTBAOnboardingViewPager;
+
+    @Bind(R.id.loading_message)
+    TextView loadingMessage;
+
+    @Bind(R.id.loading_progress_bar)
+    ProgressBar loadingProgressBar;
+
+    @Bind(R.id.continue_to_end)
+    View continueToEndButton;
 
     private String currentLoadingMessage = "";
 
@@ -58,28 +76,26 @@ public class OnboardingActivity extends AppCompatActivity
     private boolean isDataFinishedLoading = false;
     private boolean isMyTBALoginComplete = false;
 
-    private PlusManager mPlusManager;
+    @Inject @Named("firebase_auth") AuthProvider mAuthProvider;
+    @Inject AccountController mAccountController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mPlusManager = new PlusManager(this, null, this);
-
+        TBAAndroid application = (TBAAndroid) getApplication();
+        DaggerAuthComponent.builder()
+                .accountModule(application.getAccountModule())
+                .authModule(application.getAuthModule())
+                .build()
+                .inject(this);
         setContentView(R.layout.activity_onboarding);
+        ButterKnife.bind(this);
 
-        viewPager = (DisableSwipeViewPager) findViewById(R.id.view_pager);
         viewPager.setSwipeEnabled(false);
         viewPager.setOffscreenPageLimit(10);
         viewPager.setAdapter(new FirstLaunchPagerAdapter(this));
 
-        mMyTBAOnboardingViewPager = (MyTBAOnboardingViewPager) findViewById(R.id.mytba_view_pager);
         mMyTBAOnboardingViewPager.setCallbacks(this);
-
-        loadingMessage = (TextView) findViewById(R.id.loading_message);
-        loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progress_bar);
-        continueToEndButton = findViewById(R.id.continue_to_end);
-        continueToEndButton.setOnClickListener(this);
 
         // If the activity is being recreated after a config change, restore the message that was
         // being shown when the last activity was destroyed
@@ -98,17 +114,16 @@ public class OnboardingActivity extends AppCompatActivity
             }
         }
 
-        findViewById(R.id.welcome_next_page).setOnClickListener(this);
-        findViewById(R.id.finish).setOnClickListener(this);
-
-        loadFragment = (LoadTBADataTaskFragment) getSupportFragmentManager().findFragmentByTag(LOAD_FRAGMENT_TAG);
+        loadFragment = (LoadTBADataTaskFragment) getSupportFragmentManager()
+                .findFragmentByTag(LOAD_FRAGMENT_TAG);
 
         if (loadFragment != null) {
             viewPager.setCurrentItem(1, false);
 
             LoadTBAData.LoadProgressInfo info = loadFragment.getLastProgressUpdate();
             if (info != null) {
-                if (!loadFragment.wasLastUpdateDelivered() && info.state != LoadTBAData.LoadProgressInfo.STATE_FINISHED) {
+                if (!loadFragment.wasLastUpdateDelivered()
+                            && info.state != LoadTBAData.LoadProgressInfo.STATE_FINISHED) {
                     onProgressUpdate(info);
                 }
             }
@@ -128,16 +143,15 @@ public class OnboardingActivity extends AppCompatActivity
 
         if (isMyTBALoginComplete) {
             mMyTBAOnboardingViewPager.setUpForLoginSuccess();
-        } else if (!supportsGooglePlayServices()) {
-            mMyTBAOnboardingViewPager.setUpForNoPlayServices();
         } else {
             mMyTBAOnboardingViewPager.setUpForLoginPrompt();
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mPlusManager.onActivityResult(requestCode, resultCode);
+    protected void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
     }
 
     @Override
@@ -149,40 +163,62 @@ public class OnboardingActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        switch (id) {
-            case R.id.welcome_next_page:
-                beginLoadingIfConnected();
-                break;
-            case R.id.continue_to_end:
-                // If myTBA hasn't been activated yet, prompt the user one last time to sign in
-                if (!mMyTBAOnboardingViewPager.isOnLoginPage()) {
-                    mMyTBAOnboardingViewPager.scrollToLoginPage();
-                } else if (!isMyTBALoginComplete && supportsGooglePlayServices()) {
-                    // Only show this dialog if play services are actually available
-                    new AlertDialog.Builder(this)
-                            .setTitle(getString(R.string.mytba_prompt_title))
-                            .setMessage(getString(R.string.mytba_prompt_message))
-                            .setCancelable(false)
-                            .setPositiveButton(R.string.mytba_prompt_yes, (dialog, dialogId) -> {
-                                // Do nothing; allow user to enable myTBA
-                                dialog.dismiss();
-                            })
-                            .setNegativeButton(R.string.mytba_prompt_cancel, (dialog, dialogId) -> {
-                                // Scroll to the last page
-                                viewPager.setCurrentItem(2);
-                                dialog.dismiss();
-                            }).create().show();
-                } else if (isMyTBALoginComplete || !supportsGooglePlayServices()) {
-                    viewPager.setCurrentItem(2);
-                }
-                break;
-            case R.id.finish:
-                startActivity(new Intent(this, HomeActivity.class));
-                finish();
-                break;
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SIGNIN_CODE) {
+            if (resultCode == RESULT_OK) {
+                mAuthProvider.userFromSignInResult(requestCode, resultCode, data)
+                        .subscribe(user -> {
+                            Log.d(Constants.LOG_TAG, "User logged in: " + user.getEmail());
+                            mMyTBAOnboardingViewPager.setUpForLoginSuccess();
+                            isMyTBALoginComplete = true;
+                            mAccountController.setMyTbaEnabled(true);
+                        }, throwable -> {
+                            Log.e(Constants.LOG_TAG, "Error logging in");
+                            throwable.printStackTrace();
+                            mAccountController.setMyTbaEnabled(false);
+                        });
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "Sign in canceled", Toast.LENGTH_LONG).show();
+                mMyTBAOnboardingViewPager.setUpForLoginPrompt();
+            }
         }
+    }
+
+    @OnClick(R.id.continue_to_end)
+    public void onContinueToEndClient(View view) {
+        // If myTBA hasn't been activated yet, prompt the user one last time to sign in
+        if (!mMyTBAOnboardingViewPager.isOnLoginPage()) {
+            mMyTBAOnboardingViewPager.scrollToLoginPage();
+        } else if (!isMyTBALoginComplete) {
+            // Only show this dialog if play services are actually available
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.mytba_prompt_title))
+                    .setMessage(getString(R.string.mytba_prompt_message))
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.mytba_prompt_yes, (dialog, dialogId) -> {
+                        // Do nothing; allow user to enable myTBA
+                        dialog.dismiss();
+                    })
+                    .setNegativeButton(R.string.mytba_prompt_cancel, (dialog, dialogId) -> {
+                        // Scroll to the last page
+                        viewPager.setCurrentItem(2);
+                        dialog.dismiss();
+                    }).create().show();
+        } else {
+            viewPager.setCurrentItem(2);
+        }
+    }
+
+    @OnClick(R.id.welcome_next_page)
+    public void onWelcomeNextPageClick(View view) {
+        beginLoadingIfConnected();
+    }
+
+    @OnClick(R.id.finish)
+    public void onFinishClick(View view) {
+        startActivity(new Intent(this, HomeActivity.class));
+        finish();
     }
 
     private void beginLoadingIfConnected() {
@@ -194,7 +230,9 @@ public class OnboardingActivity extends AppCompatActivity
 
             alertDialogBuilder.setTitle(R.string.check_connection_title);
 
-            alertDialogBuilder.setMessage(getString(R.string.warning_no_internet_connection)).setCancelable(false)
+            alertDialogBuilder
+                    .setMessage(getString(R.string.warning_no_internet_connection))
+                    .setCancelable(false)
                     .setPositiveButton(getString(R.string.retry), (dialog, id) -> {
                         beginLoadingIfConnected();
                         dialog.dismiss();
@@ -216,7 +254,9 @@ public class OnboardingActivity extends AppCompatActivity
     }
 
     private void onError(final String stacktrace) {
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Constants.ALL_DATA_LOADED_KEY, false).commit();
+        PreferenceManager.getDefaultSharedPreferences(this).edit()
+                         .putBoolean(Constants.ALL_DATA_LOADED_KEY, false)
+                         .apply();
 
         // Return to the first page
         viewPager.setCurrentItem(0);
@@ -225,16 +265,25 @@ public class OnboardingActivity extends AppCompatActivity
 
         alertDialogBuilder.setTitle(getString(R.string.fatal_error));
 
-        alertDialogBuilder.setMessage(getString(R.string.fatal_error_message)).setCancelable(false).setPositiveButton(R.string.contact_developer, (dialog, id) -> {
-            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                    "mailto", "contact@thebluealliance.com", null));
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "FATAL ERROR");
-            emailIntent.putExtra(Intent.EXTRA_TEXT, "Version: " + BuildConfig.VERSION_NAME + "\nStacktrace:\n" + stacktrace);
-            startActivity(Intent.createChooser(emailIntent, getString(R.string.send_email)));
-            finish();
-        }).setNegativeButton(R.string.cancel, (dialog, id) -> {
-            finish();
-        });
+        alertDialogBuilder
+                .setMessage(getString(R.string.fatal_error_message))
+                .setCancelable(false)
+                .setPositiveButton(R.string.contact_developer, (dialog, id) -> {
+                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO,
+                                                    Uri.fromParts("mailto",
+                                                                  "contact@thebluealliance.com",
+                                                                  null));
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "FATAL ERROR");
+                    emailIntent.putExtra(Intent.EXTRA_TEXT,
+                                         "Version: " + BuildConfig.VERSION_NAME +
+                                         "\nStacktrace:\n" + stacktrace);
+                    startActivity(Intent.createChooser(emailIntent,
+                                                       getString(R.string.send_email)));
+                    finish();
+                })
+                .setNegativeButton(R.string.cancel, (dialog, id) -> {
+                    finish();
+                });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
 
@@ -248,7 +297,9 @@ public class OnboardingActivity extends AppCompatActivity
     }
 
     private void onLoadFinished() {
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Constants.ALL_DATA_LOADED_KEY, true).commit();
+        PreferenceManager.getDefaultSharedPreferences(this).edit()
+                         .putBoolean(Constants.ALL_DATA_LOADED_KEY, true)
+                         .apply();
 
         isDataFinishedLoading = true;
 
@@ -271,9 +322,8 @@ public class OnboardingActivity extends AppCompatActivity
             fadeOutAnimation.setDuration(250);
 
             ValueAnimator fadeInAnimation = ValueAnimator.ofFloat(0.0f, 1.0f);
-            fadeInAnimation.addUpdateListener(animation -> {
-                continueToEndButton.setAlpha((float) animation.getAnimatedValue());
-            });
+            fadeInAnimation.addUpdateListener(animation ->
+                    continueToEndButton.setAlpha((float) animation.getAnimatedValue()));
             fadeInAnimation.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -305,9 +355,7 @@ public class OnboardingActivity extends AppCompatActivity
         alertDialogBuilder.setTitle(R.string.connection_lost_title);
 
         alertDialogBuilder.setMessage(getString(R.string.connection_lost)).setCancelable(false)
-                .setPositiveButton(getString(R.string.ok), (dialog, id) -> {
-                    dialog.dismiss();
-                });
+                .setPositiveButton(getString(R.string.ok), (dialog, id) -> dialog.dismiss());
 
         AlertDialog alertDialog = alertDialogBuilder.create();
 
@@ -340,34 +388,9 @@ public class OnboardingActivity extends AppCompatActivity
     }
 
     @Override
-    public void onPlusClientSignIn() {
-        mMyTBAOnboardingViewPager.setUpForLoginSuccess();
-        isMyTBALoginComplete = true;
-    }
-
-    @Override
-    public void onPlusClientBlockingUI(boolean show) {
-
-    }
-
-    @Override
-    public void updateConnectButtonState() {
-
-    }
-
-    /**
-     * Check if the device supports Google Play Services.  It's best practice to check first rather
-     * than handling this as an error case.
-     *
-     * @return whether the device supports Google Play Services
-     */
-    private boolean supportsGooglePlayServices() {
-        return GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS;
-    }
-
-    @Override
     public void onSignInButtonClicked() {
-        mPlusManager.signIn();
+        Intent signInIntent = mAuthProvider.buildSignInIntent();
+        startActivityForResult(signInIntent, SIGNIN_CODE);
     }
 
     public DatafeedComponent getComponent() {

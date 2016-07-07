@@ -2,27 +2,11 @@ package com.thebluealliance.androidclient.auth;
 
 import android.net.Uri;
 
-public class User {
+public interface User {
 
-    private final String mName;
-    private final String mEmail;
-    private final Uri mProfilePicUrl;
+    String getName();
 
-    public User(String name, String email, Uri profilePicUrl) {
-        mName = name;
-        mEmail = email;
-        mProfilePicUrl = profilePicUrl;
-    }
+    String getEmail();
 
-    public String getName() {
-        return mName;
-    }
-
-    public String getEmail() {
-        return mEmail;
-    }
-
-    public Uri getProfilePicUrl() {
-        return mProfilePicUrl;
-    }
+    Uri getProfilePicUrl();
 }

@@ -3,11 +3,13 @@ package com.thebluealliance.androidclient.activities.settings;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
 import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
 import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
+import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -21,6 +23,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import javax.inject.Inject;
+
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
@@ -29,12 +33,24 @@ public class SettingsActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
+
     }
 
     public static class SettingsFragment extends PreferenceFragment {
+
+        @Inject AccountController mAccountController;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            TBAAndroid application = (TBAAndroid) getActivity().getApplication();
+            DaggerMyTbaComponent.builder()
+                                .tBAAndroidModule(application.getModule())
+                                .accountModule(application.getAccountModule())
+                                .authModule(application.getAuthModule())
+                                .applicationComponent(application.getComponent())
+                                .build()
+                                .inject(this);
             addPreferencesFromResource(R.xml.preferences);
 
             Preference appVersion = findPreference("app_version");
@@ -84,11 +100,11 @@ public class SettingsActivity extends AppCompatActivity {
 
             final SwitchPreference mytbaEnabled = (SwitchPreference) findPreference("mytba_enabled");
             final Activity activity = getActivity();
-            mytbaEnabled.setChecked(AccountHelper.isMyTBAEnabled(activity));
+            mytbaEnabled.setChecked(mAccountController.isMyTbaEnabled());
             mytbaEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean enabled = AccountHelper.isMyTBAEnabled(activity);
+                    boolean enabled = mAccountController.isMyTbaEnabled();
                     Log.d(Constants.LOG_TAG, "myTBA is: " + enabled);
                     activity.startActivity(new Intent(getActivity(), MyTBAOnboardingActivity.class));
                     return true;
@@ -121,7 +137,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             // Enable might have failed; update the state of the switch when we resume
             SwitchPreference mytbaEnabled = (SwitchPreference) findPreference("mytba_enabled");
-            mytbaEnabled.setChecked(AccountHelper.isMyTBAEnabled(getActivity()));
+            mytbaEnabled.setChecked(mAccountController.isMyTbaEnabled());
         }
     }
 

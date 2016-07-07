@@ -1,26 +1,16 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.accounts.PlusHelper;
-import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
-import com.thebluealliance.androidclient.gcm.GCMHelper;
-import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 import com.thebluealliance.androidclient.types.ModelType;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.IntDef;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
@@ -39,7 +29,7 @@ import java.util.Set;
  * functionality.
  */
 public abstract class BaseActivity extends NavigationDrawerActivity
-        implements NfcAdapter.CreateNdefMessageCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        implements NfcAdapter.CreateNdefMessageCallback {
 
     @IntDef({WARNING_OFFLINE, WARNING_FIRST_API_DOWN, WARNING_EVENT_DOWN})
     @Retention(RetentionPolicy.SOURCE)
@@ -50,8 +40,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     public static final int WARNING_EVENT_DOWN = 1;
 
     public Set<Integer> activeMessages = new HashSet<>();
-
-    /*@Inject*/ MyTbaDatafeed mMyTbaDatafeed;
 
     String beamUri;
     String shareUri;
@@ -247,33 +235,5 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     protected void setModelKey(String key, ModelType type) {
         modelKey = key;
         modelType = type;
-    }
-
-    /**
-     * Successfully connected (called by PlusClient)
-     */
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        String accountName = PlusHelper.getAccountName();
-        AccountHelper.setSelectedAccount(this, accountName);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putBoolean(AccountHelper.PREF_MYTBA_ENABLED, true).apply();
-        GCMHelper.registerGCMIfNeeded(this, mMyTbaDatafeed);
-        startService(new Intent(this, MyTbaUpdateService.class));
-    }
-
-    /**
-     * Connection failed for some reason (called by PlusClient) Try and resolve the result.
-     * Failure here is usually not an indication of a serious error, just that the user's input
-     * is needed.
-     */
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
     }
 }

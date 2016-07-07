@@ -1,33 +1,13 @@
 package com.thebluealliance.androidclient.accounts;
 
-import com.google.gson.JsonObject;
-
-import com.google.gson.JsonObject;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.database.tables.FavoritesTable;
-import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
-import com.thebluealliance.androidclient.gcm.GCMAuthHelper;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
-import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
-import com.thebluealliance.androidclient.models.Favorite;
-import com.thebluealliance.androidclient.models.Subscription;
-import com.thebluealliance.androidclient.types.ModelType;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.util.Log;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserModelSettings.Result> {
@@ -57,10 +37,10 @@ public class UpdateUserModelSettings extends AsyncTask<String, Void, UpdateUserM
         List<String> notifications = settings.enabledNotifications;
         boolean isFavorite = settings.isFavorite;
 
+/*
         String user = AccountHelper.getSelectedAccount(context);
         String key = MyTBAHelper.createKey(user, modelKey);
         ModelType modelType = settings.modelType;
-/*
         ModelsMobileApiMessagesModelPreferenceMessage request = new ModelsMobileApiMessagesModelPreferenceMessage();
         request.setModelKey(modelKey);
         request.setDeviceKey(GCMAuthHelper.getRegistrationId(context));

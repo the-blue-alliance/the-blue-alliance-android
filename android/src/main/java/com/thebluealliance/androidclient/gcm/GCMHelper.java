@@ -4,7 +4,6 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 
 import android.app.Activity;
@@ -59,10 +58,6 @@ public final class GCMHelper {
     }
 
     public static void registerGCMIfNeeded(Activity activity, MyTbaDatafeed datafeed) {
-        if (!AccountHelper.checkGooglePlayServicesAvailable(activity)) {
-            Log.w(Constants.LOG_TAG, "Google Play Services unavailable. Can't register with GCM");
-            return;
-        }
         final String registrationId = GCMAuthHelper.getRegistrationId(activity);
         if (TextUtils.isEmpty(registrationId) && datafeed != null) {
             // GCM has not yet been registered on this device

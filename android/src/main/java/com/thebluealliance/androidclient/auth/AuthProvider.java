@@ -3,7 +3,13 @@ package com.thebluealliance.androidclient.auth;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 
+import rx.Observable;
+
 public interface AuthProvider {
+
+    void onStart();
+
+    void onStop();
 
     /**
      * Check if a user is currently signed in
@@ -23,5 +29,7 @@ public interface AuthProvider {
      * either returns RESULT_OK or RESULT_CANCELLED
      */
     Intent buildSignInIntent();
+
+    Observable<? extends User> userFromSignInResult(int requestCode, int resultCode, Intent data);
 
 }
