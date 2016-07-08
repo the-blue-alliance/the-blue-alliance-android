@@ -7,7 +7,7 @@ import com.appspot.tbatv_prod_hrd.Model;
 import com.appspot.tbatv_prod_hrd.Subscriptions;
 import com.appspot.tbatv_prod_hrd.Tbamobile;
 import com.appspot.tbatv_prod_hrd.TeamMedia;
-import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.LocalProperties;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.accounts.AccountModule;
 import com.thebluealliance.androidclient.database.Database;
@@ -17,7 +17,6 @@ import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterF
 import com.thebluealliance.androidclient.gcm.GcmController;
 import com.thebluealliance.androidclient.gcm.GcmModule;
 
-import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -49,16 +48,16 @@ public class GceModule {
 
     @Provides GceAuthController provideGceAuthController(
             Context context,
-            SharedPreferences sharedPreferences,
-            AccountManager accountManager) {
-        return new GceAuthController(context, sharedPreferences, accountManager);
+            AccountController accountController) {
+        return new GceAuthController(context, accountController);
     }
 
-    @Provides @Singleton @Named("gce_retrofit") Retrofit provideGceRetrofit(
-            Context context,
+    @Provides @Singleton @Named("gce_retrofit")
+    Retrofit provideGceRetrofit(
             Gson gson,
-            OkHttpClient okHttpClient) {
-        String appspotId = Utilities.readLocalProperty(context, "appspot.projectId", "tbatv-prod-hrd");
+            OkHttpClient okHttpClient,
+            LocalProperties localProperties) {
+        String appspotId = localProperties.readLocalProperty("appspot.projectId", "tbatv-prod-hrd");
         return new Retrofit.Builder()
                 .baseUrl(String.format(GCE_URL_FORMAT, appspotId))
                 .client(okHttpClient)

@@ -22,7 +22,7 @@ import rx.Subscriber;
 public class FirebaseAuthProvider implements AuthProvider {
 
     private final FirebaseAuth mFirebaseAuth;
-    private final AuthProvider mGoogleAuthProvider;
+    private final GoogleAuthProvider mGoogleAuthProvider;
 
     public FirebaseAuthProvider(FirebaseAuth firebaseAuth, GoogleAuthProvider googleProvider) {
         mFirebaseAuth = firebaseAuth;
@@ -68,8 +68,8 @@ public class FirebaseAuthProvider implements AuthProvider {
             }
 
             GoogleSignInUser googleSignInUser = (GoogleSignInUser) user;
-            AuthCredential credential = com.google.firebase.auth.GoogleAuthProvider
-                .getCredential(googleSignInUser.getIdToken(), null);
+            AuthCredential credential = mGoogleAuthProvider
+                    .getAuthCredential(googleSignInUser.getIdToken());
             return Observable.create(new Observable.OnSubscribe<FirebaseSignInUser>() {
                 @Override
                 public void call(Subscriber<? super FirebaseSignInUser> subscriber) {

@@ -1,14 +1,8 @@
 package com.thebluealliance.androidclient.gcm;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.LocalProperties;
-import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.text.TextUtils;
-import android.util.Log;
 
 import javax.inject.Singleton;
 
@@ -16,7 +10,8 @@ import javax.inject.Singleton;
 public class GcmController {
 
     public static final String OS_ANDROID = "android";
-    private static final String PROPERTY_GCM_REG_ID = "gcm_registration_id";
+    public static final String PROPERTY_GCM_REG_ID = "gcm_registration_id";
+    public static final String PREF_SENDER_ID = "gcm.senderId";
 
     private final LocalProperties mLocalProperties;
     private final SharedPreferences mSharedPreferences;
@@ -27,16 +22,7 @@ public class GcmController {
     }
 
     public String getSenderId() {
-        return mLocalProperties.readLocalProperty("gcm.senderId");
-    }
-
-    public void registerIfNeeded(Context context) {
-        final String registrationId = getRegistrationId();
-        if (TextUtils.isEmpty(registrationId)) {
-            // GCM has not yet been registered on this device
-            Log.d(Constants.LOG_TAG, "GCM is not currently registered. Registering....");
-            context.startService(new Intent(context, MyTbaRegistrationService.class));
-        }
+        return mLocalProperties.readLocalProperty(PREF_SENDER_ID);
     }
 
     public String getRegistrationId() {

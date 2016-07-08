@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.di;
 
 import com.google.android.gms.analytics.Tracker;
 
-import com.google.android.gms.plus.Account;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.writers.AwardListWriter;

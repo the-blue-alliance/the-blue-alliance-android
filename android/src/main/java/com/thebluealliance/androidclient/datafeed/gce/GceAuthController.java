@@ -4,14 +4,13 @@ import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountController;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
@@ -31,8 +30,7 @@ public class GceAuthController {
     private static final String AUTH_HEADER_FORMAT = "Bearer %1$s";
 
     private final Context mContext;
-    private final SharedPreferences mPrefs;
-    private final AccountManager mAccountManager;
+    private final AccountController mAccountController;
 
     /* Time to wait during exponential backoff (ms) */
     private long mBackoffTime;
@@ -43,11 +41,9 @@ public class GceAuthController {
     @Inject
     public GceAuthController(
             Context context,
-            SharedPreferences prefs,
-            AccountManager accountManager) {
+            AccountController accountController) {
         mContext = context;
-        mPrefs = prefs;
-        mAccountManager = accountManager;
+        mAccountController = accountController;
         resetBackoff();
     }
 
@@ -64,11 +60,10 @@ public class GceAuthController {
      * @return An auth token to be used with Cloud Endpoints
      * @throws GoogleAuthException Trouble authenticating to Google
      */
-    @WorkerThread
-    public @Nullable String getAuthToken() throws GoogleAuthException {
-        String scope = getAudience(mContext);
-        String accountName = getSelectedAccountName(mContext, mPrefs);
-        Account account = getSystemAccount(mAccountManager, accountName);
+    @WorkerThread @VisibleForTesting
+    public @Nullable String getAuthTokenWithBackoff() throws GoogleAuthException {
+        String scope = getAudience();
+        Account account = mAccountController.getCurrentAccount();
         if (account == null) {
             Log.e(Constants.LOG_TAG, "No system account found, can't get auth token");
             return null;
@@ -76,7 +71,7 @@ public class GceAuthController {
         resetBackoff();
         while (mBackoffCount < MAX_BACKOFF_TRIES) {
             try {
-                return GoogleAuthUtil.getToken(mContext, account, scope);
+                return getGoogleAuthToken(mContext, account, scope);
             } catch (IOException e) {
                 Log.i(Constants.LOG_TAG, "Unable to get token, sleeping " + mBackoffTime + " ms");
                 SystemClock.sleep(mBackoffTime);
@@ -89,13 +84,13 @@ public class GceAuthController {
 
     /**
      * Builds the correct Authorization header to be used with GCE requests
-     * This method <b>MUST</b> be called from a background thread; it uses {@link #getAuthToken()}
+     * This method <b>MUST</b> be called from a background thread; it uses {@link #getAuthTokenWithBackoff()}
      * @return Authorization header, or null if {@link GoogleAuthException} or other error happened
      */
     @WorkerThread
     public @Nullable String getAuthHeader() {
         try {
-            String token = getAuthToken();
+            String token = getAuthTokenWithBackoff();
             if (token == null) {
                 return null;
             }
@@ -106,30 +101,15 @@ public class GceAuthController {
         }
     }
 
-    private static String getWebClientId(Context context) {
-        return Utilities.readLocalProperty(context, "appspot.webClientId");
+    @WorkerThread @VisibleForTesting
+    public String getGoogleAuthToken(Context context, Account account, String scope)
+    throws IOException, GoogleAuthException {
+        return GoogleAuthUtil.getToken(mContext, account, scope);
     }
 
-    private static String getAndroidClientId(Context context) {
-        return Utilities.readLocalProperty(context, "appspot.androidClientId");
+    private String getAudience() {
+        String webClientId = mAccountController.getWebClientId();
+        return "audience:server:client_id:" + webClientId;
     }
 
-    private static String getAudience(Context context) {
-        return "audience:server:client_id:" + getWebClientId(context);
-    }
-
-    private static @Nullable Account getSystemAccount(AccountManager am, String accountName) {
-        Account[] accounts = am.getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
-        for (int i = 0; i < accounts.length; i++) {
-            if (accountName.equals(accounts[i].name)) {
-                return accounts[i];
-            }
-        }
-        return null;
-    }
-
-    private static String getSelectedAccountName(Context context, SharedPreferences prefs) {
-        if (context == null) return "";
-        return prefs.getString(PREF_SELECTED_ACCOUNT, "");
-    }
 }

@@ -5,6 +5,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.auth.AuthCredential;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.accounts.AccountController;
@@ -44,6 +45,10 @@ public class GoogleAuthProvider implements AuthProvider,
                 .addOnConnectionFailedListener(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+    }
+
+    public AuthCredential getAuthCredential(String idToken) {
+        return com.google.firebase.auth.GoogleAuthProvider.getCredential(idToken, null);
     }
 
     @Override
