@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.fragments.event;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.models.Event;
@@ -16,12 +16,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 
 public class EventInfoFragment
   extends DatafeedFragment<Event, EventInfoBinder.Model, EventInfoSubscriber, EventInfoBinder> {
 
     private static final String KEY = "eventKey";
+
+    @Inject AccountController mAccountController;
 
     private String mEventKey;
 
@@ -49,7 +53,7 @@ public class EventInfoFragment
         mBinder.setNoDataView((NoDataView) view.findViewById(R.id.no_data));
 
         // Only show space for the FAB if the FAB is visible
-        boolean myTbaEnabled = AccountHelper.isMyTBAEnabled(getActivity());
+        boolean myTbaEnabled = mAccountController.isMyTbaEnabled();
         view.findViewById(R.id.fab_padding).setVisibility(myTbaEnabled ? View.VISIBLE : View.GONE);
 
         return view;

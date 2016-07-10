@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.fragments.teamAtEvent;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamAtEventSummaryCombiner;
 import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
@@ -17,6 +17,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
+import javax.inject.Inject;
+
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
@@ -26,6 +28,8 @@ public class TeamAtEventSummaryFragment extends RecyclerViewFragment<Model, Team
 
     private String mTeamKey;
     private String mEventKey;
+
+    @Inject AccountController mAccountController;
 
     public static TeamAtEventSummaryFragment newInstance(String teamKey, String eventKey) {
         TeamAtEventSummaryFragment f = new TeamAtEventSummaryFragment();
@@ -51,7 +55,7 @@ public class TeamAtEventSummaryFragment extends RecyclerViewFragment<Model, Team
 
     @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // Add padding to the bottom of the list for the myTBA FAB if it is visible
-        if (AccountHelper.isMyTBAEnabled(getContext())) {
+        if (mAccountController.isMyTbaEnabled()) {
             mRecyclerView.setPadding(
                     mRecyclerView.getPaddingLeft(),
                     mRecyclerView.getPaddingTop(),

@@ -6,8 +6,7 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.background.UpdateMyTBA;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
@@ -35,6 +34,7 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.RendererModule;
 
@@ -64,6 +64,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     @Inject TBAStatusController mStatusController;
     @Inject MatchRenderer mMatchRenderer;
     @Inject Database mDb;
+    @Inject AccountController mAccountController;
 
     private NotificationComponent mComponenet;
 
@@ -88,7 +89,6 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             mComponenet = DaggerNotificationComponent.builder()
                     .applicationComponent(application.getComponent())
                     .datafeedModule(application.getDatafeedModule())
-                    .databaseWriterModule(application.getDatabaseWriterModule())
                     .rendererModule(new RendererModule())
                     .build();
         }
@@ -97,7 +97,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     @Override
     public boolean followsTeam(Context context, String teamNumber, String matchKey,
                                String notificationType) {
-        String currentUser = AccountHelper.getCurrentUser(mPrefs);
+        String currentUser = mAccountController.getSelectedAccount();
         String teamKey = TeamHelper.baseTeamKey("frc" + teamNumber); // "frc111"
         String teamInterestKey = MyTBAHelper.createKey(currentUser, teamKey); // "r@gmail.com:frc111"
         String teamAtEventKey = EventTeamHelper.generateKey(
@@ -139,10 +139,12 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             BaseNotification notification = null;
             switch (messageType) {
                 case NotificationTypes.UPDATE_FAVORITES:
-                    new UpdateMyTBA(mMyTbaDatafeed).execute(UpdateMyTBA.UPDATE_FAVORITES);
+                    Intent favIntent = MyTbaUpdateService.newInstance(c, true, false);
+                    c.startService(favIntent);
                     break;
                 case NotificationTypes.UPDATE_SUBSCRIPTIONS:
-                    new UpdateMyTBA(mMyTbaDatafeed).execute(UpdateMyTBA.UPDATE_SUBSCRIPTION);
+                    Intent subIntent = MyTbaUpdateService.newInstance(c, false, true);
+                    c.startService(subIntent);
                     break;
                 case NotificationTypes.PING:
                 case NotificationTypes.BROADCAST:

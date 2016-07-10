@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.fragments.mytba;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.Subscription;
@@ -8,10 +9,14 @@ import com.thebluealliance.androidclient.subscribers.SubscriptionListSubscriber;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 
 public class MySubscriptionsFragment
   extends ListViewFragment<List<Subscription>, SubscriptionListSubscriber> {
+
+    @Inject MyTbaDatafeed mMyTbaDatafeed;
 
     public static MySubscriptionsFragment newInstance() {
         return new MySubscriptionsFragment();
@@ -24,7 +29,7 @@ public class MySubscriptionsFragment
 
     @Override
     protected Observable<List<Subscription>> getObservable(String tbaCacheHeader) {
-        return mDatafeed.getCache().fetchUserSubscriptions(getActivity());
+        return mMyTbaDatafeed.fetchLocalSubscriptions();
     }
 
     @Override

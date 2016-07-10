@@ -1,8 +1,10 @@
 package com.thebluealliance.androidclient.activities;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
 import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
 import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
@@ -35,6 +37,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import javax.inject.Inject;
 
 /**
  * Activity which hosts a FAB that opens a myTBA model settings panel.
@@ -81,9 +85,19 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
 
     private Bundle savedPreferenceState;
 
+    @Inject AccountController mAccountController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TBAAndroid application = (TBAAndroid) getApplication();
+        DaggerMyTbaComponent.builder()
+                .tBAAndroidModule(application.getModule())
+                .accountModule(application.getAccountModule())
+                .authModule(application.getAuthModule())
+                .applicationComponent(application.getComponent())
+                .build()
+                .inject(this);
 
         super.setContentView(R.layout.activity_mytba_settings);
 
@@ -103,7 +117,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
 
         // We check this so that we can hide the fab and prevent it from being subsequently shown
         // if myTBA is not enabled
-        mIsMyTBAEnabled = AccountHelper.isMyTBAEnabled(this);
+        mIsMyTBAEnabled = mAccountController.isMyTbaEnabled();
 
         mFabVisible = (mToggleSettingsPanelButton.getVisibility() == View.VISIBLE);
         syncFabVisibilityWithMyTbaEnabled(false);
@@ -177,8 +191,12 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
                 }
 
                 if (mSaveSettingsTaskFragment == null) {
-                    mSaveSettingsTaskFragment = new UpdateUserModelSettingsTaskFragment(mSettingsFragment.getSettings());
-                    getSupportFragmentManager().beginTransaction().add(mSaveSettingsTaskFragment, SAVE_SETTINGS_TASK_FRAGMENT_TAG).commit();
+                    mSaveSettingsTaskFragment = UpdateUserModelSettingsTaskFragment
+                            .newInstance(mSettingsFragment.getSettings());
+                    getSupportFragmentManager().beginTransaction()
+                                               .add(mSaveSettingsTaskFragment,
+                                                    SAVE_SETTINGS_TASK_FRAGMENT_TAG)
+                                               .commit();
                     mSaveInProgress = true;
 
                     final android.support.v4.app.FragmentManager fm = getSupportFragmentManager();

@@ -409,6 +409,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                     .datafeedModule(application.getDatafeedModule())
                     .binderModule(application.getBinderModule())
                     .databaseWriterModule(application.getDatabaseWriterModule())
+                    .gceModule(application.getGceModule())
                     .subscriberModule(new SubscriberModule(this))
                     .clickListenerModule(new ClickListenerModule(this))
                     .build();

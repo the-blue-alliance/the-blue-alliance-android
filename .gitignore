@@ -9,6 +9,9 @@
 # Local Properties
 android/src/main/assets/tba.properties
 
+# Google Secrets
+*google-services.json
+
 # Ignore debug client library
 android/libs/tbaMobile-v9-1.19.0-SNAPSHOT-debug.jar
 install_mytba_debug.sh

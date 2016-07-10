@@ -1,16 +1,10 @@
 package com.thebluealliance.androidclient.activities.settings;
 
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
-import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
-import com.thebluealliance.androidclient.models.Favorite;
-import com.thebluealliance.androidclient.types.ModelType;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -52,11 +46,12 @@ public class DevSettingsActivity extends AppCompatActivity {
             addMyTBAItem.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Favorite fav = new Favorite();
+                    /*Favorite fav = new Favorite();
                     fav.setUserName(AccountHelper.getSelectedAccount(getActivity()));
                     fav.setModelKey("frc111");
                     fav.setModelEnum(ModelType.TEAM.getEnum());
-                    Database.getInstance(getActivity()).getFavoritesTable().add(fav);
+                    Database.getInstance(getActivity()).getFavoritesTable().add(fav);*/
+                    Toast.makeText(getActivity(), "TODO", Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });
@@ -117,8 +112,10 @@ public class DevSettingsActivity extends AppCompatActivity {
             gcmRegister.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    GoogleAccountCredential credential = AccountHelper.getSelectedAccountCredential(getActivity());
+                    //TODO
+                    /*GoogleAccountCredential credential = AccountHelper.getSelectedAccountCredential(getActivity());
                     getActivity().startActivity(credential.newChooseAccountIntent());
+                    */
                     return false;
                 }
             });

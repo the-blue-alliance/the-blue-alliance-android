@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.di;
 import com.google.android.gms.analytics.Tracker;
 
 import com.thebluealliance.androidclient.Analytics;
+import com.thebluealliance.androidclient.LocalProperties;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -99,6 +100,11 @@ public class TBAAndroidModule {
     @Provides
     public AccountManager provideAccountManager(Context context) {
         return AccountManager.get(context);
+    }
+
+    @Provides
+    public LocalProperties provideLocalProperties(Context context) {
+        return new LocalProperties(context);
     }
 
     @Provides

@@ -6,7 +6,7 @@ import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.models.APIStatus;
@@ -67,14 +67,14 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     private boolean mUserIsLoggedIn;
 
     @Inject
-    public TBAStatusController(SharedPreferences prefs, Gson gson, Cache cache, Context context) {
+    public TBAStatusController(SharedPreferences prefs, Gson gson, Cache cache, AccountController accountController) {
         mPrefs = prefs;
         mGson = gson;
         mOkHttpCache = cache;
         mLastUpdateTime = Long.MIN_VALUE;
         mLastDialogTime = Long.MIN_VALUE;
 
-        mUserIsLoggedIn = AccountHelper.isMyTBAEnabled(context);
+        mUserIsLoggedIn = accountController.isMyTbaEnabled();
     }
 
     public void scheduleStatusUpdate(Context context) {
