@@ -275,8 +275,8 @@ public class OnboardingActivity extends AppCompatActivity
                                                                   null));
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "FATAL ERROR");
                     emailIntent.putExtra(Intent.EXTRA_TEXT,
-                                         "Version: " + BuildConfig.VERSION_NAME +
-                                         "\nStacktrace:\n" + stacktrace);
+                                         "Version: " + BuildConfig.VERSION_NAME
+                                         + "\nStacktrace:\n" + stacktrace);
                     startActivity(Intent.createChooser(emailIntent,
                                                        getString(R.string.send_email)));
                     finish();

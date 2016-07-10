@@ -274,8 +274,8 @@ public class MyTbaDatafeed {
         // If the user is requesting a favorite and is already a favorite,
         // or if the user is requesting an unfavorite and it is already not a favorite,
         // and if the existing notification mSettings equal the new ones, do nothing.
-        if (((isFavorite && favoritesTable.exists(key)) ||
-             (!isFavorite && !favoritesTable.exists(key))) && !notificationsHaveChanged) {
+        if (((isFavorite && favoritesTable.exists(key))
+             || (!isFavorite && !favoritesTable.exists(key))) && !notificationsHaveChanged) {
             // nothing has changed, no-op
             return ModelPrefsResult.NOOP;
         } else {

@@ -1,10 +1,6 @@
 package com.thebluealliance.androidclient.di;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.thebluealliance.androidclient.LocalProperties;
 import com.thebluealliance.androidclient.gcm.GcmController;
 
 import org.mockito.Mockito;

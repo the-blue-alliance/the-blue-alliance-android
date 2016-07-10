@@ -4,12 +4,10 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.User;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.di.components.HasMyTbaComponent;
 import com.thebluealliance.androidclient.listitems.DividerListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -55,7 +53,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import dagger.Lazy;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -117,7 +114,7 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mUseActionBarToggle;
 
     @Inject AccountController mAccountController;
-    @Inject @Named("firebase_auth") AuthProvider mAuthProviderLazy;
+    @Inject @Named("firebase_auth") AuthProvider mAuthProvider;
 
     // Required empty constructor
     public NavigationDrawerFragment() {
@@ -173,7 +170,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         boolean hasAccountDetails = false;
         if (mAccountController.isMyTbaEnabled()) {
-            User currentUser = mAuthProviderLazy.getCurrentUser();
+            User currentUser = mAuthProvider.getCurrentUser();
             if (currentUser != null) {
                 String displayName = currentUser.getName();
                 if (!displayName.isEmpty()) {

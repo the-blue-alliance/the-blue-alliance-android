@@ -45,8 +45,8 @@ public class UpdateUserModelSettingsTaskFragment extends Fragment {
 
         Bundle arguments = getArguments();
         if (arguments == null) {
-            throw new IllegalArgumentException("UpdateUserModelSettingsTaskFragment needs " +
-                                               "settings");
+            throw new IllegalArgumentException("UpdateUserModelSettingsTaskFragment needs "
+                                               + "settings");
         }
         settings = ModelNotificationFavoriteSettings.readFromBundle(arguments);
 
