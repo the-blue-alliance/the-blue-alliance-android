@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.database.writers;
 
 import com.google.gson.JsonArray;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -16,8 +17,8 @@ public class YearsParticipatedWriter extends BaseDbWriter<YearsParticipatedInfo>
     private final TeamWriter mTeamWriter;
 
     @Inject
-    public YearsParticipatedWriter(Database db, TeamWriter teamWriter) {
-        super(db);
+    public YearsParticipatedWriter(Database db, BriteDatabase briteDb, TeamWriter teamWriter) {
+        super(db, briteDb);
         mTeamWriter = teamWriter;
     }
 

@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.squareup.sqlbrite.BriteDatabase;
+import com.thebluealliance.androidclient.RobolectricPowerMockTestBase;
+import com.thebluealliance.androidclient.database.BriteDatabaseMocker;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
@@ -8,9 +11,7 @@ import com.thebluealliance.androidclient.models.Media;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.robolectric.RobolectricTestRunner;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.annotation.Config;
 
 import android.database.sqlite.SQLiteDatabase;
@@ -21,11 +22,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @Config(manifest = Config.NONE)
-@RunWith(RobolectricTestRunner.class)
-public class MediaListWriterTest {
+@PrepareForTest(BriteDatabase.class)
+public class MediaListWriterTest extends RobolectricPowerMockTestBase {
 
-    @Mock Database mDb;
-    @Mock MediasTable mTable;
+    Database mDb;
+    BriteDatabase mBriteDb;
+    MediasTable mTable;
 
     private List<Media> mMedias;
     private MediaListWriter mWriter;
@@ -33,18 +35,18 @@ public class MediaListWriterTest {
     @Before
     public void setUp() {
         mDb = mock(Database.class);
-        mTable = DatabaseMocker.mockMediasTable(mDb);
+        mBriteDb = BriteDatabaseMocker.mockDatabase();
+        mTable = DatabaseMocker.mockMediasTable(mDb, mBriteDb);
         mMedias = ModelMaker.getModelList(Media.class, "media_frc254_2014");
-        mWriter = new MediaListWriter(mDb);
+        mWriter = new MediaListWriter(mDb, mBriteDb);
     }
 
     @Test
     public void testEventListWriter() {
         mWriter.write(mMedias);
 
-        SQLiteDatabase db = mDb.getWritableDatabase();
         for (Media media : mMedias) {
-            verify(db).insert(Database.TABLE_MEDIAS, null, media.getParams());
+            verify(mBriteDb).insert(Database.TABLE_MEDIAS, media.getParams(), SQLiteDatabase.CONFLICT_IGNORE);
         }
     }
 }

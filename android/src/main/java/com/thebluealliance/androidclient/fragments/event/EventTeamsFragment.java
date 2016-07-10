@@ -4,24 +4,26 @@ import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
-import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
+import com.thebluealliance.androidclient.fragments.BriteRecyclerViewFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.itemviews.TeamItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.Team;
-import com.thebluealliance.androidclient.subscribers.TeamListRecyclerSubscriber;
+import com.thebluealliance.androidclient.subscribers.BriteTeamListRecyclerSubscriber;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 
 import android.content.Intent;
 import android.os.Bundle;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
+import rx.Single;
 
-public class EventTeamsFragment extends RecyclerViewFragment<List<Team>, TeamListRecyclerSubscriber, RecyclerViewBinder> {
+public class EventTeamsFragment extends BriteRecyclerViewFragment<List<Team>, BriteTeamListRecyclerSubscriber, RecyclerViewBinder> {
 
     private static final String KEY = "event_key";
 
@@ -49,9 +51,14 @@ public class EventTeamsFragment extends RecyclerViewFragment<List<Team>, TeamLis
         mComponent.inject(this);
     }
 
-    @Override
-    protected Observable<List<Team>> getObservable(String tbaCacheHeader) {
-        return mDatafeed.fetchEventTeams(mEventKey, tbaCacheHeader);
+    @Override protected Observable<List<Team>> getObservable() {
+        return mDatafeed.getEventTeams(mEventKey);
+    }
+
+    @Override protected List<Single<?>> beginDataUpdate(String tbaCacheHeader) {
+        List<Single<?>> observables = new ArrayList<>();
+        observables.add(mDatabaseUpdater.updateEventTeams(mEventKey, tbaCacheHeader));
+        return observables;
     }
 
     @Override

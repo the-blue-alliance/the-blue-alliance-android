@@ -1,10 +1,14 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventInfo;
 
 import junit.framework.TestCase;
 
@@ -19,12 +23,19 @@ import org.robolectric.annotation.Config;
 public class EventInfoSubscriberTest extends TestCase {
 
     private EventInfoSubscriber mSubscriber;
+    private EventInfo mEventInfo;
     private Event mEvent;
 
     @Before
     public void setUp() throws Exception{
         mSubscriber = new EventInfoSubscriber();
         mEvent = ModelMaker.getModel(Event.class, "2015necmp");
+        JsonArray rankings = ModelMaker.getModel(JsonArray.class, "2015necmp_rankings");
+        JsonObject stats = ModelMaker.getModel(JsonObject.class, "2015necmp_stats");
+        mEvent.setRankings(rankings);
+        mEvent.setStats(stats);
+        mEventInfo = new EventInfo();
+        mEventInfo.event = mEvent;
     }
 
     @Test
@@ -34,12 +45,12 @@ public class EventInfoSubscriberTest extends TestCase {
 
     @Test
     public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
-        DatafeedTestDriver.testSimpleParsing(mSubscriber, mEvent);
+        DatafeedTestDriver.testSimpleParsing(mSubscriber, mEventInfo);
     }
 
     @Test
     public void testParse() throws BasicModel.FieldNotDefinedException {
-        EventInfoBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mEvent);
+        EventInfoBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mEventInfo);
 
         assertEquals(data.eventKey, mEvent.getKey());
         assertEquals(data.nameString, mEvent.getName());

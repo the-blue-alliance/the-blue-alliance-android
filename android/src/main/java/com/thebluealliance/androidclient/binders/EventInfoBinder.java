@@ -6,19 +6,18 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
-import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
-import com.thebluealliance.androidclient.eventbus.EventStatsEvent;
-import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
+import com.thebluealliance.androidclient.helpers.RankingsHelper;
+import com.thebluealliance.androidclient.helpers.StatsHelper;
 import com.thebluealliance.androidclient.helpers.WebcastHelper;
 import com.thebluealliance.androidclient.listeners.EventInfoContainerClickListener;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
 import com.thebluealliance.androidclient.listeners.WebcastClickListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
+import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.types.WebcastType;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -40,7 +39,6 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import rx.android.schedulers.AndroidSchedulers;
 
 import static com.thebluealliance.androidclient.renderers.MatchRenderer.RENDER_DEFAULT;
 
@@ -194,6 +192,33 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
             webcastContainer.setVisibility(View.VISIBLE);
         }
 
+        if (data.lastMatch != null) {
+            //noinspection WrongThread
+            showLastMatch(mMatchRenderer.renderFromModel(data.lastMatch, RENDER_DEFAULT));
+        } else {
+            hideLastMatch();
+        }
+
+        if (data.nextMatch != null) {
+            //noinspection WrongThread
+            showNextMatch(mMatchRenderer.renderFromModel(data.nextMatch, RENDER_DEFAULT));
+        } else {
+            hideNextMatch();
+        }
+
+        if (topTeamsContainer != null && topTeams != null && RankingsHelper.canGenerateTopRanksString(data.rankings)) {
+            topTeamsContainer.setVisibility(View.VISIBLE);
+            topTeamsContainer.setOnClickListener(mInfoClickListener);
+            topTeams.setText(Html.fromHtml(RankingsHelper.generateTopRanksString(data.rankings, 5)));
+        }
+
+        if (topOprsContainer != null && topOprs != null && StatsHelper.canGenerateTopOprsString(data.stats)) {
+            topOprsContainer.setVisibility(View.VISIBLE);
+            topOprsContainer.setOnClickListener(mInfoClickListener);
+            topOprs.setText(Html.fromHtml(StatsHelper.generateTopOprsString(data.stats, 5)));
+        }
+
+
         content.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
 
@@ -255,6 +280,10 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         public String eventWebsite;
         public boolean isLive;
         public JsonArray webcasts;
+        public JsonArray rankings;
+        public JsonObject stats;
+        public Match lastMatch;
+        public Match nextMatch;
     }
 
     protected void showLastMatch(MatchListElement match) {
@@ -289,53 +318,6 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
             bindViews();
         }
         nextMatchContainer.setVisibility(View.GONE);
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onLiveEventMatchesUpdated(LiveEventMatchUpdateEvent event) {
-        AndroidSchedulers.mainThread().createWorker().schedule(() -> {
-            if (mIsLive && event != null && event.getLastMatch() != null) {
-                Log.d(Constants.LOG_TAG, "showing last match");
-                showLastMatch(mMatchRenderer.renderFromModel(event.getLastMatch(), RENDER_DEFAULT));
-            } else {
-                Log.d(Constants.LOG_TAG, "hiding last match");
-                hideLastMatch();
-            }
-            if (mIsLive && event != null && event.getNextMatch() != null) {
-                Log.d(Constants.LOG_TAG, "showing next match");
-                showNextMatch(mMatchRenderer.renderFromModel(event.getNextMatch(), RENDER_DEFAULT));
-            } else {
-                Log.d(Constants.LOG_TAG, "hiding next match");
-                hideNextMatch();
-            }
-        });
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onEventRankingsUpdated(EventRankingsEvent event) {
-        AndroidSchedulers.mainThread().createWorker().schedule(() -> {
-            if (topTeamsContainer == null || topTeams == null) {
-                return;
-            }
-            topTeamsContainer.setVisibility(View.VISIBLE);
-            topTeamsContainer.setOnClickListener(mInfoClickListener);
-            topTeams.setText(Html.fromHtml(event.getRankString()));
-        });
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onEventStatsUpdated(EventStatsEvent event) {
-        AndroidSchedulers.mainThread().createWorker().schedule(() -> {
-            if (topOprsContainer == null || topOprs == null) {
-                return;
-            }
-            topOprsContainer.setVisibility(View.VISIBLE);
-            topOprsContainer.setOnClickListener(mInfoClickListener);
-            topOprs.setText(Html.fromHtml(event.getStatString()));
-        });
     }
 
     private Dialog buildMultiWebcastDialog(final JsonArray webcasts, final String eventKey) {

@@ -10,5 +10,5 @@ import dagger.Component;
 @Component(
         modules = {MockDatafeedModule.class},
         dependencies = {MockApplicationComponent.class})
-public interface MockDatafeedComponent extends DatafeedComponent{
+public interface MockDatafeedComponent extends DatafeedComponent {
 }

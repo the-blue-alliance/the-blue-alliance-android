@@ -3,23 +3,25 @@ package com.thebluealliance.androidclient.fragments.event;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
-import com.thebluealliance.androidclient.fragments.DatafeedFragment;
-import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.fragments.BriteDatafeedFragment;
+import com.thebluealliance.androidclient.models.EventInfo;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
-
-import org.greenrobot.eventbus.EventBus;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import rx.Observable;
+import rx.Single;
 
 public class EventInfoFragment
-  extends DatafeedFragment<Event, EventInfoBinder.Model, EventInfoSubscriber, EventInfoBinder> {
+        extends BriteDatafeedFragment<EventInfo, EventInfoBinder.Model, EventInfoSubscriber, EventInfoBinder> {
 
     private static final String KEY = "eventKey";
 
@@ -58,13 +60,11 @@ public class EventInfoFragment
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(mBinder);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(mBinder);
     }
 
     @Override
@@ -73,8 +73,23 @@ public class EventInfoFragment
     }
 
     @Override
-    protected Observable<Event> getObservable(String tbaCacheHeader) {
-        return mDatafeed.fetchEvent(mEventKey, tbaCacheHeader);
+    protected Observable<EventInfo> getObservable() {
+        return mDatafeed.getEventInfo(mEventKey);
+    }
+
+    @Override
+    protected List<Single<?>> beginDataUpdate(String tbaCacheHeader) {
+        List<Single<?>> observables = new ArrayList<>();
+
+        observables.add(mDatabaseUpdater.updateEvent(mEventKey, tbaCacheHeader));
+        // For showing next/last match
+        observables.add(mDatabaseUpdater.updateEventMatches(mEventKey, tbaCacheHeader));
+        // For showing top teams by ranking
+        observables.add(mDatabaseUpdater.updateEventRankings(mEventKey, tbaCacheHeader));
+        // For showing top teams by OPR
+        observables.add(mDatabaseUpdater.updateEventStats(mEventKey, tbaCacheHeader));
+
+        return observables;
     }
 
     @Override

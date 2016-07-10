@@ -30,12 +30,14 @@ import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import rx.schedulers.Schedulers;
 
 @Module(includes = {TBAAndroidModule.class, HttpModule.class})
 public class DatafeedModule {
 
 
-    public DatafeedModule() {}
+    public DatafeedModule() {
+    }
 
     @Provides @Singleton @Named("tba_retrofit")
     public Retrofit provideTBARetrofit(
@@ -53,7 +55,7 @@ public class DatafeedModule {
                 .baseUrl("https://api.github.com/")
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build();
     }
 
@@ -64,7 +66,7 @@ public class DatafeedModule {
                 .baseUrl(firebaseUrl)
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build();
     }
 
@@ -91,11 +93,24 @@ public class DatafeedModule {
 
     @Provides @Singleton
     public CacheableDatafeed provideDatafeed(
-      @Named("tba_api") APIv2 retrofit,
-      APICache cache,
-      DatabaseWriter writer,
-      RetrofitResponseMap responseMap) {
+            @Named("tba_api") APIv2 retrofit,
+            APICache cache,
+            DatabaseWriter writer,
+            RetrofitResponseMap responseMap) {
         return new CacheableDatafeed(retrofit, cache, writer, responseMap);
+    }
+
+    @Provides @Singleton
+    public BriteDatafeed provideBriteDatafeed(Database db) {
+        return new BriteDatafeed(db);
+    }
+
+    @Provides @Singleton
+    public DatabaseUpdater provideDatabaseUpdater(
+            @Named("tba_api") APIv2 retrofit,
+            DatabaseWriter writer,
+            RetrofitResponseMap responseMap) {
+        return new DatabaseUpdater(retrofit, writer, responseMap);
     }
 
     @Provides @Singleton
@@ -117,15 +132,15 @@ public class DatafeedModule {
     @VisibleForTesting
     public static Retrofit getRetrofit(Gson gson, OkHttpClient okHttpClient, SharedPreferences prefs) {
         String baseUrl = Utilities.isDebuggable()
-          ? prefs.getString(APIv2.DEV_TBA_PREF_KEY, APIv2.TBA_URL)
-          : APIv2.TBA_URL;
+                ? prefs.getString(APIv2.DEV_TBA_PREF_KEY, APIv2.TBA_URL)
+                : APIv2.TBA_URL;
         baseUrl = baseUrl.isEmpty() ? APIv2.TBA_URL : baseUrl;
         Log.d(Constants.LOG_TAG, "Using TBA Host: " + baseUrl);
         return new Retrofit.Builder()
-          .baseUrl(baseUrl)
-          .client(okHttpClient)
-          .addConverterFactory(LenientGsonConverterFactory.create(gson))
-          .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-          .build();
+                .baseUrl(baseUrl)
+                .client(okHttpClient)
+                .addConverterFactory(LenientGsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
+                .build();
     }
 }

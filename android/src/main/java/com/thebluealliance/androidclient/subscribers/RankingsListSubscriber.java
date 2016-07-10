@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper.CaseInsensitiveMap;
+import com.thebluealliance.androidclient.helpers.RankingsHelper;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
@@ -83,25 +84,10 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonElement, List<
                             record,
                             rankingString));
         }
-        mEventBus.post(new EventRankingsEvent(generateTopRanksString(rankingsData)));
+        mEventBus.post(new EventRankingsEvent(RankingsHelper.generateTopRanksString(rankingsData, EventRankingsEvent.SIZE)));
     }
 
     @Override public boolean isDataValid() {
         return super.isDataValid() && mAPIData.isJsonArray();
-    }
-
-    private String generateTopRanksString(JsonArray rankingsData) {
-        String rankString = "";
-        if (rankingsData.size() <= 1) {
-            return rankString;
-        }
-        for (int i = 1; i < Math.min(EventRankingsEvent.SIZE + 1, rankingsData.size()); i++) {
-            rankString += ((i) + ". <b>" + rankingsData.get(i).getAsJsonArray().get(1).getAsString()) + "</b>";
-            if (i < Math.min(6, rankingsData.size()) - 1) {
-                rankString += "<br>";
-            }
-        }
-        rankString = rankString.trim();
-        return rankString;
     }
 }

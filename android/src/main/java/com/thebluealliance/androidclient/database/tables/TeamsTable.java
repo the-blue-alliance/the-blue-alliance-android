@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
@@ -30,12 +31,10 @@ public class TeamsTable extends ModelTable<Team> {
             YEARS_PARTICIPATED = "yearsParticipated",
             MOTTO = "motto";
 
-    private SQLiteDatabase mDb;
 
     @Inject
-    public TeamsTable(SQLiteDatabase db) {
-        super(db);
-        mDb = db;
+    public TeamsTable(SQLiteDatabase db, BriteDatabase briteDb) {
+        super(db, briteDb);
     }
 
     @Override

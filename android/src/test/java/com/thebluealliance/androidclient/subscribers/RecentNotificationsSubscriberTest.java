@@ -2,7 +2,10 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.JsonObject;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.RobolectricPowerMockTestBase;
+import com.thebluealliance.androidclient.database.BriteDatabaseMocker;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -22,10 +25,9 @@ import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationVie
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.annotation.Config;
 
 import android.content.Context;
@@ -43,11 +45,12 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 @Config(manifest = Config.NONE)
-@RunWith(RobolectricTestRunner.class)
-public class RecentNotificationsSubscriberTest {
+@PrepareForTest(BriteDatabase.class)
+public class RecentNotificationsSubscriberTest extends RobolectricPowerMockTestBase {
 
     @Mock Database mDb;
     @Mock MatchRenderer mRenderer;
+    BriteDatabase mBriteDb;
 
     private RecentNotificationsSubscriber mSubscriber;
     private List<StoredNotification> mNotifications;
@@ -56,6 +59,7 @@ public class RecentNotificationsSubscriberTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        mBriteDb = BriteDatabaseMocker.mockDatabase();
         mContext = mock(Context.class, RETURNS_DEEP_STUBS);
 
         when(mContext.getString(R.string.match_title_abbrev_format)).thenReturn("%1$s%2$s");
@@ -63,7 +67,7 @@ public class RecentNotificationsSubscriberTest {
         when(mContext.getString(R.string.submatch_title_abbrev_format)).thenReturn("%1$s%2$s-%3$s");
         when(mContext.getString(R.string.submatch_title_format)).thenReturn("%1$s %2$s Match %3$s");
 
-        DatabaseMocker.mockNotificationsTable(mDb);
+        DatabaseMocker.mockNotificationsTable(mDb, mBriteDb);
         DatabaseWriter writer = mockDatabaseWriter();
         mSubscriber = new RecentNotificationsSubscriber(writer, mContext, mRenderer);
         List<JsonObject> notificationData = ModelMaker.getMultiModelList(JsonObject.class,

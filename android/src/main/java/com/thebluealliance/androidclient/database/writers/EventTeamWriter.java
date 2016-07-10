@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.EventTeam;
 
@@ -9,8 +10,8 @@ import javax.inject.Inject;
 
 public class EventTeamWriter extends BaseDbWriter<EventTeam> {
     @Inject
-    public EventTeamWriter(Database db) {
-        super(db);
+    public EventTeamWriter(Database db, BriteDatabase briteDb) {
+        super(db, briteDb);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -26,11 +27,8 @@ public class DistrictTeamsTable extends ModelTable<DistrictTeam> {
             TOTAL_POINTS = "totalPoints",
             JSON = "json";
 
-    private SQLiteDatabase mDb;
-
-    public DistrictTeamsTable(SQLiteDatabase db){
-        super(db);
-        this.mDb = db;
+    public DistrictTeamsTable(SQLiteDatabase db, BriteDatabase briteDb){
+        super(db, briteDb);
     }
 
     @Override

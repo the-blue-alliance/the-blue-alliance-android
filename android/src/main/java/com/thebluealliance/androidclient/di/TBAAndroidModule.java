@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.di;
 
 import com.google.android.gms.analytics.Tracker;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
@@ -71,6 +72,12 @@ public class TBAAndroidModule {
     @Singleton
     public Database provideDatabase() {
         return Database.getInstance(mApp);
+    }
+
+    @Provides
+    @Singleton
+    public BriteDatabase provideBriteDatabase() {
+        return Database.getInstance(mApp).getBriteDatabase();
     }
 
     @Provides

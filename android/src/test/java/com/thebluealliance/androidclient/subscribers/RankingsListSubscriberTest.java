@@ -41,7 +41,7 @@ public class RankingsListSubscriberTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        DatabaseMocker.mockTeamsTable(mDb);
+        DatabaseMocker.mockTeamsTable(mDb, null);
 
         mSubscriber = new RankingsListSubscriber(mDb, mEventBus);
         mRankings = ModelMaker.getModel(JsonArray.class, "2015necmp_rankings");

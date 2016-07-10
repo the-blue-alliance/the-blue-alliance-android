@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.squareup.sqlbrite.BriteDatabase;
+import com.thebluealliance.androidclient.RobolectricPowerMockTestBase;
+import com.thebluealliance.androidclient.database.BriteDatabaseMocker;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
@@ -8,9 +11,7 @@ import com.thebluealliance.androidclient.models.DistrictTeam;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.robolectric.RobolectricTestRunner;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.annotation.Config;
 
 import android.database.sqlite.SQLiteDatabase;
@@ -21,11 +22,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @Config(manifest = Config.NONE)
-@RunWith(RobolectricTestRunner.class)
-public class DistrictTeamListWriterTest {
+@PrepareForTest(BriteDatabase.class)
+public class DistrictTeamListWriterTest extends RobolectricPowerMockTestBase {
 
-    @Mock Database mDb;
-    @Mock DistrictTeamsTable mTable;
+    Database mDb;
+    BriteDatabase mBriteDb;
+    DistrictTeamsTable mTable;
 
     private List<DistrictTeam> mDistrictTeams;
     private DistrictTeamListWriter mWriter;
@@ -33,18 +35,18 @@ public class DistrictTeamListWriterTest {
     @Before
     public void setUp() {
         mDb = mock(Database.class);
-        mTable = DatabaseMocker.mockDistrictTeamsTable(mDb);
+        mBriteDb = BriteDatabaseMocker.mockDatabase();
+        mTable = DatabaseMocker.mockDistrictTeamsTable(mDb, mBriteDb);
         mDistrictTeams = ModelMaker.getModelList(DistrictTeam.class, "2015ne_rankings");
-        mWriter = new DistrictTeamListWriter(mDb);
+        mWriter = new DistrictTeamListWriter(mDb, mBriteDb);
     }
 
     @Test
     public void testDistrictTeamListWriter() {
         mWriter.write(mDistrictTeams);
 
-        SQLiteDatabase db = mDb.getWritableDatabase();
         for (DistrictTeam districtTeam : mDistrictTeams) {
-            verify(db).insert(Database.TABLE_DISTRICTTEAMS, null, districtTeam.getParams());
+            verify(mBriteDb).insert(Database.TABLE_DISTRICTTEAMS, districtTeam.getParams(), SQLiteDatabase.CONFLICT_IGNORE);
         }
     }
 }

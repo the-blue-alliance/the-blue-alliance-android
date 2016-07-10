@@ -5,7 +5,9 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.APICache;
+import com.thebluealliance.androidclient.datafeed.BriteDatafeed;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.DatabaseUpdater;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
@@ -31,6 +33,7 @@ import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import rx.schedulers.Schedulers;
 
 import static org.mockito.Mockito.when;
 
@@ -45,7 +48,7 @@ public class MockDatafeedModule {
                 .baseUrl(APIv2.TBA_URL)
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build();
     }
 
@@ -57,7 +60,7 @@ public class MockDatafeedModule {
                 .baseUrl("https://api.github.com/")
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build();
     }
 
@@ -78,7 +81,7 @@ public class MockDatafeedModule {
                 .baseUrl(firebaseUrl)
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build();
     }
 
@@ -117,6 +120,19 @@ public class MockDatafeedModule {
         CacheableDatafeed df = Mockito.mock(CacheableDatafeed.class);
         when(df.getCache()).thenReturn(cache);
         return df;
+    }
+
+    @Provides @Singleton
+    public BriteDatafeed provideBriteDatafeed(Database db) {
+        return Mockito.mock(BriteDatafeed.class);
+    }
+
+        @Provides @Singleton
+    public DatabaseUpdater provideDatabaseUpdater(
+            @Named("tba_api") APIv2 retrofit,
+            DatabaseWriter writer,
+            RetrofitResponseMap responseMap) {
+        return Mockito.mock(DatabaseUpdater.class);
     }
 
     @Provides @Singleton

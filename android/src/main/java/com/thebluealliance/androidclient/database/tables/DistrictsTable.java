@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -16,11 +17,8 @@ public class DistrictsTable extends ModelTable<District> {
             YEAR = "year",
             NAME = "name";
 
-    private SQLiteDatabase mDb;
-
-    public DistrictsTable(SQLiteDatabase db){
-        super(db);
-        this.mDb = db;
+    public DistrictsTable(SQLiteDatabase db, BriteDatabase briteDb){
+        super(db, briteDb);
     }
 
     @Override

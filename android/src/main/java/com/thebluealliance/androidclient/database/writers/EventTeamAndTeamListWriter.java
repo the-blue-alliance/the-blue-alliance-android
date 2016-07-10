@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.squareup.sqlbrite.BriteDatabase;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Team;
@@ -16,8 +17,8 @@ public class EventTeamAndTeamListWriter extends BaseDbWriter<EventTeamAndTeamLis
     private final TeamListWriter mTeamListWriter;
 
     @Inject
-    public EventTeamAndTeamListWriter(Database db, EventTeamListWriter etWriter, TeamListWriter teamWriter) {
-        super(db);
+    public EventTeamAndTeamListWriter(Database db, BriteDatabase briteDb, EventTeamListWriter etWriter, TeamListWriter teamWriter) {
+        super(db, briteDb);
         mEventTeamListWriter = etWriter;
         mTeamListWriter = teamWriter;
     }
@@ -27,13 +28,13 @@ public class EventTeamAndTeamListWriter extends BaseDbWriter<EventTeamAndTeamLis
         if (newModels == null) {
             return;
         }
-        mDb.getWritableDatabase().beginTransaction();
+        BriteDatabase.Transaction transaction = mBriteDb.newTransaction();
         try {
             mEventTeamListWriter.write(newModels.eventTeams);
             mTeamListWriter.write(newModels.teams);
-            mDb.getWritableDatabase().setTransactionSuccessful();
+            transaction.markSuccessful();
         } finally {
-            mDb.getWritableDatabase().endTransaction();
+            transaction.end();
         }
     }
 

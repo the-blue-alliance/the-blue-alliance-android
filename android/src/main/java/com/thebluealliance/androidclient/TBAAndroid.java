@@ -14,6 +14,10 @@ import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.imgur.ImgurModule;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.EventBusBuilder;
+import org.greenrobot.eventbus.EventBusException;
+
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
@@ -37,6 +41,17 @@ public class TBAAndroid extends MultiDexApplication {
     public TBAAndroid() {
         super();
         mShouldBindStetho = true;
+
+        // Build custom EventBus that doesn't log "No subscribers registered" messages
+        // Tests were failing because this was being called multiple times. Catch the possible error
+        // and ignore it.
+        try {
+            EventBusBuilder builder = EventBus.builder();
+            builder.logNoSubscriberMessages(false);
+            builder.installDefaultEventBus();
+        } catch (EventBusException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
