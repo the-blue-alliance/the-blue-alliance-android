@@ -1,8 +1,9 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.thebluealliance.androidclient.datafeed.NetworkRequestStatusAggregator;
+import com.thebluealliance.androidclient.datafeed.ObservableCompletionAggregator;
 
 import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
 
 public abstract class BriteBaseAPISubscriber<APIType, BindType> extends BaseAPISubscriber<APIType, BindType> {
 
@@ -25,8 +26,8 @@ public abstract class BriteBaseAPISubscriber<APIType, BindType> extends BaseAPIS
         };
     }
 
-    public void subscribeAndStartNetworkRequestStatusAggregator(NetworkRequestStatusAggregator agg) {
-        agg.getObservable().subscribe(mNetworkStatusObserver);
+    public void subscribeNetworkRequestStatusAggregator(ObservableCompletionAggregator agg) {
+        agg.getObservable().observeOn(AndroidSchedulers.mainThread()).subscribe(mNetworkStatusObserver);
         agg.start();
     }
 

@@ -5,7 +5,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.datafeed.BriteDatafeed;
-import com.thebluealliance.androidclient.datafeed.NetworkRequestStatusAggregator;
+import com.thebluealliance.androidclient.datafeed.ObservableCompletionAggregator;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController.RefreshType;
 import com.thebluealliance.androidclient.datafeed.refresh.Refreshable;
@@ -38,7 +38,7 @@ import rx.schedulers.Schedulers;
  *
  * @param <T> Type returned by the API
  * @param <V> Type to be bound to a view
- * @param <S> {@link BaseAPISubscriber} that will take API Data -> prepare data to render
+ * @param <S> {@link BriteBaseAPISubscriber} that will take API Data -> prepare data to render
  * @param <B> {@link AbstractDataBinder} that will take prepared data -> view
  */
 public abstract class BriteDatafeedFragment
@@ -172,13 +172,13 @@ public abstract class BriteDatafeedFragment
     @Override
     public void onRefreshStart(@RefreshType int refreshType) {
         if (mSubscriber != null && mBinder != null) {
-            List<Single<Void>> observables = beginDataUpdate(
+            List<Single<?>> observables = beginDataUpdate(
                     refreshType == RefreshController.REQUESTED_BY_USER
                             ? APIv2.TBA_CACHE_WEB
                             : null);
-            NetworkRequestStatusAggregator aggregator = new NetworkRequestStatusAggregator();
-            aggregator.addAllRequestStatusObservables(observables);
-            mSubscriber.subscribeAndStartNetworkRequestStatusAggregator(aggregator);
+            ObservableCompletionAggregator aggregator = new ObservableCompletionAggregator();
+            aggregator.addAllSingles(observables);
+            mSubscriber.subscribeNetworkRequestStatusAggregator(aggregator);
             mSubscriber.onRefreshStart(refreshType);
         }
     }
@@ -211,7 +211,7 @@ public abstract class BriteDatafeedFragment
      *                       {@link APIv2#TBA_CACHE_WEB}, {@link APIv2#TBA_CACHE_LOCAL}, or {@code
      *                       null} for regular usage
      */
-    protected abstract List<Single<Void>> beginDataUpdate(String tbaCacheHeader);
+    protected abstract List<Single<?>> beginDataUpdate(String tbaCacheHeader);
 
     /**
      * @return A string identifying what data this fragment is loading

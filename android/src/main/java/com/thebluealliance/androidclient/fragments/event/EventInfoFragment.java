@@ -78,8 +78,8 @@ public class EventInfoFragment
     }
 
     @Override
-    protected List<Single<Void>> beginDataUpdate(String tbaCacheHeader) {
-        List<Single<Void>> observables = new ArrayList<>();
+    protected List<Single<?>> beginDataUpdate(String tbaCacheHeader) {
+        List<Single<?>> observables = new ArrayList<>();
 
         observables.add(mDatabaseUpdater.updateEvent(mEventKey, tbaCacheHeader));
         // For showing next/last match

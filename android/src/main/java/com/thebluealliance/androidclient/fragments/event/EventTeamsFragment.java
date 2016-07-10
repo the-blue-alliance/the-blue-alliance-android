@@ -55,8 +55,8 @@ public class EventTeamsFragment extends BriteRecyclerViewFragment<List<Team>, Br
         return mDatafeed.getEventTeams(mEventKey);
     }
 
-    @Override protected List<Single<Void>> beginDataUpdate(String tbaCacheHeader) {
-        List<Single<Void>> observables = new ArrayList<>();
+    @Override protected List<Single<?>> beginDataUpdate(String tbaCacheHeader) {
+        List<Single<?>> observables = new ArrayList<>();
         observables.add(mDatabaseUpdater.updateEventTeams(mEventKey, tbaCacheHeader));
         return observables;
     }
