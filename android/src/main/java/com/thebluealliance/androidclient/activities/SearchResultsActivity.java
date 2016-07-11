@@ -1,20 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.app.SearchManager;
-import android.content.Intent;
-import android.database.Cursor;
-import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -31,6 +16,20 @@ import com.thebluealliance.androidclient.listitems.TeamListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
+
+import android.app.SearchManager;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -151,7 +150,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 if (team == null) {
                     // Don't display models that don't exist anymore and delete them from search indexes
                     team = new Team();
-                    team.setTeamKey(key);
+                    team.setKey(key);
                     Database.getInstance(this).getTeamsTable().deleteSearchIndex(team);
                     continue;
                 }
@@ -160,8 +159,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     element = new TeamListElement(team);
                     listItems.add(element);
                 } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.e(Constants.LOG_TAG, "Can't add team search result item. Missing fields... " +
-                            Arrays.toString(e.getStackTrace()));
+                    Log.e(Constants.LOG_TAG, "Can't add team search result item. Missing fields... "
+                          + Arrays.toString(e.getStackTrace()));
                 }
                 Log.d(Constants.LOG_TAG, "titles: " + teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.TITLES)));
             }
@@ -198,7 +197,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 if (event == null) {
                     // Don't display models that don't exist anymore and delete them from search indexes
                     event = new Event();
-                    event.setEventKey(key);
+                    event.setKey(key);
                     Database.getInstance(this).getEventsTable().deleteSearchIndex(event);
                     continue;
                 }
@@ -207,8 +206,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     element = new EventListElement(event);
                     listItems.add(element);
                 } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.e(Constants.LOG_TAG, "Can't add event search result with missing fields...\n" +
-                            Arrays.toString(e.getStackTrace()));
+                    Log.e(Constants.LOG_TAG, "Can't add event search result with missing fields...\n"
+                            + Arrays.toString(e.getStackTrace()));
                 }
             }
             eventQueryResults.close();

@@ -1,50 +1,66 @@
 package com.thebluealliance.androidclient.fragments.tasks;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.accounts.UpdateUserModelSettings;
+import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
+import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+
+import javax.inject.Inject;
 
 public class UpdateUserModelSettingsTaskFragment extends Fragment {
 
     private UpdateUserModelSettings task;
-    private ModelSettingsCallbacks callbacks;
     private ModelNotificationFavoriteSettings settings;
 
-    public UpdateUserModelSettingsTaskFragment() {
-    }
+    @Inject MyTbaDatafeed mMyTbaDatafeed;
 
-    public UpdateUserModelSettingsTaskFragment(ModelNotificationFavoriteSettings settings) {
-        this.settings = settings;
-
-        // Stash the settings so they'll be retained across Fragment destroy and creation.
+    public static UpdateUserModelSettingsTaskFragment newInstance(
+            ModelNotificationFavoriteSettings settings) {
+        UpdateUserModelSettingsTaskFragment fragment = new UpdateUserModelSettingsTaskFragment();
         Bundle bundle = new Bundle();
         settings.writeToBundle(bundle);
-        setArguments(bundle);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
-
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        TBAAndroid application = (TBAAndroid) getActivity().getApplication();
+        DaggerMyTbaComponent.builder()
+                            .tBAAndroidModule(application.getModule())
+                            .accountModule(application.getAccountModule())
+                            .authModule(application.getAuthModule())
+                            .applicationComponent(application.getComponent())
+                            .gceModule(application.getGceModule())
+                            .build()
+                            .inject(this);
 
-        if (settings == null) {
-            Bundle arguments = getArguments();
-            settings = ModelNotificationFavoriteSettings.readFromBundle(arguments);
+        Bundle arguments = getArguments();
+        if (arguments == null) {
+            throw new IllegalArgumentException("UpdateUserModelSettingsTaskFragment needs "
+                                               + "settings");
         }
+        settings = ModelNotificationFavoriteSettings.readFromBundle(arguments);
 
-        callbacks = (ModelSettingsCallbacks) activity;
+        Activity activity = getActivity();
+        ModelSettingsCallbacks callbacks = (ModelSettingsCallbacks) activity;
         this.setRetainInstance(true);
         // If the task does not exist, create it
         if (task != null) {
             task.setCallbacks(callbacks);
         } else {
-            task = new UpdateUserModelSettings(activity, settings);
+            task = new UpdateUserModelSettings(activity, mMyTbaDatafeed, settings);
             task.setCallbacks(callbacks);
             task.execute();
         }
     }
+
 }

@@ -1,13 +1,14 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.ContentValues;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.types.ModelType;
+
+import android.content.ContentValues;
 
 import java.util.ArrayList;
 import java.util.List;

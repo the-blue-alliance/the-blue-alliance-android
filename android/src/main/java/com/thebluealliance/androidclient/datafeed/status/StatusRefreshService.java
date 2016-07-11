@@ -4,7 +4,6 @@ import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
-import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
@@ -12,16 +11,12 @@ import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.models.APIStatus;
 
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONObject;
 
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.WorkerThread;
-import android.util.JsonReader;
 import android.util.Log;
-
-import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -69,8 +64,8 @@ public class StatusRefreshService extends IntentService {
             return;
         }
         if (!response.isSuccessful()) {
-            Log.w(Constants.LOG_TAG, "Unable to update myTBA Status\n" +
-                    response.code() + " " + response.message());
+            Log.w(Constants.LOG_TAG, "Unable to update myTBA Status\n"
+                    + response.code() + " " + response.message());
             return;
         }
         APIStatus status = response.body();

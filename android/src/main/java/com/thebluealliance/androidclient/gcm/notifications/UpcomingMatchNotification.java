@@ -20,7 +20,6 @@ import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
-import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
 
@@ -41,7 +40,8 @@ import java.util.Date;
 
 public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNotificationViewModel> {
 
-    private String eventName, eventKey, matchKey, redTeams[], blueTeams[];
+    private String eventName, eventKey, matchKey;
+    private String[] redTeams, blueTeams;
     private JsonElement matchTime;
     private JsonArray teamKeys;
 

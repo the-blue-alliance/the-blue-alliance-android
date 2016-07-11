@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.res.Resources;
-
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
+import com.thebluealliance.androidclient.types.ModelType;
+
+import android.content.res.Resources;
 
 public class DistrictPointBreakdown implements RenderableModel {
 
@@ -18,7 +18,12 @@ public class DistrictPointBreakdown implements RenderableModel {
     private int rank;
 
     public DistrictPointBreakdown() {
-        this.qualPoints = this.elimPoints = this.alliancePoints = this.awardPoints = this.totalPoints = rank = -1;
+        this.qualPoints = -1;
+        this.elimPoints = -1;
+        this.alliancePoints = -1;
+        this.awardPoints = -1;
+        this.totalPoints = -1;
+        rank = -1;
     }
 
     public int getQualPoints() {

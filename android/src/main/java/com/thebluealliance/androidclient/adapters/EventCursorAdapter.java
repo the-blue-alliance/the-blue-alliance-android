@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.adapters;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.EventHelper;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
@@ -8,15 +11,12 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.database.tables.EventsTable;
-import com.thebluealliance.androidclient.helpers.EventHelper;
-
 import java.util.Date;
 
 /**
- * A class that adapts a cursor retrieved from {@link EventsTable#getForSearchQuery(String)} and
- * binds it to views
+ * A class that adapts a cursor retrieved from
+ * {@link com.thebluealliance.androidclient.database.tables.EventsTable#getForSearchQuery(String)}
+ * and binds it to views
  *
  * WARNING: TERRIBLE HACKS WITHIN
  * For some reason, I was having trouble getting the returned cursor to get the right column index

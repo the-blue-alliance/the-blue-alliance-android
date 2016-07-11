@@ -2,12 +2,11 @@ package com.thebluealliance.androidclient.datafeed.status;
 
 import com.google.gson.Gson;
 
-import okhttp3.Cache;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
 import com.thebluealliance.androidclient.models.APIStatus;
@@ -30,6 +29,7 @@ import java.util.Date;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import okhttp3.Cache;
 import rx.schedulers.Schedulers;
 
 /**
@@ -67,14 +67,14 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     private boolean mUserIsLoggedIn;
 
     @Inject
-    public TBAStatusController(SharedPreferences prefs, Gson gson, Cache cache, Context context) {
+    public TBAStatusController(SharedPreferences prefs, Gson gson, Cache cache, AccountController accountController) {
         mPrefs = prefs;
         mGson = gson;
         mOkHttpCache = cache;
         mLastUpdateTime = Long.MIN_VALUE;
         mLastDialogTime = Long.MIN_VALUE;
 
-        mUserIsLoggedIn = AccountHelper.isMyTBAEnabled(context);
+        mUserIsLoggedIn = accountController.isMyTbaEnabled();
     }
 
     public void scheduleStatusUpdate(Context context) {
@@ -149,8 +149,8 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     @Override
     public void onActivityResumed(Activity activity) {
         /* Update myTBA Status */
-        double timeout = mUserIsLoggedIn ? UPDATE_TIMEOUT_LOGGED_IN_NS :
-                UPDATE_TIMEOUT_LOGGED_OUT_NS;
+        double timeout = mUserIsLoggedIn ? UPDATE_TIMEOUT_LOGGED_IN_NS
+                : UPDATE_TIMEOUT_LOGGED_OUT_NS;
         if (mLastUpdateTime + timeout < System.nanoTime()) {
             scheduleStatusUpdate(activity);
             mLastUpdateTime = System.nanoTime();

@@ -27,7 +27,11 @@ import java.util.regex.Pattern;
  * @author Nathan Walters
  * @author Phil Lopreiato
  */
-public class MatchHelper {
+public final class MatchHelper {
+
+    private MatchHelper() {
+        // not used
+    }
 
     public static boolean validateMatchKey(String key) {
         if (key == null || key.isEmpty()) return false;
@@ -200,7 +204,8 @@ public class MatchHelper {
      * @param teamKey     key associated with team
      * @return team's past/current event status
      */
-    public static EventStatus evaluateStatusOfTeam(Event e, List<Match> teamMatches, String teamKey) throws BasicModel.FieldNotDefinedException {
+    public static EventStatus evaluateStatusOfTeam(Event e, List<Match> teamMatches, String teamKey)
+    throws BasicModel.FieldNotDefinedException {
 
         // There might be match info available,
         // but no alliance selection data (for old events)
@@ -315,16 +320,16 @@ public class MatchHelper {
 
         Log.d(Constants.LOG_TAG, "In alliance: " + inAlliance);
         Log.d(Constants.LOG_TAG, "All qual matches played: " + allQualMatchesPlayed);
-        if (qualMatches.isEmpty() ||
-                (allQualMatchesPlayed && !teamIsHere) ||
-                (!(elimMatchPlayed || allQualMatchesPlayed) && !e.isHappeningNow())) {
+        if (qualMatches.isEmpty()
+                || (allQualMatchesPlayed && !teamIsHere)
+                || (!(elimMatchPlayed || allQualMatchesPlayed) && !e.isHappeningNow())) {
             return EventStatus.NOT_AVAILABLE;
-        } else if ((allQualMatchesPlayed && !inAlliance) ||
-                (!e.isHappeningNow() &&
-                        (octoMatches.isEmpty() &&
-                                quarterMatches.isEmpty() &&
-                                semiMatches.isEmpty() &&
-                                finalMatches.isEmpty()))) {
+        } else if ((allQualMatchesPlayed && !inAlliance)
+                || (!e.isHappeningNow()
+                        && (octoMatches.isEmpty()
+                                && quarterMatches.isEmpty()
+                                && semiMatches.isEmpty()
+                                && finalMatches.isEmpty()))) {
             return EventStatus.NOT_PICKED;
         }
 

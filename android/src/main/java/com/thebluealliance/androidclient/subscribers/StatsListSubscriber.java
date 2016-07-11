@@ -9,12 +9,12 @@ import com.thebluealliance.androidclient.binders.ListPair;
 import com.thebluealliance.androidclient.comparators.StatListElementComparator;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventStatsEvent;
+import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.Stat;
 import com.thebluealliance.androidclient.models.Team;
 
 import org.greenrobot.eventbus.EventBus;
@@ -48,7 +48,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
         mTeamStats = new ArrayList<>();
         mEventStats = new ArrayList<>();
         mDataToBind = new ListPair<>(mTeamStats, mEventStats);
-        ((ListPair)mDataToBind).setSelectedList(ListPair.LIST0);
+        ((ListPair) mDataToBind).setSelectedList(ListPair.LIST0);
         mDb = db;
         mEventYear = -1;
     }
@@ -65,9 +65,9 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
     public void parseData() throws BasicModel.FieldNotDefinedException {
         mTeamStats.clear();
         JsonObject statsData = mAPIData.getAsJsonObject();
-        if (!statsData.has("oprs") || !statsData.get("oprs").isJsonObject() ||
-          !statsData.has("dprs") ||!statsData.get("dprs").isJsonObject() ||
-          !statsData.has("ccwms") || !statsData.get("ccwms").isJsonObject()) {
+        if (!statsData.has("oprs") || !statsData.get("oprs").isJsonObject()
+                || !statsData.has("dprs") || !statsData.get("dprs").isJsonObject()
+                || !statsData.has("ccwms") || !statsData.get("ccwms").isJsonObject()) {
             return;
         }
 
@@ -83,19 +83,18 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
             double dpr = dprs.has(stat.getKey()) ? dprs.get(stat.getKey()).getAsDouble() : 0;
             double ccwm = ccwms.has(stat.getKey()) ? ccwms.get(stat.getKey()).getAsDouble() : 0;
             String displayString = mResources.getString(
-              R.string.stats_format,
-              Stat.displayFormat.format(opr),
-              Stat.displayFormat.format(dpr),
-              Stat.displayFormat.format(ccwm));
+                    R.string.stats_format,
+                    ThreadSafeFormatters.formatDoubleTwoPlaces(opr),
+                    ThreadSafeFormatters.formatDoubleTwoPlaces(dpr),
+                    ThreadSafeFormatters.formatDoubleTwoPlaces(ccwm));
             mTeamStats.add(new StatsListElement(
-              teamKey,
-              stat.getKey(),
-              teamName,
-              displayString,
-              opr,
-              dpr,
-              ccwm
-            ));
+                    teamKey,
+                    stat.getKey(),
+                    teamName,
+                    displayString,
+                    opr,
+                    dpr,
+                    ccwm));
         }
         Collections.sort(mTeamStats, new StatListElementComparator(mStatToSortBy));
 
@@ -160,9 +159,10 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
                     .get(0).getAsInt(), elimHigh.get(2).getAsString());
         }
         mEventStats.add(new LabelValueListItem(mResources.getString(R.string
-                .breakdown2016_high_score), combineQualAndElimStat
-                (qualHighScore, elimHighScore), true));
-        
+                .breakdown2016_high_score),
+                combineQualAndElimStat(qualHighScore, elimHighScore),
+                true));
+
         for (int i = 0; i < matchKeys.length; i++) {
             String qualStat = null, elimStat = null;
             if (quals.has(matchKeys[i]) && quals.get(matchKeys[i]).isJsonPrimitive()) {
@@ -192,7 +192,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
             if (quals.has(defenseTitle[i]) && quals.get(defenseTitle[i]).isJsonArray()) {
                 JsonArray qualData = quals.get(defenseTitle[i]).getAsJsonArray();
                 qualStat = String.format(defenseFormat, qualData.get(0).getAsInt(), qualData.get(1).getAsInt(),
-                            qualData.get(2).getAsDouble());
+                        qualData.get(2).getAsDouble());
             }
             if (elims.has(defenseTitle[i]) && elims.get(defenseTitle[i]).isJsonArray()) {
                 JsonArray elimData = elims.get(defenseTitle[i]).getAsJsonArray();
@@ -229,7 +229,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
         }
     }
 
-    private String combineQualAndElimStat(@Nullable String qualStat, @Nullable  String elimStat) {
+    private String combineQualAndElimStat(@Nullable String qualStat, @Nullable String elimStat) {
         if (qualStat != null && elimStat != null) {
             return mResources.getString(R.string.breakdown2016_qual_and_elim, qualStat, elimStat);
         } else if (qualStat != null) {
@@ -242,8 +242,8 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
     private String getTopStatsString() {
         String statsString = "";
         for (int i = 0; i < Math.min(EventStatsEvent.SIZE, mTeamStats.size()); i++) {
-            String opr = ((StatsListElement)mTeamStats.get(i)).getFormattedOpr();
-            String teamName = ((StatsListElement)mTeamStats.get(i)).getTeamNumberString();
+            String opr = ((StatsListElement) mTeamStats.get(i)).getFormattedOpr();
+            String teamName = ((StatsListElement) mTeamStats.get(i)).getTeamNumberString();
             statsString += (i + 1) + ". " + teamName + " - <b>" + opr + "</b>";
             if (i < Math.min(EventStatsEvent.SIZE, mTeamStats.size()) - 1) {
                 statsString += "<br>";

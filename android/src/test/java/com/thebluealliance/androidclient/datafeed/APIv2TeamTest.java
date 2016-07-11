@@ -13,7 +13,6 @@ import static junit.framework.Assert.assertTrue;
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
 public class APIv2TeamTest extends AbstractAPIv2Test {
-    
     @Test
     public void testFetchTeamPage(){
         mApi.fetchTeamPage(0, null).subscribe(teams -> {

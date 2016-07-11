@@ -1,11 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
-import android.content.Context;
-import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
-import android.util.Log;
-
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
@@ -14,6 +10,11 @@ import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
+
+import android.content.Context;
+import android.support.annotation.IntDef;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -44,8 +45,8 @@ public class Team extends BasicModel<Team> implements ViewModelRenderer<TeamView
 
     public Team(String teamKey, int teamNumber, String nickname, String location) {
         this();
-        setTeamKey(teamKey);
-        setTeamNumber(teamNumber);
+        setKey(teamKey);
+        setNumber(teamNumber);
         setNickname(nickname);
         setLocation(location);
     }
@@ -80,8 +81,8 @@ public class Team extends BasicModel<Team> implements ViewModelRenderer<TeamView
         return "";
     }
 
-    public void setTeamKey(String teamKey) {
-        fields.put(TeamsTable.KEY, teamKey);
+    public void setKey(String key) {
+        fields.put(TeamsTable.KEY, key);
     }
 
     public String getNickname() {
@@ -107,15 +108,15 @@ public class Team extends BasicModel<Team> implements ViewModelRenderer<TeamView
         fields.put(TeamsTable.LOCATION, location);
     }
 
-    public Integer getTeamNumber() throws FieldNotDefinedException {
+    public Integer getNumber() throws FieldNotDefinedException {
         if (fields.containsKey(TeamsTable.NUMBER) && fields.get(TeamsTable.NUMBER) instanceof Integer) {
             return (Integer) fields.get(TeamsTable.NUMBER);
         }
         throw new FieldNotDefinedException("Field Database.Teams.NUMBER is not defined");
     }
 
-    public void setTeamNumber(int teamNumber) {
-        fields.put(TeamsTable.NUMBER, teamNumber);
+    public void setNumber(int number) {
+        fields.put(TeamsTable.NUMBER, number);
     }
 
     public void setYearsParticipated(JsonArray years) {
@@ -140,10 +141,10 @@ public class Team extends BasicModel<Team> implements ViewModelRenderer<TeamView
 
     public String getSearchTitles() {
         try {
-            return getKey() + "," + getNickname() + "," + getTeamNumber();
+            return getKey() + "," + getNickname() + "," + getNumber();
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for creating search titles\n" +
-                    "Required: Database.Teams.KEY, Database.Teams.SHORTNAME, Database.Teams.NUMBER");
+            Log.w(Constants.LOG_TAG, "Missing fields for creating search titles\n"
+                    + "Required: Database.Teams.KEY, Database.Teams.SHORTNAME, Database.Teams.NUMBER");
             return null;
         }
     }
@@ -164,7 +165,7 @@ public class Team extends BasicModel<Team> implements ViewModelRenderer<TeamView
     public TeamViewModel renderToViewModel(Context context, @Nullable @RenderType Integer renderType) {
         try {
             int safeRenderType = renderType == null ? RENDER_BASIC : renderType;
-            TeamViewModel model = new TeamViewModel(getKey(), getTeamNumber(), getNickname(), getLocation());
+            TeamViewModel model = new TeamViewModel(getKey(), getNumber(), getNickname(), getLocation());
             model.setShowLinkToTeamDetails(false);
             model.setShowMyTbaDetails(false);
             switch (safeRenderType) {

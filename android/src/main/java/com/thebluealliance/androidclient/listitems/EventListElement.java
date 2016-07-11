@@ -1,17 +1,17 @@
 package com.thebluealliance.androidclient.listitems;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.EventClickListener;
+import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.types.ModelType;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.listeners.EventClickListener;
-import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
-import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.Event;
 
 import java.io.Serializable;
 
@@ -27,10 +27,10 @@ public class EventListElement extends ListElement implements Serializable {
     public EventListElement(Event event) throws BasicModel.FieldNotDefinedException {
         super(event.getKey());
         eventKey = "";
-        eventName = event.getEventName();
+        eventName = event.getName();
         eventDates = event.getDateString();
         eventLocation = event.getLocation();
-        eventYear = event.getEventYear();
+        eventYear = event.getYear();
         this.showMyTba = false;
     }
 
@@ -50,10 +50,10 @@ public class EventListElement extends ListElement implements Serializable {
             return false;
         }
         EventListElement element = ((EventListElement) o);
-        return eventName.equals(element.eventName) &&
-          eventDates.equals(element.eventDates) &&
-          eventLocation.equals(element.eventLocation) &&
-          eventKey.equals(element.eventKey);
+        return eventName.equals(element.eventName)
+          && eventDates.equals(element.eventDates)
+          && eventLocation.equals(element.eventLocation)
+          && eventKey.equals(element.eventKey);
     }
 
     public String getEventKey() {

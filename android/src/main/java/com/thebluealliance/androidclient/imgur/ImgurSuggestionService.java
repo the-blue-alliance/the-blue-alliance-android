@@ -6,8 +6,6 @@ import com.google.gson.JsonPrimitive;
 import com.appspot.tbatv_prod_hrd.TeamMedia;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesMediaSuggestionMessage;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
@@ -28,6 +26,8 @@ import java.io.File;
 
 import javax.inject.Inject;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Response;
 
 /**

@@ -5,6 +5,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.models.Team;
 
 import java.lang.reflect.Type;
@@ -22,11 +23,11 @@ public class TeamDeserializer implements JsonDeserializer<Team> {
         // All the teams should have an associated key and team number,
         // but it doesn't hurt to check in the rare case something goes terribly wrong.
         if (!isNull(object.get("key"))) {
-            team.setTeamKey(object.get("key").getAsString());
+            team.setKey(object.get("key").getAsString());
         }
 
         if (!isNull(object.get("team_number"))) {
-            team.setTeamNumber(object.get("team_number").getAsInt());
+            team.setNumber(object.get("team_number").getAsInt());
         }
 
         // Some of the old teams don't have names and/or locations.

@@ -1,14 +1,12 @@
 package com.thebluealliance.androidclient.binders;
 
-import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.views.NoDataView;
+
+import android.support.annotation.Nullable;
+import android.util.Log;
+import android.view.View;
 
 /**
  * Display a "No Data Available" notice.

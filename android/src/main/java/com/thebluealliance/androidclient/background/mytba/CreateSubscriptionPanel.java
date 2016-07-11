@@ -1,5 +1,16 @@
 package com.thebluealliance.androidclient.background.mytba;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.FavoritesTable;
+import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
+import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
+import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.types.ModelType;
+
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,28 +19,23 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.database.tables.FavoritesTable;
-import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
-import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
-import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.helpers.MyTBAHelper;
-
 public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
 
-    private Context context;
+    private final Context context;
+    private final MyTBASettingsFragment fragment;
+    private final Bundle savedState;
+    private final ModelType type;
+    private final AccountController accountController;
     private boolean favExists;
-    private MyTBASettingsFragment fragment;
-    private Bundle savedState;
-    private ModelType type;
     private String currentSettings;
 
-    public CreateSubscriptionPanel(Context context, MyTBASettingsFragment preferenceFragment, Bundle savedState, ModelType type) {
+    public CreateSubscriptionPanel(Context context,
+                                   AccountController accountController,
+                                   MyTBASettingsFragment preferenceFragment,
+                                   Bundle savedState,
+                                   ModelType type) {
         this.context = context;
+        this.accountController = accountController;
         this.fragment = preferenceFragment;
         this.savedState = savedState;
         this.type = type;
@@ -42,7 +48,7 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
         FavoritesTable favTable = Database.getInstance(context).getFavoritesTable();
         SubscriptionsTable subTable = Database.getInstance(context).getSubscriptionsTable();
 
-        String currentUser = AccountHelper.getSelectedAccount(context);
+        String currentUser = accountController.getSelectedAccount();
         String myKey = MyTBAHelper.createKey(currentUser, modelKey);
 
         favExists = favTable.exists(myKey);
@@ -109,10 +115,6 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
                 preference.setPersistent(false);
                 notificationSettingsCategory.addPreference(preference);
             }
-
-            Preference buffer = new Preference(context);
-            buffer.setLayoutResource(R.layout.buffer_preference);
-            notificationSettingsCategory.addPreference(buffer);
         }
         fragment.setPreferencesLoaded();
 

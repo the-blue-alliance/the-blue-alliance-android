@@ -46,7 +46,7 @@ public class MatchesTable extends ModelTable<Match> {
 
     public List<Match> getTeamAtEventMatches(String teamKey, String eventKey) {
         Cursor cursor = mDb.rawQuery("SELECT * FROM `" + Database.TABLE_MATCHES + "` WHERE `" + EVENT
-          + "` = ? AND `" + ALLIANCES + "` LIKE '%" + teamKey + "," + "%'", new String[]{eventKey});
+          + "` = ? AND `" + ALLIANCES + "` LIKE '%\"" + teamKey + "\"%'", new String[]{eventKey});
         List<Match> models = new ArrayList<>(cursor == null ? 0 : cursor.getCount());
         if (cursor == null || !cursor.moveToFirst()) {
             return models;

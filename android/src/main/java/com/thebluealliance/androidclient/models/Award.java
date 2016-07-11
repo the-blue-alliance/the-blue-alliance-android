@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.helpers.AwardHelper;

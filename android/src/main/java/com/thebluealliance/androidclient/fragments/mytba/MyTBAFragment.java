@@ -1,31 +1,51 @@
 package com.thebluealliance.androidclient.fragments.mytba;
 
-import android.support.v7.app.AlertDialog;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
+import com.thebluealliance.androidclient.adapters.MyTBAFragmentPagerAdapter;
+import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
+import com.thebluealliance.androidclient.views.SlidingTabs;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
-import com.thebluealliance.androidclient.adapters.MyTBAFragmentPagerAdapter;
-import com.thebluealliance.androidclient.views.SlidingTabs;
+import javax.inject.Inject;
 
 public class MyTBAFragment extends Fragment {
 
     private ViewPager mViewPager;
     private SlidingTabs mTabs;
 
+    @Inject AccountController mAccountController;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        TBAAndroid application = (TBAAndroid) getActivity().getApplication();
+        DaggerMyTbaComponent.builder()
+                .tBAAndroidModule(application.getModule())
+                .accountModule(application.getAccountModule())
+                .authModule(application.getAuthModule())
+                .applicationComponent(application.getComponent())
+                .build()
+                .inject(this);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        if (!AccountHelper.isMyTBAEnabled(getActivity())) {
+        if (!mAccountController.isMyTbaEnabled()) {
             //show a dialog to reenable myTBA
             final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             final Intent loginIntent = new Intent(getActivity(), MyTBAOnboardingActivity.class);

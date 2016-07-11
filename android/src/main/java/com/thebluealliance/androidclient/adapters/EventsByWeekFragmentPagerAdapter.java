@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.adapters;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-
 import com.thebluealliance.androidclient.fragments.EventListFragment;
 import com.thebluealliance.androidclient.models.EventWeekTab;
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 
 import java.util.ArrayList;
 import java.util.List;

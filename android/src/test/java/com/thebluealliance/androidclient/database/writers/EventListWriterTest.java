@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.database.writers;
 
-import android.database.sqlite.SQLiteDatabase;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
@@ -14,6 +12,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import android.database.sqlite.SQLiteDatabase;
 
 import java.util.List;
 

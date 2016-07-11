@@ -2,9 +2,9 @@ package com.thebluealliance.androidclient.renderers;
 
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listitems.TeamListElement;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.types.ModelType;
 
 import org.junit.Before;
 import org.junit.Test;

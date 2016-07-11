@@ -5,6 +5,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.helpers.AwardHelper;
 import com.thebluealliance.androidclient.models.Award;
 

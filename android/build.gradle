@@ -3,6 +3,7 @@ apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'gitsemver'
 apply plugin: 'com.github.triplet.play'
+apply plugin: 'com.noveogroup.android.check'
 
 apply from: "../code_coverage.gradle"
 
@@ -222,16 +223,11 @@ repositories {
     }
 }
 
-ext {
-    supportLibVersion = '23.2.1'
-    playServicesVersion = '8.4.0'
+check {
+    abortOnError true
 }
 
 dependencies {
-
-    // Google Cloud Endpoints Library
-    compile ([group: 'com.google.api-client', name: 'google-api-client-android', version: googleApiClientVersion])
-    compile ([group: 'com.google.http-client', name: 'google-http-client-gson', version: googleApiClientVersion])
     compile project(':tbaMobile')
     compile project(':libImgur')
 
@@ -246,10 +242,12 @@ dependencies {
 
     // Play Services Libraries
     // See http://developer.android.com/google/play-services/setup.html
+    compile 'com.google.collections:google-collections:1.0-rc2'
     compile "com.google.android.gms:play-services-base:${playServicesVersion}"
-    compile "com.google.android.gms:play-services-plus:${playServicesVersion}"
     compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"
     compile "com.google.android.gms:play-services-gcm:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-auth:${playServicesVersion}"
+    compile "com.google.firebase:firebase-auth:${playServicesVersion}"
 
     // Square Libraries
     compile 'com.squareup.picasso:picasso:2.5.2'
@@ -292,3 +290,5 @@ dependencies {
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
 }
+
+apply plugin: 'com.google.gms.google-services'

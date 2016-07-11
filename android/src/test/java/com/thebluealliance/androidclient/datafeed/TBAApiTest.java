@@ -1,24 +1,25 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import android.util.Log;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.types.MatchType;
-import com.thebluealliance.androidclient.types.MediaType;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.types.EventType;
+import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.androidclient.types.MediaType;
 
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,8 +39,8 @@ public class TBAApiTest {
             assertEquals(event.getKey(), "2014ctgro");
             assertEquals(event.getStartDate(), new Date(114, 2, 8));
             assertEquals(event.getEndDate(), new Date(114, 2, 9));
-            assertEquals(event.getEventName(), "Groton District Event");
-            assertEquals(event.getEventShortName(), "Groton");
+            assertEquals(event.getName(), "Groton District Event");
+            assertEquals(event.getShortName(), "Groton");
             assertEquals(event.isOfficial(), true);
             assertEquals(event.getLocation(), "Groton, CT, USA");
             assertEquals(event.getEventType(), EventType.DISTRICT);
@@ -51,25 +52,25 @@ public class TBAApiTest {
 
     @org.junit.Test
     public void testParseTeam() {
-        String teamJson = "{\n" +
-                "  \"website\": \"http://www.uberbots.org\",\n" +
-                "  \"name\": \"UTC Fire and Security & Avon High School\",\n" +
-                "  \"locality\": \"Avon\",\n" +
-                "  \"rookie_year\": 2003,\n" +
-                "  \"region\": \"CT\",\n" +
-                "  \"team_number\": 1124,\n" +
-                "  \"location\": \"Avon, CT, USA\",\n" +
-                "  \"key\": \"frc1124\",\n" +
-                "  \"country_name\": \"USA\",\n" +
-                "  \"nickname\": \"ÜberBots\"\n" +
-                "}";
+        String teamJson = "{\n"
+                + "  \"website\": \"http://www.uberbots.org\",\n"
+                + "  \"name\": \"UTC Fire and Security & Avon High School\",\n"
+                + "  \"locality\": \"Avon\",\n"
+                + "  \"rookie_year\": 2003,\n"
+                + "  \"region\": \"CT\",\n"
+                + "  \"team_number\": 1124,\n"
+                + "  \"location\": \"Avon, CT, USA\",\n"
+                + "  \"key\": \"frc1124\",\n"
+                + "  \"country_name\": \"USA\",\n"
+                + "  \"nickname\": \"ÜberBots\"\n"
+                + "}";
         Team team = JSONHelper.getGson().fromJson(teamJson, Team.class);
 
         try {
             assertEquals(team.getWebsite(), "http://www.uberbots.org");
             assertEquals(team.getFullName(), "UTC Fire and Security & Avon High School");
             assertEquals(team.getLocation(), "Avon, CT, USA");
-            assertEquals((int) team.getTeamNumber(), 1124);
+            assertEquals((int) team.getNumber(), 1124);
             assertEquals(team.getKey(), "frc1124");
             assertEquals(team.getNickname(), "ÜberBots");
         } catch (BasicModel.FieldNotDefinedException e) {
@@ -80,20 +81,20 @@ public class TBAApiTest {
 
     @org.junit.Test
     public void testParseMedia() {
-        String mediaJson = "[" +
-                "  {" +
-                "    \"type\": \"cdphotothread\"," +
-                "    \"details\": {" +
-                "      \"image_partial\": \"fe3/fe38d320428adf4f51ac969efb3db32c_l.jpg\"" +
-                "    }," +
-                "    \"foreign_key\": \"39894\"" +
-                "  }," +
-                "  {" +
-                "    \"type\": \"youtube\"," +
-                "    \"details\": {}," +
-                "    \"foreign_key\": \"RpSgUrsghv4\"" +
-                "  }" +
-                "]";
+        String mediaJson = "["
+                + "  {"
+                + "    \"type\": \"cdphotothread\","
+                + "    \"details\": {"
+                + "      \"image_partial\": \"fe3/fe38d320428adf4f51ac969efb3db32c_l.jpg\""
+                + "    },"
+                + "    \"foreign_key\": \"39894\""
+                + "  },"
+                + "  {"
+                + "    \"type\": \"youtube\","
+                + "    \"details\": {},"
+                + "    \"foreign_key\": \"RpSgUrsghv4\""
+                + "  }"
+                + "]";
 
         ArrayList<Media> medias = new ArrayList<>();
         JsonArray mediaArray = JSONHelper.getasJsonArray(mediaJson);
@@ -143,25 +144,25 @@ public class TBAApiTest {
 
     @org.junit.Test
     public void testParseAwardNoAwardee() {
-        String json = "{\n" +
-                "    \"event_key\": \"2010sc\",\n" +
-                "    \"name\": \"Winner\",\n" +
-                "    \"recipient_list\": [\n" +
-                "      {\n" +
-                "        \"team_number\": 343,\n" +
-                "        \"awardee\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"team_number\": 1261,\n" +
-                "        \"awardee\": null\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"team_number\": 1398,\n" +
-                "        \"awardee\": null\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"year\": 2010\n" +
-                "  }";
+        String json = "{\n"
+                + "    \"event_key\": \"2010sc\",\n"
+                + "    \"name\": \"Winner\",\n"
+                + "    \"recipient_list\": [\n"
+                + "      {\n"
+                + "        \"team_number\": 343,\n"
+                + "        \"awardee\": null\n"
+                + "      },\n"
+                + "      {\n"
+                + "        \"team_number\": 1261,\n"
+                + "        \"awardee\": null\n"
+                + "      },\n"
+                + "      {\n"
+                + "        \"team_number\": 1398,\n"
+                + "        \"awardee\": null\n"
+                + "      }\n"
+                + "    ],\n"
+                + "    \"year\": 2010\n"
+                + "  }";
         Award award = JSONHelper.getGson().fromJson(json, Award.class);
 
         try {
@@ -183,21 +184,21 @@ public class TBAApiTest {
 
     @org.junit.Test
     public void testParseAwardNoTeam() {
-        String json = "{\n" +
-                "    \"event_key\": \"2010sc\",\n" +
-                "    \"name\": \"FIRST Dean's List Finalist Award\",\n" +
-                "    \"recipient_list\": [\n" +
-                "      {\n" +
-                "        \"team_number\": null,\n" +
-                "        \"awardee\": \"Brandon Dean\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"team_number\": null,\n" +
-                "        \"awardee\": \"Megan Shew\"\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"year\": 2010\n" +
-                "  }";
+        String json = "{\n"
+                + "    \"event_key\": \"2010sc\",\n"
+                + "    \"name\": \"FIRST Dean's List Finalist Award\",\n"
+                + "    \"recipient_list\": [\n"
+                + "      {\n"
+                + "        \"team_number\": null,\n"
+                + "        \"awardee\": \"Brandon Dean\"\n"
+                + "      },\n"
+                + "      {\n"
+                + "        \"team_number\": null,\n"
+                + "        \"awardee\": \"Megan Shew\"\n"
+                + "      }\n"
+                + "    ],\n"
+                + "    \"year\": 2010\n"
+                + "  }";
         Award award = JSONHelper.getGson().fromJson(json, Award.class);
 
         try {

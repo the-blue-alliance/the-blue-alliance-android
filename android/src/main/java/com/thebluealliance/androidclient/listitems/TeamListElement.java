@@ -1,17 +1,17 @@
 package com.thebluealliance.androidclient.listitems;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
+import com.thebluealliance.androidclient.listeners.TeamClickListener;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.types.ModelType;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
-import com.thebluealliance.androidclient.listeners.TeamClickListener;
-import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.Team;
 
 public class TeamListElement extends ListElement {
 
@@ -23,7 +23,7 @@ public class TeamListElement extends ListElement {
 
     public TeamListElement(Team team) throws BasicModel.FieldNotDefinedException {
         super(team.getKey());
-        mTeamNumber = team.getTeamNumber();
+        mTeamNumber = team.getNumber();
         mTeamName = team.getNickname();
         mTeamLocation = team.getLocation();
         mShowLinkToTeamDetails = false;

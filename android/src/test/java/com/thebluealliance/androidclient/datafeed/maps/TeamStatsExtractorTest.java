@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.datafeed.maps;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 
 import org.junit.Before;

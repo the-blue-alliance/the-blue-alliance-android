@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.fragments.mytba;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
@@ -8,9 +9,13 @@ import com.thebluealliance.androidclient.subscribers.FavoriteListSubscriber;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import rx.Observable;
 
 public class MyFavoritesFragment extends ListViewFragment<List<Favorite>, FavoriteListSubscriber> {
+
+    @Inject MyTbaDatafeed mMyTbaDatafeed;
 
     public static MyFavoritesFragment newInstance() {
         return new MyFavoritesFragment();
@@ -23,7 +28,7 @@ public class MyFavoritesFragment extends ListViewFragment<List<Favorite>, Favori
 
     @Override
     protected Observable<List<Favorite>> getObservable(String tbaCacheHeader) {
-        return mDatafeed.getCache().fetchUserFavorites(getActivity());
+        return mMyTbaDatafeed.fetchLocalFavorites();
     }
 
     @Override

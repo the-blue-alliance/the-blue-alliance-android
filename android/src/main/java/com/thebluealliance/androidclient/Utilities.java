@@ -52,7 +52,11 @@ import java.util.zip.ZipFile;
 
 import me.xuender.unidecode.Unidecode;
 
-public class Utilities {
+public final class Utilities {
+
+    private Utilities() {
+        // not used
+    }
 
     public static int getPixelsFromDp(Context c, int dipValue) {
         Resources r = c.getResources();
@@ -76,9 +80,9 @@ public class Utilities {
     public static int getFirstCompWeek(int year) {
         int offset = year - 1992;
         if (Constants.FIRST_COMP_WEEK.length > offset && year != -1) {
-            return offset >= Constants.FIRST_COMP_WEEK.length || offset < 0 ?
-                    Constants.FIRST_COMP_WEEK[Constants.FIRST_COMP_WEEK.length - 1] :
-                    Constants.FIRST_COMP_WEEK[offset];
+            return offset >= Constants.FIRST_COMP_WEEK.length || offset < 0
+                    ? Constants.FIRST_COMP_WEEK[Constants.FIRST_COMP_WEEK.length - 1]
+                    : Constants.FIRST_COMP_WEEK[offset];
         } else {
             //if no data for this year, return the most recent data
             Log.w(Constants.LOG_TAG, "No first competition week data available for " + year + ". Using most recent year.");
@@ -189,11 +193,11 @@ public class Utilities {
     }
 
     public static boolean indexExists(List<String> data, int index) {
-        return data != null &&
-                !data.isEmpty() &&
-                data.size() >= (index + 1) &&
-                data.get(index) != null &&
-                !data.get(index).isEmpty();
+        return data != null
+                && !data.isEmpty()
+                && data.size() >= (index + 1)
+                && data.get(index) != null
+                && !data.get(index).isEmpty();
     }
 
     public static int getCurrentYear() {
@@ -264,10 +268,12 @@ public class Utilities {
         return true;
     }
 
+    @Deprecated
     public static String readLocalProperty(Context c, String property) {
         return readLocalProperty(c, property, "");
     }
 
+    @Deprecated
     public static String readLocalProperty(Context c, String property, String defaultValue) {
         Properties properties;
         properties = new Properties();
@@ -375,14 +381,14 @@ public class Utilities {
         return builder;
     }
 
-    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    final protected static char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     private static String bytesToHexString(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
         }
         String output = new String(hexChars);
         return output.toLowerCase();

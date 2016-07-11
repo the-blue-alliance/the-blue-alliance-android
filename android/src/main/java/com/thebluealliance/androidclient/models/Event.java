@@ -11,7 +11,6 @@ import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
-import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
@@ -88,7 +87,7 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
         return "";
     }
 
-    public int getEventYear() throws FieldNotDefinedException {
+    public int getYear() throws FieldNotDefinedException {
         if (fields.containsKey(EventsTable.YEAR) && fields.get(EventsTable.YEAR) instanceof Integer) {
             return (Integer) fields.get(EventsTable.YEAR);
         } else {
@@ -178,36 +177,37 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
         return getKey().replaceAll("[0-9]", "");
     }
 
-    public void setEventKey(String eventKey) {
-        if (!EventHelper.validateEventKey(eventKey))
-            throw new IllegalArgumentException("Invalid event key: " + eventKey + " Should be format <year><event>, like 2014cthar");
-        fields.put(EventsTable.KEY, eventKey);
-        fields.put(EventsTable.YEAR, Integer.parseInt(eventKey.substring(0, 4)));
+    public void setKey(String key) {
+        if (!EventHelper.validateEventKey(key)) {
+            throw new IllegalArgumentException("Invalid event key: " + key + " Should be format <year><event>, like 2014cthar");
+        }
+        fields.put(EventsTable.KEY, key);
+        fields.put(EventsTable.YEAR, Integer.parseInt(key.substring(0, 4)));
     }
 
-    public String getEventName() throws FieldNotDefinedException {
+    public String getName() throws FieldNotDefinedException {
         if (fields.containsKey(EventsTable.NAME) && fields.get(EventsTable.NAME) instanceof String) {
             return (String) fields.get(EventsTable.NAME);
         }
         throw new FieldNotDefinedException("Field Database.Events.NAME is not defined");
     }
 
-    public void setEventName(String eventName) {
-        fields.put(EventsTable.NAME, eventName);
+    public void setName(String name) {
+        fields.put(EventsTable.NAME, name);
     }
 
-    public String getEventShortName() throws FieldNotDefinedException {
+    public String getShortName() throws FieldNotDefinedException {
         if (fields.containsKey(EventsTable.SHORTNAME) && fields.get(EventsTable.SHORTNAME) instanceof String) {
             String shortName = (String) fields.get(EventsTable.SHORTNAME);
             if (shortName != null && !shortName.isEmpty()) {
                 return shortName;
             }
         }
-        return getEventName();
+        return getName();
     }
 
-    public void setEventShortName(String eventShortName) {
-        fields.put(EventsTable.SHORTNAME, eventShortName);
+    public void setShortName(String shortName) {
+        fields.put(EventsTable.SHORTNAME, shortName);
     }
 
     public String getLocation() throws FieldNotDefinedException {
@@ -395,8 +395,8 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             Date now = new Date();
             return now.after(startDate) && now.before(endDate);
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields to determine if event is happening now.\n" +
-                    "Required fields: Database.Events.START and Database.Events.END");
+            Log.w(Constants.LOG_TAG, "Missing fields to determine if event is happening now.\n"
+                    + "Required fields: Database.Events.START and Database.Events.END");
             return false;
         }
     }
@@ -408,8 +408,8 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             Date now = new Date();
             return now.after(startDate);
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields to determine if event has started.\n" +
-                    "Required fields: Database.Events.START");
+            Log.w(Constants.LOG_TAG, "Missing fields to determine if event has started.\n"
+                    + "Required fields: Database.Events.START");
             return false;
         }
     }
@@ -458,23 +458,23 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             if (startDate.equals(endDate)) {
                 return ThreadSafeFormatters.renderEventDate(startDate);
             }
-            return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to " +
-                    ThreadSafeFormatters.renderEventDate(endDate);
+            return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to "
+                    + ThreadSafeFormatters.renderEventDate(endDate);
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for getting date string. \n" +
-                    "Required fields: Database.Events.START, Database.Events.END");
+            Log.w(Constants.LOG_TAG, "Missing fields for getting date string. \n"
+                    + "Required fields: Database.Events.START, Database.Events.END");
             return "";
         }
     }
 
     public String getSearchTitles() throws FieldNotDefinedException {
-        return getKey() + "," + getEventYear() + " " + getEventName() + "," + getEventYear() + " " + getEventShortName() + "," + getYearAgnosticEventKey() + " " + getEventYear();
+        return getKey() + "," + getYear() + " " + getName() + "," + getYear() + " " + getShortName() + "," + getYearAgnosticEventKey() + " " + getYear();
     }
 
     @Nullable @Override public EventViewModel renderToViewModel(Context context, @Nullable @RenderType Integer renderType) {
         EventViewModel model;
         try {
-            model = new EventViewModel(getKey(), getEventYear(), getEventShortName(), getDateString(), getLocation());
+            model = new EventViewModel(getKey(), getYear(), getShortName(), getDateString(), getLocation());
 
 
             switch (renderType) {
@@ -483,8 +483,8 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             }
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n" +
-                    "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
+            Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n"
+                    + "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
             return null;
         }
 

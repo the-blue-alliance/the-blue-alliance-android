@@ -2,11 +2,11 @@ package com.thebluealliance.androidclient.renderers;
 
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.renderers.MatchRenderer.RenderArgs;
 import com.thebluealliance.androidclient.renderers.MatchRenderer.RenderType;
+import com.thebluealliance.androidclient.types.ModelType;
 
 import org.junit.Before;
 import org.junit.Test;

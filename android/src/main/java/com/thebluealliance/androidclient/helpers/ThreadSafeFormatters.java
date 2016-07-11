@@ -16,39 +16,43 @@ import static java.util.Locale.ENGLISH;
  * {@code synchronized} blocks
  */
 @ThreadSafe
-public class ThreadSafeFormatters {
+public final class ThreadSafeFormatters {
 
-    private static final DateFormat sEventDateFormat = new SimpleDateFormat("yyyy-MM-dd", ENGLISH);
-    private static final DateFormat sEventRenderFormat =
+    private ThreadSafeFormatters() {
+        // unused
+    }
+
+    private static final DateFormat EVENT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", ENGLISH);
+    private static final DateFormat EVENT_RENDER_FORMAT =
       new SimpleDateFormat("MMM d, yyyy", ENGLISH);
-    private static final DateFormat sEventRenderShortFormat =
+    private static final DateFormat EVENT_RENDER_SHORT_FORMAT =
       new SimpleDateFormat("MMM d", ENGLISH);
-    private static final DateFormat sMonthFormat = new SimpleDateFormat("MMM", ENGLISH);
+    private static final DateFormat MONTH_FORMAT = new SimpleDateFormat("MMM", ENGLISH);
 
-    private static NumberFormat sDoubleOnePlaceFormat = new DecimalFormat("##.#");
-    private static NumberFormat sDoubleTwoPlacesFormat = new DecimalFormat("###.##");
+    private static final NumberFormat DOUBLE_ONE_PLACE_FORMAT = new DecimalFormat("##.#");
+    private static final NumberFormat DOUBLE_TWO_PLACES_FORMAT = new DecimalFormat("###.##");
 
     public static synchronized Date parseEventDate(String dateString) throws ParseException{
-        return sEventDateFormat.parse(dateString);
+        return EVENT_DATE_FORMAT.parse(dateString);
     }
 
     public static synchronized String renderEventDate(Date date) {
-        return sEventRenderFormat.format(date);
+        return EVENT_RENDER_FORMAT.format(date);
     }
 
     public static synchronized String renderEventShortFormat(Date date) {
-        return sEventRenderShortFormat.format(date);
+        return EVENT_RENDER_SHORT_FORMAT.format(date);
     }
 
     public static synchronized String renderEventMonth(Date date) {
-        return sMonthFormat.format(date);
+        return MONTH_FORMAT.format(date);
     }
 
     public static synchronized String formatDoubleOnePlace(double input) {
-        return sDoubleOnePlaceFormat.format(input);
+        return DOUBLE_ONE_PLACE_FORMAT.format(input);
     }
 
     public static synchronized String formatDoubleTwoPlaces(double input) {
-        return sDoubleTwoPlacesFormat.format(input);
+        return DOUBLE_TWO_PLACES_FORMAT.format(input);
     }
 }

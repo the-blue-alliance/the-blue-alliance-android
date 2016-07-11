@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.datafeed.framework;
 
 import com.google.common.base.Preconditions;
+
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.models.BasicModel;

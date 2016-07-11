@@ -1,11 +1,7 @@
 package com.thebluealliance.androidclient.renderers;
 
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
-
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
-import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.listitems.DistrictListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.listitems.ModelListElement;
@@ -13,6 +9,10 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.types.ModelType;
+
+import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -74,8 +74,8 @@ public class MyTbaModelRenderer implements ModelRenderer<Void, Void> {
                     }
                     text = String.format("%1$s @ %2$d %3$s",
                       eTeam.getNickname(),
-                      eEvent.getEventYear(),
-                      eEvent.getEventShortName());
+                      eEvent.getYear(),
+                      eEvent.getShortName());
                     return new ModelListElement(text, key, type);
                 case DISTRICT:
                     DistrictListElement element = mDistrictRenderer.renderFromKey(

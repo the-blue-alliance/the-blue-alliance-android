@@ -1,5 +1,17 @@
 package com.thebluealliance.androidclient.fragments.mytba;
 
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPanel;
+import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
+import com.thebluealliance.androidclient.helpers.ModelHelper;
+import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
+import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
+import com.thebluealliance.androidclient.types.ModelType;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -9,17 +21,12 @@ import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
 import android.util.Log;
 import android.view.View;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPanel;
-import com.thebluealliance.androidclient.helpers.ModelHelper;
-import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
-import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.helpers.MyTBAHelper;
-import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 public class MyTBASettingsFragment extends PreferenceFragment {
 
@@ -33,6 +40,8 @@ public class MyTBASettingsFragment extends PreferenceFragment {
     private LoadModelSettingsCallback loadCallback;
 
     private boolean preferencesLoaded = false;
+
+    @Inject AccountController mAccountController;
 
     public static MyTBASettingsFragment newInstance(String modelKey, ModelType modelType, Bundle savedStateBundle) {
         MyTBASettingsFragment fragment = new MyTBASettingsFragment();
@@ -58,6 +67,14 @@ public class MyTBASettingsFragment extends PreferenceFragment {
         if (getArguments() == null || !getArguments().containsKey(MODEL_KEY)) {
             throw new IllegalArgumentException("MyTBASettingsFragment must be constructed with a model key");
         }
+        TBAAndroid application = (TBAAndroid) getActivity().getApplication();
+        DaggerMyTbaComponent.builder()
+                .tBAAndroidModule(application.getModule())
+                .accountModule(application.getAccountModule())
+                .authModule(application.getAuthModule())
+                .applicationComponent(application.getComponent())
+                .build()
+                .inject(this);
         modelKey = getArguments().getString(MODEL_KEY);
         modelType = ModelHelper.getModelFromEnum(getArguments().getInt(MODEL_TYPE));
         savedStateBundle = getArguments().getBundle(SAVED_STATE_BUNDLE);
@@ -72,13 +89,16 @@ public class MyTBASettingsFragment extends PreferenceFragment {
         this.setPreferenceScreen(p);
 
         // Create the list of preferences
-        new CreateSubscriptionPanel(getActivity(), this, savedStateBundle, modelType).execute(modelKey);
+        new CreateSubscriptionPanel(getActivity(), mAccountController, this, savedStateBundle, modelType).execute(modelKey);
 
-        // Remove padding from the list view
+        // Setup padding on the view. Padding is needed at the bottom to account for the FAB.
         if (getView() != null) {
-            View listView = getView().findViewById(android.R.id.list);
+            ListView listView = (ListView) getView().findViewById(android.R.id.list);
             if (listView != null) {
-                listView.setPadding(0, 0, 0, 0);
+                listView.setPadding(0, 0, 0, getResources().getDimensionPixelSize(R.dimen.fab_list_padding));
+                listView.setClipToPadding(false);
+                // Scrollbar gets janky with padding in a listview. Just hide it.
+                listView.setVerticalScrollBarEnabled(false);
             }
         }
     }
@@ -169,6 +189,7 @@ public class MyTBASettingsFragment extends PreferenceFragment {
     }
 
     public void refreshSettingsFromDatabase() {
-        new CreateSubscriptionPanel(getActivity(), this, savedStateBundle, modelType).execute(modelKey);
+        new CreateSubscriptionPanel(getActivity(), mAccountController, this, savedStateBundle,
+                                    modelType).execute(modelKey);
     }
 }

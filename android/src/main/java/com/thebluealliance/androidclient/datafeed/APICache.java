@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.datafeed;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
-import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
@@ -16,14 +15,11 @@ import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
-import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.DistrictType;
 
-import android.content.Context;
 import android.database.Cursor;
 
 import java.util.Calendar;
@@ -37,7 +33,7 @@ import rx.Observable;
 @Singleton
 public class APICache {
 
-    private Database mDb;
+    private final Database mDb;
 
     @Inject
     public APICache(Database db) {
@@ -372,29 +368,4 @@ public class APICache {
         });
     }
 
-    public Observable<List<Subscription>> fetchUserSubscriptions(Context context) {
-        return Observable.create((observer) -> {
-            try {
-                String account = AccountHelper.getSelectedAccount(context);
-                List<Subscription> subscriptions = mDb.getSubscriptionsTable().getForUser(account);
-                observer.onNext(subscriptions);
-                observer.onCompleted();
-            } catch (Exception e) {
-                observer.onError(e);
-            }
-        });
-    }
-
-    public Observable<List<Favorite>> fetchUserFavorites(Context context) {
-        return Observable.create((observer) -> {
-            try {
-                String account = AccountHelper.getSelectedAccount(context);
-                List<Favorite> favorites = mDb.getFavoritesTable().getForUser(account);
-                observer.onNext(favorites);
-                observer.onCompleted();
-            } catch (Exception e) {
-                observer.onError(e);
-            }
-        });
-    }
 }

@@ -518,7 +518,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
 
     protected abstract String getFirebaseUrlSuffix();
 
-    private static class ViewCrossfader {
+    private static final class ViewCrossfader {
         private List<View> mFadeIn, mFadeOut;
         private int mDuration;
 

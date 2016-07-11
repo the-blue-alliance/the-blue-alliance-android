@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.listitems;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.models.Stat;
+import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -68,7 +68,7 @@ public class StatsListElement extends ListElement {
     }
 
     public String getFormattedOpr() {
-        return Stat.displayFormat.format(opr);
+        return ThreadSafeFormatters.formatDoubleTwoPlaces(opr);
     }
 
     public Double getDpr() {
@@ -76,7 +76,7 @@ public class StatsListElement extends ListElement {
     }
 
     public String getFormattedDpr() {
-        return Stat.displayFormat.format(dpr);
+        return ThreadSafeFormatters.formatDoubleTwoPlaces(dpr);
     }
 
     public Double getCcwm() {
@@ -84,7 +84,7 @@ public class StatsListElement extends ListElement {
     }
 
     public String getFormattedCcwm() {
-        return Stat.displayFormat.format(ccwm);
+        return ThreadSafeFormatters.formatDoubleTwoPlaces(ccwm);
     }
 
     public String getTeamNumberString() {
@@ -97,10 +97,10 @@ public class StatsListElement extends ListElement {
             return false;
         }
         StatsListElement element = (StatsListElement) o;
-        return teamName.equals(element.teamName) &&
-          teamNumber.equals(element.teamNumber) &&
-          opr.equals(element.opr) &&
-          dpr.equals(element.dpr) &&
-          ccwm.equals(element.ccwm);
+        return teamName.equals(element.teamName)
+          && teamNumber.equals(element.teamNumber)
+          && opr.equals(element.opr)
+          && dpr.equals(element.dpr)
+          && ccwm.equals(element.ccwm);
     }
 }

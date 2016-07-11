@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.binders.BinderModule;
 import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
+import com.thebluealliance.androidclient.datafeed.gce.GceModule;
 import com.thebluealliance.androidclient.fragments.AllTeamsListFragment;
 import com.thebluealliance.androidclient.fragments.ContributorsFragment;
 import com.thebluealliance.androidclient.fragments.EventListFragment;
@@ -53,13 +54,14 @@ import dagger.Component;
 
 @Singleton
 @Component(
-  modules= {
-    SubscriberModule.class,
-    BinderModule.class,
-    DatafeedModule.class,
-    DatabaseWriterModule.class,
-    ClickListenerModule.class},
-  dependencies = {ApplicationComponent.class})
+        modules = {
+                SubscriberModule.class,
+                BinderModule.class,
+                DatafeedModule.class,
+                DatabaseWriterModule.class,
+                ClickListenerModule.class,
+                GceModule.class},
+        dependencies = {ApplicationComponent.class})
 public interface FragmentComponent {
 
     void inject(TeamInfoFragment fragment);

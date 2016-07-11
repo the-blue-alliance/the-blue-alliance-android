@@ -4,17 +4,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listitems.LabelValueListItem;
-import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.Stat;
+import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 
 import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamStatsSubscriber extends BaseAPISubscriber<JsonElement, List<ListItem>> {
+public class TeamStatsSubscriber extends BaseAPISubscriber<JsonElement, List<Object>> {
 
     private Resources mResources;
 
@@ -29,19 +28,19 @@ public class TeamStatsSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
         mDataToBind.clear();
         JsonObject statsData = mAPIData.getAsJsonObject();
         if (statsData.has("opr")) {
-            mDataToBind.add(new LabelValueListItem(
+            mDataToBind.add(new LabelValueViewModel(
               mResources.getString(R.string.opr_no_colon),
-              Stat.displayFormat.format(statsData.get("opr").getAsDouble())));
+              ThreadSafeFormatters.formatDoubleTwoPlaces(statsData.get("opr").getAsDouble())));
         }
         if (statsData.has("dpr")) {
-            mDataToBind.add(new LabelValueListItem(
+            mDataToBind.add(new LabelValueViewModel(
               mResources.getString(R.string.dpr_no_colon),
-              Stat.displayFormat.format(statsData.get("dpr").getAsDouble())));
+              ThreadSafeFormatters.formatDoubleTwoPlaces(statsData.get("dpr").getAsDouble())));
         }
         if (statsData.has("ccwm")) {
-            mDataToBind.add(new LabelValueListItem(
+            mDataToBind.add(new LabelValueViewModel(
               mResources.getString(R.string.ccwm_no_colon),
-              Stat.displayFormat.format(statsData.get("ccwm").getAsDouble())));
+              ThreadSafeFormatters.formatDoubleTwoPlaces(statsData.get("ccwm").getAsDouble())));
         }
     }
 

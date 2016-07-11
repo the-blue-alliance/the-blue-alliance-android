@@ -1,9 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.content.Context;
-import android.content.res.Resources;
-
 import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
@@ -20,6 +18,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+
+import android.content.Context;
 
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;

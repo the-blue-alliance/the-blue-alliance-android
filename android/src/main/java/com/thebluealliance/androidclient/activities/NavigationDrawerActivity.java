@@ -1,26 +1,23 @@
 package com.thebluealliance.androidclient.activities;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
+import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
+import com.thebluealliance.androidclient.di.components.HasMyTbaComponent;
+import com.thebluealliance.androidclient.di.components.MyTbaComponent;
+import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
+import com.thebluealliance.androidclient.listitems.NavDrawerItem;
+import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.FrameLayout;
-import android.widget.Toast;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.PlusHelper;
-import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
-import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
-import com.thebluealliance.androidclient.listitems.NavDrawerItem;
-import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
 
 /**
  * Activity that provides a navigation drawer.
@@ -29,7 +26,7 @@ import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
  */
 
 public abstract class NavigationDrawerActivity extends AppCompatActivity
-        implements NavigationDrawerFragment.NavigationDrawerListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+        implements NavigationDrawerFragment.NavigationDrawerListener, HasMyTbaComponent {
 
     private static final String IS_DRAWER_OPEN = "is_drawer_open";
 
@@ -76,6 +73,14 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
         mDrawerContainer = (ScrimInsetsFrameLayout) findViewById(R.id.navigation_drawer_fragment_container);
 
         handler = new Handler();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mNavDrawerFragment != null) {
+            mNavDrawerFragment.setupNavDrawerHeader();
+        }
     }
 
     /**
@@ -277,23 +282,14 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
         }
     }
 
-    /* Plus callbacks */
     @Override
-    public void onConnected(Bundle connectionHint) {
-        PlusHelper.onConnectCommon(this);
-        if (mNavDrawerFragment != null) {
-            mNavDrawerFragment.setupNavDrawerHeader();
-        }
+    public MyTbaComponent getMyTbaComponent() {
+        TBAAndroid application = (TBAAndroid) getApplication();
+        return DaggerMyTbaComponent.builder()
+                .tBAAndroidModule(application.getModule())
+                .accountModule(application.getAccountModule())
+                .authModule(application.getAuthModule())
+                .applicationComponent(application.getComponent())
+                .build();
     }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    public void onConnectionFailed(ConnectionResult result) {
-        Log.w(Constants.LOG_TAG, "Failed to connect to G+");
-        Toast.makeText(this, "Failed to connect to G+ API", Toast.LENGTH_SHORT).show();
-    }
-
 }
