@@ -218,7 +218,7 @@ public class Database extends SQLiteOpenHelper {
 
     public static synchronized Database getInstance(Context context) {
         if (sDatabaseInstance == null) {
-            sDatabaseInstance = new Database(context);
+            sDatabaseInstance = new Database(context.getApplicationContext());
             sDatabaseInstance.setWriteAheadLoggingEnabled(true);
         }
         return sDatabaseInstance;
