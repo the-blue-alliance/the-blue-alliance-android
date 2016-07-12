@@ -32,4 +32,5 @@ public interface AuthProvider {
 
     Observable<? extends User> userFromSignInResult(int requestCode, int resultCode, Intent data);
 
+    Observable<? extends User> signInLegacyUser();
 }

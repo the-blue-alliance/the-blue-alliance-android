@@ -5,6 +5,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.firebase.auth.AuthCredential;
 
 import com.thebluealliance.androidclient.Constants;
@@ -16,6 +17,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import javax.inject.Inject;
@@ -85,6 +87,19 @@ public class GoogleAuthProvider implements AuthProvider,
             mCurrentUser = new GoogleSignInUser(result.getSignInAccount());
         }
         return Observable.just(mCurrentUser);
+    }
+
+    @WorkerThread
+    public Observable<GoogleSignInUser> signInLegacyUser() {
+        onStart();
+        OptionalPendingResult<GoogleSignInResult> optionalResult = Auth.GoogleSignInApi
+                .silentSignIn(mGoogleApiClient);
+        GoogleSignInResult result = optionalResult.await();
+        onStop();
+        if (result.isSuccess()) {
+            return Observable.just(new GoogleSignInUser(result.getSignInAccount()));
+        }
+        return Observable.empty();
     }
 
     @Override

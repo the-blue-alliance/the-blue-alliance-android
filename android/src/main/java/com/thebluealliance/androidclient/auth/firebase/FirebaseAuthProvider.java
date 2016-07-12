@@ -86,4 +86,34 @@ public class FirebaseAuthProvider implements AuthProvider {
             });
         });
     }
+
+    /**
+     * Migrate a pre-Firebase user and try and sign it in with Firebase
+     */
+    public Observable<FirebaseSignInUser> signInLegacyUser() {
+        Observable<? extends User> googleUser = mGoogleAuthProvider.signInLegacyUser();
+        return googleUser.switchMap(user -> {
+            if (!(user instanceof GoogleSignInUser)) {
+                return Observable.empty();
+            }
+
+            GoogleSignInUser googleSignInUser = (GoogleSignInUser) user;
+            AuthCredential credential = mGoogleAuthProvider
+                    .getAuthCredential(googleSignInUser.getIdToken());
+            return Observable.create(new Observable.OnSubscribe<FirebaseSignInUser>() {
+                @Override
+                public void call(Subscriber<? super FirebaseSignInUser> subscriber) {
+                    mFirebaseAuth.signInWithCredential(credential)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                AuthResult result = task.getResult();
+                                subscriber.onNext(new FirebaseSignInUser(result.getUser()));
+                            }
+                            subscriber.onCompleted();
+                        })
+                        .addOnFailureListener(subscriber::onError);
+                }
+            });
+        });
+    }
 }

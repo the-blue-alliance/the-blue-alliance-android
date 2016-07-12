@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.User;
+import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
 import com.thebluealliance.androidclient.di.components.HasMyTbaComponent;
 import com.thebluealliance.androidclient.listitems.DividerListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -16,6 +17,7 @@ import com.thebluealliance.androidclient.listitems.SpacerListItem;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -192,6 +194,10 @@ public class NavigationDrawerFragment extends Fragment {
                 }
             } else {
                 Log.w(Constants.LOG_TAG, "No current user found");
+                // If myTBA /should/ be enabled, but we don't have a registered Firebase user,
+                // then we're probably upgrading from a pre-firebase version. Try and migrate
+                Activity activity = getActivity();
+                activity.startService(new Intent(activity, MigrateLegacyUserToFirebase.class));
             }
         }
 
