@@ -3,8 +3,11 @@ package com.thebluealliance.androidclient.activities.settings;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.RedownloadActivity;
+import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
+import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -73,51 +76,25 @@ public class DevSettingsActivity extends AppCompatActivity {
                 return true;
             });
 
-            Preference testUpcomingMatchNotification = findPreference("test_upcoming_match_notification");
-            /*testUpcomingMatchNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    String data = "{\"match_key\":\"2014ilch_f1m2\",\"event_name\":\"Midwest Regional\",\"team_keys\":[\"frc111\",\"frc118\",\"frc254\",\"frc496\",\"frc1114\",\"frc2056\"],\"scheduled_time\":12345,\"predicted_time\":123456}";
-                    GCMMessageHandler.handleMessage(getActivity(), "upcoming_match", data);
-                    return true;
-                }
-            });*/
+            Preference gcmRegister = findPreference("gcm_register");
+            gcmRegister.setOnPreferenceClickListener((preference) -> {
+                getActivity().startService(new Intent(getActivity(),
+                                                      MyTbaRegistrationService.class));
+                return false;
+            });
 
+            Preference updateMytba = findPreference("update_mytba");
+            updateMytba.setOnPreferenceClickListener((preference) -> {
+                getActivity().startService(
+                        MyTbaUpdateService.newInstance(getActivity(), true, true));
+                return false;
+            });
 
-            Preference testScoreNotification = findPreference("test_score_notification");
-            /*testScoreNotification.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    // Comment out different strings to see different types of notifications.
-                    // This is kind of a hacky way of demonstrating notifications; it just removes
-                    // teams from the alliance json objects to simulate different numbers of favorited teams.
-                    // This will break once we actually check if teams are favorited while constructing notifications.
-
-                    // All teams are favorited
-                    //String data = "{\"event_name\":\"EVENT NAME\",\"match\":{\"comp_level\":\"f\",\"match_number\":1,\"videos\":[],\"time_string\":null,\"set_number\":1,\"key\":\"2010sc_f1m1\",\"time\":null,\"alliances\":{\"blue\":{\"score\":5,\"teams\":[\"frc1772\",\"frc2751\",\"frc1102\"]},\"red\":{\"score\":0,\"teams\":[\"frc1398\",\"frc343\",\"frc1261\"]}},\"event_key\":\"2010sc\"}}";
-                    // 2 teams on winning alliance are favorited
-                    //String data = "{\"event_name\":\"EVENT NAME\",\"match\":{\"comp_level\":\"f\",\"match_number\":1,\"videos\":[],\"time_string\":null,\"set_number\":1,\"key\":\"2010sc_f1m1\",\"time\":null,\"alliances\":{\"blue\":{\"score\":5,\"teams\":[\"frc1772\",\"frc2751\"]},\"red\":{\"score\":0,\"teams\":[]}},\"event_key\":\"2010sc\"}}";
-                    // 1 team on losing alliance is favorited
-                    //String data = "{\"event_name\":\"EVENT NAME\",\"match\":{\"comp_level\":\"f\",\"match_number\":1,\"videos\":[],\"time_string\":null,\"set_number\":1,\"key\":\"2010sc_f1m1\",\"time\":null,\"alliances\":{\"blue\":{\"score\":5,\"teams\":[]},\"red\":{\"score\":0,\"teams\":[\"frc1398\"]}},\"event_key\":\"2010sc\"}}";
-                    // 2 teams on tied alliance are favorited
-                    // String data = "{\"event_name\":\"EVENT NAME\",\"match\":{\"comp_level\":\"f\",\"match_number\":1,\"videos\":[],\"time_string\":null,\"set_number\":1,\"key\":\"2010sc_f1m1\",\"time\":null,\"alliances\":{\"blue\":{\"score\":5,\"teams\":[\"frc1772\",\"frc2751\"]},\"red\":{\"score\":5,\"teams\":[]}},\"event_key\":\"2010sc\"}}";
-                    // 2 teams on each tied alliance are favorited
-                    String data = "{\"event_name\":\"San Diego Regional\",\"match\":{\"comp_level\":\"f\",\"match_number\":1,\"videos\":[],\"time_string\":null,\"set_number\":1,\"key\":\"2010casd_f1m1\",\"time\":null,\"alliances\":{\"blue\":{\"score\":5,\"teams\":[\"frc1772\",\"frc2751\"]},\"red\":{\"score\":5,\"teams\":[\"frc1398\",\"frc343\"]}},\"event_key\":\"2010casd\"}}";
-                    GCMMessageHandler.handleMessage(getActivity(), "score", data);
-                    return true;
-                }
-            });*/
-
-            Preference gcmRegister = findPreference("select_account");
-            gcmRegister.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    //TODO
-                    /*GoogleAccountCredential credential = AccountHelper.getSelectedAccountCredential(getActivity());
-                    getActivity().startActivity(credential.newChooseAccountIntent());
-                    */
-                    return false;
-                }
+            Preference migrateAuth = findPreference("migrate_auth");
+            migrateAuth.setOnPreferenceClickListener((preference) -> {
+                getActivity().startService(new Intent(getActivity(),
+                                                      MigrateLegacyUserToFirebase.class));
+                return false;
             });
 
         }
