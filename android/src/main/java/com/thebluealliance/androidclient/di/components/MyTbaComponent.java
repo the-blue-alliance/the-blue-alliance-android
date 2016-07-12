@@ -5,6 +5,7 @@ import com.thebluealliance.androidclient.activities.MyTBASettingsActivity;
 import com.thebluealliance.androidclient.activities.settings.MyTBAModelSettingsActivity;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
 import com.thebluealliance.androidclient.auth.AuthModule;
+import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
 import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
 import com.thebluealliance.androidclient.datafeed.gce.GceModule;
 import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
@@ -35,4 +36,5 @@ public interface MyTbaComponent {
     void inject(MyTBASettingsActivity myTBASettingsActivity);
     void inject(UpdateUserModelSettingsTaskFragment updateUserModelSettingsTaskFragment);
     void inject(MyTBAModelSettingsActivity myTBAModelSettingsActivity);
+    void inject(MigrateLegacyUserToFirebase migrateLegacyUserToFirebase);
 }
