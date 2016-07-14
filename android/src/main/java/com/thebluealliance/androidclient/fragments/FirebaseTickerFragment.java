@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import com.firebase.client.Firebase;
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.Log;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.ViewUtilities;
@@ -46,7 +46,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import com.thebluealliance.androidclient.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -198,7 +197,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         if (mNotificationsAdapter != null) {
             mNotificationsRecyclerView.setAdapter(mNotificationsAdapter);
             mLayoutManager.onRestoreInstanceState(mListState);
-            Log.d("onCreateView", "using existing adapter");
+            Log.d("onCreateView: using existing adapter");
         } else {
             mNotificationsAdapter = new AnimatedRecyclerMultiAdapter(createAdapterMapper(), new ArrayList<>());
             mNotificationsRecyclerView.setAdapter(mNotificationsAdapter);
@@ -267,7 +266,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     public void onPause() {
         super.onPause();
         if (mNotificationsRecyclerView != null) {
-            Log.d("onPause", "saving adapter");
+            Log.d("onPause: saving adapter");
             mNotificationsAdapter = (AnimatedRecyclerMultiAdapter) mNotificationsRecyclerView.getAdapter();
             mListState = mLayoutManager.onSaveInstanceState();
         }
