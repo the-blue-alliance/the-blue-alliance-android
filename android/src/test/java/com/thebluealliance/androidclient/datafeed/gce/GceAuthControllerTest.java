@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
-import android.accounts.Account;
 import android.content.Context;
 
 import java.io.IOException;
@@ -27,9 +26,9 @@ public class GceAuthControllerTest {
 
     private static final String AUTH_TOKEN = "abc123";
     private static final String CLIENT_ID = "foo.bar";
+    private static final String ACCOUNT = "foo@bar.com";
 
     @Mock Context mContext;
-    @Mock Account mAccount;
     @Mock AccountController mAccountController;
 
     private GceAuthController mAuthController;
@@ -39,15 +38,14 @@ public class GceAuthControllerTest {
         MockitoAnnotations.initMocks(this);
         mAuthController = spy(new GceAuthController(mContext, mAccountController));
 
-
         doReturn(AUTH_TOKEN)
                 .when(mAuthController)
-                .getGoogleAuthToken(mContext, mAccount, "audience:server:client_id:foo.bar");
+                .getGoogleAuthToken(ACCOUNT, "audience:server:client_id:foo.bar");
     }
 
     @Test
     public void testGetAuthHeader() {
-        when(mAccountController.getCurrentAccount()).thenReturn(mAccount);
+        when(mAccountController.getSelectedAccount()).thenReturn(ACCOUNT);
         when(mAccountController.getWebClientId()).thenReturn(CLIENT_ID);
         String header = mAuthController.getAuthHeader();
         assertEquals(header, "Bearer abc123");

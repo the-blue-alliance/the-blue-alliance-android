@@ -6,7 +6,6 @@ import com.google.android.gms.auth.GoogleAuthUtil;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.accounts.AccountController;
 
-import android.accounts.Account;
 import android.content.Context;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
@@ -24,8 +23,6 @@ import javax.inject.Inject;
  * Resulting oauth tokens are to be used with the GCE Retrofit Services
  */
 public class GceAuthController {
-    public static final String PREF_SELECTED_ACCOUNT = "selected_account";
-
     private static final int MAX_BACKOFF_TRIES = 3;
     private static final String AUTH_HEADER_FORMAT = "Bearer %1$s";
 
@@ -61,19 +58,20 @@ public class GceAuthController {
      * @throws GoogleAuthException Trouble authenticating to Google
      */
     @WorkerThread @VisibleForTesting
-    public @Nullable String getAuthTokenWithBackoff() throws GoogleAuthException {
+    @Nullable private String getAuthTokenWithBackoff() throws GoogleAuthException {
         String scope = getAudience();
-        Account account = mAccountController.getCurrentAccount();
-        if (account == null) {
+        String account = mAccountController.getSelectedAccount();
+        if (account == null || account.isEmpty()) {
             Log.e(Constants.LOG_TAG, "No system account found, can't get auth token");
             return null;
         }
         resetBackoff();
         while (mBackoffCount < MAX_BACKOFF_TRIES) {
             try {
-                return getGoogleAuthToken(mContext, account, scope);
+                return getGoogleAuthToken(account, scope);
             } catch (IOException e) {
                 Log.i(Constants.LOG_TAG, "Unable to get token, sleeping " + mBackoffTime + " ms");
+                e.printStackTrace();
                 SystemClock.sleep(mBackoffTime);
                 mBackoffTime *= 2;
                 mBackoffCount++;
@@ -99,10 +97,11 @@ public class GceAuthController {
             Log.w(Constants.LOG_TAG, "Auth exception while fetching google token");
             return null;
         }
+
     }
 
     @WorkerThread @VisibleForTesting
-    public String getGoogleAuthToken(Context context, Account account, String scope)
+    String getGoogleAuthToken(String account, String scope)
     throws IOException, GoogleAuthException {
         return GoogleAuthUtil.getToken(mContext, account, scope);
     }
