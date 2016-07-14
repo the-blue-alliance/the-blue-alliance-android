@@ -15,12 +15,22 @@ public class Log {
         return android.util.Log.d(tag, msg);
     }
 
+    public static synchronized int d(String msg) {
+        String callingClass = getCallerCallerClassName();
+        return android.util.Log.d(callingClass, msg);
+    }
+
     public static synchronized int e(String tag, String msg) {
         return android.util.Log.e(tag, msg);
     }
 
     public static synchronized int e(String tag, String msg, Throwable tr) {
         return android.util.Log.e(tag, msg, tr);
+    }
+
+    public static synchronized int e(String msg) {
+        String callingClass = getCallerCallerClassName();
+        return android.util.Log.e(callingClass, msg);
     }
 
     public static synchronized String getStackTraceString(Throwable tr) {
@@ -33,6 +43,11 @@ public class Log {
 
     public static synchronized int i(String tag, String msg) {
         return android.util.Log.i(tag, msg);
+    }
+
+    public static synchronized int i(String msg) {
+        String callingClass = getCallerCallerClassName();
+        return android.util.Log.i(callingClass, msg);
     }
 
     public static synchronized boolean isLoggable(String tag, int level) {
@@ -51,6 +66,11 @@ public class Log {
         return android.util.Log.v(tag, msg, tr);
     }
 
+    public static synchronized int v(String msg) {
+        String callingClass = getCallerCallerClassName();
+        return android.util.Log.v(callingClass, msg);
+    }
+
     public static synchronized int w(String tag, Throwable tr) {
         return android.util.Log.w(tag, tr);
     }
@@ -63,6 +83,11 @@ public class Log {
         return android.util.Log.w(tag, msg);
     }
 
+    public static synchronized int w(String msg) {
+        String callingClass = getCallerCallerClassName();
+        return android.util.Log.w(callingClass, msg);
+    }
+
     public static synchronized int wtf(String tag, String msg) {
         return android.util.Log.wtf(tag, msg);
     }
@@ -73,6 +98,11 @@ public class Log {
 
     public static synchronized int wtf(String tag, String msg, Throwable tr) {
         return android.util.Log.wtf(tag, msg, tr);
+    }
+
+    public static synchronized int wtf(String msg) {
+        String callingClass = getCallerCallerClassName();
+        return android.util.Log.wtf(callingClass, msg);
     }
 
     /**
