@@ -19,7 +19,7 @@ import com.thebluealliance.androidclient.types.MediaType;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.ArrayList;
 import java.util.Date;

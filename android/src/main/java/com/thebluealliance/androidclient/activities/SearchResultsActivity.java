@@ -25,7 +25,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;

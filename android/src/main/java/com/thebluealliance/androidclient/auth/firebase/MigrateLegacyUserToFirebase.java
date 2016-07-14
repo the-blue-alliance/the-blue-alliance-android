@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.di.components.MyTbaComponent;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import javax.inject.Inject;
 import javax.inject.Named;

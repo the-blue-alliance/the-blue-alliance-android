@@ -13,7 +13,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;

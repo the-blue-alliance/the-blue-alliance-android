@@ -19,7 +19,7 @@ import com.thebluealliance.androidclient.gcm.GcmModule;
 import com.thebluealliance.androidclient.imgur.ImgurModule;
 
 import android.support.multidex.MultiDexApplication;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import javax.inject.Inject;
 

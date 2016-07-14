@@ -8,7 +8,7 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.JsonReader;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.io.BufferedWriter;
 import java.io.File;

@@ -16,7 +16,7 @@ import com.thebluealliance.androidclient.types.ModelType;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 public final class ModelHelper {
 

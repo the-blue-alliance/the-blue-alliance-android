@@ -5,7 +5,7 @@ import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.models.EventWeekTab;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.List;
 

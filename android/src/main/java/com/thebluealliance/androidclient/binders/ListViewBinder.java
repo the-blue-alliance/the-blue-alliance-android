@@ -6,7 +6,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;

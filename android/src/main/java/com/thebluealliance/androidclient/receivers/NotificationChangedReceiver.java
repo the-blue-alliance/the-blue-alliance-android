@@ -8,7 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 /**
  * Android is predictably stupid when it comes to handling notifications. Specifically, clicking

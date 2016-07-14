@@ -16,7 +16,7 @@ import com.thebluealliance.androidclient.types.ModelType;
 
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.ArrayList;
 import java.util.Date;

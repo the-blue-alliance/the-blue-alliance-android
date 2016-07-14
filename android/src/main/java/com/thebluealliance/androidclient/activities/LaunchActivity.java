@@ -23,7 +23,7 @@ import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

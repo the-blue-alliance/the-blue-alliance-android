@@ -24,7 +24,7 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
 
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 @Deprecated
 public final class JSONHelper {

@@ -8,7 +8,7 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Team;
 
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.ArrayList;
 import java.util.List;

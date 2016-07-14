@@ -27,7 +27,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;

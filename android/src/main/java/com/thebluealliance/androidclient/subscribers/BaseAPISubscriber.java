@@ -15,7 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;

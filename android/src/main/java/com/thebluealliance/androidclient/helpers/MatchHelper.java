@@ -13,7 +13,7 @@ import com.thebluealliance.androidclient.types.MatchType;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.ArrayList;
 import java.util.List;

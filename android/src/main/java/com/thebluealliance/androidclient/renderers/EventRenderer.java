@@ -16,7 +16,7 @@ import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;

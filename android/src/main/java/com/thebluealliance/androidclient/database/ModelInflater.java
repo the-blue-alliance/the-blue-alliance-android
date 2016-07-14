@@ -25,7 +25,7 @@ import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
 import android.database.Cursor;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.Date;
 

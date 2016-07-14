@@ -5,7 +5,7 @@ import com.google.android.gms.analytics.Tracker;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.HashMap;
 

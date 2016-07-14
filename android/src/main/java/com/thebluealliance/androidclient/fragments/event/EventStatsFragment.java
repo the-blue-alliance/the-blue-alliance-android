@@ -20,7 +20,7 @@ import com.thebluealliance.androidclient.views.NoDataView;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;

@@ -7,7 +7,7 @@ import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 import android.view.View;
 
 public class MatchClickListener implements View.OnClickListener {

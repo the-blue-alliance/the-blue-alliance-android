@@ -14,7 +14,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 import android.view.View;
 import android.widget.TextView;
 

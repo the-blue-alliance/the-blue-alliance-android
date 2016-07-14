@@ -20,7 +20,7 @@ import com.thebluealliance.androidclient.fragments.FirebaseTickerFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.VisibleForTesting;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

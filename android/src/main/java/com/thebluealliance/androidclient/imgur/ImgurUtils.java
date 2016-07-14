@@ -6,7 +6,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;

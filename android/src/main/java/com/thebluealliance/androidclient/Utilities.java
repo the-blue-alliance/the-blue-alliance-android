@@ -25,7 +25,7 @@ import android.text.SpannableStringBuilder;
 import android.text.format.DateFormat;
 import android.text.style.StyleSpan;
 import android.util.ArrayMap;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;

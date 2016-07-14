@@ -15,7 +15,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.Calendar;
 import java.util.Collections;

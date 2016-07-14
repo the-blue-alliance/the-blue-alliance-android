@@ -8,7 +8,7 @@ import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2016;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 

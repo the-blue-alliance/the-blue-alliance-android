@@ -6,7 +6,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.Analytics;
 
 import android.content.Context;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.Map;
 

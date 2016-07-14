@@ -28,7 +28,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;

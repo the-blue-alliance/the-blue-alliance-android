@@ -9,7 +9,7 @@ import org.greenrobot.eventbus.EventBus;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 public class ConnectivityChangeReceiver extends BroadcastReceiver {
 

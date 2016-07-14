@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.Constants;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.Map;
 

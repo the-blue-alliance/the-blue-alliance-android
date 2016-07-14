@@ -20,7 +20,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.io.File;
 

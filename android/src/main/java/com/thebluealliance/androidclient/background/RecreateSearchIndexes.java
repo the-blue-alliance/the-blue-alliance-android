@@ -8,7 +8,7 @@ import com.thebluealliance.androidclient.models.Team;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.List;
 

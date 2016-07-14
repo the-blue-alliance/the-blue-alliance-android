@@ -21,7 +21,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;

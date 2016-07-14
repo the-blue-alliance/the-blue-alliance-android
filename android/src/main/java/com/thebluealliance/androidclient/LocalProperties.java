@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient;
 
 import android.content.Context;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.io.IOException;
 import java.io.InputStream;

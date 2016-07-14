@@ -19,7 +19,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 import android.view.MenuItem;
 import android.view.View;
 

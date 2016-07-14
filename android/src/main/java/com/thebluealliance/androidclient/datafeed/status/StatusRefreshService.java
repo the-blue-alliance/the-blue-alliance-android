@@ -16,7 +16,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import javax.inject.Inject;
 import javax.inject.Named;

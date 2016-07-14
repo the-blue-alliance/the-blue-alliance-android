@@ -20,7 +20,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.Map;
 

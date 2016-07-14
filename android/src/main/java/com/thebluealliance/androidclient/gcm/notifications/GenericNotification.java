@@ -20,7 +20,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;

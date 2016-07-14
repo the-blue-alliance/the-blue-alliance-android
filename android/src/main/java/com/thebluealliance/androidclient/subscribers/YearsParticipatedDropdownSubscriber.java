@@ -5,7 +5,7 @@ import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.interfaces.YearsParticipatedUpdate;
 
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.Arrays;
 

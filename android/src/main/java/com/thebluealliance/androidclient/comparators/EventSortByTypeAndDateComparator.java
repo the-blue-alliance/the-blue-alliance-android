@@ -5,7 +5,7 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.types.EventType;
 
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.util.Comparator;
 

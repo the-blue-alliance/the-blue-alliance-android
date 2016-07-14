@@ -12,7 +12,7 @@ import com.thebluealliance.androidclient.types.ModelType;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

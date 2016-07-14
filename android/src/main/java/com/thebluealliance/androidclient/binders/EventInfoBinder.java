@@ -27,7 +27,7 @@ import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.text.Html;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;

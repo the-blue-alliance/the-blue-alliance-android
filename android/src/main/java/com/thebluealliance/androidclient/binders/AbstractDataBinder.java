@@ -6,7 +6,7 @@ import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.views.NoDataView;
 
 import android.app.Activity;
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 import android.view.View;
 
 /**

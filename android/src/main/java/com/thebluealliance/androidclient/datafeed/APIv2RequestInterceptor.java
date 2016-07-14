@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.datafeed;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 
-import android.util.Log;
+import com.thebluealliance.androidclient.Log;
 
 import java.io.IOException;
 
