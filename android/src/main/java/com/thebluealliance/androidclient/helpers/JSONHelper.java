@@ -75,7 +75,7 @@ public final class JSONHelper {
         try {
             e = getParser().parse(input);
         } catch (JsonSyntaxException ex) {
-            Log.w(Constants.LOG_TAG, "Couldn't parse bad json: " + input);
+            Log.w("Couldn't parse bad json: " + input);
         }
         if (isNull(e)) {
             return new JsonObject();
@@ -83,7 +83,7 @@ public final class JSONHelper {
         try {
             return e.getAsJsonObject();
         } catch (IllegalStateException err) {
-            Log.w(Constants.LOG_TAG, "getAsJsonObject failed: " + err);
+            Log.w("getAsJsonObject failed: " + err);
             return new JsonObject();
         }
     }
@@ -95,10 +95,10 @@ public final class JSONHelper {
         try {
             return getParser().parse(input).getAsJsonArray();
         } catch (IllegalStateException err) {
-            Log.w(Constants.LOG_TAG, "getAsJsonArray failed: " + err);
+            Log.w("getAsJsonArray failed: " + err);
             return new JsonArray();
         } catch (Exception ex) {
-            Log.w(Constants.LOG_TAG, "Attempted to parse invalid json");
+            Log.w("Attempted to parse invalid json");
             ex.printStackTrace();
             return new JsonArray();
         }

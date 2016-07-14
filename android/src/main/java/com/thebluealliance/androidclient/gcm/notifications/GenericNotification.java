@@ -72,7 +72,7 @@ public class GenericNotification extends BaseNotification<GenericNotificationVie
             int currentVersion = BuildConfig.VERSION_CODE;
             if (currentVersion < targetVersion) {
                 // The broadcast is not targeted at this version, don't show it
-                Log.d(Constants.LOG_TAG, "Not displaying received broadcast target at version "
+                Log.d("Not displaying received broadcast target at version "
                         + targetVersion + " (this is version " + currentVersion + ")");
                 display = false;
             }

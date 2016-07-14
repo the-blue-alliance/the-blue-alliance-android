@@ -62,7 +62,7 @@ public abstract class AbstractDataBinder<T> implements DataConsumer<T> {
     }
 
     public void unbind(boolean unbindViews) {
-        Log.d(Constants.LOG_TAG, "UNBINDING");
+        Log.d("UNBINDING");
         setDataBound(false);
         /* Child classes can unbind their own views. */
         /** Don't show NoDataBinder because we'll call this from {@link Fragment#onDestroyView()} */

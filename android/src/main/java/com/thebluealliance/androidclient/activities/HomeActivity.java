@@ -114,7 +114,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
         if (savedInstanceState != null) {
             mFromSavedInstance = true;
-            Log.d(Constants.LOG_TAG, "StartActivity is from saved instance");
+            Log.d("StartActivity is from saved instance");
 
             if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION)) {
                 mCurrentSelectedYearPosition = savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION);

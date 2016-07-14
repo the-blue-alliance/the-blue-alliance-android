@@ -82,7 +82,7 @@ public class GoogleAuthProvider implements AuthProvider,
     public Observable<GoogleSignInUser> userFromSignInResult(int requestCode, int resultCode, Intent data) {
         GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
         boolean success = result.isSuccess();
-        Log.d(Constants.LOG_TAG, "Google Sign In Result: " + success);
+        Log.d("Google Sign In Result: " + success);
         if (success) {
             mCurrentUser = new GoogleSignInUser(result.getSignInAccount());
         }
@@ -104,13 +104,13 @@ public class GoogleAuthProvider implements AuthProvider,
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.w(Constants.LOG_TAG, "Google API client connection failed");
-        Log.w(Constants.LOG_TAG, connectionResult.getErrorMessage());
+        Log.w("Google API client connection failed");
+        Log.w(connectionResult.getErrorMessage());
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.d(Constants.LOG_TAG, "Google API client connected");
+        Log.d("Google API client connected");
     }
 
     @Override

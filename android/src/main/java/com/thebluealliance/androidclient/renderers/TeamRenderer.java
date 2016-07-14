@@ -58,7 +58,7 @@ public class TeamRenderer implements ModelRenderer<Team, Integer> {
               safeRenderType == RENDER_DETAILS_BUTTON,
               safeRenderType == RENDER_MYTBA_DETAILS);
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering.\n"
+            Log.w("Missing fields for rendering.\n"
               + "Required: Database.Teams.KEY, Database.Teams.NUMBER, Database.Teams.SHORTNAME, "
               + "Database.Teams.LOCATION");
             return null;

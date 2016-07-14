@@ -117,7 +117,7 @@ public class ImgurSuggestionService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(Constants.LOG_TAG, "IMGUR SERVICE START");
+        Log.d("IMGUR SERVICE START");
         String filepath = intent.getStringExtra(EXTRA_FILEPATH);
         String title = intent.getStringExtra(EXTRA_TITLE);
         String description = intent.getStringExtra(EXTRA_DESCRIPTION);
@@ -147,12 +147,12 @@ public class ImgurSuggestionService extends IntentService {
 
             if (response != null && response.isSuccessful()) {
                 UploadResponse uploadResponse = response.body();
-                Log.d(Constants.LOG_TAG, "Uploaded imgur image: " + uploadResponse.data.link);
+                Log.d("Uploaded imgur image: " + uploadResponse.data.link);
 
                 String link = uploadResponse.data.link;
                 String deletehash = uploadResponse.data.deletehash;
 
-                Log.d(Constants.LOG_TAG, "Imgur link: " + link);
+                Log.d("Imgur link: " + link);
 
                 // Do suggestion
                 String authHeader = mGceAuthController.getAuthHeader();
@@ -170,7 +170,7 @@ public class ImgurSuggestionService extends IntentService {
                     successful = false;
                 }
             } else {
-                Log.e(Constants.LOG_TAG, "Error uploading imgur image\n"
+                Log.e("Error uploading imgur image\n"
                         + response.code() + " " + response.message());
                 successful = false;
             }

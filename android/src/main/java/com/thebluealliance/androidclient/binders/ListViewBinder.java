@@ -44,7 +44,7 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
             return;
         }
         long startTime = System.currentTimeMillis();
-        Log.d(Constants.LOG_TAG, "BINDING DATA");
+        Log.d("BINDING DATA");
         if (mAdapter == null) {
             mAdapter = newAdapter(data);
             listView.setAdapter(mAdapter);
@@ -59,7 +59,7 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
         listView.setVisibility(View.VISIBLE);
         mNoDataBinder.unbindData();
-        Log.d(Constants.LOG_TAG, "BINDING COMPLETE; ELAPSED TIME: " + (System.currentTimeMillis() - startTime) + "ms");
+        Log.d("BINDING COMPLETE; ELAPSED TIME: " + (System.currentTimeMillis() - startTime) + "ms");
         setDataBound(true);
     }
 
@@ -86,7 +86,7 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
     @Override
     public void onError(Throwable throwable) {
-        Log.e(Constants.LOG_TAG, Log.getStackTraceString(throwable));
+        Log.e(Log.getStackTraceString(throwable));
 
         // If we received valid data from the cache but get an error from the network operations,
         // don't display the "No data" message.

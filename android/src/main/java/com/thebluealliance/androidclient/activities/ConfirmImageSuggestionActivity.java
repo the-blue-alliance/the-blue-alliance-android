@@ -144,7 +144,7 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
                 mImageFile = ImgurUtils.createFile(uri, ConfirmImageSuggestionActivity.this);
                 if (mImageFile == null) {
                     // TODO error handling!
-                    Log.e(Constants.LOG_TAG, "Image was null!");
+                    Log.e("Image was null!");
                 }
                 return mImageFile;
             });

@@ -159,7 +159,7 @@ public final class PitLocationHelper {
                 reader.beginObject();
                 while(reader.hasNext()) {
                     String currentTeamKey = reader.nextName();
-                    Log.d(Constants.LOG_TAG, "reading team: " + currentTeamKey);
+                    Log.d("reading team: " + currentTeamKey);
                     if (!currentTeamKey.equals(teamKey)) {
                         reader.skipValue();
                     } else {

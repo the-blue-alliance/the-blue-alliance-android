@@ -30,7 +30,7 @@ public class YearsParticipatedDropdownSubscriber extends Subscriber<JsonArray> {
 
     @Override
     public void onError(Throwable e) {
-        Log.e(Constants.LOG_TAG, "Error fetching team years");
+        Log.e("Error fetching team years");
         e.printStackTrace();
     }
 

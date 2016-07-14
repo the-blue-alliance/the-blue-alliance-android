@@ -63,14 +63,14 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
         try {
             alliances = match.getAlliances();
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required field for match render: Database.Matches.ALLIANCES");
+            Log.w("Required field for match render: Database.Matches.ALLIANCES");
             return null;
         }
         JsonArray videos;
         try {
             videos = match.getVideos();
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required field for match render: Database.Matches.VIDEOS");
+            Log.w("Required field for match render: Database.Matches.VIDEOS");
             videos = new JsonArray();
         }
         String key = match.getKey();

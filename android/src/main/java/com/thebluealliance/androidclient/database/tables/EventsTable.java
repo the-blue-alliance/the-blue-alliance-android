@@ -101,10 +101,10 @@ public class EventsTable extends ModelTable<Event> {
             mDb.insert(Database.TABLE_SEARCH_EVENTS, null, cv);
 
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:"
+            Log.e("Can't insert event search item without the following fields:"
                     + "Database.Events.KEY, Database.Events.YEAR");
         } catch (SQLiteException e) {
-            Log.w(Constants.LOG_TAG, "Trying to add a SearchEvent that already exists. " + event.getKey());
+            Log.w("Trying to add a SearchEvent that already exists. " + event.getKey());
         }
     }
 
@@ -118,7 +118,7 @@ public class EventsTable extends ModelTable<Event> {
 
             mDb.update(Database.TABLE_SEARCH_EVENTS, cv, Database.SearchEvent.KEY + "=?", new String[]{event.getKey()});
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:"
+            Log.e("Can't insert event search item without the following fields:"
                     + "Database.Events.KEY, Database.Events.YEAR");
         }
     }

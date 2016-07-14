@@ -175,7 +175,7 @@ public final class MatchHelper {
                     break;
                 }
             } catch (BasicModel.FieldNotDefinedException e) {
-                Log.w(Constants.LOG_TAG, "Match doesn't have alliances defined. Can't determine alliance");
+                Log.w("Match doesn't have alliances defined. Can't determine alliance");
             }
         }
         return alliance;
@@ -299,10 +299,10 @@ public final class MatchHelper {
             currentGroup.add(match);
         }
 
-        Log.d(Constants.LOG_TAG, "qual size: " + qualMatches.size());
-        Log.d(Constants.LOG_TAG, "quarter size: " + quarterMatches.size());
-        Log.d(Constants.LOG_TAG, "semi size: " + semiMatches.size());
-        Log.d(Constants.LOG_TAG, "final size: " + finalMatches.size());
+        Log.d("qual size: " + qualMatches.size());
+        Log.d("quarter size: " + quarterMatches.size());
+        Log.d("semi size: " + semiMatches.size());
+        Log.d("final size: " + finalMatches.size());
 
         if (e.isHappeningNow() && quarterMatches.size() == 0) {
             return EventStatus.PLAYING_IN_QUALS;
@@ -312,14 +312,14 @@ public final class MatchHelper {
         boolean allQualMatchesPlayed = true;
         for (Match match : qualMatches) {
             if (!match.hasBeenPlayed()) {
-                Log.d(Constants.LOG_TAG, "Match " + match.getKey() + " not played!");
+                Log.d("Match " + match.getKey() + " not played!");
                 allQualMatchesPlayed = false;
                 break;
             }
         }
 
-        Log.d(Constants.LOG_TAG, "In alliance: " + inAlliance);
-        Log.d(Constants.LOG_TAG, "All qual matches played: " + allQualMatchesPlayed);
+        Log.d("In alliance: " + inAlliance);
+        Log.d("All qual matches played: " + allQualMatchesPlayed);
         if (qualMatches.isEmpty()
                 || (allQualMatchesPlayed && !teamIsHere)
                 || (!(elimMatchPlayed || allQualMatchesPlayed) && !e.isHappeningNow())) {

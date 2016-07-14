@@ -125,7 +125,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
                     bindViewsIfNeeded();
                     mConsumer.onComplete();
                 } catch (Exception e) {
-                    Log.e(Constants.LOG_TAG, "UNABLE TO COMPLETE RENDER");
+                    Log.e("UNABLE TO COMPLETE RENDER");
                     e.printStackTrace();
                     mConsumer.onError(e);
                 }
@@ -169,7 +169,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
                     bindViewsIfNeeded();
                     mConsumer.updateData(mDataToBind);
                 } catch (Exception e) {
-                    Log.e(Constants.LOG_TAG, "UNABLE TO RENDER");
+                    Log.e("UNABLE TO RENDER");
                     e.printStackTrace();
                     mConsumer.onError(e);
                 }

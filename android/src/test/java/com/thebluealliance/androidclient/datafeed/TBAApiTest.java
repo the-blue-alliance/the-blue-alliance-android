@@ -45,7 +45,7 @@ public class TBAApiTest {
             assertEquals(event.getLocation(), "Groton, CT, USA");
             assertEquals(event.getEventType(), EventType.DISTRICT);
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Unable to get event fields");
+            Log.e("Unable to get event fields");
             e.printStackTrace();
         }
     }
@@ -74,7 +74,7 @@ public class TBAApiTest {
             assertEquals(team.getKey(), "frc1124");
             assertEquals(team.getNickname(), "ÜberBots");
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Unable to get team fields");
+            Log.e("Unable to get team fields");
             e.printStackTrace();
         }
     }
@@ -116,7 +116,7 @@ public class TBAApiTest {
             assertEquals(yt.getForeignKey(), "RpSgUrsghv4");
             assertEquals(yt.getDetails(), new JsonObject());
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Unable to get media fields");
+            Log.e("Unable to get media fields");
             e.printStackTrace();
         }
     }
@@ -137,7 +137,7 @@ public class TBAApiTest {
             assertEquals(match.getTime(), new Date(1394393760));
             assertEquals(match.getVideos(), JSONHelper.getasJsonArray("[{\"type\": \"youtube\", \"key\": \"ci6LicTg5rk\"}]"));
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Unable to get match fields");
+            Log.e("Unable to get match fields");
             e.printStackTrace();
         }
     }
@@ -177,7 +177,7 @@ public class TBAApiTest {
                 assertEquals(winners[i], recips.get(i).getAsJsonObject().get("team_number").getAsString());
             }
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Unable to get award fields");
+            Log.e("Unable to get award fields");
             e.printStackTrace();
         }
     }
@@ -213,7 +213,7 @@ public class TBAApiTest {
                 assertEquals(winners[i], recips.get(i).getAsJsonObject().get("awardee").getAsString());
             }
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Unable to get award fields");
+            Log.e("Unable to get award fields");
             e.printStackTrace();
         }
     }

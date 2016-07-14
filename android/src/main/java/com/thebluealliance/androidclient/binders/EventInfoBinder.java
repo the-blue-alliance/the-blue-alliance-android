@@ -216,7 +216,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
     @Override
     public void onError(Throwable throwable) {
-        Log.e(Constants.LOG_TAG, Log.getStackTraceString(throwable));
+        Log.e(Log.getStackTraceString(throwable));
 
         // If we received valid data from the cache but get an error from the network operations,
         // don't display the "No data" message.
@@ -296,17 +296,17 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     public void onLiveEventMatchesUpdated(LiveEventMatchUpdateEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mIsLive && event != null && event.getLastMatch() != null) {
-                Log.d(Constants.LOG_TAG, "showing last match");
+                Log.d("showing last match");
                 showLastMatch(mMatchRenderer.renderFromModel(event.getLastMatch(), RENDER_DEFAULT));
             } else {
-                Log.d(Constants.LOG_TAG, "hiding last match");
+                Log.d("hiding last match");
                 hideLastMatch();
             }
             if (mIsLive && event != null && event.getNextMatch() != null) {
-                Log.d(Constants.LOG_TAG, "showing next match");
+                Log.d("showing next match");
                 showNextMatch(mMatchRenderer.renderFromModel(event.getNextMatch(), RENDER_DEFAULT));
             } else {
-                Log.d(Constants.LOG_TAG, "hiding next match");
+                Log.d("hiding next match");
                 hideNextMatch();
             }
         });

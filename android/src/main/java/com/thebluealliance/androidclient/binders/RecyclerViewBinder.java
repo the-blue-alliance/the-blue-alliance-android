@@ -80,7 +80,7 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
 
     @Override
     public void onError(Throwable throwable) {
-        Log.e(Constants.LOG_TAG, Log.getStackTraceString(throwable));
+        Log.e(Log.getStackTraceString(throwable));
 
         // If we received valid data from the cache but get an error from the network operations,
         // don't display the "No data" message.

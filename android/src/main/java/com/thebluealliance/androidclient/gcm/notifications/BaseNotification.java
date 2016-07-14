@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.gcm.notifications;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
@@ -39,7 +38,6 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
     String messageData;
     String messageType;
     Gson gson;
-    private String logTag;
     protected boolean display;
     StoredNotification stored;
     protected Date notificationTime;
@@ -51,7 +49,6 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
         this.messageType = messageType;
         this.messageData = messageData;
         this.gson = HttpModule.getGson();
-        this.logTag = null;
         this.display = true;
         this.stored = null;
 
@@ -108,13 +105,6 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
      */
     public StoredNotification getStoredNotification() {
         return stored;
-    }
-
-    protected String getLogTag() {
-        if (logTag == null) {
-            logTag = Constants.LOG_TAG + "/" + messageType;
-        }
-        return logTag;
     }
 
     /**

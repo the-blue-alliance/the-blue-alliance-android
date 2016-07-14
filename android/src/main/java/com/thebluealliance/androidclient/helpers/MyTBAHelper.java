@@ -46,7 +46,7 @@ public final class MyTBAHelper {
             }
         }
         data.add(INTENT_EXTRAS, extras);
-        Log.d(Constants.LOG_TAG, "Serialized: " + data.toString());
+        Log.d("Serialized: " + data.toString());
         return data.toString();
     }
 
@@ -55,7 +55,7 @@ public final class MyTBAHelper {
         Intent intent = new Intent();
         String pack = data.get(INTENT_PACKAGE).getAsString();
         String cls = data.get(INTENT_CLASS).getAsString();
-        Log.d(Constants.LOG_TAG, pack + "/" + cls);
+        Log.d(pack + "/" + cls);
         intent.setClassName(pack, cls);
         JsonObject extras = data.get(INTENT_EXTRAS).getAsJsonObject();
         for (Map.Entry<String, JsonElement> extra : extras.entrySet()) {

@@ -105,7 +105,7 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     boolean enabled = mAccountController.isMyTbaEnabled();
-                    Log.d(Constants.LOG_TAG, "myTBA is: " + enabled);
+                    Log.d("myTBA is: " + enabled);
                     activity.startActivity(new Intent(getActivity(), MyTBAOnboardingActivity.class));
                     return true;
                 }

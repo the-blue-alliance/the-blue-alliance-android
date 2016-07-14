@@ -49,7 +49,7 @@ public class TBAAndroid extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(Constants.LOG_TAG, "Welcome to The Blue Alliance for Android, v" + BuildConfig.VERSION_NAME);
+        Log.i("Welcome to The Blue Alliance for Android, v" + BuildConfig.VERSION_NAME);
         getDatafeedComponenet().inject(this);
         registerActivityLifecycleCallbacks(mStatusController);
 

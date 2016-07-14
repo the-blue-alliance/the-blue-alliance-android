@@ -21,7 +21,7 @@ public class MatchClickListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         String matchKey = v.findViewById(R.id.match_title).getTag().toString();
-        Log.d(Constants.LOG_TAG, "Match key clicked: " + matchKey);
+        Log.d("Match key clicked: " + matchKey);
         Intent intent = ViewMatchActivity.newInstance(context, matchKey);
         AnalyticsHelper.sendClickUpdate(context, "match_click", matchKey, "");
         context.startActivity(intent);

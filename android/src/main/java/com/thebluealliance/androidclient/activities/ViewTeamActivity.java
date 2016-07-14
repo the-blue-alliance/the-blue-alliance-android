@@ -428,7 +428,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         if (requestCode == CHOOSE_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 Uri uri = data.getData();
-                Log.i(Constants.LOG_TAG, "Uri: " + uri.toString());
+                Log.i("Uri: " + uri.toString());
                 // Pass off the URI to ConfirmImageSuggestionActivity, it will handle uploading
                 // and suggesting the appropriate image
                 startActivity(ConfirmImageSuggestionActivity.newIntent(this, uri, mTeamKey, mYear));

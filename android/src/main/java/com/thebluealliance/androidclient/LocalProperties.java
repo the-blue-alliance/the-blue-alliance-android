@@ -45,7 +45,7 @@ public class LocalProperties {
             mProperties.load(fileStream);
             fileStream.close();
         } catch (IOException e) {
-            Log.e(Constants.LOG_TAG, "Unable to load property file");
+            Log.e("Unable to load property file");
             e.printStackTrace();
         }
     }

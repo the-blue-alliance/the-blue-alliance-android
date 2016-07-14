@@ -37,7 +37,7 @@ public class DistrictTeamRenderer implements ModelRenderer<DistrictTeam, Void> {
               districtTeam.getRank(),
               districtTeam.getTotalPoints());
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Unable to render districtTeam. Missing fields");
+            Log.w("Unable to render districtTeam. Missing fields");
             e.printStackTrace();
             return null;
         }

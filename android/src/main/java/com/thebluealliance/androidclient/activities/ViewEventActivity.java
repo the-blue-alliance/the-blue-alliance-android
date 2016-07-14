@@ -116,7 +116,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d(Constants.LOG_TAG, "onNewIntent called");
+        Log.d("onNewIntent called");
         setIntent(intent);
         String newEventKey;
 
@@ -150,7 +150,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
             pager.setCurrentItem(mSelectedTab);
         };
 
-        Log.d(Constants.LOG_TAG, "Got new ViewEvent intent with key: " + mEventKey);
+        Log.d("Got new ViewEvent intent with key: " + mEventKey);
     }
 
     @Override

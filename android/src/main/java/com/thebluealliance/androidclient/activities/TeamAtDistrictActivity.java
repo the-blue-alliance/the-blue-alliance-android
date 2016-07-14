@@ -143,7 +143,7 @@ public class TeamAtDistrictActivity extends DatafeedActivity
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
                 } else {
-                    Log.d(Constants.LOG_TAG, "Navigating up...");
+                    Log.d("Navigating up...");
                     NavUtils.navigateUpTo(this, upIntent);
                 }
                 return true;

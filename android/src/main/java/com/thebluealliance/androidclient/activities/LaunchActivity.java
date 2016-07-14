@@ -51,12 +51,12 @@ public class LaunchActivity extends AppCompatActivity {
                 Parcelable[] rawMsgs = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
                 NdefMessage message = (NdefMessage) rawMsgs[0];
                 String uri = new String(message.getRecords()[0].getPayload());
-                Log.d(Constants.LOG_TAG, "NFC URI: " + uri);
+                Log.d("NFC URI: " + uri);
                 processNfcUri(uri);
                 return;
             } else if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
                 Uri data = getIntent().getData();
-                Log.d(Constants.LOG_TAG, "VIEW URI: " + data.toString());
+                Log.d("VIEW URI: " + data.toString());
                 if (data != null) {
                     //we caught an Action.VIEW intent, so
                     //now we generate the proper intent to view
@@ -103,7 +103,7 @@ public class LaunchActivity extends AppCompatActivity {
         }
 
         boolean redownload = false;
-        Log.d(Constants.LOG_TAG, "Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + prefs.contains(Constants.APP_VERSION_KEY));
+        Log.d("Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + prefs.contains(Constants.APP_VERSION_KEY));
 
         if (prefs.contains(Constants.APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
             /* Clear OkHttp cache for the new version. */

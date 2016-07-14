@@ -120,15 +120,15 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
 
         String messageType = gcm.getMessageType(intent);
-        Log.d(Constants.LOG_TAG, "GCM Message type: " + messageType);
-        Log.d(Constants.LOG_TAG, "Intent extras: " + extras.toString());
+        Log.d("GCM Message type: " + messageType);
+        Log.d("Intent extras: " + extras.toString());
 
         // We got a standard message. Parse it and handle it.
         String type = extras.getString("message_type", "");
         String data = extras.getString("message_data", "");
         handleMessage(getApplicationContext(), type, data);
 
-        Log.i(Constants.LOG_TAG, "Received : (" + type + ")  " + data);
+        Log.i("Received : (" + type + ")  " + data);
 
         GCMBroadcastReceiver.completeWakefulIntent(intent);
     }
@@ -176,7 +176,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                     notification = new EventDownNotification(messageData);
                     /* Don't break, we also want to schedule a status update here */
                 case NotificationTypes.SYNC_STATUS:
-                    Log.i(Constants.LOG_TAG, "Updating TBA API Status via push notification");
+                    Log.i("Updating TBA API Status via push notification");
                     mStatusController.scheduleStatusUpdate(c);
                     break;
             }
@@ -185,7 +185,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             try {
                 notification.parseMessageData();
             } catch (JsonParseException e) {
-                Log.e(Constants.LOG_TAG, "Error parsing incoming message json");
+                Log.e("Error parsing incoming message json");
                 e.printStackTrace();
                 return;
             }

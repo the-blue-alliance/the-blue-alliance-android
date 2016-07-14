@@ -21,7 +21,7 @@ public final class ImgurUtils {
     }
 
     public static File createFile(Uri uri, Context context) {
-        Log.d(Constants.LOG_TAG, "URI: " + uri);
+        Log.d("URI: " + uri);
         try {
             InputStream in = context.getContentResolver().openInputStream(uri);
 

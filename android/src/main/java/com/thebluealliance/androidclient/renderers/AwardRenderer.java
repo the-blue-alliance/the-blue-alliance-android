@@ -58,7 +58,7 @@ public class AwardRenderer implements ModelRenderer<Award, AwardRenderer.RenderA
                     return new AwardListElement(mDatafeed, award.getName(), award.getWinners());
             }
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Unable to render award: " + award.getKey());
+            Log.e("Unable to render award: " + award.getKey());
             e.printStackTrace();
         }
         return null;

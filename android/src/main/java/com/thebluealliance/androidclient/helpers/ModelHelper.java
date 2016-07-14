@@ -29,7 +29,7 @@ public final class ModelHelper {
     }
 
     public static String[] getNotificationTypes(ModelType type) {
-        Log.d(Constants.LOG_TAG, "getting notifications for: " + type);
+        Log.d("getting notifications for: " + type);
         switch (type) {
             case EVENT:
                 return Event.NOTIFICATION_TYPES;

@@ -47,10 +47,10 @@ public class TeamsTable extends ModelTable<Team> {
             cv.put(Database.SearchTeam.NUMBER, team.getNumber());
             mDb.insert(Database.TABLE_SEARCH_TEAMS, null, cv);
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Can't insert search team without the following fields:"
+            Log.e("Can't insert search team without the following fields:"
                     + "Database.Teams.KEY, Database.Teams.NUMBER");
         } catch (SQLiteException e) {
-            Log.w(Constants.LOG_TAG, "Trying to add a SearchTeam that already exists. " + team.getKey());
+            Log.w("Trying to add a SearchTeam that already exists. " + team.getKey());
         }
     }
 
@@ -63,7 +63,7 @@ public class TeamsTable extends ModelTable<Team> {
             cv.put(Database.SearchTeam.NUMBER, team.getNumber());
             mDb.update(Database.TABLE_SEARCH_TEAMS, cv, Database.SearchTeam.KEY + "=?", new String[]{team.getKey()});
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:"
+            Log.e("Can't insert event search item without the following fields:"
               + "Database.Events.KEY, Database.Events.YEAR");
         }
     }

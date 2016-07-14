@@ -39,7 +39,7 @@ public class RecreateSearchIndexes extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_RECREATE_SEARCH.equals(action)) {
-                Log.d(Constants.LOG_TAG, "Recreating search indexes");
+                Log.d("Recreating search indexes");
                 recreateSearchIndexes();
             }
         }
@@ -54,7 +54,7 @@ public class RecreateSearchIndexes extends IntentService {
         // Get current events and teams to create indexes for
         List<Event> events = db.getEventsTable().getAll();
         List<Team> teams = db.getTeamsTable().getAll();
-        Log.d(Constants.LOG_TAG, "Saving " + events.size() + " events and " + teams.size() + "teams");
+        Log.d("Saving " + events.size() + " events and " + teams.size() + "teams");
 
         // remove current indexes
         db.getTeamsTable().deleteAllSearchIndexes();
@@ -63,6 +63,6 @@ public class RecreateSearchIndexes extends IntentService {
         // store new indexes
         db.getEventsTable().recreateAllSearchIndexes(events);
         db.getTeamsTable().recreateAllSearchIndexes(teams);
-        Log.d(Constants.LOG_TAG, "New indexes inserted");
+        Log.d("New indexes inserted");
     }
 }

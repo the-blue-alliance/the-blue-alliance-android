@@ -14,6 +14,7 @@ import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesRegistrationReque
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesSubscriptionCollection;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesSubscriptionMessage;
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.Log;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
@@ -35,7 +36,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Handler;
-import com.thebluealliance.androidclient.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -94,7 +94,7 @@ public class MyTbaDatafeed {
     }
 
     public boolean register(String regId) {
-        Log.d(Constants.LOG_TAG, "Registering for GCM");
+        Log.d("Registering for GCM");
         if (!ConnectionDetector.isConnectedToInternet(mApplicationContext)) {
             return false;
         }
@@ -116,7 +116,7 @@ public class MyTbaDatafeed {
     }
 
     public boolean unregister() {
-        Log.d(Constants.LOG_TAG, "Unregistering for GCM");
+        Log.d("Unregistering for GCM");
         if (!ConnectionDetector.isConnectedToInternet(mApplicationContext)) {
             return false;
         }
@@ -145,16 +145,16 @@ public class MyTbaDatafeed {
         Date now = new Date();
         Date futureTime = new Date(mPrefs.getLong(prefString, 0) + Constants.MY_TBA_UPDATE_TIMEOUT);
         if (now.before(futureTime)) {
-            Log.d(Constants.LOG_TAG, "Not updating myTBA subscriptions. Too soon since last update");
+            Log.d("Not updating myTBA subscriptions. Too soon since last update");
             return;
         }
         if (!ConnectionDetector.isConnectedToInternet(mApplicationContext)) {
             return;
         }
 
-        Log.d(Constants.LOG_TAG, "Updating myTBA favorites");
+        Log.d("Updating myTBA favorites");
         if (!mAccountController.isMyTbaEnabled()) {
-            Log.e(Constants.LOG_TAG, "MyTBA is not enabled");
+            Log.e("MyTBA is not enabled");
             Handler mainHandler = new Handler(mApplicationContext.getMainLooper());
             mainHandler.post(() -> Toast.makeText(mApplicationContext, mRes.getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show());
             return;
@@ -165,7 +165,7 @@ public class MyTbaDatafeed {
         try {
             favoriteResponse = mFavoriteApi.list(authHeader).execute();
         } catch (IOException e) {
-            Log.w(Constants.LOG_TAG, "Unable to update myTBA favorites");
+            Log.w("Unable to update myTBA favorites");
             e.printStackTrace();
             return;
         }
@@ -180,7 +180,7 @@ public class MyTbaDatafeed {
                     favoriteModels.add(new Favorite(currentUser, f.model_key, f.model_type));
                 }
                 favorites.add(favoriteModels);
-                Log.d(Constants.LOG_TAG, "Added " + favoriteModels.size() + " favorites");
+                Log.d("Added " + favoriteModels.size() + " favorites");
             }
         }
 
@@ -194,16 +194,16 @@ public class MyTbaDatafeed {
         Date now = new Date();
         Date futureTime = new Date(mPrefs.getLong(prefString, 0) + Constants.MY_TBA_UPDATE_TIMEOUT);
         if (now.before(futureTime)) {
-            Log.d(Constants.LOG_TAG, "Not updating myTBA subscriptions. Too soon since last update");
+            Log.d("Not updating myTBA subscriptions. Too soon since last update");
             return;
         }
         if (!ConnectionDetector.isConnectedToInternet(mApplicationContext)) {
             return;
         }
 
-        Log.d(Constants.LOG_TAG, "Updating myTBA subscriptions");
+        Log.d("Updating myTBA subscriptions");
         if (!mAccountController.isMyTbaEnabled()) {
-            Log.e(Constants.LOG_TAG, "MyTBA is not enabled");
+            Log.e("MyTBA is not enabled");
             Handler mainHandler = new Handler(mApplicationContext.getMainLooper());
             mainHandler.post(() -> Toast.makeText(mApplicationContext, mRes.getString(R.string.mytba_error_no_account), Toast.LENGTH_SHORT).show());
             return;
@@ -214,7 +214,7 @@ public class MyTbaDatafeed {
         try {
             subscriptionResponse = mSubscriptionApi.list(authHeader).execute();
         } catch (IOException e) {
-            Log.w(Constants.LOG_TAG, "Unable to update myTBA favorites");
+            Log.w("Unable to update myTBA favorites");
             e.printStackTrace();
             return;
         }
@@ -230,7 +230,7 @@ public class MyTbaDatafeed {
                     subscriptionModels.add(new Subscription(currentUser, s.model_key, s.notifications, s.model_type));
                 }
                 subscriptions.add(subscriptionModels);
-                Log.d(Constants.LOG_TAG, "Added " + subscriptionModels.size() + " subscriptions");
+                Log.d("Added " + subscriptionModels.size() + " subscriptions");
             }
         }
 
@@ -266,8 +266,8 @@ public class MyTbaDatafeed {
         Collections.sort(notifications);
         Collections.sort(existingNotificationsList);
 
-        Log.d(Constants.LOG_TAG, "New notifications: " + notifications.toString());
-        Log.d(Constants.LOG_TAG, "Existing notifications: " + existingNotificationsList.toString());
+        Log.d("New notifications: " + notifications.toString());
+        Log.d("Existing notifications: " + existingNotificationsList.toString());
 
         boolean notificationsHaveChanged = !(notifications.equals(existingNotificationsList));
 
@@ -290,10 +290,9 @@ public class MyTbaDatafeed {
                 }
 
                 ModelsMobileApiMessagesBaseResponse prefResponse = response.body();
-                Log.d(Constants.LOG_TAG,
-                      "Result: " + prefResponse.code + "/" + prefResponse.message);
+                Log.d("Result: " + prefResponse.code + "/" + prefResponse.message);
                 if (response.code() == 401) {
-                    Log.e(Constants.LOG_TAG, prefResponse.message);
+                    Log.e(prefResponse.message);
                     return ModelPrefsResult.ERROR;
                 }
                 JsonObject responseJson = JSONHelper.getasJsonObject(prefResponse.message);
@@ -343,7 +342,7 @@ public class MyTbaDatafeed {
                 return ModelPrefsResult.SUCCESS;
 
             } catch (IOException e) {
-                Log.e(Constants.LOG_TAG, "IO Exception while updating model preferences!");
+                Log.e("IO Exception while updating model preferences!");
                 e.printStackTrace();
                 return ModelPrefsResult.ERROR;
             }

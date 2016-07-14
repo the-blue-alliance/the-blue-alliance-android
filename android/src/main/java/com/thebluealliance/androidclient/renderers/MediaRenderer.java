@@ -70,7 +70,7 @@ public class MediaRenderer implements ModelRenderer<Media, Void> {
             String linkUrl = String.format(mediaType.getLinkUrlPattern(), keyForUrl);
             return new ImageListElement(imageUrl, linkUrl, isVideo);
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields not defined for rendering. \n"
+            Log.w("Required fields not defined for rendering. \n"
               + "Fields Required: Database.Medias.TYPE, Database.Medias.DETAILS, Database.Medias.FOREIGNKEY");
             return null;
         }

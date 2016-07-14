@@ -64,7 +64,7 @@ public class EventsByWeekFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(Constants.LOG_TAG, "EventsByWeekFragment created!");
+        Log.d("EventsByWeekFragment created!");
         mYear = mStatusController.getMaxCompYear();
         mSelectedTab = -1;
         if (getArguments() != null) {

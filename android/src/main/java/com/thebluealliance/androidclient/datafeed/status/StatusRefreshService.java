@@ -49,7 +49,7 @@ public class StatusRefreshService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(Constants.LOG_TAG, "Updating TBA Status");
+        Log.d("Updating TBA Status");
         Schedulers.io().createWorker().schedule(this::updateTbaStatus);
     }
 
@@ -59,12 +59,12 @@ public class StatusRefreshService extends IntentService {
         try {
             response = mRetrofitAPI.status().toBlocking().first();
         } catch (Exception ex) {
-            Log.w(Constants.LOG_TAG, "Error updating TBA status");
+            Log.w("Error updating TBA status");
             ex.printStackTrace();
             return;
         }
         if (!response.isSuccessful()) {
-            Log.w(Constants.LOG_TAG, "Unable to update myTBA Status\n"
+            Log.w("Unable to update myTBA Status\n"
                     + response.code() + " " + response.message());
             return;
         }

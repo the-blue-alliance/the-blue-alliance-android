@@ -187,13 +187,13 @@ public class NavigationDrawerFragment extends Fragment {
                                                               personPhotoUrl.length() - 2)
                                      + PROFILE_PIC_SIZE;
 
-                    Log.d(Constants.LOG_TAG, "Profile photo url: " + personPhotoUrl);
+                    Log.d("Profile photo url: " + personPhotoUrl);
 
                     mPicasso.load(personPhotoUrl).into(mProfilePicture);
                     hasAccountDetails = true;
                 }
             } else {
-                Log.w(Constants.LOG_TAG, "No current user found");
+                Log.w("No current user found");
                 // If myTBA /should/ be enabled, but we don't have a registered Firebase user,
                 // then we're probably upgrading from a pre-firebase version. Try and migrate
                 Activity activity = getActivity();

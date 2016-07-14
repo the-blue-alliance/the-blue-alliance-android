@@ -90,12 +90,12 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 mAuthProvider.userFromSignInResult(requestCode, resultCode, data)
                         .subscribe(user -> {
-                            Log.d(Constants.LOG_TAG, "User logged in: " + user.getEmail());
+                            Log.d("User logged in: " + user.getEmail());
                             mMyTBAOnboardingViewPager.setUpForLoginSuccess();
                             isMyTBALoginComplete = true;
                             mAccountController.onAccountConnect(MyTBAOnboardingActivity.this, user);
                         }, throwable -> {
-                            Log.e(Constants.LOG_TAG, "Error logging in");
+                            Log.e("Error logging in");
                             throwable.printStackTrace();
                             mAccountController.setMyTbaEnabled(false);
                         });

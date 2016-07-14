@@ -48,7 +48,7 @@ public class EventTabBinder extends AbstractDataBinder<List<EventWeekTab>> {
 
     @Override
     public void onError(Throwable throwable) {
-        Log.e(Constants.LOG_TAG, "Error fetching event years");
+        Log.e("Error fetching event years");
         throwable.printStackTrace();
     }
 }

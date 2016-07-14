@@ -139,7 +139,7 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
                     TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams))
                             .addNextIntent(ViewEventActivity.newInstance(this, mEventKey)).startActivities();
                 } else {
-                    Log.d(Constants.LOG_TAG, "Navigating up...");
+                    Log.d("Navigating up...");
                     NavUtils.navigateUpTo(this, upIntent);
                 }
                 return true;

@@ -62,7 +62,7 @@ public class GceAuthController {
         String scope = getAudience();
         String account = mAccountController.getSelectedAccount();
         if (account == null || account.isEmpty()) {
-            Log.e(Constants.LOG_TAG, "No system account found, can't get auth token");
+            Log.e("No system account found, can't get auth token");
             return null;
         }
         resetBackoff();
@@ -70,7 +70,7 @@ public class GceAuthController {
             try {
                 return getGoogleAuthToken(account, scope);
             } catch (IOException e) {
-                Log.i(Constants.LOG_TAG, "Unable to get token, sleeping " + mBackoffTime + " ms");
+                Log.i("Unable to get token, sleeping " + mBackoffTime + " ms");
                 e.printStackTrace();
                 SystemClock.sleep(mBackoffTime);
                 mBackoffTime *= 2;
@@ -94,7 +94,7 @@ public class GceAuthController {
             }
             return String.format(AUTH_HEADER_FORMAT, token);
         } catch (GoogleAuthException e) {
-            Log.w(Constants.LOG_TAG, "Auth exception while fetching google token");
+            Log.w("Auth exception while fetching google token");
             return null;
         }
 

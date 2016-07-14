@@ -133,7 +133,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this, throwable -> {
-                    Log.e(Constants.LOG_TAG, "Firebase error: " + throwable);
+                    Log.e("Firebase error: " + throwable);
                     throwable.printStackTrace();
                     // Show the "none found" warning
                     mProgressBar.setVisibility(View.GONE);
@@ -162,7 +162,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                         }
                         updateViewVisibility();
                     }, throwable -> {
-                        Log.e(Constants.LOG_TAG, "Firebase rest error: " + throwable);
+                        Log.e("Firebase rest error: " + throwable);
                         throwable.printStackTrace();
 
                         // net error getting item count, show no data view
@@ -469,7 +469,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
 
                     updateViewVisibility();
                 }, throwable -> {
-                    Log.e(Constants.LOG_TAG, "Firebase error");
+                    Log.e("Firebase error");
                     throwable.printStackTrace();
                     // Show the "none found" warning
                     mAreFilteredNotificationsVisible = false;

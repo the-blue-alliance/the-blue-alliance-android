@@ -31,7 +31,7 @@ public class EventSortByTypeAndNameComparator implements Comparator<Event> {
                 }
             }
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Can't compare events with missing fields.");
+            Log.w("Can't compare events with missing fields.");
             return 0;
         }
     }

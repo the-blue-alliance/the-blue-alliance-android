@@ -296,7 +296,7 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(Constants.LOG_TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
+        Log.w("Upgrading database from version " + oldVersion + " to " + newVersion);
 
         int upgradeTo = oldVersion + 1;
         while (upgradeTo <= newVersion) {

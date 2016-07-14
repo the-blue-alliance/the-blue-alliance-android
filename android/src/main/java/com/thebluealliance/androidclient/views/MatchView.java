@@ -114,7 +114,7 @@ public class MatchView extends FrameLayout {
             } catch (NumberFormatException e) {
                 redAlliance.setBackgroundResource(R.drawable.no_border);
                 blueAlliance.setBackgroundResource(R.drawable.no_border);
-                Log.w(Constants.LOG_TAG, "Attempted to parse an invalid match score.");
+                Log.w("Attempted to parse an invalid match score.");
             }
         }
         // Match hasn't been played yet. Don't border anything.

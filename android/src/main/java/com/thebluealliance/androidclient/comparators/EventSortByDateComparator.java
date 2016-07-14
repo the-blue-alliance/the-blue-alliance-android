@@ -19,7 +19,7 @@ public class EventSortByDateComparator implements Comparator<Event> {
                 return dateCompare;
             }
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Can't compare events with missing fields");
+            Log.e("Can't compare events with missing fields");
             e.printStackTrace();
             return 0;
         }

@@ -34,7 +34,7 @@ public class DistrictRankingsSubscriber
             if (teamData != null) {
                 nickname = teamData.getNickname();
             } else {
-                Log.w(Constants.LOG_TAG, "Couldn't find " + districtTeam.getTeamKey() + " in db");
+                Log.w("Couldn't find " + districtTeam.getTeamKey() + " in db");
                 nickname = "Team " + districtTeam.getTeamKey().substring(3);
             }
             mDataToBind.add(

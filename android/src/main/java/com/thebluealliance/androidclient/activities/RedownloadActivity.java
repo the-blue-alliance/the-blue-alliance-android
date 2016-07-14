@@ -227,7 +227,7 @@ public class RedownloadActivity extends AppCompatActivity
             alertDialog.show();
         } catch (WindowManager.BadTokenException e) {
             // Activity is already gone. Just log the exception
-            Log.e(Constants.LOG_TAG, "Error loading data: " + stacktrace);
+            Log.e("Error loading data: " + stacktrace);
             e.printStackTrace();
         }
     }

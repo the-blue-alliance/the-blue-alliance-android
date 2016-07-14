@@ -324,7 +324,7 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             setCompetitionWeek(week);
         } catch (FieldNotDefinedException e) {
             e.printStackTrace();
-            Log.w(Constants.LOG_TAG, "Can't set week, no start date");
+            Log.w("Can't set week, no start date");
         }
     }
 
@@ -395,7 +395,7 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             Date now = new Date();
             return now.after(startDate) && now.before(endDate);
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields to determine if event is happening now.\n"
+            Log.w("Missing fields to determine if event is happening now.\n"
                     + "Required fields: Database.Events.START and Database.Events.END");
             return false;
         }
@@ -408,7 +408,7 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             Date now = new Date();
             return now.after(startDate);
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields to determine if event has started.\n"
+            Log.w("Missing fields to determine if event has started.\n"
                     + "Required fields: Database.Events.START");
             return false;
         }
@@ -461,7 +461,7 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to "
                     + ThreadSafeFormatters.renderEventDate(endDate);
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for getting date string. \n"
+            Log.w("Missing fields for getting date string. \n"
                     + "Required fields: Database.Events.START, Database.Events.END");
             return "";
         }
@@ -483,7 +483,7 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             }
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n"
+            Log.w("Missing fields for rendering event\n"
                     + "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
             return null;
         }

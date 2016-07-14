@@ -169,7 +169,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
 
     @Override
     public void onError(Throwable throwable) {
-        Log.e(Constants.LOG_TAG, throwable.toString());
+        Log.e(throwable.toString());
 
         // If we received valid data from the cache but get an error from the network operations,
         // don't display the "No data" message.

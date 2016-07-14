@@ -25,7 +25,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         try {
             object = json.getAsJsonObject();
         } catch (JsonSyntaxException | IllegalStateException ex) {
-            Log.w(Constants.LOG_TAG, "Failed to parse json: " + json.toString());
+            Log.w("Failed to parse json: " + json.toString());
             return null;
         }
         final Event event = new Event();

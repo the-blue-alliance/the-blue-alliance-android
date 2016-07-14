@@ -107,7 +107,7 @@ public class ViewMatchActivity extends MyTBASettingsActivity
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
         setModelKey(mMatchKey, ModelType.MATCH);
-        Log.i(Constants.LOG_TAG, "New ViewMatch intent with key: " + mMatchKey);
+        Log.i("New ViewMatch intent with key: " + mMatchKey);
         setupActionBar();
 
         currentTab = getIntent().getIntExtra(TAB, ViewMatchFragmentPagerAdapter.TAB_RESULT);
@@ -158,11 +158,11 @@ public class ViewMatchActivity extends MyTBASettingsActivity
 
                 Intent upIntent = ViewEventActivity.newInstance(this, eventKey);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                    Log.d(Constants.LOG_TAG, "Navigating to new back stack with key " + eventKey);
+                    Log.d("Navigating to new back stack with key " + eventKey);
                     TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
                             .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
                 } else {
-                    Log.d(Constants.LOG_TAG, "Navigating up...");
+                    Log.d("Navigating up...");
                     upIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(upIntent);
                     finish();

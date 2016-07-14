@@ -144,7 +144,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         try {
             status = MatchHelper.evaluateStatusOfTeam(event, mMatches, mTeamKey);
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.d(Constants.LOG_TAG, "Status could not be evaluated for team; missing fields: "
+            Log.d("Status could not be evaluated for team; missing fields: "
                     + Arrays.toString(e.getStackTrace()));
             status = MatchHelper.EventStatus.NOT_AVAILABLE;
         }
@@ -172,7 +172,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
                 }
             }
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.d(Constants.LOG_TAG, "Could not determine if pit locations should be shown. Hiding by default.");
+            Log.d("Could not determine if pit locations should be shown. Hiding by default.");
         }
 
         if (status != MatchHelper.EventStatus.NOT_AVAILABLE) {

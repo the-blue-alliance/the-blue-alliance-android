@@ -33,13 +33,13 @@ public class MigrateLegacyUserToFirebase extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(Constants.LOG_TAG, "Trying to migrate legacy auth to Firebase");
+        Log.d("Trying to migrate legacy auth to Firebase");
         User user = mAuthProvider.signInLegacyUser().toBlocking().first();
 
         if (user != null) {
-            Log.d(Constants.LOG_TAG, "Migrated user");
+            Log.d("Migrated user");
         } else {
-            Log.d(Constants.LOG_TAG, "Failed to migrate");
+            Log.d("Failed to migrate");
         }
     }
 

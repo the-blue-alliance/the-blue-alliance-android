@@ -267,7 +267,7 @@ public class Match extends BasicModel<Match> {
                         + setNumber + " - " + matchNumber;
             }
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields for title not present\n"
+            Log.w("Required fields for title not present\n"
                     + "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
             return null;
         }
@@ -283,7 +283,7 @@ public class Match extends BasicModel<Match> {
                     setNumber = getSetNumber();
             return type.getPlayOrder() * 1000000 + setNumber * 1000 + matchNumber;
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields for display order not present\n"
+            Log.w("Required fields for display order not present\n"
                     + "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
             return 1000000;
         }
@@ -295,7 +295,7 @@ public class Match extends BasicModel<Match> {
                     setNumber = getSetNumber();
             return type.getPlayOrder() * 1000000 + matchNumber * 1000 + setNumber;
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields for display order not present\n"
+            Log.w("Required fields for display order not present\n"
                   + "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
             return null;
         }
@@ -327,7 +327,7 @@ public class Match extends BasicModel<Match> {
                 return false;
             }
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields not present\n"
+            Log.w("Required fields not present\n"
                     + "Required: Database.Matches.ALLIANCES");
             return false;
         }
@@ -364,7 +364,7 @@ public class Match extends BasicModel<Match> {
                 }
             }
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields not present\n"
+            Log.w("Required fields not present\n"
                     + "Required: Database.Matches.ALLIANCES");
         }
     }
@@ -381,7 +381,7 @@ public class Match extends BasicModel<Match> {
 
             return redScore >= 0 && blueScore >= 0;
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields for title not present\n"
+            Log.w("Required fields for title not present\n"
                   + "Required: Database.Matches.ALLIANCES");
             return false;
         }

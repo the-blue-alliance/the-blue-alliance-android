@@ -45,7 +45,7 @@ public class NotificationChangedReceiver extends BroadcastReceiver {
         }
 
         // Mark all notifications as not active
-        Log.d(Constants.LOG_TAG, "Notification Dismiss!");
+        Log.d("Notification Dismiss!");
         NotificationsTable table = Database.getInstance(context).getNotificationsTable();
         table.dismissAll();
     }

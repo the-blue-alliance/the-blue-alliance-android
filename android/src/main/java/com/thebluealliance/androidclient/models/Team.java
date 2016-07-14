@@ -143,7 +143,7 @@ public class Team extends BasicModel<Team> implements ViewModelRenderer<TeamView
         try {
             return getKey() + "," + getNickname() + "," + getNumber();
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for creating search titles\n"
+            Log.w("Missing fields for creating search titles\n"
                     + "Required: Database.Teams.KEY, Database.Teams.SHORTNAME, Database.Teams.NUMBER");
             return null;
         }
@@ -180,7 +180,7 @@ public class Team extends BasicModel<Team> implements ViewModelRenderer<TeamView
             }
             return model;
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Team missing field required for rendering.");
+            Log.w("Team missing field required for rendering.");
             return null;
         }
     }

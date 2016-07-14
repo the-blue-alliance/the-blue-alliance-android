@@ -24,7 +24,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i(Constants.LOG_TAG, "Received connectivity change intent: " + intent.getAction());
+        Log.i("Received connectivity change intent: " + intent.getAction());
 
         // If we now have interwebz, send out a local broadcast telling things to refresh
         int connectionStatus;

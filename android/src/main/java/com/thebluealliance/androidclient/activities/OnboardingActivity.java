@@ -169,12 +169,12 @@ public class OnboardingActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 mAuthProvider.userFromSignInResult(requestCode, resultCode, data)
                         .subscribe(user -> {
-                            Log.d(Constants.LOG_TAG, "User logged in: " + user.getEmail());
+                            Log.d("User logged in: " + user.getEmail());
                             mMyTBAOnboardingViewPager.setUpForLoginSuccess();
                             isMyTBALoginComplete = true;
                             mAccountController.onAccountConnect(OnboardingActivity.this, user);
                         }, throwable -> {
-                            Log.e(Constants.LOG_TAG, "Error logging in");
+                            Log.e("Error logging in");
                             throwable.printStackTrace();
                             mAccountController.setMyTbaEnabled(false);
                         });
@@ -291,7 +291,7 @@ public class OnboardingActivity extends AppCompatActivity
             alertDialog.show();
         } catch (WindowManager.BadTokenException e) {
             // Activity is already gone. Just log the exception
-            Log.e(Constants.LOG_TAG, "Error loading data: " + stacktrace);
+            Log.e("Error loading data: " + stacktrace);
             e.printStackTrace();
         }
     }

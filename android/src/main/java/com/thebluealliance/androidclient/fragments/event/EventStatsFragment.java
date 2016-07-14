@@ -147,7 +147,7 @@ public class EventStatsFragment
             if (!(adapterView.getAdapter() instanceof ListViewAdapter)
                     || position >= adapterView.getAdapter().getCount()
                     || !(((ListViewAdapter) adapterView.getAdapter()).getItem(position) instanceof ListElement)) {
-                Log.d(Constants.LOG_TAG, "Can't open stat item");
+                Log.d("Can't open stat item");
                 return;
             }
             String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();

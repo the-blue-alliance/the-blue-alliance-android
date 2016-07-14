@@ -17,8 +17,8 @@ public class TeamListFragmentPagerAdapter extends FragmentPagerAdapter {
     public TeamListFragmentPagerAdapter(FragmentManager fm, int largestTeamNumber) {
         super(fm);
         mCount = (largestTeamNumber / TEAMS_PER_TAB) + 1;
-        Log.d(Constants.LOG_TAG, "LARGEST TEAM: " + largestTeamNumber);
-        Log.d(Constants.LOG_TAG, "USING " + mCount + " PAGES");
+        Log.d("LARGEST TEAM: " + largestTeamNumber);
+        Log.d("USING " + mCount + " PAGES");
     }
 
     @Override

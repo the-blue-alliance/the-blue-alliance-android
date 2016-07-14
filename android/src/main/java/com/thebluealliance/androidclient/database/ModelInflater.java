@@ -394,7 +394,7 @@ public final class ModelInflater {
                     subscription.setModelEnum(data.getInt(i));
                     break;
                 case SubscriptionsTable.NOTIFICATION_SETTINGS:
-                    Log.d(Constants.LOG_TAG, "Settings: " + data.getString(i));
+                    Log.d("Settings: " + data.getString(i));
                     subscription.setNotificationSettings(data.getString(i));
                     break;
                 default:

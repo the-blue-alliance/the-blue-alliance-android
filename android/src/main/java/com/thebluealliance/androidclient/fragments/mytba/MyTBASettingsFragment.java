@@ -112,7 +112,7 @@ public class MyTBASettingsFragment extends PreferenceFragment {
 
         // Don't pass the favorite preference to the updater.
         subscribed.remove(MyTBAHelper.getFavoritePreferenceKey());
-        Log.d(Constants.LOG_TAG, "notifications: " + subscribed);
+        Log.d("notifications: " + subscribed);
 
         ModelNotificationFavoriteSettings settings = new ModelNotificationFavoriteSettings();
         Preference fav = findPreference(MyTBAHelper.getFavoritePreferenceKey());

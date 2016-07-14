@@ -22,11 +22,11 @@ public class NoDataBinder {
 
     public void bindData(@Nullable NoDataViewParams data) {
         if (data == null) {
-            Log.d(Constants.LOG_TAG, "NoDataView not bound; NoDataViewParams cannot be null");
+            Log.d("NoDataView not bound; NoDataViewParams cannot be null");
             return;
         }
         if (mNoDataView == null) {
-            Log.d(Constants.LOG_TAG, "NoDataView not bound; view cannot be null");
+            Log.d("NoDataView not bound; view cannot be null");
             return;
         }
         mNoDataView.setVisibility(View.VISIBLE);

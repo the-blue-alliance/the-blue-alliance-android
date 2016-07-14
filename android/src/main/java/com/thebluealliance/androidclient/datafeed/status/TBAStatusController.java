@@ -123,7 +123,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
                 && mOkHttpCache != null
                 && (forceClear || lastCacheClear < status.getLastOkHttpCacheClear())) {
             Schedulers.io().createWorker().schedule(() -> {
-                Log.i(Constants.LOG_TAG, "Clearing OkHttp cache");
+                Log.i("Clearing OkHttp cache");
                 try {
                     mOkHttpCache.evictAll();
                     mPrefs.edit()
