@@ -8,76 +8,126 @@ import com.google.firebase.crash.FirebaseCrash;
  */
 public class Log {
 
-    public static synchronized int d(String msg) {
+    public static synchronized void d(String msg) {
         String callingClass = getCallerCallerClassName();
-        return android.util.Log.d(callingClass, msg);
+        if (BuildConfig.DEBUG) {
+            android.util.Log.d(callingClass, msg);
+        } else {
+            // Don't write debug logs to logcat in prod builds
+            FirebaseCrash.log(String.format("%1$s: %2$s", callingClass, msg));
+        }
     }
 
-    public static synchronized int d(String msg, Throwable tr) {
+    public static synchronized void d(String msg, Throwable tr) {
         String callingClass = getCallerCallerClassName();
-        return android.util.Log.d(callingClass, msg, tr);
+        if (BuildConfig.DEBUG) {
+            android.util.Log.d(callingClass, msg, tr);
+        } else {
+            // Don't write debug logs to logcat in prod builds
+            FirebaseCrash.log(String.format("%1$s: %2$s", callingClass, msg));
+            FirebaseCrash.report(tr);
+        }
     }
 
-    public static synchronized int e(String msg) {
+    public static synchronized void e(String msg) {
         String callingClass = getCallerCallerClassName();
-        return android.util.Log.e(callingClass, msg);
+        if (BuildConfig.DEBUG) {
+            android.util.Log.e(callingClass, msg);
+        } else {
+            FirebaseCrash.logcat(android.util.Log.ERROR, callingClass, msg);
+        }
     }
 
-    public static synchronized int e(String msg, Throwable tr) {
+    public static synchronized void e(String msg, Throwable tr) {
         String callingClass = getCallerCallerClassName();
-        return android.util.Log.e(callingClass, msg, tr);
+        if (BuildConfig.DEBUG) {
+            android.util.Log.e(callingClass, msg, tr);
+        } else {
+            FirebaseCrash.logcat(android.util.Log.ERROR, callingClass, msg);
+            FirebaseCrash.report(tr);
+        }
     }
 
     public static synchronized String getStackTraceString(Throwable tr) {
         return android.util.Log.getStackTraceString(tr);
     }
 
-    public static synchronized int i(String msg) {
+    public static synchronized void i(String msg) {
         String callingClass = getCallerCallerClassName();
-        return android.util.Log.i(callingClass, msg);
+        if (BuildConfig.DEBUG) {
+            android.util.Log.i(callingClass, msg);
+        } else {
+            FirebaseCrash.logcat(android.util.Log.INFO, callingClass, msg);
+        }
     }
 
-    public static synchronized int i(String msg, Throwable tr) {
+    public static synchronized void i(String msg, Throwable tr) {
         String callingClass = getCallerCallerClassName();
-        return android.util.Log.i(callingClass, msg, tr);
+        if (BuildConfig.DEBUG) {
+            android.util.Log.i(callingClass, msg, tr);
+        } else {
+            FirebaseCrash.logcat(android.util.Log.INFO, callingClass, msg);
+            FirebaseCrash.report(tr);
+        }
     }
 
-    public static synchronized boolean isLoggable(String tag, int level) {
-        return android.util.Log.isLoggable(tag, level);
-    }
-
-    public static synchronized int println(int priority, String tag, String msg) {
-        return android.util.Log.println(priority, tag, msg);
-    }
-
-    public static synchronized int v(String msg) {
+    public static synchronized void v(String msg) {
         String callingClass = getCallerCallerClassName();
-        return android.util.Log.v(callingClass, msg);
+        if (BuildConfig.DEBUG) {
+            android.util.Log.v(callingClass, msg);
+        } else {
+            // Don't print verbose to logcat in release builds
+            FirebaseCrash.log(String.format("%1$s: %2$s", callingClass, msg));
+        }
     }
 
-    public static synchronized int v(String msg, Throwable tr) {
+    public static synchronized void v(String msg, Throwable tr) {
         String callingClass = getCallerCallerClassName();
-        return android.util.Log.v(callingClass, msg, tr);
+        if (BuildConfig.DEBUG) {
+            android.util.Log.v(callingClass, msg, tr);
+        } else {
+            // Don't print verbose to logcat in release builds
+            FirebaseCrash.log(String.format("%1$s: %2$s", callingClass, msg));
+            FirebaseCrash.report(tr);
+        }
     }
 
-    public static synchronized int w(String msg) {
+    public static synchronized void w(String msg) {
         String callingClass = getCallerCallerClassName();
-        return android.util.Log.w(callingClass, msg);
+        if (BuildConfig.DEBUG) {
+            android.util.Log.w(callingClass, msg);
+        } else {
+            FirebaseCrash.logcat(android.util.Log.WARN, callingClass, msg);
+        }
     }
 
-    public static synchronized int w(String msg, Throwable tr) {
+    public static synchronized void w(String msg, Throwable tr) {
         String callingClass = getCallerCallerClassName();
-        return android.util.Log.w(callingClass, msg, tr);
+        if (BuildConfig.DEBUG) {
+            android.util.Log.w(callingClass, msg, tr);
+        } else {
+            FirebaseCrash.logcat(android.util.Log.WARN, callingClass, msg);
+            FirebaseCrash.report(tr);
+        }
     }
 
-    public static synchronized int wtf(String msg) {
+    public static synchronized void wtf(String msg) {
         String callingClass = getCallerCallerClassName();
-        return android.util.Log.wtf(callingClass, msg);
+        if (BuildConfig.DEBUG) {
+            android.util.Log.wtf(callingClass, msg);
+        } else {
+            FirebaseCrash.logcat(android.util.Log.ASSERT, callingClass, msg);
+        }
     }
 
-    public static synchronized int wtf(String msg, Throwable tr) {
+    public static synchronized void wtf(String msg, Throwable tr) {
         String callingClass = getCallerCallerClassName();
-        return android.util.Log.wtf(callingClass, msg, tr);
+        if (BuildConfig.DEBUG) {
+            android.util.Log.wtf(callingClass, msg, tr);
+        } else {
+            FirebaseCrash.logcat(android.util.Log.ASSERT, callingClass, msg);
+            FirebaseCrash.report(tr);
+        }
     }
 
     /**
