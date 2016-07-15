@@ -150,7 +150,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 if (team == null) {
                     // Don't display models that don't exist anymore and delete them from search indexes
                     team = new Team();
-                    team.setTeamKey(key);
+                    team.setKey(key);
                     Database.getInstance(this).getTeamsTable().deleteSearchIndex(team);
                     continue;
                 }
@@ -197,7 +197,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 if (event == null) {
                     // Don't display models that don't exist anymore and delete them from search indexes
                     event = new Event();
-                    event.setEventKey(key);
+                    event.setKey(key);
                     Database.getInstance(this).getEventsTable().deleteSearchIndex(event);
                     continue;
                 }

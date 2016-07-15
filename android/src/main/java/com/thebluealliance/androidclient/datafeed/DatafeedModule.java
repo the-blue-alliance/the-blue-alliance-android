@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
@@ -104,14 +105,11 @@ public class DatafeedModule {
     }
 
     @Provides @Singleton
-    public MyTbaDatafeed provideMyTbaDatafeed(Context context, SharedPreferences prefs, Database db) {
-        return new MyTbaDatafeed(context, context.getResources(), prefs, db);
-    }
-
-    @Provides @Singleton
-    public TBAStatusController provideTbaStatusController(SharedPreferences prefs, Gson gson,
-                                                          Cache cache, Context context) {
-        return new TBAStatusController(prefs, gson, cache, context);
+    public TBAStatusController provideTbaStatusController(SharedPreferences prefs,
+                                                          Gson gson,
+                                                          Cache cache,
+                                                          AccountController accountController) {
+        return new TBAStatusController(prefs, gson, cache, accountController);
     }
 
     @VisibleForTesting

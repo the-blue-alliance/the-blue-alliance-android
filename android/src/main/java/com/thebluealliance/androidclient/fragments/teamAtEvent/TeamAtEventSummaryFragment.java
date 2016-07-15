@@ -1,26 +1,35 @@
 package com.thebluealliance.androidclient.fragments.teamAtEvent;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamAtEventSummaryCombiner;
-import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
+import com.thebluealliance.androidclient.itemviews.LabelValueItemView;
+import com.thebluealliance.androidclient.itemviews.LabeledMatchItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber.Model;
+import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
+import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.annotation.Nullable;
 import android.view.View;
-import android.view.ViewGroup;
 
+import javax.inject.Inject;
+
+import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
-public class TeamAtEventSummaryFragment
-  extends ListViewFragment<Model, TeamAtEventSummarySubscriber> {
+public class TeamAtEventSummaryFragment extends RecyclerViewFragment<Model, TeamAtEventSummarySubscriber, RecyclerViewBinder> {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 
     private String mTeamKey;
     private String mEventKey;
+
+    @Inject AccountController mAccountController;
 
     public static TeamAtEventSummaryFragment newInstance(String teamKey, String eventKey) {
         TeamAtEventSummaryFragment f = new TeamAtEventSummaryFragment();
@@ -44,13 +53,16 @@ public class TeamAtEventSummaryFragment
         mSubscriber.setTeamKey(mTeamKey);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = super.onCreateView(inflater, container, savedInstanceState);
-        //disable touch feedback (you can't click the elements here...)
-        mListView.setCacheColorHint(getResources().getColor(android.R.color.transparent));
-        mListView.setSelector(R.drawable.transparent);
-        return v;
+    @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        // Add padding to the bottom of the list for the myTBA FAB if it is visible
+        if (mAccountController.isMyTbaEnabled()) {
+            mRecyclerView.setPadding(
+                    mRecyclerView.getPaddingLeft(),
+                    mRecyclerView.getPaddingTop(),
+                    mRecyclerView.getPaddingRight(),
+                    getResources().getDimensionPixelSize(R.dimen.fab_list_padding));
+            mRecyclerView.setClipToPadding(false);
+        }
     }
 
     @Override
@@ -61,9 +73,9 @@ public class TeamAtEventSummaryFragment
     @Override
     protected Observable<Model> getObservable(String cacheHeader) {
         return Observable.zip(
-          mDatafeed.fetchTeamAtEventRank(mTeamKey, mEventKey, cacheHeader),
-          mDatafeed.fetchEvent(mEventKey, cacheHeader),
-          new TeamAtEventSummaryCombiner());
+                mDatafeed.fetchTeamAtEventRank(mTeamKey, mEventKey, cacheHeader),
+                mDatafeed.fetchEvent(mEventKey, cacheHeader),
+                new TeamAtEventSummaryCombiner());
     }
 
     @Override
@@ -78,5 +90,10 @@ public class TeamAtEventSummaryFragment
 
     @Override public NoDataViewParams getNoDataParams() {
         return new NoDataViewParams(R.drawable.ic_info_black_48dp, R.string.no_team_at_event_summary_data);
+    }
+
+    @Override public void initializeAdapterCreator(SmartAdapter.MultiAdaptersCreator creator) {
+        creator.map(LabelValueViewModel.class, LabelValueItemView.class);
+        creator.map(LabeledMatchViewModel.class, LabeledMatchItemView.class);
     }
 }

@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.fragments;
 
-import com.google.android.gms.plus.model.people.Person;
-
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.accounts.PlusHelper;
-import com.thebluealliance.androidclient.activities.NavigationDrawerActivity;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
+import com.thebluealliance.androidclient.auth.AuthProvider;
+import com.thebluealliance.androidclient.auth.User;
+import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
+import com.thebluealliance.androidclient.di.components.HasMyTbaComponent;
 import com.thebluealliance.androidclient.listitems.DividerListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.listitems.SpacerListItem;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -29,6 +30,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Shader;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -49,6 +51,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -110,6 +115,9 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mUserLearnedDrawer;
     private boolean mUseActionBarToggle;
 
+    @Inject AccountController mAccountController;
+    @Inject @Named("firebase_auth") AuthProvider mAuthProvider;
+
     // Required empty constructor
     public NavigationDrawerFragment() {
     }
@@ -117,6 +125,10 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Activity activity = getActivity();
+        if (activity instanceof HasMyTbaComponent) {
+            ((HasMyTbaComponent) activity).getMyTbaComponent().inject(this);
+        }
 
         // Read in the flag indicating whether or not the user has demonstrated awareness of the
         // drawer. See PREF_USER_LEARNED_DRAWER for details.
@@ -159,34 +171,33 @@ public class NavigationDrawerFragment extends Fragment {
     public void setupNavDrawerHeader() {
 
         boolean hasAccountDetails = false;
-        if (AccountHelper.isMyTBAEnabled(getActivity())) {
-            if (PlusHelper.isConnected()) {
-                Person person = PlusHelper.getCurrentPerson();
-                if (person != null) {
-                    if (person.hasDisplayName()) {
-                        mProfileName.setText(person.getDisplayName());
-                        hasAccountDetails = true;
-                    }
+        if (mAccountController.isMyTbaEnabled()) {
+            User currentUser = mAuthProvider.getCurrentUser();
+            if (currentUser != null) {
+                String displayName = currentUser.getName();
+                if (!displayName.isEmpty()) {
+                    mProfileName.setText(displayName);
+                    hasAccountDetails = true;
+                }
 
-                    if (person.hasImage()) {
-                        String personPhotoUrl = person.getImage().getUrl();
-                        personPhotoUrl = personPhotoUrl.substring(0,
-                                personPhotoUrl.length() - 2)
-                                + PROFILE_PIC_SIZE;
+                Uri profilePic = currentUser.getProfilePicUrl();
+                if (profilePic != null) {
+                    String personPhotoUrl = profilePic.toString();
+                    personPhotoUrl = personPhotoUrl.substring(0,
+                                                              personPhotoUrl.length() - 2)
+                                     + PROFILE_PIC_SIZE;
 
-                        Log.d(Constants.LOG_TAG, "Profile photo url: " + personPhotoUrl);
+                    Log.d(Constants.LOG_TAG, "Profile photo url: " + personPhotoUrl);
 
-                        mPicasso.load(personPhotoUrl).into(mProfilePicture);
-                        hasAccountDetails = true;
-                    }
+                    mPicasso.load(personPhotoUrl).into(mProfilePicture);
+                    hasAccountDetails = true;
                 }
             } else {
-                Log.w(Constants.LOG_TAG, "Plus is not connected. Can't show profile info. Attempting to reconnect...");
-
+                Log.w(Constants.LOG_TAG, "No current user found");
+                // If myTBA /should/ be enabled, but we don't have a registered Firebase user,
+                // then we're probably upgrading from a pre-firebase version. Try and migrate
                 Activity activity = getActivity();
-                if (activity != null && activity instanceof NavigationDrawerActivity) {
-                    PlusHelper.connect(activity, (NavigationDrawerActivity) activity, (NavigationDrawerActivity) activity);
-                }
+                activity.startService(new Intent(activity, MigrateLegacyUserToFirebase.class));
             }
         }
 

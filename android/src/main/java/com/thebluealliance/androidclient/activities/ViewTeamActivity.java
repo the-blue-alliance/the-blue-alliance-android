@@ -6,7 +6,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.adapters.DialogListWithIconsAdapter;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
@@ -94,6 +94,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
 
     @Inject TBAStatusController mStatusController;
     @Inject CacheableDatafeed mDatafeed;
+    @Inject AccountController mAccountController;
 
     // Should come in the format frc####
     private String mTeamKey;
@@ -179,7 +180,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
 
         boolean wasMediaSnackbarDismissed = PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean(PREF_MEDIA_SNACKBAR_DISMISSED, false);
-        if (!wasMediaSnackbarDismissed && AccountHelper.isMyTBAEnabled(this)) {
+        if (!wasMediaSnackbarDismissed && mAccountController.isMyTbaEnabled()) {
             mMediaSnackbar = createSnackbar(Html.fromHtml(getString(R.string.imgur_media_snackbar_message)), Snackbar.LENGTH_INDEFINITE);
             mMediaSnackbar.setAction(R.string.imgur_media_snackbar_Action_dismiss, (view) -> {
             });
@@ -471,6 +472,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
                     .datafeedModule(application.getDatafeedModule())
                     .binderModule(application.getBinderModule())
                     .databaseWriterModule(application.getDatabaseWriterModule())
+                    .gceModule(application.getGceModule())
                     .subscriberModule(new SubscriberModule(this))
                     .clickListenerModule(new ClickListenerModule(this))
                     .build();

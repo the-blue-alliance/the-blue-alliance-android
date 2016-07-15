@@ -1,6 +1,9 @@
 package com.thebluealliance.androidclient;
 
 import com.facebook.stetho.Stetho;
+import com.squareup.leakcanary.LeakCanary;
+import com.thebluealliance.androidclient.accounts.AccountModule;
+import com.thebluealliance.androidclient.auth.AuthModule;
 import com.thebluealliance.androidclient.binders.BinderModule;
 import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
@@ -12,6 +15,7 @@ import com.thebluealliance.androidclient.di.components.ApplicationComponent;
 import com.thebluealliance.androidclient.di.components.DaggerApplicationComponent;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
+import com.thebluealliance.androidclient.gcm.GcmModule;
 import com.thebluealliance.androidclient.imgur.ImgurModule;
 
 import android.support.multidex.MultiDexApplication;
@@ -28,11 +32,14 @@ public class TBAAndroid extends MultiDexApplication {
     private DatafeedModule mDatafeedModule;
     private BinderModule mBinderModule;
     private DatabaseWriterModule mDatabaseWriterModule;
+    private AuthModule mAuthModule;
     private boolean mShouldBindStetho;
 
     private HttpModule mHttpModule;
     private GceModule mGceModule;
     private ImgurModule mImgurModule;
+    private AccountModule mAccountModule;
+    private GcmModule mGcmModule;
 
     public TBAAndroid() {
         super();
@@ -52,6 +59,10 @@ public class TBAAndroid extends MultiDexApplication {
                             .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                             .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                             .build());
+        }
+
+        if (Utilities.isDebuggable()) {
+            LeakCanary.install(this);
         }
     }
 
@@ -106,6 +117,27 @@ public class TBAAndroid extends MultiDexApplication {
             mDatabaseWriterModule = new DatabaseWriterModule();
         }
         return mDatabaseWriterModule;
+    }
+
+    public AuthModule getAuthModule() {
+        if (mAuthModule == null) {
+            mAuthModule = new AuthModule(this);
+        }
+        return mAuthModule;
+    }
+
+    public AccountModule getAccountModule() {
+        if (mAccountModule == null) {
+            mAccountModule = new AccountModule();
+        }
+        return mAccountModule;
+    }
+
+    public GcmModule getGcmModule() {
+        if (mGcmModule == null) {
+            mGcmModule = new GcmModule();
+        }
+        return mGcmModule;
     }
 
     public ApplicationComponent getComponent() {

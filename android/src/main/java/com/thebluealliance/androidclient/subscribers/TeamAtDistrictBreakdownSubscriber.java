@@ -66,7 +66,7 @@ public class TeamAtDistrictBreakdownSubscriber
             Event event = mDb.getEventsTable().get(eventData.getKey());
             ListGroup eventGroup = new ListGroup(event == null
               ? eventData.getKey()
-              : event.getEventName());
+              : event.getName());
 
             DistrictPointBreakdown breakdown =
               mGson.fromJson(eventData.getValue(), DistrictPointBreakdown.class);

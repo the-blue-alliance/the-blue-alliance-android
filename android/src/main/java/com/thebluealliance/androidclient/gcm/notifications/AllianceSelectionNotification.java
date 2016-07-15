@@ -64,7 +64,7 @@ public class AllianceSelectionNotification extends BaseNotification<AllianceSele
         Resources r = context.getResources();
         String eventName;
         try {
-            eventName = event.getEventShortName();
+            eventName = event.getShortName();
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(getLogTag(), "Event data passed in this notification does not contain an event short name. Can't post notification");
             e.printStackTrace();
@@ -128,7 +128,7 @@ public class AllianceSelectionNotification extends BaseNotification<AllianceSele
 
         String titleString, shortName, shortCode;
         try {
-            shortName = event.getEventShortName();
+            shortName = event.getShortName();
             shortCode = EventHelper.getShortCodeForEventKey(event.getKey()).toUpperCase();
             titleString = c.getString(R.string.gameday_ticker_event_title_format, shortName, shortCode);
         } catch (BasicModel.FieldNotDefinedException e) {
@@ -146,7 +146,7 @@ public class AllianceSelectionNotification extends BaseNotification<AllianceSele
     public AllianceSelectionNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
         String titleString;
         try {
-            titleString = getNotificationCardHeader(context, event.getEventShortName(), event.getKey());
+            titleString = getNotificationCardHeader(context, event.getShortName(), event.getKey());
         } catch (BasicModel.FieldNotDefinedException e) {
             titleString = eventKey;
         }

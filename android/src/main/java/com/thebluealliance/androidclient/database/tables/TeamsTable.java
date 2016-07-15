@@ -44,7 +44,7 @@ public class TeamsTable extends ModelTable<Team> {
         try {
             cv.put(Database.SearchTeam.KEY, team.getKey());
             cv.put(Database.SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
-            cv.put(Database.SearchTeam.NUMBER, team.getTeamNumber());
+            cv.put(Database.SearchTeam.NUMBER, team.getNumber());
             mDb.insert(Database.TABLE_SEARCH_TEAMS, null, cv);
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert search team without the following fields:"
@@ -60,7 +60,7 @@ public class TeamsTable extends ModelTable<Team> {
             ContentValues cv = new ContentValues();
             cv.put(Database.SearchTeam.KEY, team.getKey());
             cv.put(Database.SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
-            cv.put(Database.SearchTeam.NUMBER, team.getTeamNumber());
+            cv.put(Database.SearchTeam.NUMBER, team.getNumber());
             mDb.update(Database.TABLE_SEARCH_TEAMS, cv, Database.SearchTeam.KEY + "=?", new String[]{team.getKey()});
         } catch (BasicModel.FieldNotDefinedException e) {
             Log.e(Constants.LOG_TAG, "Can't insert event search item without the following fields:"

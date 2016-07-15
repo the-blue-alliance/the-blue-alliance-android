@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.gcm.messages;
 
-import com.thebluealliance.androidclient.gcm.GCMHelper;
+import com.thebluealliance.androidclient.gcm.GcmMessageType;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,9 +8,9 @@ import android.os.Bundle;
 public abstract class BasicGCMMessage {
 
     public static final String MESSAGE_TYPE = "msg_type";
-    protected GCMHelper.MSGTYPE type;
+    protected GcmMessageType type;
 
-    public BasicGCMMessage(GCMHelper.MSGTYPE msgtype) {
+    public BasicGCMMessage(GcmMessageType msgtype) {
         this.type = msgtype;
     }
 

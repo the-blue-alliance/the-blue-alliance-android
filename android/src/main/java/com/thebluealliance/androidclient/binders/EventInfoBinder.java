@@ -197,7 +197,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         content.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
 
-        EventBus.getDefault().post(new ActionBarTitleEvent(data.titleString));
+        EventBus.getDefault().post(new ActionBarTitleEvent(data.actionBarTitle, data.actionBarSubtitle));
 
         mNoDataBinder.unbindData();
         setDataBound(true);
@@ -247,12 +247,12 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     public static class Model {
         public String eventKey;
         public String actionBarTitle;
+        public String actionBarSubtitle;
         public String nameString;
         public String dateString;
         public String venueString;
         public String locationString;
         public String eventWebsite;
-        public String titleString;
         public boolean isLive;
         public JsonArray webcasts;
     }

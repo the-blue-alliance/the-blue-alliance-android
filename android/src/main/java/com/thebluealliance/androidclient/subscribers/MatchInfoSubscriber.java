@@ -74,7 +74,7 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
             }
         }
 
-        updateActionBarTitle(mAPIData.event.getEventShortName());
+        updateActionBarTitle(mAPIData.event.getShortName());
     }
 
     @Override public boolean isDataValid() {
