@@ -15,7 +15,7 @@ Want to add features, fix bugs, or just poke around the code? No problem!
 ### Project Management 
  - Keep up to date with the [mailing list](https://groups.google.com/forum/#!forum/thebluealliance-developers).
  - Read through the [planning documents](https://drive.google.com/#folders/0B5RO2Yzh2z01MDBOVXYwM1lXdFk) so you know what's going on.
- - Watch our [Trello board](https://trello.com/b/x42paPe3/tba-android) for updates on our long-term plans.
+ - Watch our [Trello board](https://trello.com/b/x42paPe3/tba-android) for updates on our long-term plans. [***TODO:*** Is this still relevant?]
  - Chat with us on our [Slack team](https://the-blue-alliance.slack.com/). (Request an invite in the mailing list.)
 
 ### Learning
@@ -51,6 +51,16 @@ Environment Setup
 3. See [Tips and Tricks](https://developer.android.com/sdk/installing/studio-tips.html) for developing with Android Studio.
 4. Use the [Android SDK Manager](https://developer.android.com/tools/help/sdk-manager.html) to download the correct versions of the Android libraries. You will need to download the Android SDK Tools, Android SDK Platform-Tools, and the SDK Platform for Android. See `build.gradle` and `android/build.gradle` for the currently needed versions.
 5. If you have an Android device to test on, make sure to [enable USB Debugging](http://stackoverflow.com/questions/16707137/how-to-find-and-turn-on-usb-debugging-mode-on-nexus-4) in its Settings menu. Otherwise, [configure an Android Virtual Device (AVD)](https://developer.android.com/tools/devices/managing-avds.html) to debug with. To use a virtual device, you'll have to download an Android System image via the SDK manager. Android x86-based System images run much faster than ARM-based System images but they require [Virtual Machine Acceleration](http://developer.android.com/tools/devices/emulator.html#accel-vm). Note that the SDK manager will install the Intel HAXM _installer_ on your local disk; you still have to run that installer unless the Android Studio installer [does it for you](http://developer.android.com/tools/studio/index.html#install-updates).
+6. Set up a Firebase project to enable login authentication:
+    1. Open the [Firebase console](https://console.firebase.google.com/).
+    1. Create a Firebase project.
+        [***TODO:*** If you have a TBA dev web site AppEngine project, it may ask about using that project. Accept that offer?]
+    1. Click "Add Firebase to your Android app".
+    1. Enter the package name `com.thebluealliance.androidclient.development` into the form.
+    1. Follow [these instructions](https://developers.google.com/android/guides/client-auth) to determine your debug SHA1. Enter that into the form.
+    1. Continue. It should download a `google-services.json` file.
+    1. Move the downloaded `google-services.json` file into `android/src/debug/`. ***Note:*** _Don't_ put it in the directory shown in the "Add Firebase to your Android app" instructions.
+    1. [***TODO:*** How to test this setup?]
 6. To run the unit tests, do `./gradlew test`
 
 ### <a name="mytba"></a>
