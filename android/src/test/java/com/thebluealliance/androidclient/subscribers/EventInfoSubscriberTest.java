@@ -42,14 +42,14 @@ public class EventInfoSubscriberTest extends TestCase {
         EventInfoBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mEvent);
 
         assertEquals(data.eventKey, mEvent.getKey());
-        assertEquals(data.nameString, mEvent.getEventName());
-        assertEquals(data.actionBarTitle, mEvent.getEventYear() + " " + mEvent.getEventShortName());
+        assertEquals(data.nameString, mEvent.getName());
+        assertEquals(data.actionBarTitle, mEvent.getShortName());
+        assertEquals(data.actionBarSubtitle, String.valueOf(mEvent.getYear()));
         assertEquals(data.venueString, mEvent.getVenue());
         assertEquals(data.locationString, mEvent.getLocation());
         assertEquals(data.eventWebsite, mEvent.getWebsite());
         assertEquals(data.dateString, mEvent.getDateString());
         assertEquals(data.isLive, mEvent.isHappeningNow());
-        assertEquals(data.titleString, mEvent.getEventYear() + " " + mEvent.getEventShortName());
         assertEquals(data.webcasts, mEvent.getWebcasts());
     }
 }

@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
-import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
@@ -122,11 +121,6 @@ public class MockDatafeedModule {
     @Provides @Singleton
     public RefreshController provideRefreshController() {
         return Mockito.mock(RefreshController.class);
-    }
-
-    @Provides @Singleton
-    public MyTbaDatafeed provideMyTbaDatafeed(Context context, SharedPreferences prefs, Database db) {
-        return Mockito.mock(MyTbaDatafeed.class);
     }
 
     @Provides @Singleton

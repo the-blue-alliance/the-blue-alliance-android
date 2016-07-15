@@ -14,20 +14,11 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/gameday_ticker_alliance_selection_header">
-
                 <TextView
                     android:id="@+id/card_header"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
+                    style="@style/NotificationCardHeader"
+                    android:background="@color/gameday_ticker_alliance_selection_header"
                     tools:text="Test header" />
-            </FrameLayout>
 
             <LinearLayout
                 android:id="@+id/summary_container"

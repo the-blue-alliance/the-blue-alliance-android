@@ -52,7 +52,7 @@ public class TeamRenderer implements ModelRenderer<Team, Integer> {
         try {
             return new TeamListElement(
               team.getKey(),
-              team.getTeamNumber(),
+              team.getNumber(),
               team.getNickname(),
               team.getLocation(),
               safeRenderType == RENDER_DETAILS_BUTTON,

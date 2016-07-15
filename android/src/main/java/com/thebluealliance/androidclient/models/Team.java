@@ -45,8 +45,8 @@ public class Team extends BasicModel<Team> implements ViewModelRenderer<TeamView
 
     public Team(String teamKey, int teamNumber, String nickname, String location) {
         this();
-        setTeamKey(teamKey);
-        setTeamNumber(teamNumber);
+        setKey(teamKey);
+        setNumber(teamNumber);
         setNickname(nickname);
         setLocation(location);
     }
@@ -81,8 +81,8 @@ public class Team extends BasicModel<Team> implements ViewModelRenderer<TeamView
         return "";
     }
 
-    public void setTeamKey(String teamKey) {
-        fields.put(TeamsTable.KEY, teamKey);
+    public void setKey(String key) {
+        fields.put(TeamsTable.KEY, key);
     }
 
     public String getNickname() {
@@ -108,15 +108,15 @@ public class Team extends BasicModel<Team> implements ViewModelRenderer<TeamView
         fields.put(TeamsTable.LOCATION, location);
     }
 
-    public Integer getTeamNumber() throws FieldNotDefinedException {
+    public Integer getNumber() throws FieldNotDefinedException {
         if (fields.containsKey(TeamsTable.NUMBER) && fields.get(TeamsTable.NUMBER) instanceof Integer) {
             return (Integer) fields.get(TeamsTable.NUMBER);
         }
         throw new FieldNotDefinedException("Field Database.Teams.NUMBER is not defined");
     }
 
-    public void setTeamNumber(int teamNumber) {
-        fields.put(TeamsTable.NUMBER, teamNumber);
+    public void setNumber(int number) {
+        fields.put(TeamsTable.NUMBER, number);
     }
 
     public void setYearsParticipated(JsonArray years) {
@@ -141,7 +141,7 @@ public class Team extends BasicModel<Team> implements ViewModelRenderer<TeamView
 
     public String getSearchTitles() {
         try {
-            return getKey() + "," + getNickname() + "," + getTeamNumber();
+            return getKey() + "," + getNickname() + "," + getNumber();
         } catch (FieldNotDefinedException e) {
             Log.w(Constants.LOG_TAG, "Missing fields for creating search titles\n"
                     + "Required: Database.Teams.KEY, Database.Teams.SHORTNAME, Database.Teams.NUMBER");
@@ -165,7 +165,7 @@ public class Team extends BasicModel<Team> implements ViewModelRenderer<TeamView
     public TeamViewModel renderToViewModel(Context context, @Nullable @RenderType Integer renderType) {
         try {
             int safeRenderType = renderType == null ? RENDER_BASIC : renderType;
-            TeamViewModel model = new TeamViewModel(getKey(), getTeamNumber(), getNickname(), getLocation());
+            TeamViewModel model = new TeamViewModel(getKey(), getNumber(), getNickname(), getLocation());
             model.setShowLinkToTeamDetails(false);
             model.setShowMyTbaDetails(false);
             switch (safeRenderType) {

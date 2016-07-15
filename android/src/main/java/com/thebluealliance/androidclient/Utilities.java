@@ -268,10 +268,12 @@ public final class Utilities {
         return true;
     }
 
+    @Deprecated
     public static String readLocalProperty(Context c, String property) {
         return readLocalProperty(c, property, "");
     }
 
+    @Deprecated
     public static String readLocalProperty(Context c, String property, String defaultValue) {
         Properties properties;
         properties = new Properties();

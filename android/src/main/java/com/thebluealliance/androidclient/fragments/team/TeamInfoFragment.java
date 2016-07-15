@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.fragments.team;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
 import com.thebluealliance.androidclient.eventbus.LiveEventUpdateEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
@@ -37,6 +37,7 @@ public class TeamInfoFragment
 
     @Inject EventBus mEventBus;
     @Inject Lazy<EventRenderer> mEventRenderer;
+    @Inject AccountController mAccountController;
 
     public static TeamInfoFragment newInstance(String teamKey) {
         TeamInfoFragment fragment = new TeamInfoFragment();
@@ -60,7 +61,7 @@ public class TeamInfoFragment
         View view = inflater.inflate(R.layout.fragment_team_info, container, false);
 
         // Only show space for the FAB if the FAB is visible
-        boolean myTbaEnabled = AccountHelper.isMyTBAEnabled(getActivity());
+        boolean myTbaEnabled = mAccountController.isMyTbaEnabled();
         view.findViewById(R.id.fab_padding).setVisibility(myTbaEnabled ? View.VISIBLE : View.GONE);
 
         mBinder.setRootView(view);

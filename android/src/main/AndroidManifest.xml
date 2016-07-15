@@ -248,6 +248,12 @@
         <service
             android:name=".imgur.ImgurSuggestionService"
             android:exported="false" />
+        <service
+                android:name=".auth.firebase.MigrateLegacyUserToFirebase"
+                android:exported="false" />
+        <service
+                android:name=".mytba.MyTbaRegistrationService"
+                android:exported="false" />
     </application>
 
 </manifest>

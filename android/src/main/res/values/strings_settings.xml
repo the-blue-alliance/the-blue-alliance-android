@@ -10,7 +10,8 @@
     <string name="is_mytba_enabled">Enable myTBA</string>
 
     <!-- Debug Settings Screen -->
-    <string name="pref_header_debug">Debug Preferences</string>
+    <string name="pref_header_api">API</string>
+    <string name="pref_header_analytics">Analytics</string>
 
     <string name="pref_dry_run">Analytics Dry Run</string>
     <string name="pref_dry_run_detail">Skip sending analytics data</string>
@@ -21,10 +22,9 @@
     <string name="pref_tba_host">TBA Host</string>
     <string name="pref_tba_host_detail">Web address of another TBA instance that the app will use</string>
 
-    <string name="pref_test_upcoming_match_notification">Test upcoming match notification</string>
-    <string name="pref_test_score_notification">Test score notification</string>
-
-    <string name="pref_select_account">Select Account</string>
+    <string name="pref_gcm_register">Re-register for GCM</string>
+    <string name="pref_migrate_legacy_auth">Migrate legacy auth</string>
+    <string name="pref_update_mytba">Update myTBA Data</string>
     <string name="pref_redownload_data">Redownload data</string>
     <string name="pref_redownload_data_detail">Returns to Launch Activity for data download</string>
     <string name="pref_update_status">Update TBA API Status</string>
