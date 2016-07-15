@@ -6,9 +6,6 @@
 # Keys
 *.jks
 
-# Google Secrets
-android/src/debug/google-services.json
-
 # Local Properties
 android/src/main/assets/tba.properties
 
