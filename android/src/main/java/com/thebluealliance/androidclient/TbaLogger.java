@@ -5,7 +5,9 @@ package com.thebluealliance.androidclient;
  * (like integrate Firebase Crash Reporting logs)
  * This class should not keep any state
  */
-public class TbaLogger {
+public final class TbaLogger {
+
+    private TbaLogger() {}
 
     public static synchronized void d(String msg) {
         String callingClass = getCallerCallerClassName();
