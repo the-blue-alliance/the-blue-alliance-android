@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.database.tables;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
@@ -12,7 +11,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,10 +100,10 @@ public class EventsTable extends ModelTable<Event> {
             mDb.insert(Database.TABLE_SEARCH_EVENTS, null, cv);
 
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e("Can't insert event search item without the following fields:"
-                    + "Database.Events.KEY, Database.Events.YEAR");
+            TbaLogger.e("Can't insert event search item without the following fields:"
+                        + "Database.Events.KEY, Database.Events.YEAR");
         } catch (SQLiteException e) {
-            Log.w("Trying to add a SearchEvent that already exists. " + event.getKey());
+            TbaLogger.w("Trying to add a SearchEvent that already exists. " + event.getKey());
         }
     }
 
@@ -118,8 +117,8 @@ public class EventsTable extends ModelTable<Event> {
 
             mDb.update(Database.TABLE_SEARCH_EVENTS, cv, Database.SearchEvent.KEY + "=?", new String[]{event.getKey()});
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e("Can't insert event search item without the following fields:"
-                    + "Database.Events.KEY, Database.Events.YEAR");
+            TbaLogger.e("Can't insert event search item without the following fields:"
+                        + "Database.Events.KEY, Database.Events.YEAR");
         }
     }
 

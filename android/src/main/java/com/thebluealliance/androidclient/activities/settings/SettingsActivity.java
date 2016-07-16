@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.activities.settings;
 
 import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
@@ -19,7 +18,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.v7.app.AppCompatActivity;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -105,7 +104,7 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     boolean enabled = mAccountController.isMyTbaEnabled();
-                    Log.d("myTBA is: " + enabled);
+                    TbaLogger.d("myTBA is: " + enabled);
                     activity.startActivity(new Intent(getActivity(), MyTBAOnboardingActivity.class));
                     return true;
                 }

@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.Gson;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.database.Database;
@@ -20,7 +19,7 @@ import com.thebluealliance.androidclient.fragments.FirebaseTickerFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.VisibleForTesting;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -118,7 +117,7 @@ public class DatafeedModule {
           ? prefs.getString(APIv2.DEV_TBA_PREF_KEY, APIv2.TBA_URL)
           : APIv2.TBA_URL;
         baseUrl = baseUrl.isEmpty() ? APIv2.TBA_URL : baseUrl;
-        Log.d("Using TBA Host: " + baseUrl);
+        TbaLogger.d("Using TBA Host: " + baseUrl);
         return new Retrofit.Builder()
           .baseUrl(baseUrl)
           .client(okHttpClient)

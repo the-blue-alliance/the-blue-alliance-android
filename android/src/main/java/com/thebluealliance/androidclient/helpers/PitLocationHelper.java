@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.helpers;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.models.APIStatus;
 
@@ -8,7 +7,7 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.JsonReader;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -159,7 +158,7 @@ public final class PitLocationHelper {
                 reader.beginObject();
                 while(reader.hasNext()) {
                     String currentTeamKey = reader.nextName();
-                    Log.d("reading team: " + currentTeamKey);
+                    TbaLogger.d("reading team: " + currentTeamKey);
                     if (!currentTeamKey.equals(teamKey)) {
                         reader.skipValue();
                     } else {

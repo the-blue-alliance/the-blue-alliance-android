@@ -21,7 +21,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             throw new IllegalArgumentException("callbacks must not be null!");
         }
 
-        Log.d("Input: " + Arrays.deepToString(params));
+        TbaLogger.d("Input: " + Arrays.deepToString(params));
 
         Short[] dataToLoad;
         if (params == null) {
@@ -77,7 +77,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             dataToLoad = params;
         }
 
-        Log.d("Loading: " + Arrays.deepToString(dataToLoad));
+        TbaLogger.d("Loading: " + Arrays.deepToString(dataToLoad));
 
         /* We need to download and cache every team and event into the database. To avoid
          * unexpected behavior caused by changes in network connectivity, we will load all
@@ -145,8 +145,8 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                         return null;
                     }
                     allEvents.addAll(eventListResponse.body());
-                    Log.i(String.format("Loaded %1$d events in %2$d",
-                            eventListResponse.body().size(), year));
+                    TbaLogger.i(String.format("Loaded %1$d events in %2$d",
+                                              eventListResponse.body().size(), year));
                 }
             }
 
@@ -173,8 +173,8 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     List<District> newDistrictList = districtListResponse.body();
                     keyAdder.call(newDistrictList);
                     allDistricts.addAll(newDistrictList);
-                    Log.i(String.format("Loaded %1$d districts in %2$d",
-                            newDistrictList.size(), year));
+                    TbaLogger.i(String.format("Loaded %1$d districts in %2$d",
+                                              newDistrictList.size(), year));
                 }
             }
 
@@ -185,11 +185,11 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             // insert it into the database.
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, context.getString(R.string.loading_almost_finished)));
 
-            Log.i("Writing " + allTeams.size() + " teams");
+            TbaLogger.i("Writing " + allTeams.size() + " teams");
             Schedulers.io().createWorker().schedule(() -> mTeamWriter.write(allTeams));
-            Log.i("Writing " + allEvents.size() + " events");
+            TbaLogger.i("Writing " + allEvents.size() + " events");
             Schedulers.io().createWorker().schedule(() -> mEventWriter.write(allEvents));
-            Log.i("Writing " + allDistricts.size() + " districts");
+            TbaLogger.i("Writing " + allDistricts.size() + " districts");
             Schedulers.io().createWorker().schedule(() -> mDistrictWriter.write(allDistricts));
 
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();

@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
@@ -42,7 +41,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListAdapter;
@@ -428,7 +427,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         if (requestCode == CHOOSE_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 Uri uri = data.getData();
-                Log.i("Uri: " + uri.toString());
+                TbaLogger.i("Uri: " + uri.toString());
                 // Pass off the URI to ConfirmImageSuggestionActivity, it will handle uploading
                 // and suggesting the appropriate image
                 startActivity(ConfirmImageSuggestionActivity.newIntent(this, uri, mTeamKey, mYear));

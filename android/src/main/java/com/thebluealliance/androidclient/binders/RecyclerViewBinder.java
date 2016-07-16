@@ -1,11 +1,10 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -80,7 +79,7 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
 
     @Override
     public void onError(Throwable throwable) {
-        Log.e(Log.getStackTraceString(throwable));
+        TbaLogger.e(TbaLogger.getStackTraceString(throwable));
 
         // If we received valid data from the cache but get an error from the network operations,
         // don't display the "No data" message.

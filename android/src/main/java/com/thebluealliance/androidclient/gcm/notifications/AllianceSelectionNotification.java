@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.gcm.notifications;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
@@ -66,7 +66,8 @@ public class AllianceSelectionNotification extends BaseNotification<AllianceSele
         try {
             eventName = event.getShortName();
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e("Event data passed in this notification does not contain an event short name. Can't post notification");
+            TbaLogger
+                    .e("Event data passed in this notification does not contain an event short name. Can't post notification");
             e.printStackTrace();
             return null;
         }

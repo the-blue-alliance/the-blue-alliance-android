@@ -6,7 +6,6 @@ import com.google.gson.JsonPrimitive;
 import com.appspot.tbatv_prod_hrd.TeamMedia;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesMediaSuggestionMessage;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.gce.GceAuthController;
@@ -20,7 +19,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.io.File;
 
@@ -117,7 +116,7 @@ public class ImgurSuggestionService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d("IMGUR SERVICE START");
+        TbaLogger.d("IMGUR SERVICE START");
         String filepath = intent.getStringExtra(EXTRA_FILEPATH);
         String title = intent.getStringExtra(EXTRA_TITLE);
         String description = intent.getStringExtra(EXTRA_DESCRIPTION);
@@ -147,12 +146,12 @@ public class ImgurSuggestionService extends IntentService {
 
             if (response != null && response.isSuccessful()) {
                 UploadResponse uploadResponse = response.body();
-                Log.d("Uploaded imgur image: " + uploadResponse.data.link);
+                TbaLogger.d("Uploaded imgur image: " + uploadResponse.data.link);
 
                 String link = uploadResponse.data.link;
                 String deletehash = uploadResponse.data.deletehash;
 
-                Log.d("Imgur link: " + link);
+                TbaLogger.d("Imgur link: " + link);
 
                 // Do suggestion
                 String authHeader = mGceAuthController.getAuthHeader();
@@ -170,8 +169,8 @@ public class ImgurSuggestionService extends IntentService {
                     successful = false;
                 }
             } else {
-                Log.e("Error uploading imgur image\n"
-                        + response.code() + " " + response.message());
+                TbaLogger.e("Error uploading imgur image\n"
+                            + response.code() + " " + response.message());
                 successful = false;
             }
         } catch (Exception e) {

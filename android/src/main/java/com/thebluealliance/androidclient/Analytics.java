@@ -30,12 +30,12 @@ public final class Analytics {
                     dryRun = false;
                 }
                 analytics.setDryRun(dryRun);
-                Log.d("Setting analytics dry run? " + dryRun);
+                TbaLogger.d("Setting analytics dry run? " + dryRun);
             }
 
             String id = Utilities.readLocalProperty(c, PROD_ANALYTICS_KEY);
             Tracker t;
-            Log.d("Loaded analytics id: " + id);
+            TbaLogger.d("Loaded analytics id: " + id);
             t = analytics.newTracker(id);
             t.setAppId(BuildConfig.VERSION_NAME);
             t.setAppName(c.getString(R.string.app_name));
@@ -54,7 +54,7 @@ public final class Analytics {
         if (analytics == null) {
             analytics = GoogleAnalytics.getInstance(c);
             analytics.setDryRun(dryRun);
-            Log.d("Setting analytics dry run? " + dryRun);
+            TbaLogger.d("Setting analytics dry run? " + dryRun);
         }
     }
 

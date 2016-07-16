@@ -1,13 +1,12 @@
 package com.thebluealliance.androidclient.listeners;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 
 import android.content.Context;
 import android.content.Intent;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 
 public class MatchClickListener implements View.OnClickListener {
@@ -21,7 +20,7 @@ public class MatchClickListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         String matchKey = v.findViewById(R.id.match_title).getTag().toString();
-        Log.d("Match key clicked: " + matchKey);
+        TbaLogger.d("Match key clicked: " + matchKey);
         Intent intent = ViewMatchActivity.newInstance(context, matchKey);
         AnalyticsHelper.sendClickUpdate(context, "match_click", matchKey, "");
         context.startActivity(intent);

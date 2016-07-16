@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.gcm;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonParseException;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.accounts.AccountController;
@@ -49,7 +48,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import javax.inject.Inject;
 
@@ -120,15 +119,15 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
 
         String messageType = gcm.getMessageType(intent);
-        Log.d("GCM Message type: " + messageType);
-        Log.d("Intent extras: " + extras.toString());
+        TbaLogger.d("GCM Message type: " + messageType);
+        TbaLogger.d("Intent extras: " + extras.toString());
 
         // We got a standard message. Parse it and handle it.
         String type = extras.getString("message_type", "");
         String data = extras.getString("message_data", "");
         handleMessage(getApplicationContext(), type, data);
 
-        Log.i("Received : (" + type + ")  " + data);
+        TbaLogger.i("Received : (" + type + ")  " + data);
 
         GCMBroadcastReceiver.completeWakefulIntent(intent);
     }
@@ -176,7 +175,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                     notification = new EventDownNotification(messageData);
                     /* Don't break, we also want to schedule a status update here */
                 case NotificationTypes.SYNC_STATUS:
-                    Log.i("Updating TBA API Status via push notification");
+                    TbaLogger.i("Updating TBA API Status via push notification");
                     mStatusController.scheduleStatusUpdate(c);
                     break;
             }
@@ -185,7 +184,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             try {
                 notification.parseMessageData();
             } catch (JsonParseException e) {
-                Log.e("Error parsing incoming message json");
+                TbaLogger.e("Error parsing incoming message json");
                 e.printStackTrace();
                 return;
             }

@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -8,7 +7,7 @@ import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Team;
 
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,7 @@ public class DistrictRankingsSubscriber
             if (teamData != null) {
                 nickname = teamData.getNickname();
             } else {
-                Log.w("Couldn't find " + districtTeam.getTeamKey() + " in db");
+                TbaLogger.w("Couldn't find " + districtTeam.getTeamKey() + " in db");
                 nickname = "Team " + districtTeam.getTeamKey().substring(3);
             }
             mDataToBind.add(

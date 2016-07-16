@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.database;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
@@ -25,7 +24,7 @@ import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
 import android.database.Cursor;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.Date;
 
@@ -394,7 +393,7 @@ public final class ModelInflater {
                     subscription.setModelEnum(data.getInt(i));
                     break;
                 case SubscriptionsTable.NOTIFICATION_SETTINGS:
-                    Log.d("Settings: " + data.getString(i));
+                    TbaLogger.d("Settings: " + data.getString(i));
                     subscription.setNotificationSettings(data.getString(i));
                     break;
                 default:

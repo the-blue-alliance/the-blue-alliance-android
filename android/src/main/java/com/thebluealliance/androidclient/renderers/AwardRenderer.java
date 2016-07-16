@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.renderers;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
@@ -12,7 +11,7 @@ import com.thebluealliance.androidclient.types.ModelType;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -58,7 +57,7 @@ public class AwardRenderer implements ModelRenderer<Award, AwardRenderer.RenderA
                     return new AwardListElement(mDatafeed, award.getName(), award.getWinners());
             }
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e("Unable to render award: " + award.getKey());
+            TbaLogger.e("Unable to render award: " + award.getKey());
             e.printStackTrace();
         }
         return null;

@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient;
 
 import android.content.Context;
-import com.thebluealliance.androidclient.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +44,7 @@ public class LocalProperties {
             mProperties.load(fileStream);
             fileStream.close();
         } catch (IOException e) {
-            Log.e("Unable to load property file");
+            TbaLogger.e("Unable to load property file");
             e.printStackTrace();
         }
     }

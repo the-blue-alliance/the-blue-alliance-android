@@ -1,12 +1,11 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
 import android.support.annotation.Nullable;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -44,7 +43,7 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
             return;
         }
         long startTime = System.currentTimeMillis();
-        Log.d("BINDING DATA");
+        TbaLogger.d("BINDING DATA");
         if (mAdapter == null) {
             mAdapter = newAdapter(data);
             listView.setAdapter(mAdapter);
@@ -59,7 +58,7 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
         listView.setVisibility(View.VISIBLE);
         mNoDataBinder.unbindData();
-        Log.d("BINDING COMPLETE; ELAPSED TIME: " + (System.currentTimeMillis() - startTime) + "ms");
+        TbaLogger.d("BINDING COMPLETE; ELAPSED TIME: " + (System.currentTimeMillis() - startTime) + "ms");
         setDataBound(true);
     }
 
@@ -86,7 +85,7 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
     @Override
     public void onError(Throwable throwable) {
-        Log.e(Log.getStackTraceString(throwable));
+        TbaLogger.e(TbaLogger.getStackTraceString(throwable));
 
         // If we received valid data from the cache but get an error from the network operations,
         // don't display the "No data" message.

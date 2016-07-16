@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -25,7 +24,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -159,10 +158,10 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     element = new TeamListElement(team);
                     listItems.add(element);
                 } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.e("Can't add team search result item. Missing fields... "
-                          + Arrays.toString(e.getStackTrace()));
+                    TbaLogger.e("Can't add team search result item. Missing fields... "
+                                + Arrays.toString(e.getStackTrace()));
                 }
-                Log.d("titles: " + teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.TITLES)));
+                TbaLogger.d("titles: " + teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.TITLES)));
             }
             teamQueryResults.close();
         } else {
@@ -206,8 +205,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     element = new EventListElement(event);
                     listItems.add(element);
                 } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.e("Can't add event search result with missing fields...\n"
-                            + Arrays.toString(e.getStackTrace()));
+                    TbaLogger.e("Can't add event search result with missing fields...\n"
+                                + Arrays.toString(e.getStackTrace()));
                 }
             }
             eventQueryResults.close();

@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.renderers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
@@ -16,7 +15,7 @@ import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,8 +57,8 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
               safeMyTba);
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
-            Log.w("Missing fields for rendering event\n"
-              + "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
+            TbaLogger.w("Missing fields for rendering event\n"
+                        + "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
             return null;
         }
     }
@@ -74,11 +73,11 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
                     webcasts.add(new WebcastListElement(event.getKey(), event.getShortName(), webcast.getAsJsonObject(), i));
                     i++;
                 } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.w("Missing fields for rendering event webcasts: KEY, SHORTNAME");
+                    TbaLogger.w("Missing fields for rendering event webcasts: KEY, SHORTNAME");
                 }
             }
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w("Missing fields to get event webcasts");
+            TbaLogger.w("Missing fields to get event webcasts");
         }
         return webcasts;
     }
@@ -104,10 +103,10 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
                 counter++;
             }
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w("Missing fields for rendering alliances.\n"
-              + "Required field: Database.Events.ALLIANCES");
+            TbaLogger.w("Missing fields for rendering alliances.\n"
+                        + "Required field: Database.Events.ALLIANCES");
         } catch (IllegalArgumentException e) {
-            Log.w("Invalid alliance size. Can't render");
+            TbaLogger.w("Invalid alliance size. Can't render");
         }
     }
 

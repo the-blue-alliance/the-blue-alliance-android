@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import com.firebase.client.Firebase;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.ViewUtilities;
@@ -132,7 +132,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this, throwable -> {
-                    Log.e("Firebase error: " + throwable);
+                    TbaLogger.e("Firebase error: " + throwable);
                     throwable.printStackTrace();
                     // Show the "none found" warning
                     mProgressBar.setVisibility(View.GONE);
@@ -161,7 +161,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                         }
                         updateViewVisibility();
                     }, throwable -> {
-                        Log.e("Firebase rest error: " + throwable);
+                        TbaLogger.e("Firebase rest error: " + throwable);
                         throwable.printStackTrace();
 
                         // net error getting item count, show no data view
@@ -197,7 +197,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         if (mNotificationsAdapter != null) {
             mNotificationsRecyclerView.setAdapter(mNotificationsAdapter);
             mLayoutManager.onRestoreInstanceState(mListState);
-            Log.d("onCreateView: using existing adapter");
+            TbaLogger.d("onCreateView: using existing adapter");
         } else {
             mNotificationsAdapter = new AnimatedRecyclerMultiAdapter(createAdapterMapper(), new ArrayList<>());
             mNotificationsRecyclerView.setAdapter(mNotificationsAdapter);
@@ -266,7 +266,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     public void onPause() {
         super.onPause();
         if (mNotificationsRecyclerView != null) {
-            Log.d("onPause: saving adapter");
+            TbaLogger.d("onPause: saving adapter");
             mNotificationsAdapter = (AnimatedRecyclerMultiAdapter) mNotificationsRecyclerView.getAdapter();
             mListState = mLayoutManager.onSaveInstanceState();
         }
@@ -468,7 +468,7 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
 
                     updateViewVisibility();
                 }, throwable -> {
-                    Log.e("Firebase error");
+                    TbaLogger.e("Firebase error");
                     throwable.printStackTrace();
                     // Show the "none found" warning
                     mAreFilteredNotificationsVisible = false;

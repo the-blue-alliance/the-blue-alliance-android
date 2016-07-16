@@ -1,12 +1,11 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.views.NoDataView;
 
 import android.app.Activity;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 
 /**
@@ -62,7 +61,7 @@ public abstract class AbstractDataBinder<T> implements DataConsumer<T> {
     }
 
     public void unbind(boolean unbindViews) {
-        Log.d("UNBINDING");
+        TbaLogger.d("UNBINDING");
         setDataBound(false);
         /* Child classes can unbind their own views. */
         /** Don't show NoDataBinder because we'll call this from {@link Fragment#onDestroyView()} */

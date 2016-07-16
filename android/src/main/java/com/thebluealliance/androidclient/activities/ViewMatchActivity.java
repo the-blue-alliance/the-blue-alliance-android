@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
@@ -29,7 +28,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -107,7 +106,7 @@ public class ViewMatchActivity extends MyTBASettingsActivity
             throw new IllegalArgumentException("ViewMatchActivity must be created with a match key!");
         }
         setModelKey(mMatchKey, ModelType.MATCH);
-        Log.i("New ViewMatch intent with key: " + mMatchKey);
+        TbaLogger.i("New ViewMatch intent with key: " + mMatchKey);
         setupActionBar();
 
         currentTab = getIntent().getIntExtra(TAB, ViewMatchFragmentPagerAdapter.TAB_RESULT);
@@ -158,11 +157,11 @@ public class ViewMatchActivity extends MyTBASettingsActivity
 
                 Intent upIntent = ViewEventActivity.newInstance(this, eventKey);
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                    Log.d("Navigating to new back stack with key " + eventKey);
+                    TbaLogger.d("Navigating to new back stack with key " + eventKey);
                     TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_events))
                             .addNextIntent(ViewEventActivity.newInstance(this, eventKey)).startActivities();
                 } else {
-                    Log.d("Navigating up...");
+                    TbaLogger.d("Navigating up...");
                     upIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(upIntent);
                     finish();

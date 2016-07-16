@@ -28,7 +28,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
@@ -169,12 +169,12 @@ public class OnboardingActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 mAuthProvider.userFromSignInResult(requestCode, resultCode, data)
                         .subscribe(user -> {
-                            Log.d("User logged in: " + user.getEmail());
+                            TbaLogger.d("User logged in: " + user.getEmail());
                             mMyTBAOnboardingViewPager.setUpForLoginSuccess();
                             isMyTBALoginComplete = true;
                             mAccountController.onAccountConnect(OnboardingActivity.this, user);
                         }, throwable -> {
-                            Log.e("Error logging in");
+                            TbaLogger.e("Error logging in");
                             throwable.printStackTrace();
                             mAccountController.setMyTbaEnabled(false);
                         });
@@ -291,7 +291,7 @@ public class OnboardingActivity extends AppCompatActivity
             alertDialog.show();
         } catch (WindowManager.BadTokenException e) {
             // Activity is already gone. Just log the exception
-            Log.e("Error loading data: " + stacktrace);
+            TbaLogger.e("Error loading data: " + stacktrace);
             e.printStackTrace();
         }
     }

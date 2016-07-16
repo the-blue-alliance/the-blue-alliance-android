@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.datafeed.status;
 
 import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
@@ -16,7 +15,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.WorkerThread;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -49,7 +48,7 @@ public class StatusRefreshService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d("Updating TBA Status");
+        TbaLogger.d("Updating TBA Status");
         Schedulers.io().createWorker().schedule(this::updateTbaStatus);
     }
 
@@ -59,13 +58,13 @@ public class StatusRefreshService extends IntentService {
         try {
             response = mRetrofitAPI.status().toBlocking().first();
         } catch (Exception ex) {
-            Log.w("Error updating TBA status");
+            TbaLogger.w("Error updating TBA status");
             ex.printStackTrace();
             return;
         }
         if (!response.isSuccessful()) {
-            Log.w("Unable to update myTBA Status\n"
-                    + response.code() + " " + response.message());
+            TbaLogger.w("Unable to update myTBA Status\n"
+                        + response.code() + " " + response.message());
             return;
         }
         APIStatus status = response.body();

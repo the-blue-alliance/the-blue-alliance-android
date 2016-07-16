@@ -25,7 +25,6 @@ import android.text.SpannableStringBuilder;
 import android.text.format.DateFormat;
 import android.text.style.StyleSpan;
 import android.util.ArrayMap;
-import com.thebluealliance.androidclient.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
@@ -85,7 +84,7 @@ public final class Utilities {
                     : Constants.FIRST_COMP_WEEK[offset];
         } else {
             //if no data for this year, return the most recent data
-            Log.w("No first competition week data available for " + year + ". Using most recent year.");
+            TbaLogger.w("No first competition week data available for " + year + ". Using most recent year.");
             return Constants.FIRST_COMP_WEEK[Constants.FIRST_COMP_WEEK.length - 1];
         }
     }
@@ -96,7 +95,7 @@ public final class Utilities {
             return Constants.CMP_WEEK[offset];
         } else {
             //if no data for this year, return the most recent data
-            Log.w("No first championship week data available for " + year + ". Using most recent year.");
+            TbaLogger.w("No first championship week data available for " + year + ". Using most recent year.");
             return Constants.CMP_WEEK[Constants.CMP_WEEK.length - 1];
         }
     }
@@ -134,7 +133,7 @@ public final class Utilities {
 
 
     public static Intent getIntentForTBAUrl(Context c, Uri data) {
-        Log.d("Uri: " + data.toString());
+        TbaLogger.d("Uri: " + data.toString());
         List<String> urlParts = data.getPathSegments();
 
         // Check if this is actually a TBA URL
@@ -278,7 +277,7 @@ public final class Utilities {
         Properties properties;
         properties = new Properties();
         if (c == null) {
-            Log.w("Null context. Can't read local properties");
+            TbaLogger.w("Null context. Can't read local properties");
             return defaultValue;
         }
         try {
@@ -290,7 +289,7 @@ public final class Utilities {
             }
             return properties.getProperty(property, defaultValue);
         } catch (IOException e) {
-            Log.e("Unable to read from tba.properties");
+            TbaLogger.e("Unable to read from tba.properties");
             e.printStackTrace();
         }
         return defaultValue;
@@ -402,7 +401,7 @@ public final class Utilities {
 
             hash = bytesToHexString(digest.digest());
         } catch (NoSuchAlgorithmException e) {
-            Log.e("Can't find SHA-256 algorithm.");
+            TbaLogger.e("Can't find SHA-256 algorithm.");
             e.printStackTrace();
         }
         return hash;

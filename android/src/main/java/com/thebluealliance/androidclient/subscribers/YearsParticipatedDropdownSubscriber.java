@@ -2,10 +2,9 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.JsonArray;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.interfaces.YearsParticipatedUpdate;
 
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.Arrays;
 
@@ -30,7 +29,7 @@ public class YearsParticipatedDropdownSubscriber extends Subscriber<JsonArray> {
 
     @Override
     public void onError(Throwable e) {
-        Log.e("Error fetching team years");
+        TbaLogger.e("Error fetching team years");
         e.printStackTrace();
     }
 

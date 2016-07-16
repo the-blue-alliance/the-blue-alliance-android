@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
@@ -28,7 +27,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.MenuItem;
 
 public class ViewEventActivity extends MyTBASettingsActivity
@@ -116,7 +115,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d("onNewIntent called");
+        TbaLogger.d("onNewIntent called");
         setIntent(intent);
         String newEventKey;
 
@@ -150,7 +149,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
             pager.setCurrentItem(mSelectedTab);
         };
 
-        Log.d("Got new ViewEvent intent with key: " + mEventKey);
+        TbaLogger.d("Got new ViewEvent intent with key: " + mEventKey);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.receivers;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 
@@ -8,7 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 /**
  * Android is predictably stupid when it comes to handling notifications. Specifically, clicking
@@ -45,7 +44,7 @@ public class NotificationChangedReceiver extends BroadcastReceiver {
         }
 
         // Mark all notifications as not active
-        Log.d("Notification Dismiss!");
+        TbaLogger.d("Notification Dismiss!");
         NotificationsTable table = Database.getInstance(context).getNotificationsTable();
         table.dismissAll();
     }

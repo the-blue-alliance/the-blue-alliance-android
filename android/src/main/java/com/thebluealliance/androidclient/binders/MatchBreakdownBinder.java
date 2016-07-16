@@ -2,13 +2,12 @@ package com.thebluealliance.androidclient.binders;
 
 import com.google.gson.JsonObject;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2016;
 
 import android.support.annotation.Nullable;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -36,7 +35,7 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
             return;
         }
         long startTime = System.currentTimeMillis();
-        Log.d("BINDING DATA");
+        TbaLogger.d("BINDING DATA");
         boolean success = breakdown.initWithData(mMatchType, data.allianceData, data.scoreData);
 
         if (!success) {
@@ -50,7 +49,7 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
 
         breakdown.setVisibility(View.VISIBLE);
         mNoDataBinder.unbindData();
-        Log.d("BINDING COMPLETE; ELAPSED TIME: " + (System.currentTimeMillis() - startTime) + "ms");
+        TbaLogger.d("BINDING COMPLETE; ELAPSED TIME: " + (System.currentTimeMillis() - startTime) + "ms");
         setDataBound(true);
     }
 
@@ -72,7 +71,7 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
 
     @Override
     public void onError(Throwable throwable) {
-        Log.e(Log.getStackTraceString(throwable));
+        TbaLogger.e(TbaLogger.getStackTraceString(throwable));
 
         // If we received valid data from the cache but get an error from the network operations,
         // don't display the "No data" message.

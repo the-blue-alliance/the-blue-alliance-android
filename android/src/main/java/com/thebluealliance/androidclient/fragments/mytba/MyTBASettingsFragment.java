@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.fragments.mytba;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.accounts.AccountController;
@@ -19,7 +18,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
-import com.thebluealliance.androidclient.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 import android.widget.ListView;
 
@@ -112,7 +111,7 @@ public class MyTBASettingsFragment extends PreferenceFragment {
 
         // Don't pass the favorite preference to the updater.
         subscribed.remove(MyTBAHelper.getFavoritePreferenceKey());
-        Log.d("notifications: " + subscribed);
+        TbaLogger.d("notifications: " + subscribed);
 
         ModelNotificationFavoriteSettings settings = new ModelNotificationFavoriteSettings();
         Preference fav = findPreference(MyTBAHelper.getFavoritePreferenceKey());
