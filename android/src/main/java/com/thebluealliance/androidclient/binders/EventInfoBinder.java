@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.binders;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
@@ -27,7 +26,7 @@ import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.text.Html;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -216,7 +215,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
     @Override
     public void onError(Throwable throwable) {
-        Log.e(Constants.LOG_TAG, Log.getStackTraceString(throwable));
+        TbaLogger.e(TbaLogger.getStackTraceString(throwable));
 
         // If we received valid data from the cache but get an error from the network operations,
         // don't display the "No data" message.
@@ -296,17 +295,17 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     public void onLiveEventMatchesUpdated(LiveEventMatchUpdateEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
             if (mIsLive && event != null && event.getLastMatch() != null) {
-                Log.d(Constants.LOG_TAG, "showing last match");
+                TbaLogger.d("showing last match");
                 showLastMatch(mMatchRenderer.renderFromModel(event.getLastMatch(), RENDER_DEFAULT));
             } else {
-                Log.d(Constants.LOG_TAG, "hiding last match");
+                TbaLogger.d("hiding last match");
                 hideLastMatch();
             }
             if (mIsLive && event != null && event.getNextMatch() != null) {
-                Log.d(Constants.LOG_TAG, "showing next match");
+                TbaLogger.d("showing next match");
                 showNextMatch(mMatchRenderer.renderFromModel(event.getNextMatch(), RENDER_DEFAULT));
             } else {
-                Log.d(Constants.LOG_TAG, "hiding next match");
+                TbaLogger.d("hiding next match");
                 hideNextMatch();
             }
         });

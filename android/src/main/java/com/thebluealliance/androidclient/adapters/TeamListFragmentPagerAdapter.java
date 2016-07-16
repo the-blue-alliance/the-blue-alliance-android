@@ -1,12 +1,11 @@
 package com.thebluealliance.androidclient.adapters;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.fragments.TeamListFragment;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 public class TeamListFragmentPagerAdapter extends FragmentPagerAdapter {
 
@@ -17,8 +16,8 @@ public class TeamListFragmentPagerAdapter extends FragmentPagerAdapter {
     public TeamListFragmentPagerAdapter(FragmentManager fm, int largestTeamNumber) {
         super(fm);
         mCount = (largestTeamNumber / TEAMS_PER_TAB) + 1;
-        Log.d(Constants.LOG_TAG, "LARGEST TEAM: " + largestTeamNumber);
-        Log.d(Constants.LOG_TAG, "USING " + mCount + " PAGES");
+        TbaLogger.d("LARGEST TEAM: " + largestTeamNumber);
+        TbaLogger.d("USING " + mCount + " PAGES");
     }
 
     @Override

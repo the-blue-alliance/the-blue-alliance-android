@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.renderers;
 
 import com.google.gson.JsonObject;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -11,7 +10,7 @@ import com.thebluealliance.androidclient.types.MediaType;
 import com.thebluealliance.androidclient.types.ModelType;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,8 +69,8 @@ public class MediaRenderer implements ModelRenderer<Media, Void> {
             String linkUrl = String.format(mediaType.getLinkUrlPattern(), keyForUrl);
             return new ImageListElement(imageUrl, linkUrl, isVideo);
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields not defined for rendering. \n"
-              + "Fields Required: Database.Medias.TYPE, Database.Medias.DETAILS, Database.Medias.FOREIGNKEY");
+            TbaLogger.w("Required fields not defined for rendering. \n"
+                        + "Fields Required: Database.Medias.TYPE, Database.Medias.DETAILS, Database.Medias.FOREIGNKEY");
             return null;
         }
     }

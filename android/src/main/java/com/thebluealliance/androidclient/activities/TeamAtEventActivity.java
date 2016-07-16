@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
@@ -32,7 +31,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -139,7 +138,7 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
                     TaskStackBuilder.create(this).addNextIntent(HomeActivity.newInstance(this, R.id.nav_item_teams))
                             .addNextIntent(ViewEventActivity.newInstance(this, mEventKey)).startActivities();
                 } else {
-                    Log.d(Constants.LOG_TAG, "Navigating up...");
+                    TbaLogger.d("Navigating up...");
                     NavUtils.navigateUpTo(this, upIntent);
                 }
                 return true;

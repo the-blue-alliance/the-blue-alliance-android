@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.fragments;
 
 import com.google.common.base.Preconditions;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
@@ -18,7 +17,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +63,7 @@ public class EventsByWeekFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(Constants.LOG_TAG, "EventsByWeekFragment created!");
+        TbaLogger.d("EventsByWeekFragment created!");
         mYear = mStatusController.getMaxCompYear();
         mSelectedTab = -1;
         if (getArguments() != null) {

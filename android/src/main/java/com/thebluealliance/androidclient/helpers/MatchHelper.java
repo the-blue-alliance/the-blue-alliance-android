@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.helpers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
@@ -13,7 +12,7 @@ import com.thebluealliance.androidclient.types.MatchType;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -175,7 +174,7 @@ public final class MatchHelper {
                     break;
                 }
             } catch (BasicModel.FieldNotDefinedException e) {
-                Log.w(Constants.LOG_TAG, "Match doesn't have alliances defined. Can't determine alliance");
+                TbaLogger.w("Match doesn't have alliances defined. Can't determine alliance");
             }
         }
         return alliance;
@@ -299,10 +298,10 @@ public final class MatchHelper {
             currentGroup.add(match);
         }
 
-        Log.d(Constants.LOG_TAG, "qual size: " + qualMatches.size());
-        Log.d(Constants.LOG_TAG, "quarter size: " + quarterMatches.size());
-        Log.d(Constants.LOG_TAG, "semi size: " + semiMatches.size());
-        Log.d(Constants.LOG_TAG, "final size: " + finalMatches.size());
+        TbaLogger.d("qual size: " + qualMatches.size());
+        TbaLogger.d("quarter size: " + quarterMatches.size());
+        TbaLogger.d("semi size: " + semiMatches.size());
+        TbaLogger.d("final size: " + finalMatches.size());
 
         if (e.isHappeningNow() && quarterMatches.size() == 0) {
             return EventStatus.PLAYING_IN_QUALS;
@@ -312,14 +311,14 @@ public final class MatchHelper {
         boolean allQualMatchesPlayed = true;
         for (Match match : qualMatches) {
             if (!match.hasBeenPlayed()) {
-                Log.d(Constants.LOG_TAG, "Match " + match.getKey() + " not played!");
+                TbaLogger.d("Match " + match.getKey() + " not played!");
                 allQualMatchesPlayed = false;
                 break;
             }
         }
 
-        Log.d(Constants.LOG_TAG, "In alliance: " + inAlliance);
-        Log.d(Constants.LOG_TAG, "All qual matches played: " + allQualMatchesPlayed);
+        TbaLogger.d("In alliance: " + inAlliance);
+        TbaLogger.d("All qual matches played: " + allQualMatchesPlayed);
         if (qualMatches.isEmpty()
                 || (allQualMatchesPlayed && !teamIsHere)
                 || (!(elimMatchPlayed || allQualMatchesPlayed) && !e.isHappeningNow())) {

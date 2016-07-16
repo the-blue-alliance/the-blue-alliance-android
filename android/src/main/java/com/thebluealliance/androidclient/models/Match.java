@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
@@ -16,7 +15,7 @@ import com.thebluealliance.androidclient.types.ModelType;
 
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -267,8 +266,8 @@ public class Match extends BasicModel<Match> {
                         + setNumber + " - " + matchNumber;
             }
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields for title not present\n"
-                    + "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
+            TbaLogger.w("Required fields for title not present\n"
+                        + "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
             return null;
         }
     }
@@ -283,8 +282,8 @@ public class Match extends BasicModel<Match> {
                     setNumber = getSetNumber();
             return type.getPlayOrder() * 1000000 + setNumber * 1000 + matchNumber;
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields for display order not present\n"
-                    + "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
+            TbaLogger.w("Required fields for display order not present\n"
+                        + "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
             return 1000000;
         }
     }
@@ -295,8 +294,8 @@ public class Match extends BasicModel<Match> {
                     setNumber = getSetNumber();
             return type.getPlayOrder() * 1000000 + matchNumber * 1000 + setNumber;
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields for display order not present\n"
-                  + "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
+            TbaLogger.w("Required fields for display order not present\n"
+                        + "Required: Database.Matches.MATCHNUM, Database.Matches.SETNUM");
             return null;
         }
     }
@@ -327,8 +326,8 @@ public class Match extends BasicModel<Match> {
                 return false;
             }
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields not present\n"
-                    + "Required: Database.Matches.ALLIANCES");
+            TbaLogger.w("Required fields not present\n"
+                        + "Required: Database.Matches.ALLIANCES");
             return false;
         }
     }
@@ -364,8 +363,8 @@ public class Match extends BasicModel<Match> {
                 }
             }
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields not present\n"
-                    + "Required: Database.Matches.ALLIANCES");
+            TbaLogger.w("Required fields not present\n"
+                        + "Required: Database.Matches.ALLIANCES");
         }
     }
 
@@ -381,8 +380,8 @@ public class Match extends BasicModel<Match> {
 
             return redScore >= 0 && blueScore >= 0;
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required fields for title not present\n"
-                  + "Required: Database.Matches.ALLIANCES");
+            TbaLogger.w("Required fields for title not present\n"
+                        + "Required: Database.Matches.ALLIANCES");
             return false;
         }
     }

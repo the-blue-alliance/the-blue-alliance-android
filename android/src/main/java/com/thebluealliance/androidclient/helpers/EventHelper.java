@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.helpers;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
@@ -15,7 +14,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -230,12 +229,12 @@ public final class EventHelper {
 
                 if (event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
-                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getKey());
+                    TbaLogger.d("Sending live event broadcast: " + event.getKey());
                     EventBus.getDefault().post(new LiveEventUpdateEvent(event));
                 }
 
             } catch (BasicModel.FieldNotDefinedException e) {
-                Log.w(Constants.LOG_TAG, "Missing fields for rendering event lists");
+                TbaLogger.w("Missing fields for rendering event lists");
             }
             lastType = currentType;
             lastDistrict = currentDistrict;
@@ -258,11 +257,11 @@ public final class EventHelper {
 
                 if (event.isHappeningNow()) {
                     //send out that there are live matches happening for other things to pick up
-                    Log.d(Constants.LOG_TAG, "Sending live event broadcast: " + event.getKey());
+                    TbaLogger.d("Sending live event broadcast: " + event.getKey());
                     EventBus.getDefault().post(new LiveEventUpdateEvent(event));
                 }
             } catch (BasicModel.FieldNotDefinedException e) {
-                Log.w(Constants.LOG_TAG, "Missing fields for rendering event lists");
+                TbaLogger.w("Missing fields for rendering event lists");
             }
             lastHeader = currentHeader;
         }

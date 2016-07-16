@@ -33,7 +33,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -114,7 +114,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
         if (savedInstanceState != null) {
             mFromSavedInstance = true;
-            Log.d(Constants.LOG_TAG, "StartActivity is from saved instance");
+            TbaLogger.d("StartActivity is from saved instance");
 
             if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION)) {
                 mCurrentSelectedYearPosition = savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION);

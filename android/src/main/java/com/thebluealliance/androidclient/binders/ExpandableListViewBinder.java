@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListGroup;
@@ -8,7 +7,7 @@ import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.views.ExpandableListView;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -59,7 +58,7 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
             return;
         }
         if (data.isEmpty()) {
-            Log.d(Constants.LOG_TAG, "DATA IS EMPTY");
+            TbaLogger.d("DATA IS EMPTY");
             if (!isDataBound()) {
                 setDataBound(false);
             }
@@ -103,7 +102,7 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
 
     @Override
     public void onError(Throwable throwable) {
-        Log.e(Constants.LOG_TAG, Log.getStackTraceString(throwable));
+        TbaLogger.e(TbaLogger.getStackTraceString(throwable));
 
         // If we received valid data from the cache but get an error from the network operations,
         // don't display the "No data" message.

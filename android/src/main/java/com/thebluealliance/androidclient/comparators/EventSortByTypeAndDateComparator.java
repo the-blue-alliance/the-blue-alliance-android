@@ -1,11 +1,10 @@
 package com.thebluealliance.androidclient.comparators;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.types.EventType;
 
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.Comparator;
 
@@ -35,7 +34,7 @@ public class EventSortByTypeAndDateComparator implements Comparator<Event> {
                 }
             }
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Can't compare events with missing fields." + e.getMessage());
+            TbaLogger.e("Can't compare events with missing fields." + e.getMessage());
             return 0;
         }
     }

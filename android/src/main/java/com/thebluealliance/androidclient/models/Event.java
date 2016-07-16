@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.models;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
@@ -19,7 +18,7 @@ import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
 import android.content.Context;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -324,7 +323,7 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             setCompetitionWeek(week);
         } catch (FieldNotDefinedException e) {
             e.printStackTrace();
-            Log.w(Constants.LOG_TAG, "Can't set week, no start date");
+            TbaLogger.w("Can't set week, no start date");
         }
     }
 
@@ -395,8 +394,8 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             Date now = new Date();
             return now.after(startDate) && now.before(endDate);
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields to determine if event is happening now.\n"
-                    + "Required fields: Database.Events.START and Database.Events.END");
+            TbaLogger.w("Missing fields to determine if event is happening now.\n"
+                        + "Required fields: Database.Events.START and Database.Events.END");
             return false;
         }
     }
@@ -408,8 +407,8 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             Date now = new Date();
             return now.after(startDate);
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields to determine if event has started.\n"
-                    + "Required fields: Database.Events.START");
+            TbaLogger.w("Missing fields to determine if event has started.\n"
+                        + "Required fields: Database.Events.START");
             return false;
         }
     }
@@ -461,8 +460,8 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             return ThreadSafeFormatters.renderEventShortFormat(startDate) + " to "
                     + ThreadSafeFormatters.renderEventDate(endDate);
         } catch (FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for getting date string. \n"
-                    + "Required fields: Database.Events.START, Database.Events.END");
+            TbaLogger.w("Missing fields for getting date string. \n"
+                        + "Required fields: Database.Events.START, Database.Events.END");
             return "";
         }
     }
@@ -483,8 +482,8 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
             }
         } catch (BasicModel.FieldNotDefinedException e) {
             e.printStackTrace();
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n"
-                    + "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
+            TbaLogger.w("Missing fields for rendering event\n"
+                        + "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
             return null;
         }
 

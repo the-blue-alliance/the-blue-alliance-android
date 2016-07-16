@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.HomeActivity;
@@ -20,7 +19,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -72,8 +71,8 @@ public class GenericNotification extends BaseNotification<GenericNotificationVie
             int currentVersion = BuildConfig.VERSION_CODE;
             if (currentVersion < targetVersion) {
                 // The broadcast is not targeted at this version, don't show it
-                Log.d(Constants.LOG_TAG, "Not displaying received broadcast target at version "
-                        + targetVersion + " (this is version " + currentVersion + ")");
+                TbaLogger.d("Not displaying received broadcast target at version "
+                            + targetVersion + " (this is version " + currentVersion + ")");
                 display = false;
             }
         }

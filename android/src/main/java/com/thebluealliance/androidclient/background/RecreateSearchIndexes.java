@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.background;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
@@ -8,7 +7,7 @@ import com.thebluealliance.androidclient.models.Team;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class RecreateSearchIndexes extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_RECREATE_SEARCH.equals(action)) {
-                Log.d(Constants.LOG_TAG, "Recreating search indexes");
+                TbaLogger.d("Recreating search indexes");
                 recreateSearchIndexes();
             }
         }
@@ -54,7 +53,7 @@ public class RecreateSearchIndexes extends IntentService {
         // Get current events and teams to create indexes for
         List<Event> events = db.getEventsTable().getAll();
         List<Team> teams = db.getTeamsTable().getAll();
-        Log.d(Constants.LOG_TAG, "Saving " + events.size() + " events and " + teams.size() + "teams");
+        TbaLogger.d("Saving " + events.size() + " events and " + teams.size() + "teams");
 
         // remove current indexes
         db.getTeamsTable().deleteAllSearchIndexes();
@@ -63,6 +62,6 @@ public class RecreateSearchIndexes extends IntentService {
         // store new indexes
         db.getEventsTable().recreateAllSearchIndexes(events);
         db.getTeamsTable().recreateAllSearchIndexes(teams);
-        Log.d(Constants.LOG_TAG, "New indexes inserted");
+        TbaLogger.d("New indexes inserted");
     }
 }

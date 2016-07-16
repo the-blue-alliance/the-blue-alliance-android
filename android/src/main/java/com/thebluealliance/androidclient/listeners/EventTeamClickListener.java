@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.listeners;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -15,7 +14,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -57,7 +56,7 @@ public class EventTeamClickListener implements View.OnClickListener, View.OnLong
             mEventKey = EventTeamHelper.getEventKey(eventTeamKey);
             mTeamKey = EventTeamHelper.getTeamKey(eventTeamKey);
         } else {
-            Log.w(Constants.LOG_TAG, "EventTeamClickListener created with invalid EventTeam key! " + eventTeamKey);
+            TbaLogger.w("EventTeamClickListener created with invalid EventTeam key! " + eventTeamKey);
             mEventKey = null;
             mTeamKey = null;
         }
@@ -144,7 +143,7 @@ public class EventTeamClickListener implements View.OnClickListener, View.OnLong
                 eventKey = mEventKey;
                 teamKey = tag;
             } else {
-                Log.w(Constants.LOG_TAG, "EventTeamClickListener received invalid EventTeam Key! " + tag);
+                TbaLogger.w("EventTeamClickListener received invalid EventTeam Key! " + tag);
                 // Use defaults provided in constructor
                 eventKey = mEventKey;
                 teamKey = mTeamKey;
