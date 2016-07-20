@@ -228,7 +228,7 @@ check {
 }
 
 dependencies {
-    compile project(':tbaMobile')
+    compile project(':libTba')
     compile project(':libImgur')
 
     // Android support libraries

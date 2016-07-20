@@ -1,2 +1,2 @@
-include ':tbaMobile', ':libImgur'
+include ':libTba', ':libImgur'
 include 'android'
