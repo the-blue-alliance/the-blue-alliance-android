@@ -59,3 +59,6 @@ scripts/github_token
 
 # Current release shortlog, used in scripts
 RELEASE_SHORTLOG
+
+# gce2retrofit jar
+libTba/gce/gce2retrofit.jar
