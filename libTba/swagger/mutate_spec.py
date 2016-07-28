@@ -5,6 +5,10 @@ import json
 from optparse import OptionParser
 from glob import glob
 
+# Dict keys we merge into the same key in the real spec
+MERGE_KEYS = ["paths", "definitions"]
+HEADER_KEY = "headers"
+
 
 def main():
     parser = OptionParser()
@@ -24,7 +28,7 @@ def main():
         print("Invalid swagger data")
         sys.exit(-1)
 
-    for f in glob("{}/*.json".format(options.json)):
+    for f in sorted(glob("{}/*.json".format(options.json))):
         data = None
         print("Reading from {}".format(f))
         with open(f, 'r') as datafile:
@@ -35,9 +39,15 @@ def main():
             sys.exit(-1)
 
         for key, value in data.iteritems():
-            if key not in swagger_data:
-                swagger_data[key] = {}
-            swagger_data[key].update(value)
+            if key in MERGE_KEYS:
+                if key not in swagger_data:
+                    swagger_data[key] = {}
+                swagger_data[key].update(value)
+            elif key == HEADER_KEY:
+                for path, obj in swagger_data["paths"].iteritems():
+                    if not isinstance(obj.get("parameters", None), list):
+                        obj["parameters"] = []
+                    obj["parameters"].extend(value)
 
     pretty = json.dumps(swagger_data, indent=2, sort_keys=True)
     print("Writing data back to {}".format(options.out))
