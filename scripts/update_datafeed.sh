@@ -1,8 +1,16 @@
 #! /bin/sh
 
 # Script to generate Retrofit datafeed from swagger spec
-# Usage ./scripts/update_datafeed.sh
+# Usage ./scripts/update_datafeed.sh [-l <lib version>]
 
+while getopts ":l:" opt; do
+  case $opt in
+    l) LIB_VERSION="$OPTARG" && echo "Setting GCE Library Version to $LIB_VERSION"
+    ;;
+    \?) echo "Unknown option -$OPTARG" && usage
+    ;;
+  esac
+done
 echo "Building Retrofit Datafeed for TBA Android App"
 
 # This script should be run from the root of the TBA Android Repo
@@ -13,6 +21,16 @@ if [ $(basename $TBA_ANDROID_HOME) = "scripts" ]; then
 fi
 
 set -e
+
+if [ ! -z "$LIB_VERSION" ]; then
+    echo "Downloading swagger-codegen-cli jar version $LIB_VERSION"
+    wget -P libTba/swagger/ https://github.com/the-blue-alliance/swagger-codegen/releases/download/$LIB_VERSION/swagger-codegen-cli.jar
+fi
+
+if [ ! -f libTba/swagger/swagger-codegen-cli.jar ]; then
+    echo "swagger-codegen-cli.jar not found. Try running with -l <release-tag> to download"
+    exit -1
+fi
 
 # Do our app mutations on the swagger spec
 INITIAL_SPEC=libTba/swagger/apiv2-swagger.json
