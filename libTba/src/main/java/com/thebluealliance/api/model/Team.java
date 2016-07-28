@@ -34,10 +34,22 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Team
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-26T22:55:26.148-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-27T21:39:58.701-04:00")
 public class Team   {
+  @SerializedName("country_name")
+  private String countryName = null;
+
   @SerializedName("key")
   private String key = null;
+
+  @SerializedName("locality")
+  private String locality = null;
+
+  @SerializedName("location")
+  private String location = null;
+
+  @SerializedName("motto")
+  private String motto = null;
 
   @SerializedName("name")
   private String name = null;
@@ -45,29 +57,35 @@ public class Team   {
   @SerializedName("nickname")
   private String nickname = null;
 
-  @SerializedName("website")
-  private String website = null;
-
-  @SerializedName("locality")
-  private String locality = null;
-
   @SerializedName("region")
   private String region = null;
-
-  @SerializedName("country_name")
-  private String countryName = null;
-
-  @SerializedName("location")
-  private String location = null;
-
-  @SerializedName("team_number")
-  private Integer teamNumber = null;
 
   @SerializedName("rookie_year")
   private Integer rookieYear = null;
 
-  @SerializedName("motto")
-  private String motto = null;
+  @SerializedName("team_number")
+  private Integer teamNumber = null;
+
+  @SerializedName("website")
+  private String website = null;
+
+  public Team countryName(String countryName) {
+    this.countryName = countryName;
+    return this;
+  }
+
+   /**
+   * Country of team derived from parsing the address registered with FIRST
+   * @return countryName
+  **/
+  @ApiModelProperty(example = "null", value = "Country of team derived from parsing the address registered with FIRST")
+  public String getCountryName() {
+    return countryName;
+  }
+
+  public void setCountryName(String countryName) {
+    this.countryName = countryName;
+  }
 
   public Team key(String key) {
     this.key = key;
@@ -85,6 +103,60 @@ public class Team   {
 
   public void setKey(String key) {
     this.key = key;
+  }
+
+  public Team locality(String locality) {
+    this.locality = locality;
+    return this;
+  }
+
+   /**
+   * City of team derived from parsing the address registered with FIRST
+   * @return locality
+  **/
+  @ApiModelProperty(example = "null", value = "City of team derived from parsing the address registered with FIRST")
+  public String getLocality() {
+    return locality;
+  }
+
+  public void setLocality(String locality) {
+    this.locality = locality;
+  }
+
+  public Team location(String location) {
+    this.location = location;
+    return this;
+  }
+
+   /**
+   * Long form address that includes city, state, and country provided by FIRST
+   * @return location
+  **/
+  @ApiModelProperty(example = "null", value = "Long form address that includes city, state, and country provided by FIRST")
+  public String getLocation() {
+    return location;
+  }
+
+  public void setLocation(String location) {
+    this.location = location;
+  }
+
+  public Team motto(String motto) {
+    this.motto = motto;
+    return this;
+  }
+
+   /**
+   * Team's motto as provided by FIRST
+   * @return motto
+  **/
+  @ApiModelProperty(example = "null", value = "Team's motto as provided by FIRST")
+  public String getMotto() {
+    return motto;
+  }
+
+  public void setMotto(String motto) {
+    this.motto = motto;
   }
 
   public Team name(String name) {
@@ -123,42 +195,6 @@ public class Team   {
     this.nickname = nickname;
   }
 
-  public Team website(String website) {
-    this.website = website;
-    return this;
-  }
-
-   /**
-   * Official website associatd with the team
-   * @return website
-  **/
-  @ApiModelProperty(example = "null", value = "Official website associatd with the team")
-  public String getWebsite() {
-    return website;
-  }
-
-  public void setWebsite(String website) {
-    this.website = website;
-  }
-
-  public Team locality(String locality) {
-    this.locality = locality;
-    return this;
-  }
-
-   /**
-   * City of team derived from parsing the address registered with FIRST
-   * @return locality
-  **/
-  @ApiModelProperty(example = "null", value = "City of team derived from parsing the address registered with FIRST")
-  public String getLocality() {
-    return locality;
-  }
-
-  public void setLocality(String locality) {
-    this.locality = locality;
-  }
-
   public Team region(String region) {
     this.region = region;
     return this;
@@ -175,60 +211,6 @@ public class Team   {
 
   public void setRegion(String region) {
     this.region = region;
-  }
-
-  public Team countryName(String countryName) {
-    this.countryName = countryName;
-    return this;
-  }
-
-   /**
-   * Country of team derived from parsing the address registered with FIRST
-   * @return countryName
-  **/
-  @ApiModelProperty(example = "null", value = "Country of team derived from parsing the address registered with FIRST")
-  public String getCountryName() {
-    return countryName;
-  }
-
-  public void setCountryName(String countryName) {
-    this.countryName = countryName;
-  }
-
-  public Team location(String location) {
-    this.location = location;
-    return this;
-  }
-
-   /**
-   * Long form address that includes city, state, and country provided by FIRST
-   * @return location
-  **/
-  @ApiModelProperty(example = "null", value = "Long form address that includes city, state, and country provided by FIRST")
-  public String getLocation() {
-    return location;
-  }
-
-  public void setLocation(String location) {
-    this.location = location;
-  }
-
-  public Team teamNumber(Integer teamNumber) {
-    this.teamNumber = teamNumber;
-    return this;
-  }
-
-   /**
-   * Official team number issued by FIRST
-   * @return teamNumber
-  **/
-  @ApiModelProperty(example = "null", value = "Official team number issued by FIRST")
-  public Integer getTeamNumber() {
-    return teamNumber;
-  }
-
-  public void setTeamNumber(Integer teamNumber) {
-    this.teamNumber = teamNumber;
   }
 
   public Team rookieYear(Integer rookieYear) {
@@ -249,22 +231,40 @@ public class Team   {
     this.rookieYear = rookieYear;
   }
 
-  public Team motto(String motto) {
-    this.motto = motto;
+  public Team teamNumber(Integer teamNumber) {
+    this.teamNumber = teamNumber;
     return this;
   }
 
    /**
-   * Team's motto as provided by FIRST
-   * @return motto
+   * Official team number issued by FIRST
+   * @return teamNumber
   **/
-  @ApiModelProperty(example = "null", value = "Team's motto as provided by FIRST")
-  public String getMotto() {
-    return motto;
+  @ApiModelProperty(example = "null", value = "Official team number issued by FIRST")
+  public Integer getTeamNumber() {
+    return teamNumber;
   }
 
-  public void setMotto(String motto) {
-    this.motto = motto;
+  public void setTeamNumber(Integer teamNumber) {
+    this.teamNumber = teamNumber;
+  }
+
+  public Team website(String website) {
+    this.website = website;
+    return this;
+  }
+
+   /**
+   * Official website associatd with the team
+   * @return website
+  **/
+  @ApiModelProperty(example = "null", value = "Official website associatd with the team")
+  public String getWebsite() {
+    return website;
+  }
+
+  public void setWebsite(String website) {
+    this.website = website;
   }
 
 
@@ -277,22 +277,22 @@ public class Team   {
       return false;
     }
     Team team = (Team) o;
-    return Objects.equals(this.key, team.key) &&
+    return Objects.equals(this.countryName, team.countryName) &&
+        Objects.equals(this.key, team.key) &&
+        Objects.equals(this.locality, team.locality) &&
+        Objects.equals(this.location, team.location) &&
+        Objects.equals(this.motto, team.motto) &&
         Objects.equals(this.name, team.name) &&
         Objects.equals(this.nickname, team.nickname) &&
-        Objects.equals(this.website, team.website) &&
-        Objects.equals(this.locality, team.locality) &&
         Objects.equals(this.region, team.region) &&
-        Objects.equals(this.countryName, team.countryName) &&
-        Objects.equals(this.location, team.location) &&
-        Objects.equals(this.teamNumber, team.teamNumber) &&
         Objects.equals(this.rookieYear, team.rookieYear) &&
-        Objects.equals(this.motto, team.motto);
+        Objects.equals(this.teamNumber, team.teamNumber) &&
+        Objects.equals(this.website, team.website);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(key, name, nickname, website, locality, region, countryName, location, teamNumber, rookieYear, motto);
+    return Objects.hash(countryName, key, locality, location, motto, name, nickname, region, rookieYear, teamNumber, website);
   }
 
   @Override
@@ -300,17 +300,17 @@ public class Team   {
     StringBuilder sb = new StringBuilder();
     sb.append("class Team {\n");
     
+    sb.append("    countryName: ").append(toIndentedString(countryName)).append("\n");
     sb.append("    key: ").append(toIndentedString(key)).append("\n");
+    sb.append("    locality: ").append(toIndentedString(locality)).append("\n");
+    sb.append("    location: ").append(toIndentedString(location)).append("\n");
+    sb.append("    motto: ").append(toIndentedString(motto)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    nickname: ").append(toIndentedString(nickname)).append("\n");
-    sb.append("    website: ").append(toIndentedString(website)).append("\n");
-    sb.append("    locality: ").append(toIndentedString(locality)).append("\n");
     sb.append("    region: ").append(toIndentedString(region)).append("\n");
-    sb.append("    countryName: ").append(toIndentedString(countryName)).append("\n");
-    sb.append("    location: ").append(toIndentedString(location)).append("\n");
-    sb.append("    teamNumber: ").append(toIndentedString(teamNumber)).append("\n");
     sb.append("    rookieYear: ").append(toIndentedString(rookieYear)).append("\n");
-    sb.append("    motto: ").append(toIndentedString(motto)).append("\n");
+    sb.append("    teamNumber: ").append(toIndentedString(teamNumber)).append("\n");
+    sb.append("    website: ").append(toIndentedString(website)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -34,108 +34,72 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Event
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-26T22:55:26.148-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-27T21:39:58.701-04:00")
 public class Event   {
-  @SerializedName("key")
-  private String key = null;
-
-  @SerializedName("name")
-  private String name = null;
-
-  @SerializedName("short_name")
-  private String shortName = null;
+  @SerializedName("alliances")
+  private String alliances = null;
 
   @SerializedName("event_code")
   private String eventCode = null;
 
-  @SerializedName("event_type_string")
-  private String eventTypeString = null;
-
-  @SerializedName("event_type")
-  private Integer eventType = null;
+  @SerializedName("event_district")
+  private Integer eventDistrict = null;
 
   @SerializedName("event_district_string")
   private String eventDistrictString = null;
 
-  @SerializedName("event_district")
-  private Integer eventDistrict = null;
+  @SerializedName("event_type")
+  private Integer eventType = null;
 
-  @SerializedName("year")
-  private Integer year = null;
+  @SerializedName("event_type_string")
+  private String eventTypeString = null;
+
+  @SerializedName("key")
+  private String key = null;
 
   @SerializedName("location")
   private String location = null;
 
-  @SerializedName("venue_address")
-  private String venueAddress = null;
-
-  @SerializedName("timezone")
-  private String timezone = null;
-
-  @SerializedName("website")
-  private String website = null;
+  @SerializedName("name")
+  private String name = null;
 
   @SerializedName("official")
   private Boolean official = null;
 
+  @SerializedName("short_name")
+  private String shortName = null;
+
+  @SerializedName("timezone")
+  private String timezone = null;
+
+  @SerializedName("venue_address")
+  private String venueAddress = null;
+
   @SerializedName("webcast")
   private String webcast = null;
 
-  @SerializedName("alliances")
-  private String alliances = null;
+  @SerializedName("website")
+  private String website = null;
 
-  public Event key(String key) {
-    this.key = key;
+  @SerializedName("year")
+  private Integer year = null;
+
+  public Event alliances(String alliances) {
+    this.alliances = alliances;
     return this;
   }
 
    /**
-   * TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event.
-   * @return key
+   * If we have alliance selection data for this event, this contains a JSON array of the alliances. The captain is the first team, followed by their picks, in order.
+   * @return alliances
   **/
-  @ApiModelProperty(example = "null", value = "TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event.")
-  public String getKey() {
-    return key;
+  @ApiModelProperty(example = "null", value = "If we have alliance selection data for this event, this contains a JSON array of the alliances. The captain is the first team, followed by their picks, in order.")
+  public String getAlliances() {
+    return alliances;
   }
 
-  public void setKey(String key) {
-    this.key = key;
-  }
-
-  public Event name(String name) {
-    this.name = name;
-    return this;
-  }
-
-   /**
-   * Official name of event on record either provided by FIRST or organizers of offseason event.
-   * @return name
-  **/
-  @ApiModelProperty(example = "null", value = "Official name of event on record either provided by FIRST or organizers of offseason event.")
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Event shortName(String shortName) {
-    this.shortName = shortName;
-    return this;
-  }
-
-   /**
-   * Same as name but doesn't include event specifiers, such as 'Regional' or 'District'. May be null.
-   * @return shortName
-  **/
-  @ApiModelProperty(example = "null", value = "Same as name but doesn't include event specifiers, such as 'Regional' or 'District'. May be null.")
-  public String getShortName() {
-    return shortName;
-  }
-
-  public void setShortName(String shortName) {
-    this.shortName = shortName;
+  public void setAlliances(String alliances) {
+    this.alliances = alliances;
   }
 
   public Event eventCode(String eventCode) {
@@ -156,40 +120,22 @@ public class Event   {
     this.eventCode = eventCode;
   }
 
-  public Event eventTypeString(String eventTypeString) {
-    this.eventTypeString = eventTypeString;
+  public Event eventDistrict(Integer eventDistrict) {
+    this.eventDistrict = eventDistrict;
     return this;
   }
 
    /**
-   * A human readable string that defines the event type.
-   * @return eventTypeString
+   * An integer that represents the event district as a constant.
+   * @return eventDistrict
   **/
-  @ApiModelProperty(example = "null", value = "A human readable string that defines the event type.")
-  public String getEventTypeString() {
-    return eventTypeString;
+  @ApiModelProperty(example = "null", value = "An integer that represents the event district as a constant.")
+  public Integer getEventDistrict() {
+    return eventDistrict;
   }
 
-  public void setEventTypeString(String eventTypeString) {
-    this.eventTypeString = eventTypeString;
-  }
-
-  public Event eventType(Integer eventType) {
-    this.eventType = eventType;
-    return this;
-  }
-
-   /**
-   * An integer that represents the event type as a constant.
-   * @return eventType
-  **/
-  @ApiModelProperty(example = "null", value = "An integer that represents the event type as a constant.")
-  public Integer getEventType() {
-    return eventType;
-  }
-
-  public void setEventType(Integer eventType) {
-    this.eventType = eventType;
+  public void setEventDistrict(Integer eventDistrict) {
+    this.eventDistrict = eventDistrict;
   }
 
   public Event eventDistrictString(String eventDistrictString) {
@@ -210,40 +156,58 @@ public class Event   {
     this.eventDistrictString = eventDistrictString;
   }
 
-  public Event eventDistrict(Integer eventDistrict) {
-    this.eventDistrict = eventDistrict;
+  public Event eventType(Integer eventType) {
+    this.eventType = eventType;
     return this;
   }
 
    /**
-   * An integer that represents the event district as a constant.
-   * @return eventDistrict
+   * An integer that represents the event type as a constant.
+   * @return eventType
   **/
-  @ApiModelProperty(example = "null", value = "An integer that represents the event district as a constant.")
-  public Integer getEventDistrict() {
-    return eventDistrict;
+  @ApiModelProperty(example = "null", value = "An integer that represents the event type as a constant.")
+  public Integer getEventType() {
+    return eventType;
   }
 
-  public void setEventDistrict(Integer eventDistrict) {
-    this.eventDistrict = eventDistrict;
+  public void setEventType(Integer eventType) {
+    this.eventType = eventType;
   }
 
-  public Event year(Integer year) {
-    this.year = year;
+  public Event eventTypeString(String eventTypeString) {
+    this.eventTypeString = eventTypeString;
     return this;
   }
 
    /**
-   * Year the event data is for.
-   * @return year
+   * A human readable string that defines the event type.
+   * @return eventTypeString
   **/
-  @ApiModelProperty(example = "null", value = "Year the event data is for.")
-  public Integer getYear() {
-    return year;
+  @ApiModelProperty(example = "null", value = "A human readable string that defines the event type.")
+  public String getEventTypeString() {
+    return eventTypeString;
   }
 
-  public void setYear(Integer year) {
-    this.year = year;
+  public void setEventTypeString(String eventTypeString) {
+    this.eventTypeString = eventTypeString;
+  }
+
+  public Event key(String key) {
+    this.key = key;
+    return this;
+  }
+
+   /**
+   * TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event.
+   * @return key
+  **/
+  @ApiModelProperty(example = "null", value = "TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event.")
+  public String getKey() {
+    return key;
+  }
+
+  public void setKey(String key) {
+    this.key = key;
   }
 
   public Event location(String location) {
@@ -264,58 +228,22 @@ public class Event   {
     this.location = location;
   }
 
-  public Event venueAddress(String venueAddress) {
-    this.venueAddress = venueAddress;
+  public Event name(String name) {
+    this.name = name;
     return this;
   }
 
    /**
-   * Address of the event's venue, if available. Line breaks included.
-   * @return venueAddress
+   * Official name of event on record either provided by FIRST or organizers of offseason event.
+   * @return name
   **/
-  @ApiModelProperty(example = "null", value = "Address of the event's venue, if available. Line breaks included.")
-  public String getVenueAddress() {
-    return venueAddress;
+  @ApiModelProperty(example = "null", value = "Official name of event on record either provided by FIRST or organizers of offseason event.")
+  public String getName() {
+    return name;
   }
 
-  public void setVenueAddress(String venueAddress) {
-    this.venueAddress = venueAddress;
-  }
-
-  public Event timezone(String timezone) {
-    this.timezone = timezone;
-    return this;
-  }
-
-   /**
-   * Timezone name
-   * @return timezone
-  **/
-  @ApiModelProperty(example = "null", value = "Timezone name")
-  public String getTimezone() {
-    return timezone;
-  }
-
-  public void setTimezone(String timezone) {
-    this.timezone = timezone;
-  }
-
-  public Event website(String website) {
-    this.website = website;
-    return this;
-  }
-
-   /**
-   * The event's website, if any.
-   * @return website
-  **/
-  @ApiModelProperty(example = "null", value = "The event's website, if any.")
-  public String getWebsite() {
-    return website;
-  }
-
-  public void setWebsite(String website) {
-    this.website = website;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public Event official(Boolean official) {
@@ -336,6 +264,60 @@ public class Event   {
     this.official = official;
   }
 
+  public Event shortName(String shortName) {
+    this.shortName = shortName;
+    return this;
+  }
+
+   /**
+   * Same as name but doesn't include event specifiers, such as 'Regional' or 'District'. May be null.
+   * @return shortName
+  **/
+  @ApiModelProperty(example = "null", value = "Same as name but doesn't include event specifiers, such as 'Regional' or 'District'. May be null.")
+  public String getShortName() {
+    return shortName;
+  }
+
+  public void setShortName(String shortName) {
+    this.shortName = shortName;
+  }
+
+  public Event timezone(String timezone) {
+    this.timezone = timezone;
+    return this;
+  }
+
+   /**
+   * Timezone name
+   * @return timezone
+  **/
+  @ApiModelProperty(example = "null", value = "Timezone name")
+  public String getTimezone() {
+    return timezone;
+  }
+
+  public void setTimezone(String timezone) {
+    this.timezone = timezone;
+  }
+
+  public Event venueAddress(String venueAddress) {
+    this.venueAddress = venueAddress;
+    return this;
+  }
+
+   /**
+   * Address of the event's venue, if available. Line breaks included.
+   * @return venueAddress
+  **/
+  @ApiModelProperty(example = "null", value = "Address of the event's venue, if available. Line breaks included.")
+  public String getVenueAddress() {
+    return venueAddress;
+  }
+
+  public void setVenueAddress(String venueAddress) {
+    this.venueAddress = venueAddress;
+  }
+
   public Event webcast(String webcast) {
     this.webcast = webcast;
     return this;
@@ -354,22 +336,40 @@ public class Event   {
     this.webcast = webcast;
   }
 
-  public Event alliances(String alliances) {
-    this.alliances = alliances;
+  public Event website(String website) {
+    this.website = website;
     return this;
   }
 
    /**
-   * If we have alliance selection data for this event, this contains a JSON array of the alliances. The captain is the first team, followed by their picks, in order.
-   * @return alliances
+   * The event's website, if any.
+   * @return website
   **/
-  @ApiModelProperty(example = "null", value = "If we have alliance selection data for this event, this contains a JSON array of the alliances. The captain is the first team, followed by their picks, in order.")
-  public String getAlliances() {
-    return alliances;
+  @ApiModelProperty(example = "null", value = "The event's website, if any.")
+  public String getWebsite() {
+    return website;
   }
 
-  public void setAlliances(String alliances) {
-    this.alliances = alliances;
+  public void setWebsite(String website) {
+    this.website = website;
+  }
+
+  public Event year(Integer year) {
+    this.year = year;
+    return this;
+  }
+
+   /**
+   * Year the event data is for.
+   * @return year
+  **/
+  @ApiModelProperty(example = "null", value = "Year the event data is for.")
+  public Integer getYear() {
+    return year;
+  }
+
+  public void setYear(Integer year) {
+    this.year = year;
   }
 
 
@@ -382,27 +382,27 @@ public class Event   {
       return false;
     }
     Event event = (Event) o;
-    return Objects.equals(this.key, event.key) &&
-        Objects.equals(this.name, event.name) &&
-        Objects.equals(this.shortName, event.shortName) &&
+    return Objects.equals(this.alliances, event.alliances) &&
         Objects.equals(this.eventCode, event.eventCode) &&
-        Objects.equals(this.eventTypeString, event.eventTypeString) &&
-        Objects.equals(this.eventType, event.eventType) &&
-        Objects.equals(this.eventDistrictString, event.eventDistrictString) &&
         Objects.equals(this.eventDistrict, event.eventDistrict) &&
-        Objects.equals(this.year, event.year) &&
+        Objects.equals(this.eventDistrictString, event.eventDistrictString) &&
+        Objects.equals(this.eventType, event.eventType) &&
+        Objects.equals(this.eventTypeString, event.eventTypeString) &&
+        Objects.equals(this.key, event.key) &&
         Objects.equals(this.location, event.location) &&
-        Objects.equals(this.venueAddress, event.venueAddress) &&
-        Objects.equals(this.timezone, event.timezone) &&
-        Objects.equals(this.website, event.website) &&
+        Objects.equals(this.name, event.name) &&
         Objects.equals(this.official, event.official) &&
+        Objects.equals(this.shortName, event.shortName) &&
+        Objects.equals(this.timezone, event.timezone) &&
+        Objects.equals(this.venueAddress, event.venueAddress) &&
         Objects.equals(this.webcast, event.webcast) &&
-        Objects.equals(this.alliances, event.alliances);
+        Objects.equals(this.website, event.website) &&
+        Objects.equals(this.year, event.year);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(key, name, shortName, eventCode, eventTypeString, eventType, eventDistrictString, eventDistrict, year, location, venueAddress, timezone, website, official, webcast, alliances);
+    return Objects.hash(alliances, eventCode, eventDistrict, eventDistrictString, eventType, eventTypeString, key, location, name, official, shortName, timezone, venueAddress, webcast, website, year);
   }
 
   @Override
@@ -410,22 +410,22 @@ public class Event   {
     StringBuilder sb = new StringBuilder();
     sb.append("class Event {\n");
     
-    sb.append("    key: ").append(toIndentedString(key)).append("\n");
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
-    sb.append("    shortName: ").append(toIndentedString(shortName)).append("\n");
-    sb.append("    eventCode: ").append(toIndentedString(eventCode)).append("\n");
-    sb.append("    eventTypeString: ").append(toIndentedString(eventTypeString)).append("\n");
-    sb.append("    eventType: ").append(toIndentedString(eventType)).append("\n");
-    sb.append("    eventDistrictString: ").append(toIndentedString(eventDistrictString)).append("\n");
-    sb.append("    eventDistrict: ").append(toIndentedString(eventDistrict)).append("\n");
-    sb.append("    year: ").append(toIndentedString(year)).append("\n");
-    sb.append("    location: ").append(toIndentedString(location)).append("\n");
-    sb.append("    venueAddress: ").append(toIndentedString(venueAddress)).append("\n");
-    sb.append("    timezone: ").append(toIndentedString(timezone)).append("\n");
-    sb.append("    website: ").append(toIndentedString(website)).append("\n");
-    sb.append("    official: ").append(toIndentedString(official)).append("\n");
-    sb.append("    webcast: ").append(toIndentedString(webcast)).append("\n");
     sb.append("    alliances: ").append(toIndentedString(alliances)).append("\n");
+    sb.append("    eventCode: ").append(toIndentedString(eventCode)).append("\n");
+    sb.append("    eventDistrict: ").append(toIndentedString(eventDistrict)).append("\n");
+    sb.append("    eventDistrictString: ").append(toIndentedString(eventDistrictString)).append("\n");
+    sb.append("    eventType: ").append(toIndentedString(eventType)).append("\n");
+    sb.append("    eventTypeString: ").append(toIndentedString(eventTypeString)).append("\n");
+    sb.append("    key: ").append(toIndentedString(key)).append("\n");
+    sb.append("    location: ").append(toIndentedString(location)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    official: ").append(toIndentedString(official)).append("\n");
+    sb.append("    shortName: ").append(toIndentedString(shortName)).append("\n");
+    sb.append("    timezone: ").append(toIndentedString(timezone)).append("\n");
+    sb.append("    venueAddress: ").append(toIndentedString(venueAddress)).append("\n");
+    sb.append("    webcast: ").append(toIndentedString(webcast)).append("\n");
+    sb.append("    website: ").append(toIndentedString(website)).append("\n");
+    sb.append("    year: ").append(toIndentedString(year)).append("\n");
     sb.append("}");
     return sb.toString();
   }

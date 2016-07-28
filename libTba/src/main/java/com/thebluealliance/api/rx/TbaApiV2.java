@@ -7,6 +7,7 @@ import retrofit2.http.*;
 
 import okhttp3.RequestBody;
 
+import com.thebluealliance.api.model.ApiStatus;
 import com.thebluealliance.api.model.Event;
 import com.thebluealliance.api.model.Team;
 import com.thebluealliance.api.model.Award;
@@ -20,6 +21,16 @@ import java.util.List;
 import java.util.Map;
 
 public interface TbaApiV2 {
+  /**
+   * API Status Request
+   * Get various metadata about the TBA API
+   * @return Call&lt;ApiStatus&gt;
+   */
+  
+  @GET("api/v2/status")
+  Observable<Response<ApiStatus>> fetchApiStatus();
+    
+
   /**
    * District Events Request
    * Fetch a list of events within a given district

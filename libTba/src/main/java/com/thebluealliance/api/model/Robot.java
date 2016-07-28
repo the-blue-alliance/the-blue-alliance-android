@@ -34,19 +34,19 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Robot
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-26T22:55:26.148-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-27T21:39:58.701-04:00")
 public class Robot   {
   @SerializedName("key")
   private String key = null;
+
+  @SerializedName("name")
+  private String name = null;
 
   @SerializedName("team_key")
   private String teamKey = null;
 
   @SerializedName("year")
   private Integer year = null;
-
-  @SerializedName("name")
-  private String name = null;
 
   public Robot key(String key) {
     this.key = key;
@@ -64,6 +64,24 @@ public class Robot   {
 
   public void setKey(String key) {
     this.key = key;
+  }
+
+  public Robot name(String name) {
+    this.name = name;
+    return this;
+  }
+
+   /**
+   * The robot name in this year
+   * @return name
+  **/
+  @ApiModelProperty(example = "null", value = "The robot name in this year")
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public Robot teamKey(String teamKey) {
@@ -102,24 +120,6 @@ public class Robot   {
     this.year = year;
   }
 
-  public Robot name(String name) {
-    this.name = name;
-    return this;
-  }
-
-   /**
-   * The robot name in this year
-   * @return name
-  **/
-  @ApiModelProperty(example = "null", value = "The robot name in this year")
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -131,14 +131,14 @@ public class Robot   {
     }
     Robot robot = (Robot) o;
     return Objects.equals(this.key, robot.key) &&
+        Objects.equals(this.name, robot.name) &&
         Objects.equals(this.teamKey, robot.teamKey) &&
-        Objects.equals(this.year, robot.year) &&
-        Objects.equals(this.name, robot.name);
+        Objects.equals(this.year, robot.year);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(key, teamKey, year, name);
+    return Objects.hash(key, name, teamKey, year);
   }
 
   @Override
@@ -147,9 +147,9 @@ public class Robot   {
     sb.append("class Robot {\n");
     
     sb.append("    key: ").append(toIndentedString(key)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    teamKey: ").append(toIndentedString(teamKey)).append("\n");
     sb.append("    year: ").append(toIndentedString(year)).append("\n");
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("}");
     return sb.toString();
   }

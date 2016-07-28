@@ -34,33 +34,33 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Media
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-26T22:55:26.148-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-27T21:39:58.701-04:00")
 public class Media   {
-  @SerializedName("type")
-  private String type = null;
+  @SerializedName("details")
+  private String details = null;
 
   @SerializedName("foreign_key")
   private String foreignKey = null;
 
-  @SerializedName("details")
-  private String details = null;
+  @SerializedName("type")
+  private String type = null;
 
-  public Media type(String type) {
-    this.type = type;
+  public Media details(String details) {
+    this.details = details;
     return this;
   }
 
    /**
-   * The string type of the media element
-   * @return type
+   * If the media requires it, a json dict of additional information
+   * @return details
   **/
-  @ApiModelProperty(example = "null", value = "The string type of the media element")
-  public String getType() {
-    return type;
+  @ApiModelProperty(example = "null", value = "If the media requires it, a json dict of additional information")
+  public String getDetails() {
+    return details;
   }
 
-  public void setType(String type) {
-    this.type = type;
+  public void setDetails(String details) {
+    this.details = details;
   }
 
   public Media foreignKey(String foreignKey) {
@@ -81,22 +81,22 @@ public class Media   {
     this.foreignKey = foreignKey;
   }
 
-  public Media details(String details) {
-    this.details = details;
+  public Media type(String type) {
+    this.type = type;
     return this;
   }
 
    /**
-   * If the media requires it, a json dict of additional information
-   * @return details
+   * The string type of the media element
+   * @return type
   **/
-  @ApiModelProperty(example = "null", value = "If the media requires it, a json dict of additional information")
-  public String getDetails() {
-    return details;
+  @ApiModelProperty(example = "null", value = "The string type of the media element")
+  public String getType() {
+    return type;
   }
 
-  public void setDetails(String details) {
-    this.details = details;
+  public void setType(String type) {
+    this.type = type;
   }
 
 
@@ -109,14 +109,14 @@ public class Media   {
       return false;
     }
     Media media = (Media) o;
-    return Objects.equals(this.type, media.type) &&
+    return Objects.equals(this.details, media.details) &&
         Objects.equals(this.foreignKey, media.foreignKey) &&
-        Objects.equals(this.details, media.details);
+        Objects.equals(this.type, media.type);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(type, foreignKey, details);
+    return Objects.hash(details, foreignKey, type);
   }
 
   @Override
@@ -124,9 +124,9 @@ public class Media   {
     StringBuilder sb = new StringBuilder();
     sb.append("class Media {\n");
     
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
-    sb.append("    foreignKey: ").append(toIndentedString(foreignKey)).append("\n");
     sb.append("    details: ").append(toIndentedString(details)).append("\n");
+    sb.append("    foreignKey: ").append(toIndentedString(foreignKey)).append("\n");
+    sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("}");
     return sb.toString();
   }

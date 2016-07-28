@@ -34,40 +34,22 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Award
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-26T22:55:26.148-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-27T21:39:58.701-04:00")
 public class Award   {
-  @SerializedName("name")
-  private String name = null;
-
   @SerializedName("award_type")
   private Integer awardType = null;
 
   @SerializedName("event_key")
   private String eventKey = null;
 
+  @SerializedName("name")
+  private String name = null;
+
   @SerializedName("recipient_list")
   private String recipientList = null;
 
   @SerializedName("year")
   private Integer year = null;
-
-  public Award name(String name) {
-    this.name = name;
-    return this;
-  }
-
-   /**
-   * The name of the award as provided by FIRST. May vary for the same award type.
-   * @return name
-  **/
-  @ApiModelProperty(example = "null", value = "The name of the award as provided by FIRST. May vary for the same award type.")
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
 
   public Award awardType(Integer awardType) {
     this.awardType = awardType;
@@ -103,6 +85,24 @@ public class Award   {
 
   public void setEventKey(String eventKey) {
     this.eventKey = eventKey;
+  }
+
+  public Award name(String name) {
+    this.name = name;
+    return this;
+  }
+
+   /**
+   * The name of the award as provided by FIRST. May vary for the same award type.
+   * @return name
+  **/
+  @ApiModelProperty(example = "null", value = "The name of the award as provided by FIRST. May vary for the same award type.")
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public Award recipientList(String recipientList) {
@@ -151,16 +151,16 @@ public class Award   {
       return false;
     }
     Award award = (Award) o;
-    return Objects.equals(this.name, award.name) &&
-        Objects.equals(this.awardType, award.awardType) &&
+    return Objects.equals(this.awardType, award.awardType) &&
         Objects.equals(this.eventKey, award.eventKey) &&
+        Objects.equals(this.name, award.name) &&
         Objects.equals(this.recipientList, award.recipientList) &&
         Objects.equals(this.year, award.year);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, awardType, eventKey, recipientList, year);
+    return Objects.hash(awardType, eventKey, name, recipientList, year);
   }
 
   @Override
@@ -168,9 +168,9 @@ public class Award   {
     StringBuilder sb = new StringBuilder();
     sb.append("class Award {\n");
     
-    sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    awardType: ").append(toIndentedString(awardType)).append("\n");
     sb.append("    eventKey: ").append(toIndentedString(eventKey)).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    recipientList: ").append(toIndentedString(recipientList)).append("\n");
     sb.append("    year: ").append(toIndentedString(year)).append("\n");
     sb.append("}");

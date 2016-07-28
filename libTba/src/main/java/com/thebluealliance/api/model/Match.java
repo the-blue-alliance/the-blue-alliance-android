@@ -34,54 +34,54 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Match
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-26T22:55:26.148-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-27T21:39:58.701-04:00")
 public class Match   {
-  @SerializedName("key")
-  private String key = null;
+  @SerializedName("alliances")
+  private String alliances = null;
 
   @SerializedName("comp_level")
   private String compLevel = null;
 
-  @SerializedName("set_number")
-  private Integer setNumber = null;
+  @SerializedName("event_key")
+  private String eventKey = null;
+
+  @SerializedName("key")
+  private String key = null;
 
   @SerializedName("match_number")
   private Integer matchNumber = null;
 
-  @SerializedName("alliances")
-  private String alliances = null;
-
   @SerializedName("score_breakdown")
   private String scoreBreakdown = null;
 
-  @SerializedName("event_key")
-  private String eventKey = null;
-
-  @SerializedName("videos")
-  private String videos = null;
-
-  @SerializedName("time_string")
-  private String timeString = null;
+  @SerializedName("set_number")
+  private Integer setNumber = null;
 
   @SerializedName("time")
   private Integer time = null;
 
-  public Match key(String key) {
-    this.key = key;
+  @SerializedName("time_string")
+  private String timeString = null;
+
+  @SerializedName("videos")
+  private String videos = null;
+
+  public Match alliances(String alliances) {
+    this.alliances = alliances;
     return this;
   }
 
    /**
-   * TBA event key with the format yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER], where yyyy is the year, and EVENT_CODE is the event code of the event, COMP_LEVEL is (qm, ef, qf, sf, f), and MATCH_NUMBER is the match number in the competition level. A set number may append the competition level if more than one match in required per set .
-   * @return key
+   * A list of alliances, the teams on the alliances, and their score.
+   * @return alliances
   **/
-  @ApiModelProperty(example = "null", value = "TBA event key with the format yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER], where yyyy is the year, and EVENT_CODE is the event code of the event, COMP_LEVEL is (qm, ef, qf, sf, f), and MATCH_NUMBER is the match number in the competition level. A set number may append the competition level if more than one match in required per set .")
-  public String getKey() {
-    return key;
+  @ApiModelProperty(example = "null", value = "A list of alliances, the teams on the alliances, and their score.")
+  public String getAlliances() {
+    return alliances;
   }
 
-  public void setKey(String key) {
-    this.key = key;
+  public void setAlliances(String alliances) {
+    this.alliances = alliances;
   }
 
   public Match compLevel(String compLevel) {
@@ -102,22 +102,40 @@ public class Match   {
     this.compLevel = compLevel;
   }
 
-  public Match setNumber(Integer setNumber) {
-    this.setNumber = setNumber;
+  public Match eventKey(String eventKey) {
+    this.eventKey = eventKey;
     return this;
   }
 
    /**
-   * The set number in a series of matches where more than one match is required in the match series.
-   * @return setNumber
+   * Event key of the event the match was played at.
+   * @return eventKey
   **/
-  @ApiModelProperty(example = "null", value = "The set number in a series of matches where more than one match is required in the match series.")
-  public Integer getSetNumber() {
-    return setNumber;
+  @ApiModelProperty(example = "null", value = "Event key of the event the match was played at.")
+  public String getEventKey() {
+    return eventKey;
   }
 
-  public void setSetNumber(Integer setNumber) {
-    this.setNumber = setNumber;
+  public void setEventKey(String eventKey) {
+    this.eventKey = eventKey;
+  }
+
+  public Match key(String key) {
+    this.key = key;
+    return this;
+  }
+
+   /**
+   * TBA event key with the format yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER], where yyyy is the year, and EVENT_CODE is the event code of the event, COMP_LEVEL is (qm, ef, qf, sf, f), and MATCH_NUMBER is the match number in the competition level. A set number may append the competition level if more than one match in required per set .
+   * @return key
+  **/
+  @ApiModelProperty(example = "null", value = "TBA event key with the format yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER], where yyyy is the year, and EVENT_CODE is the event code of the event, COMP_LEVEL is (qm, ef, qf, sf, f), and MATCH_NUMBER is the match number in the competition level. A set number may append the competition level if more than one match in required per set .")
+  public String getKey() {
+    return key;
+  }
+
+  public void setKey(String key) {
+    this.key = key;
   }
 
   public Match matchNumber(Integer matchNumber) {
@@ -138,24 +156,6 @@ public class Match   {
     this.matchNumber = matchNumber;
   }
 
-  public Match alliances(String alliances) {
-    this.alliances = alliances;
-    return this;
-  }
-
-   /**
-   * A list of alliances, the teams on the alliances, and their score.
-   * @return alliances
-  **/
-  @ApiModelProperty(example = "null", value = "A list of alliances, the teams on the alliances, and their score.")
-  public String getAlliances() {
-    return alliances;
-  }
-
-  public void setAlliances(String alliances) {
-    this.alliances = alliances;
-  }
-
   public Match scoreBreakdown(String scoreBreakdown) {
     this.scoreBreakdown = scoreBreakdown;
     return this;
@@ -174,58 +174,22 @@ public class Match   {
     this.scoreBreakdown = scoreBreakdown;
   }
 
-  public Match eventKey(String eventKey) {
-    this.eventKey = eventKey;
+  public Match setNumber(Integer setNumber) {
+    this.setNumber = setNumber;
     return this;
   }
 
    /**
-   * Event key of the event the match was played at.
-   * @return eventKey
+   * The set number in a series of matches where more than one match is required in the match series.
+   * @return setNumber
   **/
-  @ApiModelProperty(example = "null", value = "Event key of the event the match was played at.")
-  public String getEventKey() {
-    return eventKey;
+  @ApiModelProperty(example = "null", value = "The set number in a series of matches where more than one match is required in the match series.")
+  public Integer getSetNumber() {
+    return setNumber;
   }
 
-  public void setEventKey(String eventKey) {
-    this.eventKey = eventKey;
-  }
-
-  public Match videos(String videos) {
-    this.videos = videos;
-    return this;
-  }
-
-   /**
-   * JSON array of videos associated with this match and corresponding information
-   * @return videos
-  **/
-  @ApiModelProperty(example = "null", value = "JSON array of videos associated with this match and corresponding information")
-  public String getVideos() {
-    return videos;
-  }
-
-  public void setVideos(String videos) {
-    this.videos = videos;
-  }
-
-  public Match timeString(String timeString) {
-    this.timeString = timeString;
-    return this;
-  }
-
-   /**
-   * Time string for this match, as published on the official schedule. Of course, this may or may not be accurate, as events often run ahead or behind schedule
-   * @return timeString
-  **/
-  @ApiModelProperty(example = "null", value = "Time string for this match, as published on the official schedule. Of course, this may or may not be accurate, as events often run ahead or behind schedule")
-  public String getTimeString() {
-    return timeString;
-  }
-
-  public void setTimeString(String timeString) {
-    this.timeString = timeString;
+  public void setSetNumber(Integer setNumber) {
+    this.setNumber = setNumber;
   }
 
   public Match time(Integer time) {
@@ -246,6 +210,42 @@ public class Match   {
     this.time = time;
   }
 
+  public Match timeString(String timeString) {
+    this.timeString = timeString;
+    return this;
+  }
+
+   /**
+   * Time string for this match, as published on the official schedule. Of course, this may or may not be accurate, as events often run ahead or behind schedule
+   * @return timeString
+  **/
+  @ApiModelProperty(example = "null", value = "Time string for this match, as published on the official schedule. Of course, this may or may not be accurate, as events often run ahead or behind schedule")
+  public String getTimeString() {
+    return timeString;
+  }
+
+  public void setTimeString(String timeString) {
+    this.timeString = timeString;
+  }
+
+  public Match videos(String videos) {
+    this.videos = videos;
+    return this;
+  }
+
+   /**
+   * JSON array of videos associated with this match and corresponding information
+   * @return videos
+  **/
+  @ApiModelProperty(example = "null", value = "JSON array of videos associated with this match and corresponding information")
+  public String getVideos() {
+    return videos;
+  }
+
+  public void setVideos(String videos) {
+    this.videos = videos;
+  }
+
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -256,21 +256,21 @@ public class Match   {
       return false;
     }
     Match match = (Match) o;
-    return Objects.equals(this.key, match.key) &&
+    return Objects.equals(this.alliances, match.alliances) &&
         Objects.equals(this.compLevel, match.compLevel) &&
-        Objects.equals(this.setNumber, match.setNumber) &&
-        Objects.equals(this.matchNumber, match.matchNumber) &&
-        Objects.equals(this.alliances, match.alliances) &&
-        Objects.equals(this.scoreBreakdown, match.scoreBreakdown) &&
         Objects.equals(this.eventKey, match.eventKey) &&
-        Objects.equals(this.videos, match.videos) &&
+        Objects.equals(this.key, match.key) &&
+        Objects.equals(this.matchNumber, match.matchNumber) &&
+        Objects.equals(this.scoreBreakdown, match.scoreBreakdown) &&
+        Objects.equals(this.setNumber, match.setNumber) &&
+        Objects.equals(this.time, match.time) &&
         Objects.equals(this.timeString, match.timeString) &&
-        Objects.equals(this.time, match.time);
+        Objects.equals(this.videos, match.videos);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(key, compLevel, setNumber, matchNumber, alliances, scoreBreakdown, eventKey, videos, timeString, time);
+    return Objects.hash(alliances, compLevel, eventKey, key, matchNumber, scoreBreakdown, setNumber, time, timeString, videos);
   }
 
   @Override
@@ -278,16 +278,16 @@ public class Match   {
     StringBuilder sb = new StringBuilder();
     sb.append("class Match {\n");
     
-    sb.append("    key: ").append(toIndentedString(key)).append("\n");
-    sb.append("    compLevel: ").append(toIndentedString(compLevel)).append("\n");
-    sb.append("    setNumber: ").append(toIndentedString(setNumber)).append("\n");
-    sb.append("    matchNumber: ").append(toIndentedString(matchNumber)).append("\n");
     sb.append("    alliances: ").append(toIndentedString(alliances)).append("\n");
-    sb.append("    scoreBreakdown: ").append(toIndentedString(scoreBreakdown)).append("\n");
+    sb.append("    compLevel: ").append(toIndentedString(compLevel)).append("\n");
     sb.append("    eventKey: ").append(toIndentedString(eventKey)).append("\n");
-    sb.append("    videos: ").append(toIndentedString(videos)).append("\n");
-    sb.append("    timeString: ").append(toIndentedString(timeString)).append("\n");
+    sb.append("    key: ").append(toIndentedString(key)).append("\n");
+    sb.append("    matchNumber: ").append(toIndentedString(matchNumber)).append("\n");
+    sb.append("    scoreBreakdown: ").append(toIndentedString(scoreBreakdown)).append("\n");
+    sb.append("    setNumber: ").append(toIndentedString(setNumber)).append("\n");
     sb.append("    time: ").append(toIndentedString(time)).append("\n");
+    sb.append("    timeString: ").append(toIndentedString(timeString)).append("\n");
+    sb.append("    videos: ").append(toIndentedString(videos)).append("\n");
     sb.append("}");
     return sb.toString();
   }
