@@ -62,3 +62,6 @@ RELEASE_SHORTLOG
 
 # gce2retrofit jar
 libTba/gce/gce2retrofit.jar
+
+# Swagger spec for generation
+libTba/swagger/apiv2-swagger.mod.json

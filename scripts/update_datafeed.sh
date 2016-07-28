@@ -14,15 +14,21 @@ fi
 
 set -e
 
+# Do our app mutations on the swagger spec
+INITIAL_SPEC=libTba/swagger/apiv2-swagger.json
+JSON_DIR=libTba/swagger/jsonFragments
+SPEC=libTba/swagger/apiv2-swagger.mod.json
+python libTba/swagger/mutate_spec.py --file $INITIAL_SPEC --json $JSON_DIR --out $SPEC
+
 # Generate all the classes in a temporary directory so we can filter out what we want
 rm -rf libTba/swagger/tmp
 mkdir libTba/swagger/tmp
 
 # rx version
-java -jar libTba/swagger/swagger-codegen-cli.jar generate -i libTba/swagger/apiv2-swagger.json -l java -o libTba/swagger/tmp -c libTba/swagger/tba-rx.json
+java -jar libTba/swagger/swagger-codegen-cli.jar generate -i $SPEC -l java -o libTba/swagger/tmp -c libTba/swagger/tba-rx.json
 
 # regular version
-java -jar libTba/swagger/swagger-codegen-cli.jar generate -i libTba/swagger/apiv2-swagger.json -l java -o libTba/swagger/tmp -c libTba/swagger/tba-call.json
+java -jar libTba/swagger/swagger-codegen-cli.jar generate -i $SPEC -l java -o libTba/swagger/tmp -c libTba/swagger/tba-call.json
 
 echo
 echo "Moving generated files"
@@ -37,9 +43,11 @@ cp -r libTba/swagger/tmp/$PKG/rx/ $DST
 cp -r libTba/swagger/tmp/$PKG/model/ $DST
 
 echo "Patching"
+OLD_NAME=DefaultApi
+NEW_NAME=TbaApiV2
 mv libTba/$PKG/call/DefaultApi.java libTba/$PKG/call/TbaApiV2.java
 mv libTba/$PKG/rx/DefaultApi.java libTba/$PKG/rx/TbaApiV2.java
-git apply scripts/patches/swagger-api-names.patch
+perl -pi -e "s/$OLD_NAME/$NEW_NAME/g" libTba/$PKG/{call,rx}/TbaApiV2.java
 
 echo
 echo "Cleaning up"
