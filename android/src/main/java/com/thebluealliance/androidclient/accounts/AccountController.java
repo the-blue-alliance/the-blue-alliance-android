@@ -47,7 +47,7 @@ public class AccountController {
     }
 
     public boolean isMyTbaEnabled() {
-        return mPreferences.getBoolean(PREF_MYTBA_ENABLED, false);
+        return mPreferences.getBoolean(PREF_MYTBA_ENABLED, false) && !getWebClientId().isEmpty();
     }
 
     public void setSelectedAccount(String account) {
