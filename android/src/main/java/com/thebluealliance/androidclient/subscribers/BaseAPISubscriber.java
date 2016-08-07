@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.google.android.gms.analytics.Tracker;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APISubscriber;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
@@ -15,7 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -125,7 +124,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
                     bindViewsIfNeeded();
                     mConsumer.onComplete();
                 } catch (Exception e) {
-                    Log.e(Constants.LOG_TAG, "UNABLE TO COMPLETE RENDER");
+                    TbaLogger.e("UNABLE TO COMPLETE RENDER");
                     e.printStackTrace();
                     mConsumer.onError(e);
                 }
@@ -169,7 +168,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
                     bindViewsIfNeeded();
                     mConsumer.updateData(mDataToBind);
                 } catch (Exception e) {
-                    Log.e(Constants.LOG_TAG, "UNABLE TO RENDER");
+                    TbaLogger.e("UNABLE TO RENDER");
                     e.printStackTrace();
                     mConsumer.onError(e);
                 }

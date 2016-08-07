@@ -4,7 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
@@ -31,7 +31,6 @@ import android.content.res.Resources;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -98,7 +97,8 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
         try {
             alliances = match.getAlliances();
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(getLogTag(), "Incoming match object does not contain alliance data. Can't post score update");
+            TbaLogger
+                    .e("Incoming match object does not contain alliance data. Can't post score update");
             e.printStackTrace();
             return null;
         }
@@ -130,7 +130,7 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
             useSpecial2015Format = match.getYear() == 2015 && match.getMatchType() != MatchType.FINAL;
         } catch (BasicModel.FieldNotDefinedException e) {
             useSpecial2015Format = false;
-            Log.w(Constants.LOG_TAG, "Couldn't determine if we should use 2015 score format. Defaulting to no");
+            TbaLogger.w("Couldn't determine if we should use 2015 score format. Defaulting to no");
         }
 
         String eventShortName = EventHelper.shortName(eventName);

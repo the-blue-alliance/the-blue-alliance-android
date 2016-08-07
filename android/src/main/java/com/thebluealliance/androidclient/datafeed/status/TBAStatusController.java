@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.datafeed.status;
 import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
@@ -20,7 +19,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -123,7 +122,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
                 && mOkHttpCache != null
                 && (forceClear || lastCacheClear < status.getLastOkHttpCacheClear())) {
             Schedulers.io().createWorker().schedule(() -> {
-                Log.i(Constants.LOG_TAG, "Clearing OkHttp cache");
+                TbaLogger.i("Clearing OkHttp cache");
                 try {
                     mOkHttpCache.evictAll();
                     mPrefs.edit()

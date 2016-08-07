@@ -6,7 +6,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.Analytics;
 
 import android.content.Context;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.Map;
 
@@ -78,7 +78,7 @@ public final class AnalyticsHelper {
 
     public static Map<String, String> getErrorHit(Throwable throwable) {
         return new HitBuilders.ExceptionBuilder()
-          .setDescription(Log.getStackTraceString(throwable))
+          .setDescription(TbaLogger.getStackTraceString(throwable))
           .setFatal(false)
           .build();
     }

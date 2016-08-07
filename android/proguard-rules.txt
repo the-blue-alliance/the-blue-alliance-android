@@ -20,9 +20,9 @@
 -dontwarn
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable
 
-#Remove Log.d statements
 -assumenosideeffects class android.util.Log {
 public static *** d(...);
+public static *** v(...);
 }
 
 # For enumeration classes, see http://proguard.sourceforge.net/manual/examples.html#enumerations

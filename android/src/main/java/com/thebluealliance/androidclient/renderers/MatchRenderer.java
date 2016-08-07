@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.renderers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -15,7 +14,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -63,14 +62,14 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
         try {
             alliances = match.getAlliances();
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required field for match render: Database.Matches.ALLIANCES");
+            TbaLogger.w("Required field for match render: Database.Matches.ALLIANCES");
             return null;
         }
         JsonArray videos;
         try {
             videos = match.getVideos();
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Required field for match render: Database.Matches.VIDEOS");
+            TbaLogger.w("Required field for match render: Database.Matches.VIDEOS");
             videos = new JsonArray();
         }
         String key = match.getKey();

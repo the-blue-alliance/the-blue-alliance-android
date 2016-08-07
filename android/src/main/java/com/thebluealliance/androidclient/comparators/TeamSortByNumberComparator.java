@@ -1,10 +1,9 @@
 package com.thebluealliance.androidclient.comparators;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -15,8 +14,8 @@ public class TeamSortByNumberComparator implements Comparator<Team> {
         try {
             return team.getNumber().compareTo(team2.getNumber());
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(Constants.LOG_TAG, "Can't compare teams with missing fields"
-                    + Arrays.toString(e.getStackTrace()));
+            TbaLogger.e("Can't compare teams with missing fields"
+                        + Arrays.toString(e.getStackTrace()));
             return 0;
         }
     }

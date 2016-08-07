@@ -7,10 +7,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.models.Event;
 
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.lang.reflect.Type;
 
@@ -25,7 +24,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         try {
             object = json.getAsJsonObject();
         } catch (JsonSyntaxException | IllegalStateException ex) {
-            Log.w(Constants.LOG_TAG, "Failed to parse json: " + json.toString());
+            TbaLogger.w("Failed to parse json: " + json.toString());
             return null;
         }
         final Event event = new Event();

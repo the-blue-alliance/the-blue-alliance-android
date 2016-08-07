@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.datafeed.gce;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.accounts.AccountController;
 
 import android.content.Context;
@@ -11,7 +10,7 @@ import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.io.IOException;
 
@@ -62,7 +61,7 @@ public class GceAuthController {
         String scope = getAudience();
         String account = mAccountController.getSelectedAccount();
         if (account == null || account.isEmpty()) {
-            Log.e(Constants.LOG_TAG, "No system account found, can't get auth token");
+            TbaLogger.e("No system account found, can't get auth token");
             return null;
         }
         resetBackoff();
@@ -70,7 +69,7 @@ public class GceAuthController {
             try {
                 return getGoogleAuthToken(account, scope);
             } catch (IOException e) {
-                Log.i(Constants.LOG_TAG, "Unable to get token, sleeping " + mBackoffTime + " ms");
+                TbaLogger.i("Unable to get token, sleeping " + mBackoffTime + " ms");
                 e.printStackTrace();
                 SystemClock.sleep(mBackoffTime);
                 mBackoffTime *= 2;
@@ -94,7 +93,7 @@ public class GceAuthController {
             }
             return String.format(AUTH_HEADER_FORMAT, token);
         } catch (GoogleAuthException e) {
-            Log.w(Constants.LOG_TAG, "Auth exception while fetching google token");
+            TbaLogger.w("Auth exception while fetching google token");
             return null;
         }
 

@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.JsonArray;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
@@ -27,7 +26,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,8 +143,8 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         try {
             status = MatchHelper.evaluateStatusOfTeam(event, mMatches, mTeamKey);
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.d(Constants.LOG_TAG, "Status could not be evaluated for team; missing fields: "
-                    + Arrays.toString(e.getStackTrace()));
+            TbaLogger.d("Status could not be evaluated for team; missing fields: "
+                        + Arrays.toString(e.getStackTrace()));
             status = MatchHelper.EventStatus.NOT_AVAILABLE;
         }
 
@@ -172,7 +171,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
                 }
             }
         } catch (BasicModel.FieldNotDefinedException e) {
-            Log.d(Constants.LOG_TAG, "Could not determine if pit locations should be shown. Hiding by default.");
+            TbaLogger.d("Could not determine if pit locations should be shown. Hiding by default.");
         }
 
         if (status != MatchHelper.EventStatus.NOT_AVAILABLE) {

@@ -59,3 +59,10 @@ scripts/github_token
 
 # Current release shortlog, used in scripts
 RELEASE_SHORTLOG
+
+# jars
+libTba/gce/gce2retrofit.jar
+libTba/swagger/swagger-codegen-cli.jar
+
+# Swagger spec for generation
+libTba/swagger/apiv2-swagger.mod.json

@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.helpers;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.activities.TeamAtDistrictActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
@@ -16,7 +15,7 @@ import com.thebluealliance.androidclient.types.ModelType;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 public final class ModelHelper {
 
@@ -29,7 +28,7 @@ public final class ModelHelper {
     }
 
     public static String[] getNotificationTypes(ModelType type) {
-        Log.d(Constants.LOG_TAG, "getting notifications for: " + type);
+        TbaLogger.d("getting notifications for: " + type);
         switch (type) {
             case EVENT:
                 return Event.NOTIFICATION_TYPES;

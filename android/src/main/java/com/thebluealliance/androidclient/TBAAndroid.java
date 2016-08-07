@@ -19,7 +19,6 @@ import com.thebluealliance.androidclient.gcm.GcmModule;
 import com.thebluealliance.androidclient.imgur.ImgurModule;
 
 import android.support.multidex.MultiDexApplication;
-import android.util.Log;
 
 import javax.inject.Inject;
 
@@ -46,10 +45,16 @@ public class TBAAndroid extends MultiDexApplication {
         mShouldBindStetho = true;
     }
 
+    /**
+     * Firebase Crash Reporting makes it so the application is multi-process. Each process will
+     * run the Application's onCreate during initialization.
+     * Therefore, ensure there are no accesses to shared resources here, otherwise we could
+     * get some strange race conditions
+     */
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(Constants.LOG_TAG, "Welcome to The Blue Alliance for Android, v" + BuildConfig.VERSION_NAME);
+        TbaLogger.i("Welcome to The Blue Alliance for Android, v" + BuildConfig.VERSION_NAME);
         getDatafeedComponenet().inject(this);
         registerActivityLifecycleCallbacks(mStatusController);
 
@@ -66,7 +71,7 @@ public class TBAAndroid extends MultiDexApplication {
         }
     }
 
-    public void setShouldBindStetho(boolean shouldBindStetho) {
+    void setShouldBindStetho(boolean shouldBindStetho) {
         mShouldBindStetho = shouldBindStetho;
     }
 

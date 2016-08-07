@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
@@ -14,7 +13,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 import android.widget.TextView;
 
@@ -169,7 +168,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
 
     @Override
     public void onError(Throwable throwable) {
-        Log.e(Constants.LOG_TAG, throwable.toString());
+        TbaLogger.e(throwable.toString());
 
         // If we received valid data from the cache but get an error from the network operations,
         // don't display the "No data" message.

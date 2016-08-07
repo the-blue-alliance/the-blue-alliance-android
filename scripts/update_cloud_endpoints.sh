@@ -1,12 +1,14 @@
 #! /bin/sh
 
 # Script to generate code for Cloud Endpoints client lib
-# Usage: ./scripts/update_cloud_endpoints.sh -t <path-to-tba> -s <path-to-gae-sdk> -a <debug-app-id>
+# Usage: ./scripts/update_cloud_endpoints.sh -t <path-to-tba> -s <path-to-gae-sdk> -a <debug-app-id> -l <gce2retrofit-tag>
+
+usage() { echo "Usage: $0 [-t <path-to-tba>] [-s <path-to-gae-sdk> [-l <gce2retrofit-tag>]" 1>&2; exit 1; }
 
 # Default to packaging for prod
 TBA_APP_ID="tbatv-prod-hrd"
 
-while getopts ":t:s:a:" opt; do
+while getopts ":t:s:a:l:" opt; do
   case $opt in
     t) TBA_HOME="$OPTARG" && echo "Setting TBA Home to $TBA_HOME"
     ;;
@@ -14,7 +16,9 @@ while getopts ":t:s:a:" opt; do
     ;;
     a) TBA_APP_ID="$OPTARG"
     ;;
-    \?) echo "Invalid option -$OPTARG" >&2 && exit -1
+    l) LIB_VERSION="$OPTARG" && echo "Setting GCE Library Version to $LIB_VERSION"
+    ;;
+    \?) echo "Unknown option -$OPTARG" && usage
     ;;
   esac
 done
@@ -42,6 +46,7 @@ fi
 
 # Set up & generate endpoints client library
 cd $TBA_HOME
+set -e
 
 # Set the proper app id and modify mobile API file to remove sitevar references
 perl -pi -e "s/tbatv-dev-hrd/$TBA_APP_ID/g" *.yaml
@@ -50,7 +55,7 @@ git apply $TBA_ANDROID_HOME/scripts/patches/endpoints_remove_sitevar.patch
 # Generate discovery document
 # $GAE_HOME/endpointscfg.py get_client_lib java -o $TBA_ANDROID_HOME -bs gradle mobile_main.MobileAPI
 echo "Getting discovery.json for $TBA_APP_ID"
-$GAE_HOME/endpointscfg.py get_discovery_doc -o $TBA_ANDROID_HOME/gce/ mobile_main.MobileAPI
+$GAE_HOME/endpointscfg.py get_discovery_doc -o $TBA_ANDROID_HOME/libTba/gce/ mobile_main.MobileAPI
 RES="$?"
 
 # Undo our changes
@@ -65,9 +70,19 @@ fi
 
 # Now generate retrofit services
 echo "Renaming discovery document to gce/gce_discovery.json"
-mv gce/tbaMobile-v*.discovery gce/gce_discovery.json
+mv libTba/gce/tbaMobile-v*.discovery libTba/gce/gce_discovery.json
+
+if [ ! -z "$LIB_VERSION" ]; then
+    echo "Downloading gce2retrofit jar version $LIB_VERSION"
+    wget -P libTba/gce/ https://github.com/the-blue-alliance/gce2retrofit/releases/download/$LIB_VERSION/gce2retrofit.jar
+fi
+
+if [ ! -f libTba/gce/gce2retrofit.jar ]; then
+    echo "gce2retrofit.jar not found. Try running with -l <release-tag> to download"
+    exit -1
+fi
 
 echo "Generating retrofit services"
-java -jar gce/gce2retrofit.jar gce/gce_discovery.json ./tbaMobile/src/main/java/ -methods async,reactive
+java -jar libTba/gce/gce2retrofit.jar libTba/gce/gce_discovery.json ./libTba/src/main/java/ -methods async,reactive
 
 exit $RES

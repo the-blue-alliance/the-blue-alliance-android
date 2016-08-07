@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.accounts.AccountController;
@@ -13,7 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -90,12 +89,12 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 mAuthProvider.userFromSignInResult(requestCode, resultCode, data)
                         .subscribe(user -> {
-                            Log.d(Constants.LOG_TAG, "User logged in: " + user.getEmail());
+                            TbaLogger.d("User logged in: " + user.getEmail());
                             mMyTBAOnboardingViewPager.setUpForLoginSuccess();
                             isMyTBALoginComplete = true;
                             mAccountController.onAccountConnect(MyTBAOnboardingActivity.this, user);
                         }, throwable -> {
-                            Log.e(Constants.LOG_TAG, "Error logging in");
+                            TbaLogger.e("Error logging in");
                             throwable.printStackTrace();
                             mAccountController.setMyTbaEnabled(false);
                         });

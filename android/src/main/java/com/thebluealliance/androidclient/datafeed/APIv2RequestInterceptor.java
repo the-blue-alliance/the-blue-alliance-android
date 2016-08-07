@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.datafeed;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.io.IOException;
 
@@ -21,7 +21,7 @@ public class APIv2RequestInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request originalRequest = chain.request();
         String url = originalRequest.url().toString();
-        Log.d(Constants.LOG_TAG, "FETCHING " + url);
+        TbaLogger.d("FETCHING " + url);
 
         Request.Builder newRequestBuilder = originalRequest.newBuilder()
             .addHeader("X-TBA-App-Id", Constants.getApiHeader())

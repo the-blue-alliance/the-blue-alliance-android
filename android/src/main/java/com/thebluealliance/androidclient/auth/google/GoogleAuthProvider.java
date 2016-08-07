@@ -8,7 +8,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.firebase.auth.AuthCredential;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 
@@ -18,7 +17,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -82,7 +81,7 @@ public class GoogleAuthProvider implements AuthProvider,
     public Observable<GoogleSignInUser> userFromSignInResult(int requestCode, int resultCode, Intent data) {
         GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
         boolean success = result.isSuccess();
-        Log.d(Constants.LOG_TAG, "Google Sign In Result: " + success);
+        TbaLogger.d("Google Sign In Result: " + success);
         if (success) {
             mCurrentUser = new GoogleSignInUser(result.getSignInAccount());
         }
@@ -104,13 +103,13 @@ public class GoogleAuthProvider implements AuthProvider,
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.w(Constants.LOG_TAG, "Google API client connection failed");
-        Log.w(Constants.LOG_TAG, connectionResult.getErrorMessage());
+        TbaLogger.w("Google API client connection failed");
+        TbaLogger.w(connectionResult.getErrorMessage());
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.d(Constants.LOG_TAG, "Google API client connected");
+        TbaLogger.d("Google API client connected");
     }
 
     @Override

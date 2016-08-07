@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.fragments;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
@@ -40,7 +39,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -187,13 +186,13 @@ public class NavigationDrawerFragment extends Fragment {
                                                               personPhotoUrl.length() - 2)
                                      + PROFILE_PIC_SIZE;
 
-                    Log.d(Constants.LOG_TAG, "Profile photo url: " + personPhotoUrl);
+                    TbaLogger.d("Profile photo url: " + personPhotoUrl);
 
                     mPicasso.load(personPhotoUrl).into(mProfilePicture);
                     hasAccountDetails = true;
                 }
             } else {
-                Log.w(Constants.LOG_TAG, "No current user found");
+                TbaLogger.w("No current user found");
                 // If myTBA /should/ be enabled, but we don't have a registered Firebase user,
                 // then we're probably upgrading from a pre-firebase version. Try and migrate
                 Activity activity = getActivity();
