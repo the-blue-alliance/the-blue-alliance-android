@@ -39,8 +39,8 @@ public class GoogleAuthProvider implements AuthProvider,
         String clientId = accountController.getWebClientId();
         if (clientId.isEmpty()) {
             // No client id set in tba.properties, can't continue
-            TbaLogger.w("Oauth client ID not set, can't enable myTBA. See https://goo.gl/Swp5PC " +
-                        "for config details");
+            TbaLogger.w("Oauth client ID not set, can't enable myTBA. See https://goo.gl/Swp5PC "
+                        + "for config details");
             mGoogleApiClient = null;
             return;
         }
