@@ -8,6 +8,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.firebase.auth.AuthCredential;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 
@@ -17,7 +18,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -30,13 +30,20 @@ public class GoogleAuthProvider implements AuthProvider,
                                            GoogleApiClient.ConnectionCallbacks
 {
 
-    private final GoogleApiClient mGoogleApiClient;
+    private final @Nullable GoogleApiClient mGoogleApiClient;
     private @Nullable GoogleSignInUser mCurrentUser;
 
     @Inject
     public GoogleAuthProvider(Context context, AccountController accountController) {
         mCurrentUser = null;
         String clientId = accountController.getWebClientId();
+        if (clientId.isEmpty()) {
+            // No client id set in tba.properties, can't continue
+            TbaLogger.w("Oauth client ID not set, can't enable myTBA. See https://goo.gl/Swp5PC "
+                        + "for config details");
+            mGoogleApiClient = null;
+            return;
+        }
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .requestIdToken(clientId)
@@ -54,12 +61,20 @@ public class GoogleAuthProvider implements AuthProvider,
 
     @Override
     public void onStart() {
-        mGoogleApiClient.connect();
+        if (mGoogleApiClient != null
+            && !mGoogleApiClient.isConnecting()
+            && !mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
     }
 
     @Override
     public void onStop() {
-        mGoogleApiClient.disconnect();
+        if (mGoogleApiClient != null
+            && !mGoogleApiClient.isConnecting()
+            && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
     }
 
     @Override
