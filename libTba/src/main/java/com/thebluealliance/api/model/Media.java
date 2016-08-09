@@ -25,16 +25,17 @@
 
 package com.thebluealliance.api.model;
 
-import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
+
+import java.util.Objects;
+
 import io.swagger.annotations.ApiModelProperty;
 
 
 /**
  * Media
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-27T22:00:48.157-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T21:28:28.003-04:00")
 public class Media   {
   @SerializedName("details")
   private String details = null;

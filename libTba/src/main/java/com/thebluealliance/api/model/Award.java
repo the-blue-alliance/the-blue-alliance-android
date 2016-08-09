@@ -34,13 +34,16 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Award
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-27T22:00:48.157-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T21:28:28.003-04:00")
 public class Award   {
   @SerializedName("award_type")
   private Integer awardType = null;
 
   @SerializedName("event_key")
   private String eventKey = null;
+
+  @SerializedName("key")
+  private String key = null;
 
   @SerializedName("name")
   private String name = null;
@@ -85,6 +88,24 @@ public class Award   {
 
   public void setEventKey(String eventKey) {
     this.eventKey = eventKey;
+  }
+
+  public Award key(String key) {
+    this.key = key;
+    return this;
+  }
+
+   /**
+   * Unique key for this Award, formatted like <event key>:<type enum>
+   * @return key
+  **/
+  @ApiModelProperty(example = "null", value = "Unique key for this Award, formatted like <event key>:<type enum>")
+  public String getKey() {
+    return key;
+  }
+
+  public void setKey(String key) {
+    this.key = key;
   }
 
   public Award name(String name) {
@@ -153,6 +174,7 @@ public class Award   {
     Award award = (Award) o;
     return Objects.equals(this.awardType, award.awardType) &&
         Objects.equals(this.eventKey, award.eventKey) &&
+        Objects.equals(this.key, award.key) &&
         Objects.equals(this.name, award.name) &&
         Objects.equals(this.recipientList, award.recipientList) &&
         Objects.equals(this.year, award.year);
@@ -160,7 +182,7 @@ public class Award   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(awardType, eventKey, name, recipientList, year);
+    return Objects.hash(awardType, eventKey, key, name, recipientList, year);
   }
 
   @Override
@@ -170,6 +192,7 @@ public class Award   {
     
     sb.append("    awardType: ").append(toIndentedString(awardType)).append("\n");
     sb.append("    eventKey: ").append(toIndentedString(eventKey)).append("\n");
+    sb.append("    key: ").append(toIndentedString(key)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    recipientList: ").append(toIndentedString(recipientList)).append("\n");
     sb.append("    year: ").append(toIndentedString(year)).append("\n");

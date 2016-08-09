@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * ApiStatus
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-27T22:00:48.157-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T21:28:28.003-04:00")
 public class ApiStatus   {
   @SerializedName("champsPitLocationsUrl")
   private String champsPitLocationsUrl = null;

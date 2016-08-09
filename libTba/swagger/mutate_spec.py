@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import collections
 import sys
 import json
 from optparse import OptionParser
@@ -8,6 +9,16 @@ from glob import glob
 # Dict keys we merge into the same key in the real spec
 MERGE_KEYS = ["paths", "definitions"]
 HEADER_KEY = "headers"
+
+
+def update(d, u):
+    for k, v in u.iteritems():
+        if isinstance(v, collections.Mapping):
+            r = update(d.get(k, {}), v)
+            d[k] = r
+        else:
+            d[k] = u[k]
+    return d
 
 
 def main():
@@ -42,7 +53,7 @@ def main():
             if key in MERGE_KEYS:
                 if key not in swagger_data:
                     swagger_data[key] = {}
-                swagger_data[key].update(value)
+                update(swagger_data[key], value)
             elif key == HEADER_KEY:
                 for path, obj in swagger_data["paths"].iteritems():
                     if not isinstance(obj.get("parameters", None), list):
