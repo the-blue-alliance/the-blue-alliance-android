@@ -5,6 +5,7 @@ import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
 import com.thebluealliance.androidclient.models.Match;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -27,6 +28,16 @@ public class MatchesTable extends ModelTable<Match> {
     public MatchesTable(SQLiteDatabase db){
         super(db);
         this.mDb = db;
+    }
+
+    @Override
+    protected String getKey(Match in) {
+        return in.getKey();
+    }
+
+    @Override
+    protected ContentValues getParams(Match in) {
+        return in.getParams();
     }
 
     @Override

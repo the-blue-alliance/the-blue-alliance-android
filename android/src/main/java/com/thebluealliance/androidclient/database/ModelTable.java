@@ -15,7 +15,7 @@ import java.util.List;
  * Base class for typed storage of models in the database
  * @param <T> Type of the corresponding model, must implement {@link TbaDatabaseModel}
  */
-public abstract class ModelTable<T extends TbaDatabaseModel> {
+public abstract class ModelTable<T> {
 
     private SQLiteDatabase mDb;
 
@@ -25,8 +25,8 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
 
     /**
      * Adds a model to the database, if it doesn't already exist
-     * If the model is already entered, update the existing row via {@link #update(TbaDatabaseModel)}
-     * If the insert was successful, call {@link #insertCallback(TbaDatabaseModel)}
+     * If the model is already entered, update the existing row via {@link #update(T)}
+     * If the insert was successful, call {@link #insertCallback(T)}
      * @param in Model to be added
      * @return The value from {@link SQLiteDatabase#insert(String, String, ContentValues)} if a new
      * row is inserted (row ID or -1 on error), or the value from
@@ -40,8 +40,8 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
         mDb.beginTransaction();
         long ret = -1;
         try {
-            if (!exists(in.getKey())) {
-                ret = mDb.insert(getTableName(), null, in.getParams());
+            if (!exists(getKey(in))) {
+                ret = mDb.insert(getTableName(), null, getParams(in));
                 if (ret != -1) {
                     insertCallback(in);
                 }
@@ -56,7 +56,7 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
     }
 
     /**
-     * Adds a List of items to the database via {@link #add(TbaDatabaseModel)}
+     * Adds a List of items to the database via {@link #add(T)}
      * @param inList List of models to be added
      */
     public void add(@Nullable ImmutableList<T> inList){
@@ -77,7 +77,7 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
     /**
      * Updates an existing row in the database.
      * Uses {@link #getKeyColumn()} = {@link TbaDatabaseModel#getKey()} as the WHERE clause
-     * If the update was successful, call {@link #updateCallback(TbaDatabaseModel)}
+     * If the update was successful, call {@link #updateCallback(T)}
      * @param in Model to be updated
      * @return Value from {@link SQLiteDatabase#update(String, ContentValues, String, String[])},
      * or number of rows affected by the query
@@ -91,9 +91,9 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
         try {
             affectedRows = mDb.update(
                     getTableName(),
-                    in.getParams(),
+                    getParams(in),
                     getKeyColumn() + "=?",
-                    new String[]{in.getKey()});
+                    new String[]{getKey(in)});
             if (affectedRows > 0) {
                 updateCallback(in);
             }
@@ -223,7 +223,7 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
     /**
      * Delete a given model from the database
      * Same as running DELETE FROM {@link #getTableName()} WHERE {@link #getKeyColumn()} = key
-     * If the deletion was successful, call {@link #deleteCallback(TbaDatabaseModel)}
+     * If the deletion was successful, call {@link #deleteCallback(T)}
      * @param in Model to delete. Uses {@link TbaDatabaseModel#getKey()} for the key
      * @return Return value from {@link SQLiteDatabase#delete(String, String, String[])}
      * (number of rows affected)
@@ -232,7 +232,7 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
         int ret;
         mDb.beginTransaction();
         try {
-            ret = mDb.delete(getTableName(), getKeyColumn() + " = ?", new String[]{in.getKey()});
+            ret = mDb.delete(getTableName(), getKeyColumn() + " = ?", new String[]{getKey(in)});
             if (ret > 0) {
                 deleteCallback(in);
             }
@@ -245,7 +245,7 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
 
     /**
      * Delete from the table with a provided WHERE clause
-     * DOES NOT CALL {@link #deleteCallback(TbaDatabaseModel)} - can't make the types work :(
+     * DOES NOT CALL {@link #deleteCallback(T)} - can't make the types work :(
      * @param whereClause SQL WHERE clause to use in deletion
      * @param whereArgs Substitution arguments for the clause
      * @return Value from {@link SQLiteDatabase#delete(String, String, String[])}
@@ -315,6 +315,20 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
     protected void deleteAllCallback() {
         // default to no op
     }
+
+    /**
+     * Get the key associated with this model
+     * @param in Model to interact with the DB
+     * @return Primary key for the model
+     */
+    protected abstract String getKey(T in);
+
+    /**
+     * Get a ContentValues for inserting/updating this model
+     * @param in Model to interact with the DB
+     * @return Serialized version of the model params
+     */
+    protected abstract ContentValues getParams(T in);
 
     /**
      * @return a String containing the same of the backing SQL table
