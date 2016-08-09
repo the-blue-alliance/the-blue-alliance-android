@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
@@ -19,7 +20,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -39,7 +39,7 @@ import rx.schedulers.Schedulers;
 public class TBAStatusController implements Application.ActivityLifecycleCallbacks {
 
     public static final String STATUS_PREF_KEY = "tba_status";
-    public static final String STATUS_CACHE_CLEAR_KEY = "last_okcache_clear";
+    private static final String STATUS_CACHE_CLEAR_KEY = "last_okcache_clear";
 
     /**
      * We use different timeouts for logged in users and not logged in users. Logged-in users will
@@ -91,29 +91,29 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
 
     public int getMaxCompYear() {
         APIStatus status = fetchApiStatus();
-        if (status == null) {
+        if (status == null || status.getMaxSeason() == null) {
             Calendar cal = Calendar.getInstance();
             return cal.get(Calendar.YEAR);
         }
         return status.getMaxSeason();
     }
 
-    public int getMinAppVersion() {
+    private int getMinAppVersion() {
         APIStatus status = fetchApiStatus();
-        if (status == null) {
+        if (status == null || status.getMinAppVersion() == null) {
             /* Default to the current version */
             return BuildConfig.VERSION_CODE;
         }
         return status.getMinAppVersion();
     }
 
-    public int getLatestAppVersion() {
+    private int getLatestAppVersion() {
         APIStatus status = fetchApiStatus();
-        if (status == null) {
+        if (status == null || status.getLatestAppVersion() == null) {
             /* Default to the current version */
             return BuildConfig.VERSION_CODE;
         }
-        return status.getLatestAppersion();
+        return status.getLatestAppVersion();
     }
 
     public void clearOkCacheIfNeeded(@Nullable APIStatus status, boolean forceClear) {
@@ -172,9 +172,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
                         i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient"));
                         activity.startActivity(i);
                     })
-                    .setNegativeButton(R.string.cancel, (dialog, which) -> {
-                        dialog.dismiss();
-                    })
+                    .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
                     .show();
             mLastDialogTime = System.nanoTime();
         }
@@ -188,9 +186,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
             new AlertDialog.Builder(activity)
                     .setMessage(status.getMessageText())
                     .setCancelable(false)
-                    .setPositiveButton(R.string.ok, ((dialog, which) -> {
-                        dialog.dismiss();
-                    }))
+                    .setPositiveButton(R.string.ok, ((dialog, which) -> dialog.dismiss()))
                     .show();
             mLastMessageTime = System.nanoTime();
         }

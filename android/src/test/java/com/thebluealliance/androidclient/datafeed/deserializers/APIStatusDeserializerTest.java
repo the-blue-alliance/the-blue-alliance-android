@@ -48,9 +48,12 @@ public class APIStatusDeserializerTest {
         mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
 
         assertNotNull(mStatus);
-        assertEquals(mStatus.getMaxSeason(), 2015);
-        assertEquals(mStatus.getMinAppVersion(), 123456);
-        assertEquals(mStatus.getLatestAppersion(), 123488);
+        assertNotNull(mStatus.getMaxSeason());
+        assertEquals(mStatus.getMaxSeason().intValue(), 2015);
+        assertNotNull(mStatus.getMinAppVersion());
+        assertEquals(mStatus.getMinAppVersion().intValue(), 123456);
+        assertNotNull(mStatus.getLatestAppVersion());
+        assertEquals(mStatus.getLatestAppVersion().intValue(), 123488);
         assertEquals(mStatus.isFmsApiDown(), false);
         assertEquals(mStatus.getJsonBlob(), mJsonData.toString());
         assertTrue(mStatus.hasMessage());

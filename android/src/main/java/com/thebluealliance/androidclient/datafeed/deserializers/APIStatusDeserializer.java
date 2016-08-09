@@ -18,18 +18,18 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
 
     private static final int MS_PER_SECOND = 1000;
 
-    public static final String MAX_SEASON_TAG = "max_season";
-    public static final String FMS_API_DOWN_TAG = "is_datafeed_down";
-    public static final String DOWN_EVENTS_TAG = "down_events";
-    public static final String ANDROID_SETTINGS_TAG = "android";
-    public static final String MIN_APP_VERSION_TAG = "min_app_version";
-    public static final String LATEST_APP_VERSION_TAG = "latest_app_version";
-    public static final String MESSAGE_DICT = "message";
-    public static final String MESSAGE_TEXT = "text";
-    public static final String MESSAGE_EXPIRATION = "expiration";
-    public static final String LAST_OKHTTP_CACHE_CLEAR = "last_cache_clear";
-    public static final String CHAMPS_PIT_LOCATIONS_URL = "cmp_pit_locations_url";
-    public static final String CHAMPS_PIT_LOCATIONS_UPDATE_TIME = "cmp_pit_locations_update_time";
+    static final String MAX_SEASON_TAG = "max_season";
+    static final String FMS_API_DOWN_TAG = "is_datafeed_down";
+    static final String DOWN_EVENTS_TAG = "down_events";
+    static final String ANDROID_SETTINGS_TAG = "android";
+    static final String MIN_APP_VERSION_TAG = "min_app_version";
+    static final String LATEST_APP_VERSION_TAG = "latest_app_version";
+    static final String MESSAGE_DICT = "message";
+    static final String MESSAGE_TEXT = "text";
+    static final String MESSAGE_EXPIRATION = "expiration";
+    static final String LAST_OKHTTP_CACHE_CLEAR = "last_cache_clear";
+    static final String CHAMPS_PIT_LOCATIONS_URL = "cmp_pit_locations_url";
+    static final String CHAMPS_PIT_LOCATIONS_UPDATE_TIME = "cmp_pit_locations_update_time";
 
     @Override
     public APIStatus deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -81,7 +81,7 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
         if (latestAppVersion == null || !latestAppVersion.isJsonPrimitive()) {
             throw new JsonParseException("Latest app version not found");
         }
-        status.setLatestAppersion(latestAppVersion.getAsInt());
+        status.setLatestAppVersion(latestAppVersion.getAsInt());
 
         JsonElement message = data.get(MESSAGE_DICT);
         if (message != null && !message.isJsonNull() && message.isJsonObject()) {
