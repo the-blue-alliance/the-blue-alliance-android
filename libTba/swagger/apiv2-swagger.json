@@ -579,6 +579,11 @@
   "definitions": {
     "Team": {
       "type": "object",
+      "required": [
+        "key",
+        "name",
+        "team_number"
+      ],
       "properties": {
         "key": {
           "type": "string",
@@ -628,6 +633,12 @@
     },
     "Event": {
       "type": "object",
+      "required": [
+        "key",
+        "name",
+        "event_code",
+        "year"
+      ],
       "properties": {
         "key": {
           "type": "string",
@@ -697,6 +708,13 @@
     },
     "Match": {
       "type": "object",
+      "required": [
+        "key",
+        "event_key",
+        "comp_level",
+        "match_number",
+        "set_number"
+      ],
       "properties": {
         "key": {
           "type": "string",
@@ -742,6 +760,12 @@
     },
     "Award": {
       "type": "object",
+      "required": [
+        "name",
+        "award_type",
+        "event_key",
+        "year"
+      ],
       "properties": {
         "name": {
           "type": "string",
@@ -767,6 +791,10 @@
     },
     "Media": {
       "type": "object",
+      "required": [
+        "type",
+        "foreign_key"
+      ],
       "properties": {
         "type": {
           "type": "string",
@@ -784,6 +812,12 @@
     },
     "Robot": {
       "type": "object",
+      "required": [
+        "key",
+        "team_key",
+        "year",
+        "name"
+      ],
       "properties": {
         "key": {
           "type": "string",

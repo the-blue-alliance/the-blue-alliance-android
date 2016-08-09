@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Media
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:04:30.906-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:16:34.746-04:00")
 public class Media   {
   @SerializedName("details")
   private String details = null;
@@ -77,8 +77,7 @@ public class Media   {
    * The key used to indentify this media element on the remote site (e.g YouTube video key)
    * @return foreignKey
   **/
-  @ApiModelProperty(example = "null", value = "The key used to indentify this media element on the remote site (e.g YouTube video key)")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "The key used to indentify this media element on the remote site (e.g YouTube video key)")
   public String getForeignKey() {
     return foreignKey;
   }
@@ -115,8 +114,7 @@ public class Media   {
    * The string type of the media element
    * @return type
   **/
-  @ApiModelProperty(example = "null", value = "The string type of the media element")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "The string type of the media element")
   public String getType() {
     return type;
   }

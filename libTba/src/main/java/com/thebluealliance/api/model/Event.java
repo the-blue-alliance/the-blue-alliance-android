@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Event
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:04:30.906-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:16:34.746-04:00")
 public class Event   {
   @SerializedName("alliances")
   private String alliances = null;
@@ -116,8 +116,7 @@ public class Event   {
    * Event short code, as provided by FIRST
    * @return eventCode
   **/
-  @ApiModelProperty(example = "null", value = "Event short code, as provided by FIRST")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "Event short code, as provided by FIRST")
   public String getEventCode() {
     return eventCode;
   }
@@ -211,8 +210,7 @@ public class Event   {
    * TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event.
    * @return key
   **/
-  @ApiModelProperty(example = "null", value = "TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event.")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event.")
   public String getKey() {
     return key;
   }
@@ -268,8 +266,7 @@ public class Event   {
    * Official name of event on record either provided by FIRST or organizers of offseason event.
    * @return name
   **/
-  @ApiModelProperty(example = "null", value = "Official name of event on record either provided by FIRST or organizers of offseason event.")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "Official name of event on record either provided by FIRST or organizers of offseason event.")
   public String getName() {
     return name;
   }
@@ -401,8 +398,7 @@ public class Event   {
    * Year the event data is for.
    * @return year
   **/
-  @ApiModelProperty(example = "null", value = "Year the event data is for.")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "Year the event data is for.")
   public Integer getYear() {
     return year;
   }

@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Robot
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:04:30.906-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:16:34.746-04:00")
 public class Robot   {
   @SerializedName("key")
   private String key = null;
@@ -61,8 +61,7 @@ public class Robot   {
    * A key identifying the robot object. Formed like [team_key]_[year]
    * @return key
   **/
-  @ApiModelProperty(example = "null", value = "A key identifying the robot object. Formed like [team_key]_[year]")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "A key identifying the robot object. Formed like [team_key]_[year]")
   public String getKey() {
     return key;
   }
@@ -99,8 +98,7 @@ public class Robot   {
    * The robot name in this year
    * @return name
   **/
-  @ApiModelProperty(example = "null", value = "The robot name in this year")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "The robot name in this year")
   public String getName() {
     return name;
   }
@@ -118,8 +116,7 @@ public class Robot   {
    * The associated Team key
    * @return teamKey
   **/
-  @ApiModelProperty(example = "null", value = "The associated Team key")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "The associated Team key")
   public String getTeamKey() {
     return teamKey;
   }
@@ -137,8 +134,7 @@ public class Robot   {
    * The year this Robot model referes to
    * @return year
   **/
-  @ApiModelProperty(example = "null", value = "The year this Robot model referes to")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "The year this Robot model referes to")
   public Integer getYear() {
     return year;
   }

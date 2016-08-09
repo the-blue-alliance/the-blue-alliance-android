@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Team
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:04:30.906-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:16:34.746-04:00")
 public class Team   {
   @SerializedName("country_name")
   private String countryName = null;
@@ -101,8 +101,7 @@ public class Team   {
    * TBA team key with the format frcyyyy
    * @return key
   **/
-  @ApiModelProperty(example = "null", value = "TBA team key with the format frcyyyy")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "TBA team key with the format frcyyyy")
   public String getKey() {
     return key;
   }
@@ -196,8 +195,7 @@ public class Team   {
    * Official long name registerd with FIRST
    * @return name
   **/
-  @ApiModelProperty(example = "null", value = "Official long name registerd with FIRST")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "Official long name registerd with FIRST")
   public String getName() {
     return name;
   }
@@ -272,8 +270,7 @@ public class Team   {
    * Official team number issued by FIRST
    * @return teamNumber
   **/
-  @ApiModelProperty(example = "null", value = "Official team number issued by FIRST")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "Official team number issued by FIRST")
   public Integer getTeamNumber() {
     return teamNumber;
   }

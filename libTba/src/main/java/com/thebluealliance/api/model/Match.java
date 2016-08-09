@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Match
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:04:30.906-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:16:34.746-04:00")
 public class Match   {
   @SerializedName("alliances")
   private String alliances = null;
@@ -98,8 +98,7 @@ public class Match   {
    * The competition level the match was played at.
    * @return compLevel
   **/
-  @ApiModelProperty(example = "null", value = "The competition level the match was played at.")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "The competition level the match was played at.")
   public String getCompLevel() {
     return compLevel;
   }
@@ -117,8 +116,7 @@ public class Match   {
    * Event key of the event the match was played at.
    * @return eventKey
   **/
-  @ApiModelProperty(example = "null", value = "Event key of the event the match was played at.")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "Event key of the event the match was played at.")
   public String getEventKey() {
     return eventKey;
   }
@@ -136,8 +134,7 @@ public class Match   {
    * TBA event key with the format yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER], where yyyy is the year, and EVENT_CODE is the event code of the event, COMP_LEVEL is (qm, ef, qf, sf, f), and MATCH_NUMBER is the match number in the competition level. A set number may append the competition level if more than one match in required per set .
    * @return key
   **/
-  @ApiModelProperty(example = "null", value = "TBA event key with the format yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER], where yyyy is the year, and EVENT_CODE is the event code of the event, COMP_LEVEL is (qm, ef, qf, sf, f), and MATCH_NUMBER is the match number in the competition level. A set number may append the competition level if more than one match in required per set .")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "TBA event key with the format yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER], where yyyy is the year, and EVENT_CODE is the event code of the event, COMP_LEVEL is (qm, ef, qf, sf, f), and MATCH_NUMBER is the match number in the competition level. A set number may append the competition level if more than one match in required per set .")
   public String getKey() {
     return key;
   }
@@ -174,8 +171,7 @@ public class Match   {
    * The match number of the match in the competition level.
    * @return matchNumber
   **/
-  @ApiModelProperty(example = "null", value = "The match number of the match in the competition level.")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "The match number of the match in the competition level.")
   public Integer getMatchNumber() {
     return matchNumber;
   }
@@ -212,8 +208,7 @@ public class Match   {
    * The set number in a series of matches where more than one match is required in the match series.
    * @return setNumber
   **/
-  @ApiModelProperty(example = "null", value = "The set number in a series of matches where more than one match is required in the match series.")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "The set number in a series of matches where more than one match is required in the match series.")
   public Integer getSetNumber() {
     return setNumber;
   }

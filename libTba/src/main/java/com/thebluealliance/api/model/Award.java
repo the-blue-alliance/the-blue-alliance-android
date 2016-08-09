@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Award
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:04:30.906-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:16:34.746-04:00")
 public class Award   {
   @SerializedName("award_type")
   private Integer awardType = null;
@@ -67,8 +67,7 @@ public class Award   {
    * An integer that represents the award type as a constant.
    * @return awardType
   **/
-  @ApiModelProperty(example = "null", value = "An integer that represents the award type as a constant.")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "An integer that represents the award type as a constant.")
   public Integer getAwardType() {
     return awardType;
   }
@@ -86,8 +85,7 @@ public class Award   {
    * The event_key of the event the award was won at.
    * @return eventKey
   **/
-  @ApiModelProperty(example = "null", value = "The event_key of the event the award was won at.")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "The event_key of the event the award was won at.")
   public String getEventKey() {
     return eventKey;
   }
@@ -143,8 +141,7 @@ public class Award   {
    * The name of the award as provided by FIRST. May vary for the same award type.
    * @return name
   **/
-  @ApiModelProperty(example = "null", value = "The name of the award as provided by FIRST. May vary for the same award type.")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "The name of the award as provided by FIRST. May vary for the same award type.")
   public String getName() {
     return name;
   }
@@ -181,8 +178,7 @@ public class Award   {
    * The year this award was won.
    * @return year
   **/
-  @ApiModelProperty(example = "null", value = "The year this award was won.")
-  @Nullable
+  @ApiModelProperty(example = "null", required = true, value = "The year this award was won.")
   public Integer getYear() {
     return year;
   }
