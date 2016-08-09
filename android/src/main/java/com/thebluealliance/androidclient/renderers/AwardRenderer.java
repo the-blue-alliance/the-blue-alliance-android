@@ -1,12 +1,10 @@
 package com.thebluealliance.androidclient.renderers;
 
-import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.Award;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.ModelType;
 
@@ -43,22 +41,17 @@ public class AwardRenderer implements ModelRenderer<Award, AwardRenderer.RenderA
 
     @Override
     public @Nullable ListElement renderFromModel(Award award, RenderArgs args) {
-        try {
-            switch (args.renderType) {
-                case RENDER_CARDED:
-                    return new CardedAwardListElement(
-                      mDatafeed,
-                      award.getName(),
-                      award.getEventKey(),
-                      award.getWinners(),
-                      args.teams,
-                      args.selectedTeamKey);
-                case RENDER_NONCARDED:
-                    return new AwardListElement(mDatafeed, award.getName(), award.getWinners());
-            }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.e("Unable to render award: " + award.getKey());
-            e.printStackTrace();
+        switch (args.renderType) {
+            case RENDER_CARDED:
+                return new CardedAwardListElement(
+                        mDatafeed,
+                        award.getName(),
+                        award.getEventKey(),
+                        award.getWinners(),
+                        args.teams,
+                        args.selectedTeamKey);
+            case RENDER_NONCARDED:
+                return new AwardListElement(mDatafeed, award.getName(), award.getWinners());
         }
         return null;
     }

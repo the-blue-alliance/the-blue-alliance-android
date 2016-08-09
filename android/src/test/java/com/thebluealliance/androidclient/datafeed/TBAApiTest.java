@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -18,12 +19,11 @@ import com.thebluealliance.androidclient.types.MediaType;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
-import com.thebluealliance.androidclient.TbaLogger;
-
 import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(RobolectricTestRunner.class)
 public class TBAApiTest {
@@ -164,20 +164,17 @@ public class TBAApiTest {
                 + "  }";
         Award award = JSONHelper.getGson().fromJson(json, Award.class);
 
-        try {
-            assertEquals(award.getEventKey(), "2010sc");
-            assertEquals(award.getName(), "Winner");
-            assertEquals(award.getYear(), 2010);
+        assertEquals(award.getEventKey(), "2010sc");
+        assertEquals(award.getName(), "Winner");
+        assertEquals(award.getYear().intValue(), 2010);
 
-            JsonArray recips = award.getWinners();
-            String[] winners = {"343", "1261", "1398"};
-            assertEquals(recips.size(), 3);
-            for (int i = 0; i < 3; i++) {
-                assertEquals(winners[i], recips.get(i).getAsJsonObject().get("team_number").getAsString());
-            }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.e("Unable to get award fields");
-            e.printStackTrace();
+        JsonArray recips = award.getWinners();
+        String[] winners = {"343", "1261", "1398"};
+        assertNotNull(recips);
+        assertEquals(recips.size(), 3);
+        for (int i = 0; i < 3; i++) {
+            assertEquals(winners[i],
+                         recips.get(i).getAsJsonObject().get("team_number").getAsString());
         }
     }
 
@@ -200,20 +197,16 @@ public class TBAApiTest {
                 + "  }";
         Award award = JSONHelper.getGson().fromJson(json, Award.class);
 
-        try {
-            assertEquals(award.getEventKey(), "2010sc");
-            assertEquals(award.getName(), "FIRST Dean's List Finalist Award");
-            assertEquals(award.getYear(), 2010);
+        assertEquals(award.getEventKey(), "2010sc");
+        assertEquals(award.getName(), "FIRST Dean's List Finalist Award");
+        assertEquals(award.getYear().intValue(), 2010);
 
-            JsonArray recips = award.getWinners();
-            String[] winners = {"Brandon Dean", "Megan Shew"};
-            assertEquals(recips.size(), 2);
-            for (int i = 0; i < 2; i++) {
-                assertEquals(winners[i], recips.get(i).getAsJsonObject().get("awardee").getAsString());
-            }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.e("Unable to get award fields");
-            e.printStackTrace();
+        JsonArray recips = award.getWinners();
+        String[] winners = {"Brandon Dean", "Megan Shew"};
+        assertNotNull(recips);
+        assertEquals(recips.size(), 2);
+        for (int i = 0; i < 2; i++) {
+            assertEquals(winners[i], recips.get(i).getAsJsonObject().get("awardee").getAsString());
         }
     }
 
