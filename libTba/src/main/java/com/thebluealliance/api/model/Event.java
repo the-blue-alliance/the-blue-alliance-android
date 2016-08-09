@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Event
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T22:10:21.357-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:04:30.906-04:00")
 public class Event   {
   @SerializedName("alliances")
   private String alliances = null;
@@ -57,6 +57,9 @@ public class Event   {
 
   @SerializedName("key")
   private String key = null;
+
+  @SerializedName("lastModified")
+  private Long lastModified = null;
 
   @SerializedName("location")
   private String location = null;
@@ -216,6 +219,25 @@ public class Event   {
 
   public void setKey(String key) {
     this.key = key;
+  }
+
+  public Event lastModified(Long lastModified) {
+    this.lastModified = lastModified;
+    return this;
+  }
+
+   /**
+   * Timestamp this model was last modified
+   * @return lastModified
+  **/
+  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
+  @Nullable
+  public Long getLastModified() {
+    return lastModified;
+  }
+
+  public void setLastModified(Long lastModified) {
+    this.lastModified = lastModified;
   }
 
   public Event location(String location) {
@@ -406,6 +428,7 @@ public class Event   {
         Objects.equals(this.eventType, event.eventType) &&
         Objects.equals(this.eventTypeString, event.eventTypeString) &&
         Objects.equals(this.key, event.key) &&
+        Objects.equals(this.lastModified, event.lastModified) &&
         Objects.equals(this.location, event.location) &&
         Objects.equals(this.name, event.name) &&
         Objects.equals(this.official, event.official) &&
@@ -419,7 +442,7 @@ public class Event   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(alliances, eventCode, eventDistrict, eventDistrictString, eventType, eventTypeString, key, location, name, official, shortName, timezone, venueAddress, webcast, website, year);
+    return Objects.hash(alliances, eventCode, eventDistrict, eventDistrictString, eventType, eventTypeString, key, lastModified, location, name, official, shortName, timezone, venueAddress, webcast, website, year);
   }
 
   @Override
@@ -434,6 +457,7 @@ public class Event   {
     sb.append("    eventType: ").append(toIndentedString(eventType)).append("\n");
     sb.append("    eventTypeString: ").append(toIndentedString(eventTypeString)).append("\n");
     sb.append("    key: ").append(toIndentedString(key)).append("\n");
+    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
     sb.append("    location: ").append(toIndentedString(location)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    official: ").append(toIndentedString(official)).append("\n");

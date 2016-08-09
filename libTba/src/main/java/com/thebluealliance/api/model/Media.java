@@ -35,13 +35,16 @@ import javax.annotation.Nullable;
 /**
  * Media
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T22:10:21.357-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:04:30.906-04:00")
 public class Media   {
   @SerializedName("details")
   private String details = null;
 
   @SerializedName("foreign_key")
   private String foreignKey = null;
+
+  @SerializedName("lastModified")
+  private Long lastModified = null;
 
   @SerializedName("type")
   private String type = null;
@@ -84,6 +87,25 @@ public class Media   {
     this.foreignKey = foreignKey;
   }
 
+  public Media lastModified(Long lastModified) {
+    this.lastModified = lastModified;
+    return this;
+  }
+
+   /**
+   * Timestamp this model was last modified
+   * @return lastModified
+  **/
+  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
+  @Nullable
+  public Long getLastModified() {
+    return lastModified;
+  }
+
+  public void setLastModified(Long lastModified) {
+    this.lastModified = lastModified;
+  }
+
   public Media type(String type) {
     this.type = type;
     return this;
@@ -115,12 +137,13 @@ public class Media   {
     Media media = (Media) o;
     return Objects.equals(this.details, media.details) &&
         Objects.equals(this.foreignKey, media.foreignKey) &&
+        Objects.equals(this.lastModified, media.lastModified) &&
         Objects.equals(this.type, media.type);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(details, foreignKey, type);
+    return Objects.hash(details, foreignKey, lastModified, type);
   }
 
   @Override
@@ -130,6 +153,7 @@ public class Media   {
     
     sb.append("    details: ").append(toIndentedString(details)).append("\n");
     sb.append("    foreignKey: ").append(toIndentedString(foreignKey)).append("\n");
+    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("}");
     return sb.toString();

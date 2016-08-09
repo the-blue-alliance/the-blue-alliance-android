@@ -35,10 +35,13 @@ import javax.annotation.Nullable;
 /**
  * Robot
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T22:10:21.357-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:04:30.906-04:00")
 public class Robot   {
   @SerializedName("key")
   private String key = null;
+
+  @SerializedName("lastModified")
+  private Long lastModified = null;
 
   @SerializedName("name")
   private String name = null;
@@ -66,6 +69,25 @@ public class Robot   {
 
   public void setKey(String key) {
     this.key = key;
+  }
+
+  public Robot lastModified(Long lastModified) {
+    this.lastModified = lastModified;
+    return this;
+  }
+
+   /**
+   * Timestamp this model was last modified
+   * @return lastModified
+  **/
+  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
+  @Nullable
+  public Long getLastModified() {
+    return lastModified;
+  }
+
+  public void setLastModified(Long lastModified) {
+    this.lastModified = lastModified;
   }
 
   public Robot name(String name) {
@@ -136,6 +158,7 @@ public class Robot   {
     }
     Robot robot = (Robot) o;
     return Objects.equals(this.key, robot.key) &&
+        Objects.equals(this.lastModified, robot.lastModified) &&
         Objects.equals(this.name, robot.name) &&
         Objects.equals(this.teamKey, robot.teamKey) &&
         Objects.equals(this.year, robot.year);
@@ -143,7 +166,7 @@ public class Robot   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(key, name, teamKey, year);
+    return Objects.hash(key, lastModified, name, teamKey, year);
   }
 
   @Override
@@ -152,6 +175,7 @@ public class Robot   {
     sb.append("class Robot {\n");
     
     sb.append("    key: ").append(toIndentedString(key)).append("\n");
+    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    teamKey: ").append(toIndentedString(teamKey)).append("\n");
     sb.append("    year: ").append(toIndentedString(year)).append("\n");

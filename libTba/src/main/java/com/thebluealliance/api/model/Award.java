@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Award
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T22:10:21.357-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:04:30.906-04:00")
 public class Award   {
   @SerializedName("award_type")
   private Integer awardType = null;
@@ -45,6 +45,9 @@ public class Award   {
 
   @SerializedName("key")
   private String key = null;
+
+  @SerializedName("lastModified")
+  private Long lastModified = null;
 
   @SerializedName("name")
   private String name = null;
@@ -110,6 +113,25 @@ public class Award   {
 
   public void setKey(String key) {
     this.key = key;
+  }
+
+  public Award lastModified(Long lastModified) {
+    this.lastModified = lastModified;
+    return this;
+  }
+
+   /**
+   * Timestamp this model was last modified
+   * @return lastModified
+  **/
+  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
+  @Nullable
+  public Long getLastModified() {
+    return lastModified;
+  }
+
+  public void setLastModified(Long lastModified) {
+    this.lastModified = lastModified;
   }
 
   public Award name(String name) {
@@ -182,6 +204,7 @@ public class Award   {
     return Objects.equals(this.awardType, award.awardType) &&
         Objects.equals(this.eventKey, award.eventKey) &&
         Objects.equals(this.key, award.key) &&
+        Objects.equals(this.lastModified, award.lastModified) &&
         Objects.equals(this.name, award.name) &&
         Objects.equals(this.recipientList, award.recipientList) &&
         Objects.equals(this.year, award.year);
@@ -189,7 +212,7 @@ public class Award   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(awardType, eventKey, key, name, recipientList, year);
+    return Objects.hash(awardType, eventKey, key, lastModified, name, recipientList, year);
   }
 
   @Override
@@ -200,6 +223,7 @@ public class Award   {
     sb.append("    awardType: ").append(toIndentedString(awardType)).append("\n");
     sb.append("    eventKey: ").append(toIndentedString(eventKey)).append("\n");
     sb.append("    key: ").append(toIndentedString(key)).append("\n");
+    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    recipientList: ").append(toIndentedString(recipientList)).append("\n");
     sb.append("    year: ").append(toIndentedString(year)).append("\n");

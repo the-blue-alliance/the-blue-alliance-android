@@ -35,13 +35,16 @@ import javax.annotation.Nullable;
 /**
  * Team
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T22:10:21.357-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:04:30.906-04:00")
 public class Team   {
   @SerializedName("country_name")
   private String countryName = null;
 
   @SerializedName("key")
   private String key = null;
+
+  @SerializedName("lastModified")
+  private Long lastModified = null;
 
   @SerializedName("locality")
   private String locality = null;
@@ -106,6 +109,25 @@ public class Team   {
 
   public void setKey(String key) {
     this.key = key;
+  }
+
+  public Team lastModified(Long lastModified) {
+    this.lastModified = lastModified;
+    return this;
+  }
+
+   /**
+   * Timestamp this model was last modified
+   * @return lastModified
+  **/
+  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
+  @Nullable
+  public Long getLastModified() {
+    return lastModified;
+  }
+
+  public void setLastModified(Long lastModified) {
+    this.lastModified = lastModified;
   }
 
   public Team locality(String locality) {
@@ -291,6 +313,7 @@ public class Team   {
     Team team = (Team) o;
     return Objects.equals(this.countryName, team.countryName) &&
         Objects.equals(this.key, team.key) &&
+        Objects.equals(this.lastModified, team.lastModified) &&
         Objects.equals(this.locality, team.locality) &&
         Objects.equals(this.location, team.location) &&
         Objects.equals(this.motto, team.motto) &&
@@ -304,7 +327,7 @@ public class Team   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(countryName, key, locality, location, motto, name, nickname, region, rookieYear, teamNumber, website);
+    return Objects.hash(countryName, key, lastModified, locality, location, motto, name, nickname, region, rookieYear, teamNumber, website);
   }
 
   @Override
@@ -314,6 +337,7 @@ public class Team   {
     
     sb.append("    countryName: ").append(toIndentedString(countryName)).append("\n");
     sb.append("    key: ").append(toIndentedString(key)).append("\n");
+    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
     sb.append("    locality: ").append(toIndentedString(locality)).append("\n");
     sb.append("    location: ").append(toIndentedString(location)).append("\n");
     sb.append("    motto: ").append(toIndentedString(motto)).append("\n");

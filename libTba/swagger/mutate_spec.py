@@ -9,6 +9,7 @@ from glob import glob
 # Dict keys we merge into the same key in the real spec
 MERGE_KEYS = ["paths", "definitions"]
 HEADER_KEY = "headers"
+ALL_PROPERTIES_KEY = "allProperties"
 
 
 def update(d, u):
@@ -59,6 +60,9 @@ def main():
                     if not isinstance(obj.get("parameters", None), list):
                         obj["parameters"] = []
                     obj["parameters"].extend(value)
+            elif key == ALL_PROPERTIES_KEY:
+                for model, obj in swagger_data["definitions"].iteritems():
+                    swagger_data["definitions"][model]["properties"].update(value)
 
     pretty = json.dumps(swagger_data, indent=2, sort_keys=True)
     print("Writing data back to {}".format(options.out))

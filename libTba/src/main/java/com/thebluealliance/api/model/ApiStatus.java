@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 /**
  * ApiStatus
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T22:10:21.357-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:04:30.906-04:00")
 public class ApiStatus   {
   @SerializedName("champsPitLocationsUrl")
   private String champsPitLocationsUrl = null;
@@ -50,6 +50,9 @@ public class ApiStatus   {
 
   @SerializedName("hasMessage")
   private Boolean hasMessage = null;
+
+  @SerializedName("lastModified")
+  private Long lastModified = null;
 
   @SerializedName("latestAppVersion")
   private Integer latestAppVersion = null;
@@ -144,6 +147,25 @@ public class ApiStatus   {
     this.hasMessage = hasMessage;
   }
 
+  public ApiStatus lastModified(Long lastModified) {
+    this.lastModified = lastModified;
+    return this;
+  }
+
+   /**
+   * Timestamp this model was last modified
+   * @return lastModified
+  **/
+  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
+  @Nullable
+  public Long getLastModified() {
+    return lastModified;
+  }
+
+  public void setLastModified(Long lastModified) {
+    this.lastModified = lastModified;
+  }
+
   public ApiStatus latestAppVersion(Integer latestAppVersion) {
     this.latestAppVersion = latestAppVersion;
     return this;
@@ -234,6 +256,7 @@ public class ApiStatus   {
         Objects.equals(this.downEvents, apiStatus.downEvents) &&
         Objects.equals(this.fmsApiDown, apiStatus.fmsApiDown) &&
         Objects.equals(this.hasMessage, apiStatus.hasMessage) &&
+        Objects.equals(this.lastModified, apiStatus.lastModified) &&
         Objects.equals(this.latestAppVersion, apiStatus.latestAppVersion) &&
         Objects.equals(this.maxSeason, apiStatus.maxSeason) &&
         Objects.equals(this.messageText, apiStatus.messageText) &&
@@ -242,7 +265,7 @@ public class ApiStatus   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(champsPitLocationsUrl, downEvents, fmsApiDown, hasMessage, latestAppVersion, maxSeason, messageText, minAppVersion);
+    return Objects.hash(champsPitLocationsUrl, downEvents, fmsApiDown, hasMessage, lastModified, latestAppVersion, maxSeason, messageText, minAppVersion);
   }
 
   @Override
@@ -254,6 +277,7 @@ public class ApiStatus   {
     sb.append("    downEvents: ").append(toIndentedString(downEvents)).append("\n");
     sb.append("    fmsApiDown: ").append(toIndentedString(fmsApiDown)).append("\n");
     sb.append("    hasMessage: ").append(toIndentedString(hasMessage)).append("\n");
+    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
     sb.append("    latestAppVersion: ").append(toIndentedString(latestAppVersion)).append("\n");
     sb.append("    maxSeason: ").append(toIndentedString(maxSeason)).append("\n");
     sb.append("    messageText: ").append(toIndentedString(messageText)).append("\n");

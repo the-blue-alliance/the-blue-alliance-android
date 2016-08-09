@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Match
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T22:10:21.357-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:04:30.906-04:00")
 public class Match   {
   @SerializedName("alliances")
   private String alliances = null;
@@ -48,6 +48,9 @@ public class Match   {
 
   @SerializedName("key")
   private String key = null;
+
+  @SerializedName("lastModified")
+  private Long lastModified = null;
 
   @SerializedName("match_number")
   private Integer matchNumber = null;
@@ -141,6 +144,25 @@ public class Match   {
 
   public void setKey(String key) {
     this.key = key;
+  }
+
+  public Match lastModified(Long lastModified) {
+    this.lastModified = lastModified;
+    return this;
+  }
+
+   /**
+   * Timestamp this model was last modified
+   * @return lastModified
+  **/
+  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
+  @Nullable
+  public Long getLastModified() {
+    return lastModified;
+  }
+
+  public void setLastModified(Long lastModified) {
+    this.lastModified = lastModified;
   }
 
   public Match matchNumber(Integer matchNumber) {
@@ -271,6 +293,7 @@ public class Match   {
         Objects.equals(this.compLevel, match.compLevel) &&
         Objects.equals(this.eventKey, match.eventKey) &&
         Objects.equals(this.key, match.key) &&
+        Objects.equals(this.lastModified, match.lastModified) &&
         Objects.equals(this.matchNumber, match.matchNumber) &&
         Objects.equals(this.scoreBreakdown, match.scoreBreakdown) &&
         Objects.equals(this.setNumber, match.setNumber) &&
@@ -281,7 +304,7 @@ public class Match   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(alliances, compLevel, eventKey, key, matchNumber, scoreBreakdown, setNumber, time, timeString, videos);
+    return Objects.hash(alliances, compLevel, eventKey, key, lastModified, matchNumber, scoreBreakdown, setNumber, time, timeString, videos);
   }
 
   @Override
@@ -293,6 +316,7 @@ public class Match   {
     sb.append("    compLevel: ").append(toIndentedString(compLevel)).append("\n");
     sb.append("    eventKey: ").append(toIndentedString(eventKey)).append("\n");
     sb.append("    key: ").append(toIndentedString(key)).append("\n");
+    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
     sb.append("    matchNumber: ").append(toIndentedString(matchNumber)).append("\n");
     sb.append("    scoreBreakdown: ").append(toIndentedString(scoreBreakdown)).append("\n");
     sb.append("    setNumber: ").append(toIndentedString(setNumber)).append("\n");
