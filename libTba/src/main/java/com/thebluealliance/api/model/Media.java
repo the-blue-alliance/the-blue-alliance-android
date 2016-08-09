@@ -25,17 +25,17 @@
 
 package com.thebluealliance.api.model;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.Objects;
-
+import com.google.gson.annotations.SerializedName;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.annotation.Nullable;
 
 
 /**
  * Media
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T21:28:28.003-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T22:10:21.357-04:00")
 public class Media   {
   @SerializedName("details")
   private String details = null;
@@ -56,6 +56,7 @@ public class Media   {
    * @return details
   **/
   @ApiModelProperty(example = "null", value = "If the media requires it, a json dict of additional information")
+  @Nullable
   public String getDetails() {
     return details;
   }
@@ -74,6 +75,7 @@ public class Media   {
    * @return foreignKey
   **/
   @ApiModelProperty(example = "null", value = "The key used to indentify this media element on the remote site (e.g YouTube video key)")
+  @Nullable
   public String getForeignKey() {
     return foreignKey;
   }
@@ -92,6 +94,7 @@ public class Media   {
    * @return type
   **/
   @ApiModelProperty(example = "null", value = "The string type of the media element")
+  @Nullable
   public String getType() {
     return type;
   }

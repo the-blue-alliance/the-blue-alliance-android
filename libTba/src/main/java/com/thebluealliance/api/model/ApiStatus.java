@@ -31,12 +31,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 
 /**
  * ApiStatus
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T21:28:28.003-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T22:10:21.357-04:00")
 public class ApiStatus   {
   @SerializedName("champsPitLocationsUrl")
   private String champsPitLocationsUrl = null;
@@ -72,6 +73,7 @@ public class ApiStatus   {
    * @return champsPitLocationsUrl
   **/
   @ApiModelProperty(example = "null", value = "Location of data file for CMP pits")
+  @Nullable
   public String getChampsPitLocationsUrl() {
     return champsPitLocationsUrl;
   }
@@ -85,11 +87,17 @@ public class ApiStatus   {
     return this;
   }
 
+  public ApiStatus addDownEventsItem(String downEventsItem) {
+    this.downEvents.add(downEventsItem);
+    return this;
+  }
+
    /**
    * A list of event keys that are not publishing data
    * @return downEvents
   **/
   @ApiModelProperty(example = "null", value = "A list of event keys that are not publishing data")
+  @Nullable
   public List<String> getDownEvents() {
     return downEvents;
   }
@@ -108,6 +116,7 @@ public class ApiStatus   {
    * @return fmsApiDown
   **/
   @ApiModelProperty(example = "null", value = "Is FIRST's datafeed down?")
+  @Nullable
   public Boolean getFmsApiDown() {
     return fmsApiDown;
   }
@@ -126,6 +135,7 @@ public class ApiStatus   {
    * @return hasMessage
   **/
   @ApiModelProperty(example = "null", value = "Is there an admin message to show?")
+  @Nullable
   public Boolean getHasMessage() {
     return hasMessage;
   }
@@ -144,6 +154,7 @@ public class ApiStatus   {
    * @return latestAppVersion
   **/
   @ApiModelProperty(example = "null", value = "Newest app version code")
+  @Nullable
   public Integer getLatestAppVersion() {
     return latestAppVersion;
   }
@@ -162,6 +173,7 @@ public class ApiStatus   {
    * @return maxSeason
   **/
   @ApiModelProperty(example = "null", value = "Max year we have data for")
+  @Nullable
   public Integer getMaxSeason() {
     return maxSeason;
   }
@@ -180,6 +192,7 @@ public class ApiStatus   {
    * @return messageText
   **/
   @ApiModelProperty(example = "null", value = "Admin message")
+  @Nullable
   public String getMessageText() {
     return messageText;
   }
@@ -198,6 +211,7 @@ public class ApiStatus   {
    * @return minAppVersion
   **/
   @ApiModelProperty(example = "null", value = "Lowest allowed app version code")
+  @Nullable
   public Integer getMinAppVersion() {
     return minAppVersion;
   }

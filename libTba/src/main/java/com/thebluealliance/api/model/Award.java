@@ -29,12 +29,13 @@ import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.annotation.Nullable;
 
 
 /**
  * Award
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T21:28:28.003-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T22:10:21.357-04:00")
 public class Award   {
   @SerializedName("award_type")
   private Integer awardType = null;
@@ -64,6 +65,7 @@ public class Award   {
    * @return awardType
   **/
   @ApiModelProperty(example = "null", value = "An integer that represents the award type as a constant.")
+  @Nullable
   public Integer getAwardType() {
     return awardType;
   }
@@ -82,6 +84,7 @@ public class Award   {
    * @return eventKey
   **/
   @ApiModelProperty(example = "null", value = "The event_key of the event the award was won at.")
+  @Nullable
   public String getEventKey() {
     return eventKey;
   }
@@ -100,6 +103,7 @@ public class Award   {
    * @return key
   **/
   @ApiModelProperty(example = "null", value = "Unique key for this Award, formatted like <event key>:<type enum>")
+  @Nullable
   public String getKey() {
     return key;
   }
@@ -118,6 +122,7 @@ public class Award   {
    * @return name
   **/
   @ApiModelProperty(example = "null", value = "The name of the award as provided by FIRST. May vary for the same award type.")
+  @Nullable
   public String getName() {
     return name;
   }
@@ -136,6 +141,7 @@ public class Award   {
    * @return recipientList
   **/
   @ApiModelProperty(example = "null", value = "A list of recipients of the award at the event. Either team_number or awardee for individual awards.")
+  @Nullable
   public String getRecipientList() {
     return recipientList;
   }
@@ -154,6 +160,7 @@ public class Award   {
    * @return year
   **/
   @ApiModelProperty(example = "null", value = "The year this award was won.")
+  @Nullable
   public Integer getYear() {
     return year;
   }

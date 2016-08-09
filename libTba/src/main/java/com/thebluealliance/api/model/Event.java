@@ -25,17 +25,17 @@
 
 package com.thebluealliance.api.model;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.Objects;
-
+import com.google.gson.annotations.SerializedName;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.annotation.Nullable;
 
 
 /**
  * Event
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T21:28:28.003-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T22:10:21.357-04:00")
 public class Event   {
   @SerializedName("alliances")
   private String alliances = null;
@@ -95,6 +95,7 @@ public class Event   {
    * @return alliances
   **/
   @ApiModelProperty(example = "null", value = "If we have alliance selection data for this event, this contains a JSON array of the alliances. The captain is the first team, followed by their picks, in order.")
+  @Nullable
   public String getAlliances() {
     return alliances;
   }
@@ -113,6 +114,7 @@ public class Event   {
    * @return eventCode
   **/
   @ApiModelProperty(example = "null", value = "Event short code, as provided by FIRST")
+  @Nullable
   public String getEventCode() {
     return eventCode;
   }
@@ -131,6 +133,7 @@ public class Event   {
    * @return eventDistrict
   **/
   @ApiModelProperty(example = "null", value = "An integer that represents the event district as a constant.")
+  @Nullable
   public Integer getEventDistrict() {
     return eventDistrict;
   }
@@ -149,6 +152,7 @@ public class Event   {
    * @return eventDistrictString
   **/
   @ApiModelProperty(example = "null", value = "A human readable string that defines the event's district.")
+  @Nullable
   public String getEventDistrictString() {
     return eventDistrictString;
   }
@@ -167,6 +171,7 @@ public class Event   {
    * @return eventType
   **/
   @ApiModelProperty(example = "null", value = "An integer that represents the event type as a constant.")
+  @Nullable
   public Integer getEventType() {
     return eventType;
   }
@@ -185,6 +190,7 @@ public class Event   {
    * @return eventTypeString
   **/
   @ApiModelProperty(example = "null", value = "A human readable string that defines the event type.")
+  @Nullable
   public String getEventTypeString() {
     return eventTypeString;
   }
@@ -203,6 +209,7 @@ public class Event   {
    * @return key
   **/
   @ApiModelProperty(example = "null", value = "TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event.")
+  @Nullable
   public String getKey() {
     return key;
   }
@@ -221,6 +228,7 @@ public class Event   {
    * @return location
   **/
   @ApiModelProperty(example = "null", value = "Long form address that includes city, and state provided by FIRST")
+  @Nullable
   public String getLocation() {
     return location;
   }
@@ -239,6 +247,7 @@ public class Event   {
    * @return name
   **/
   @ApiModelProperty(example = "null", value = "Official name of event on record either provided by FIRST or organizers of offseason event.")
+  @Nullable
   public String getName() {
     return name;
   }
@@ -257,6 +266,7 @@ public class Event   {
    * @return official
   **/
   @ApiModelProperty(example = "null", value = "Whether this is a FIRST official event, or an offseaon event.")
+  @Nullable
   public Boolean getOfficial() {
     return official;
   }
@@ -275,6 +285,7 @@ public class Event   {
    * @return shortName
   **/
   @ApiModelProperty(example = "null", value = "Same as name but doesn't include event specifiers, such as 'Regional' or 'District'. May be null.")
+  @Nullable
   public String getShortName() {
     return shortName;
   }
@@ -293,6 +304,7 @@ public class Event   {
    * @return timezone
   **/
   @ApiModelProperty(example = "null", value = "Timezone name")
+  @Nullable
   public String getTimezone() {
     return timezone;
   }
@@ -311,6 +323,7 @@ public class Event   {
    * @return venueAddress
   **/
   @ApiModelProperty(example = "null", value = "Address of the event's venue, if available. Line breaks included.")
+  @Nullable
   public String getVenueAddress() {
     return venueAddress;
   }
@@ -329,6 +342,7 @@ public class Event   {
    * @return webcast
   **/
   @ApiModelProperty(example = "null", value = "If the event has webcast data associated with it, this contains JSON data of the streams")
+  @Nullable
   public String getWebcast() {
     return webcast;
   }
@@ -347,6 +361,7 @@ public class Event   {
    * @return website
   **/
   @ApiModelProperty(example = "null", value = "The event's website, if any.")
+  @Nullable
   public String getWebsite() {
     return website;
   }
@@ -365,6 +380,7 @@ public class Event   {
    * @return year
   **/
   @ApiModelProperty(example = "null", value = "Year the event data is for.")
+  @Nullable
   public Integer getYear() {
     return year;
   }

@@ -29,12 +29,13 @@ import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.annotation.Nullable;
 
 
 /**
  * Match
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T21:28:28.003-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T22:10:21.357-04:00")
 public class Match   {
   @SerializedName("alliances")
   private String alliances = null;
@@ -76,6 +77,7 @@ public class Match   {
    * @return alliances
   **/
   @ApiModelProperty(example = "null", value = "A list of alliances, the teams on the alliances, and their score.")
+  @Nullable
   public String getAlliances() {
     return alliances;
   }
@@ -94,6 +96,7 @@ public class Match   {
    * @return compLevel
   **/
   @ApiModelProperty(example = "null", value = "The competition level the match was played at.")
+  @Nullable
   public String getCompLevel() {
     return compLevel;
   }
@@ -112,6 +115,7 @@ public class Match   {
    * @return eventKey
   **/
   @ApiModelProperty(example = "null", value = "Event key of the event the match was played at.")
+  @Nullable
   public String getEventKey() {
     return eventKey;
   }
@@ -130,6 +134,7 @@ public class Match   {
    * @return key
   **/
   @ApiModelProperty(example = "null", value = "TBA event key with the format yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER], where yyyy is the year, and EVENT_CODE is the event code of the event, COMP_LEVEL is (qm, ef, qf, sf, f), and MATCH_NUMBER is the match number in the competition level. A set number may append the competition level if more than one match in required per set .")
+  @Nullable
   public String getKey() {
     return key;
   }
@@ -148,6 +153,7 @@ public class Match   {
    * @return matchNumber
   **/
   @ApiModelProperty(example = "null", value = "The match number of the match in the competition level.")
+  @Nullable
   public Integer getMatchNumber() {
     return matchNumber;
   }
@@ -166,6 +172,7 @@ public class Match   {
    * @return scoreBreakdown
   **/
   @ApiModelProperty(example = "null", value = "Score breakdown for auto, teleop, etc. points. Varies from year to year. May be null.")
+  @Nullable
   public String getScoreBreakdown() {
     return scoreBreakdown;
   }
@@ -184,6 +191,7 @@ public class Match   {
    * @return setNumber
   **/
   @ApiModelProperty(example = "null", value = "The set number in a series of matches where more than one match is required in the match series.")
+  @Nullable
   public Integer getSetNumber() {
     return setNumber;
   }
@@ -202,6 +210,7 @@ public class Match   {
    * @return time
   **/
   @ApiModelProperty(example = "null", value = "UNIX timestamp of match time, as taken from the published schedule")
+  @Nullable
   public Integer getTime() {
     return time;
   }
@@ -220,6 +229,7 @@ public class Match   {
    * @return timeString
   **/
   @ApiModelProperty(example = "null", value = "Time string for this match, as published on the official schedule. Of course, this may or may not be accurate, as events often run ahead or behind schedule")
+  @Nullable
   public String getTimeString() {
     return timeString;
   }
@@ -238,6 +248,7 @@ public class Match   {
    * @return videos
   **/
   @ApiModelProperty(example = "null", value = "JSON array of videos associated with this match and corresponding information")
+  @Nullable
   public String getVideos() {
     return videos;
   }

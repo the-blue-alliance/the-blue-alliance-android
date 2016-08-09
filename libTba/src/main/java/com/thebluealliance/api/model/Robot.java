@@ -29,12 +29,13 @@ import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.annotation.Nullable;
 
 
 /**
  * Robot
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T21:28:28.003-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T22:10:21.357-04:00")
 public class Robot   {
   @SerializedName("key")
   private String key = null;
@@ -58,6 +59,7 @@ public class Robot   {
    * @return key
   **/
   @ApiModelProperty(example = "null", value = "A key identifying the robot object. Formed like [team_key]_[year]")
+  @Nullable
   public String getKey() {
     return key;
   }
@@ -76,6 +78,7 @@ public class Robot   {
    * @return name
   **/
   @ApiModelProperty(example = "null", value = "The robot name in this year")
+  @Nullable
   public String getName() {
     return name;
   }
@@ -94,6 +97,7 @@ public class Robot   {
    * @return teamKey
   **/
   @ApiModelProperty(example = "null", value = "The associated Team key")
+  @Nullable
   public String getTeamKey() {
     return teamKey;
   }
@@ -112,6 +116,7 @@ public class Robot   {
    * @return year
   **/
   @ApiModelProperty(example = "null", value = "The year this Robot model referes to")
+  @Nullable
   public Integer getYear() {
     return year;
   }

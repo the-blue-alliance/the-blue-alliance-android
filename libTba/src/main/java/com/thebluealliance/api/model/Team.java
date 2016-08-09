@@ -29,12 +29,13 @@ import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.annotation.Nullable;
 
 
 /**
  * Team
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T21:28:28.003-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-08T22:10:21.357-04:00")
 public class Team   {
   @SerializedName("country_name")
   private String countryName = null;
@@ -79,6 +80,7 @@ public class Team   {
    * @return countryName
   **/
   @ApiModelProperty(example = "null", value = "Country of team derived from parsing the address registered with FIRST")
+  @Nullable
   public String getCountryName() {
     return countryName;
   }
@@ -97,6 +99,7 @@ public class Team   {
    * @return key
   **/
   @ApiModelProperty(example = "null", value = "TBA team key with the format frcyyyy")
+  @Nullable
   public String getKey() {
     return key;
   }
@@ -115,6 +118,7 @@ public class Team   {
    * @return locality
   **/
   @ApiModelProperty(example = "null", value = "City of team derived from parsing the address registered with FIRST")
+  @Nullable
   public String getLocality() {
     return locality;
   }
@@ -133,6 +137,7 @@ public class Team   {
    * @return location
   **/
   @ApiModelProperty(example = "null", value = "Long form address that includes city, state, and country provided by FIRST")
+  @Nullable
   public String getLocation() {
     return location;
   }
@@ -151,6 +156,7 @@ public class Team   {
    * @return motto
   **/
   @ApiModelProperty(example = "null", value = "Team's motto as provided by FIRST")
+  @Nullable
   public String getMotto() {
     return motto;
   }
@@ -169,6 +175,7 @@ public class Team   {
    * @return name
   **/
   @ApiModelProperty(example = "null", value = "Official long name registerd with FIRST")
+  @Nullable
   public String getName() {
     return name;
   }
@@ -187,6 +194,7 @@ public class Team   {
    * @return nickname
   **/
   @ApiModelProperty(example = "null", value = "Team nickname provided by FIRST")
+  @Nullable
   public String getNickname() {
     return nickname;
   }
@@ -205,6 +213,7 @@ public class Team   {
    * @return region
   **/
   @ApiModelProperty(example = "null", value = "State of team derived from parsing the address registered with FIRST")
+  @Nullable
   public String getRegion() {
     return region;
   }
@@ -223,6 +232,7 @@ public class Team   {
    * @return rookieYear
   **/
   @ApiModelProperty(example = "null", value = "First year the team officially competed")
+  @Nullable
   public Integer getRookieYear() {
     return rookieYear;
   }
@@ -241,6 +251,7 @@ public class Team   {
    * @return teamNumber
   **/
   @ApiModelProperty(example = "null", value = "Official team number issued by FIRST")
+  @Nullable
   public Integer getTeamNumber() {
     return teamNumber;
   }
@@ -259,6 +270,7 @@ public class Team   {
    * @return website
   **/
   @ApiModelProperty(example = "null", value = "Official website associatd with the team")
+  @Nullable
   public String getWebsite() {
     return website;
   }
