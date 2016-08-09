@@ -5,7 +5,6 @@ import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
 import com.thebluealliance.androidclient.models.Media;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -21,16 +20,6 @@ public class MediasTable extends ModelTable<Media> {
     public MediasTable(SQLiteDatabase db){
         super(db);
         this.mDb = db;
-    }
-
-    @Override
-    protected String getKey(Media in) {
-        return in.getKey();
-    }
-
-    @Override
-    protected ContentValues getParams(Media in) {
-        return in.getParams();
     }
 
     @Override

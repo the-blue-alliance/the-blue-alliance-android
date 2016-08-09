@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.database.tables;
 
-import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
@@ -12,6 +11,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,16 +130,6 @@ public class EventsTable extends ModelTable<Event> {
     @Override
     protected void deleteAllCallback() {
         mDb.execSQL("delete from " + Database.TABLE_SEARCH_EVENTS);
-    }
-
-    @Override
-    protected String getKey(Event in) {
-        return in.getKey();
-    }
-
-    @Override
-    protected ContentValues getParams(Event in) {
-        return in.getParams();
     }
 
     @Override

@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Team;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -27,16 +26,6 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
     public EventTeamsTable(SQLiteDatabase db) {
         super(db);
         this.mDb = db;
-    }
-
-    @Override
-    protected String getKey(EventTeam in) {
-        return in.getKey();
-    }
-
-    @Override
-    protected ContentValues getParams(EventTeam in) {
-        return in.getParams();
     }
 
     /**
