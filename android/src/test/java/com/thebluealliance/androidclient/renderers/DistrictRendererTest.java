@@ -76,7 +76,7 @@ public class DistrictRendererTest {
         assertNotNull(element);
         assertEquals(element.key, DISTRICT_KEY);
         assertEquals(element.numEvents, numEvents);
-        assertEquals(element.type, DistrictType.NEW_ENGLAND);
+        assertEquals(element.name, DistrictType.NEW_ENGLAND.getName());
         assertEquals(element.showMyTba, showMyTba);
         assertEquals(element.year, year);
     }
