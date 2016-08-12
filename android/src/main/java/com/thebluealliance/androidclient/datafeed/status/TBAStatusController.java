@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.datafeed.status;
 
 import com.google.gson.Gson;
 
-import okhttp3.Cache;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -30,6 +29,7 @@ import java.util.Date;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import okhttp3.Cache;
 import rx.schedulers.Schedulers;
 
 /**
@@ -97,6 +97,15 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
             return cal.get(Calendar.YEAR);
         }
         return status.getMaxSeason();
+    }
+
+    public int getCurrentCompYear() {
+        APIStatus status = fetchApiStatus();
+        if (status == null) {
+            Calendar cal = Calendar.getInstance();
+            return cal.get(Calendar.YEAR);
+        }
+        return status.getCurrentSeason();
     }
 
     public int getMinAppVersion() {

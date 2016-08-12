@@ -39,6 +39,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.Arrays;
+
 import javax.inject.Inject;
 
 public class HomeActivity extends DatafeedActivity implements HasFragmentComponent {
@@ -63,6 +65,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
     private boolean mFromSavedInstance = false;
     private int mCurrentSelectedNavigationItemId = -1;
     private int mCurrentSelectedYearPosition = -1;
+    private int mSelectedYear;
     private String[] mEventsDropdownItems, mDistrictsDropdownItems;
     private Toolbar mToolbar;
     private View mYearSelectorContainer;
@@ -112,6 +115,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
             }
         }
 
+        String currentYear = Integer.toString(mStatusController.getCurrentCompYear());
         if (savedInstanceState != null) {
             mFromSavedInstance = true;
             Log.d(Constants.LOG_TAG, "StartActivity is from saved instance");
@@ -119,7 +123,11 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
             if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION)) {
                 mCurrentSelectedYearPosition = savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION);
             } else {
-                mCurrentSelectedYearPosition = 0;
+                mCurrentSelectedYearPosition = Arrays.asList(mEventsDropdownItems)
+                                                     .indexOf(currentYear);
+                if (mCurrentSelectedNavigationItemId == -1) {
+                    mCurrentSelectedNavigationItemId = 0;
+                }
             }
 
             if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
@@ -129,7 +137,11 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 switchToModeForId(R.id.nav_item_events, savedInstanceState);
             }
         } else {
-            mCurrentSelectedYearPosition = 0;
+            mCurrentSelectedYearPosition = Arrays.asList(mEventsDropdownItems)
+                                                 .indexOf(currentYear);
+            if (mCurrentSelectedNavigationItemId == -1) {
+                    mCurrentSelectedNavigationItemId = 0;
+            }
             switchToModeForId(initNavId, savedInstanceState);
         }
 
