@@ -6,16 +6,9 @@ import com.thebluealliance.androidclient.types.DistrictType;
 public class DistrictHelper {
 
     public static boolean validateDistrictKey(String key) {
-        if (key == null || key.length() <= 4) {
-            return false;
-        }
-        try {
-            Integer.parseInt(key.substring(0, 4));
-            String districtAbbrev = key.substring(4);
-            return DistrictType.fromAbbreviation(districtAbbrev) != DistrictType.NO_DISTRICT;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        // District keys have the same format as event keys
+        // We don't want to be too strict here, so we don't get issues when we districts are added
+        return EventHelper.validateEventKey(key);
     }
 
     public static int extractYearFromKey(String key) {
