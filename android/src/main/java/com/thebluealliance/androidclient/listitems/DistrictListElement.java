@@ -1,33 +1,32 @@
 package com.thebluealliance.androidclient.listitems;
 
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.DistrictClickListener;
+import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
+import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.models.District;
+import com.thebluealliance.androidclient.types.ModelType;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.types.DistrictType;
-import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.listeners.DistrictClickListener;
-import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
-import com.thebluealliance.androidclient.models.BasicModel;
-import com.thebluealliance.androidclient.models.District;
-
 public class DistrictListElement extends ListElement {
 
-    public final DistrictType type;
     public final int numEvents;
     public final String key;
+    public final String name;
     public final int year;
     public final boolean showMyTba;
 
     public DistrictListElement(District district, int numEvents, boolean showMyTba)
       throws BasicModel.FieldNotDefinedException {
         super(district.getKey());
-        type = DistrictType.fromEnum(district.getEnum());
         key = district.getKey();
         year = district.getYear();
+        name = district.getName();
         this.numEvents = numEvents;
         this.showMyTba = showMyTba;
     }
@@ -49,9 +48,9 @@ public class DistrictListElement extends ListElement {
 
         /* For mytba list, show the year as well */
         if (showMyTba) {
-            holder.title.setText(String.format("%1$d %2$s District", year, type.getName()));
+            holder.title.setText(String.format("%1$d %2$s District", year, name));
         } else {
-            holder.title.setText(String.format("%1$s District", type.getName()));
+            holder.title.setText(String.format("%1$s District", name));
         }
         if (numEvents != -1) {
             holder.events.setVisibility(View.VISIBLE);
@@ -77,8 +76,7 @@ public class DistrictListElement extends ListElement {
             return false;
         }
         DistrictListElement element = (DistrictListElement) o;
-        return type == element.type
-          && numEvents == element.numEvents
+        return numEvents == element.numEvents
           && key.equals(element.key);
     }
 
