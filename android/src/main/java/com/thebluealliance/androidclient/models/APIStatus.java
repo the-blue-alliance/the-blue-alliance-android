@@ -5,6 +5,7 @@ import java.util.List;
 
 public class APIStatus {
     private int maxSeason;
+    private int currentSeason;
     private boolean fmsApiDown;
     private int minAppVersion;
     private int latestAppersion;
@@ -29,6 +30,14 @@ public class APIStatus {
 
     public void setMaxSeason(int maxSeason) {
         this.maxSeason = maxSeason;
+    }
+
+    public int getCurrentSeason() {
+        return currentSeason;
+    }
+
+    public void setCurrentSeason(int currentSeason) {
+        this.currentSeason = currentSeason;
     }
 
     public boolean isFmsApiDown() {

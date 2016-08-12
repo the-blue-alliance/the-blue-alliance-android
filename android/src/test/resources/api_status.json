@@ -1,5 +1,6 @@
 {
   "max_season": 2015,
+  "current_season": 2014,
   "is_datafeed_down": false,
   "android": {
     "min_app_version": 123456,

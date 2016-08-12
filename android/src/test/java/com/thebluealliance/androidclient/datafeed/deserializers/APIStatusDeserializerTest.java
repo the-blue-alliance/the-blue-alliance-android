@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class APIStatusDeserializerTest {
 
         assertNotNull(mStatus);
         assertEquals(mStatus.getMaxSeason(), 2015);
+        assertEquals(mStatus.getCurrentSeason(), 2014);
         assertEquals(mStatus.getMinAppVersion(), 123456);
         assertEquals(mStatus.getLatestAppersion(), 123488);
         assertEquals(mStatus.isFmsApiDown(), false);
@@ -83,6 +85,30 @@ public class APIStatusDeserializerTest {
     public void testBadMaxSeason() {
         mJsonData.add(APIStatusDeserializer.MAX_SEASON_TAG, new JsonArray());
         mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+    }
+
+    @Test()
+    public void testLowerMaxSeason() {
+        // Make sure maxSeason >= currentSeason
+        mJsonData.addProperty(APIStatusDeserializer.MAX_SEASON_TAG, 2013);
+        mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+        assertEquals(mStatus.getCurrentSeason(), mStatus.getMaxSeason());
+    }
+
+    @Test
+    public void testNoCurrentSeason() {
+        mJsonData.remove(APIStatusDeserializer.CURRENT_SEASON_TAG);
+        mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        assertEquals(currentYear, mStatus.getCurrentSeason());
+    }
+
+    @Test
+    public void testBadCurrentSeason() {
+        mJsonData.add(APIStatusDeserializer.CURRENT_SEASON_TAG, new JsonArray());
+        mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        assertEquals(currentYear, mStatus.getCurrentSeason());
     }
 
     @Test(expected = JsonParseException.class)
