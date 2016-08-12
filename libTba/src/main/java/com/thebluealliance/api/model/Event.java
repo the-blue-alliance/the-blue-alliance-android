@@ -29,16 +29,23 @@ import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.joda.time.LocalDate;
 import javax.annotation.Nullable;
 
 
 /**
  * Event
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:16:34.746-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T18:55:10.735-04:00")
 public class Event   {
   @SerializedName("alliances")
   private String alliances = null;
+
+  @SerializedName("competitionWeek")
+  private Integer competitionWeek = null;
+
+  @SerializedName("endDate")
+  private LocalDate endDate = null;
 
   @SerializedName("event_code")
   private String eventCode = null;
@@ -73,6 +80,9 @@ public class Event   {
   @SerializedName("short_name")
   private String shortName = null;
 
+  @SerializedName("startDate")
+  private LocalDate startDate = null;
+
   @SerializedName("timezone")
   private String timezone = null;
 
@@ -105,6 +115,44 @@ public class Event   {
 
   public void setAlliances(String alliances) {
     this.alliances = alliances;
+  }
+
+  public Event competitionWeek(Integer competitionWeek) {
+    this.competitionWeek = competitionWeek;
+    return this;
+  }
+
+   /**
+   * Week of the season the event occurs on
+   * @return competitionWeek
+  **/
+  @ApiModelProperty(example = "null", value = "Week of the season the event occurs on")
+  @Nullable
+  public Integer getCompetitionWeek() {
+    return competitionWeek;
+  }
+
+  public void setCompetitionWeek(Integer competitionWeek) {
+    this.competitionWeek = competitionWeek;
+  }
+
+  public Event endDate(LocalDate endDate) {
+    this.endDate = endDate;
+    return this;
+  }
+
+   /**
+   * When the event ends
+   * @return endDate
+  **/
+  @ApiModelProperty(example = "null", value = "When the event ends")
+  @Nullable
+  public LocalDate getEndDate() {
+    return endDate;
+  }
+
+  public void setEndDate(LocalDate endDate) {
+    this.endDate = endDate;
   }
 
   public Event eventCode(String eventCode) {
@@ -313,6 +361,25 @@ public class Event   {
     this.shortName = shortName;
   }
 
+  public Event startDate(LocalDate startDate) {
+    this.startDate = startDate;
+    return this;
+  }
+
+   /**
+   * When the event starts
+   * @return startDate
+  **/
+  @ApiModelProperty(example = "null", value = "When the event starts")
+  @Nullable
+  public LocalDate getStartDate() {
+    return startDate;
+  }
+
+  public void setStartDate(LocalDate startDate) {
+    this.startDate = startDate;
+  }
+
   public Event timezone(String timezone) {
     this.timezone = timezone;
     return this;
@@ -418,6 +485,8 @@ public class Event   {
     }
     Event event = (Event) o;
     return Objects.equals(this.alliances, event.alliances) &&
+        Objects.equals(this.competitionWeek, event.competitionWeek) &&
+        Objects.equals(this.endDate, event.endDate) &&
         Objects.equals(this.eventCode, event.eventCode) &&
         Objects.equals(this.eventDistrict, event.eventDistrict) &&
         Objects.equals(this.eventDistrictString, event.eventDistrictString) &&
@@ -429,6 +498,7 @@ public class Event   {
         Objects.equals(this.name, event.name) &&
         Objects.equals(this.official, event.official) &&
         Objects.equals(this.shortName, event.shortName) &&
+        Objects.equals(this.startDate, event.startDate) &&
         Objects.equals(this.timezone, event.timezone) &&
         Objects.equals(this.venueAddress, event.venueAddress) &&
         Objects.equals(this.webcast, event.webcast) &&
@@ -438,7 +508,7 @@ public class Event   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(alliances, eventCode, eventDistrict, eventDistrictString, eventType, eventTypeString, key, lastModified, location, name, official, shortName, timezone, venueAddress, webcast, website, year);
+    return Objects.hash(alliances, competitionWeek, endDate, eventCode, eventDistrict, eventDistrictString, eventType, eventTypeString, key, lastModified, location, name, official, shortName, startDate, timezone, venueAddress, webcast, website, year);
   }
 
   @Override
@@ -447,6 +517,8 @@ public class Event   {
     sb.append("class Event {\n");
     
     sb.append("    alliances: ").append(toIndentedString(alliances)).append("\n");
+    sb.append("    competitionWeek: ").append(toIndentedString(competitionWeek)).append("\n");
+    sb.append("    endDate: ").append(toIndentedString(endDate)).append("\n");
     sb.append("    eventCode: ").append(toIndentedString(eventCode)).append("\n");
     sb.append("    eventDistrict: ").append(toIndentedString(eventDistrict)).append("\n");
     sb.append("    eventDistrictString: ").append(toIndentedString(eventDistrictString)).append("\n");
@@ -458,6 +530,7 @@ public class Event   {
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    official: ").append(toIndentedString(official)).append("\n");
     sb.append("    shortName: ").append(toIndentedString(shortName)).append("\n");
+    sb.append("    startDate: ").append(toIndentedString(startDate)).append("\n");
     sb.append("    timezone: ").append(toIndentedString(timezone)).append("\n");
     sb.append("    venueAddress: ").append(toIndentedString(venueAddress)).append("\n");
     sb.append("    webcast: ").append(toIndentedString(webcast)).append("\n");

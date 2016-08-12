@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Award
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:16:34.746-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T18:55:10.735-04:00")
 public class Award   {
   @SerializedName("award_type")
   private Integer awardType = null;

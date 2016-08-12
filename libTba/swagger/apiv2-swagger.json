@@ -703,6 +703,20 @@
         "alliances": {
           "type": "string",
           "description": "If we have alliance selection data for this event, this contains a JSON array of the alliances. The captain is the first team, followed by their picks, in order."
+        },
+        "competitionWeek": {
+          "type": "integer",
+          "description": "Week of the season the event occurs on"
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date",
+          "description": "When the event starts"
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date",
+          "description": "When the event ends"
         }
       }
     },
