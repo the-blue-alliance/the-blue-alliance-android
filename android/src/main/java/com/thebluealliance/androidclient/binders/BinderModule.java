@@ -8,6 +8,8 @@ import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.renderers.RendererModule;
 
+import org.greenrobot.eventbus.EventBus;
+
 import android.content.res.Resources;
 
 import dagger.Module;
@@ -85,5 +87,10 @@ public class BinderModule {
     @Provides
     public MatchBreakdownBinder provideMatchBreakdownBinder() {
         return new MatchBreakdownBinder();
+    }
+
+    @Provides
+    public DistrictEventsBinder provideDistrictEventsBinder(EventBus eventBus, Resources res) {
+        return new DistrictEventsBinder(eventBus, res);
     }
 }
