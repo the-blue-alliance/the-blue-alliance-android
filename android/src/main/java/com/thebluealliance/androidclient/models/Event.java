@@ -11,7 +11,6 @@ import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
-import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
@@ -474,7 +473,8 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
     @Nullable @Override public EventViewModel renderToViewModel(Context context, @Nullable @RenderType Integer renderType) {
         EventViewModel model;
         try {
-            model = new EventViewModel(getKey(), getEventYear(), getEventShortName(), getDateString(), getLocation());
+            model = new EventViewModel(getKey(), getEventYear(), getEventShortName(),
+                                       getDateString(), getLocation(), getDistrictTitle());
 
 
             switch (renderType) {

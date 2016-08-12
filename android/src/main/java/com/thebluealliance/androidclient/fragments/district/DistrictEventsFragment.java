@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.fragments.district;
 import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
-import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
+import com.thebluealliance.androidclient.binders.DistrictEventsBinder;
 import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.itemviews.EventItemView;
@@ -21,7 +21,8 @@ import java.util.List;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
-public class DistrictEventsFragment extends RecyclerViewFragment<List<Event>, EventListSubscriber, RecyclerViewBinder> {
+public class DistrictEventsFragment extends RecyclerViewFragment<List<Event>,
+        EventListSubscriber, DistrictEventsBinder> {
 
     public static final String KEY = "districtKey";
 
