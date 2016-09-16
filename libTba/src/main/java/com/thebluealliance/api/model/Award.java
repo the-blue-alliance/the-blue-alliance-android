@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Award
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T18:55:10.735-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-16T18:35:54.755-04:00")
 public class Award   {
   @SerializedName("award_type")
   private Integer awardType = null;
@@ -68,6 +68,7 @@ public class Award   {
    * @return awardType
   **/
   @ApiModelProperty(example = "null", required = true, value = "An integer that represents the award type as a constant.")
+  
   public Integer getAwardType() {
     return awardType;
   }
@@ -86,6 +87,7 @@ public class Award   {
    * @return eventKey
   **/
   @ApiModelProperty(example = "null", required = true, value = "The event_key of the event the award was won at.")
+  
   public String getEventKey() {
     return eventKey;
   }
@@ -142,6 +144,7 @@ public class Award   {
    * @return name
   **/
   @ApiModelProperty(example = "null", required = true, value = "The name of the award as provided by FIRST. May vary for the same award type.")
+  
   public String getName() {
     return name;
   }
@@ -179,6 +182,7 @@ public class Award   {
    * @return year
   **/
   @ApiModelProperty(example = "null", required = true, value = "The year this award was won.")
+  
   public Integer getYear() {
     return year;
   }

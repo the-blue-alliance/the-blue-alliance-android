@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Robot
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T18:55:10.735-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-16T18:35:54.755-04:00")
 public class Robot   {
   @SerializedName("key")
   private String key = null;
@@ -62,6 +62,7 @@ public class Robot   {
    * @return key
   **/
   @ApiModelProperty(example = "null", required = true, value = "A key identifying the robot object. Formed like [team_key]_[year]")
+  
   public String getKey() {
     return key;
   }
@@ -99,6 +100,7 @@ public class Robot   {
    * @return name
   **/
   @ApiModelProperty(example = "null", required = true, value = "The robot name in this year")
+  
   public String getName() {
     return name;
   }
@@ -117,6 +119,7 @@ public class Robot   {
    * @return teamKey
   **/
   @ApiModelProperty(example = "null", required = true, value = "The associated Team key")
+  
   public String getTeamKey() {
     return teamKey;
   }
@@ -135,6 +138,7 @@ public class Robot   {
    * @return year
   **/
   @ApiModelProperty(example = "null", required = true, value = "The year this Robot model referes to")
+  
   public Integer getYear() {
     return year;
   }

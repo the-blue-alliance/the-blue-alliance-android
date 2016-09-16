@@ -29,14 +29,13 @@ import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.joda.time.LocalDate;
 import javax.annotation.Nullable;
 
 
 /**
  * Event
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T18:55:10.735-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-16T18:35:54.755-04:00")
 public class Event   {
   @SerializedName("alliances")
   private String alliances = null;
@@ -45,7 +44,7 @@ public class Event   {
   private Integer competitionWeek = null;
 
   @SerializedName("endDate")
-  private LocalDate endDate = null;
+  private String endDate = null;
 
   @SerializedName("event_code")
   private String eventCode = null;
@@ -81,7 +80,7 @@ public class Event   {
   private String shortName = null;
 
   @SerializedName("startDate")
-  private LocalDate startDate = null;
+  private String startDate = null;
 
   @SerializedName("timezone")
   private String timezone = null;
@@ -136,7 +135,7 @@ public class Event   {
     this.competitionWeek = competitionWeek;
   }
 
-  public Event endDate(LocalDate endDate) {
+  public Event endDate(String endDate) {
     this.endDate = endDate;
     return this;
   }
@@ -147,11 +146,11 @@ public class Event   {
   **/
   @ApiModelProperty(example = "null", value = "When the event ends")
   @Nullable
-  public LocalDate getEndDate() {
+  public String getEndDate() {
     return endDate;
   }
 
-  public void setEndDate(LocalDate endDate) {
+  public void setEndDate(String endDate) {
     this.endDate = endDate;
   }
 
@@ -165,6 +164,7 @@ public class Event   {
    * @return eventCode
   **/
   @ApiModelProperty(example = "null", required = true, value = "Event short code, as provided by FIRST")
+  
   public String getEventCode() {
     return eventCode;
   }
@@ -259,6 +259,7 @@ public class Event   {
    * @return key
   **/
   @ApiModelProperty(example = "null", required = true, value = "TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event.")
+  
   public String getKey() {
     return key;
   }
@@ -315,6 +316,7 @@ public class Event   {
    * @return name
   **/
   @ApiModelProperty(example = "null", required = true, value = "Official name of event on record either provided by FIRST or organizers of offseason event.")
+  
   public String getName() {
     return name;
   }
@@ -361,7 +363,7 @@ public class Event   {
     this.shortName = shortName;
   }
 
-  public Event startDate(LocalDate startDate) {
+  public Event startDate(String startDate) {
     this.startDate = startDate;
     return this;
   }
@@ -372,11 +374,11 @@ public class Event   {
   **/
   @ApiModelProperty(example = "null", value = "When the event starts")
   @Nullable
-  public LocalDate getStartDate() {
+  public String getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(LocalDate startDate) {
+  public void setStartDate(String startDate) {
     this.startDate = startDate;
   }
 
@@ -466,6 +468,7 @@ public class Event   {
    * @return year
   **/
   @ApiModelProperty(example = "null", required = true, value = "Year the event data is for.")
+  
   public Integer getYear() {
     return year;
   }

@@ -710,12 +710,10 @@
         },
         "startDate": {
           "type": "string",
-          "format": "date",
           "description": "When the event starts"
         },
         "endDate": {
           "type": "string",
-          "format": "date",
           "description": "When the event ends"
         }
       }

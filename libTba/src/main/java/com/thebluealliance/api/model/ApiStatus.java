@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 /**
  * ApiStatus
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T18:55:10.735-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-16T18:35:54.755-04:00")
 public class ApiStatus   {
   @SerializedName("champsPitLocationsUrl")
   private String champsPitLocationsUrl = null;

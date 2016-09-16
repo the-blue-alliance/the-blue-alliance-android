@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Match
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T18:55:10.735-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-16T18:35:54.755-04:00")
 public class Match   {
   @SerializedName("alliances")
   private String alliances = null;
@@ -99,6 +99,7 @@ public class Match   {
    * @return compLevel
   **/
   @ApiModelProperty(example = "null", required = true, value = "The competition level the match was played at.")
+  
   public String getCompLevel() {
     return compLevel;
   }
@@ -117,6 +118,7 @@ public class Match   {
    * @return eventKey
   **/
   @ApiModelProperty(example = "null", required = true, value = "Event key of the event the match was played at.")
+  
   public String getEventKey() {
     return eventKey;
   }
@@ -135,6 +137,7 @@ public class Match   {
    * @return key
   **/
   @ApiModelProperty(example = "null", required = true, value = "TBA event key with the format yyyy[EVENT_CODE]_[COMP_LEVEL]m[MATCH_NUMBER], where yyyy is the year, and EVENT_CODE is the event code of the event, COMP_LEVEL is (qm, ef, qf, sf, f), and MATCH_NUMBER is the match number in the competition level. A set number may append the competition level if more than one match in required per set .")
+  
   public String getKey() {
     return key;
   }
@@ -172,6 +175,7 @@ public class Match   {
    * @return matchNumber
   **/
   @ApiModelProperty(example = "null", required = true, value = "The match number of the match in the competition level.")
+  
   public Integer getMatchNumber() {
     return matchNumber;
   }
@@ -209,6 +213,7 @@ public class Match   {
    * @return setNumber
   **/
   @ApiModelProperty(example = "null", required = true, value = "The set number in a series of matches where more than one match is required in the match series.")
+  
   public Integer getSetNumber() {
     return setNumber;
   }
