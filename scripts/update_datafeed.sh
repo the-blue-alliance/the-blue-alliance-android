@@ -24,7 +24,7 @@ set -e
 
 if [ ! -z "$LIB_VERSION" ]; then
     echo "Downloading swagger-codegen-cli jar version $LIB_VERSION"
-    wget -P libTba/swagger/ https://github.com/the-blue-alliance/swagger-codegen/releases/download/$LIB_VERSION/swagger-codegen-cli.jar
+    wget -O libTba/swagger/swagger-codegen-cli.jar https://github.com/the-blue-alliance/swagger-codegen/releases/download/$LIB_VERSION/swagger-codegen-cli.jar
 fi
 
 if [ ! -f libTba/swagger/swagger-codegen-cli.jar ]; then
