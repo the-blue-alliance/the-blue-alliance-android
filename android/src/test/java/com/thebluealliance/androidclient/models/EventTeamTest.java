@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotNull;
 @Config(manifest = Config.NONE)
 public class EventTeamTest {
 
-    EventTeam mEventTeam;
+    private EventTeam mEventTeam;
 
     @Before
     public void readJson() {
@@ -31,7 +31,7 @@ public class EventTeamTest {
         assertEquals("frc1124", mEventTeam.getTeamKey());
         assertEquals("2015necmp", mEventTeam.getEventKey());
         assertEquals("2015necmp_frc1124", mEventTeam.getKey());
-        assertEquals(2015, mEventTeam.getYear());
-        assertEquals(7, mEventTeam.getCompWeek());
+        assertEquals((Integer)2015, mEventTeam.getYear());
+        assertEquals((Integer)7, mEventTeam.getCompWeek());
     }
 }

@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.models;
 
-import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
-import com.thebluealliance.androidclient.helpers.EventTeamHelper;
-import com.thebluealliance.androidclient.types.ModelType;
 
-public class EventTeam extends BasicModel<EventTeam> {
+import android.content.ContentValues;
+
+public class EventTeam implements TbaDatabaseModel {
 
     public static final String[] NOTIFICATION_TYPES = {
             NotificationTypes.UPCOMING_MATCH,
@@ -16,74 +16,64 @@ public class EventTeam extends BasicModel<EventTeam> {
             //NotificationTypes.FINAL_RESULTS
     };
 
+    private String key;
+    private String teamKey;
+    private String eventKey;
+    private Integer year;
+    private Integer compWeek;
+
     public EventTeam() {
-        super(Database.TABLE_EVENTTEAMS, ModelType.EVENTTEAM);
     }
 
-    public void setKey(String newKey) {
-        if (EventTeamHelper.validateEventTeamKey(newKey)) {
-            fields.put(EventTeamsTable.KEY, newKey);
-        } else {
-            throw new IllegalArgumentException("Invalid EventTeam key: " + newKey);
-        }
-    }
-
+    @Override
     public String getKey() {
-        if (fields.containsKey(EventTeamsTable.KEY) && fields.get(EventTeamsTable.KEY) instanceof String) {
-            return (String) fields.get(EventTeamsTable.KEY);
-        } else {
-            try {
-                String newKey = EventTeamHelper.generateKey(getEventKey(), getTeamKey());
-                setKey(newKey);
-                return newKey;
-            } catch (FieldNotDefinedException e) {
-                return "";
-            }
-        }
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getTeamKey() {
+        return teamKey;
     }
 
     public void setTeamKey(String teamKey) {
-        fields.put(EventTeamsTable.TEAMKEY, teamKey);
+        this.teamKey = teamKey;
     }
 
-    public String getTeamKey() throws FieldNotDefinedException {
-        if (fields.containsKey(EventTeamsTable.TEAMKEY) && fields.get(EventTeamsTable.TEAMKEY) instanceof String) {
-            return (String) fields.get(EventTeamsTable.TEAMKEY);
-        }
-        throw new FieldNotDefinedException("Field Database.EventTeams.TEAMKEY is not defined");
+    public String getEventKey() {
+        return eventKey;
     }
 
     public void setEventKey(String eventKey) {
-        fields.put(EventTeamsTable.EVENTKEY, eventKey);
+        this.eventKey = eventKey;
     }
 
-    public String getEventKey() throws FieldNotDefinedException {
-        if (fields.containsKey(EventTeamsTable.EVENTKEY) && fields.get(EventTeamsTable.EVENTKEY) instanceof String) {
-            return (String) fields.get(EventTeamsTable.EVENTKEY);
-        }
-        throw new FieldNotDefinedException("Field Database.EventTeams.EVENTKEY is not defined");
+    public Integer getYear() {
+        return year;
     }
 
-    public void setYear(int year) {
-        fields.put(EventTeamsTable.YEAR, year);
+    public void setYear(Integer year) {
+        this.year = year;
     }
 
-    public int getYear() throws FieldNotDefinedException {
-        if (fields.containsKey(EventTeamsTable.YEAR) && fields.get(EventTeamsTable.YEAR) instanceof Integer) {
-            return (Integer) fields.get(EventTeamsTable.YEAR);
-        }
-        throw new FieldNotDefinedException("Field Database.EventTeams.YEAR is not defined");
+    public Integer getCompWeek() {
+        return compWeek;
     }
 
-    public void setCompWeek(int week) {
-        fields.put(EventTeamsTable.COMPWEEK, week);
+    public void setCompWeek(Integer compWeek) {
+        this.compWeek = compWeek;
     }
 
-    public int getCompWeek() throws FieldNotDefinedException {
-        if (fields.containsKey(EventTeamsTable.COMPWEEK) && fields.get(EventTeamsTable.COMPWEEK) instanceof Integer) {
-            return (Integer) fields.get(EventTeamsTable.COMPWEEK);
-        }
-        throw new FieldNotDefinedException("Field Database.EventTeams.COMPWEEK is not defined");
+    @Override
+    public ContentValues getParams() {
+        ContentValues params = new ContentValues();
+        params.put(EventTeamsTable.KEY, getKey());
+        params.put(EventTeamsTable.TEAMKEY, getTeamKey());
+        params.put(EventTeamsTable.EVENTKEY, getEventKey());
+        params.put(EventTeamsTable.YEAR, getYear());
+        params.put(EventTeamsTable.COMPWEEK, getCompWeek());
+        return params;
     }
-
 }

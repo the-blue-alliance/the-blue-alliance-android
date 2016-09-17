@@ -46,7 +46,7 @@ public class TeamAndEventTeamCombinerTest {
             assertEquals(eventTeam.getKey(), EventTeamHelper.generateKey("2015necmp", team.getKey()));
             assertEquals(eventTeam.getEventKey(), "2015necmp");
             assertEquals(eventTeam.getTeamKey(), team.getKey());
-            assertEquals(eventTeam.getYear(), 2015);
+            assertEquals(eventTeam.getYear(), (Integer)2015);
         }
     }
 }
