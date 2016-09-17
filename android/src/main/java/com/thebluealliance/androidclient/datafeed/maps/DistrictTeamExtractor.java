@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 
 import java.util.List;
@@ -19,12 +18,8 @@ public class DistrictTeamExtractor implements Func1<List<DistrictTeam>, District
     public DistrictTeam call(List<DistrictTeam> districtTeams) {
         for (int i = 0; i < districtTeams.size(); i++) {
             DistrictTeam districtTeam = districtTeams.get(i);
-            try {
-                if (districtTeam.getTeamKey().equals(mTeamKey)) {
-                    return districtTeam;
-                }
-            } catch (BasicModel.FieldNotDefinedException e) {
-                e.printStackTrace();
+            if (districtTeam.getTeamKey().equals(mTeamKey)) {
+                return districtTeam;
             }
         }
         return null;

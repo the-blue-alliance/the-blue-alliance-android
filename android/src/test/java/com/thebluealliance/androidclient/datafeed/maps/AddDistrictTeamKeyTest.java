@@ -25,7 +25,7 @@ public class AddDistrictTeamKeyTest {
     private AddDistrictTeamKey mKeyAdder;
     private DistrictTeam mDistrictTeam;
     private String mDistrictShort;
-    private int mYear;
+    private Integer mYear;
 
     @Before
     public void setUp() {
@@ -47,7 +47,7 @@ public class AddDistrictTeamKeyTest {
 
         String districtKey = DistrictHelper.generateKey(mDistrictShort, mYear);
         String expectedKey = DistrictTeamHelper.generateKey(mDistrictTeam.getTeamKey(), districtKey);
-        int districtEnum = DistrictHelper.districtTypeFromKey(districtKey).ordinal();
+        Integer districtEnum = DistrictHelper.districtTypeFromKey(districtKey).ordinal();
         assertEquals(mDistrictTeam.getKey(), expectedKey);
         assertEquals(mDistrictTeam.getDistrictEnum(), districtEnum);
         assertEquals(mDistrictTeam.getYear(), mYear);

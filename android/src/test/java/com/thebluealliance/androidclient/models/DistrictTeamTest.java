@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class DistrictTeamTest {
-    DistrictTeam mDistrictTeam;
+    private DistrictTeam mDistrictTeam;
 
     @Before
     public void readJson() {
@@ -25,13 +25,13 @@ public class DistrictTeamTest {
     public void testDistrictTeamModel() throws BasicModel.FieldNotDefinedException {
         assertNotNull(mDistrictTeam);
         assertEquals("frc1124", mDistrictTeam.getTeamKey());
-        assertEquals(26, mDistrictTeam.getRank());
+        assertEquals((Integer)26, mDistrictTeam.getRank());
         assertEquals("2015ctwat", mDistrictTeam.getEvent1Key());
-        assertEquals(26, mDistrictTeam.getEvent1Points());
+        assertEquals((Integer)26, mDistrictTeam.getEvent1Points());
         assertEquals("2015manda", mDistrictTeam.getEvent2Key());
-        assertEquals(44, mDistrictTeam.getEvent2Points());
+        assertEquals((Integer)44, mDistrictTeam.getEvent2Points());
         assertEquals("2015necmp", mDistrictTeam.getCmpKey());
-        assertEquals(87, mDistrictTeam.getCmpPoints());
-        assertEquals(157, mDistrictTeam.getTotalPoints());
+        assertEquals((Integer)87, mDistrictTeam.getCmpPoints());
+        assertEquals((Integer)157, mDistrictTeam.getTotalPoints());
     }
 }
