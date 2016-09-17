@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
@@ -12,7 +13,6 @@ import com.thebluealliance.androidclient.types.MatchType;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -208,7 +208,7 @@ public final class MatchHelper {
 
         // There might be match info available,
         // but no alliance selection data (for old events)
-        JsonArray alliances = e.getAlliances();
+        JsonArray alliances = JSONHelper.getasJsonArray(e.getAlliances());
         int year = 2014;
 
         boolean inAlliance = false;

@@ -231,7 +231,8 @@ public class APICache {
             try {
                 Event event = mDb.getEventsTable()
                   .get(eventKey, new String[]{EventsTable.RANKINGS});
-                observer.onNext(event != null ? event.getRankings() : null);
+                // TODO(#773) depends on EventDetails
+                // observer.onNext(event != null ? event.getRankings() : null);
                 observer.onCompleted();
             } catch (Exception e) {
                 observer.onError(e);
@@ -258,7 +259,8 @@ public class APICache {
             try {
                 Event event = mDb.getEventsTable()
                   .get(eventKey, new String[]{EventsTable.STATS});
-                observer.onNext(event != null ? event.getStats() : null);
+                // TODO(#773) depends on EventDetails
+                //observer.onNext(event != null ? event.getStats() : null);
                 observer.onCompleted();
             } catch (Exception e) {
                 observer.onError(e);
@@ -284,7 +286,8 @@ public class APICache {
         return Observable.create((observer) -> {
             try {
                 Event event = mDb.getEventsTable().get(eventKey);
-                observer.onNext(event != null ? event.getDistrictPoints() : null);
+                // TODO(#773) depends on EventDetails
+                //observer.onNext(event != null ? event.getDistrictPoints() : null);
                 observer.onCompleted();
             } catch (Exception e) {
                 observer.onError(e);

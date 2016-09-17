@@ -34,19 +34,14 @@ public class TBAApiTest {
         Event event = JSONHelper.getGson().fromJson(eventJson, Event.class);
 
         //now, assert that all the properties are there
-        try {
-            assertEquals(event.getKey(), "2014ctgro");
-            assertEquals(event.getStartDate(), new Date(114, 2, 8));
-            assertEquals(event.getEndDate(), new Date(114, 2, 9));
-            assertEquals(event.getName(), "Groton District Event");
-            assertEquals(event.getShortName(), "Groton");
-            assertEquals(event.isOfficial(), true);
-            assertEquals(event.getLocation(), "Groton, CT, USA");
-            assertEquals(event.getEventType(), EventType.DISTRICT);
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.e("Unable to get event fields");
-            e.printStackTrace();
-        }
+        assertEquals(event.getKey(), "2014ctgro");
+        assertEquals(event.getStartDate(), new Date(114, 2, 8));
+        assertEquals(event.getEndDate(), new Date(114, 2, 9));
+        assertEquals(event.getName(), "Groton District Event");
+        assertEquals(event.getShortName(), "Groton");
+        assertEquals(event.getOfficial(), true);
+        assertEquals(event.getLocation(), "Groton, CT, USA");
+        assertEquals(event.getEventType(), EventType.DISTRICT);
     }
 
     @org.junit.Test

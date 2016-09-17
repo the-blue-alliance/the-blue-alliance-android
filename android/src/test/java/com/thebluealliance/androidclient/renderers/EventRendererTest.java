@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -82,7 +83,7 @@ public class EventRendererTest  {
         assertNotNull(webcast);
         assertEquals(webcast.eventKey, EVENT_KEY);
         assertEquals(webcast.eventName, "Hartford");
-        assertEquals(webcast.webcast, mEvent.getWebcasts().get(0));
+        assertEquals(webcast.webcast, JSONHelper.getasJsonArray(mEvent.getWebcasts()).get(0));
         assertEquals(webcast.number, 1);
     }
 
@@ -103,7 +104,7 @@ public class EventRendererTest  {
         assertNotNull(alliances);
         assertEquals(alliances.size(), 8);
 
-        JsonArray jsonData = mEvent.getAlliances();
+        JsonArray jsonData = JSONHelper.getasJsonArray(mEvent.getAlliances());
         for (int i = 0; i < 8; i++) {
             assertTrue(alliances.get(i) instanceof AllianceListElement);
             AllianceListElement alliance = (AllianceListElement)alliances.get(i);

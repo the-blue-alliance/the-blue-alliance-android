@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.database;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
@@ -24,7 +25,6 @@ import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
 import android.database.Cursor;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.Date;
 
@@ -91,7 +91,7 @@ public final class ModelInflater {
                     event.setLocation(data.getString(i));
                     break;
                 case EventsTable.VENUE:
-                    event.setVenue(data.getString(i));
+                    event.setVenueAddress(data.getString(i));
                     break;
                 case EventsTable.WEBSITE:
                     event.setWebsite(data.getString(i));
@@ -100,19 +100,20 @@ public final class ModelInflater {
                     event.setEventType(data.getInt(i));
                     break;
                 case EventsTable.DISTRICT:
-                    event.setDistrictEnum(data.getInt(i));
+                    event.setEventDistrict(data.getInt(i));
                     break;
                 case EventsTable.DISTRICT_STRING:
-                    event.setDistrictTitle(data.getString(i));
+                    event.setEventDistrictString(data.getString(i));
                     break;
                 case EventsTable.DISTRICT_POINTS:
-                    event.setDistrictPoints(data.getString(i));
+                    // TODO(773) Required EventDetails
+                    //event.setDistrictPoints(data.getString(i));
                     break;
                 case EventsTable.START:
-                    event.setStartDate(new Date(data.getLong(i)));
+                    event.setStartDate(data.getLong(i));
                     break;
                 case EventsTable.END:
-                    event.setEndDate(new Date(data.getLong(i)));
+                    event.setEndDate(data.getLong(i));
                     break;
                 case EventsTable.OFFICIAL:
                     event.setOfficial(data.getInt(i) == 1);
@@ -121,16 +122,19 @@ public final class ModelInflater {
                     event.setCompetitionWeek(data.getInt(i));
                     break;
                 case EventsTable.RANKINGS:
-                    event.setRankings(data.getString(i));
+                    //TODO(773) Requires EventDetails
+                    //event.setRankings(data.getString(i));
                     break;
                 case EventsTable.ALLIANCES:
                     event.setAlliances(data.getString(i));
                     break;
                 case EventsTable.STATS:
-                    event.setStats(data.getString(i));
+                    //TODO(773) Requires EventDetails
+                    //event.setStats(data.getString(i));
                     break;
                 case EventsTable.TEAMS:
-                    event.setTeams(data.getString(i));
+                    //TODO(773) Requires EventDetails
+                    ////event.setTeams(data.getString(i));
                     break;
                 case EventsTable.WEBCASTS:
                     event.setWebcasts(data.getString(i));

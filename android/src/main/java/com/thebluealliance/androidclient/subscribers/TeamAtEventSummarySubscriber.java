@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.subscribers;
 import com.google.gson.JsonArray;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
@@ -10,6 +11,7 @@ import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper.CaseInsensitiveMap;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.models.Award;
@@ -26,7 +28,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import android.content.Context;
 import android.content.res.Resources;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,7 +97,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         }
 
         // Search for team in alliances
-        JsonArray alliances = event.getAlliances();
+        JsonArray alliances = JSONHelper.getasJsonArray(event.getAlliances());
         int allianceNumber = 0, alliancePick = -1;
 
         if (alliances == null || alliances.size() == 0) {
@@ -161,17 +162,15 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
                     awardsString));
         }
 
-        try {
-            if (event.isChampsEvent()
-                    && event.getYear() == 2016
-                    && PitLocationHelper.shouldShowPitLocation(mContext, mTeamKey)) {
-                PitLocationHelper.TeamPitLocation location = PitLocationHelper.getPitLocation(mContext, mTeamKey);
-                if (location != null) {
-                    mDataToBind.add(new LabelValueViewModel(mResources.getString(R.string.championship_pit_location), location.getAddressString()));
-                }
+        if (event.isChampsEvent()
+            && event.getYear() == 2016
+            && PitLocationHelper.shouldShowPitLocation(mContext, mTeamKey)) {
+            PitLocationHelper.TeamPitLocation location = PitLocationHelper
+                    .getPitLocation(mContext, mTeamKey);
+            if (location != null) {
+                mDataToBind.add(new LabelValueViewModel(mResources.getString(R.string.championship_pit_location),
+                                                        location.getAddressString()));
             }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.d("Could not determine if pit locations should be shown. Hiding by default.");
         }
 
         if (status != MatchHelper.EventStatus.NOT_AVAILABLE) {

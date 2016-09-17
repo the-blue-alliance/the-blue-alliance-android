@@ -696,7 +696,7 @@
           "type": "boolean",
           "description": "Whether this is a FIRST official event, or an offseaon event."
         },
-        "webcast": {
+        "webcasts": {
           "type": "string",
           "description": "If the event has webcast data associated with it, this contains JSON data of the streams"
         },
@@ -709,11 +709,13 @@
           "description": "Week of the season the event occurs on"
         },
         "startDate": {
-          "type": "string",
+          "type": "integer",
+          "format": "int64",
           "description": "When the event starts"
         },
         "endDate": {
-          "type": "string",
+          "type": "integer",
+          "format": "int64",
           "description": "When the event ends"
         }
       }

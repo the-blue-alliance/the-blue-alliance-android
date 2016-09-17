@@ -24,7 +24,8 @@ public class EventStatsWriter extends BaseDbWriter<KeyAndJson> {
         try {
             Event event = mDb.getEventsTable().get(newData.key);
             if (event != null && newData.json != null && newData.json.isJsonObject()) {
-                event.setStats(newData.json.getAsJsonObject());
+                //TODO(773) Requires EventDetails
+                //event.setStats(newData.json.getAsJsonObject());
                 mEventWriter.write(event);
             }
             mDb.getWritableDatabase().setTransactionSuccessful();

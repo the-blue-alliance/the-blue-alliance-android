@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.helpers;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
@@ -14,7 +15,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import android.content.Context;
 import android.content.res.Resources;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.annotation.Nullable;
 
 public final class EventHelper {
 
@@ -108,7 +110,7 @@ public final class EventHelper {
     }
 
     public static String generateLabelForEvent(Event e) throws BasicModel.FieldNotDefinedException {
-        switch (e.getEventType()) {
+        switch (e.getEventTypeEnum()) {
             case CMP_DIVISION:
             case CMP_FINALS:
                 return CHAMPIONSHIP_LABEL;
@@ -131,7 +133,7 @@ public final class EventHelper {
                     return String.format(REGIONAL_LABEL, e.getCompetitionWeek());
                 }
             case OFFSEASON:
-                String month = ThreadSafeFormatters.renderEventMonth(e.getStartDate());
+                String month = ThreadSafeFormatters.renderEventMonth(e.getFormattedStartDate());
                 return String.format(OFFSEASON_LABEL, month);
             case PRESEASON:
                 return PRESEASON_LABEL;
@@ -140,7 +142,11 @@ public final class EventHelper {
         }
     }
 
-    public static String weekLabelFromNum(int year, int weekNum) {
+    public static String weekLabelFromNum(int year, @Nullable Integer weekNum) {
+
+        if (weekNum == null) {
+            return WEEKLESS_LABEL;
+        }
 
         if (weekNum <= 0) {
             return PRESEASON_LABEL;
@@ -214,28 +220,27 @@ public final class EventHelper {
         EventType lastType = null, currentType = null;
         int lastDistrict = -1, currentDistrict = -1;
         for (Event event : events) {
-            try {
-                currentType = event.getEventType();
-                currentDistrict = event.getDistrictEnum();
-                if (currentType != lastType
-                        || (currentType == EventType.DISTRICT && currentDistrict != lastDistrict)) {
-                    if (currentType == EventType.DISTRICT) {
-                        output.add(new ListSectionHeaderViewModel(event.getDistrictTitle() + " District Events"));
-                    } else {
-                        output.add(new ListSectionHeaderViewModel(currentType.toString()));
-                    }
+            currentType = event.getEventTypeEnum();
+            currentDistrict = event.getEventDistrict() != null
+                              ? event.getEventDistrict()
+                              : -1;
+            if (currentType != lastType
+                || (currentType == EventType.DISTRICT && currentDistrict != lastDistrict)) {
+                if (currentType == EventType.DISTRICT) {
+                    output.add(new ListSectionHeaderViewModel(event.getEventDistrictString() + " " +
+                                                              "District Events"));
+                } else {
+                    output.add(new ListSectionHeaderViewModel(currentType.toString()));
                 }
-                output.add(event.renderToViewModel(context, Event.RENDER_BASIC));
-
-                if (event.isHappeningNow()) {
-                    //send out that there are live matches happening for other things to pick up
-                    TbaLogger.d("Sending live event broadcast: " + event.getKey());
-                    EventBus.getDefault().post(new LiveEventUpdateEvent(event));
-                }
-
-            } catch (BasicModel.FieldNotDefinedException e) {
-                TbaLogger.w("Missing fields for rendering event lists");
             }
+            output.add(event.renderToViewModel(context, Event.RENDER_BASIC));
+
+            if (event.isHappeningNow()) {
+                //send out that there are live matches happening for other things to pick up
+                TbaLogger.d("Sending live event broadcast: " + event.getKey());
+                EventBus.getDefault().post(new LiveEventUpdateEvent(event));
+            }
+
             lastType = currentType;
             lastDistrict = currentDistrict;
         }
@@ -248,20 +253,16 @@ public final class EventHelper {
         Collections.sort(events, new EventSortByDateComparator());
         String lastHeader = null, currentHeader = null;
         for (Event event : events) {
-            try {
-                currentHeader = weekLabelFromNum(event.getYear(), event.getCompetitionWeek());
-                if (!currentHeader.equals(lastHeader)) {
-                    output.add(new ListSectionHeaderViewModel(currentHeader + " Events"));
-                }
-                output.add(event.renderToViewModel(context, Event.RENDER_BASIC));
+            currentHeader = weekLabelFromNum(event.getYear(), event.getCompetitionWeek());
+            if (!currentHeader.equals(lastHeader)) {
+                output.add(new ListSectionHeaderViewModel(currentHeader + " Events"));
+            }
+            output.add(event.renderToViewModel(context, Event.RENDER_BASIC));
 
-                if (event.isHappeningNow()) {
-                    //send out that there are live matches happening for other things to pick up
-                    TbaLogger.d("Sending live event broadcast: " + event.getKey());
-                    EventBus.getDefault().post(new LiveEventUpdateEvent(event));
-                }
-            } catch (BasicModel.FieldNotDefinedException e) {
-                TbaLogger.w("Missing fields for rendering event lists");
+            if (event.isHappeningNow()) {
+                //send out that there are live matches happening for other things to pick up
+                TbaLogger.d("Sending live event broadcast: " + event.getKey());
+                EventBus.getDefault().post(new LiveEventUpdateEvent(event));
             }
             lastHeader = currentHeader;
         }

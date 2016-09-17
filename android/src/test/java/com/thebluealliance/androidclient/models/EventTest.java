@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.types.EventType;
 
@@ -14,7 +15,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
@@ -33,31 +33,29 @@ public class EventTest {
         assertNotNull(mEvent);
         assertEquals(mEvent.getKey(), "2015cthar");
         assertEquals(mEvent.getWebsite(), "http://www.nefirst.org/");
-        assertTrue(mEvent.isOfficial());
-        assertEquals(mEvent.getCompetitionWeek(), 5);
+        assertTrue(mEvent.getOfficial());
+        assertEquals(mEvent.getCompetitionWeek(), (Integer)5);
         assertEquals(mEvent.getName(), "NE District - Hartford Event");
         assertEquals(mEvent.getShortName(), "Hartford");
-        assertEquals(mEvent.getDistrictEnum(),
-                     DistrictType.NEW_ENGLAND.ordinal());
-        assertEquals(mEvent.getVenue(), "Hartford Public High School\n55 Forest Street\nHartford, CT 06105\nUSA");
+        assertEquals(mEvent.getEventDistrictEnum(),
+                     DistrictType.NEW_ENGLAND);
+        assertEquals(mEvent.getVenueAddress(), "Hartford Public High School\n55 Forest Street\nHartford, " +
+                                      "CT 06105\nUSA");
         assertEquals(mEvent.getLocation(), "Hartford, CT, USA");
         assertEquals(mEvent.getYearAgnosticEventKey(), "cthar");
-        assertEquals(mEvent.getYear(), 2015);
+        assertEquals(mEvent.getYear(), (Integer)2015);
         assertEquals(mEvent.getEventType(),
                      EventType.DISTRICT);
-        assertFalse(mEvent.getWebcasts().isJsonNull());
-        assertTrue(mEvent.getWebcasts().isJsonArray());
-        assertFalse(mEvent.getAlliances().isJsonNull());
-        assertTrue(mEvent.getAlliances().isJsonArray());
+        assertNotNull(mEvent.getWebcasts());
 
-        JsonArray webcast = mEvent.getWebcasts().getAsJsonArray();
+        JsonArray webcast = JSONHelper.getasJsonArray(mEvent.getWebcasts());
         assertEquals(webcast.size(), 1);
         assertTrue(webcast.get(0).isJsonObject());
         JsonObject castObject = webcast.get(0).getAsJsonObject();
         assertEquals(castObject.get("type").getAsString(), "twitch");
         assertEquals(castObject.get("channel").getAsString(), "nefirst_red");
 
-        JsonArray alliances = mEvent.getAlliances().getAsJsonArray();
+        JsonArray alliances = JSONHelper.getasJsonArray(mEvent.getAlliances());
         assertEquals(alliances.size(), 8);
         assertTrue(alliances.get(0).isJsonObject());
         JsonObject alliance1 = alliances.get(0).getAsJsonObject();
