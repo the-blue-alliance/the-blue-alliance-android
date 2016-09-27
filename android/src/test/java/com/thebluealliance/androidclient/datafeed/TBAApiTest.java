@@ -4,10 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.models.Award;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
@@ -60,17 +58,12 @@ public class TBAApiTest {
                 + "}";
         Team team = JSONHelper.getGson().fromJson(teamJson, Team.class);
 
-        try {
-            assertEquals(team.getWebsite(), "http://www.uberbots.org");
-            assertEquals(team.getFullName(), "UTC Fire and Security & Avon High School");
-            assertEquals(team.getLocation(), "Avon, CT, USA");
-            assertEquals((int) team.getNumber(), 1124);
-            assertEquals(team.getKey(), "frc1124");
-            assertEquals(team.getNickname(), "ÜberBots");
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.e("Unable to get team fields");
-            e.printStackTrace();
-        }
+        assertEquals(team.getWebsite(), "http://www.uberbots.org");
+        assertEquals(team.getName(), "UTC Fire and Security & Avon High School");
+        assertEquals(team.getLocation(), "Avon, CT, USA");
+        assertEquals((int) team.getTeamNumber(), 1124);
+        assertEquals(team.getKey(), "frc1124");
+        assertEquals(team.getNickname(), "ÜberBots");
     }
 
     @org.junit.Test

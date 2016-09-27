@@ -227,13 +227,13 @@ public final class ModelInflater {
                     team.setKey(data.getString(i));
                     break;
                 case TeamsTable.NUMBER:
-                    team.setNumber(data.getInt(i));
+                    team.setTeamNumber(data.getInt(i));
                     break;
                 case TeamsTable.SHORTNAME:
                     team.setNickname(data.getString(i));
                     break;
                 case TeamsTable.NAME:
-                    team.setFullName(data.getString(i));
+                    team.setName(data.getString(i));
                     break;
                 case TeamsTable.LOCATION:
                     team.setLocation(data.getString(i));

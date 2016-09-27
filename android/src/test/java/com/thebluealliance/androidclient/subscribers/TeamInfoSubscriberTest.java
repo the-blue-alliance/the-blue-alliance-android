@@ -44,7 +44,7 @@ public class TeamInfoSubscriberTest {
 
         assertNotNull(data);
         assertEquals(mTeam.getKey(), data.teamKey);
-        assertEquals(mTeam.getFullName(), data.fullName);
+        assertEquals(mTeam.getName(), data.fullName);
         assertEquals(mTeam.getNickname(), data.nickname);
         assertEquals(mTeam.getLocation(), data.location);
         assertEquals(mTeam.getWebsite(), data.website);

@@ -23,7 +23,7 @@ public class TeamListElement extends ListElement {
 
     public TeamListElement(Team team) throws BasicModel.FieldNotDefinedException {
         super(team.getKey());
-        mTeamNumber = team.getNumber();
+        mTeamNumber = team.getTeamNumber();
         mTeamName = team.getNickname();
         mTeamLocation = team.getLocation();
         mShowLinkToTeamDetails = false;

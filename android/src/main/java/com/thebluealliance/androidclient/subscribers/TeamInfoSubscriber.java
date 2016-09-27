@@ -15,9 +15,9 @@ public class TeamInfoSubscriber extends BaseAPISubscriber<Team, TeamInfoBinder.M
     public void parseData() throws BasicModel.FieldNotDefinedException{
         mDataToBind = new TeamInfoBinder.Model();
         mDataToBind.teamKey = mAPIData.getKey();
-        mDataToBind.fullName = mAPIData.getFullName();
+        mDataToBind.fullName = mAPIData.getName();
         mDataToBind.nickname = mAPIData.getNickname();
-        mDataToBind.teamNumber = mAPIData.getNumber();
+        mDataToBind.teamNumber = mAPIData.getTeamNumber();
         mDataToBind.location = mAPIData.getLocation();
         if (mAPIData.getParams().containsKey(TeamsTable.WEBSITE)) {
             mDataToBind.website = mAPIData.getWebsite();
