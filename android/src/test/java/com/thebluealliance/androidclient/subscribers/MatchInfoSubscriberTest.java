@@ -82,7 +82,7 @@ public class MatchInfoSubscriberTest {
         assertTrue(data.get(0) instanceof MatchListElement);
         assertTrue(data.get(1) instanceof ImageListElement);
 
-        Media videoItem = mGson.fromJson(mData.match.getVideos().get(0), Media.class);
+        Media videoItem = mGson.fromJson(mData.match.getVideosJson().get(0), Media.class);
         ImageListElement video = (ImageListElement) data.get(1);
 
         verify(mRenderer).renderFromModel(mData.match, MatchRenderer.RENDER_MATCH_INFO);

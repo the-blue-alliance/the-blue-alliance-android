@@ -64,7 +64,7 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
 
         mMatchTitle = mAPIData.match.getTitle(mResources);
         mMatchKey = mAPIData.match.getKey();
-        JsonArray matchVideos = mAPIData.match.getVideos();
+        JsonArray matchVideos = mAPIData.match.getVideosJson();
         for (int i = 0; i < matchVideos.size(); i++) {
             JsonElement video = matchVideos.get(i);
             if (MediaType.fromString(video.getAsJsonObject().get("type").getAsString())

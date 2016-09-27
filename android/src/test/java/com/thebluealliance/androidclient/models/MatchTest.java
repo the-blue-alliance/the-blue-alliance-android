@@ -32,22 +32,22 @@ public class MatchTest {
     public void testMatchModel() throws BasicModel.FieldNotDefinedException {
         assertNotNull(mMatch);
         assertEquals(mMatch.getKey(), "2014cmp_f1m1");
-        assertEquals(mMatch.getMatchNumber(), 1);
-        assertEquals(mMatch.getSetNumber(), 1);
+        assertEquals(mMatch.getMatchNumber().intValue(), 1);
+        assertEquals(mMatch.getSetNumber().intValue(), 1);
         assertEquals(mMatch.getEventKey(), "2014cmp");
         assertEquals(mMatch.getTimeString(), "5:38 PM");
-        assertEquals(mMatch.getTime().getTime(), 1398551880);
+        assertEquals(mMatch.getTime().intValue(), 1398551880);
         assertNotNull(mMatch.getVideos());
         assertNotNull(mMatch.getAlliances());
 
-        JsonArray videos = mMatch.getVideos();
+        JsonArray videos = mMatch.getVideosJson();
         assertEquals(videos.size(), 2);
         assertTrue(videos.get(0).isJsonObject());
         JsonObject video1 = videos.get(0).getAsJsonObject();
         assertEquals(video1.get("type").getAsString(), "youtube");
         assertEquals(video1.get("key").getAsString(), "jdJutaggCMk");
 
-        JsonObject alliances = mMatch.getAlliances().getAsJsonObject();
+        JsonObject alliances = mMatch.getAlliancesJson();
         assertTrue(alliances.has("blue") && alliances.get("blue").isJsonObject());
         assertTrue(alliances.has("red") && alliances.get("red").isJsonObject());
         JsonObject blueAlliance = alliances.get("blue").getAsJsonObject();
@@ -61,7 +61,7 @@ public class MatchTest {
 
     @Test
     public void testUtilities() throws BasicModel.FieldNotDefinedException {
-        JsonArray teamsJson = Match.getRedTeams(mMatch.getAlliances());
+        JsonArray teamsJson = Match.getRedTeams(mMatch.getAlliancesJson());
         ArrayList<String> teamKeys = Match.teamKeys(teamsJson);
         assertEquals(Arrays.asList("frc1678", "frc1640", "frc1114"), teamKeys);
 

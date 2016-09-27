@@ -28,7 +28,7 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
         }
 
         if (object.has("comp_level")) {
-            match.setTypeFromShort(object.get("comp_level").getAsString());
+            match.setCompLevel(object.get("comp_level").getAsString());
         }
 
         if (object.has("match_number")) {
@@ -40,7 +40,7 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
         }
 
         if (object.has(ALLIANCE_TAG)) {
-            match.setAlliances(object.get(ALLIANCE_TAG).getAsJsonObject());
+            match.setAlliances(object.get(ALLIANCE_TAG).getAsString());
         }
 
         if (!isNull(object.get("time_string"))) {
@@ -52,11 +52,11 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
         }
 
         if (object.has("videos")) {
-            match.setVideos(object.get("videos").getAsJsonArray());
+            match.setVideos(object.get("videos").getAsString());
         }
 
         if (object.has("score_breakdown") && object.get("score_breakdown").isJsonObject()) {
-            match.setBreakdown(object.get("score_breakdown").getAsJsonObject());
+            match.setScoreBreakdown(object.get("score_breakdown").getAsString());
         }
 
         return match;

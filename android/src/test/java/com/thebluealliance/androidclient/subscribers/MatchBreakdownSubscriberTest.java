@@ -40,7 +40,8 @@ public class MatchBreakdownSubscriberTest {
     @Test
     public void testParsedData() throws BasicModel.FieldNotDefinedException {
         MatchBreakdownBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mMatch);
-        assertEquals(new MatchBreakdownBinder.Model(mMatch.getAlliances(), mMatch.getBreakdown()), data);
+        assertEquals(new MatchBreakdownBinder.Model(mMatch.getAlliancesJson(),
+                                                    mMatch.getScoreBreakdownJson()), data);
     }
 
 }

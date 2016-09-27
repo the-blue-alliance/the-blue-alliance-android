@@ -177,7 +177,7 @@ public final class ModelInflater {
                     match.setSetNumber(data.getInt(i));
                     break;
                 case MatchesTable.BREAKDOWN:
-                    match.setBreakdown(data.getString(i));
+                    match.setScoreBreakdown(data.getString(i));
                     break;
                 default:
             }

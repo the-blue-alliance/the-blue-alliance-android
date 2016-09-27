@@ -768,6 +768,7 @@
         },
         "time": {
           "type": "integer",
+          "format": "int64",
           "description": "UNIX timestamp of match time, as taken from the published schedule"
         }
       }

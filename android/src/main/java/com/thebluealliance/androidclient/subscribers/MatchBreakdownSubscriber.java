@@ -15,18 +15,13 @@ public class MatchBreakdownSubscriber extends BaseAPISubscriber<Match, MatchBrea
     public void parseData() throws BasicModel.FieldNotDefinedException {
         if (mAPIData.getYear() == 2016) {
             // Currently only support 2016 matches
-            try {
-                JsonObject scoreBreakdown = mAPIData.getBreakdown();
-                JsonObject alliances = mAPIData.getAlliances();
-                if (scoreBreakdown.entrySet().isEmpty() || alliances.entrySet().isEmpty()) {
-                    mDataToBind = null;
-                }
-
-                mDataToBind = new MatchBreakdownBinder.Model(alliances, scoreBreakdown);
-            } catch (BasicModel.FieldNotDefinedException ex) {
-                // Match is unplayed or doesn't have a breakdown. Fail gracefully
+            JsonObject scoreBreakdown = mAPIData.getScoreBreakdownJson();
+            JsonObject alliances = mAPIData.getAlliancesJson();
+            if (scoreBreakdown.entrySet().isEmpty() || alliances.entrySet().isEmpty()) {
                 mDataToBind = null;
             }
+
+            mDataToBind = new MatchBreakdownBinder.Model(alliances, scoreBreakdown);
         } else {
             mDataToBind = null;
         }

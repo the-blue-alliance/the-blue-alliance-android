@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Team
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-16T20:00:11.423-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-27T14:59:25.379-04:00")
 public class Team   {
   @SerializedName("country_name")
   private String countryName = null;

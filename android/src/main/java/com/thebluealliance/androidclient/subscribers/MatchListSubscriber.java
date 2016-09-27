@@ -93,10 +93,10 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         }
         for (int i = 0; i < mAPIData.size(); i++) {
             Match match = mAPIData.get(i);
-            MatchType currentType = match.getMatchType();
-            JsonObject alliances = match.getAlliances();
+            MatchType currentType = MatchType.fromShortType(match.getCompLevel());
+            JsonObject alliances = match.getAlliancesJson();
             if (lastType != currentType) {
-                switch (match.getMatchType()) {
+                switch (MatchType.fromShortType(match.getCompLevel())) {
                     case QUAL:
                         currentGroup = mQualMatches;
                         break;
@@ -123,7 +123,7 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
             }
 
             /* Track alliance advancement, indexed by captain team key */
-            if (match.getMatchType() == MatchType.FINAL && match.hasBeenPlayed()) {
+            if (currentType == MatchType.FINAL && match.hasBeenPlayed()) {
                 // Need to ensure we can differentiate who won the finals
                 if (Match.getRedScore(alliances) > Match.getBlueScore(alliances)) {
                     redFinalsWon++;
@@ -131,15 +131,15 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
                     blueFinalsWon++;
                 }
             }
-            if (match.getMatchType().isPlayoff()) {
+            if (currentType.isPlayoff()) {
                 addAllianceTeams(
                         mAdvancement,
                         Match.getRedTeams(alliances),
-                        PlayoffAdvancement.fromMatchType(match.getMatchType()));
+                        PlayoffAdvancement.fromMatchType(currentType));
                 addAllianceTeams(
                         mAdvancement,
                         Match.getBlueTeams(alliances),
-                        PlayoffAdvancement.fromMatchType(match.getMatchType()));
+                        PlayoffAdvancement.fromMatchType(currentType));
             }
 
             /**
@@ -162,11 +162,13 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
             }
         }
 
-        if (lastMatch != null && lastMatch.getMatchType() == MatchType.FINAL) {
+        if (lastMatch != null && lastType == MatchType.FINAL) {
             if (redFinalsWon >= 2) {
-                addAllianceTeams(mAdvancement, Match.getRedTeams(lastMatch.getAlliances()), PlayoffAdvancement.WINNER);
+                addAllianceTeams(mAdvancement, Match.getRedTeams(lastMatch.getAlliancesJson()),
+                                 PlayoffAdvancement.WINNER);
             } else if (blueFinalsWon >= 2) {
-                addAllianceTeams(mAdvancement, Match.getBlueTeams(lastMatch.getAlliances()), PlayoffAdvancement.WINNER);
+                addAllianceTeams(mAdvancement, Match.getBlueTeams(lastMatch.getAlliancesJson()),
+                                 PlayoffAdvancement.WINNER);
             }
         }
 

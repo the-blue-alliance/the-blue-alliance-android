@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Match
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-16T20:00:11.423-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-27T14:59:25.379-04:00")
 public class Match   {
   @SerializedName("alliances")
   private String alliances = null;
@@ -62,7 +62,7 @@ public class Match   {
   private Integer setNumber = null;
 
   @SerializedName("time")
-  private Integer time = null;
+  private Long time = null;
 
   @SerializedName("time_string")
   private String timeString = null;
@@ -222,7 +222,7 @@ public class Match   {
     this.setNumber = setNumber;
   }
 
-  public Match time(Integer time) {
+  public Match time(Long time) {
     this.time = time;
     return this;
   }
@@ -233,11 +233,11 @@ public class Match   {
   **/
   @ApiModelProperty(example = "null", value = "UNIX timestamp of match time, as taken from the published schedule")
   @Nullable
-  public Integer getTime() {
+  public Long getTime() {
     return time;
   }
 
-  public void setTime(Integer time) {
+  public void setTime(Long time) {
     this.time = time;
   }
 

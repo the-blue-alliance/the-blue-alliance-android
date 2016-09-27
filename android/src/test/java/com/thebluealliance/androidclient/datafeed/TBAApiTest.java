@@ -120,20 +120,21 @@ public class TBAApiTest {
         String matchJson = "{\"comp_level\": \"f\", \"match_number\": 1, \"videos\": [{\"type\": \"youtube\", \"key\": \"ci6LicTg5rk\"}], \"time_string\": \"3:36 PM\", \"set_number\": 1, \"key\": \"2014ctgro_f1m1\", \"time\": \"1394393760\", \"alliances\": {\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", \"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", \"frc237\", \"frc2064\"]}}, \"event_key\": \"2014ctgro\"}";
         Match match = JSONHelper.getGson().fromJson(matchJson, Match.class);
 
-        try {
-            assertEquals(match.getKey(), "2014ctgro_f1m1");
-            assertEquals(match.getEventKey(), "2014ctgro");
-            assertEquals(match.getMatchNumber(), 1);
-            assertEquals(match.getSetNumber(), 1);
-            assertEquals(match.getMatchType(), MatchType.FINAL);
-            assertEquals(match.getAlliances(), JSONHelper.getasJsonObject("{\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", \"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", \"frc237\", \"frc2064\"]}}"));
-            assertEquals(match.getTimeString(), "3:36 PM");
-            assertEquals(match.getTime(), new Date(1394393760));
-            assertEquals(match.getVideos(), JSONHelper.getasJsonArray("[{\"type\": \"youtube\", \"key\": \"ci6LicTg5rk\"}]"));
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.e("Unable to get match fields");
-            e.printStackTrace();
-        }
+        assertEquals(match.getKey(), "2014ctgro_f1m1");
+        assertEquals(match.getEventKey(), "2014ctgro");
+        assertEquals(match.getMatchNumber().intValue(), 1);
+        assertEquals(match.getSetNumber().intValue(), 1);
+        assertEquals(MatchType.fromShortType(match.getCompLevel()), MatchType.FINAL);
+        assertEquals(match.getAlliances(),
+                     JSONHelper.getasJsonObject(
+                             "{\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", " +
+                             "\"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", " +
+                             "\"frc237\", \"frc2064\"]}}"));
+        assertEquals(match.getTimeString(), "3:36 PM");
+        assertEquals(match.getTime(), new Date(1394393760));
+        assertEquals(match.getVideos(),
+                     JSONHelper
+                             .getasJsonArray("[{\"type\": \"youtube\", \"key\": \"ci6LicTg5rk\"}]"));
     }
 
     @org.junit.Test

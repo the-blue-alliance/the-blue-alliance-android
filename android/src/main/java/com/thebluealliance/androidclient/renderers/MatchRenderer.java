@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.types.ModelType;
 
@@ -14,7 +13,6 @@ import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -58,20 +56,8 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
     @Override
     public @Nullable MatchListElement renderFromModel(Match match, Integer renderMode) {
         RenderArgs args = argsFromMode(renderMode);
-        JsonObject alliances;
-        try {
-            alliances = match.getAlliances();
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.w("Required field for match render: Database.Matches.ALLIANCES");
-            return null;
-        }
-        JsonArray videos;
-        try {
-            videos = match.getVideos();
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.w("Required field for match render: Database.Matches.VIDEOS");
-            videos = new JsonArray();
-        }
+        JsonObject alliances = match.getAlliancesJson();
+        JsonArray videos = match.getVideosJson();
         String key = match.getKey();
         if (key.isEmpty()) {
             return null;
@@ -121,12 +107,7 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
             blueAlliance = new String[]{"", "", ""};
         }
 
-        long matchTime;
-        try {
-            matchTime = match.getTimeMillis();
-        } catch (BasicModel.FieldNotDefinedException e) {
-            matchTime = -1;
-        }
+        long matchTime = match.getTime() != null ? (match.getTime() * 1000) : -1;
 
         return new MatchListElement(youTubeVideoKey, match.getTitle(mResources, true),
           redAlliance, blueAlliance,

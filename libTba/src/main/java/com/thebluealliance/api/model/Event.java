@@ -25,19 +25,17 @@
 
 package com.thebluealliance.api.model;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.Objects;
-
-import javax.annotation.Nullable;
-
+import com.google.gson.annotations.SerializedName;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.annotation.Nullable;
 
 
 /**
  * Event
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-16T20:00:11.423-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-27T14:59:25.379-04:00")
 public class Event   {
   @SerializedName("alliances")
   private String alliances = null;
