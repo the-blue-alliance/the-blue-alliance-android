@@ -31,11 +31,11 @@ public class MediaTest {
     @Test
     public void testCdMedia() throws BasicModel.FieldNotDefinedException {
         assertNotNull(cdMedia);
-        assertEquals(cdMedia.getMediaType(),
+        assertEquals(MediaType.fromString(cdMedia.getType()),
                      MediaType.CD_PHOTO_THREAD);
         assertEquals(cdMedia.getForeignKey(), "39894");
-        assertFalse(cdMedia.getDetails().isJsonNull());
-        JsonObject details = cdMedia.getDetails();
+        assertFalse(cdMedia.getDetailsJson().isJsonNull());
+        JsonObject details = cdMedia.getDetailsJson();
         assertTrue(details.has("image_partial"));
         assertEquals(details.get("image_partial").getAsString(), "fe3/fe38d320428adf4f51ac969efb3db32c_l.jpg");
     }
@@ -43,9 +43,9 @@ public class MediaTest {
     @Test
     public void testYtMedia() throws BasicModel.FieldNotDefinedException {
         assertNotNull(ytMedia);
-        assertEquals(ytMedia.getMediaType(),
+        assertEquals(MediaType.fromString(ytMedia.getType()),
                      MediaType.YOUTUBE);
         assertEquals(ytMedia.getForeignKey(), "RpSgUrsghv4");
-        assertFalse(ytMedia.getDetails().isJsonNull());
+        assertFalse(ytMedia.getDetailsJson().isJsonNull());
     }
 }

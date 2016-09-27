@@ -101,18 +101,16 @@ public class TBAApiTest {
 
         Media cd = medias.get(0);
         Media yt = medias.get(1);
-        try {
-            assertEquals(cd.getForeignKey(), "39894");
-            assertEquals(cd.getMediaType(), MediaType.CD_PHOTO_THREAD);
-            assertEquals(cd.getDetails(), JSONHelper.getasJsonObject("{\"image_partial\": \"fe3/fe38d320428adf4f51ac969efb3db32c_l.jpg\"}"));
+        assertEquals(cd.getForeignKey(), "39894");
+        assertEquals(MediaType.fromString(cd.getType()), MediaType.CD_PHOTO_THREAD);
+        assertEquals(cd.getDetails(),
+                     JSONHelper.getasJsonObject(
+                             "{\"image_partial\": \"fe3/fe38d320428adf4f51ac969efb3db32c_l" +
+                             ".jpg\"}"));
 
-            assertEquals(yt.getMediaType(), MediaType.YOUTUBE);
-            assertEquals(yt.getForeignKey(), "RpSgUrsghv4");
-            assertEquals(yt.getDetails(), new JsonObject());
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.e("Unable to get media fields");
-            e.printStackTrace();
-        }
+        assertEquals(MediaType.fromString(yt.getType()), MediaType.YOUTUBE);
+        assertEquals(yt.getForeignKey(), "RpSgUrsghv4");
+        assertEquals(yt.getDetails(), new JsonObject());
     }
 
     @org.junit.Test

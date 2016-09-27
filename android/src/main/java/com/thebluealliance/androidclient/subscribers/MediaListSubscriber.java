@@ -30,7 +30,7 @@ public class MediaListSubscriber extends BaseAPISubscriber<List<Media>, List<Lis
 
         for (int i=0; i < mAPIData.size(); i++) {
             Media media = mAPIData.get(i);
-            MediaType mediaType = media.getMediaType();
+            MediaType mediaType = MediaType.fromString(media.getType());
             if (mediaType.isImage()) {
                 mPhotos.children.add(media);
             } else if (mediaType.isVideo()) {

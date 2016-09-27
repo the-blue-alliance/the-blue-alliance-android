@@ -2,97 +2,74 @@ package com.thebluealliance.androidclient.models;
 
 import com.google.gson.JsonObject;
 
-import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.types.MediaType;
+import com.thebluealliance.androidclient.interfaces.RenderableModel;
+import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.renderers.MediaRenderer;
+import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.types.ModelType;
 
+import android.content.ContentValues;
 
-public class Media extends BasicModel<Media> {
+
+public class Media extends com.thebluealliance.api.model.Media implements TbaDatabaseModel,
+                                                                          RenderableModel<Media>
+{
 
     private JsonObject details;
+    private String teamKey;
+    private int year;
 
     public Media() {
-        super(Database.TABLE_MEDIAS, ModelType.MEDIA);
-        details = null;
     }
 
     @Override
     public String getKey() {
-        try {
-            return getForeignKey();
-        } catch (FieldNotDefinedException e) {
-            return "";
+        return getForeignKey();
+    }
+
+    public JsonObject getDetailsJson() {
+        if (details == null) {
+            details = JSONHelper.getasJsonObject(getDetails());
         }
+        return details;
     }
 
-    public MediaType getMediaType() throws FieldNotDefinedException {
-        if (fields.containsKey(MediasTable.TYPE) && fields.get(MediasTable.TYPE) instanceof String) {
-            return MediaType.fromString((String) fields.get(MediasTable.TYPE));
-        }
-        throw new FieldNotDefinedException("Field Database.Medias.TYPE is not defined");
-    }
-
-    public void setMediaType(String typeString) {
-        fields.put(MediasTable.TYPE, typeString);
-    }
-
-    public void setMediaType(MediaType mediaType) {
-        fields.put(MediasTable.TYPE, mediaType.toString());
-    }
-
-    public String getForeignKey() throws FieldNotDefinedException {
-        if (fields.containsKey(MediasTable.FOREIGNKEY) && fields.get(MediasTable.FOREIGNKEY) instanceof String) {
-            return (String) fields.get(MediasTable.FOREIGNKEY);
-        }
-        throw new FieldNotDefinedException("Field Database.Medias.FOREIGNKEY is not defined");
-    }
-
-    public void setForeignKey(String foreignKey) {
-        fields.put(MediasTable.FOREIGNKEY, foreignKey);
-    }
-
-    public String getTeamKey() throws FieldNotDefinedException {
-        if (fields.containsKey(MediasTable.TEAMKEY) && fields.get(MediasTable.TEAMKEY) instanceof String) {
-            return (String) fields.get(MediasTable.TEAMKEY);
-        }
-        throw new FieldNotDefinedException("Field Database.MEDIAS.TEAMKEY is not defined");
+    public String getTeamKey() {
+        return teamKey;
     }
 
     public void setTeamKey(String teamKey) {
-        fields.put(MediasTable.TEAMKEY, teamKey);
+        this.teamKey = teamKey;
     }
 
-    public JsonObject getDetails() throws FieldNotDefinedException {
-        if (details != null) {
-            return details;
-        }
-        if (fields.containsKey(MediasTable.DETAILS) && fields.get(MediasTable.DETAILS) instanceof String) {
-            details = JSONHelper.getasJsonObject((String) fields.get(MediasTable.DETAILS));
-            return details;
-        }
-        throw new FieldNotDefinedException("Field Database.Medias.TEAMKEY is not defined");
-    }
-
-    public void setDetails(JsonObject details) {
-        fields.put(MediasTable.DETAILS, details.toString());
-        this.details = details;
-    }
-
-    public void setDetails(String detailsJson) {
-        fields.put(MediasTable.DETAILS, detailsJson);
-    }
-
-    public int getYear() throws FieldNotDefinedException {
-        if (fields.containsKey(MediasTable.YEAR) && fields.get(MediasTable.YEAR) instanceof Integer) {
-            return (Integer) fields.get(MediasTable.DETAILS);
-        }
-        throw new FieldNotDefinedException("Field Database.Medias.YEAR is not defined");
+    public int getYear() {
+        return year;
     }
 
     public void setYear(int year) {
-        fields.put(MediasTable.YEAR, year);
+        this.year = year;
     }
 
+    @Override
+    public ContentValues getParams() {
+        ContentValues data = new ContentValues();
+        data.put(MediasTable.TYPE, getType());
+        data.put(MediasTable.FOREIGNKEY, getForeignKey());
+        data.put(MediasTable.TEAMKEY, getTeamKey());
+        data.put(MediasTable.DETAILS, getDetails());
+        data.put(MediasTable.YEAR, getYear());
+        return data;
+    }
+
+    @Override
+    public ListElement render(ModelRendererSupplier rendererSupplier) {
+        MediaRenderer renderer = (MediaRenderer) rendererSupplier.getRendererForType(ModelType.MEDIA);
+        if (renderer == null) {
+            return null;
+        }
+        return renderer.renderFromModel(this, null);
+    }
 }

@@ -196,7 +196,7 @@ public final class ModelInflater {
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
                 case MediasTable.TYPE:
-                    media.setMediaType(data.getString(i));
+                    media.setType(data.getString(i));
                     break;
                 case MediasTable.FOREIGNKEY:
                     media.setForeignKey(data.getString(i));
