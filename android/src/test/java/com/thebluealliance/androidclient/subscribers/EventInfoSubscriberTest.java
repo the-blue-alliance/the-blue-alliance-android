@@ -50,6 +50,6 @@ public class EventInfoSubscriberTest extends TestCase {
         assertEquals(data.eventWebsite, mEvent.getWebsite());
         assertEquals(data.dateString, mEvent.getDateString());
         assertEquals(data.isLive, mEvent.isHappeningNow());
-        assertEquals(data.webcasts, mEvent.getWebcasts());
+        assertEquals(data.webcasts.toString(), mEvent.getWebcasts());
     }
 }

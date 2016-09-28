@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.models;
 import com.google.gson.JsonArray;
 
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
+import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
@@ -89,6 +90,17 @@ public class Team extends com.thebluealliance.api.model.Team implements TbaDatab
 
     @Override
     public ContentValues getParams() {
-        return null;
+        ContentValues data = new ContentValues();
+        data.put(TeamsTable.KEY, getKey());
+        data.put(TeamsTable.NUMBER, getTeamNumber());
+        data.put(TeamsTable.NAME, getName());
+        data.put(TeamsTable.SHORTNAME, getNickname());
+        data.put(TeamsTable.LOCATION, getLocation());
+        data.put(TeamsTable.WEBSITE, getWebsite());
+        if (yearsParticipated != null) {
+            data.put(TeamsTable.YEARS_PARTICIPATED, yearsParticipated.toString());
+        }
+        data.put(TeamsTable.MOTTO, getMotto());
+        return data;
     }
 }

@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
@@ -43,6 +44,18 @@ public class Match extends com.thebluealliance.api.model.Match implements TbaDat
         type = MatchType.NONE;
         alliances = null;
         videos = null;
+    }
+
+    @Override
+    public String getEventKey() {
+        String apiValue = super.getEventKey();
+        if (apiValue == null) {
+            // Lazy load this
+            String eventKey = MatchHelper.getEventKeyFromMatchKey(getKey());
+            setEventKey(eventKey);
+            return eventKey;
+        }
+        return apiValue;
     }
 
     public JsonObject getAlliancesJson() {

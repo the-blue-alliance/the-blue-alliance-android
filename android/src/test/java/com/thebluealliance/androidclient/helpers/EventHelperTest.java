@@ -305,7 +305,7 @@ public class EventHelperTest {
         assertEquals(EventHelper.generateLabelForEvent(preseason), EventHelper.PRESEASON_LABEL);
 
         Event offseason = mockEventType(EventType.OFFSEASON);
-        when(offseason.getStartDate()).thenReturn(new Date(115, 4, 2).getTime());
+        when(offseason.getFormattedStartDate()).thenReturn(new Date(115, 4, 2));
         assertEquals(EventHelper.generateLabelForEvent(offseason), "May Offseason Events");
 
         Event cmpDivision = mockEventType(EventType.CMP_DIVISION);
@@ -358,7 +358,7 @@ public class EventHelperTest {
 
     private static Event mockEventType(EventType type) throws BasicModel.FieldNotDefinedException {
         Event event = mock(Event.class);
-        when(event.getEventType()).thenReturn(type.ordinal());
+        when(event.getEventTypeEnum()).thenReturn(type);
         return event;
     }
 

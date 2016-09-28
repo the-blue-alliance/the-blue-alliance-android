@@ -33,13 +33,13 @@ public class TBAApiTest {
 
         //now, assert that all the properties are there
         assertEquals(event.getKey(), "2014ctgro");
-        assertEquals(event.getStartDate(), new Date(114, 2, 8));
-        assertEquals(event.getEndDate(), new Date(114, 2, 9));
+        assertEquals(event.getStartDate().longValue(), new Date(114, 2, 8).getTime());
+        assertEquals(event.getEndDate().longValue(), new Date(114, 2, 9).getTime());
         assertEquals(event.getName(), "Groton District Event");
         assertEquals(event.getShortName(), "Groton");
         assertEquals(event.getOfficial(), true);
         assertEquals(event.getLocation(), "Groton, CT, USA");
-        assertEquals(event.getEventType(), EventType.DISTRICT);
+        assertEquals(event.getEventTypeEnum(), EventType.DISTRICT);
     }
 
     @org.junit.Test
@@ -96,14 +96,14 @@ public class TBAApiTest {
         Media yt = medias.get(1);
         assertEquals(cd.getForeignKey(), "39894");
         assertEquals(MediaType.fromString(cd.getType()), MediaType.CD_PHOTO_THREAD);
-        assertEquals(cd.getDetails(),
+        assertEquals(cd.getDetailsJson(),
                      JSONHelper.getasJsonObject(
                              "{\"image_partial\": \"fe3/fe38d320428adf4f51ac969efb3db32c_l" +
                              ".jpg\"}"));
 
         assertEquals(MediaType.fromString(yt.getType()), MediaType.YOUTUBE);
         assertEquals(yt.getForeignKey(), "RpSgUrsghv4");
-        assertEquals(yt.getDetails(), new JsonObject());
+        assertEquals(yt.getDetailsJson(), new JsonObject());
     }
 
     @org.junit.Test
@@ -116,14 +116,14 @@ public class TBAApiTest {
         assertEquals(match.getMatchNumber().intValue(), 1);
         assertEquals(match.getSetNumber().intValue(), 1);
         assertEquals(MatchType.fromShortType(match.getCompLevel()), MatchType.FINAL);
-        assertEquals(match.getAlliances(),
+        assertEquals(match.getAlliancesJson(),
                      JSONHelper.getasJsonObject(
                              "{\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", " +
                              "\"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", " +
                              "\"frc237\", \"frc2064\"]}}"));
         assertEquals(match.getTimeString(), "3:36 PM");
-        assertEquals(match.getTime(), new Date(1394393760));
-        assertEquals(match.getVideos(),
+        assertEquals(match.getTime().longValue(), new Date(1394393760).getTime());
+        assertEquals(match.getVideosJson(),
                      JSONHelper
                              .getasJsonArray("[{\"type\": \"youtube\", \"key\": \"ci6LicTg5rk\"}]"));
     }

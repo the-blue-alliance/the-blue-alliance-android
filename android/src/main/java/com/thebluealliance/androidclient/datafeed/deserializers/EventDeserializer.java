@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.Event;
 
 import com.thebluealliance.androidclient.TbaLogger;
@@ -30,7 +31,10 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         final Event event = new Event();
 
         if (object.has("key")) {
-            event.setKey(object.get("key").getAsString());
+            String key = object.get("key").getAsString();
+            int year = EventHelper.getYear(key);
+            event.setKey(key);
+            event.setYear(year);
         }
 
         if (object.has("name")) {
@@ -85,7 +89,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         }
 
         if (object.has("webcast")) {
-            event.setWebcasts(object.get("webcast").getAsString());
+            event.setWebcasts(object.get("webcast").toString());
         }
 
         JsonElement districtEnum = object.get("event_district");

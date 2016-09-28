@@ -4,6 +4,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.types.EventType;
@@ -51,6 +52,17 @@ public class Event extends com.thebluealliance.api.model.Event implements TbaDat
         endDate = null;
     }
 
+    @Override
+    public Integer getYear() {
+        Integer apiYear = super.getYear();
+        if (apiYear == null) {
+            int year = EventHelper.getYear(getKey());
+            setYear(year);
+            return year;
+        }
+        return apiYear;
+    }
+
     public void setStartDate(String startString) {
         try {
             startDate = ThreadSafeFormatters.parseEventDate(startString);
@@ -95,6 +107,7 @@ public class Event extends com.thebluealliance.api.model.Event implements TbaDat
         int eventWeek = cal.get(Calendar.WEEK_OF_YEAR);
         int firstWeek = Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
         int week = eventWeek - firstWeek;
+        week = Math.max(week, 0); // Ensure that week is never <0
         setCompetitionWeek(week);
     }
 

@@ -28,7 +28,7 @@ public class MediaDeserializer implements JsonDeserializer<Media> {
         }
 
         if (object.has("details")) {
-            media.setDetails(object.get("details").getAsString());
+            media.setDetails(object.get("details").toString());
         }
 
         return media;
