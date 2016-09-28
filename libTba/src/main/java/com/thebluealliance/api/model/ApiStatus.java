@@ -37,10 +37,16 @@ import javax.annotation.Nullable;
 /**
  * ApiStatus
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-27T14:59:25.379-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-27T20:41:10.548-04:00")
 public class ApiStatus   {
+  @SerializedName("champsPitLocationsUpdateTime")
+  private Long champsPitLocationsUpdateTime = null;
+
   @SerializedName("champsPitLocationsUrl")
   private String champsPitLocationsUrl = null;
+
+  @SerializedName("currentSeason")
+  private Integer currentSeason = null;
 
   @SerializedName("downEvents")
   private List<String> downEvents = new ArrayList<String>();
@@ -54,17 +60,42 @@ public class ApiStatus   {
   @SerializedName("lastModified")
   private Long lastModified = null;
 
+  @SerializedName("lastOkHttpCacheClear")
+  private Long lastOkHttpCacheClear = null;
+
   @SerializedName("latestAppVersion")
   private Integer latestAppVersion = null;
 
   @SerializedName("maxSeason")
   private Integer maxSeason = null;
 
+  @SerializedName("messageExpiration")
+  private Long messageExpiration = null;
+
   @SerializedName("messageText")
   private String messageText = null;
 
   @SerializedName("minAppVersion")
   private Integer minAppVersion = null;
+
+  public ApiStatus champsPitLocationsUpdateTime(Long champsPitLocationsUpdateTime) {
+    this.champsPitLocationsUpdateTime = champsPitLocationsUpdateTime;
+    return this;
+  }
+
+   /**
+   * Last update of CMP pit location
+   * @return champsPitLocationsUpdateTime
+  **/
+  @ApiModelProperty(example = "null", value = "Last update of CMP pit location")
+  @Nullable
+  public Long getChampsPitLocationsUpdateTime() {
+    return champsPitLocationsUpdateTime;
+  }
+
+  public void setChampsPitLocationsUpdateTime(Long champsPitLocationsUpdateTime) {
+    this.champsPitLocationsUpdateTime = champsPitLocationsUpdateTime;
+  }
 
   public ApiStatus champsPitLocationsUrl(String champsPitLocationsUrl) {
     this.champsPitLocationsUrl = champsPitLocationsUrl;
@@ -83,6 +114,25 @@ public class ApiStatus   {
 
   public void setChampsPitLocationsUrl(String champsPitLocationsUrl) {
     this.champsPitLocationsUrl = champsPitLocationsUrl;
+  }
+
+  public ApiStatus currentSeason(Integer currentSeason) {
+    this.currentSeason = currentSeason;
+    return this;
+  }
+
+   /**
+   * Current default year to show
+   * @return currentSeason
+  **/
+  @ApiModelProperty(example = "null", value = "Current default year to show")
+  @Nullable
+  public Integer getCurrentSeason() {
+    return currentSeason;
+  }
+
+  public void setCurrentSeason(Integer currentSeason) {
+    this.currentSeason = currentSeason;
   }
 
   public ApiStatus downEvents(List<String> downEvents) {
@@ -166,6 +216,25 @@ public class ApiStatus   {
     this.lastModified = lastModified;
   }
 
+  public ApiStatus lastOkHttpCacheClear(Long lastOkHttpCacheClear) {
+    this.lastOkHttpCacheClear = lastOkHttpCacheClear;
+    return this;
+  }
+
+   /**
+   * Ensure that the app's network caches are cleared by this timestamp
+   * @return lastOkHttpCacheClear
+  **/
+  @ApiModelProperty(example = "null", value = "Ensure that the app's network caches are cleared by this timestamp")
+  @Nullable
+  public Long getLastOkHttpCacheClear() {
+    return lastOkHttpCacheClear;
+  }
+
+  public void setLastOkHttpCacheClear(Long lastOkHttpCacheClear) {
+    this.lastOkHttpCacheClear = lastOkHttpCacheClear;
+  }
+
   public ApiStatus latestAppVersion(Integer latestAppVersion) {
     this.latestAppVersion = latestAppVersion;
     return this;
@@ -202,6 +271,25 @@ public class ApiStatus   {
 
   public void setMaxSeason(Integer maxSeason) {
     this.maxSeason = maxSeason;
+  }
+
+  public ApiStatus messageExpiration(Long messageExpiration) {
+    this.messageExpiration = messageExpiration;
+    return this;
+  }
+
+   /**
+   * Expiration of the admin message
+   * @return messageExpiration
+  **/
+  @ApiModelProperty(example = "null", value = "Expiration of the admin message")
+  @Nullable
+  public Long getMessageExpiration() {
+    return messageExpiration;
+  }
+
+  public void setMessageExpiration(Long messageExpiration) {
+    this.messageExpiration = messageExpiration;
   }
 
   public ApiStatus messageText(String messageText) {
@@ -252,20 +340,24 @@ public class ApiStatus   {
       return false;
     }
     ApiStatus apiStatus = (ApiStatus) o;
-    return Objects.equals(this.champsPitLocationsUrl, apiStatus.champsPitLocationsUrl) &&
+    return Objects.equals(this.champsPitLocationsUpdateTime, apiStatus.champsPitLocationsUpdateTime) &&
+        Objects.equals(this.champsPitLocationsUrl, apiStatus.champsPitLocationsUrl) &&
+        Objects.equals(this.currentSeason, apiStatus.currentSeason) &&
         Objects.equals(this.downEvents, apiStatus.downEvents) &&
         Objects.equals(this.fmsApiDown, apiStatus.fmsApiDown) &&
         Objects.equals(this.hasMessage, apiStatus.hasMessage) &&
         Objects.equals(this.lastModified, apiStatus.lastModified) &&
+        Objects.equals(this.lastOkHttpCacheClear, apiStatus.lastOkHttpCacheClear) &&
         Objects.equals(this.latestAppVersion, apiStatus.latestAppVersion) &&
         Objects.equals(this.maxSeason, apiStatus.maxSeason) &&
+        Objects.equals(this.messageExpiration, apiStatus.messageExpiration) &&
         Objects.equals(this.messageText, apiStatus.messageText) &&
         Objects.equals(this.minAppVersion, apiStatus.minAppVersion);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(champsPitLocationsUrl, downEvents, fmsApiDown, hasMessage, lastModified, latestAppVersion, maxSeason, messageText, minAppVersion);
+    return Objects.hash(champsPitLocationsUpdateTime, champsPitLocationsUrl, currentSeason, downEvents, fmsApiDown, hasMessage, lastModified, lastOkHttpCacheClear, latestAppVersion, maxSeason, messageExpiration, messageText, minAppVersion);
   }
 
   @Override
@@ -273,13 +365,17 @@ public class ApiStatus   {
     StringBuilder sb = new StringBuilder();
     sb.append("class ApiStatus {\n");
     
+    sb.append("    champsPitLocationsUpdateTime: ").append(toIndentedString(champsPitLocationsUpdateTime)).append("\n");
     sb.append("    champsPitLocationsUrl: ").append(toIndentedString(champsPitLocationsUrl)).append("\n");
+    sb.append("    currentSeason: ").append(toIndentedString(currentSeason)).append("\n");
     sb.append("    downEvents: ").append(toIndentedString(downEvents)).append("\n");
     sb.append("    fmsApiDown: ").append(toIndentedString(fmsApiDown)).append("\n");
     sb.append("    hasMessage: ").append(toIndentedString(hasMessage)).append("\n");
     sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
+    sb.append("    lastOkHttpCacheClear: ").append(toIndentedString(lastOkHttpCacheClear)).append("\n");
     sb.append("    latestAppVersion: ").append(toIndentedString(latestAppVersion)).append("\n");
     sb.append("    maxSeason: ").append(toIndentedString(maxSeason)).append("\n");
+    sb.append("    messageExpiration: ").append(toIndentedString(messageExpiration)).append("\n");
     sb.append("    messageText: ").append(toIndentedString(messageText)).append("\n");
     sb.append("    minAppVersion: ").append(toIndentedString(minAppVersion)).append("\n");
     sb.append("}");

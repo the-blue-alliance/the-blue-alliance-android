@@ -8,12 +8,17 @@ import com.thebluealliance.androidclient.adapters.ViewDistrictFragmentPagerAdapt
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
+import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import android.content.Context;
 import android.content.Intent;
@@ -103,9 +108,14 @@ public class ViewDistrictActivity extends MyTBASettingsActivity
 
     private void setupActionBar() {
         ActionBar bar = getSupportActionBar();
+        DistrictType type = DistrictHelper.districtTypeFromKey(mDistrictKey);
         if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
-            setActionBarTitle(String.format(getString(R.string.district_title_format), mYear, DistrictHelper.districtTypeFromKey(mDistrictKey).getName()));
+            if (type != DistrictType.NO_DISTRICT) {
+                setActionBarTitle(String.format(getString(R.string.district_title_format),
+                                                mYear,
+                                                type.getName()));
+            }
         }
     }
 
@@ -184,6 +194,12 @@ public class ViewDistrictActivity extends MyTBASettingsActivity
               .build();
         }
         return mComponent;
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onActionBarTitleUpdated(ActionBarTitleEvent event) {
+        setActionBarTitle(event.getTitle());
     }
 
     @Override

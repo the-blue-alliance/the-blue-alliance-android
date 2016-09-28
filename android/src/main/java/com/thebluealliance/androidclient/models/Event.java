@@ -181,7 +181,8 @@ public class Event extends com.thebluealliance.api.model.Event implements TbaDat
                                    getYear(),
                                    getShortName(),
                                    getDateString(),
-                                   getLocation());
+                                   getLocation(),
+                                   getEventDistrictString());
         switch (renderType) {
             case RENDER_MYTBA_BUTTON:
                 model.setShowMyTbaSettings(true);

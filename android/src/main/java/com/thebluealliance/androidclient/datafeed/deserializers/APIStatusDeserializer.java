@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.models.APIStatus;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
     private static final int MS_PER_SECOND = 1000;
 
     static final String MAX_SEASON_TAG = "max_season";
+    static final String CURRENT_SEASON_TAG = "current_season";
     static final String FMS_API_DOWN_TAG = "is_datafeed_down";
     static final String DOWN_EVENTS_TAG = "down_events";
     static final String ANDROID_SETTINGS_TAG = "android";
@@ -45,6 +47,19 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
             throw new JsonParseException("Max Season is not a primitive");
         }
         status.setMaxSeason(maxSeason.getAsInt());
+
+        JsonElement currentSeason = data.get(CURRENT_SEASON_TAG);
+        if (currentSeason == null || !currentSeason.isJsonPrimitive()) {
+            // Default to the current year if not set
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            status.setCurrentSeason(currentYear);
+        } else {
+            status.setCurrentSeason(currentSeason.getAsInt());
+        }
+
+        // Ensure that maxSeason always is max(current, given max)
+        int maxSeasonCheck = Math.max(status.getMaxSeason(), status.getCurrentSeason());
+        status.setMaxSeason(maxSeasonCheck);
 
         JsonElement fmsApiDown = data.get(FMS_API_DOWN_TAG);
         if (fmsApiDown == null || !fmsApiDown.isJsonPrimitive()) {
@@ -94,7 +109,8 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
             }
             status.setHasMessage(true);
             status.setMessageText(messageText.getAsString());
-            status.setMessageExipration(new Date(messageExpiration.getAsLong() * MS_PER_SECOND));
+            status.setMessageExpiration(new Date(messageExpiration.getAsLong() * MS_PER_SECOND)
+                                                .getTime());
         } else {
             status.setHasMessage(false);
         }
@@ -105,7 +121,7 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
             long lastTimestamp = lastCacheTime.getAsLong();
             status.setLastOkHttpCacheClear(lastTimestamp);
         } else {
-            status.setLastOkHttpCacheClear(-1);
+            status.setLastOkHttpCacheClear((long) -1);
         }
 
         JsonElement champsPitLocationsUrl = data.get(CHAMPS_PIT_LOCATIONS_URL);
@@ -119,7 +135,7 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
         if (champsPitLocationsUpdateTime != null && !champsPitLocationsUpdateTime.isJsonNull()) {
             status.setChampsPitLocationsUpdateTime(champsPitLocationsUpdateTime.getAsLong());
         } else {
-            status.setChampsPitLocationsUpdateTime(-1);
+            status.setChampsPitLocationsUpdateTime((long)-1);
         }
 
         status.setJsonBlob(json.toString());

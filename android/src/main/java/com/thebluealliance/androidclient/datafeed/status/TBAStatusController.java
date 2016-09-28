@@ -98,7 +98,16 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         return status.getMaxSeason();
     }
 
-    private int getMinAppVersion() {
+    public Integer getCurrentCompYear() {
+        APIStatus status = fetchApiStatus();
+        if (status == null) {
+            Calendar cal = Calendar.getInstance();
+            return cal.get(Calendar.YEAR);
+        }
+        return status.getCurrentSeason();
+    }
+
+    public int getMinAppVersion() {
         APIStatus status = fetchApiStatus();
         if (status == null || status.getMinAppVersion() == null) {
             /* Default to the current version */
@@ -180,9 +189,9 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         /* Admin push message */
         APIStatus status = fetchApiStatus();
         Date now = new Date();
-        if (status != null && status.hasMessage()
+        if (status != null && status.getHasMessage()
                 && mLastMessageTime + DIALOG_TIMEOUT < System.nanoTime()
-                && status.getMessageExipration().compareTo(now) > 0) {
+                && status.getMessageExpiration().compareTo(now.getTime()) > 0) {
             new AlertDialog.Builder(activity)
                     .setMessage(status.getMessageText())
                     .setCancelable(false)

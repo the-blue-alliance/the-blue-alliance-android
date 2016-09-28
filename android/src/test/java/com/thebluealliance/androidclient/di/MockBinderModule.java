@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.di;
 
+import com.thebluealliance.androidclient.binders.DistrictEventsBinder;
 import com.thebluealliance.androidclient.binders.DistrictPointsListBinder;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
 import com.thebluealliance.androidclient.binders.EventTabBinder;
@@ -105,5 +106,10 @@ public class MockBinderModule {
     @Provides @Singleton
     public SimpleBinder provideSimpleBinder() {
         return Mockito.mock(SimpleBinder.class);
+    }
+
+    @Provides @Singleton
+    public DistrictEventsBinder provideDistrictEventsBinder() {
+        return Mockito.mock(DistrictEventsBinder.class);
     }
 }

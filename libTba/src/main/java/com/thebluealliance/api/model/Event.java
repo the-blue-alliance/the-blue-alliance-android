@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Event
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-27T14:59:25.379-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-09-27T20:41:10.548-04:00")
 public class Event   {
   @SerializedName("alliances")
   private String alliances = null;

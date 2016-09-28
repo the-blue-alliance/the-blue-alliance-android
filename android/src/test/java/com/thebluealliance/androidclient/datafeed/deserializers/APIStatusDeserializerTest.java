@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -54,14 +55,14 @@ public class APIStatusDeserializerTest {
         assertEquals(mStatus.getMinAppVersion().intValue(), 123456);
         assertNotNull(mStatus.getLatestAppVersion());
         assertEquals(mStatus.getLatestAppVersion().intValue(), 123488);
-        assertEquals(mStatus.isFmsApiDown(), false);
+        assertEquals(mStatus.getFmsApiDown(), false);
         assertEquals(mStatus.getJsonBlob(), mJsonData.toString());
-        assertTrue(mStatus.hasMessage());
+        assertTrue(mStatus.getHasMessage());
         assertEquals("This is only a test", mStatus.getMessageText());
-        assertEquals(new Date(1449698422L * 1000), mStatus.getMessageExipration());
-        assertEquals(1449698422, mStatus.getLastOkHttpCacheClear());
+        assertEquals(1449698422L * 1000, mStatus.getMessageExpiration().longValue());
+        assertEquals(1449698422, mStatus.getLastOkHttpCacheClear().longValue());
         assertEquals("https://www.thebluealliance.com", mStatus.getChampsPitLocationsUrl());
-        assertEquals(12345678, mStatus.getChampsPitLocationsUpdateTime());
+        assertEquals(12345678, mStatus.getChampsPitLocationsUpdateTime().longValue());
 
         List<String> downKeys = mStatus.getDownEvents();
         assertNotNull(downKeys);
@@ -86,6 +87,30 @@ public class APIStatusDeserializerTest {
     public void testBadMaxSeason() {
         mJsonData.add(APIStatusDeserializer.MAX_SEASON_TAG, new JsonArray());
         mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+    }
+
+    @Test()
+    public void testLowerMaxSeason() {
+        // Make sure maxSeason >= currentSeason
+        mJsonData.addProperty(APIStatusDeserializer.MAX_SEASON_TAG, 2013);
+        mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+        assertEquals(mStatus.getCurrentSeason(), mStatus.getMaxSeason());
+    }
+
+    @Test
+    public void testNoCurrentSeason() {
+        mJsonData.remove(APIStatusDeserializer.CURRENT_SEASON_TAG);
+        mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        assertEquals(currentYear, mStatus.getCurrentSeason().intValue());
+    }
+
+    @Test
+    public void testBadCurrentSeason() {
+        mJsonData.add(APIStatusDeserializer.CURRENT_SEASON_TAG, new JsonArray());
+        mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        assertEquals(currentYear, mStatus.getCurrentSeason().intValue());
     }
 
     @Test(expected = JsonParseException.class)
@@ -156,7 +181,7 @@ public class APIStatusDeserializerTest {
     public void testNoMessage() {
         mJsonData.remove(APIStatusDeserializer.MESSAGE_DICT);
         mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
-        assertFalse(mStatus.hasMessage());
+        assertFalse(mStatus.getHasMessage());
     }
 
     @Test(expected = JsonParseException.class)
@@ -177,7 +202,7 @@ public class APIStatusDeserializerTest {
     public void testNoLastCacheClear() {
         mJsonData.remove(APIStatusDeserializer.LAST_OKHTTP_CACHE_CLEAR);
         mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
-        assertEquals(-1, mStatus.getLastOkHttpCacheClear());
+        assertEquals(-1, mStatus.getLastOkHttpCacheClear().intValue());
     }
 
     @Test
@@ -191,6 +216,6 @@ public class APIStatusDeserializerTest {
     public void testNoChampsPitLocationsUpdateTime() {
         mJsonData.remove(APIStatusDeserializer.CHAMPS_PIT_LOCATIONS_UPDATE_TIME);
         mStatus = mDeserializer.deserialize(mJsonData, APIStatus.class, mContext);
-        assertEquals(-1, mStatus.getChampsPitLocationsUpdateTime());
+        assertEquals(-1, mStatus.getChampsPitLocationsUpdateTime().intValue());
     }
 }

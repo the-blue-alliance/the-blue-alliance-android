@@ -94,7 +94,7 @@ public abstract class DatafeedActivity extends BaseActivity
             return;
         }
 
-        if (newStatus.isFmsApiDown()) {
+        if (newStatus.getFmsApiDown()) {
             // Everything is broken
             showWarningMessage(BaseActivity.WARNING_FIRST_API_DOWN);
         } else {
