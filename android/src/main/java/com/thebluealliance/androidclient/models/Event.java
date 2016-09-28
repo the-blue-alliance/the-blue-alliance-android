@@ -473,9 +473,8 @@ public class Event extends BasicModel<Event> implements ViewModelRenderer<EventV
     @Nullable @Override public EventViewModel renderToViewModel(Context context, @Nullable @RenderType Integer renderType) {
         EventViewModel model;
         try {
-            model = new EventViewModel(getKey(), getYear(), getShortName(), getDateString(), getLocation());
-
-
+            model = new EventViewModel(getKey(), getYear(), getShortName(), getDateString(),
+                                       getLocation(), getDistrictTitle());
             switch (renderType) {
                 case RENDER_MYTBA_BUTTON:
                     model.setShowMyTbaSettings(true);

@@ -29,18 +29,22 @@ import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.annotation.Nullable;
 
 
 /**
  * Media
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-27T22:00:48.157-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:16:34.746-04:00")
 public class Media   {
   @SerializedName("details")
   private String details = null;
 
   @SerializedName("foreign_key")
   private String foreignKey = null;
+
+  @SerializedName("lastModified")
+  private Long lastModified = null;
 
   @SerializedName("type")
   private String type = null;
@@ -55,6 +59,7 @@ public class Media   {
    * @return details
   **/
   @ApiModelProperty(example = "null", value = "If the media requires it, a json dict of additional information")
+  @Nullable
   public String getDetails() {
     return details;
   }
@@ -72,13 +77,32 @@ public class Media   {
    * The key used to indentify this media element on the remote site (e.g YouTube video key)
    * @return foreignKey
   **/
-  @ApiModelProperty(example = "null", value = "The key used to indentify this media element on the remote site (e.g YouTube video key)")
+  @ApiModelProperty(example = "null", required = true, value = "The key used to indentify this media element on the remote site (e.g YouTube video key)")
   public String getForeignKey() {
     return foreignKey;
   }
 
   public void setForeignKey(String foreignKey) {
     this.foreignKey = foreignKey;
+  }
+
+  public Media lastModified(Long lastModified) {
+    this.lastModified = lastModified;
+    return this;
+  }
+
+   /**
+   * Timestamp this model was last modified
+   * @return lastModified
+  **/
+  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
+  @Nullable
+  public Long getLastModified() {
+    return lastModified;
+  }
+
+  public void setLastModified(Long lastModified) {
+    this.lastModified = lastModified;
   }
 
   public Media type(String type) {
@@ -90,7 +114,7 @@ public class Media   {
    * The string type of the media element
    * @return type
   **/
-  @ApiModelProperty(example = "null", value = "The string type of the media element")
+  @ApiModelProperty(example = "null", required = true, value = "The string type of the media element")
   public String getType() {
     return type;
   }
@@ -111,12 +135,13 @@ public class Media   {
     Media media = (Media) o;
     return Objects.equals(this.details, media.details) &&
         Objects.equals(this.foreignKey, media.foreignKey) &&
+        Objects.equals(this.lastModified, media.lastModified) &&
         Objects.equals(this.type, media.type);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(details, foreignKey, type);
+    return Objects.hash(details, foreignKey, lastModified, type);
   }
 
   @Override
@@ -126,6 +151,7 @@ public class Media   {
     
     sb.append("    details: ").append(toIndentedString(details)).append("\n");
     sb.append("    foreignKey: ").append(toIndentedString(foreignKey)).append("\n");
+    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("}");
     return sb.toString();

@@ -10,7 +10,8 @@ public enum DistrictType {
     INDIANA,
     CHESAPEAKE,
     NORTH_CAROLINA,
-    GEORGIA;
+    GEORGIA,
+    ONTARIO;
 
     public static DistrictType fromEnum(int districtEnum) {
         switch (districtEnum) {
@@ -24,6 +25,7 @@ public enum DistrictType {
             case 6: return CHESAPEAKE;
             case 7: return NORTH_CAROLINA;
             case 8: return GEORGIA;
+            case 9: return ONTARIO;
         }
     }
 
@@ -37,6 +39,7 @@ public enum DistrictType {
             case "chs": return CHESAPEAKE;
             case "nc":  return NORTH_CAROLINA;
             case "pch": return GEORGIA;
+            case "ont": return ONTARIO;
             default:
                 return NO_DISTRICT;
         }
@@ -63,6 +66,8 @@ public enum DistrictType {
                 return "North Carolina";
             case GEORGIA:
                 return "Georgia";
+            case ONTARIO:
+                return "Ontario";
         }
     }
 
@@ -87,6 +92,8 @@ public enum DistrictType {
                 return "nc";
             case GEORGIA:
                 return "pch";
+            case ONTARIO:
+                return "ont";
         }
     }
 

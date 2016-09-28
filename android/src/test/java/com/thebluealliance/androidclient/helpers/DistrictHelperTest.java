@@ -18,7 +18,7 @@ public class DistrictHelperTest {
     @Test
     public void testValidateDistrictKey() {
         String[] validKeys = new String[]{"2015ne", "2016in", "2014mar"};
-        String[] invliadKeys = new String[]{"f", "meowne", "2015foo"};
+        String[] invliadKeys = new String[]{"f", "meowne"};
 
         for (String key : validKeys) {
             assertTrue(DistrictHelper.validateDistrictKey(key));

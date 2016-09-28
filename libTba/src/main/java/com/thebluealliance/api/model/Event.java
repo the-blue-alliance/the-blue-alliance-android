@@ -29,12 +29,13 @@ import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.annotation.Nullable;
 
 
 /**
  * Event
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-27T22:00:48.157-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:16:34.746-04:00")
 public class Event   {
   @SerializedName("alliances")
   private String alliances = null;
@@ -56,6 +57,9 @@ public class Event   {
 
   @SerializedName("key")
   private String key = null;
+
+  @SerializedName("lastModified")
+  private Long lastModified = null;
 
   @SerializedName("location")
   private String location = null;
@@ -94,6 +98,7 @@ public class Event   {
    * @return alliances
   **/
   @ApiModelProperty(example = "null", value = "If we have alliance selection data for this event, this contains a JSON array of the alliances. The captain is the first team, followed by their picks, in order.")
+  @Nullable
   public String getAlliances() {
     return alliances;
   }
@@ -111,7 +116,7 @@ public class Event   {
    * Event short code, as provided by FIRST
    * @return eventCode
   **/
-  @ApiModelProperty(example = "null", value = "Event short code, as provided by FIRST")
+  @ApiModelProperty(example = "null", required = true, value = "Event short code, as provided by FIRST")
   public String getEventCode() {
     return eventCode;
   }
@@ -130,6 +135,7 @@ public class Event   {
    * @return eventDistrict
   **/
   @ApiModelProperty(example = "null", value = "An integer that represents the event district as a constant.")
+  @Nullable
   public Integer getEventDistrict() {
     return eventDistrict;
   }
@@ -148,6 +154,7 @@ public class Event   {
    * @return eventDistrictString
   **/
   @ApiModelProperty(example = "null", value = "A human readable string that defines the event's district.")
+  @Nullable
   public String getEventDistrictString() {
     return eventDistrictString;
   }
@@ -166,6 +173,7 @@ public class Event   {
    * @return eventType
   **/
   @ApiModelProperty(example = "null", value = "An integer that represents the event type as a constant.")
+  @Nullable
   public Integer getEventType() {
     return eventType;
   }
@@ -184,6 +192,7 @@ public class Event   {
    * @return eventTypeString
   **/
   @ApiModelProperty(example = "null", value = "A human readable string that defines the event type.")
+  @Nullable
   public String getEventTypeString() {
     return eventTypeString;
   }
@@ -201,13 +210,32 @@ public class Event   {
    * TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event.
    * @return key
   **/
-  @ApiModelProperty(example = "null", value = "TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event.")
+  @ApiModelProperty(example = "null", required = true, value = "TBA event key with the format yyyy[EVENT_CODE], where yyyy is the year, and EVENT_CODE is the event code of the event.")
   public String getKey() {
     return key;
   }
 
   public void setKey(String key) {
     this.key = key;
+  }
+
+  public Event lastModified(Long lastModified) {
+    this.lastModified = lastModified;
+    return this;
+  }
+
+   /**
+   * Timestamp this model was last modified
+   * @return lastModified
+  **/
+  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
+  @Nullable
+  public Long getLastModified() {
+    return lastModified;
+  }
+
+  public void setLastModified(Long lastModified) {
+    this.lastModified = lastModified;
   }
 
   public Event location(String location) {
@@ -220,6 +248,7 @@ public class Event   {
    * @return location
   **/
   @ApiModelProperty(example = "null", value = "Long form address that includes city, and state provided by FIRST")
+  @Nullable
   public String getLocation() {
     return location;
   }
@@ -237,7 +266,7 @@ public class Event   {
    * Official name of event on record either provided by FIRST or organizers of offseason event.
    * @return name
   **/
-  @ApiModelProperty(example = "null", value = "Official name of event on record either provided by FIRST or organizers of offseason event.")
+  @ApiModelProperty(example = "null", required = true, value = "Official name of event on record either provided by FIRST or organizers of offseason event.")
   public String getName() {
     return name;
   }
@@ -256,6 +285,7 @@ public class Event   {
    * @return official
   **/
   @ApiModelProperty(example = "null", value = "Whether this is a FIRST official event, or an offseaon event.")
+  @Nullable
   public Boolean getOfficial() {
     return official;
   }
@@ -274,6 +304,7 @@ public class Event   {
    * @return shortName
   **/
   @ApiModelProperty(example = "null", value = "Same as name but doesn't include event specifiers, such as 'Regional' or 'District'. May be null.")
+  @Nullable
   public String getShortName() {
     return shortName;
   }
@@ -292,6 +323,7 @@ public class Event   {
    * @return timezone
   **/
   @ApiModelProperty(example = "null", value = "Timezone name")
+  @Nullable
   public String getTimezone() {
     return timezone;
   }
@@ -310,6 +342,7 @@ public class Event   {
    * @return venueAddress
   **/
   @ApiModelProperty(example = "null", value = "Address of the event's venue, if available. Line breaks included.")
+  @Nullable
   public String getVenueAddress() {
     return venueAddress;
   }
@@ -328,6 +361,7 @@ public class Event   {
    * @return webcast
   **/
   @ApiModelProperty(example = "null", value = "If the event has webcast data associated with it, this contains JSON data of the streams")
+  @Nullable
   public String getWebcast() {
     return webcast;
   }
@@ -346,6 +380,7 @@ public class Event   {
    * @return website
   **/
   @ApiModelProperty(example = "null", value = "The event's website, if any.")
+  @Nullable
   public String getWebsite() {
     return website;
   }
@@ -363,7 +398,7 @@ public class Event   {
    * Year the event data is for.
    * @return year
   **/
-  @ApiModelProperty(example = "null", value = "Year the event data is for.")
+  @ApiModelProperty(example = "null", required = true, value = "Year the event data is for.")
   public Integer getYear() {
     return year;
   }
@@ -389,6 +424,7 @@ public class Event   {
         Objects.equals(this.eventType, event.eventType) &&
         Objects.equals(this.eventTypeString, event.eventTypeString) &&
         Objects.equals(this.key, event.key) &&
+        Objects.equals(this.lastModified, event.lastModified) &&
         Objects.equals(this.location, event.location) &&
         Objects.equals(this.name, event.name) &&
         Objects.equals(this.official, event.official) &&
@@ -402,7 +438,7 @@ public class Event   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(alliances, eventCode, eventDistrict, eventDistrictString, eventType, eventTypeString, key, location, name, official, shortName, timezone, venueAddress, webcast, website, year);
+    return Objects.hash(alliances, eventCode, eventDistrict, eventDistrictString, eventType, eventTypeString, key, lastModified, location, name, official, shortName, timezone, venueAddress, webcast, website, year);
   }
 
   @Override
@@ -417,6 +453,7 @@ public class Event   {
     sb.append("    eventType: ").append(toIndentedString(eventType)).append("\n");
     sb.append("    eventTypeString: ").append(toIndentedString(eventTypeString)).append("\n");
     sb.append("    key: ").append(toIndentedString(key)).append("\n");
+    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
     sb.append("    location: ").append(toIndentedString(location)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    official: ").append(toIndentedString(official)).append("\n");

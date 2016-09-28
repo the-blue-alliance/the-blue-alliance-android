@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
+import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.renderers.ModelRenderer;
@@ -8,7 +9,9 @@ import com.thebluealliance.androidclient.types.ModelType;
 
 import android.content.ContentValues;
 
-public abstract class BasicModel<T extends BasicModel> implements RenderableModel {
+public abstract class BasicModel<T extends BasicModel> implements RenderableModel,
+                                                                  TbaDatabaseModel
+{
 
     /* Map of the requested fields for this object
      * This is done for two reasons - since different parts of the model are loaded from different API queries,
@@ -37,6 +40,7 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
         return table;
     }
 
+    @Override
     public ContentValues getParams() {
         return fields;
     }
@@ -49,6 +53,7 @@ public abstract class BasicModel<T extends BasicModel> implements RenderableMode
         return fields.containsKey(key);
     }
 
+    @Override
     public abstract String getKey();
 
     @Override

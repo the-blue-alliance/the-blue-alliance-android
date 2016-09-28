@@ -29,15 +29,19 @@ import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.annotation.Nullable;
 
 
 /**
  * Robot
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-27T22:00:48.157-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:16:34.746-04:00")
 public class Robot   {
   @SerializedName("key")
   private String key = null;
+
+  @SerializedName("lastModified")
+  private Long lastModified = null;
 
   @SerializedName("name")
   private String name = null;
@@ -57,13 +61,32 @@ public class Robot   {
    * A key identifying the robot object. Formed like [team_key]_[year]
    * @return key
   **/
-  @ApiModelProperty(example = "null", value = "A key identifying the robot object. Formed like [team_key]_[year]")
+  @ApiModelProperty(example = "null", required = true, value = "A key identifying the robot object. Formed like [team_key]_[year]")
   public String getKey() {
     return key;
   }
 
   public void setKey(String key) {
     this.key = key;
+  }
+
+  public Robot lastModified(Long lastModified) {
+    this.lastModified = lastModified;
+    return this;
+  }
+
+   /**
+   * Timestamp this model was last modified
+   * @return lastModified
+  **/
+  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
+  @Nullable
+  public Long getLastModified() {
+    return lastModified;
+  }
+
+  public void setLastModified(Long lastModified) {
+    this.lastModified = lastModified;
   }
 
   public Robot name(String name) {
@@ -75,7 +98,7 @@ public class Robot   {
    * The robot name in this year
    * @return name
   **/
-  @ApiModelProperty(example = "null", value = "The robot name in this year")
+  @ApiModelProperty(example = "null", required = true, value = "The robot name in this year")
   public String getName() {
     return name;
   }
@@ -93,7 +116,7 @@ public class Robot   {
    * The associated Team key
    * @return teamKey
   **/
-  @ApiModelProperty(example = "null", value = "The associated Team key")
+  @ApiModelProperty(example = "null", required = true, value = "The associated Team key")
   public String getTeamKey() {
     return teamKey;
   }
@@ -111,7 +134,7 @@ public class Robot   {
    * The year this Robot model referes to
    * @return year
   **/
-  @ApiModelProperty(example = "null", value = "The year this Robot model referes to")
+  @ApiModelProperty(example = "null", required = true, value = "The year this Robot model referes to")
   public Integer getYear() {
     return year;
   }
@@ -131,6 +154,7 @@ public class Robot   {
     }
     Robot robot = (Robot) o;
     return Objects.equals(this.key, robot.key) &&
+        Objects.equals(this.lastModified, robot.lastModified) &&
         Objects.equals(this.name, robot.name) &&
         Objects.equals(this.teamKey, robot.teamKey) &&
         Objects.equals(this.year, robot.year);
@@ -138,7 +162,7 @@ public class Robot   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(key, name, teamKey, year);
+    return Objects.hash(key, lastModified, name, teamKey, year);
   }
 
   @Override
@@ -147,6 +171,7 @@ public class Robot   {
     sb.append("class Robot {\n");
     
     sb.append("    key: ").append(toIndentedString(key)).append("\n");
+    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    teamKey: ").append(toIndentedString(teamKey)).append("\n");
     sb.append("    year: ").append(toIndentedString(year)).append("\n");

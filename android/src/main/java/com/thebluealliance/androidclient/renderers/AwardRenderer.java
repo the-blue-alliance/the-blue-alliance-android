@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.renderers;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.listitems.AwardListElement;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
@@ -10,13 +11,12 @@ import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.ModelType;
 
 import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 

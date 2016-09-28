@@ -29,18 +29,22 @@ import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.annotation.Nullable;
 
 
 /**
  * Team
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-07-27T22:00:48.157-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-08-09T14:16:34.746-04:00")
 public class Team   {
   @SerializedName("country_name")
   private String countryName = null;
 
   @SerializedName("key")
   private String key = null;
+
+  @SerializedName("lastModified")
+  private Long lastModified = null;
 
   @SerializedName("locality")
   private String locality = null;
@@ -79,6 +83,7 @@ public class Team   {
    * @return countryName
   **/
   @ApiModelProperty(example = "null", value = "Country of team derived from parsing the address registered with FIRST")
+  @Nullable
   public String getCountryName() {
     return countryName;
   }
@@ -96,13 +101,32 @@ public class Team   {
    * TBA team key with the format frcyyyy
    * @return key
   **/
-  @ApiModelProperty(example = "null", value = "TBA team key with the format frcyyyy")
+  @ApiModelProperty(example = "null", required = true, value = "TBA team key with the format frcyyyy")
   public String getKey() {
     return key;
   }
 
   public void setKey(String key) {
     this.key = key;
+  }
+
+  public Team lastModified(Long lastModified) {
+    this.lastModified = lastModified;
+    return this;
+  }
+
+   /**
+   * Timestamp this model was last modified
+   * @return lastModified
+  **/
+  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
+  @Nullable
+  public Long getLastModified() {
+    return lastModified;
+  }
+
+  public void setLastModified(Long lastModified) {
+    this.lastModified = lastModified;
   }
 
   public Team locality(String locality) {
@@ -115,6 +139,7 @@ public class Team   {
    * @return locality
   **/
   @ApiModelProperty(example = "null", value = "City of team derived from parsing the address registered with FIRST")
+  @Nullable
   public String getLocality() {
     return locality;
   }
@@ -133,6 +158,7 @@ public class Team   {
    * @return location
   **/
   @ApiModelProperty(example = "null", value = "Long form address that includes city, state, and country provided by FIRST")
+  @Nullable
   public String getLocation() {
     return location;
   }
@@ -151,6 +177,7 @@ public class Team   {
    * @return motto
   **/
   @ApiModelProperty(example = "null", value = "Team's motto as provided by FIRST")
+  @Nullable
   public String getMotto() {
     return motto;
   }
@@ -168,7 +195,7 @@ public class Team   {
    * Official long name registerd with FIRST
    * @return name
   **/
-  @ApiModelProperty(example = "null", value = "Official long name registerd with FIRST")
+  @ApiModelProperty(example = "null", required = true, value = "Official long name registerd with FIRST")
   public String getName() {
     return name;
   }
@@ -187,6 +214,7 @@ public class Team   {
    * @return nickname
   **/
   @ApiModelProperty(example = "null", value = "Team nickname provided by FIRST")
+  @Nullable
   public String getNickname() {
     return nickname;
   }
@@ -205,6 +233,7 @@ public class Team   {
    * @return region
   **/
   @ApiModelProperty(example = "null", value = "State of team derived from parsing the address registered with FIRST")
+  @Nullable
   public String getRegion() {
     return region;
   }
@@ -223,6 +252,7 @@ public class Team   {
    * @return rookieYear
   **/
   @ApiModelProperty(example = "null", value = "First year the team officially competed")
+  @Nullable
   public Integer getRookieYear() {
     return rookieYear;
   }
@@ -240,7 +270,7 @@ public class Team   {
    * Official team number issued by FIRST
    * @return teamNumber
   **/
-  @ApiModelProperty(example = "null", value = "Official team number issued by FIRST")
+  @ApiModelProperty(example = "null", required = true, value = "Official team number issued by FIRST")
   public Integer getTeamNumber() {
     return teamNumber;
   }
@@ -259,6 +289,7 @@ public class Team   {
    * @return website
   **/
   @ApiModelProperty(example = "null", value = "Official website associatd with the team")
+  @Nullable
   public String getWebsite() {
     return website;
   }
@@ -279,6 +310,7 @@ public class Team   {
     Team team = (Team) o;
     return Objects.equals(this.countryName, team.countryName) &&
         Objects.equals(this.key, team.key) &&
+        Objects.equals(this.lastModified, team.lastModified) &&
         Objects.equals(this.locality, team.locality) &&
         Objects.equals(this.location, team.location) &&
         Objects.equals(this.motto, team.motto) &&
@@ -292,7 +324,7 @@ public class Team   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(countryName, key, locality, location, motto, name, nickname, region, rookieYear, teamNumber, website);
+    return Objects.hash(countryName, key, lastModified, locality, location, motto, name, nickname, region, rookieYear, teamNumber, website);
   }
 
   @Override
@@ -302,6 +334,7 @@ public class Team   {
     
     sb.append("    countryName: ").append(toIndentedString(countryName)).append("\n");
     sb.append("    key: ").append(toIndentedString(key)).append("\n");
+    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
     sb.append("    locality: ").append(toIndentedString(locality)).append("\n");
     sb.append("    location: ").append(toIndentedString(location)).append("\n");
     sb.append("    motto: ").append(toIndentedString(motto)).append("\n");

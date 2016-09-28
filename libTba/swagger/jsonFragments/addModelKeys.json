@@ -1,0 +1,12 @@
+{
+  "definitions": {
+    "Award": {
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Unique key for this Award, formatted like <event key>:<type enum>"
+        }
+      }
+    }
+  }
+}

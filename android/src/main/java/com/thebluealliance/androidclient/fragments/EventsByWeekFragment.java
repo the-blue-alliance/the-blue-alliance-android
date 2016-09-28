@@ -64,11 +64,11 @@ public class EventsByWeekFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         TbaLogger.d("EventsByWeekFragment created!");
-        mYear = mStatusController.getMaxCompYear();
+        mYear = mStatusController.getCurrentCompYear();
         mSelectedTab = -1;
         if (getArguments() != null) {
             // Default to the current year if no year is provided in the arguments
-            mYear = getArguments().getInt(YEAR, mStatusController.getMaxCompYear());
+            mYear = getArguments().getInt(YEAR, mYear);
             mSelectedTab = getArguments().getInt(TAB, -1);
         } else if (savedInstanceState != null && savedInstanceState.containsKey(TAB)) {
             mSelectedTab = savedInstanceState.getInt(TAB);
@@ -145,9 +145,6 @@ public class EventsByWeekFragment
             mViewPager.setCurrentItem(mSelectedTab);
             mFragmentBinder.onPageSelected(mSelectedTab);
         }
-
-
-
         mFragmentAdapter.setAutoBindOnceAtPosition(mViewPager.getCurrentItem(), true);
     }
 
