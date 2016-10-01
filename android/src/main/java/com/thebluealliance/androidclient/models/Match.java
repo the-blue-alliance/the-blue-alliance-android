@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.api.model.IMatch;
 
 import android.content.ContentValues;
 import android.content.res.Resources;
@@ -23,32 +24,141 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 
+import javax.annotation.Nullable;
 
-public class Match extends com.thebluealliance.api.model.Match implements TbaDatabaseModel,
-                                                                          RenderableModel<Match> {
+
+public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
 
     public static final String[] NOTIFICATION_TYPES = {
             NotificationTypes.UPCOMING_MATCH,
             NotificationTypes.MATCH_SCORE
     };
 
+    private String alliances = null;
+    private String compLevel = null;
+    private String eventKey = null;
+    private String key = null;
+    private Long lastModified = null;
+    private Integer matchNumber = null;
+    private String scoreBreakdown = null;
+    private Integer setNumber = null;
+    private Long time = null;
+    private String timeString = null;
+    private String videos = null;
+
     private String selectedTeam;
     private int year;
     private MatchType type;
-    private JsonObject alliances;
-    private JsonArray videos;
-    private JsonObject breakdown;
+    private JsonObject alliancesObject;
+    private JsonArray videosArray;
+    private JsonObject breakdownObject;
 
     public Match() {
         year = -1;
         type = MatchType.NONE;
-        alliances = null;
-        videos = null;
+        alliancesObject = null;
+        videosArray = null;
+    }
+
+    @Nullable @Override public String getAlliances() {
+        return alliances;
+    }
+
+    @Override public void setAlliances(String alliances) {
+        this.alliances = alliances;
+    }
+
+    @Override public String getCompLevel() {
+        return compLevel;
+    }
+
+    @Override public void setCompLevel(String compLevel) {
+        this.compLevel = compLevel;
+    }
+
+    @Override public void setEventKey(String eventKey) {
+        this.eventKey = eventKey;
+    }
+
+    @Override public String getKey() {
+        return key;
+    }
+
+    @Override public void setKey(String key) {
+        this.key = key;
+    }
+
+    @Nullable @Override public Long getLastModified() {
+        return lastModified;
+    }
+
+    @Override public void setLastModified(Long lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    @Override public Integer getMatchNumber() {
+        return matchNumber;
+    }
+
+    @Override public void setMatchNumber(Integer matchNumber) {
+        this.matchNumber = matchNumber;
+    }
+
+    @Nullable @Override public String getScoreBreakdown() {
+        return scoreBreakdown;
+    }
+
+    @Override public void setScoreBreakdown(String scoreBreakdown) {
+        this.scoreBreakdown = scoreBreakdown;
+    }
+
+    @Override public Integer getSetNumber() {
+        return setNumber;
+    }
+
+    @Override public void setSetNumber(Integer setNumber) {
+        this.setNumber = setNumber;
+    }
+
+    @Nullable @Override public Long getTime() {
+        return time;
+    }
+
+    @Override public void setTime(Long time) {
+        this.time = time;
+    }
+
+    @Nullable @Override public String getTimeString() {
+        return timeString;
+    }
+
+    @Override public void setTimeString(String timeString) {
+        this.timeString = timeString;
+    }
+
+    @Nullable @Override public String getVideos() {
+        return videos;
+    }
+
+    @Override public void setVideos(String videos) {
+        this.videos = videos;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public MatchType getType() {
+        return type;
+    }
+
+    public void setType(MatchType type) {
+        this.type = type;
     }
 
     @Override
     public String getEventKey() {
-        String apiValue = super.getEventKey();
+        String apiValue = eventKey;
         if (apiValue == null) {
             // Lazy load this
             String eventKey = MatchHelper.getEventKeyFromMatchKey(getKey());
@@ -59,24 +169,24 @@ public class Match extends com.thebluealliance.api.model.Match implements TbaDat
     }
 
     public JsonObject getAlliancesJson() {
-        if (alliances == null) {
-            alliances = JSONHelper.getasJsonObject(getAlliances());
+        if (alliancesObject == null) {
+            alliancesObject = JSONHelper.getasJsonObject(getAlliances());
         }
-        return alliances;
+        return alliancesObject;
     }
 
     public JsonArray getVideosJson() {
-        if (videos == null) {
-            videos = JSONHelper.getasJsonArray(getVideos());
+        if (videosArray == null) {
+            videosArray = JSONHelper.getasJsonArray(getVideos());
         }
-        return videos;
+        return videosArray;
     }
 
     public JsonObject getScoreBreakdownJson() {
-        if (breakdown == null) {
-            breakdown = JSONHelper.getasJsonObject(getScoreBreakdown());
+        if (breakdownObject == null) {
+            breakdownObject = JSONHelper.getasJsonObject(getScoreBreakdown());
         }
-        return breakdown;
+        return breakdownObject;
     }
 
     public String getTitle(Resources resources, boolean lineBreak) {

@@ -10,13 +10,21 @@ import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.renderers.ModelRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.api.model.IAward;
 
 import android.content.ContentValues;
 
 import javax.annotation.Nullable;
 
-public class Award extends com.thebluealliance.api.model.Award implements RenderableModel,
-                                                                          TbaDatabaseModel{
+public class Award implements IAward, RenderableModel, TbaDatabaseModel {
+
+    private Integer awardType = null;
+    private String eventKey = null;
+    private String key = null;
+    private Long lastModified = null;
+    private String name = null;
+    private String recipientList = null;
+    private Integer year = null;
 
     private JsonArray winners;
 
@@ -30,6 +38,62 @@ public class Award extends com.thebluealliance.api.model.Award implements Render
         setName(name);
         setYear(year);
         setWinners(winners);
+    }
+
+    @Override public Integer getAwardType() {
+        return awardType;
+    }
+
+    @Override public void setAwardType(Integer awardType) {
+        this.awardType = awardType;
+    }
+
+    @Override public String getEventKey() {
+        return eventKey;
+    }
+
+    @Override public void setEventKey(String eventKey) {
+        this.eventKey = eventKey;
+    }
+
+    @Nullable @Override public String getKey() {
+        return key;
+    }
+
+    @Override public void setKey(String key) {
+        this.key = key;
+    }
+
+    @Nullable @Override public Long getLastModified() {
+        return lastModified;
+    }
+
+    @Override public void setLastModified(Long lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    @Override public String getName() {
+        return name;
+    }
+
+    @Override public void setName(String name) {
+        this.name = name;
+    }
+
+    @Nullable @Override public String getRecipientList() {
+        return recipientList;
+    }
+
+    @Override public void setRecipientList(String recipientList) {
+        this.recipientList = recipientList;
+    }
+
+    @Override public Integer getYear() {
+        return year;
+    }
+
+    @Override public void setYear(Integer year) {
+        this.year = year;
     }
 
     @Nullable

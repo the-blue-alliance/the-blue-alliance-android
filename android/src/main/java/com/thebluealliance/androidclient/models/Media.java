@@ -10,13 +10,19 @@ import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.renderers.MediaRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.api.model.IMedia;
 
 import android.content.ContentValues;
 
+import javax.annotation.Nullable;
 
-public class Media extends com.thebluealliance.api.model.Media implements TbaDatabaseModel,
-                                                                          RenderableModel<Media>
-{
+
+public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
+
+    private String detailsJson = null;
+    private String foreignKey = null;
+    private Long lastModified = null;
+    private String type = null;
 
     private JsonObject details;
     private String teamKey;
@@ -35,6 +41,38 @@ public class Media extends com.thebluealliance.api.model.Media implements TbaDat
             details = JSONHelper.getasJsonObject(getDetails());
         }
         return details;
+    }
+
+    public void setDetails(String detailsJson) {
+        this.detailsJson = detailsJson;
+    }
+
+    @Nullable @Override public String getDetails() {
+        return detailsJson;
+    }
+
+    @Override public String getForeignKey() {
+        return foreignKey;
+    }
+
+    @Override public void setForeignKey(String foreignKey) {
+        this.foreignKey = foreignKey;
+    }
+
+    @Nullable @Override public Long getLastModified() {
+        return lastModified;
+    }
+
+    @Override public void setLastModified(Long lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    @Override public String getType() {
+        return type;
+    }
+
+    @Override public void setType(String type) {
+        this.type = type;
     }
 
     public String getTeamKey() {

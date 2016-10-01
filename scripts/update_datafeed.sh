@@ -70,7 +70,11 @@ perl -pi -e "s/$OLD_NAME/$NEW_NAME/g" libTba/$PKG/{call,rx}/TbaApiV2.java
 # Rename models to start with I<name>.java
 CUR=$(pwd)
 cd libTba/$PKG/model
-for f in *.java; do mv "$f" "I$f"; done
+for f in *.java;  do
+    NAME=`basename $f .java`
+    perl -pi -e "s/$NAME/I$NAME/g" $CUR/libTba/$PKG/{call,rx}/TbaApiV2.java
+    mv "$f" "I$f";
+done
 cd $CUR
 
 echo

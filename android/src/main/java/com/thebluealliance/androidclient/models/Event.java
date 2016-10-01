@@ -10,11 +10,11 @@ import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
 import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
+import com.thebluealliance.api.model.IEvent;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -22,9 +22,10 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.annotation.Nullable;
 
-public class Event extends com.thebluealliance.api.model.Event implements TbaDatabaseModel,
-                                                           ViewModelRenderer<EventViewModel, Integer> {
+
+public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventViewModel, Integer> {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({RENDER_BASIC, RENDER_MYTBA_BUTTON})
@@ -33,6 +34,28 @@ public class Event extends com.thebluealliance.api.model.Event implements TbaDat
 
     public static final int RENDER_BASIC = 0;
     public static final int RENDER_MYTBA_BUTTON = 1;
+
+    private String alliances = null;
+    private Integer competitionWeek = null;
+    private Long endTimestamp = null;
+    private String eventCode = null;
+    private Integer eventDistrict = null;
+    private String eventDistrictString = null;
+    private Integer eventType = null;
+    private String eventTypeString = null;
+    private String key = null;
+    private Long lastModified = null;
+    private String location = null;
+    private String name = null;
+    private Boolean official = null;
+    private String shortName = null;
+    private Long startTimestamp = null;
+    private String timezone = null;
+    private String venueAddress = null;
+    private String webcasts = null;
+    private String website = null;
+    private Integer year = null;
+
 
     private Date startDate;
     private Date endDate;
@@ -52,15 +75,170 @@ public class Event extends com.thebluealliance.api.model.Event implements TbaDat
         endDate = null;
     }
 
+    @Nullable @Override public String getAlliances() {
+        return alliances;
+    }
+
+    @Override public void setAlliances(String alliances) {
+        this.alliances = alliances;
+    }
+
+    @Nullable @Override public Integer getCompetitionWeek() {
+        return competitionWeek;
+    }
+
+    @Override public void setCompetitionWeek(Integer competitionWeek) {
+        this.competitionWeek = competitionWeek;
+    }
+
+    public Long getEndDate() {
+        return endTimestamp;
+    }
+
+    public void setEndDate(Long endTimestamp) {
+        this.endTimestamp = endTimestamp;
+    }
+
+    @Override public String getEventCode() {
+        return eventCode;
+    }
+
+    @Override public void setEventCode(String eventCode) {
+        this.eventCode = eventCode;
+    }
+
+    @Nullable @Override public Integer getEventDistrict() {
+        return eventDistrict;
+    }
+
+    @Override public void setEventDistrict(Integer eventDistrict) {
+        this.eventDistrict = eventDistrict;
+    }
+
+    @Nullable @Override public String getEventDistrictString() {
+        return eventDistrictString;
+    }
+
+    @Override public void setEventDistrictString(String eventDistrictString) {
+        this.eventDistrictString = eventDistrictString;
+    }
+
+    @Nullable @Override public Integer getEventType() {
+        return eventType;
+    }
+
+    @Override public void setEventType(Integer eventType) {
+        this.eventType = eventType;
+    }
+
+    @Nullable @Override public String getEventTypeString() {
+        return eventTypeString;
+    }
+
+    @Override public void setEventTypeString(String eventTypeString) {
+        this.eventTypeString = eventTypeString;
+    }
+
+    @Override public String getKey() {
+        return key;
+    }
+
+    @Override public void setKey(String key) {
+        this.key = key;
+    }
+
+    @Nullable @Override public Long getLastModified() {
+        return lastModified;
+    }
+
+    @Override public void setLastModified(Long lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    @Nullable @Override public String getLocation() {
+        return location;
+    }
+
+    @Override public void setLocation(String location) {
+        this.location = location;
+    }
+
+    @Override public String getName() {
+        return name;
+    }
+
+    @Override public void setName(String name) {
+        this.name = name;
+    }
+
+    @Nullable @Override public Boolean getOfficial() {
+        return official;
+    }
+
+    @Override public void setOfficial(Boolean official) {
+        this.official = official;
+    }
+
+    @Nullable @Override public String getShortName() {
+        return shortName;
+    }
+
+    @Override public void setShortName(String shortName) {
+        this.shortName = shortName;
+    }
+
+    public Long getStartDate() {
+        return startTimestamp;
+    }
+
+    public void setStartDate(Long startTimestamp) {
+        this.startTimestamp = startTimestamp;
+    }
+
+    @Nullable @Override public String getTimezone() {
+        return timezone;
+    }
+
+    @Override public void setTimezone(String timezone) {
+        this.timezone = timezone;
+    }
+
+    @Nullable @Override public String getVenueAddress() {
+        return venueAddress;
+    }
+
+    @Override public void setVenueAddress(String venueAddress) {
+        this.venueAddress = venueAddress;
+    }
+
+    @Nullable @Override public String getWebcasts() {
+        return webcasts;
+    }
+
+    @Override public void setWebcasts(String webcasts) {
+        this.webcasts = webcasts;
+    }
+
+    @Nullable @Override public String getWebsite() {
+        return website;
+    }
+
+    @Override public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    @Override public void setYear(Integer year) {
+        this.year = year;
+    }
+
     @Override
     public Integer getYear() {
-        Integer apiYear = super.getYear();
-        if (apiYear == null) {
+        if (year == null) {
             int year = EventHelper.getYear(getKey());
             setYear(year);
             return year;
         }
-        return apiYear;
+        return year;
     }
 
     public void setStartDate(String startString) {
@@ -152,14 +330,14 @@ public class Event extends com.thebluealliance.api.model.Event implements TbaDat
     }
 
     public EventType getEventTypeEnum() {
-        @javax.annotation.Nullable Integer eventType = getEventType();
+        @Nullable Integer eventType = getEventType();
         return eventType != null
                ? EventType.fromInt(eventType)
                : EventType.NONE;
     }
 
     public DistrictType getEventDistrictEnum() {
-        @javax.annotation.Nullable Integer districtEnum = getEventDistrict();
+        @Nullable Integer districtEnum = getEventDistrict();
         return districtEnum != null
                ? DistrictType.fromEnum(districtEnum)
                : DistrictType.NO_DISTRICT;

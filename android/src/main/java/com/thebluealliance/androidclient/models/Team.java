@@ -8,17 +8,18 @@ import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
+import com.thebluealliance.api.model.ITeam;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class Team extends com.thebluealliance.api.model.Team implements TbaDatabaseModel,
-                                                             ViewModelRenderer<TeamViewModel, Integer> {
+import javax.annotation.Nullable;
+
+public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamViewModel, Integer> {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({RENDER_BASIC, RENDER_DETAILS_BUTTON, RENDER_MYTBA_DETAILS})
@@ -35,6 +36,19 @@ public class Team extends com.thebluealliance.api.model.Team implements TbaDatab
             //NotificationTypes.MEDIA_POSTED
     };
 
+    private String countryName = null;
+    private String key = null;
+    private Long lastModified = null;
+    private String locality = null;
+    private String location = null;
+    private String motto = null;
+    private String name = null;
+    private String nickname = null;
+    private String region = null;
+    private Integer rookieYear = null;
+    private Integer teamNumber = null;
+    private String website = null;
+
     private JsonArray yearsParticipated;
 
     public Team() {
@@ -47,6 +61,102 @@ public class Team extends com.thebluealliance.api.model.Team implements TbaDatab
         setTeamNumber(teamNumber);
         setNickname(nickname);
         setLocation(location);
+    }
+
+    @Nullable @Override public String getCountryName() {
+        return countryName;
+    }
+
+    @Override public void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
+
+    @Override public String getKey() {
+        return key;
+    }
+
+    @Override public void setKey(String key) {
+        this.key = key;
+    }
+
+    @Nullable @Override public Long getLastModified() {
+        return lastModified;
+    }
+
+    @Override public void setLastModified(Long lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    @Nullable @Override public String getLocality() {
+        return locality;
+    }
+
+    @Override public void setLocality(String locality) {
+        this.locality = locality;
+    }
+
+    @Nullable @Override public String getLocation() {
+        return location;
+    }
+
+    @Override public void setLocation(String location) {
+        this.location = location;
+    }
+
+    @Nullable @Override public String getMotto() {
+        return motto;
+    }
+
+    @Override public void setMotto(String motto) {
+        this.motto = motto;
+    }
+
+    @Override public String getName() {
+        return name;
+    }
+
+    @Override public void setName(String name) {
+        this.name = name;
+    }
+
+    @Nullable @Override public String getNickname() {
+        return nickname;
+    }
+
+    @Override public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    @Nullable @Override public String getRegion() {
+        return region;
+    }
+
+    @Override public void setRegion(String region) {
+        this.region = region;
+    }
+
+    @Nullable @Override public Integer getRookieYear() {
+        return rookieYear;
+    }
+
+    @Override public void setRookieYear(Integer rookieYear) {
+        this.rookieYear = rookieYear;
+    }
+
+    @Override public Integer getTeamNumber() {
+        return teamNumber;
+    }
+
+    @Override public void setTeamNumber(Integer teamNumber) {
+        this.teamNumber = teamNumber;
+    }
+
+    @Nullable @Override public String getWebsite() {
+        return website;
+    }
+
+    @Override public void setWebsite(String website) {
+        this.website = website;
     }
 
     public JsonArray getYearsParticipated() {
