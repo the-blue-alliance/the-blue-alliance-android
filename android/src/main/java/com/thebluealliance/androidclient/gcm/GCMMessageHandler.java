@@ -5,6 +5,7 @@ import com.google.gson.JsonParseException;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -41,20 +42,19 @@ import org.greenrobot.eventbus.EventBus;
 
 import android.app.IntentService;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import com.thebluealliance.androidclient.TbaLogger;
+import android.support.v4.app.NotificationManagerCompat;
 
 import javax.inject.Inject;
 
 public class GCMMessageHandler extends IntentService implements FollowsChecker {
 
     public static final String GROUP_KEY = "tba-android";
+    public static final int NOTIFICATION_ID = 363;
 
     @Inject MyTbaDatafeed mMyTbaDatafeed;
     @Inject DatabaseWriter mWriter;
@@ -133,7 +133,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     }
 
     public void handleMessage(Context c, String messageType, String messageData) {
-        NotificationManager notificationManager = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(c);
         try {
             BaseNotification notification = null;
             switch (messageType) {
@@ -217,7 +217,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                     }
 
                     setNotificationParams(built, c, messageType, mPrefs);
-                    int id = notification.getNotificationId();
+                    int id = NOTIFICATION_ID; // notification.getNotificationId();
                     notificationManager.notify(id, built);
                 }
 
@@ -250,7 +250,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                     priority = Notification.PRIORITY_LOW;
             }
 
-            boolean headsUpPref = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("notification_headsup", true);
+            boolean headsUpPref = prefs.getBoolean("notification_headsup", true);
             if (headsUpPref) {
                 built.priority = priority;
             } else {

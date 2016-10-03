@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.gcm.FollowsChecker;
-import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
 
@@ -66,8 +65,8 @@ public class SummaryNotification extends BaseNotification<Void> {
                 .setContentIntent(intent)
                 .setDeleteIntent(onDismiss)
                 .setAutoCancel(true)
-                .setGroup(GCMMessageHandler.GROUP_KEY)
-                .setGroupSummary(true)
+                //.setGroup(GCMMessageHandler.GROUP_KEY)
+                //.setGroupSummary(true)
                 .setStyle(style).build();
     }
 

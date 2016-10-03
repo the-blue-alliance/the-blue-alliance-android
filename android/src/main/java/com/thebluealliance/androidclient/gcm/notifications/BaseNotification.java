@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.gcm.FollowsChecker;
-import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -130,7 +129,7 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
 
         return new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setGroup(GCMMessageHandler.GROUP_KEY)
+                //.setGroup(GCMMessageHandler.GROUP_KEY)
                 .setColor(context.getResources().getColor(R.color.accent_dark))
                 .setDeleteIntent(onDismiss)
                 .setAutoCancel(true)
