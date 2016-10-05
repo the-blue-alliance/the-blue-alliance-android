@@ -1,8 +1,16 @@
 package com.thebluealliance.androidclient.gcm;
 
+import android.app.IntentService;
+import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.NotificationManagerCompat;
+
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -40,21 +48,22 @@ import com.thebluealliance.androidclient.renderers.RendererModule;
 
 import org.greenrobot.eventbus.EventBus;
 
-import android.app.IntentService;
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.v4.app.NotificationManagerCompat;
-
 import javax.inject.Inject;
 
 public class GCMMessageHandler extends IntentService implements FollowsChecker {
 
-    public static final String GROUP_KEY = "tba-android";
-    public static final int NOTIFICATION_ID = 363;
+    /**
+     * Stack (bundle) notifications together into a Group for better UX on Nougat+ and Android Wear
+     * but not on KitKat- because SupportLib 24.2.1 NotificationManagerCompat still gets it wrong.
+     * http://stackoverflow.com/a/34953411/1682419
+     *<p/>
+     * When not stacking, use the same ID for all these notifications so each will replace any
+     * predecessor.
+     */
+    public static final boolean STACK_NOTIFICATIONS =
+            Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT;
+    public static final String GROUP_KEY = STACK_NOTIFICATIONS ? "tba-android" : null;
+    public static final int SINGULAR_NOTIFICATION_ID = 363;
 
     @Inject MyTbaDatafeed mMyTbaDatafeed;
     @Inject DatabaseWriter mWriter;
@@ -133,7 +142,6 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     }
 
     public void handleMessage(Context c, String messageType, String messageData) {
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(c);
         try {
             BaseNotification notification = null;
             switch (messageType) {
@@ -181,6 +189,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             }
 
             if (notification == null) return;
+
             try {
                 notification.parseMessageData();
             } catch (JsonParseException e) {
@@ -212,20 +221,33 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
 
                 if (notification.shouldShow()) {
                     if (SummaryNotification.isNotificationActive(c)) {
+                        // Multiple notifications: Stack them into a Group by posting the new
+                        // notification THEN (re)posting a summary. If we can't stack them, post
+                        // the new one XOR a summary, all with the same ID to replace any
+                        // predecessor notification.
+                        if (STACK_NOTIFICATIONS) {
+                            notify(c, notification, built);
+                        }
+
                         notification = new SummaryNotification();
                         built = notification.buildNotification(c, this);
                     }
 
-                    setNotificationParams(built, c, messageType, mPrefs);
-                    int id = NOTIFICATION_ID; // notification.getNotificationId();
-                    notificationManager.notify(id, built);
+                    notify(c, notification, built);
                 }
-
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...
             e.printStackTrace();
         }
+    }
+
+    private void notify(Context c, BaseNotification notification, Notification built) {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(c);
+        int id = STACK_NOTIFICATIONS ? notification.getNotificationId() : SINGULAR_NOTIFICATION_ID;
+
+        setNotificationParams(built, c, notification.getNotificationType(), mPrefs);
+        notificationManager.notify(id, built);
     }
 
     private static void setNotificationParams(Notification built, Context c, String messageType, SharedPreferences prefs) {
@@ -248,6 +270,15 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             switch (messageType) {
                 case NotificationTypes.PING:
                     priority = Notification.PRIORITY_LOW;
+                    break;
+                case NotificationTypes.SUMMARY:
+                    // If Android will really display a regular notification then a group summary,
+                    // don't let the latter heads-up atop the former.
+                    if (STACK_NOTIFICATIONS
+                            && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        priority = Notification.PRIORITY_DEFAULT;
+                    }
+                    break;
             }
 
             boolean headsUpPref = prefs.getBoolean("notification_headsup", true);
