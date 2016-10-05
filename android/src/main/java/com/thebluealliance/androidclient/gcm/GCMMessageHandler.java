@@ -54,14 +54,16 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
 
     /**
      * Stack (bundle) notifications together into a Group for better UX on Nougat+ and Android Wear
-     * but not on KitKat- because SupportLib 24.2.1 NotificationManagerCompat still gets it wrong.
-     * http://stackoverflow.com/a/34953411/1682419
+     * but not on KitKat because SupportLib 24.2.1 NotificationManagerCompat drops grouped
+     * notifications (http://stackoverflow.com/a/34953411/1682419) nor on Lollipop API 21 because
+     * the OS messes up groups (it shows a summary and the first two source notifications as
+     * separate items instead of one group.)
      *<p/>
      * When not stacking, use the same ID for all these notifications so each will replace any
      * predecessor.
      */
     public static final boolean STACK_NOTIFICATIONS =
-            Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT;
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
     public static final String GROUP_KEY = STACK_NOTIFICATIONS ? "tba-android" : null;
     public static final int SINGULAR_NOTIFICATION_ID = 363;
 
