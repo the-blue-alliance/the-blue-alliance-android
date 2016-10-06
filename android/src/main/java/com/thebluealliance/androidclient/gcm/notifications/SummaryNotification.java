@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class SummaryNotification extends BaseNotification<Void> {
         return new NotificationCompat.Builder(context)
                 .setContentTitle(notificationTitle)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp))
+                .setColor(ContextCompat.getColor(context, R.color.primary))
                 .setContentIntent(intent)
                 .setDeleteIntent(onDismiss)
                 .setAutoCancel(true)
