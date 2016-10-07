@@ -45,8 +45,8 @@
         Event Schedule Updated Notification
         ********************* -->
     <string name="notification_schedule_updated_title">%1$s Schedule Updated</string>
-    <string name="notification_schedule_updated_with_time">The match schedule at %1$s has been updated. The next match starts at %2$s.</string>
-    <string name="notification_schedule_updated_without_time">The match schedule at %1$s has been updated.</string>
+    <string name="notification_schedule_updated_with_time">The %1$s match schedule has been updated. The next match starts at %2$s.</string>
+    <string name="notification_schedule_updated_without_time">The %1$s match schedule has been updated.</string>
     <string name="notification_schedule_updated_gameday_body_with_time">The match schedule has been updated. The next match begins at %1$s.</string>
     <string name="notification_schedule_updated_gameday_body_without_time">The match schedule has been updated.</string>
 
@@ -54,21 +54,21 @@
         Awards Updated Notification
         ********************* -->
     <string name="notification_awards_updated_title">%1$s Awards Updated</string>
-    <string name="notification_awards_updated">Awards have been updated at %1$s.</string>
+    <string name="notification_awards_updated">%1$s awards have been updated.</string>
     <string name="notification_awards_updated_gameday_details">Event awards have been updated</string>
 
     <!-- *********************
         Alliances Updated Notification
         ********************* -->
     <string name="notification_alliances_updated_title">%1$s Alliances Updated</string>
-    <string name="notification_alliances_updated">Alliances have been updated at %1$s.</string>
+    <string name="notification_alliances_updated">%1$s alliances have been updated.</string>
     <string name="notification_alliances_updated_gameday_details">Alliance selections have been updated</string>
 
     <!-- *********************
         District Points Updated Notification
         ********************* -->
     <string name="notification_district_points_title">%1$s District Points Updated</string>
-    <string name="notification_district_points_updated">District point calculations have been updated for %1$s.</string>
+    <string name="notification_district_points_updated">%1$s district point calculations have been updated.</string>
 
     <!-- *********************
         Summary Notification
@@ -79,8 +79,8 @@
     <!-- *********************
        Event Down Notification
        ********************* -->
-    <string name="notification_event_down">No Event Data Available</string>
-    <string name="notification_event_down_content">We\'re sorry, but %1$s is not reporting data to The Blue Alliance. You may not receive myTBA push notifications for your subscriptions at this event.</string>
+    <string name="notification_event_down">%1$s No Event Data Available</string>
+    <string name="notification_event_down_content">We\'re sorry, but %1$s is not reporting data to The Blue Alliance. You might not receive myTBA push notifications for your subscriptions at this event.</string>
 
     <!-- *********************
         Generic Notification

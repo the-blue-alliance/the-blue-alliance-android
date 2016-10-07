@@ -5,6 +5,7 @@ import com.google.gson.JsonParseException;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -41,20 +42,34 @@ import org.greenrobot.eventbus.EventBus;
 
 import android.app.IntentService;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import com.thebluealliance.androidclient.TbaLogger;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 
 import javax.inject.Inject;
 
 public class GCMMessageHandler extends IntentService implements FollowsChecker {
 
-    public static final String GROUP_KEY = "tba-android";
+    /**
+     * Stack (bundle) notifications together into a Group for better UX on Nougat+ and Android Wear
+     * but not on KitKat because SupportLib 24.2.1 NotificationManagerCompat drops grouped
+     * notifications (http://stackoverflow.com/a/34953411/1682419) nor on Lollipop API 21 because
+     * the OS messes up groups (it shows a summary and the first two source notifications as
+     * separate items instead of one group.)
+     */
+    public static final boolean STACK_NOTIFICATIONS =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
+    /** True if phones/tablets will bundle up the stack using the summary as a header. */
+    public static final boolean SUMMARY_NOTIFICATION_IS_A_HEADER =
+            STACK_NOTIFICATIONS && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+    /** The setGroup() key to group notifications into a stack/bundle as feasible. */
+    public static final String GROUP_KEY = STACK_NOTIFICATIONS ? "tba-android" : null;
+    /** If grouping won't work, use this ID to make each notification replace its predecessor. */
+    public static final int SINGULAR_NOTIFICATION_ID = 363;
 
     @Inject MyTbaDatafeed mMyTbaDatafeed;
     @Inject DatabaseWriter mWriter;
@@ -133,7 +148,6 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     }
 
     public void handleMessage(Context c, String messageType, String messageData) {
-        NotificationManager notificationManager = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
         try {
             BaseNotification notification = null;
             switch (messageType) {
@@ -181,6 +195,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             }
 
             if (notification == null) return;
+
             try {
                 notification.parseMessageData();
             } catch (JsonParseException e) {
@@ -212,20 +227,33 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
 
                 if (notification.shouldShow()) {
                     if (SummaryNotification.isNotificationActive(c)) {
+                        // Multiple notifications: Stack them into a Group by posting the new
+                        // notification THEN (re)posting a summary. If we can't stack them, post
+                        // the new one XOR a summary, all with the same ID to replace any
+                        // predecessor notification.
+                        if (STACK_NOTIFICATIONS) {
+                            notify(c, notification, built);
+                        }
+
                         notification = new SummaryNotification();
                         built = notification.buildNotification(c, this);
                     }
 
-                    setNotificationParams(built, c, messageType, mPrefs);
-                    int id = notification.getNotificationId();
-                    notificationManager.notify(id, built);
+                    notify(c, notification, built);
                 }
-
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...
             e.printStackTrace();
         }
+    }
+
+    private void notify(Context c, BaseNotification notification, Notification built) {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(c);
+        int id = STACK_NOTIFICATIONS ? notification.getNotificationId() : SINGULAR_NOTIFICATION_ID;
+
+        setNotificationParams(built, c, notification.getNotificationType(), mPrefs);
+        notificationManager.notify(id, built);
     }
 
     private static void setNotificationParams(Notification built, Context c, String messageType, SharedPreferences prefs) {
@@ -237,7 +265,8 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             built.defaults |= Notification.DEFAULT_SOUND;
         }
         if (prefs.getBoolean("notification_led_enabled", true)) {
-            built.ledARGB = prefs.getInt("notification_led_color", c.getResources().getColor(R.color.primary));
+            built.ledARGB = prefs.getInt("notification_led_color",
+                    ContextCompat.getColor(c, R.color.primary));
             built.ledOnMS = 1000;
             built.ledOffMS = 1000;
             built.flags |= Notification.FLAG_SHOW_LIGHTS;
@@ -248,9 +277,17 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             switch (messageType) {
                 case NotificationTypes.PING:
                     priority = Notification.PRIORITY_LOW;
+                    break;
+                case NotificationTypes.SUMMARY:
+                    // If Android will really display a component notification then a group summary,
+                    // don't let the summary heads-up atop the component.
+                    if (SUMMARY_NOTIFICATION_IS_A_HEADER) {
+                        priority = Notification.PRIORITY_DEFAULT;
+                    }
+                    break;
             }
 
-            boolean headsUpPref = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("notification_headsup", true);
+            boolean headsUpPref = prefs.getBoolean("notification_headsup", true);
             if (headsUpPref) {
                 built.priority = priority;
             } else {
