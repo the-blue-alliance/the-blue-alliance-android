@@ -22,7 +22,8 @@ import static org.mockito.Mockito.when;
 @Config(manifest = Config.NONE)
 public class EventDownNotificationTest {
 
-    private static final String MOCK_TITLE = "No Event Data Available";
+    private static final String KEY = "DOWN";
+    private static final String MOCK_TITLE = KEY + " No Event Data Available";
     private static final String MOCK_TEXT = "Down Event has no data";
 
     private EventDownNotification mNotification;
@@ -35,7 +36,7 @@ public class EventDownNotificationTest {
         mData = ModelMaker.getModel(JsonObject.class, "notification_event_down");
         mNotification = new EventDownNotification(mData.toString());
 
-        when(context.getString(R.string.notification_event_down)).thenReturn(MOCK_TITLE);
+        when(context.getString(R.string.notification_event_down, KEY)).thenReturn(MOCK_TITLE);
         when(context.getString(R.string.notification_event_down_content, "Down Event"))
           .thenReturn(MOCK_TEXT);
     }
