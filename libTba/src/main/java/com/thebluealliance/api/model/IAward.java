@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Award
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-10-01T11:53:35.313-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-10-07T15:59:12.095-04:00")
 public interface IAward   {
 
 

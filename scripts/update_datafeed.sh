@@ -53,29 +53,34 @@ echo "Moving generated files"
 
 # Move generated files to module
 PKG=src/main/java/com/thebluealliance/api
+APP_PKG=src/main/java/com/thebluealliance/androidclient/api
 DST=libTba/$PKG/
 rm -rf $DST
+rm -rf android/$APP_PKG
 mkdir -p $DST
-cp -r libTba/swagger/tmp/$PKG/call/ $DST
-cp -r libTba/swagger/tmp/$PKG/rx/ $DST
+mkdir -p android/$APP_PKG
+cp -r libTba/swagger/tmp/$PKG/call/ android/$APP_PKG
+cp -r libTba/swagger/tmp/$PKG/rx/ android/$APP_PKG
 cp -r libTba/swagger/tmp/$PKG/model/ $DST
 
 echo "Patching"
 OLD_NAME=DefaultApi
 NEW_NAME=TbaApiV2
-mv libTba/$PKG/call/DefaultApi.java libTba/$PKG/call/TbaApiV2.java
-mv libTba/$PKG/rx/DefaultApi.java libTba/$PKG/rx/TbaApiV2.java
-perl -pi -e "s/$OLD_NAME/$NEW_NAME/g" libTba/$PKG/{call,rx}/TbaApiV2.java
+mv android/$APP_PKG/call/DefaultApi.java android/$APP_PKG/call/TbaApiV2.java
+mv android/$APP_PKG/rx/DefaultApi.java android/$APP_PKG/rx/TbaApiV2.java
+perl -pi -e "s/$OLD_NAME/$NEW_NAME/g" android/$APP_PKG/{call,rx}/TbaApiV2.java
+perl -pi -e "s/thebluealliance/thebluealliance\.androidclient/g" android/$APP_PKG/{call,rx}/TbaApiV2.java
+perl -pi -e "s/api\.model/models/g" android/$APP_PKG/{call,rx}/TbaApiV2.java
 
 # Rename models to start with I<name>.java
 CUR=$(pwd)
 cd libTba/$PKG/model
 for f in *.java;  do
     NAME=`basename $f .java`
-    perl -pi -e "s/$NAME/I$NAME/g" $CUR/libTba/$PKG/{call,rx}/TbaApiV2.java
     mv "$f" "I$f";
 done
 cd $CUR
+
 
 echo
 echo "Cleaning up"

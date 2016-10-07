@@ -25,17 +25,15 @@
 
 package com.thebluealliance.api.model;
 
-import java.util.Objects;
-import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import javax.annotation.Nullable;
+
+import io.swagger.annotations.ApiModelProperty;
 
 
 /**
  * Robot
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-10-01T11:53:35.313-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-10-07T15:59:12.095-04:00")
 public interface IRobot   {
 
 
