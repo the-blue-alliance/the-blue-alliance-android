@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.gcm.notifications.DistrictPointsUpdated
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -94,5 +95,12 @@ public class DistrictPointsUpdatedNotificationTest {
         assertEquals(intent.getComponent().getClassName(), "com.thebluealliance.androidclient.activities.ViewDistrictActivity");
         assertEquals(intent.getStringExtra(ViewDistrictActivity.DISTRICT_ABBREV), "pnw");
         assertEquals(intent.getIntExtra(ViewDistrictActivity.YEAR, -1), 2014);
+    }
+
+    @Test
+    public void testRenderToViewModel() {
+        mNotification.parseMessageData();
+        GenericNotificationViewModel viewModel = mNotification.renderToViewModel(mContext, null);
+        assertNotNull(viewModel);
     }
 }
