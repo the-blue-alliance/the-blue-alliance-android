@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 
 import android.app.Notification;
 import android.content.Context;
@@ -21,7 +22,8 @@ import android.support.v4.app.NotificationCompat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DistrictPointsUpdatedNotification extends BaseNotification<Void> {
+public class DistrictPointsUpdatedNotification
+        extends BaseNotification<GenericNotificationViewModel> {
 
     private String districtName, districtKey;
 
@@ -96,7 +98,14 @@ public class DistrictPointsUpdatedNotification extends BaseNotification<Void> {
 
     @Nullable
     @Override
-    public Void renderToViewModel(Context context, @Nullable Void aVoid) {
-        return null;
+    public GenericNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
+        Resources r = context.getResources();
+        String header = getNotificationCardHeader(context, districtName, districtKey);
+        String districtCode = EventHelper.getEventCode(districtKey);
+        String title = r.getString(R.string.notification_district_points_title, districtCode);
+        String contentText = r.getString(R.string.notification_district_points_updated, districtName);
+
+        return new GenericNotificationViewModel(header, title, contentText,
+                getNotificationTimeString(context), getIntent(context));
     }
 }
