@@ -16,6 +16,8 @@ import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -49,7 +51,7 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
     private Integer teamNumber = null;
     private String website = null;
 
-    private JsonArray yearsParticipated;
+    private List<Integer> yearsParticipated;
 
     public Team() {
         yearsParticipated = null;
@@ -159,15 +161,26 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
         this.website = website;
     }
 
-    public JsonArray getYearsParticipated() {
+    public List<Integer> getYearsParticipated() {
         return yearsParticipated;
     }
 
     public void setYearsParticipated(String yearsParticipated) {
-        this.yearsParticipated = JSONHelper.getasJsonArray(yearsParticipated);
+        JsonArray array = JSONHelper.getasJsonArray(yearsParticipated);
+        setYearsParticipated(array);
     }
 
     public void setYearsParticipated(JsonArray yearsParticipated) {
+        if (this.yearsParticipated == null) {
+            this.yearsParticipated = new ArrayList<>();
+        }
+        this.yearsParticipated.clear();
+        for (int i = 0; i < yearsParticipated.size(); i++) {
+            this.yearsParticipated.add(yearsParticipated.get(i).getAsInt());
+        }
+    }
+
+    public void setYearsParticipated(List<Integer> yearsParticipated) {
         this.yearsParticipated = yearsParticipated;
     }
 
@@ -208,9 +221,17 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
         data.put(TeamsTable.LOCATION, getLocation());
         data.put(TeamsTable.WEBSITE, getWebsite());
         if (yearsParticipated != null) {
-            data.put(TeamsTable.YEARS_PARTICIPATED, yearsParticipated.toString());
+            data.put(TeamsTable.YEARS_PARTICIPATED, yearsParticipatedToJsonString(yearsParticipated));
         }
         data.put(TeamsTable.MOTTO, getMotto());
         return data;
+    }
+
+    private static String yearsParticipatedToJsonString(List<Integer> yearsParticipated) {
+        JsonArray array = new JsonArray();
+        for (int i = 0; i < yearsParticipated.size(); i++) {
+            array.add(yearsParticipated.get(i));
+        }
+        return array.toString();
     }
 }

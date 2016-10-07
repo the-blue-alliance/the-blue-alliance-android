@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 import com.thebluealliance.androidclient.database.Database;
@@ -22,6 +21,7 @@ import com.thebluealliance.androidclient.types.DistrictType;
 
 import android.database.Cursor;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -119,11 +119,11 @@ public class APICache {
         });
     }
 
-    public Observable<JsonArray> fetchTeamYearsParticipated(String teamKey) {
+    public Observable<List<Integer>> fetchTeamYearsParticipated(String teamKey) {
         return Observable.create((observer) -> {
             try {
                 Team team = mDb.getTeamsTable().get(teamKey);
-                observer.onNext(team == null ? new JsonArray() : team.getYearsParticipated());
+                observer.onNext(team == null ? new ArrayList<Integer>() : team.getYearsParticipated());
                 observer.onCompleted();
             } catch (Exception e) {
                 observer.onError(e);
