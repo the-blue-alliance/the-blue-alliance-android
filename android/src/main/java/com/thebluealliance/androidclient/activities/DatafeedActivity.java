@@ -10,7 +10,7 @@ import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
 import com.thebluealliance.androidclient.interfaces.InvalidateHost;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
-import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 import org.greenrobot.eventbus.EventBus;
@@ -79,7 +79,7 @@ public abstract class DatafeedActivity extends BaseActivity
     protected void onResume() {
         super.onResume();
         mEventBus.register(this);
-        APIStatus status = mStatusController.fetchApiStatus();
+        ApiStatus status = mStatusController.fetchApiStatus();
         commonStatusUpdate(status);
     }
 
@@ -89,7 +89,7 @@ public abstract class DatafeedActivity extends BaseActivity
         mEventBus.unregister(this);
     }
 
-    private void commonStatusUpdate(@Nullable APIStatus newStatus) {
+    private void commonStatusUpdate(@Nullable ApiStatus newStatus) {
         if (newStatus == null) {
             return;
         }
@@ -110,7 +110,7 @@ public abstract class DatafeedActivity extends BaseActivity
      *
      * @param newStatus The new API Status
      */
-    protected void onTbaStatusUpdate(APIStatus newStatus) {
+    protected void onTbaStatusUpdate(ApiStatus newStatus) {
         // Default to do nothing
     }
 
@@ -130,7 +130,7 @@ public abstract class DatafeedActivity extends BaseActivity
      */
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onApiStatusUpdated(APIStatus tbaStatus) {
+    public void onApiStatusUpdated(ApiStatus tbaStatus) {
         commonStatusUpdate(tbaStatus);
     }
 

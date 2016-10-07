@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.datafeed.retrofit;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
-import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
@@ -175,11 +175,11 @@ public interface APIv2 {
             @Header(TBA_CACHE_HEADER) String cacheHeader);
 
     @GET("/api/v2/status")
-    Observable<Response<APIStatus>> status();
+    Observable<Response<ApiStatus>> status();
 
     /**
      * Use to execute synchronous request in {@link com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData}
      */
     @GET("/api/v2/status")
-    Call<APIStatus> statusCall();
+    Call<ApiStatus> statusCall();
 }

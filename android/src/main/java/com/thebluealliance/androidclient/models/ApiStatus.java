@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-public class APIStatus implements IApiStatus {
+public class ApiStatus implements IApiStatus {
 
     private Long champsPitLocationsUpdateTime;
     private String champsPitLocationsUrl;
@@ -27,7 +27,7 @@ public class APIStatus implements IApiStatus {
     /* Admin Message */
     private Date messageExipration;
 
-    public APIStatus() {
+    public ApiStatus() {
 
     }
 

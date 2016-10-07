@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 
-import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.models.ApiStatus;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
+public class APIStatusDeserializer implements JsonDeserializer<ApiStatus> {
 
     private static final int MS_PER_SECOND = 1000;
 
@@ -34,13 +34,13 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
     static final String CHAMPS_PIT_LOCATIONS_UPDATE_TIME = "cmp_pit_locations_update_time";
 
     @Override
-    public APIStatus deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+    public ApiStatus deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
         if (!json.isJsonObject()) {
             throw new JsonParseException("Data is not JsonObject");
         }
         JsonObject data = json.getAsJsonObject();
-        APIStatus status = new APIStatus();
+        ApiStatus status = new ApiStatus();
 
         JsonElement maxSeason = data.get(MAX_SEASON_TAG);
         if (maxSeason == null || !maxSeason.isJsonPrimitive()) {

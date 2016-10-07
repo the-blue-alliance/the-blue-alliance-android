@@ -9,7 +9,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
-import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.models.ApiStatus;
 
 import android.app.Activity;
 import android.app.Application;
@@ -80,17 +80,17 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         context.startService(new Intent(context, StatusRefreshService.class));
     }
 
-    public @Nullable APIStatus fetchApiStatus() {
+    public @Nullable ApiStatus fetchApiStatus() {
         if (!mPrefs.contains(STATUS_PREF_KEY)) {
             return null;
         }
 
         String statusJson = mPrefs.getString(STATUS_PREF_KEY, "");
-        return mGson.fromJson(statusJson, APIStatus.class);
+        return mGson.fromJson(statusJson, ApiStatus.class);
     }
 
     public int getMaxCompYear() {
-        APIStatus status = fetchApiStatus();
+        ApiStatus status = fetchApiStatus();
         if (status == null || status.getMaxSeason() == null) {
             Calendar cal = Calendar.getInstance();
             return cal.get(Calendar.YEAR);
@@ -99,7 +99,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     }
 
     public Integer getCurrentCompYear() {
-        APIStatus status = fetchApiStatus();
+        ApiStatus status = fetchApiStatus();
         if (status == null) {
             Calendar cal = Calendar.getInstance();
             return cal.get(Calendar.YEAR);
@@ -108,7 +108,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     }
 
     public int getMinAppVersion() {
-        APIStatus status = fetchApiStatus();
+        ApiStatus status = fetchApiStatus();
         if (status == null || status.getMinAppVersion() == null) {
             /* Default to the current version */
             return BuildConfig.VERSION_CODE;
@@ -117,7 +117,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     }
 
     private int getLatestAppVersion() {
-        APIStatus status = fetchApiStatus();
+        ApiStatus status = fetchApiStatus();
         if (status == null || status.getLatestAppVersion() == null) {
             /* Default to the current version */
             return BuildConfig.VERSION_CODE;
@@ -125,7 +125,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         return status.getLatestAppVersion();
     }
 
-    public void clearOkCacheIfNeeded(@Nullable APIStatus status, boolean forceClear) {
+    public void clearOkCacheIfNeeded(@Nullable ApiStatus status, boolean forceClear) {
         long lastCacheClear = mPrefs.getLong(STATUS_CACHE_CLEAR_KEY, Long.MIN_VALUE);
         if (status != null
                 && mOkHttpCache != null
@@ -187,7 +187,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         }
 
         /* Admin push message */
-        APIStatus status = fetchApiStatus();
+        ApiStatus status = fetchApiStatus();
         Date now = new Date();
         if (status != null && status.getHasMessage()
                 && mLastMessageTime + DIALOG_TIMEOUT < System.nanoTime()

@@ -15,7 +15,7 @@ import com.thebluealliance.androidclient.datafeed.deserializers.MediaDeserialize
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDistrictPointsDeserializer;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
-import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
@@ -98,7 +98,7 @@ public class HttpModule {
         builder.registerTypeAdapter(Media.class, mediaDeserializer);
 
         builder.registerTypeAdapter(IApiStatus.class, apiStatusDeserializer);
-        builder.registerTypeAdapter(APIStatus.class, apiStatusDeserializer);
+        builder.registerTypeAdapter(ApiStatus.class, apiStatusDeserializer);
 
         builder.registerTypeAdapter(District.class, new DistrictDeserializer());
         builder.registerTypeAdapter(DistrictTeam.class, new DistrictTeamDeserializer());

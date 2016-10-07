@@ -7,7 +7,7 @@ import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
-import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.models.ApiStatus;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -54,7 +54,7 @@ public class StatusRefreshService extends IntentService {
 
     @WorkerThread
     private void updateTbaStatus() {
-        Response<APIStatus> response;
+        Response<ApiStatus> response;
         try {
             response = mRetrofitAPI.status().toBlocking().first();
         } catch (Exception ex) {
@@ -67,7 +67,7 @@ public class StatusRefreshService extends IntentService {
                         + response.code() + " " + response.message());
             return;
         }
-        APIStatus status = response.body();
+        ApiStatus status = response.body();
 
         /* Write the new data to shared prefs */
         mPrefs.edit()

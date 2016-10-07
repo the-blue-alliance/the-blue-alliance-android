@@ -13,7 +13,7 @@ import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
-import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
@@ -218,7 +218,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
     }
 
     @Override
-    protected void onTbaStatusUpdate(APIStatus newStatus) {
+    protected void onTbaStatusUpdate(ApiStatus newStatus) {
         super.onTbaStatusUpdate(newStatus);
         if (newStatus.getDownEvents().contains(mEventKey)) {
             // This event is down

@@ -12,7 +12,7 @@ import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
@@ -86,8 +86,8 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
          */
 
         try {
-            Call<APIStatus> statusCall = datafeed.statusCall();
-            Response<APIStatus> statusResponse = statusCall.execute();
+            Call<ApiStatus> statusCall = datafeed.statusCall();
+            Response<ApiStatus> statusResponse = statusCall.execute();
             if (!statusResponse.isSuccessful() || statusResponse.body() == null) {
                 onConnectionError();
                 return null;
