@@ -79,8 +79,8 @@
     <!-- *********************
        Event Down Notification
        ********************* -->
-    <string name="notification_event_down">No Event Data Available</string>
-    <string name="notification_event_down_content">We\'re sorry, but %1$s is not reporting data to The Blue Alliance. You may not receive myTBA push notifications for your subscriptions at this event.</string>
+    <string name="notification_event_down">%1$s No Event Data Available</string>
+    <string name="notification_event_down_content">We\'re sorry, but %1$s is not reporting data to The Blue Alliance. You might not receive myTBA push notifications for your subscriptions at this event.</string>
 
     <!-- *********************
         Generic Notification

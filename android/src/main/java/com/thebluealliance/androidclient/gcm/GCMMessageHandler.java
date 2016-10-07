@@ -48,6 +48,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 
 import javax.inject.Inject;
 
@@ -59,13 +60,15 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
      * notifications (http://stackoverflow.com/a/34953411/1682419) nor on Lollipop API 21 because
      * the OS messes up groups (it shows a summary and the first two source notifications as
      * separate items instead of one group.)
-     *<p/>
-     * When not stacking, use the same ID for all these notifications so each will replace any
-     * predecessor.
      */
     public static final boolean STACK_NOTIFICATIONS =
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
+    /** True if phones/tablets will bundle up the stack using the summary as a header. */
+    public static final boolean SUMMARY_NOTIFICATION_IS_A_HEADER =
+            STACK_NOTIFICATIONS && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+    /** The setGroup() key to group notifications into a stack/bundle as feasible. */
     public static final String GROUP_KEY = STACK_NOTIFICATIONS ? "tba-android" : null;
+    /** If grouping won't work, use this ID to make each notification replace its predecessor. */
     public static final int SINGULAR_NOTIFICATION_ID = 363;
 
     @Inject MyTbaDatafeed mMyTbaDatafeed;
@@ -262,7 +265,8 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             built.defaults |= Notification.DEFAULT_SOUND;
         }
         if (prefs.getBoolean("notification_led_enabled", true)) {
-            built.ledARGB = prefs.getInt("notification_led_color", c.getResources().getColor(R.color.primary));
+            built.ledARGB = prefs.getInt("notification_led_color",
+                    ContextCompat.getColor(c, R.color.primary));
             built.ledOnMS = 1000;
             built.ledOffMS = 1000;
             built.flags |= Notification.FLAG_SHOW_LIGHTS;
@@ -275,10 +279,9 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                     priority = Notification.PRIORITY_LOW;
                     break;
                 case NotificationTypes.SUMMARY:
-                    // If Android will really display a regular notification then a group summary,
-                    // don't let the latter heads-up atop the former.
-                    if (STACK_NOTIFICATIONS
-                            && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    // If Android will really display a component notification then a group summary,
+                    // don't let the summary heads-up atop the component.
+                    if (SUMMARY_NOTIFICATION_IS_A_HEADER) {
                         priority = Notification.PRIORITY_DEFAULT;
                     }
                     break;
