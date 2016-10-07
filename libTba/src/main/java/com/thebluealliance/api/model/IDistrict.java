@@ -33,33 +33,21 @@ import javax.annotation.Nullable;
 
 
 /**
- * Media
+ * District
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2016-10-07T16:42:11.254-04:00")
-public interface IMedia   {
+public interface IDistrict   {
 
 
    /**
-   * If the media requires it, a json dict of additional information
-   * @return details
+   * The short identifier for the district
+   * @return abbreviation
   **/
-  @ApiModelProperty(example = "null", value = "If the media requires it, a json dict of additional information")
+  @ApiModelProperty(example = "null", value = "The short identifier for the district")
   @Nullable
-  public String getDetails();
+  public String getAbbreviation();
 
-  public void setDetails(String details);
-
-
-
-   /**
-   * The key used to indentify this media element on the remote site (e.g YouTube video key)
-   * @return foreignKey
-  **/
-  @ApiModelProperty(example = "null", required = true, value = "The key used to indentify this media element on the remote site (e.g YouTube video key)")
-  
-  public String getForeignKey();
-
-  public void setForeignKey(String foreignKey);
+  public void setAbbreviation(String abbreviation);
 
 
 
@@ -76,14 +64,14 @@ public interface IMedia   {
 
 
    /**
-   * The string type of the media element
-   * @return type
+   * The long name for the district
+   * @return name
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The string type of the media element")
+  @ApiModelProperty(example = "null", required = true, value = "The long name for the district")
   
-  public String getType();
+  public String getName();
 
-  public void setType(String type);
+  public void setName(String name);
 
 }
 

@@ -71,6 +71,8 @@ mv android/$APP_PKG/rx/DefaultApi.java android/$APP_PKG/rx/TbaApiV2.java
 perl -pi -e "s/$OLD_NAME/$NEW_NAME/g" android/$APP_PKG/{call,rx}/TbaApiV2.java
 perl -pi -e "s/thebluealliance/thebluealliance\.androidclient/g" android/$APP_PKG/{call,rx}/TbaApiV2.java
 perl -pi -e "s/api\.model/models/g" android/$APP_PKG/{call,rx}/TbaApiV2.java
+perl -pi -e "s/Response<String>/Response<JsonElement>/g" android/$APP_PKG/{call,rx}/TbaApiV2.java
+perl -pi -e "s/import rx\.Observable;/import com\.google\.gson\.JsonElement;\nimport rx\.Observable;/g" android/$APP_PKG/{call,rx}/TbaApiV2.java
 
 # Rename models to start with I<name>.java
 CUR=$(pwd)
@@ -80,7 +82,6 @@ for f in *.java;  do
     mv "$f" "I$f";
 done
 cd $CUR
-
 
 echo
 echo "Cleaning up"

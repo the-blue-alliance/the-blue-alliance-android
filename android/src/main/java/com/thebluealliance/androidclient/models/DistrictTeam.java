@@ -2,10 +2,13 @@ package com.thebluealliance.androidclient.models;
 
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
+import com.thebluealliance.api.model.IDistrictTeam;
 
 import android.content.ContentValues;
 
-public class DistrictTeam implements TbaDatabaseModel {
+import javax.annotation.Nullable;
+
+public class DistrictTeam implements TbaDatabaseModel, IDistrictTeam {
 
     private String key;
     private String districtKey;
@@ -22,6 +25,7 @@ public class DistrictTeam implements TbaDatabaseModel {
     private Integer rookiePoints;
     private Integer totalPoints;
     private String json;
+    private Long lastModified;
 
     public DistrictTeam() {
     }
@@ -33,6 +37,14 @@ public class DistrictTeam implements TbaDatabaseModel {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    @Nullable @Override public Long getLastModified() {
+        return lastModified;
+    }
+
+    @Override public void setLastModified(Long lastModified) {
+        this.lastModified = lastModified;
     }
 
     public String getDistrictKey() {

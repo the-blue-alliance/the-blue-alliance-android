@@ -25,7 +25,7 @@
             "description": "A page of teams, zero-indexed. Each page consists of teams whose numbers start at start = 500 * page_num and end at end = start + 499, inclusive.",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer"
           }
         ],
         "responses": {
@@ -424,10 +424,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of json dicts representing districts",
-            "schema": {
-              "type": "string"
-            }
+            "$ref": "#/responses/district_list_response"
           }
         }
       }
@@ -475,10 +472,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns a json array of ranking data",
-            "schema": {
-              "type": "string"
-            }
+            "$ref": "#/responses/district_team_list_response"
           }
         }
       }
@@ -534,11 +528,29 @@
       "name": "year",
       "description": "A specific year to request data for.",
       "in": "path",
-      "type": "string",
+      "type": "integer",
       "required": true
     }
   },
   "responses": {
+    "district_list_response": {
+      "description": "A list of District objects",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/District"
+        }
+      }
+    },
+    "district_team_list_response": {
+      "description": "A list of DistrictTeam objects",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/DistrictTeam"
+        }
+      }
+    },
     "event_list_response": {
       "description": "A list of Event objects",
       "schema": {
@@ -851,6 +863,71 @@
           "description": "The robot name in this year"
         }
       }
+    },
+    "District": {
+        "type": "object",
+        "required": [
+            "name",
+            "key"
+        ],
+        "properties": {
+            "abbreviation": {
+                "type": "string",
+                "description": "The short identifier for the district"
+            },
+            "name": {
+                "type": "string",
+                "description": "The long name for the district"
+            }
+        }
+    },
+    "DistrictTeam": {
+        "type": "object",
+        "required": [
+            "key"
+        ],
+        "properties": {
+            "key": {
+                "type": "string",
+                "description": "Unique key for this team@district. Formatted like <year><districtshort>_<teamKey>"
+            },
+            "rank": {
+                "type": "integer",
+                "description": "Placing of this team"
+            },
+            "rookie_points": {
+                "type": "integer",
+                "description": "How many points this team gets by nature of their age"
+            },
+            "total_points": {
+                "type": "integer",
+                "description": "Total number of points this team has earned"
+            },
+            "event1Key": {
+                "type": "string",
+                "description": "Event code for the first qualifying event"
+            },
+            "event2Key": {
+                "type": "string",
+                "description": "Event code for the second qualifying event"
+            },
+            "cmpKey": {
+                "type": "string",
+                "description": "Event code for the district championship"
+            },
+            "event1Points": {
+                "type": "Integer",
+                "description": "Points earned at the first qualifying event"
+            },
+            "event2Points": {
+                "type": "integer",
+                "description": "Points earned at the second qualifying event"
+            },
+            "cmpPoints": {
+                "type": "integer",
+                "description": "Points earned at the district championship"
+            }
+        }
     }
   }
 }

@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.datafeed;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
+import com.thebluealliance.androidclient.api.rx.TbaApiV2;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
@@ -37,14 +38,14 @@ import rx.Observable;
 @Singleton
 public class CacheableDatafeed {
 
-    private APIv2 mRetrofitAPI;
+    private TbaApiV2 mRetrofitAPI;
     private APICache mAPICache;
     private DatabaseWriter mWriter;
     private RetrofitResponseMap mResponseMap;
 
     @Inject
     public CacheableDatafeed(
-      @Named("tba_api") APIv2 retrofitAPI,
+      @Named("tba_api") TbaApiV2 retrofitAPI,
       @Named("cache") APICache apiCache,
       DatabaseWriter writer,
       RetrofitResponseMap responseMap) {

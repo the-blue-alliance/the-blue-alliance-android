@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.api.rx;
 
+import com.google.gson.JsonElement;
 import rx.Observable;
 import retrofit2.Response;
 
@@ -9,6 +10,8 @@ import okhttp3.RequestBody;
 
 import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.District;
+import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Match;
@@ -42,7 +45,7 @@ public interface TbaApiV2 {
   
   @GET("district/{district_short}/{year}/events")
   Observable<Response<List<Event>>> fetchDistrictEvents(
-    @Path("district_short") String districtShort, @Path("year") String year, @Header("X-TBA-Cache") String xTBACache
+    @Path("district_short") String districtShort, @Path("year") Integer year, @Header("X-TBA-Cache") String xTBACache
   );
 
   /**
@@ -50,12 +53,12 @@ public interface TbaApiV2 {
    * Fetch a list of active districts in the given year
    * @param year A specific year to request data for. (required)
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
-   * @return Call&lt;String&gt;
+   * @return Call&lt;List<District>&gt;
    */
   
   @GET("districts/{year}")
-  Observable<Response<String>> fetchDistrictList(
-    @Path("year") String year, @Header("X-TBA-Cache") String xTBACache
+  Observable<Response<List<District>>> fetchDistrictList(
+    @Path("year") Integer year, @Header("X-TBA-Cache") String xTBACache
   );
 
   /**
@@ -64,12 +67,12 @@ public interface TbaApiV2 {
    * @param districtShort Short string identifying a district (e.g. &#39;ne&#39;) (required)
    * @param year A specific year to request data for. (required)
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
-   * @return Call&lt;String&gt;
+   * @return Call&lt;List<DistrictTeam>&gt;
    */
   
   @GET("district/{district_short}/{year}/rankings")
-  Observable<Response<String>> fetchDistrictRankings(
-    @Path("district_short") String districtShort, @Path("year") String year, @Header("X-TBA-Cache") String xTBACache
+  Observable<Response<List<DistrictTeam>>> fetchDistrictRankings(
+    @Path("district_short") String districtShort, @Path("year") Integer year, @Header("X-TBA-Cache") String xTBACache
   );
 
   /**
@@ -83,7 +86,7 @@ public interface TbaApiV2 {
   
   @GET("district/{district_short}/{year}/teams")
   Observable<Response<List<Team>>> fetchDistrictTeamsInYear(
-    @Path("district_short") String districtShort, @Path("year") String year, @Header("X-TBA-Cache") String xTBACache
+    @Path("district_short") String districtShort, @Path("year") Integer year, @Header("X-TBA-Cache") String xTBACache
   );
 
   /**
@@ -121,7 +124,7 @@ public interface TbaApiV2 {
    */
   
   @GET("event/{event_key}/district_points")
-  Observable<Response<String>> fetchEventDistrictPoints(
+  Observable<Response<JsonElement>> fetchEventDistrictPoints(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
   );
 
@@ -147,7 +150,7 @@ public interface TbaApiV2 {
    */
   
   @GET("event/{event_key}/rankings")
-  Observable<Response<String>> fetchEventRankings(
+  Observable<Response<JsonElement>> fetchEventRankings(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
   );
 
@@ -160,7 +163,7 @@ public interface TbaApiV2 {
    */
   
   @GET("event/{event_key}/stats")
-  Observable<Response<String>> fetchEventStats(
+  Observable<Response<JsonElement>> fetchEventStats(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
   );
 
@@ -187,7 +190,7 @@ public interface TbaApiV2 {
   
   @GET("events/{year}")
   Observable<Response<List<Event>>> fetchEventsInYear(
-    @Path("year") String year, @Header("X-TBA-Cache") String xTBACache
+    @Path("year") Integer year, @Header("X-TBA-Cache") String xTBACache
   );
 
   /**
@@ -294,7 +297,7 @@ public interface TbaApiV2 {
   
   @GET("team/{team_key}/{year}/events")
   Observable<Response<List<Event>>> fetchTeamEvents(
-    @Path("team_key") String teamKey, @Path("year") String year, @Header("X-TBA-Cache") String xTBACache
+    @Path("team_key") String teamKey, @Path("year") Integer year, @Header("X-TBA-Cache") String xTBACache
   );
 
   /**
@@ -308,7 +311,7 @@ public interface TbaApiV2 {
   
   @GET("team/{team_key}/{year}/media")
   Observable<Response<List<Media>>> fetchTeamMediaInYear(
-    @Path("team_key") String teamKey, @Path("year") String year, @Header("X-TBA-Cache") String xTBACache
+    @Path("team_key") String teamKey, @Path("year") Integer year, @Header("X-TBA-Cache") String xTBACache
   );
 
   /**
@@ -321,7 +324,7 @@ public interface TbaApiV2 {
   
   @GET("teams/{page}")
   Observable<Response<List<Team>>> fetchTeamPage(
-    @Path("page") String page, @Header("X-TBA-Cache") String xTBACache
+    @Path("page") Integer page, @Header("X-TBA-Cache") String xTBACache
   );
 
   /**

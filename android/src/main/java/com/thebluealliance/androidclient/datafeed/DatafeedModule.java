@@ -2,8 +2,10 @@ package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.Gson;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.api.rx.TbaApiV2;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
@@ -19,7 +21,6 @@ import com.thebluealliance.androidclient.fragments.FirebaseTickerFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.VisibleForTesting;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -69,8 +70,13 @@ public class DatafeedModule {
     }
 
     @Provides @Singleton @Named("tba_api")
-    public APIv2 provideTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
-        return retrofit.create(APIv2.class);
+    public TbaApiV2 provideRxTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
+        return retrofit.create(TbaApiV2.class);
+    }
+
+    @Provides @Singleton @Named("tba_api")
+    public com.thebluealliance.androidclient.api.call.TbaApiV2 provideCallTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
+        return retrofit.create(com.thebluealliance.androidclient.api.call.TbaApiV2.class);
     }
 
     @Provides @Singleton @Named("github_api")

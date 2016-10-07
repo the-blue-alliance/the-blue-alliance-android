@@ -2,10 +2,13 @@ package com.thebluealliance.androidclient.models;
 
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
+import com.thebluealliance.api.model.IDistrict;
 
 import android.content.ContentValues;
 
-public class District implements TbaDatabaseModel {
+import javax.annotation.Nullable;
+
+public class District implements IDistrict, TbaDatabaseModel {
 
     private String key;
     private String abbreviation;
@@ -13,6 +16,7 @@ public class District implements TbaDatabaseModel {
     private int year;
     private String name;
     private int numEvents;
+    private Long lastModified;
 
     public static final String[] NOTIFICATION_TYPES = {
             // NotificationTypes.DISTRICT_POINTS_UPDATED
@@ -36,6 +40,16 @@ public class District implements TbaDatabaseModel {
 
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
+    }
+
+    @Nullable @Override
+    public Long getLastModified() {
+        return lastModified;
+    }
+
+    @Override
+    public void setLastModified(Long lastModified) {
+        this.lastModified = lastModified;
     }
 
     public int getEnum() {
