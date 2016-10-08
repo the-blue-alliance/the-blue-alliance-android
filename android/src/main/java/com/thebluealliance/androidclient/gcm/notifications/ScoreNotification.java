@@ -145,8 +145,7 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(notificationTitle)
-                .setContentText(notificationBody)
-                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp));
+                .setContentText(notificationBody);
 
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(notificationBody);
         builder.setStyle(style);

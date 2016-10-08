@@ -77,8 +77,7 @@ public class AllianceSelectionNotification extends BaseNotification<AllianceSele
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(title)
-                .setContentText(contentText)
-                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp));
+                .setContentText(contentText);
 
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
         builder.setStyle(style);

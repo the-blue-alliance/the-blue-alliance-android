@@ -17,13 +17,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 
 import java.util.List;
 
 public class SummaryNotification extends BaseNotification<Void> {
     /**
      * Limit the summary's list to avoid taking up the whole notification shade and to work around
-     * <a hreaf="https://code.google.com/p/android/issues/detail?id=168890">an Android 5.1 bug</a>.
+     * <a href="https://code.google.com/p/android/issues/detail?id=168890">an Android 5.1 bug</a>.
      */
     static final int MAX = 7;
 
@@ -41,8 +42,7 @@ public class SummaryNotification extends BaseNotification<Void> {
         int count = 0;
 
         for (StoredNotification n : active) {
-            if (++count == MAX && size > MAX) {
-                style.addLine(context.getString(R.string.notification_summary_more, size + 1 - MAX));
+            if (++count > MAX) {
                 break;
             }
             style.addLine(n.getTitle());
@@ -50,7 +50,14 @@ public class SummaryNotification extends BaseNotification<Void> {
 
         String notificationTitle = context.getString(R.string.notification_summary, size);
         style.setBigContentTitle(notificationTitle);
-        style.setSummaryText(context.getString(R.string.app_name));
+
+        if (!GCMMessageHandler.SUMMARY_NOTIFICATION_IS_A_HEADER) {
+            style.setSummaryText(
+                    size > MAX ? context.getString(R.string.notification_summary_more, size - MAX)
+                               : context.getString(R.string.app_name));
+        } // else don't set the summary line since on these Android versions, the header already
+          // shows the app name and overflow count. "" would show an extra •,
+          // "The Blue Alliance • • now."
 
         Intent instance = getIntent(context);
         PendingIntent intent = makeNotificationIntent(context, instance);
@@ -62,12 +69,12 @@ public class SummaryNotification extends BaseNotification<Void> {
         return new NotificationCompat.Builder(context)
                 .setContentTitle(notificationTitle)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp))
+                .setColor(ContextCompat.getColor(context, R.color.primary))
                 .setContentIntent(intent)
                 .setDeleteIntent(onDismiss)
                 .setAutoCancel(true)
                 .setGroup(GCMMessageHandler.GROUP_KEY)
-                .setGroupSummary(true)
+                .setGroupSummary(GCMMessageHandler.STACK_NOTIFICATIONS)
                 .setStyle(style).build();
     }
 

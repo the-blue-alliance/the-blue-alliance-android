@@ -158,8 +158,7 @@ public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNot
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(notificationTitle)
-                .setContentText(contentText)
-                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_access_time_white_24dp));
+                .setContentText(contentText);
 
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
         builder.setStyle(style);
