@@ -4,7 +4,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.ListGroup;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
 
 import org.junit.Before;
@@ -43,17 +42,17 @@ public class MediaListSubscriberTest {
     }
 
     @Test
-    public void testNullData() throws BasicModel.FieldNotDefinedException {
+    public void testNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mMedias);
     }
 
     @Test
-    public void testParsedData() throws BasicModel.FieldNotDefinedException {
+    public void testParsedData()  {
         List<ListGroup> data = DatafeedTestDriver.getParsedData(mSubscriber, mMedias);
 
         assertEquals(2, data.size());

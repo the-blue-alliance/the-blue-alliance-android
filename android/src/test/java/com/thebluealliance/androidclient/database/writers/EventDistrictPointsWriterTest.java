@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.datafeed.KeyAndJson;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
 import org.junit.Before;
@@ -44,7 +43,7 @@ public class EventDistrictPointsWriterTest {
     }
 
     @Test
-    public void testEventStatsWriter() throws BasicModel.FieldNotDefinedException {
+    public void testEventStatsWriter() {
         mWriter.write(mData);
     }
 }

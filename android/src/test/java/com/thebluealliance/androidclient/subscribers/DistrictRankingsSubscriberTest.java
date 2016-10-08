@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictTeamKey;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 
 import org.junit.Before;
@@ -45,17 +44,17 @@ public class DistrictRankingsSubscriberTest {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mDistrictTeams);
     }
 
     @Test
-    public void testParse() throws BasicModel.FieldNotDefinedException {
+    public void testParse()  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mDistrictTeams);
         DistrictTeamListElement element =
           new DistrictTeamListElement("frc1124", "2015ne", "Team 1124", 26, 157);

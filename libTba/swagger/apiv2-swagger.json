@@ -14,7 +14,7 @@
     "application/json"
   ],
   "paths": {
-    "/teams/{page}": {
+    "/api/v2/teams/{page}": {
       "get": {
         "summary": "Team List Request",
         "operationId": "fetchTeamPage",
@@ -25,7 +25,7 @@
             "description": "A page of teams, zero-indexed. Each page consists of teams whose numbers start at start = 500 * page_num and end at end = start + 499, inclusive.",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "integer"
           }
         ],
         "responses": {
@@ -35,7 +35,7 @@
         }
       }
     },
-    "/team/{team_key}": {
+    "/api/v2/team/{team_key}": {
       "get": {
         "summary": "Single Team Request",
         "operationId": "fetchTeam",
@@ -55,7 +55,7 @@
         }
       }
     },
-    "/team/{team_key}/{year}/events": {
+    "/api/v2/team/{team_key}/{year}/events": {
       "get": {
         "summary": "Team Events Request",
         "operationId": "fetchTeamEvents",
@@ -75,7 +75,7 @@
         }
       }
     },
-    "/team/{team_key}/event/{event_key}/awards": {
+    "/api/v2/team/{team_key}/event/{event_key}/awards": {
       "get": {
         "summary": "Team Event Awards Request",
         "operationId": "fetchTeamAtEventAwards",
@@ -95,7 +95,7 @@
         }
       }
     },
-    "/team/{team_key}/event/{event_key}/matches": {
+    "/api/v2/team/{team_key}/event/{event_key}/matches": {
       "get": {
         "summary": "Team Event Matches Request",
         "operationId": "fetchTeamAtEventMatches",
@@ -115,7 +115,7 @@
         }
       }
     },
-    "/team/{team_key}/years_participated": {
+    "/api/v2/team/{team_key}/years_participated": {
       "get": {
         "summary": "Team Years Participated Request",
         "operationId": "fetchTeamYearsParticipated",
@@ -138,7 +138,7 @@
         }
       }
     },
-    "/team/{team_key}/{year}/media": {
+    "/api/v2/team/{team_key}/{year}/media": {
       "get": {
         "summary": "Team Media Request",
         "operationId": "fetchTeamMediaInYear",
@@ -164,7 +164,7 @@
         }
       }
     },
-    "/team/{team_key}/history/events": {
+    "/api/v2/team/{team_key}/history/events": {
       "get": {
         "summary": "Team History Events Request",
         "operationId": "fetchTeamEventHistory",
@@ -181,7 +181,7 @@
         }
       }
     },
-    "/team/{team_key}/history/awards": {
+    "/api/v2/team/{team_key}/history/awards": {
       "get": {
         "summary": "Team History Awards Request",
         "operationId": "fetchTeamAwardHistory",
@@ -198,7 +198,7 @@
         }
       }
     },
-    "/team/{team_key}/history/robots": {
+    "/api/v2/team/{team_key}/history/robots": {
       "get": {
         "summary": "Team History Robots Request",
         "operationId": "fetchTeamRobotHistory",
@@ -221,7 +221,7 @@
         }
       }
     },
-    "/team/{team_key}/history/districts": {
+    "/api/v2/team/{team_key}/history/districts": {
       "get": {
         "summary": "Team History District Request",
         "operationId": "fetchTeamDistrictHistory",
@@ -244,7 +244,7 @@
         }
       }
     },
-    "/events/{year}": {
+    "/api/v2/events/{year}": {
       "get": {
         "summary": "Event List Request",
         "operationId": "fetchEventsInYear",
@@ -261,7 +261,7 @@
         }
       }
     },
-    "/event/{event_key}": {
+    "/api/v2/event/{event_key}": {
       "get": {
         "summary": "Event Info Request",
         "operationId": "fetchEvent",
@@ -281,7 +281,7 @@
         }
       }
     },
-    "/events/{event_key}/teams": {
+    "/api/v2/event/{event_key}/teams": {
       "get": {
         "summary": "Event Teams Request",
         "operationId": "fetchEventTeams",
@@ -298,7 +298,7 @@
         }
       }
     },
-    "/events/{event_key}/matches": {
+    "/api/v2/event/{event_key}/matches": {
       "get": {
         "summary": "Event Matches Request",
         "operationId": "fetchEventMatches",
@@ -315,7 +315,7 @@
         }
       }
     },
-    "/event/{event_key}/stats": {
+    "/api/v2/event/{event_key}/stats": {
       "get": {
         "summary": "Event Stats Request",
         "operationId": "fetchEventStats",
@@ -335,7 +335,7 @@
         }
       }
     },
-    "/event/{event_key}/rankings": {
+    "/api/v2/event/{event_key}/rankings": {
       "get": {
         "summary": "Event Rankings Request",
         "operationId": "fetchEventRankings",
@@ -355,7 +355,7 @@
         }
       }
     },
-    "/events/{event_key}/awards": {
+    "/api/v2/event/{event_key}/awards": {
       "get": {
         "summary": "Event Awards Request",
         "operationId": "fetchEventAwards",
@@ -372,7 +372,7 @@
         }
       }
     },
-    "/event/{event_key}/district_points": {
+    "/api/v2/event/{event_key}/district_points": {
       "get": {
         "summary": "Event District Points Request",
         "operationId": "fetchEventDistrictPoints",
@@ -392,7 +392,7 @@
         }
       }
     },
-    "/match/{match_key}": {
+    "/api/v2/match/{match_key}": {
       "get": {
         "summary": "Match Request",
         "operationId": "fetchMatch",
@@ -412,7 +412,7 @@
         }
       }
     },
-    "/districts/{year}": {
+    "/api/v2/districts/{year}": {
       "get": {
         "summary": "District List Request",
         "operationId": "fetchDistrictList",
@@ -424,15 +424,12 @@
         ],
         "responses": {
           "200": {
-            "description": "List of json dicts representing districts",
-            "schema": {
-              "type": "string"
-            }
+            "$ref": "#/responses/district_list_response"
           }
         }
       }
     },
-    "/district/{district_short}/{year}/events": {
+    "/api/v2/district/{district_short}/{year}/events": {
       "get": {
         "summary": "District Events Request",
         "operationId": "fetchDistrictEvents",
@@ -456,7 +453,7 @@
         }
       }
     },
-    "/district/{district_short}/{year}/rankings": {
+    "/api/v2/district/{district_short}/{year}/rankings": {
       "get": {
         "summary": "District Rankings Reques",
         "operationId": "fetchDistrictRankings",
@@ -475,15 +472,12 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns a json array of ranking data",
-            "schema": {
-              "type": "string"
-            }
+            "$ref": "#/responses/district_team_list_response"
           }
         }
       }
     },
-    "/district/{district_short}/{year}/teams": {
+    "/api/v2/district/{district_short}/{year}/teams": {
       "get": {
         "summary": "District Teams Request",
         "operationId": "fetchDistrictTeamsInYear",
@@ -534,11 +528,29 @@
       "name": "year",
       "description": "A specific year to request data for.",
       "in": "path",
-      "type": "string",
+      "type": "integer",
       "required": true
     }
   },
   "responses": {
+    "district_list_response": {
+      "description": "A list of District objects",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/District"
+        }
+      }
+    },
+    "district_team_list_response": {
+      "description": "A list of DistrictTeam objects",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/DistrictTeam"
+        }
+      }
+    },
     "event_list_response": {
       "description": "A list of Event objects",
       "schema": {
@@ -696,13 +708,27 @@
           "type": "boolean",
           "description": "Whether this is a FIRST official event, or an offseaon event."
         },
-        "webcast": {
+        "webcasts": {
           "type": "string",
           "description": "If the event has webcast data associated with it, this contains JSON data of the streams"
         },
         "alliances": {
           "type": "string",
           "description": "If we have alliance selection data for this event, this contains a JSON array of the alliances. The captain is the first team, followed by their picks, in order."
+        },
+        "competitionWeek": {
+          "type": "integer",
+          "description": "Week of the season the event occurs on"
+        },
+        "startDate": {
+          "type": "integer",
+          "format": "int64",
+          "description": "When the event starts"
+        },
+        "endDate": {
+          "type": "integer",
+          "format": "int64",
+          "description": "When the event ends"
         }
       }
     },
@@ -754,6 +780,7 @@
         },
         "time": {
           "type": "integer",
+          "format": "int64",
           "description": "UNIX timestamp of match time, as taken from the published schedule"
         }
       }
@@ -836,6 +863,71 @@
           "description": "The robot name in this year"
         }
       }
+    },
+    "District": {
+        "type": "object",
+        "required": [
+            "name",
+            "key"
+        ],
+        "properties": {
+            "abbreviation": {
+                "type": "string",
+                "description": "The short identifier for the district"
+            },
+            "name": {
+                "type": "string",
+                "description": "The long name for the district"
+            }
+        }
+    },
+    "DistrictTeam": {
+        "type": "object",
+        "required": [
+            "key"
+        ],
+        "properties": {
+            "key": {
+                "type": "string",
+                "description": "Unique key for this team@district. Formatted like <year><districtshort>_<teamKey>"
+            },
+            "rank": {
+                "type": "integer",
+                "description": "Placing of this team"
+            },
+            "rookie_points": {
+                "type": "integer",
+                "description": "How many points this team gets by nature of their age"
+            },
+            "total_points": {
+                "type": "integer",
+                "description": "Total number of points this team has earned"
+            },
+            "event1Key": {
+                "type": "string",
+                "description": "Event code for the first qualifying event"
+            },
+            "event2Key": {
+                "type": "string",
+                "description": "Event code for the second qualifying event"
+            },
+            "cmpKey": {
+                "type": "string",
+                "description": "Event code for the district championship"
+            },
+            "event1Points": {
+                "type": "Integer",
+                "description": "Points earned at the first qualifying event"
+            },
+            "event2Points": {
+                "type": "integer",
+                "description": "Points earned at the second qualifying event"
+            },
+            "cmpPoints": {
+                "type": "integer",
+                "description": "Points earned at the district championship"
+            }
+        }
     }
   }
 }

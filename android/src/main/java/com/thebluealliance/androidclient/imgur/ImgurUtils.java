@@ -1,10 +1,11 @@
 package com.thebluealliance.androidclient.imgur;
 
+import com.thebluealliance.androidclient.TbaLogger;
+
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import java.io.File;
 import java.io.FileOutputStream;

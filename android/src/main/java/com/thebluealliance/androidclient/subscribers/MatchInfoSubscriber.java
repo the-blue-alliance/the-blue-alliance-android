@@ -6,7 +6,6 @@ import com.google.gson.JsonElement;
 
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
@@ -57,14 +56,14 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind.clear();
 
         mDataToBind.add(mRenderer.renderFromModel(mAPIData.match, MatchRenderer.RENDER_MATCH_INFO));
 
         mMatchTitle = mAPIData.match.getTitle(mResources);
         mMatchKey = mAPIData.match.getKey();
-        JsonArray matchVideos = mAPIData.match.getVideos();
+        JsonArray matchVideos = mAPIData.match.getVideosJson();
         for (int i = 0; i < matchVideos.size(); i++) {
             JsonElement video = matchVideos.get(i);
             if (MediaType.fromString(video.getAsJsonObject().get("type").getAsString())

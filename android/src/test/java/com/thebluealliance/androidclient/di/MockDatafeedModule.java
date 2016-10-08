@@ -2,14 +2,13 @@ package com.thebluealliance.androidclient.di;
 
 import com.google.gson.Gson;
 
+import com.thebluealliance.androidclient.api.ApiV2Constants;
+import com.thebluealliance.androidclient.api.rx.TbaApiV2;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
-import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
-import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.datafeed.retrofit.FirebaseAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
@@ -41,7 +40,7 @@ public class MockDatafeedModule {
             OkHttpClient okHttpClient,
             SharedPreferences prefs) {
         return new Retrofit.Builder()
-                .baseUrl(APIv2.TBA_URL)
+                .baseUrl(ApiV2Constants.TBA_URL)
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
@@ -61,8 +60,13 @@ public class MockDatafeedModule {
     }
 
     @Provides @Singleton @Named("tba_api")
-    public APIv2 provideTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
-        return Mockito.mock(APIv2.class);
+    public TbaApiV2 provideRxTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
+        return Mockito.mock(TbaApiV2.class);
+    }
+
+    @Provides @Singleton
+    public com.thebluealliance.androidclient.api.call.TbaApiV2 provideTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
+        return Mockito.mock(com.thebluealliance.androidclient.api.call.TbaApiV2.class);
     }
 
     @Provides @Singleton @Named("github_api")
@@ -108,11 +112,7 @@ public class MockDatafeedModule {
     }
 
     @Provides @Singleton
-    public CacheableDatafeed provideDatafeed(
-            @Named("tba_api") APIv2 retrofit,
-            APICache cache,
-            DatabaseWriter writer,
-            RetrofitResponseMap responseMap) {
+    public CacheableDatafeed provideDatafeed(APICache cache) {
         CacheableDatafeed df = Mockito.mock(CacheableDatafeed.class);
         when(df.getCache()).thenReturn(cache);
         return df;

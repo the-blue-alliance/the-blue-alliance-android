@@ -4,7 +4,6 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.renderers.DistrictRenderer;
 import com.thebluealliance.androidclient.types.DistrictType;
@@ -27,7 +26,7 @@ public class DistrictListSubscriber extends BaseAPISubscriber<List<District>, Li
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind.clear();
         for (int i = 0; i < mAPIData.size(); i++) {
             District district = mAPIData.get(i);

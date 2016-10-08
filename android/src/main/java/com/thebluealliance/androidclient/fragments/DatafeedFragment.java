@@ -2,13 +2,13 @@ package com.thebluealliance.androidclient.fragments;
 
 import com.google.android.gms.analytics.Tracker;
 
+import com.thebluealliance.androidclient.api.ApiV2Constants;
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController.RefreshType;
 import com.thebluealliance.androidclient.datafeed.refresh.Refreshable;
-import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
@@ -150,7 +150,7 @@ public abstract class DatafeedFragment
         if (mSubscriber != null) {
             mObservable = getObservable(
                     refreshType == RefreshController.REQUESTED_BY_USER
-                            ? APIv2.TBA_CACHE_WEB
+                            ? ApiV2Constants.TBA_CACHE_WEB
                             : null);
             if (mObservable != null) {
                 mObservable.subscribeOn(Schedulers.io())
@@ -186,7 +186,7 @@ public abstract class DatafeedFragment
      * Called in {@link #onResume()}
      *
      * @param tbaCacheHeader String param to tell the datafeed how to load the data. Use
-     *                       {@link APIv2#TBA_CACHE_WEB}, {@link APIv2#TBA_CACHE_LOCAL}, or {@code
+     *                       {@link ApiV2Constants#TBA_CACHE_WEB}, {@link ApiV2Constants#TBA_CACHE_LOCAL}, or {@code
      *                       null} for regular usage
      */
     protected abstract Observable<? extends T> getObservable(String tbaCacheHeader);

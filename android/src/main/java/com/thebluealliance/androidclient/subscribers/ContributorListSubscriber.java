@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.listitems.ContributorListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,7 @@ public class ContributorListSubscriber extends BaseAPISubscriber<JsonElement, Li
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind.clear();
         JsonArray data = mAPIData.getAsJsonArray();
         for (JsonElement e : data) {

@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.datafeed.maps;
 
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 
 import org.junit.Before;
@@ -33,7 +32,7 @@ public class AddDistrictKeysTest {
     }
 
     @Test
-    public void testAddDistrictKeys() throws BasicModel.FieldNotDefinedException {
+    public void testAddDistrictKeys()  {
         List<District> districtList = new ArrayList<>();
         districtList.add(mDistrict);
 

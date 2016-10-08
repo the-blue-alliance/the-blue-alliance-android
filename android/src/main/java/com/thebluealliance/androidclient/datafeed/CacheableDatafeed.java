@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.datafeed;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
+import com.thebluealliance.androidclient.api.rx.TbaApiV2;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
@@ -17,7 +18,6 @@ import com.thebluealliance.androidclient.datafeed.maps.TeamRankExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.WeekEventsExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.YearsParticipatedInfoMap;
-import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
@@ -37,14 +37,14 @@ import rx.Observable;
 @Singleton
 public class CacheableDatafeed {
 
-    private APIv2 mRetrofitAPI;
+    private TbaApiV2 mRetrofitAPI;
     private APICache mAPICache;
     private DatabaseWriter mWriter;
     private RetrofitResponseMap mResponseMap;
 
     @Inject
     public CacheableDatafeed(
-      @Named("tba_api") APIv2 retrofitAPI,
+      @Named("tba_api") TbaApiV2 retrofitAPI,
       @Named("cache") APICache apiCache,
       DatabaseWriter writer,
       RetrofitResponseMap responseMap) {
@@ -116,8 +116,8 @@ public class CacheableDatafeed {
         return fetchEventRankings(eventKey, cacheHeader).map(extractor);
     }
 
-    public Observable<JsonArray> fetchTeamYearsParticipated(String teamKey, String cacheHeader) {
-        Observable<JsonArray> apiData = mResponseMap.getAndWriteMappedResponseBody(
+    public Observable<List<Integer>> fetchTeamYearsParticipated(String teamKey, String cacheHeader) {
+        Observable<List<Integer>> apiData = mResponseMap.getAndWriteMappedResponseBody(
           mRetrofitAPI.fetchTeamYearsParticipated(teamKey, cacheHeader),
           new YearsParticipatedInfoMap(teamKey),
           mWriter.getYearsParticipatedWriter().get());

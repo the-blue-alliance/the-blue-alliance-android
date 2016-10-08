@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.subscribers;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 
@@ -38,19 +37,19 @@ public class AllianceListSubscriberTest extends TestCase {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         mSubscriber.onAllianceAdvancementLoaded(null);
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         mSubscriber.onAllianceAdvancementLoaded(null);
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mEvent);
     }
 
     @Test
-    public void testParse() throws BasicModel.FieldNotDefinedException {
+    public void testParse()  {
         mSubscriber.onAllianceAdvancementLoaded(null);
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvent);
 

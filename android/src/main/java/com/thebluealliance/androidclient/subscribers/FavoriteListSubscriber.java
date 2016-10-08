@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.subscribers;
 import com.thebluealliance.androidclient.comparators.FavoriteSortByModelComparator;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.renderers.ModelRenderer;
 import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
@@ -25,7 +24,7 @@ public class FavoriteListSubscriber extends BaseAPISubscriber<List<Favorite>, Li
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind.clear();
         int lastModel = -1;
         Collections.sort(mAPIData, mComparator);

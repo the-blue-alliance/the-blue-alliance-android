@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.EventDeserializer;
@@ -22,8 +23,6 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
-
-import com.thebluealliance.androidclient.TbaLogger;
 
 @Deprecated
 public final class JSONHelper {

@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
@@ -18,13 +17,9 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.os.Build;
-import android.support.annotation.DrawableRes;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -130,8 +125,8 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
 
         return new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(context, R.color.primary))
                 .setGroup(GCMMessageHandler.GROUP_KEY)
-                .setColor(context.getResources().getColor(R.color.accent_dark))
                 .setDeleteIntent(onDismiss)
                 .setAutoCancel(true)
                 .extend(wearableExtender);
@@ -150,25 +145,6 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
 
         builder.setContentIntent(onTap);
         return builder;
-    }
-
-    protected static Bitmap getLargeIconFormattedForPlatform(Context context, @DrawableRes int drawable) {
-        Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), drawable);
-        // Show just the white image on 4.x
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            return largeIcon;
-        }
-        // Add a colored circle on 5.x+
-        int padding = Utilities.getPixelsFromDp(context, 8);
-        int circleDiameter = Math.max(largeIcon.getWidth(), largeIcon.getHeight()) + (padding * 2);
-        Bitmap finalBitmap = Bitmap.createBitmap(circleDiameter, circleDiameter, largeIcon.getConfig());
-        Canvas c = new Canvas(finalBitmap);
-        Paint backgroundPaint = new Paint();
-        backgroundPaint.setColor(context.getResources().getColor(R.color.primary));
-        backgroundPaint.setAntiAlias(true);
-        c.drawCircle(circleDiameter / 2, circleDiameter / 2, circleDiameter / 2, backgroundPaint);
-        c.drawBitmap(largeIcon, padding, padding, null);
-        return finalBitmap;
     }
 
     public String getNotificationTimeString(Context c) {

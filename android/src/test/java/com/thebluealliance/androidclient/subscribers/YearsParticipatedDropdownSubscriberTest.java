@@ -13,6 +13,9 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.Mockito.verify;
 
 @RunWith(RobolectricTestRunner.class)
@@ -20,14 +23,18 @@ import static org.mockito.Mockito.verify;
 public class YearsParticipatedDropdownSubscriberTest {
     @Mock YearsParticipatedUpdate mCallback;
 
-    YearsParticipatedDropdownSubscriber mSubscriber;
-    JsonArray mYearsParticipated;
+    private YearsParticipatedDropdownSubscriber mSubscriber;
+    private List<Integer> mYearsParticipated;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         mSubscriber = new YearsParticipatedDropdownSubscriber(mCallback);
-        mYearsParticipated = ModelMaker.getModel(JsonArray.class, "frc1124_years_participated");
+        JsonArray yearsJson = ModelMaker.getModel(JsonArray.class, "frc1124_years_participated");
+        mYearsParticipated = new ArrayList<>();
+        for (int i = 0; i < yearsJson.size(); i++) {
+            mYearsParticipated.add(yearsJson.get(i).getAsInt());
+        }
     }
 
     @Test(expected = NullPointerException.class)

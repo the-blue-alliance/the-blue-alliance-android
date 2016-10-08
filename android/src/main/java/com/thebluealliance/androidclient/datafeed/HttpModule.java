@@ -15,7 +15,7 @@ import com.thebluealliance.androidclient.datafeed.deserializers.MediaDeserialize
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDistrictPointsDeserializer;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
-import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
@@ -24,6 +24,12 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.api.model.IApiStatus;
+import com.thebluealliance.api.model.IAward;
+import com.thebluealliance.api.model.IEvent;
+import com.thebluealliance.api.model.IMatch;
+import com.thebluealliance.api.model.IMedia;
+import com.thebluealliance.api.model.ITeam;
 
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
@@ -69,15 +75,34 @@ public class HttpModule {
     @VisibleForTesting
     public static Gson getGson() {
         GsonBuilder builder = new GsonBuilder();
-        builder.registerTypeAdapter(Award.class, new AwardDeserializer());
-        builder.registerTypeAdapter(Event.class, new EventDeserializer());
-        builder.registerTypeAdapter(Match.class, new MatchDeserializer());
-        builder.registerTypeAdapter(Team.class, new TeamDeserializer());
-        builder.registerTypeAdapter(Media.class, new MediaDeserializer());
+        AwardDeserializer awardDeserializer = new AwardDeserializer();
+        EventDeserializer eventDeserializer = new EventDeserializer();
+        MatchDeserializer matchDeserializer = new MatchDeserializer();
+        TeamDeserializer teamDeserializer = new TeamDeserializer();
+        MediaDeserializer mediaDeserializer = new MediaDeserializer();
+        APIStatusDeserializer apiStatusDeserializer = new APIStatusDeserializer();
+
+        builder.registerTypeAdapter(IAward.class, awardDeserializer);
+        builder.registerTypeAdapter(Award.class, awardDeserializer);
+
+        builder.registerTypeAdapter(IEvent.class, eventDeserializer);
+        builder.registerTypeAdapter(Event.class, eventDeserializer);
+
+        builder.registerTypeAdapter(IMatch.class, matchDeserializer);
+        builder.registerTypeAdapter(Match.class, matchDeserializer);
+
+        builder.registerTypeAdapter(ITeam.class, teamDeserializer);
+        builder.registerTypeAdapter(Team.class, teamDeserializer);
+
+        builder.registerTypeAdapter(IMedia.class, mediaDeserializer);
+        builder.registerTypeAdapter(Media.class, mediaDeserializer);
+
+        builder.registerTypeAdapter(IApiStatus.class, apiStatusDeserializer);
+        builder.registerTypeAdapter(ApiStatus.class, apiStatusDeserializer);
+
         builder.registerTypeAdapter(District.class, new DistrictDeserializer());
         builder.registerTypeAdapter(DistrictTeam.class, new DistrictTeamDeserializer());
         builder.registerTypeAdapter(DistrictPointBreakdown.class, new TeamDistrictPointsDeserializer());
-        builder.registerTypeAdapter(APIStatus.class, new APIStatusDeserializer());
         return builder.create();
     }
 

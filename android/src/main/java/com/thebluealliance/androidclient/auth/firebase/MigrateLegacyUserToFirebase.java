@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.auth.firebase;
 
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.User;
 import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
@@ -8,7 +9,6 @@ import com.thebluealliance.androidclient.di.components.MyTbaComponent;
 
 import android.app.IntentService;
 import android.content.Intent;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -33,7 +33,7 @@ public class MigrateLegacyUserToFirebase extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         TbaLogger.d("Trying to migrate legacy auth to Firebase");
-        User user = mAuthProvider.signInLegacyUser().toBlocking().first();
+        User user = mAuthProvider.signInLegacyUser().toBlocking().firstOrDefault(null);
 
         if (user != null) {
             TbaLogger.d("Migrated user");

@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 
 import org.junit.Before;
@@ -101,7 +100,7 @@ public class MatchHelperTest {
     }
 
     @Test
-    public void testGetNextMatchPlayed() throws BasicModel.FieldNotDefinedException {
+    public void testGetNextMatchPlayed()  {
         List<Match> matches;
         Match nextMatch;
 
@@ -131,7 +130,7 @@ public class MatchHelperTest {
     }
 
     @Test
-    public void testGetLastMatchPlayed() throws BasicModel.FieldNotDefinedException {
+    public void testGetLastMatchPlayed()  {
         List<Match> matches;
         Match lastMatch;
 

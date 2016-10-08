@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 
 import org.junit.Before;
@@ -34,7 +33,7 @@ public class DistrictTeamExtractorTest {
     }
 
     @Test
-    public void testDistrictTeamExtractor() throws BasicModel.FieldNotDefinedException {
+    public void testDistrictTeamExtractor()  {
         DistrictTeam extracted = mExtractor.call(mDistrictTeams);
         assertNotNull(extracted);
         assertEquals(extracted.getTeamKey(), mSearchTeamKey);

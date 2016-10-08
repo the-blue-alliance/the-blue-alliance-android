@@ -5,7 +5,6 @@ import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
 import com.thebluealliance.androidclient.models.Award;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -25,16 +24,6 @@ public class AwardsTable extends ModelTable<Award> {
     public AwardsTable(SQLiteDatabase db){
         super(db);
         this.mDb = db;
-    }
-
-    @Override
-    protected String getKey(Award in) {
-        return in.getKey();
-    }
-
-    @Override
-    protected ContentValues getParams(Award in) {
-        return in.getParams();
     }
 
     @Override

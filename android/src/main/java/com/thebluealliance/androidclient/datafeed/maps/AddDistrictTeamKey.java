@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.datafeed.maps;
 
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 
 import java.util.List;
@@ -25,15 +24,11 @@ public class AddDistrictTeamKey implements Func1<List<DistrictTeam>, List<Distri
             DistrictTeam dt = districtTeams.get(i);
             String districtKey = DistrictHelper.generateKey(mDistrictShort, mYear);
             String dtKey;
-            try {
-                dtKey = DistrictTeamHelper.generateKey(dt.getTeamKey(), districtKey);
-                dt.setKey(dtKey);
-                dt.setDistrictEnum(DistrictHelper.districtTypeFromKey(districtKey).ordinal());
-                dt.setYear(mYear);
-                dt.setDistrictKey(districtKey);
-            } catch (BasicModel.FieldNotDefinedException e) {
-                e.printStackTrace();
-            }
+            dtKey = DistrictTeamHelper.generateKey(dt.getTeamKey(), districtKey);
+            dt.setKey(dtKey);
+            dt.setDistrictEnum(DistrictHelper.districtTypeFromKey(districtKey).ordinal());
+            dt.setYear(mYear);
+            dt.setDistrictKey(districtKey);
         }
         return districtTeams;
     }

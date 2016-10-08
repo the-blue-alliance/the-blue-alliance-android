@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper.CaseInsensitiveMap;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
 
@@ -30,7 +29,7 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonElement, List<
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind.clear();
         JsonArray rankingsData = mAPIData.getAsJsonArray();
         if (rankingsData.size() == 0) return;

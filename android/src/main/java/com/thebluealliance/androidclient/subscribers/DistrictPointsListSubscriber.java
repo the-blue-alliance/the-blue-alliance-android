@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.comparators.PointBreakdownComparater;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
@@ -18,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement, List<ListItem>>{
 
@@ -39,7 +40,7 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement,
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind.clear();
         JsonObject rankingsData = mAPIData.getAsJsonObject();
         if (!rankingsData.has("points")) {
@@ -50,7 +51,10 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement,
         Event event = mDb.getEventsTable().get(mEventKey);
 
         if (event != null) {
-            DistrictType type = DistrictType.fromEnum(event.getDistrictEnum());
+            @Nullable Integer eventDistrict = event.getEventDistrict();
+            DistrictType type = eventDistrict != null
+                ? DistrictType.fromEnum(eventDistrict)
+                : DistrictType.NO_DISTRICT;
             boolean isDistrict = type != DistrictType.NO_DISTRICT;
             ((Type)mDataToBind).isDistrict = isDistrict;
             if (isDistrict) {

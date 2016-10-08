@@ -1,10 +1,7 @@
 package com.thebluealliance.androidclient.comparators;
 
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.types.EventType;
-
-import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.Comparator;
 
@@ -12,30 +9,25 @@ public class EventSortByTypeAndDateComparator implements Comparator<Event> {
     @Override
     public int compare(Event event, Event event2) {
         // Preseason < regional < district < district_cmp < cmp_division < cmp_finals < offseason
-        try {
-            if (event.getEventType() == event2.getEventType()) {
-                int districtSort = ((Integer) event.getDistrictEnum()).compareTo(event2.getDistrictEnum());
-                if (districtSort == 0) {
-                    int eventSort = event.getStartDate().compareTo(event2.getStartDate());
-                    if (eventSort == 0) {
-                        return event.getShortName().compareTo(event2.getShortName());
-                    } else {
-                        return eventSort;
-                    }
+        if (event.getEventTypeEnum() == event2.getEventTypeEnum()) {
+            int districtSort = (event.getEventDistrict()).compareTo(event2.getEventDistrict());
+            if (districtSort == 0) {
+                int eventSort = event.getStartDate().compareTo(event2.getStartDate());
+                if (eventSort == 0) {
+                    return event.getShortName().compareTo(event2.getShortName());
                 } else {
-                    return districtSort;
+                    return eventSort;
                 }
             } else {
-                int typeCompare = event.getEventType().compareTo(event2.getEventType());
-                if (typeCompare == 0 && event.getEventType() == EventType.DISTRICT) {
-                    return ((Integer) event.getDistrictEnum()).compareTo(event2.getDistrictEnum());
-                } else {
-                    return typeCompare;
-                }
+                return districtSort;
             }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.e("Can't compare events with missing fields." + e.getMessage());
-            return 0;
+        } else {
+            int typeCompare = event.getEventType().compareTo(event2.getEventType());
+            if (typeCompare == 0 && event.getEventTypeEnum() == EventType.DISTRICT) {
+                return (event.getEventDistrict()).compareTo(event2.getEventDistrict());
+            } else {
+                return typeCompare;
+            }
         }
     }
 

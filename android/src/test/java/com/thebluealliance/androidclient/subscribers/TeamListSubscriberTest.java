@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.renderers.TeamRenderer;
 
@@ -35,17 +34,17 @@ public class TeamListSubscriberTest {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mTeams);
     }
 
     @Test
-    public void testParsedDataNoButton() throws BasicModel.FieldNotDefinedException {
+    public void testParsedDataNoButton()  {
         mSubscriber.setRenderMode(TeamRenderer.RENDER_BASIC);
         DatafeedTestDriver.getParsedData(mSubscriber, mTeams);
 
@@ -55,7 +54,7 @@ public class TeamListSubscriberTest {
     }
 
     @Test
-    public void testParsedDataButton() throws BasicModel.FieldNotDefinedException {
+    public void testParsedDataButton()  {
         mSubscriber.setRenderMode(TeamRenderer.RENDER_DETAILS_BUTTON);
         DatafeedTestDriver.getParsedData(mSubscriber, mTeams);
 

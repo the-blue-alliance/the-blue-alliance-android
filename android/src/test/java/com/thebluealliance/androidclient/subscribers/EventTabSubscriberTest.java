@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventWeekTab;
 
@@ -30,17 +29,17 @@ public class EventTabSubscriberTest {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mEvents);
     }
 
     @Test
-    public void testParsedData() throws BasicModel.FieldNotDefinedException {
+    public void testParsedData()  {
         int[] weeks = {0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 15, 21, 25, 28, 32, 37};
         int[] months = {-1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 5, 6, 7, 8, 9, 10};
         String[] labels = {"Preseason Events", "Week 1", "Week 2", "Week 3", "Week 4", "Week 5",

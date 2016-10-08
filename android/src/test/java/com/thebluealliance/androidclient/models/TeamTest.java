@@ -23,13 +23,14 @@ public class TeamTest {
     }
 
     @Test
-    public void testTeamModel() throws BasicModel.FieldNotDefinedException {
+    public void testTeamModel()  {
         assertNotNull(mTeam);
         assertEquals("frc1124", mTeam.getKey());
-        assertEquals("Avon Public Schools/UTC & AVON HIGH SCHOOL", mTeam.getFullName());
+        assertEquals("Avon Public Schools/UTC & AVON HIGH SCHOOL", mTeam.getName());
         assertEquals("UberBots", mTeam.getNickname());
         assertEquals("http://www.uberbots.org", mTeam.getWebsite());
         assertEquals("Avon, Connecticut, USA", mTeam.getLocation());
-        assertEquals(1124, (int)mTeam.getNumber());
+        assertNotNull(mTeam.getTeamNumber());
+        assertEquals(1124, mTeam.getTeamNumber().intValue());
     }
 }
