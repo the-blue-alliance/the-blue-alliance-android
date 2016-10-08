@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.background;
 
+import com.thebluealliance.androidclient.api.call.TbaApiV2;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
 import com.thebluealliance.androidclient.database.writers.EventListWriter;
 import com.thebluealliance.androidclient.database.writers.TeamListWriter;
-import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
 
@@ -19,7 +19,7 @@ import javax.inject.Named;
 public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.LoadTBADataCallbacks {
 
     DatafeedComponent mComponent;
-    @Inject @Named("tba_api") APIv2 mDatafeed;
+    @Inject TbaApiV2 mDatafeed;
     @Inject Database mDb;
     @Inject TeamListWriter mTeamWriter;
     @Inject EventListWriter mEventWriter;

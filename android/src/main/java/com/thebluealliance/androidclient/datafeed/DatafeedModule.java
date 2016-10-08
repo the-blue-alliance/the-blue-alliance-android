@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.api.ApiV2Constants;
 import com.thebluealliance.androidclient.api.rx.TbaApiV2;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -120,9 +121,9 @@ public class DatafeedModule {
     @VisibleForTesting
     public static Retrofit getRetrofit(Gson gson, OkHttpClient okHttpClient, SharedPreferences prefs) {
         String baseUrl = Utilities.isDebuggable()
-          ? prefs.getString(APIv2.DEV_TBA_PREF_KEY, APIv2.TBA_URL)
-          : APIv2.TBA_URL;
-        baseUrl = baseUrl.isEmpty() ? APIv2.TBA_URL : baseUrl;
+          ? prefs.getString(ApiV2Constants.DEV_TBA_PREF_KEY, ApiV2Constants.TBA_URL)
+          : ApiV2Constants.TBA_URL;
+        baseUrl = baseUrl.isEmpty() ? ApiV2Constants.TBA_URL : baseUrl;
         TbaLogger.d("Using TBA Host: " + baseUrl);
         return new Retrofit.Builder()
           .baseUrl(baseUrl)

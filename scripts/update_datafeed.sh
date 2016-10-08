@@ -56,7 +56,7 @@ PKG=src/main/java/com/thebluealliance/api
 APP_PKG=src/main/java/com/thebluealliance/androidclient/api
 DST=libTba/$PKG/
 rm -rf $DST
-rm -rf android/$APP_PKG
+rm -rf android/$APP_PKG/{call,rx}
 mkdir -p $DST
 mkdir -p android/$APP_PKG
 cp -r libTba/swagger/tmp/$PKG/call/ android/$APP_PKG
