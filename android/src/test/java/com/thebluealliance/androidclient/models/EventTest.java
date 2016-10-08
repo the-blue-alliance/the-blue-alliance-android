@@ -29,7 +29,7 @@ public class EventTest {
     }
 
     @Test
-    public void testEventModel() throws BasicModel.FieldNotDefinedException {
+    public void testEventModel()  {
         assertNotNull(mEvent);
         assertEquals(mEvent.getKey(), "2015cthar");
         assertEquals(mEvent.getWebsite(), "http://www.nefirst.org/");

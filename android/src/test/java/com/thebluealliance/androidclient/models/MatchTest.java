@@ -29,7 +29,7 @@ public class MatchTest {
     }
 
     @Test
-    public void testMatchModel() throws BasicModel.FieldNotDefinedException {
+    public void testMatchModel()  {
         assertNotNull(mMatch);
         assertEquals(mMatch.getKey(), "2014cmp_f1m1");
         assertEquals(mMatch.getMatchNumber().intValue(), 1);
@@ -60,7 +60,7 @@ public class MatchTest {
     }
 
     @Test
-    public void testUtilities() throws BasicModel.FieldNotDefinedException {
+    public void testUtilities()  {
         JsonArray teamsJson = Match.getRedTeams(mMatch.getAlliancesJson());
         ArrayList<String> teamKeys = Match.teamKeys(teamsJson);
         assertEquals(Arrays.asList("frc1678", "frc1640", "frc1114"), teamKeys);

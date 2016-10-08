@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.types.MatchType;
@@ -54,7 +53,7 @@ public final class MatchHelper {
      * @return Next match
      */
     public static @Nullable Match getNextMatchPlayed(List<Match> matches)
-      throws BasicModel.FieldNotDefinedException {
+       {
         if (matches == null || matches.isEmpty()) return null;
 
         Match last = null;
@@ -78,7 +77,7 @@ public final class MatchHelper {
      * @return Last match played
      */
     public static @Nullable Match getLastMatchPlayed(List<Match> matches)
-      throws BasicModel.FieldNotDefinedException {
+       {
         if (matches == null || matches.isEmpty()) return null;
         for (int i = matches.size() - 1; i >= 0; i--) {
             Match m = matches.get(i);
@@ -200,7 +199,7 @@ public final class MatchHelper {
      * @return team's past/current event status
      */
     public static EventStatus evaluateStatusOfTeam(Event e, List<Match> teamMatches, String teamKey)
-    throws BasicModel.FieldNotDefinedException {
+     {
 
         // There might be match info available,
         // but no alliance selection data (for old events)

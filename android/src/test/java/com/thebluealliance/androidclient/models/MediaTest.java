@@ -29,7 +29,7 @@ public class MediaTest {
     }
 
     @Test
-    public void testCdMedia() throws BasicModel.FieldNotDefinedException {
+    public void testCdMedia()  {
         assertNotNull(cdMedia);
         assertEquals(MediaType.fromString(cdMedia.getType()),
                      MediaType.CD_PHOTO_THREAD);
@@ -41,7 +41,7 @@ public class MediaTest {
     }
 
     @Test
-    public void testYtMedia() throws BasicModel.FieldNotDefinedException {
+    public void testYtMedia()  {
         assertNotNull(ytMedia);
         assertEquals(MediaType.fromString(ytMedia.getType()),
                      MediaType.YOUTUBE);

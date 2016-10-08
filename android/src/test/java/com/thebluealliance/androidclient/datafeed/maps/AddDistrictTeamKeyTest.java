@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.datafeed.maps;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 
 import org.junit.Before;
@@ -36,7 +35,7 @@ public class AddDistrictTeamKeyTest {
     }
 
     @Test
-    public void testAddDistrictTeamKey() throws BasicModel.FieldNotDefinedException {
+    public void testAddDistrictTeamKey()  {
         List<DistrictTeam> teamList = new ArrayList<>();
         teamList.add(mDistrictTeam);
 

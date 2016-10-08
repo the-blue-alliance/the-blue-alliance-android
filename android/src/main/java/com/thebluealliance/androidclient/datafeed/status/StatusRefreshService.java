@@ -2,9 +2,9 @@ package com.thebluealliance.androidclient.datafeed.status;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.api.rx.TbaApiV2;
-import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
@@ -16,7 +16,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.WorkerThread;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import javax.inject.Inject;
 import javax.inject.Named;

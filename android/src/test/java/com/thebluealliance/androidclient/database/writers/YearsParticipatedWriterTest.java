@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.database.writers;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
-import com.thebluealliance.androidclient.models.BasicModel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +39,7 @@ public class YearsParticipatedWriterTest {
     }
 
     @Test
-    public void testTeamListWriter() throws BasicModel.FieldNotDefinedException {
+    public void testTeamListWriter()  {
         mWriter.write(mInfo);
     }
 }

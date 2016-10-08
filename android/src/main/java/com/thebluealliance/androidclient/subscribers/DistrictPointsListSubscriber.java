@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.comparators.PointBreakdownComparater;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
@@ -41,7 +40,7 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement,
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind.clear();
         JsonObject rankingsData = mAPIData.getAsJsonObject();
         if (!rankingsData.has("points")) {

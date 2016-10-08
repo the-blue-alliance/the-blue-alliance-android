@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.fragments.framework;
 
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 
 /**
@@ -9,7 +8,7 @@ import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 public class SimpleSubscriber extends BaseAPISubscriber<String, String> {
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind = mAPIData + ":" + mAPIData;
     }
 }

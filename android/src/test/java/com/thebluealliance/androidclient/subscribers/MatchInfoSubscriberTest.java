@@ -10,7 +10,6 @@ import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
@@ -64,18 +63,18 @@ public class MatchInfoSubscriberTest {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mData);
         verify(mEventBus).post(any(ActionBarTitleEvent.class));
     }
 
     @Test
-    public void testParsedData() throws BasicModel.FieldNotDefinedException {
+    public void testParsedData()  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mData);
 
         assertEquals(2, data.size());

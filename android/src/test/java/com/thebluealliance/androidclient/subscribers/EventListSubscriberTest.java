@@ -4,7 +4,6 @@ import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 
@@ -50,17 +49,17 @@ public class EventListSubscriberTest {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mEvents);
     }
 
     @Test
-    public void testParseWeek() throws BasicModel.FieldNotDefinedException {
+    public void testParseWeek()  {
         mSubscriber.setRenderMode(EventListSubscriber.MODE_WEEK);
         List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvents);
         EventHelper.renderEventListForWeek(mContext, mEvents, mExpected);
@@ -69,7 +68,7 @@ public class EventListSubscriberTest {
     }
 
     @Test
-    public void testParseTeam() throws BasicModel.FieldNotDefinedException {
+    public void testParseTeam()  {
         mSubscriber.setRenderMode(EventListSubscriber.MODE_TEAM);
         List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvents);
         EventHelper.renderEventListForWeek(mContext, mEvents, mExpected);
@@ -78,7 +77,7 @@ public class EventListSubscriberTest {
     }
 
     @Test
-    public void testParseDistrict() throws BasicModel.FieldNotDefinedException {
+    public void testParseDistrict()  {
         mSubscriber.setRenderMode(EventListSubscriber.MODE_DISTRICT);
         List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvents);
         EventHelper.renderEventListForDistrict(mContext, mEvents, mExpected);

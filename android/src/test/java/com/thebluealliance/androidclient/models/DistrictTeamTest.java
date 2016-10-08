@@ -22,7 +22,7 @@ public class DistrictTeamTest {
     }
 
     @Test
-    public void testDistrictTeamModel() throws BasicModel.FieldNotDefinedException {
+    public void testDistrictTeamModel()  {
         assertNotNull(mDistrictTeam);
         assertEquals("frc1124", mDistrictTeam.getTeamKey());
         assertEquals((Integer)26, mDistrictTeam.getRank());

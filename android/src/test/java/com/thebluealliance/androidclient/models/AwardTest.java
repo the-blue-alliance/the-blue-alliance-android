@@ -28,7 +28,7 @@ public class AwardTest {
     }
 
     @Test
-    public void testTeamAward() throws BasicModel.FieldNotDefinedException {
+    public void testTeamAward()  {
         assertNotNull(mTeamAward);
         assertEquals(mTeamAward.getEventKey(), "2015cthar");
         assertEquals(mTeamAward.getEnum(), 17);
@@ -46,7 +46,7 @@ public class AwardTest {
     }
 
     @Test
-    public void testIndividualAward() throws BasicModel.FieldNotDefinedException {
+    public void testIndividualAward()  {
         assertNotNull(mIndividualAward);
         assertEquals(mIndividualAward.getEventKey(), "2015necmp");
         assertEquals(mIndividualAward.getEnum(), 5);

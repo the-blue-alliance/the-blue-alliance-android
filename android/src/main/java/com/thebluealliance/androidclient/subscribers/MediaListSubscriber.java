@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.ListGroup;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.types.MediaType;
 
@@ -23,7 +22,7 @@ public class MediaListSubscriber extends BaseAPISubscriber<List<Media>, List<Lis
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException{
+    public void parseData() {
         mDataToBind.clear();
         mPhotos.clear();
         mVideos.clear();

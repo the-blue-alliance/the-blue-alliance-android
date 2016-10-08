@@ -9,7 +9,6 @@ import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
 
 import org.greenrobot.eventbus.EventBus;
@@ -50,17 +49,17 @@ public class AwardsListSubscriberTest {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mAwards);
     }
 
     @Test
-    public void testParse() throws BasicModel.FieldNotDefinedException {
+    public void testParse()  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mAwards);
 
         assertEquals(data.size(), 4);
@@ -76,7 +75,7 @@ public class AwardsListSubscriberTest {
     }
 
     @Test
-    public void testSelectedTeam() throws BasicModel.FieldNotDefinedException {
+    public void testSelectedTeam()  {
         mSubscriber.setTeamKey("frc195");
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mAwards);
         CardedAwardListElement element = (CardedAwardListElement) data.get(0);
@@ -85,26 +84,26 @@ public class AwardsListSubscriberTest {
     }
 
     @Test
-    public void testParseMultiTeamWinner() throws BasicModel.FieldNotDefinedException {
+    public void testParseMultiTeamWinner()  {
         assertItemsEqual(0);
     }
 
     @Test
-    public void testParseSinglePersonWinner() throws BasicModel.FieldNotDefinedException {
+    public void testParseSinglePersonWinner()  {
         assertItemsEqual(1);
     }
 
     @Test
-    public void testParseMultiPersonWinner() throws BasicModel.FieldNotDefinedException {
+    public void testParseMultiPersonWinner()  {
         assertItemsEqual(2);
     }
 
     @Test
-    public void testParseSingleTeamWinner() throws BasicModel.FieldNotDefinedException {
+    public void testParseSingleTeamWinner()  {
         assertItemsEqual(3);
     }
 
-    private void assertItemsEqual(int index) throws BasicModel.FieldNotDefinedException {
+    private void assertItemsEqual(int index)  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mAwards);
         CardedAwardListElement element = (CardedAwardListElement) data.get(index);
         Award award = mAwards.get(index);

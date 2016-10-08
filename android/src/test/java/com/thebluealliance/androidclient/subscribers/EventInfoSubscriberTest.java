@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.subscribers;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
 import junit.framework.TestCase;
@@ -28,17 +27,17 @@ public class EventInfoSubscriberTest extends TestCase {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mEvent);
     }
 
     @Test
-    public void testParse() throws BasicModel.FieldNotDefinedException {
+    public void testParse()  {
         EventInfoBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mEvent);
 
         assertEquals(data.eventKey, mEvent.getKey());

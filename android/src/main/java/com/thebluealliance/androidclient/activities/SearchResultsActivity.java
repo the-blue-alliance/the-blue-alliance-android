@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.activities;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
@@ -12,7 +13,6 @@ import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.SearchResultsHeaderListElement;
 import com.thebluealliance.androidclient.listitems.TeamListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -24,14 +24,12 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import com.thebluealliance.androidclient.TbaLogger;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class SearchResultsActivity extends NavigationDrawerActivity implements SearchView.OnQueryTextListener {
 
@@ -153,14 +151,9 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     Database.getInstance(this).getTeamsTable().deleteSearchIndex(team);
                     continue;
                 }
-                try {
-                    TeamListElement element;
-                    element = new TeamListElement(team);
-                    listItems.add(element);
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    TbaLogger.e("Can't add team search result item. Missing fields... "
-                                + Arrays.toString(e.getStackTrace()));
-                }
+                TeamListElement element;
+                element = new TeamListElement(team);
+                listItems.add(element);
                 TbaLogger.d("titles: " + teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.TITLES)));
             }
             teamQueryResults.close();
@@ -200,14 +193,9 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     Database.getInstance(this).getEventsTable().deleteSearchIndex(event);
                     continue;
                 }
-                try {
-                    EventListElement element;
-                    element = new EventListElement(event);
-                    listItems.add(element);
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    TbaLogger.e("Can't add event search result with missing fields...\n"
-                                + Arrays.toString(e.getStackTrace()));
-                }
+                EventListElement element;
+                element = new EventListElement(event);
+                listItems.add(element);
             }
             eventQueryResults.close();
         } else {

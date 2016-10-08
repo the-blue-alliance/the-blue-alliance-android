@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.listitems.ListGroup;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
@@ -33,7 +32,7 @@ public class TeamAtDistrictBreakdownSubscriber
     }
 
     @Override
-    public synchronized void parseData() throws BasicModel.FieldNotDefinedException {
+    public synchronized void parseData()  {
         mDataToBind.clear();
         Map<String, JsonObject> eventBreakdowns =
           Utilities.getMapForPlatform(String.class, JsonObject.class);

@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.subscribers;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
 import org.junit.Before;
@@ -29,17 +28,17 @@ public class TeamInfoSubscriberTest {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mTeam);
     }
 
     @Test
-    public void testParsedData() throws BasicModel.FieldNotDefinedException {
+    public void testParsedData()  {
         TeamInfoBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mTeam);
 
         assertNotNull(data);

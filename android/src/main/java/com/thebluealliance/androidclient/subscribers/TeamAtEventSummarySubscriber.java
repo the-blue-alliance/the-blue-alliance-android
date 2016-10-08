@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.subscribers;
 import com.google.gson.JsonArray;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
@@ -15,7 +14,6 @@ import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.models.Award;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
@@ -30,7 +28,6 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -74,7 +71,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
     }
 
     @Override
-    public synchronized void parseData() throws BasicModel.FieldNotDefinedException {
+    public synchronized void parseData()  {
         mDataToBind.clear();
         Match nextMatch = null, lastMatch = null;
         Collections.sort(mMatches, new MatchSortByPlayOrderComparator());
@@ -141,13 +138,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         LabelValueViewModel rankBreakdownItem = new LabelValueViewModel("Ranking Breakdown", rankingString);
 
         MatchHelper.EventStatus status;
-        try {
-            status = MatchHelper.evaluateStatusOfTeam(event, mMatches, mTeamKey);
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.d("Status could not be evaluated for team; missing fields: "
-                        + Arrays.toString(e.getStackTrace()));
-            status = MatchHelper.EventStatus.NOT_AVAILABLE;
-        }
+        status = MatchHelper.evaluateStatusOfTeam(event, mMatches, mTeamKey);
 
         // Number of awards, only if nonzero
         if (mAwards.size() > 0) {
@@ -240,13 +231,9 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         }
         mIsMatchListLoaded = true;
         mMatches = new ArrayList<>(matches.getMatches());
-        try {
-            if (isDataValid()) {
-                parseData();
-                bindData();
-            }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            e.printStackTrace();
+        if (isDataValid()) {
+            parseData();
+            bindData();
         }
     }
 
@@ -262,13 +249,9 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         }
         mIsAwardListLoaded = true;
         mAwards = new ArrayList<>(awards.getAwards());
-        try {
-            if (isDataValid()) {
-                parseData();
-                bindData();
-            }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            e.printStackTrace();
+        if (isDataValid()) {
+            parseData();
+            bindData();
         }
     }
 }

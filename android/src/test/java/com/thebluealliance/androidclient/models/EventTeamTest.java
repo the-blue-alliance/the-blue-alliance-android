@@ -26,7 +26,7 @@ public class EventTeamTest {
     }
 
     @Test
-    public void testModel() throws BasicModel.FieldNotDefinedException {
+    public void testModel()  {
         assertNotNull(mEventTeam);
         assertEquals("frc1124", mEventTeam.getTeamKey());
         assertEquals("2015necmp", mEventTeam.getEventKey());

@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.firebase.AllianceAdvancementEvent;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 import com.thebluealliance.androidclient.types.PlayoffAdvancement;
@@ -29,7 +28,7 @@ public class AllianceListSubscriber extends BaseAPISubscriber<Event, List<ListIt
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind.clear();
 
         mRenderer.renderAlliances(mAPIData, mDataToBind, mAdvancement);
@@ -52,13 +51,9 @@ public class AllianceListSubscriber extends BaseAPISubscriber<Event, List<ListIt
             return;
         }
         mAdvancement = advancementEvent.advancement;
-        try {
-            if (isDataValid()) {
-                parseData();
-                bindData();
-            }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            e.printStackTrace();
+        if (isDataValid()) {
+            parseData();
+            bindData();
         }
     }
 }

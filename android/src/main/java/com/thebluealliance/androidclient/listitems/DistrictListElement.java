@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.listitems;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listeners.DistrictClickListener;
 import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.types.ModelType;
 
@@ -22,7 +21,7 @@ public class DistrictListElement extends ListElement {
     public final boolean showMyTba;
 
     public DistrictListElement(District district, int numEvents, boolean showMyTba)
-      throws BasicModel.FieldNotDefinedException {
+       {
         super(district.getKey());
         key = district.getKey();
         year = district.getYear();

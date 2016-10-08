@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.datafeed.combiners;
 import com.thebluealliance.androidclient.database.writers.EventTeamAndTeamListWriter;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -32,7 +31,7 @@ public class TeamAndEventTeamCombinerTest {
     }
 
     @Test
-    public void testTeamAndEventTeamCombiner() throws BasicModel.FieldNotDefinedException {
+    public void testTeamAndEventTeamCombiner()  {
         EventTeamAndTeamListWriter.EventTeamAndTeam result = mCombiner.call(mTeams);
 
         assertNotNull(result);

@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.binders.EventInfoBinder.Model;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
 public class EventInfoSubscriber extends BaseAPISubscriber<Event, Model> {
@@ -12,7 +11,7 @@ public class EventInfoSubscriber extends BaseAPISubscriber<Event, Model> {
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind = new Model();
         mDataToBind.eventKey = mAPIData.getKey();
         mDataToBind.nameString = mAPIData.getName();

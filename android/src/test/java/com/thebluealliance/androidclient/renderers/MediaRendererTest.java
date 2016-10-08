@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.renderers;
 
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.types.MediaType;
 
@@ -50,7 +49,7 @@ public class MediaRendererTest {
     }
 
     @Test
-    public void testRenderFromModel() throws BasicModel.FieldNotDefinedException {
+    public void testRenderFromModel()  {
         ImageListElement listItem = mRenderer.renderFromModel(mMedia, null);
         assertNotNull(listItem);
         assertEquals(listItem.isVideo, mMediaType.isVideo());

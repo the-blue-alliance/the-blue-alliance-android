@@ -6,7 +6,6 @@ import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.WebcastListElement;
-import com.thebluealliance.androidclient.models.BasicModel.FieldNotDefinedException;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.types.ModelType;
 
@@ -70,7 +69,7 @@ public class EventRendererTest  {
     }
 
     @Test
-    public void testRenderWebcasts() throws FieldNotDefinedException {
+    public void testRenderWebcasts() {
         List<WebcastListElement> elements = mRenderer.renderWebcasts(mEvent);
         assertNotNull(elements);
         assertEquals(elements.size(), 1);
@@ -84,19 +83,19 @@ public class EventRendererTest  {
     }
 
     @Test
-    public void testRenderAlliances() throws FieldNotDefinedException {
+    public void testRenderAlliances() {
         List<ListItem> elements = mRenderer.renderAlliances(mEvent);
         assertAllianceList(elements);
     }
 
     @Test
-    public void testRenderAlliancesWithList() throws FieldNotDefinedException {
+    public void testRenderAlliancesWithList() {
         List<ListItem> elements = new ArrayList<>();
         mRenderer.renderAlliances(mEvent, elements, null);
         assertAllianceList(elements);
     }
 
-    private void assertAllianceList(List<ListItem> alliances) throws FieldNotDefinedException {
+    private void assertAllianceList(List<ListItem> alliances) {
         assertNotNull(alliances);
         // TODO(773) Needs EventDetailsA
         /*

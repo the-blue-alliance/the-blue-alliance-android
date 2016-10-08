@@ -6,7 +6,6 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.comparators.EventSortByTypeAndDateComparator;
 import com.thebluealliance.androidclient.eventbus.LiveEventUpdateEvent;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
@@ -109,7 +108,7 @@ public final class EventHelper {
         return week < 0 ? 0 : week;
     }
 
-    public static String generateLabelForEvent(Event e) throws BasicModel.FieldNotDefinedException {
+    public static String generateLabelForEvent(Event e)  {
         switch (e.getEventTypeEnum()) {
             case CMP_DIVISION:
             case CMP_FINALS:

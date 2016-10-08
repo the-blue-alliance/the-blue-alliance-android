@@ -10,7 +10,6 @@ import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.listitems.LabelValueDetailListItem;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 
 import org.greenrobot.eventbus.EventBus;
@@ -58,18 +57,18 @@ public class TeamAtDistrictSummarySubscriberTest {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mDistrictTeam);
         verify(mEventBus).post(any(ActionBarTitleEvent.class));
     }
 
     @Test
-    public void testParsedData() throws BasicModel.FieldNotDefinedException {
+    public void testParsedData()  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mDistrictTeam);
 
         assertEquals(5, data.size());
