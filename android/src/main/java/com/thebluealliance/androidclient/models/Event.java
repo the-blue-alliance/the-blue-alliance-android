@@ -252,6 +252,9 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     }
 
     public Date getFormattedStartDate() {
+        if (startDate == null) {
+            startDate = new Date(getStartDate() != null ? getStartDate() : 0);
+        }
         return startDate;
     }
 
@@ -266,6 +269,9 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     }
 
     public Date getFormattedEndDate() {
+        if (endDate == null) {
+            endDate = new Date(getEndDate() != null ? getEndDate() : 0);
+        }
         return endDate;
     }
     /**
