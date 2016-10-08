@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.activities.settings;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
@@ -18,7 +19,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.v7.app.AppCompatActivity;
-import com.thebluealliance.androidclient.TbaLogger;
 import android.view.MenuItem;
 import android.view.View;
 

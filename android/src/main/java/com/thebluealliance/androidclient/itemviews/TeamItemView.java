@@ -47,7 +47,7 @@ public class TeamItemView extends BindableFrameLayout<TeamViewModel> {
 
         teamNumber.setText(String.format("%1$d", model.getTeamNumber()));
 
-        if (model.getTeamName().isEmpty()) {
+        if (model.getTeamName() == null || model.getTeamName().isEmpty()) {
             teamName.setText(String.format("Team %1$s", model.getTeamNumber()));
         } else {
             teamName.setText(model.getTeamName());

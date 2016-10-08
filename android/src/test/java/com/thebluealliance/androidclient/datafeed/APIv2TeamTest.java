@@ -52,7 +52,7 @@ public class APIv2TeamTest extends AbstractAPIv2Test {
     public void testFetchTeamYearsParticipated(){
         mApi.fetchTeamYearsParticipated("frc1124", null).subscribe(years -> {
             assertTrue(years.body().size() > 0);
-            assertEquals(years.body().get(0).getAsInt(), 2003);
+            assertEquals(years.body().get(0).intValue(), 2003);
         });
     }
 

@@ -5,7 +5,6 @@ import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
 import com.thebluealliance.androidclient.models.District;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -22,16 +21,6 @@ public class DistrictsTable extends ModelTable<District> {
     public DistrictsTable(SQLiteDatabase db){
         super(db);
         this.mDb = db;
-    }
-
-    @Override
-    protected String getKey(District in) {
-        return in.getKey();
-    }
-
-    @Override
-    protected ContentValues getParams(District in) {
-        return in.getParams();
     }
 
     @Override

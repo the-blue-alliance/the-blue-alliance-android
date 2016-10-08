@@ -2,12 +2,10 @@ package com.thebluealliance.androidclient.renderers;
 
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.types.ModelType;
 
 import android.support.annotation.Nullable;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,16 +27,10 @@ public class DistrictTeamRenderer implements ModelRenderer<DistrictTeam, Void> {
     @Nullable
     @Override
     public DistrictTeamListElement renderFromModel(DistrictTeam districtTeam, Void aVoid) {
-        try {
-            return new DistrictTeamListElement(
-              districtTeam.getTeamKey(),
-              districtTeam.getDistrictKey(),
-              districtTeam.getRank(),
-              districtTeam.getTotalPoints());
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.w("Unable to render districtTeam. Missing fields");
-            e.printStackTrace();
-            return null;
-        }
+        return new DistrictTeamListElement(
+                districtTeam.getTeamKey(),
+                districtTeam.getDistrictKey(),
+                districtTeam.getRank(),
+                districtTeam.getTotalPoints());
     }
 }

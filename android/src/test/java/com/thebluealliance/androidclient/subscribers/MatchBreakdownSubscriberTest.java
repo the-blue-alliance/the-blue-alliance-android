@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.subscribers;
 import com.thebluealliance.androidclient.binders.MatchBreakdownBinder;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 
 import org.junit.Before;
@@ -28,19 +27,20 @@ public class MatchBreakdownSubscriberTest {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsin() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsin()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mMatch);
     }
 
     @Test
-    public void testParsedData() throws BasicModel.FieldNotDefinedException {
+    public void testParsedData()  {
         MatchBreakdownBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mMatch);
-        assertEquals(new MatchBreakdownBinder.Model(mMatch.getAlliances(), mMatch.getBreakdown()), data);
+        assertEquals(new MatchBreakdownBinder.Model(mMatch.getAlliancesJson(),
+                                                    mMatch.getScoreBreakdownJson()), data);
     }
 
 }

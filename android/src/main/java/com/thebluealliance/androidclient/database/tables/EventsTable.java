@@ -1,17 +1,14 @@
 package com.thebluealliance.androidclient.database.tables;
 
-import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +52,7 @@ public class EventsTable extends ModelTable<Event> {
      *
      * @return comma-separated list of this model's columns
      */
-    public static String getAllColumnsForJoin() {
+    static String getAllColumnsForJoin() {
         List<String> columns = new ArrayList<>();
         columns.add(KEY);
         columns.add(YEAR);
@@ -93,33 +90,20 @@ public class EventsTable extends ModelTable<Event> {
     @Override
     protected void insertCallback(Event event) {
         ContentValues cv = new ContentValues();
-        try {
-            cv.put(Database.SearchEvent.KEY, event.getKey());
-            cv.put(Database.SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
-            cv.put(Database.SearchEvent.YEAR, event.getYear());
-            mDb.insert(Database.TABLE_SEARCH_EVENTS, null, cv);
-
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.e("Can't insert event search item without the following fields:"
-                        + "Database.Events.KEY, Database.Events.YEAR");
-        } catch (SQLiteException e) {
-            TbaLogger.w("Trying to add a SearchEvent that already exists. " + event.getKey());
-        }
+        cv.put(Database.SearchEvent.KEY, event.getKey());
+        cv.put(Database.SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
+        cv.put(Database.SearchEvent.YEAR, event.getYear());
+        mDb.insert(Database.TABLE_SEARCH_EVENTS, null, cv);
     }
 
     @Override
     protected void updateCallback(Event event) {
-        try {
-            ContentValues cv = new ContentValues();
-            cv.put(Database.SearchEvent.KEY, event.getKey());
-            cv.put(Database.SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
-            cv.put(Database.SearchEvent.YEAR, event.getYear());
+        ContentValues cv = new ContentValues();
+        cv.put(Database.SearchEvent.KEY, event.getKey());
+        cv.put(Database.SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
+        cv.put(Database.SearchEvent.YEAR, event.getYear());
 
-            mDb.update(Database.TABLE_SEARCH_EVENTS, cv, Database.SearchEvent.KEY + "=?", new String[]{event.getKey()});
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.e("Can't insert event search item without the following fields:"
-                        + "Database.Events.KEY, Database.Events.YEAR");
-        }
+        mDb.update(Database.TABLE_SEARCH_EVENTS, cv, Database.SearchEvent.KEY + "=?", new String[]{event.getKey()});
     }
 
     @Override
@@ -130,16 +114,6 @@ public class EventsTable extends ModelTable<Event> {
     @Override
     protected void deleteAllCallback() {
         mDb.execSQL("delete from " + Database.TABLE_SEARCH_EVENTS);
-    }
-
-    @Override
-    protected String getKey(Event in) {
-        return in.getKey();
-    }
-
-    @Override
-    protected ContentValues getParams(Event in) {
-        return in.getParams();
     }
 
     @Override

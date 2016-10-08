@@ -225,6 +225,9 @@ repositories {
 
 check {
     abortOnError true
+    checkstyle {
+        config project.file('../config/checkstyle.xml')
+    }
 }
 
 dependencies {

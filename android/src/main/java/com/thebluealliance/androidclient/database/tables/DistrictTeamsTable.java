@@ -5,7 +5,6 @@ import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -27,21 +26,8 @@ public class DistrictTeamsTable extends ModelTable<DistrictTeam> {
             TOTAL_POINTS = "totalPoints",
             JSON = "json";
 
-    private SQLiteDatabase mDb;
-
     public DistrictTeamsTable(SQLiteDatabase db){
         super(db);
-        this.mDb = db;
-    }
-
-    @Override
-    protected String getKey(DistrictTeam in) {
-        return in.getKey();
-    }
-
-    @Override
-    protected ContentValues getParams(DistrictTeam in) {
-        return in.getParams();
     }
 
     @Override

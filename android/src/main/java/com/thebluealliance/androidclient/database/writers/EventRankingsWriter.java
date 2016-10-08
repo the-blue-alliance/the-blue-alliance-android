@@ -24,7 +24,8 @@ public class EventRankingsWriter extends BaseDbWriter<KeyAndJson> {
         try {
             Event event = mDb.getEventsTable().get(newData.key);
             if (event != null && newData.json != null && newData.json.isJsonArray()) {
-                event.setRankings(newData.json.getAsJsonArray());
+                //TODO(773) Requires EventDetails
+                //event.setRankings(newData.json.getAsJsonArray());
                 mEventWriter.write(event);
             }
             mDb.getWritableDatabase().setTransactionSuccessful();

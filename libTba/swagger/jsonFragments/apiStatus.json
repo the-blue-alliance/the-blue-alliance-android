@@ -24,6 +24,10 @@
           "type": "integer",
           "description": "Max year we have data for"
         },
+        "currentSeason": {
+          "type": "integer",
+          "description": "Current default year to show"
+        },
         "fmsApiDown": {
           "type": "boolean",
           "description": "Is FIRST's datafeed down?"
@@ -37,7 +41,8 @@
           "description": "Newest app version code"
         },
         "lastOkHttpCacheClear": {
-          "type": "long",
+          "type": "integer",
+          "format": "int64",
           "description": "Ensure that the app's network caches are cleared by this timestamp"
         },
         "downEvents": {
@@ -52,7 +57,8 @@
           "description": "Location of data file for CMP pits"
         },
         "champsPitLocationsUpdateTime": {
-          "type": "long",
+          "type": "integer",
+          "format": "int64",
           "description": "Last update of CMP pit location"
         },
         "hasMessage": {
@@ -64,7 +70,8 @@
           "description": "Admin message"
         },
         "messageExpiration": {
-          "type": "datetime",
+          "type": "integer",
+          "format": "int64",
           "description": "Expiration of the admin message"
         }
       }

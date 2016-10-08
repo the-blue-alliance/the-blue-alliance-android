@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
 import org.junit.Before;
@@ -31,14 +30,14 @@ public class WeekEventsExtractorTest {
     }
 
     @Test
-    public void testWeekEventsExtractor() throws BasicModel.FieldNotDefinedException {
+    public void testWeekEventsExtractor()  {
         List<Event> events = mExtractor.call(mEvents);
 
         assertNotNull(events);
         assertEquals(events.size(), 21);
         for (int i = 0; i < events.size(); i++) {
             Event event = events.get(i);
-            assertEquals(event.getCompetitionWeek(), mWeek);
+            assertEquals(event.getCompetitionWeek(), (Integer)mWeek);
         }
     }
 }

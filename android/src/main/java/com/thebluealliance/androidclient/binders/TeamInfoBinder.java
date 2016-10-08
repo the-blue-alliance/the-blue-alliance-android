@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.binders;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
 
@@ -13,7 +14,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
-import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 import android.widget.TextView;
 

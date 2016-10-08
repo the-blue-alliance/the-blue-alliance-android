@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.datafeed.gce;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 
 import android.content.Context;
@@ -10,7 +11,6 @@ import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import java.io.IOException;
 

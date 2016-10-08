@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.listitems;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
 import com.thebluealliance.androidclient.listeners.TeamClickListener;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.ModelType;
 
@@ -21,9 +20,9 @@ public class TeamListElement extends ListElement {
     public final boolean mShowLinkToTeamDetails;
     public final boolean mShowMyTbaDetails;
 
-    public TeamListElement(Team team) throws BasicModel.FieldNotDefinedException {
+    public TeamListElement(Team team) {
         super(team.getKey());
-        mTeamNumber = team.getNumber();
+        mTeamNumber = team.getTeamNumber();
         mTeamName = team.getNickname();
         mTeamLocation = team.getLocation();
         mShowLinkToTeamDetails = false;

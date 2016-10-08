@@ -6,7 +6,6 @@ import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.renderers.DistrictRenderer;
 
@@ -46,17 +45,17 @@ public class DistrictListSubscriberTest {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mDistricts);
     }
 
     @Test
-    public void testParse() throws BasicModel.FieldNotDefinedException {
+    public void testParse()  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mDistricts);
 
         assertEquals(data.size(), 5);

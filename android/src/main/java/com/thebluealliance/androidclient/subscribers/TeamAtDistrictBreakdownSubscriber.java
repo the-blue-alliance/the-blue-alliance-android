@@ -5,9 +5,7 @@ import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.listitems.ListGroup;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
@@ -34,28 +32,28 @@ public class TeamAtDistrictBreakdownSubscriber
     }
 
     @Override
-    public synchronized void parseData() throws BasicModel.FieldNotDefinedException {
+    public synchronized void parseData()  {
         mDataToBind.clear();
         Map<String, JsonObject> eventBreakdowns =
           Utilities.getMapForPlatform(String.class, JsonObject.class);
         JsonObject rawDistrictTeam = mGson.fromJson(mAPIData.getJson(), JsonObject.class);
         JsonObject eventPoints = rawDistrictTeam.get("event_points").getAsJsonObject();
 
-        if (mAPIData.hasField(DistrictTeamsTable.EVENT1_KEY)) {
+        if (mAPIData.getEvent1Key() != null) {
             String event1Key = mAPIData.getEvent1Key();
             if (eventPoints.has(event1Key)) {
                 eventBreakdowns.put(event1Key, eventPoints.get(event1Key).getAsJsonObject());
             }
         }
 
-        if (mAPIData.hasField(DistrictTeamsTable.EVENT2_KEY)) {
+        if (mAPIData.getEvent2Key() != null) {
             String event2Key = mAPIData.getEvent2Key();
             if (eventPoints.has(event2Key)) {
                 eventBreakdowns.put(event2Key, eventPoints.get(event2Key).getAsJsonObject());
             }
         }
 
-        if (mAPIData.hasField(DistrictTeamsTable.CMP_KEY)) {
+        if (mAPIData.getCmpKey() != null) {
             String cmpKey = mAPIData.getCmpKey();
             if (eventPoints.has(cmpKey)) {
                 eventBreakdowns.put(cmpKey, eventPoints.get(cmpKey).getAsJsonObject());

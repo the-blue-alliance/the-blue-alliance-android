@@ -19,33 +19,44 @@ import static junit.framework.Assert.assertTrue;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class MediaTest {
-    Media cdMedia;
-    Media ytMedia;
+    private Media cdMedia;
+    private Media ytMedia;
+    private Media imgurMedia;
 
     @Before
     public void readJsonData(){
         cdMedia = ModelMaker.getModel(Media.class, "media_cdphotothread");
         ytMedia = ModelMaker.getModel(Media.class, "media_youtube");
+        imgurMedia = ModelMaker.getModel(Media.class, "media_imgur");
     }
 
     @Test
-    public void testCdMedia() throws BasicModel.FieldNotDefinedException {
+    public void testCdMedia()  {
         assertNotNull(cdMedia);
-        assertEquals(cdMedia.getMediaType(),
+        assertEquals(MediaType.fromString(cdMedia.getType()),
                      MediaType.CD_PHOTO_THREAD);
         assertEquals(cdMedia.getForeignKey(), "39894");
-        assertFalse(cdMedia.getDetails().isJsonNull());
-        JsonObject details = cdMedia.getDetails();
+        assertFalse(cdMedia.getDetailsJson().isJsonNull());
+        JsonObject details = cdMedia.getDetailsJson();
         assertTrue(details.has("image_partial"));
         assertEquals(details.get("image_partial").getAsString(), "fe3/fe38d320428adf4f51ac969efb3db32c_l.jpg");
     }
 
     @Test
-    public void testYtMedia() throws BasicModel.FieldNotDefinedException {
+    public void testYtMedia()  {
         assertNotNull(ytMedia);
-        assertEquals(ytMedia.getMediaType(),
+        assertEquals(MediaType.fromString(ytMedia.getType()),
                      MediaType.YOUTUBE);
         assertEquals(ytMedia.getForeignKey(), "RpSgUrsghv4");
-        assertFalse(ytMedia.getDetails().isJsonNull());
+        assertFalse(ytMedia.getDetailsJson().isJsonNull());
+    }
+
+    @Test
+    public void testImgurMedia() {
+        assertNotNull(imgurMedia);
+        assertEquals(MediaType.fromString(imgurMedia.getType()),
+                     MediaType.IMGUR);
+        assertEquals(imgurMedia.getForeignKey(), "aF8T5ZE");
+        assertFalse(imgurMedia.getDetailsJson().isJsonNull());
     }
 }

@@ -4,8 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import com.firebase.client.Firebase;
-import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.ViewUtilities;
 import com.thebluealliance.androidclient.adapters.AnimatedRecyclerMultiAdapter;

@@ -5,7 +5,6 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
 import android.content.ContentValues;
@@ -43,11 +42,8 @@ public class TeamsTable extends ModelTable<Team> {
         try {
             cv.put(Database.SearchTeam.KEY, team.getKey());
             cv.put(Database.SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
-            cv.put(Database.SearchTeam.NUMBER, team.getNumber());
+            cv.put(Database.SearchTeam.NUMBER, team.getTeamNumber());
             mDb.insert(Database.TABLE_SEARCH_TEAMS, null, cv);
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.e("Can't insert search team without the following fields:"
-                        + "Database.Teams.KEY, Database.Teams.NUMBER");
         } catch (SQLiteException e) {
             TbaLogger.w("Trying to add a SearchTeam that already exists. " + team.getKey());
         }
@@ -55,16 +51,15 @@ public class TeamsTable extends ModelTable<Team> {
 
     @Override
     protected void updateCallback(Team team) {
-        try {
-            ContentValues cv = new ContentValues();
-            cv.put(Database.SearchTeam.KEY, team.getKey());
-            cv.put(Database.SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
-            cv.put(Database.SearchTeam.NUMBER, team.getNumber());
-            mDb.update(Database.TABLE_SEARCH_TEAMS, cv, Database.SearchTeam.KEY + "=?", new String[]{team.getKey()});
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.e("Can't insert event search item without the following fields:"
-                        + "Database.Events.KEY, Database.Events.YEAR");
-        }
+        ContentValues cv = new ContentValues();
+        cv.put(Database.SearchTeam.KEY, team.getKey());
+        cv.put(Database.SearchTeam.TITLES,
+               Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
+        cv.put(Database.SearchTeam.NUMBER, team.getTeamNumber());
+        mDb.update(Database.TABLE_SEARCH_TEAMS,
+                   cv,
+                   Database.SearchTeam.KEY + "=?",
+                   new String[]{team.getKey()});
     }
 
     @Override
@@ -75,16 +70,6 @@ public class TeamsTable extends ModelTable<Team> {
     @Override
     protected void deleteAllCallback() {
         mDb.execSQL("delete from " + Database.TABLE_SEARCH_TEAMS);
-    }
-
-    @Override
-    protected String getKey(Team in) {
-        return in.getKey();
-    }
-
-    @Override
-    protected ContentValues getParams(Team in) {
-        return in.getParams();
     }
 
     public String getTableName() {
@@ -99,24 +84,6 @@ public class TeamsTable extends ModelTable<Team> {
     @Override
     public Team inflate(Cursor cursor) {
         return ModelInflater.inflateTeam(cursor);
-    }
-
-    public Cursor getCursorForTeamsInRange(int lowerBound, int upperBound) {
-        Cursor cursor = mDb.rawQuery("SELECT " + Database.TABLE_TEAMS + ".rowid as '_id',"
-                + TeamsTable.KEY + ","
-                + TeamsTable.NUMBER + ","
-                + TeamsTable.NAME + ","
-                + TeamsTable.SHORTNAME + ","
-                + TeamsTable.LOCATION
-                + " FROM " + Database.TABLE_TEAMS + " WHERE " + TeamsTable.NUMBER + " BETWEEN ?+0 AND ?+0 ORDER BY ? ASC", new String[]{String.valueOf(lowerBound), String.valueOf(upperBound), TeamsTable.NUMBER});
-
-        if (cursor == null) {
-            return null;
-        } else if (!cursor.moveToFirst()) {
-            cursor.close();
-            return null;
-        }
-        return cursor;
     }
 
     public void deleteAllSearchIndexes() {

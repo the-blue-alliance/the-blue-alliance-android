@@ -27,12 +27,12 @@ public class TeamDeserializer implements JsonDeserializer<Team> {
         }
 
         if (!isNull(object.get("team_number"))) {
-            team.setNumber(object.get("team_number").getAsInt());
+            team.setTeamNumber(object.get("team_number").getAsInt());
         }
 
         // Some of the old teams don't have names and/or locations.
         if (!isNull(object.get("name"))) {
-            team.setFullName(object.get("name").getAsString());
+            team.setName(object.get("name").getAsString());
         }
 
         if (!isNull(object.get("nickname"))) {

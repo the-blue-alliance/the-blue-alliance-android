@@ -2,13 +2,15 @@ package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.Gson;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.api.ApiV2Constants;
+import com.thebluealliance.androidclient.api.rx.TbaApiV2;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
-import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.datafeed.retrofit.FirebaseAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
@@ -19,7 +21,6 @@ import com.thebluealliance.androidclient.fragments.FirebaseTickerFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.VisibleForTesting;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -69,8 +70,13 @@ public class DatafeedModule {
     }
 
     @Provides @Singleton @Named("tba_api")
-    public APIv2 provideTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
-        return retrofit.create(APIv2.class);
+    public com.thebluealliance.androidclient.api.rx.TbaApiV2 provideRxTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
+        return retrofit.create(TbaApiV2.class);
+    }
+
+    @Provides @Singleton
+    public com.thebluealliance.androidclient.api.call.TbaApiV2 provideCallTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
+        return retrofit.create(com.thebluealliance.androidclient.api.call.TbaApiV2.class);
     }
 
     @Provides @Singleton @Named("github_api")
@@ -91,7 +97,7 @@ public class DatafeedModule {
 
     @Provides @Singleton
     public CacheableDatafeed provideDatafeed(
-      @Named("tba_api") APIv2 retrofit,
+      @Named("tba_api") TbaApiV2 retrofit,
       APICache cache,
       DatabaseWriter writer,
       RetrofitResponseMap responseMap) {
@@ -114,9 +120,9 @@ public class DatafeedModule {
     @VisibleForTesting
     public static Retrofit getRetrofit(Gson gson, OkHttpClient okHttpClient, SharedPreferences prefs) {
         String baseUrl = Utilities.isDebuggable()
-          ? prefs.getString(APIv2.DEV_TBA_PREF_KEY, APIv2.TBA_URL)
-          : APIv2.TBA_URL;
-        baseUrl = baseUrl.isEmpty() ? APIv2.TBA_URL : baseUrl;
+          ? prefs.getString(ApiV2Constants.DEV_TBA_PREF_KEY, ApiV2Constants.TBA_URL)
+          : ApiV2Constants.TBA_URL;
+        baseUrl = baseUrl.isEmpty() ? ApiV2Constants.TBA_URL : baseUrl;
         TbaLogger.d("Using TBA Host: " + baseUrl);
         return new Retrofit.Builder()
           .baseUrl(baseUrl)

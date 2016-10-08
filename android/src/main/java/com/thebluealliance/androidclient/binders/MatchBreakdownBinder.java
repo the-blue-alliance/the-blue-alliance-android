@@ -3,11 +3,11 @@ package com.thebluealliance.androidclient.binders;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2016;
 
 import android.support.annotation.Nullable;
-import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 import android.widget.ProgressBar;
 

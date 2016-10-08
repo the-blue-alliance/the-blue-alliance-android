@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
@@ -21,12 +20,8 @@ public class WeekEventsExtractor implements Func1<List<Event>, List<Event>> {
         List<Event> weekEvents = new ArrayList<>();
         for (int i = 0; i < events.size(); i++) {
             Event event = events.get(i);
-            try {
-                if (event.getCompetitionWeek() == mWeek) {
-                    weekEvents.add(event);
-                }
-            } catch (BasicModel.FieldNotDefinedException e) {
-                e.printStackTrace();
+            if (event.getCompetitionWeek() != null && event.getCompetitionWeek() == mWeek) {
+                weekEvents.add(event);
             }
         }
         return weekEvents;

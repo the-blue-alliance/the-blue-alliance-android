@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.thebluealliance.androidclient.models.BasicModel;
-
 import javax.inject.Inject;
 
 public class TeamTabSubscriber extends BaseAPISubscriber<Integer, Integer> {
@@ -12,7 +10,7 @@ public class TeamTabSubscriber extends BaseAPISubscriber<Integer, Integer> {
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind = mAPIData;
     }
 }

@@ -9,7 +9,6 @@ import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
 
@@ -48,28 +47,28 @@ public class DistrictPointsListSubscriberTest {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testParseJsonNull() throws BasicModel.FieldNotDefinedException {
+    public void testParseJsonNull()  {
         DatafeedTestDriver.parseJsonNull(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mPoints);
     }
 
     @Test
-    public void testCorrectParsedType() throws BasicModel.FieldNotDefinedException {
+    public void testCorrectParsedType()  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mPoints);
         assertTrue(data instanceof DistrictPointsListSubscriber.Type);
     }
 
     @Test
-    public void testParseInvalidJson() throws BasicModel.FieldNotDefinedException {
+    public void testParseInvalidJson()  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, new JsonObject());
 
         assertNotNull(data);
@@ -77,7 +76,7 @@ public class DistrictPointsListSubscriberTest {
     }
 
     @Test
-    public void testParseNonDistrict() throws BasicModel.FieldNotDefinedException {
+    public void testParseNonDistrict()  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mPoints);
         DistrictTeamListElement element =
           new DistrictTeamListElement("frc1124", "", "Team 1124", 1, 87);

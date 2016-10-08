@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.listeners;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -14,7 +15,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 import android.widget.AdapterView;
 

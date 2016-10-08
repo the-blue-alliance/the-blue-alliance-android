@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventWeekTab;
 import com.thebluealliance.androidclient.types.EventType;
@@ -24,7 +23,7 @@ public class EventTabSubscriber extends BaseAPISubscriber<List<Event>, List<Even
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind.clear();
         Collections.sort(mAPIData, mEventComparator);
 
@@ -33,11 +32,13 @@ public class EventTabSubscriber extends BaseAPISubscriber<List<Event>, List<Even
         int lastEventMonth = -1;
         for (int i = 0; i < mAPIData.size(); i++) {
             Event event = mAPIData.get(i);
-            cal.setTime(event.getStartDate());
-            int competitionWeek = event.getCompetitionWeek();
+            cal.setTime(event.getFormattedStartDate());
+            int competitionWeek = event.getCompetitionWeek() != null
+                    ? event.getCompetitionWeek()
+                    : 0;
             int month = cal.get(Calendar.MONTH);
 
-            boolean isOffseason = event.getEventType() == EventType.OFFSEASON;
+            boolean isOffseason = event.getEventTypeEnum() == EventType.OFFSEASON;
 
             if (isOffseason ? lastEventMonth != month : lastEventWeek != competitionWeek) {
                 mDataToBind.add(new EventWeekTab(

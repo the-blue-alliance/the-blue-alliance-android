@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.database.writers;
 
-import com.google.gson.JsonArray;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Team;
 
 import android.support.annotation.WorkerThread;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -34,9 +34,9 @@ public class YearsParticipatedWriter extends BaseDbWriter<YearsParticipatedInfo>
 
     public static class YearsParticipatedInfo {
         public final String teamKey;
-        public final JsonArray yearsParticipated;
+        public final List<Integer> yearsParticipated;
 
-        public YearsParticipatedInfo(String teamKey, JsonArray yearsParticipated) {
+        public YearsParticipatedInfo(String teamKey, List<Integer> yearsParticipated) {
             this.teamKey = teamKey;
             this.yearsParticipated = yearsParticipated;
         }

@@ -4,10 +4,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import com.thebluealliance.androidclient.TbaLogger;
+
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.Map;
 
