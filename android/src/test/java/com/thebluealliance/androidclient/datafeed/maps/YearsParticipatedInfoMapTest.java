@@ -11,6 +11,9 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -20,11 +23,15 @@ public class YearsParticipatedInfoMapTest {
 
     private String mTeamKey;
     private YearsParticipatedInfoMap mMap;
-    private JsonArray mYearsParticipated;
+    private List<Integer> mYearsParticipated;
 
     @Before
     public void setUp() {
-        mYearsParticipated = ModelMaker.getModel(JsonArray.class, "frc1124_years_participated");
+        JsonArray yearsJson = ModelMaker.getModel(JsonArray.class, "frc1124_years_participated");
+        mYearsParticipated = new ArrayList<>();
+        for (int i = 0; i < yearsJson.size(); i++ ) {
+            mYearsParticipated.add(yearsJson.get(i).getAsInt());
+        }
         mTeamKey = "frc1124";
         mMap = new YearsParticipatedInfoMap(mTeamKey);
     }

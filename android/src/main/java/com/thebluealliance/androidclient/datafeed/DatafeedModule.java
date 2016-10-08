@@ -11,7 +11,6 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
-import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
 import com.thebluealliance.androidclient.datafeed.retrofit.FirebaseAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
@@ -71,11 +70,11 @@ public class DatafeedModule {
     }
 
     @Provides @Singleton @Named("tba_api")
-    public TbaApiV2 provideRxTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
+    public com.thebluealliance.androidclient.api.rx.TbaApiV2 provideRxTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
         return retrofit.create(TbaApiV2.class);
     }
 
-    @Provides @Singleton @Named("tba_api")
+    @Provides @Singleton
     public com.thebluealliance.androidclient.api.call.TbaApiV2 provideCallTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
         return retrofit.create(com.thebluealliance.androidclient.api.call.TbaApiV2.class);
     }
@@ -98,7 +97,7 @@ public class DatafeedModule {
 
     @Provides @Singleton
     public CacheableDatafeed provideDatafeed(
-      @Named("tba_api") APIv2 retrofit,
+      @Named("tba_api") TbaApiV2 retrofit,
       APICache cache,
       DatabaseWriter writer,
       RetrofitResponseMap responseMap) {

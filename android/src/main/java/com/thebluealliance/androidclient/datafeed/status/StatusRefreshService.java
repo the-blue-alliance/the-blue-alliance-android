@@ -32,7 +32,7 @@ import rx.schedulers.Schedulers;
  */
 public class StatusRefreshService extends IntentService {
 
-    @Inject TbaApiV2 mRetrofitAPI;
+    @Inject @Named("tba_api") TbaApiV2 mRetrofitAPI;
     @Inject SharedPreferences mPrefs;
     @Inject EventBus mEventBus;
     @Inject OkHttpClient mHttpClient;

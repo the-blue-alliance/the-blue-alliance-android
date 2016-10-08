@@ -1,19 +1,17 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.google.gson.JsonArray;
-
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.interfaces.YearsParticipatedUpdate;
 
-import com.thebluealliance.androidclient.TbaLogger;
-
 import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 
-public class YearsParticipatedDropdownSubscriber extends Subscriber<JsonArray> {
+public class YearsParticipatedDropdownSubscriber extends Subscriber<List<Integer>> {
 
     private final YearsParticipatedUpdate mCallback;
 
@@ -34,10 +32,10 @@ public class YearsParticipatedDropdownSubscriber extends Subscriber<JsonArray> {
     }
 
     @Override
-    public void onNext(JsonArray apiYears) {
+    public void onNext(List<Integer> apiYears) {
         int[] years = new int[apiYears.size()];
         for (int i = apiYears.size() - 1; i >= 0; i--) {
-            years[i] = apiYears.get(i).getAsInt();
+            years[i] = apiYears.get(i);
         }
 
         /*
