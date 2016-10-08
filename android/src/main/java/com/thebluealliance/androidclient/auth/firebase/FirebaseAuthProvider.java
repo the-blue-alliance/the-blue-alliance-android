@@ -5,7 +5,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import com.firebase.client.annotations.Nullable;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.User;
 import com.thebluealliance.androidclient.auth.google.GoogleAuthProvider;
@@ -13,6 +12,7 @@ import com.thebluealliance.androidclient.auth.google.GoogleSignInUser;
 
 import android.content.Intent;
 
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 import rx.Observable;
@@ -21,10 +21,12 @@ import rx.Subscriber;
 @Singleton
 public class FirebaseAuthProvider implements AuthProvider {
 
-    private final FirebaseAuth mFirebaseAuth;
+    private final @Nullable FirebaseAuth mFirebaseAuth;
     private final GoogleAuthProvider mGoogleAuthProvider;
 
-    public FirebaseAuthProvider(FirebaseAuth firebaseAuth, GoogleAuthProvider googleProvider) {
+    public FirebaseAuthProvider(
+            @Nullable FirebaseAuth firebaseAuth,
+            GoogleAuthProvider googleProvider) {
         mFirebaseAuth = firebaseAuth;
         mGoogleAuthProvider = googleProvider;
     }
@@ -41,11 +43,14 @@ public class FirebaseAuthProvider implements AuthProvider {
 
     @Override
     public boolean isUserSignedIn() {
-        return mFirebaseAuth.getCurrentUser() != null;
+        return mFirebaseAuth != null && mFirebaseAuth.getCurrentUser() != null;
     }
 
     @Override @Nullable
     public User getCurrentUser() {
+        if (mFirebaseAuth == null) {
+            return null;
+        }
         FirebaseUser firebaseUser = mFirebaseAuth.getCurrentUser();
         if (firebaseUser == null) {
             return null;
@@ -63,7 +68,7 @@ public class FirebaseAuthProvider implements AuthProvider {
     public Observable<FirebaseSignInUser> userFromSignInResult(int requestCode, int resultCode, Intent data) {
         Observable<? extends User> googleUser = mGoogleAuthProvider.userFromSignInResult(requestCode, resultCode, data);
         return googleUser.switchMap(user -> {
-            if (!(user instanceof GoogleSignInUser)) {
+            if (mFirebaseAuth == null || !(user instanceof GoogleSignInUser)) {
                 return Observable.empty();
             }
 
@@ -93,7 +98,7 @@ public class FirebaseAuthProvider implements AuthProvider {
     public Observable<FirebaseSignInUser> signInLegacyUser() {
         Observable<? extends User> googleUser = mGoogleAuthProvider.signInLegacyUser();
         return googleUser.switchMap(user -> {
-            if (!(user instanceof GoogleSignInUser)) {
+            if (mFirebaseAuth == null || !(user instanceof GoogleSignInUser)) {
                 return Observable.empty();
             }
 
