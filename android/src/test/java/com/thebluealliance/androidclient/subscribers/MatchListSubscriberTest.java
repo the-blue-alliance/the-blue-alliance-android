@@ -8,7 +8,6 @@ import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.firebase.AllianceAdvancementEvent;
 import com.thebluealliance.androidclient.listitems.ListGroup;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 
@@ -64,19 +63,19 @@ public class MatchListSubscriberTest {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mMatches);
         verify(mEventBus).post(eq(new LiveEventMatchUpdateEvent(mMatches.get(5), null)));
         verify(mEventBus).post(eq(new AllianceAdvancementEvent(mSubscriber.getAdvancement())));
     }
 
     @Test
-    public void testParsedData() throws BasicModel.FieldNotDefinedException {
+    public void testParsedData()  {
         List<ListGroup> data = DatafeedTestDriver.getParsedData(mSubscriber, mMatches);
 
         /* This event is not live, so matches should be sorted by display order */
@@ -88,7 +87,7 @@ public class MatchListSubscriberTest {
     }
 
     @Test
-    public void testLiveEventPlayOrderSort() throws BasicModel.FieldNotDefinedException {
+    public void testLiveEventPlayOrderSort()  {
         when(mEvent.isHappeningNow()).thenReturn(true);
         List<ListGroup> data = DatafeedTestDriver.getParsedData(mSubscriber, mMatches);
 

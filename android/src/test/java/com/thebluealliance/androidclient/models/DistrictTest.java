@@ -23,7 +23,7 @@ public class DistrictTest {
     }
 
     @Test
-    public void testDistrictModel() throws BasicModel.FieldNotDefinedException {
+    public void testDistrictModel()  {
         assertNotNull(district);
         assertEquals(district.getName(), "New England");
         assertEquals(district.getAbbreviation(), "ne");

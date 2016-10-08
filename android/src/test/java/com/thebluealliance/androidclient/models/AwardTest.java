@@ -18,8 +18,8 @@ import static junit.framework.Assert.assertTrue;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class AwardTest {
-    Award mTeamAward;
-    Award mIndividualAward;
+    private Award mTeamAward;
+    private Award mIndividualAward;
 
     @Before
     public void readJsonData(){
@@ -28,14 +28,16 @@ public class AwardTest {
     }
 
     @Test
-    public void testTeamAward() throws BasicModel.FieldNotDefinedException {
+    public void testTeamAward()  {
         assertNotNull(mTeamAward);
         assertEquals(mTeamAward.getEventKey(), "2015cthar");
-        assertEquals(mTeamAward.getEnum(), 17);
+        assertNotNull(mTeamAward.getEnum());
+        assertEquals(mTeamAward.getEnum().intValue(), 17);
         assertEquals(mTeamAward.getName(), "Quality Award sponsored by Motorola");
-        assertEquals(mTeamAward.getYear(), 2015);
+        assertEquals(mTeamAward.getYear().intValue(), 2015);
 
         JsonArray recipientList = mTeamAward.getWinners();
+        assertNotNull(recipientList);
         assertEquals(recipientList.size(), 1);
         assertTrue(recipientList.get(0).isJsonObject());
 
@@ -45,14 +47,16 @@ public class AwardTest {
     }
 
     @Test
-    public void testIndividualAward() throws BasicModel.FieldNotDefinedException {
+    public void testIndividualAward()  {
         assertNotNull(mIndividualAward);
         assertEquals(mIndividualAward.getEventKey(), "2015necmp");
-        assertEquals(mIndividualAward.getEnum(), 5);
+        assertNotNull(mIndividualAward.getEnum());
+        assertEquals(mIndividualAward.getEnum().intValue(), 5);
         assertEquals(mIndividualAward.getName(), "Volunteer of the Year");
-        assertEquals(mIndividualAward.getYear(), 2015);
+        assertEquals(mIndividualAward.getYear().intValue(), 2015);
 
         JsonArray recipientList = mIndividualAward.getWinners();
+        assertNotNull(recipientList);
         assertEquals(recipientList.size(), 1);
         assertTrue(recipientList.get(0).isJsonObject());
 

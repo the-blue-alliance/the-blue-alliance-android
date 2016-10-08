@@ -14,7 +14,6 @@ import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 
 import org.greenrobot.eventbus.EventBus;
@@ -62,7 +61,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mTeamStats.clear();
         JsonObject statsData = mAPIData.getAsJsonObject();
         if (!statsData.has("oprs") || !statsData.get("oprs").isJsonObject()

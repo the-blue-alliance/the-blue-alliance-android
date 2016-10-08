@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.EventDeserializer;
@@ -24,8 +24,7 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
 
-import android.util.Log;
-
+@Deprecated
 public final class JSONHelper {
     private static Gson gson;
     private static JsonParser parser;
@@ -66,6 +65,7 @@ public final class JSONHelper {
         return gson;
     }
 
+    @Deprecated
     public static JsonObject getasJsonObject(String input) {
         if (input == null || input.equals(""))
             return new JsonObject();
@@ -73,7 +73,7 @@ public final class JSONHelper {
         try {
             e = getParser().parse(input);
         } catch (JsonSyntaxException ex) {
-            Log.w(Constants.LOG_TAG, "Couldn't parse bad json: " + input);
+            TbaLogger.w("Couldn't parse bad json: " + input);
         }
         if (isNull(e)) {
             return new JsonObject();
@@ -81,21 +81,22 @@ public final class JSONHelper {
         try {
             return e.getAsJsonObject();
         } catch (IllegalStateException err) {
-            Log.w(Constants.LOG_TAG, "getAsJsonObject failed: " + err);
+            TbaLogger.w("getAsJsonObject failed: " + err);
             return new JsonObject();
         }
     }
 
+    @Deprecated
     public static JsonArray getasJsonArray(String input) {
         if (input == null || input.equals(""))
             return new JsonArray();
         try {
             return getParser().parse(input).getAsJsonArray();
         } catch (IllegalStateException err) {
-            Log.w(Constants.LOG_TAG, "getAsJsonArray failed: " + err);
+            TbaLogger.w("getAsJsonArray failed: " + err);
             return new JsonArray();
         } catch (Exception ex) {
-            Log.w(Constants.LOG_TAG, "Attempted to parse invalid json");
+            TbaLogger.w("Attempted to parse invalid json");
             ex.printStackTrace();
             return new JsonArray();
         }

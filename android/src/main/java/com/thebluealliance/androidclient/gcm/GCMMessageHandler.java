@@ -3,11 +3,10 @@ package com.thebluealliance.androidclient.gcm;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonParseException;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
-import com.thebluealliance.androidclient.background.UpdateMyTBA;
+import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
@@ -35,6 +34,7 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.RendererModule;
 
@@ -42,20 +42,34 @@ import org.greenrobot.eventbus.EventBus;
 
 import android.app.IntentService;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 
 import javax.inject.Inject;
 
 public class GCMMessageHandler extends IntentService implements FollowsChecker {
 
-    public static final String GROUP_KEY = "tba-android";
+    /**
+     * Stack (bundle) notifications together into a Group for better UX on Nougat+ and Android Wear
+     * but not on KitKat because SupportLib 24.2.1 NotificationManagerCompat drops grouped
+     * notifications (http://stackoverflow.com/a/34953411/1682419) nor on Lollipop API 21 because
+     * the OS messes up groups (it shows a summary and the first two source notifications as
+     * separate items instead of one group.)
+     */
+    public static final boolean STACK_NOTIFICATIONS =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
+    /** True if phones/tablets will bundle up the stack using the summary as a header. */
+    public static final boolean SUMMARY_NOTIFICATION_IS_A_HEADER =
+            STACK_NOTIFICATIONS && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
+    /** The setGroup() key to group notifications into a stack/bundle as feasible. */
+    public static final String GROUP_KEY = STACK_NOTIFICATIONS ? "tba-android" : null;
+    /** If grouping won't work, use this ID to make each notification replace its predecessor. */
+    public static final int SINGULAR_NOTIFICATION_ID = 363;
 
     @Inject MyTbaDatafeed mMyTbaDatafeed;
     @Inject DatabaseWriter mWriter;
@@ -64,6 +78,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     @Inject TBAStatusController mStatusController;
     @Inject MatchRenderer mMatchRenderer;
     @Inject Database mDb;
+    @Inject AccountController mAccountController;
 
     private NotificationComponent mComponenet;
 
@@ -88,7 +103,6 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             mComponenet = DaggerNotificationComponent.builder()
                     .applicationComponent(application.getComponent())
                     .datafeedModule(application.getDatafeedModule())
-                    .databaseWriterModule(application.getDatabaseWriterModule())
                     .rendererModule(new RendererModule())
                     .build();
         }
@@ -97,7 +111,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     @Override
     public boolean followsTeam(Context context, String teamNumber, String matchKey,
                                String notificationType) {
-        String currentUser = AccountHelper.getCurrentUser(mPrefs);
+        String currentUser = mAccountController.getSelectedAccount();
         String teamKey = TeamHelper.baseTeamKey("frc" + teamNumber); // "frc111"
         String teamInterestKey = MyTBAHelper.createKey(currentUser, teamKey); // "r@gmail.com:frc111"
         String teamAtEventKey = EventTeamHelper.generateKey(
@@ -120,29 +134,30 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
 
         String messageType = gcm.getMessageType(intent);
-        Log.d(Constants.LOG_TAG, "GCM Message type: " + messageType);
-        Log.d(Constants.LOG_TAG, "Intent extras: " + extras.toString());
+        TbaLogger.d("GCM Message type: " + messageType);
+        TbaLogger.d("Intent extras: " + extras.toString());
 
         // We got a standard message. Parse it and handle it.
         String type = extras.getString("message_type", "");
         String data = extras.getString("message_data", "");
         handleMessage(getApplicationContext(), type, data);
 
-        Log.i(Constants.LOG_TAG, "Received : (" + type + ")  " + data);
+        TbaLogger.i("Received : (" + type + ")  " + data);
 
         GCMBroadcastReceiver.completeWakefulIntent(intent);
     }
 
     public void handleMessage(Context c, String messageType, String messageData) {
-        NotificationManager notificationManager = (NotificationManager) c.getSystemService(Context.NOTIFICATION_SERVICE);
         try {
             BaseNotification notification = null;
             switch (messageType) {
                 case NotificationTypes.UPDATE_FAVORITES:
-                    new UpdateMyTBA(mMyTbaDatafeed).execute(UpdateMyTBA.UPDATE_FAVORITES);
+                    Intent favIntent = MyTbaUpdateService.newInstance(c, true, false);
+                    c.startService(favIntent);
                     break;
                 case NotificationTypes.UPDATE_SUBSCRIPTIONS:
-                    new UpdateMyTBA(mMyTbaDatafeed).execute(UpdateMyTBA.UPDATE_SUBSCRIPTION);
+                    Intent subIntent = MyTbaUpdateService.newInstance(c, false, true);
+                    c.startService(subIntent);
                     break;
                 case NotificationTypes.PING:
                 case NotificationTypes.BROADCAST:
@@ -174,16 +189,17 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                     notification = new EventDownNotification(messageData);
                     /* Don't break, we also want to schedule a status update here */
                 case NotificationTypes.SYNC_STATUS:
-                    Log.i(Constants.LOG_TAG, "Updating TBA API Status via push notification");
+                    TbaLogger.i("Updating TBA API Status via push notification");
                     mStatusController.scheduleStatusUpdate(c);
                     break;
             }
 
             if (notification == null) return;
+
             try {
                 notification.parseMessageData();
             } catch (JsonParseException e) {
-                Log.e(Constants.LOG_TAG, "Error parsing incoming message json");
+                TbaLogger.e("Error parsing incoming message json");
                 e.printStackTrace();
                 return;
             }
@@ -211,20 +227,33 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
 
                 if (notification.shouldShow()) {
                     if (SummaryNotification.isNotificationActive(c)) {
+                        // Multiple notifications: Stack them into a Group by posting the new
+                        // notification THEN (re)posting a summary. If we can't stack them, post
+                        // the new one XOR a summary, all with the same ID to replace any
+                        // predecessor notification.
+                        if (STACK_NOTIFICATIONS) {
+                            notify(c, notification, built);
+                        }
+
                         notification = new SummaryNotification();
                         built = notification.buildNotification(c, this);
                     }
 
-                    setNotificationParams(built, c, messageType, mPrefs);
-                    int id = notification.getNotificationId();
-                    notificationManager.notify(id, built);
+                    notify(c, notification, built);
                 }
-
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...
             e.printStackTrace();
         }
+    }
+
+    private void notify(Context c, BaseNotification notification, Notification built) {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(c);
+        int id = STACK_NOTIFICATIONS ? notification.getNotificationId() : SINGULAR_NOTIFICATION_ID;
+
+        setNotificationParams(built, c, notification.getNotificationType(), mPrefs);
+        notificationManager.notify(id, built);
     }
 
     private static void setNotificationParams(Notification built, Context c, String messageType, SharedPreferences prefs) {
@@ -236,7 +265,8 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             built.defaults |= Notification.DEFAULT_SOUND;
         }
         if (prefs.getBoolean("notification_led_enabled", true)) {
-            built.ledARGB = prefs.getInt("notification_led_color", c.getResources().getColor(R.color.primary));
+            built.ledARGB = prefs.getInt("notification_led_color",
+                    ContextCompat.getColor(c, R.color.primary));
             built.ledOnMS = 1000;
             built.ledOffMS = 1000;
             built.flags |= Notification.FLAG_SHOW_LIGHTS;
@@ -247,9 +277,17 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             switch (messageType) {
                 case NotificationTypes.PING:
                     priority = Notification.PRIORITY_LOW;
+                    break;
+                case NotificationTypes.SUMMARY:
+                    // If Android will really display a component notification then a group summary,
+                    // don't let the summary heads-up atop the component.
+                    if (SUMMARY_NOTIFICATION_IS_A_HEADER) {
+                        priority = Notification.PRIORITY_DEFAULT;
+                    }
+                    break;
             }
 
-            boolean headsUpPref = PreferenceManager.getDefaultSharedPreferences(c).getBoolean("notification_headsup", true);
+            boolean headsUpPref = prefs.getBoolean("notification_headsup", true);
             if (headsUpPref) {
                 built.priority = priority;
             } else {

@@ -7,14 +7,17 @@ public class EventViewModel extends BaseViewModel {
     private String mShortName;
     private String mDateString;
     private String mLocation;
+    private String mDistrictString;
     private boolean mShowMyTbaSettings = false;
 
-    public EventViewModel(String key, int year, String shortName, String dateString, String location) {
+    public EventViewModel(String key, int year, String shortName, String dateString, String
+            location, String districtString) {
         mKey = key;
         mYear = year;
         mShortName = shortName;
         mDateString = dateString;
         mLocation = location;
+        mDistrictString = districtString;
     }
 
     public String getKey() {
@@ -65,6 +68,14 @@ public class EventViewModel extends BaseViewModel {
         mShowMyTbaSettings = showMyTbaSettings;
     }
 
+    public String getDistrictString() {
+        return mDistrictString;
+    }
+
+    public void setDistrictString(String districtString) {
+        mDistrictString = districtString;
+    }
+
     @Override public boolean equals(Object o) {
         if (!(o instanceof EventViewModel)) {
             return false;
@@ -80,7 +91,8 @@ public class EventViewModel extends BaseViewModel {
                 && mShowMyTbaSettings == shouldShowMyTbaSettings();
     }
 
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return hashFromValues(mKey, mYear, mShortName, mDateString, mLocation, mShowMyTbaSettings);
     }
 }

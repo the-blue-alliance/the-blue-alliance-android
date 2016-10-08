@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.datafeed.status;
 
 import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
-import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
+import com.thebluealliance.androidclient.api.rx.TbaApiV2;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
-import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.models.ApiStatus;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -16,7 +16,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,7 +31,7 @@ import rx.schedulers.Schedulers;
  */
 public class StatusRefreshService extends IntentService {
 
-    @Inject @Named("tba_api") APIv2 mRetrofitAPI;
+    @Inject @Named("tba_api") TbaApiV2 mRetrofitAPI;
     @Inject SharedPreferences mPrefs;
     @Inject EventBus mEventBus;
     @Inject OkHttpClient mHttpClient;
@@ -49,26 +48,26 @@ public class StatusRefreshService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(Constants.LOG_TAG, "Updating TBA Status");
+        TbaLogger.d("Updating TBA Status");
         Schedulers.io().createWorker().schedule(this::updateTbaStatus);
     }
 
     @WorkerThread
     private void updateTbaStatus() {
-        Response<APIStatus> response;
+        Response<ApiStatus> response;
         try {
-            response = mRetrofitAPI.status().toBlocking().first();
+            response = mRetrofitAPI.fetchApiStatus().toBlocking().first();
         } catch (Exception ex) {
-            Log.w(Constants.LOG_TAG, "Error updating TBA status");
+            TbaLogger.w("Error updating TBA status");
             ex.printStackTrace();
             return;
         }
         if (!response.isSuccessful()) {
-            Log.w(Constants.LOG_TAG, "Unable to update myTBA Status\n"
-                    + response.code() + " " + response.message());
+            TbaLogger.w("Unable to update myTBA Status\n"
+                        + response.code() + " " + response.message());
             return;
         }
-        APIStatus status = response.body();
+        ApiStatus status = response.body();
 
         /* Write the new data to shared prefs */
         mPrefs.edit()

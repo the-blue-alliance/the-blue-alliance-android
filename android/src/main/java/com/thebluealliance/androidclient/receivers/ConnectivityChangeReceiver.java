@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.receivers;
 
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 
@@ -9,7 +9,6 @@ import org.greenrobot.eventbus.EventBus;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 public class ConnectivityChangeReceiver extends BroadcastReceiver {
 
@@ -24,7 +23,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i(Constants.LOG_TAG, "Received connectivity change intent: " + intent.getAction());
+        TbaLogger.i("Received connectivity change intent: " + intent.getAction());
 
         // If we now have interwebz, send out a local broadcast telling things to refresh
         int connectionStatus;

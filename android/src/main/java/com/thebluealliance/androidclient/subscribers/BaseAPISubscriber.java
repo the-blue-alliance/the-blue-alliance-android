@@ -2,12 +2,11 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.google.android.gms.analytics.Tracker;
 
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.APISubscriber;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.models.BasicModel;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -15,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -31,7 +29,7 @@ import rx.android.schedulers.AndroidSchedulers;
  * is accessed before {@link #parseData()} is called
  *
  * @param <APIType>  Datatype to be returned from the API (one from
- * {@link com.thebluealliance.androidclient.datafeed.retrofit.APIv2}
+ * {@link com.thebluealliance.androidclient.api.rx.TbaApiV2}
  * @param <BindType> Datatype to be returned for binding to views
  */
 public abstract class BaseAPISubscriber<APIType, BindType>
@@ -102,16 +100,12 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     public void onNext(APIType data) {
         setApiData(data);
         postToEventBus(EventBus.getDefault());
-        try {
-            if (isDataValid()) {
-                parseData();
-            }
-            if (shouldBindImmediately || shouldBindOnce) {
-                // bindViewsIfNeeded();
-                bindData();
-            }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            e.printStackTrace();
+        if (isDataValid()) {
+            parseData();
+        }
+        if (shouldBindImmediately || shouldBindOnce) {
+            // bindViewsIfNeeded();
+            bindData();
         }
     }
 
@@ -125,7 +119,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
                     bindViewsIfNeeded();
                     mConsumer.onComplete();
                 } catch (Exception e) {
-                    Log.e(Constants.LOG_TAG, "UNABLE TO COMPLETE RENDER");
+                    TbaLogger.e("UNABLE TO COMPLETE RENDER");
                     e.printStackTrace();
                     mConsumer.onError(e);
                 }
@@ -169,7 +163,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
                     bindViewsIfNeeded();
                     mConsumer.updateData(mDataToBind);
                 } catch (Exception e) {
-                    Log.e(Constants.LOG_TAG, "UNABLE TO RENDER");
+                    TbaLogger.e("UNABLE TO RENDER");
                     e.printStackTrace();
                     mConsumer.onError(e);
                 }

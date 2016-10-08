@@ -2,8 +2,8 @@ package com.thebluealliance.androidclient.fragments;
 
 import com.google.common.base.Preconditions;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
 import com.thebluealliance.androidclient.binders.EventTabBinder;
@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,12 +63,12 @@ public class EventsByWeekFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(Constants.LOG_TAG, "EventsByWeekFragment created!");
-        mYear = mStatusController.getMaxCompYear();
+        TbaLogger.d("EventsByWeekFragment created!");
+        mYear = mStatusController.getCurrentCompYear();
         mSelectedTab = -1;
         if (getArguments() != null) {
             // Default to the current year if no year is provided in the arguments
-            mYear = getArguments().getInt(YEAR, mStatusController.getMaxCompYear());
+            mYear = getArguments().getInt(YEAR, mYear);
             mSelectedTab = getArguments().getInt(TAB, -1);
         } else if (savedInstanceState != null && savedInstanceState.containsKey(TAB)) {
             mSelectedTab = savedInstanceState.getInt(TAB);
@@ -146,9 +145,6 @@ public class EventsByWeekFragment
             mViewPager.setCurrentItem(mSelectedTab);
             mFragmentBinder.onPageSelected(mSelectedTab);
         }
-
-
-
         mFragmentAdapter.setAutoBindOnceAtPosition(mViewPager.getCurrentItem(), true);
     }
 

@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
@@ -14,7 +14,7 @@ import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
-import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
@@ -28,7 +28,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 public class ViewEventActivity extends MyTBASettingsActivity
@@ -116,7 +115,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d(Constants.LOG_TAG, "onNewIntent called");
+        TbaLogger.d("onNewIntent called");
         setIntent(intent);
         String newEventKey;
 
@@ -150,7 +149,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
             pager.setCurrentItem(mSelectedTab);
         };
 
-        Log.d(Constants.LOG_TAG, "Got new ViewEvent intent with key: " + mEventKey);
+        TbaLogger.d("Got new ViewEvent intent with key: " + mEventKey);
     }
 
     @Override
@@ -219,7 +218,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
     }
 
     @Override
-    protected void onTbaStatusUpdate(APIStatus newStatus) {
+    protected void onTbaStatusUpdate(ApiStatus newStatus) {
         super.onTbaStatusUpdate(newStatus);
         if (newStatus.getDownEvents().contains(mEventKey)) {
             // This event is down
@@ -256,6 +255,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onActionBarTitleUpdated(ActionBarTitleEvent event) {
         setActionBarTitle(event.getTitle());
+        setActionBarSubtitle(event.getSubtitle());
     }
 
     public FragmentComponent getComponent() {
@@ -266,6 +266,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
                     .datafeedModule(application.getDatafeedModule())
                     .binderModule(application.getBinderModule())
                     .databaseWriterModule(application.getDatabaseWriterModule())
+                    .gceModule(application.getGceModule())
                     .subscriberModule(new SubscriberModule(this))
                     .clickListenerModule(new ClickListenerModule(this))
                     .build();

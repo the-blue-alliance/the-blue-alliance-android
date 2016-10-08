@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotNull;
 @Config(manifest = Config.NONE)
 public class EventTeamTest {
 
-    EventTeam mEventTeam;
+    private EventTeam mEventTeam;
 
     @Before
     public void readJson() {
@@ -26,12 +26,12 @@ public class EventTeamTest {
     }
 
     @Test
-    public void testModel() throws BasicModel.FieldNotDefinedException {
+    public void testModel()  {
         assertNotNull(mEventTeam);
         assertEquals("frc1124", mEventTeam.getTeamKey());
         assertEquals("2015necmp", mEventTeam.getEventKey());
         assertEquals("2015necmp_frc1124", mEventTeam.getKey());
-        assertEquals(2015, mEventTeam.getYear());
-        assertEquals(7, mEventTeam.getCompWeek());
+        assertEquals(2015, mEventTeam.getYear().intValue());
+        assertEquals(7, mEventTeam.getCompWeek().intValue());
     }
 }

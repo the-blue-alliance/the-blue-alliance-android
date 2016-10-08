@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class DistrictTeamTest {
-    DistrictTeam mDistrictTeam;
+    private DistrictTeam mDistrictTeam;
 
     @Before
     public void readJson() {
@@ -22,16 +22,21 @@ public class DistrictTeamTest {
     }
 
     @Test
-    public void testDistrictTeamModel() throws BasicModel.FieldNotDefinedException {
+    public void testDistrictTeamModel()  {
         assertNotNull(mDistrictTeam);
         assertEquals("frc1124", mDistrictTeam.getTeamKey());
-        assertEquals(26, mDistrictTeam.getRank());
+        assertNotNull(mDistrictTeam.getRank());
+        assertEquals(26, mDistrictTeam.getRank().intValue());
         assertEquals("2015ctwat", mDistrictTeam.getEvent1Key());
-        assertEquals(26, mDistrictTeam.getEvent1Points());
+        assertNotNull(mDistrictTeam.getEvent1Points());
+        assertEquals(26, mDistrictTeam.getEvent1Points().intValue());
         assertEquals("2015manda", mDistrictTeam.getEvent2Key());
-        assertEquals(44, mDistrictTeam.getEvent2Points());
+        assertNotNull(mDistrictTeam.getEvent2Points());
+        assertEquals(44, mDistrictTeam.getEvent2Points().intValue());
         assertEquals("2015necmp", mDistrictTeam.getCmpKey());
-        assertEquals(87, mDistrictTeam.getCmpPoints());
-        assertEquals(157, mDistrictTeam.getTotalPoints());
+        assertNotNull(mDistrictTeam.getCmpPoints());
+        assertEquals(87, mDistrictTeam.getCmpPoints().intValue());
+        assertNotNull(mDistrictTeam.getTotalPoints());
+        assertEquals(157, mDistrictTeam.getTotalPoints().intValue());
     }
 }

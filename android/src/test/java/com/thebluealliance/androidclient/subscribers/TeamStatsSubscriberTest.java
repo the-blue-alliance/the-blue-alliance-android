@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 
 import org.junit.Before;
@@ -42,21 +41,21 @@ public class TeamStatsSubscriberTest {
     }
 
     @Test
-    public void testNullData() throws BasicModel.FieldNotDefinedException {
+    public void testNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testJsonNull() throws BasicModel.FieldNotDefinedException {
+    public void testJsonNull()  {
         DatafeedTestDriver.parseJsonNull(mSubscriber);
     }
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mStats);
     }
 
     @Test
-    public void testParsedData() throws BasicModel.FieldNotDefinedException {
+    public void testParsedData()  {
         List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mStats);
 
         assertEquals(3, data.size());

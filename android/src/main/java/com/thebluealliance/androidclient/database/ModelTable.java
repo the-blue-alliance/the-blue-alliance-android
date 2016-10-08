@@ -2,8 +2,6 @@ package com.thebluealliance.androidclient.database;
 
 import com.google.common.collect.ImmutableList;
 
-import com.thebluealliance.androidclient.models.BasicModel;
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,9 +13,9 @@ import java.util.List;
 
 /**
  * Base class for typed storage of models in the database
- * @param <T> Type of the corresponding model, must extend {@link BasicModel}
+ * @param <T> Type of the corresponding model, must implement {@link TbaDatabaseModel}
  */
-public abstract class ModelTable<T extends BasicModel> {
+public abstract class ModelTable<T extends TbaDatabaseModel> {
 
     private SQLiteDatabase mDb;
 
@@ -27,8 +25,8 @@ public abstract class ModelTable<T extends BasicModel> {
 
     /**
      * Adds a model to the database, if it doesn't already exist
-     * If the model is already entered, update the existing row via {@link #update(BasicModel)}
-     * If the insert was successful, call {@link #insertCallback(BasicModel)}
+     * If the model is already entered, update the existing row via {@link #update(TbaDatabaseModel)}
+     * If the insert was successful, call {@link #insertCallback(TbaDatabaseModel)}
      * @param in Model to be added
      * @return The value from {@link SQLiteDatabase#insert(String, String, ContentValues)} if a new
      * row is inserted (row ID or -1 on error), or the value from
@@ -58,7 +56,7 @@ public abstract class ModelTable<T extends BasicModel> {
     }
 
     /**
-     * Adds a List of items to the database via {@link #add(BasicModel)}
+     * Adds a List of items to the database via {@link #add(TbaDatabaseModel)}
      * @param inList List of models to be added
      */
     public void add(@Nullable ImmutableList<T> inList){
@@ -78,8 +76,8 @@ public abstract class ModelTable<T extends BasicModel> {
 
     /**
      * Updates an existing row in the database.
-     * Uses {@link #getKeyColumn()} = {@link BasicModel#getKey()} as the WHERE clause
-     * If the update was successful, call {@link #updateCallback(BasicModel)}
+     * Uses {@link #getKeyColumn()} = {@link TbaDatabaseModel#getKey()} as the WHERE clause
+     * If the update was successful, call {@link #updateCallback(TbaDatabaseModel)}
      * @param in Model to be updated
      * @return Value from {@link SQLiteDatabase#update(String, ContentValues, String, String[])},
      * or number of rows affected by the query
@@ -225,8 +223,8 @@ public abstract class ModelTable<T extends BasicModel> {
     /**
      * Delete a given model from the database
      * Same as running DELETE FROM {@link #getTableName()} WHERE {@link #getKeyColumn()} = key
-     * If the deletion was successful, call {@link #deleteCallback(BasicModel)}
-     * @param in Model to delete. Uses {@link BasicModel#getKey()} for the key
+     * If the deletion was successful, call {@link #deleteCallback(TbaDatabaseModel)}
+     * @param in Model to delete. Uses {@link TbaDatabaseModel#getKey()} for the key
      * @return Return value from {@link SQLiteDatabase#delete(String, String, String[])}
      * (number of rows affected)
      */
@@ -247,7 +245,7 @@ public abstract class ModelTable<T extends BasicModel> {
 
     /**
      * Delete from the table with a provided WHERE clause
-     * DOES NOT CALL {@link #deleteCallback(BasicModel)} - can't make the types work :(
+     * DOES NOT CALL {@link #deleteCallback(TbaDatabaseModel)} - can't make the types work :(
      * @param whereClause SQL WHERE clause to use in deletion
      * @param whereArgs Substitution arguments for the clause
      * @return Value from {@link SQLiteDatabase#delete(String, String, String[])}

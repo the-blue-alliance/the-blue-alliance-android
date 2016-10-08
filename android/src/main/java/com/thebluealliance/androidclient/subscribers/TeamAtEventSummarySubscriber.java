@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.JsonArray;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
@@ -11,10 +10,10 @@ import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper.CaseInsensitiveMap;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.models.Award;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
@@ -27,10 +26,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -74,7 +71,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
     }
 
     @Override
-    public synchronized void parseData() throws BasicModel.FieldNotDefinedException {
+    public synchronized void parseData()  {
         mDataToBind.clear();
         Match nextMatch = null, lastMatch = null;
         Collections.sort(mMatches, new MatchSortByPlayOrderComparator());
@@ -84,11 +81,11 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
                 String.format("%1$d - %2$d - %3$d", record[0], record[1], record[2]);
 
         Event event = mAPIData.event;
-        int year = event.getEventYear();
+        int year = event.getYear();
         boolean activeEvent = event.isHappeningNow();
         String actionBarTitle =
                 String.format(mResources.getString(R.string.team_actionbar_title), mTeamKey.substring(3));
-        String actionBarSubtitle = String.format("@ %1$d %2$s", year, event.getEventShortName());
+        String actionBarSubtitle = String.format("@ %1$d %2$s", year, event.getShortName());
         EventBus.getDefault().post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
 
         if (activeEvent) {
@@ -97,7 +94,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         }
 
         // Search for team in alliances
-        JsonArray alliances = event.getAlliances();
+        JsonArray alliances = JSONHelper.getasJsonArray(event.getAlliances());
         int allianceNumber = 0, alliancePick = -1;
 
         if (alliances == null || alliances.size() == 0) {
@@ -141,13 +138,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         LabelValueViewModel rankBreakdownItem = new LabelValueViewModel("Ranking Breakdown", rankingString);
 
         MatchHelper.EventStatus status;
-        try {
-            status = MatchHelper.evaluateStatusOfTeam(event, mMatches, mTeamKey);
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.d(Constants.LOG_TAG, "Status could not be evaluated for team; missing fields: "
-                    + Arrays.toString(e.getStackTrace()));
-            status = MatchHelper.EventStatus.NOT_AVAILABLE;
-        }
+        status = MatchHelper.evaluateStatusOfTeam(event, mMatches, mTeamKey);
 
         // Number of awards, only if nonzero
         if (mAwards.size() > 0) {
@@ -162,17 +153,15 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
                     awardsString));
         }
 
-        try {
-            if (event.isChampsEvent()
-                    && event.getEventYear() == 2016
-                    && PitLocationHelper.shouldShowPitLocation(mContext, mTeamKey)) {
-                PitLocationHelper.TeamPitLocation location = PitLocationHelper.getPitLocation(mContext, mTeamKey);
-                if (location != null) {
-                    mDataToBind.add(new LabelValueViewModel(mResources.getString(R.string.championship_pit_location), location.getAddressString()));
-                }
+        if (event.isChampsEvent()
+            && event.getYear() == 2016
+            && PitLocationHelper.shouldShowPitLocation(mContext, mTeamKey)) {
+            PitLocationHelper.TeamPitLocation location = PitLocationHelper
+                    .getPitLocation(mContext, mTeamKey);
+            if (location != null) {
+                mDataToBind.add(new LabelValueViewModel(mResources.getString(R.string.championship_pit_location),
+                                                        location.getAddressString()));
             }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.d(Constants.LOG_TAG, "Could not determine if pit locations should be shown. Hiding by default.");
         }
 
         if (status != MatchHelper.EventStatus.NOT_AVAILABLE) {
@@ -242,13 +231,9 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         }
         mIsMatchListLoaded = true;
         mMatches = new ArrayList<>(matches.getMatches());
-        try {
-            if (isDataValid()) {
-                parseData();
-                bindData();
-            }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            e.printStackTrace();
+        if (isDataValid()) {
+            parseData();
+            bindData();
         }
     }
 
@@ -264,13 +249,9 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         }
         mIsAwardListLoaded = true;
         mAwards = new ArrayList<>(awards.getAwards());
-        try {
-            if (isDataValid()) {
-                parseData();
-                bindData();
-            }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            e.printStackTrace();
+        if (isDataValid()) {
+            parseData();
+            bindData();
         }
     }
 }

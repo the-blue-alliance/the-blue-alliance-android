@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.views;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
@@ -13,7 +13,6 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -89,7 +88,7 @@ public class MatchView extends FrameLayout {
         }
 
         int year = Integer.parseInt(matchKey.substring(0, 4));
-        MatchType type = MatchHelper.getMatchTypeFromKey(matchKey);
+        MatchType type = MatchType.fromKey(matchKey);
         boolean hasWinner = (year != 2015) || (type == MatchType.FINAL); // 2015 non-finals matches have no winner
 
         matchTitle.setTag(matchKey);
@@ -115,7 +114,7 @@ public class MatchView extends FrameLayout {
             } catch (NumberFormatException e) {
                 redAlliance.setBackgroundResource(R.drawable.no_border);
                 blueAlliance.setBackgroundResource(R.drawable.no_border);
-                Log.w(Constants.LOG_TAG, "Attempted to parse an invalid match score.");
+                TbaLogger.w("Attempted to parse an invalid match score.");
             }
         }
         // Match hasn't been played yet. Don't border anything.

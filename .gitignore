@@ -9,6 +9,9 @@
 # Local Properties
 android/src/main/assets/tba.properties
 
+# Google Secrets
+android/**/google-services.json
+
 # Ignore debug client library
 android/libs/tbaMobile-v9-1.19.0-SNAPSHOT-debug.jar
 install_mytba_debug.sh
@@ -56,3 +59,10 @@ scripts/github_token
 
 # Current release shortlog, used in scripts
 RELEASE_SHORTLOG
+
+# jars
+libTba/gce/gce2retrofit.jar
+libTba/swagger/swagger-codegen-cli.jar
+
+# Swagger spec for generation
+libTba/swagger/apiv2-swagger.mod.json

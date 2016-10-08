@@ -3,14 +3,12 @@ package com.thebluealliance.androidclient.subscribers;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.listitems.LabelValueDetailListItem;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 
@@ -47,43 +45,43 @@ public class TeamAtDistrictSummarySubscriber
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind.clear();
         EventsTable eventsTable = mDb.getEventsTable();
         mDataToBind.add(new LabelValueListItem(mResources.getString(R.string.district_point_rank),
           mAPIData.getRank() + Utilities.getOrdinalFor(mAPIData.getRank())));
 
-        if (mAPIData.hasField(DistrictTeamsTable.EVENT1_KEY)
-                && mAPIData.hasField(DistrictTeamsTable.EVENT1_POINTS)) {
+        if (mAPIData.getEvent1Key() != null
+                && mAPIData.getEvent1Points() != null) {
             Event event1 = eventsTable.get(mAPIData.getEvent1Key());
-            String event1Name = event1 != null ? event1.getEventShortName() : mAPIData.getEvent1Key();
+            String event1Name = event1 != null ? event1.getShortName() : mAPIData.getEvent1Key();
             mDataToBind.add(new LabelValueDetailListItem(event1Name,
                     String.format(
                             mResources.getString(R.string.district_points_format), mAPIData.getEvent1Points()),
                     EventTeamHelper.generateKey(mAPIData.getEvent1Key(), mAPIData.getTeamKey())));
         }
 
-        if (mAPIData.hasField(DistrictTeamsTable.EVENT2_KEY)
-                && mAPIData.hasField(DistrictTeamsTable.EVENT2_POINTS)) {
+        if (mAPIData.getEvent2Key() != null
+                && mAPIData.getEvent2Points() != null) {
             Event event2 = eventsTable.get(mAPIData.getEvent2Key());
-            String event2Name = event2 != null ? event2.getEventShortName() : mAPIData.getEvent2Key();
+            String event2Name = event2 != null ? event2.getShortName() : mAPIData.getEvent2Key();
             mDataToBind.add(new LabelValueDetailListItem(event2Name,
                     String.format(
                             mResources.getString(R.string.district_points_format), mAPIData.getEvent2Points()),
                     EventTeamHelper.generateKey(mAPIData.getEvent2Key(), mAPIData.getTeamKey())));
         }
 
-        if (mAPIData.hasField(DistrictTeamsTable.CMP_KEY)
-                && mAPIData.hasField(DistrictTeamsTable.CMP_POINTS)) {
+        if (mAPIData.getCmpKey() != null
+                && mAPIData.getCmpPoints() != null) {
             Event districtCmp = eventsTable.get(mAPIData.getCmpKey());
-            String cmpName = districtCmp != null ? districtCmp.getEventShortName() : mAPIData.getCmpKey();
+            String cmpName = districtCmp != null ? districtCmp.getShortName() : mAPIData.getCmpKey();
             mDataToBind.add(new LabelValueDetailListItem(cmpName,
                     String.format(
                             mResources.getString(R.string.district_points_format), mAPIData.getCmpPoints()),
                     EventTeamHelper.generateKey(mAPIData.getCmpKey(), mAPIData.getTeamKey())));
         }
 
-        if (mAPIData.hasField(DistrictTeamsTable.TOTAL_POINTS)) {
+        if (mAPIData.getTotalPoints() != null) {
             mDataToBind.add(new LabelValueListItem(mResources.getString(R.string.total_district_points),
                     String.format(
                             mResources.getString(R.string.district_points_format), mAPIData.getTotalPoints())));

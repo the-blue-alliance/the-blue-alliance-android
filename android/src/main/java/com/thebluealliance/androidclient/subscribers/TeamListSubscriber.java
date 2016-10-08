@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.comparators.TeamSortByNumberComparator;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.renderers.TeamRenderer;
 import com.thebluealliance.androidclient.renderers.TeamRenderer.RenderType;
@@ -30,7 +29,7 @@ public class TeamListSubscriber extends BaseAPISubscriber<List<Team>, List<ListI
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind.clear();
         Collections.sort(mAPIData, mComparator);
         for (int i=0; i < mAPIData.size(); i++) {

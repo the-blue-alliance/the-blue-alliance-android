@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.listitems;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listeners.EventClickListener;
 import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.types.ModelType;
 
@@ -24,13 +23,13 @@ public class EventListElement extends ListElement implements Serializable {
     public final int eventYear;
     public final boolean showMyTba;
 
-    public EventListElement(Event event) throws BasicModel.FieldNotDefinedException {
+    public EventListElement(Event event) {
         super(event.getKey());
         eventKey = "";
-        eventName = event.getEventName();
+        eventName = event.getName();
         eventDates = event.getDateString();
         eventLocation = event.getLocation();
-        eventYear = event.getEventYear();
+        eventYear = event.getYear();
         this.showMyTba = false;
     }
 

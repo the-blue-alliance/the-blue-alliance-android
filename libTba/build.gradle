@@ -1,0 +1,29 @@
+apply plugin: 'java'
+
+
+group = 'com.appspot.tbatv_prod_hrd'
+archivesBaseName = 'tbaMobile'
+version = 'v9-1.21.0-SNAPSHOT'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+task sourceJar(type: Jar) {
+  classifier = 'sources'
+  from sourceSets.main.allJava
+}
+
+artifacts {
+    archives sourceJar
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "io.reactivex:rxjava:${rxJavaVersion}"
+    compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    compile "com.google.code.gson:gson:${gsonVersion}"
+    compile "com.google.code.findbugs:jsr305:3.0.1"
+}

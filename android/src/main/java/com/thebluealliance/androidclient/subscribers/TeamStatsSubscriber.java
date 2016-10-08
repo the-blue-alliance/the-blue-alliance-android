@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 
 import android.content.res.Resources;
@@ -24,7 +23,7 @@ public class TeamStatsSubscriber extends BaseAPISubscriber<JsonElement, List<Obj
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind.clear();
         JsonObject statsData = mAPIData.getAsJsonObject();
         if (statsData.has("opr")) {

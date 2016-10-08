@@ -7,10 +7,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.Event;
-
-import android.util.Log;
 
 import java.lang.reflect.Type;
 
@@ -25,17 +24,20 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         try {
             object = json.getAsJsonObject();
         } catch (JsonSyntaxException | IllegalStateException ex) {
-            Log.w(Constants.LOG_TAG, "Failed to parse json: " + json.toString());
+            TbaLogger.w("Failed to parse json: " + json.toString());
             return null;
         }
         final Event event = new Event();
 
         if (object.has("key")) {
-            event.setEventKey(object.get("key").getAsString());
+            String key = object.get("key").getAsString();
+            int year = EventHelper.getYear(key);
+            event.setKey(key);
+            event.setYear(year);
         }
 
         if (object.has("name")) {
-            event.setEventName(object.get("name").getAsString());
+            event.setName(object.get("name").getAsString());
         }
 
         if (isNull(object.get("location"))) {
@@ -45,9 +47,9 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         }
 
         if (isNull(object.get("venue_address"))) {
-            event.setVenue("");
+            event.setVenueAddress("");
         } else {
-            event.setVenue(object.get("venue_address").getAsString());
+            event.setVenueAddress(object.get("venue_address").getAsString());
         }
 
         if (object.has("event_type")) {
@@ -76,48 +78,39 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         // "short_name" is not a required field in the API response.
         // If it is null, simply use the event name as the short name
         if (isNull(object.get("short_name"))) {
-            event.setEventShortName("");
+            event.setShortName("");
         } else {
-            event.setEventShortName(object.get("short_name").getAsString());
+            event.setShortName(object.get("short_name").getAsString());
         }
 
         if (!isNull(object.get("website"))) {
             event.setWebsite(object.get("website").getAsString());
         }
 
-        if (object.has("matches")) {
-            event.setMatches(object.get("matches").getAsJsonArray());
-        }
-
         if (object.has("webcast")) {
-            event.setWebcasts(object.get("webcast").getAsJsonArray());
-        }
-
-        if (object.has("rankings")) {
-            event.setRankings(object.get("rankings").getAsJsonArray());
-        }
-
-        if (object.has("stats")) {
-            event.setStats(object.get("stats").getAsJsonObject());
-        }
-
-        if (object.has("alliances")) {
-            event.setAlliances(object.get("alliances").getAsJsonArray());
+            event.setWebcasts(object.get("webcast").toString());
         }
 
         JsonElement districtEnum = object.get("event_district");
         if (isNull(districtEnum)) {
-            event.setDistrictEnum(0);
+            event.setEventDistrict(0);
         } else {
-            event.setDistrictEnum(districtEnum.getAsInt());
+            event.setEventDistrict(districtEnum.getAsInt());
         }
 
         JsonElement districtString = object.get("event_district_string");
         if (isNull(districtString)) {
-            event.setDistrictTitle("");
+            event.setEventDistrictString("");
         } else {
             String title = districtString.getAsString();
-            event.setDistrictTitle(title.equals("null") ? "" : title);
+            event.setEventDistrictString(title.equals("null") ? "" : title);
+        }
+
+        JsonElement alliances = object.get("alliances");
+        if (isNull(alliances)) {
+            event.setAlliances("");
+        } else {
+            event.setAlliancesJson(alliances.getAsJsonArray());
         }
 
         return event;

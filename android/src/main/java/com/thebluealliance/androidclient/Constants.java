@@ -8,10 +8,6 @@ public final class Constants {
         // unused
     }
 
-    public static final String LOG_TAG = "tba-android";
-    public static final String DATAMANAGER_LOG = LOG_TAG + ":dataManager";
-    public static final String REFRESH_LOG = LOG_TAG + ":refresh";
-
     // Keys for shared prefs
     // !!!!DO NOT MODIFY!!!!
     public static final String ALL_DATA_LOADED_KEY = "all_data_loaded";

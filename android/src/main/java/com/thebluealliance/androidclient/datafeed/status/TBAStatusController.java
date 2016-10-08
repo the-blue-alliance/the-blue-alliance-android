@@ -3,13 +3,13 @@ package com.thebluealliance.androidclient.datafeed.status;
 import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountHelper;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
-import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.models.ApiStatus;
 
 import android.app.Activity;
 import android.app.Application;
@@ -20,7 +20,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -40,7 +39,7 @@ import rx.schedulers.Schedulers;
 public class TBAStatusController implements Application.ActivityLifecycleCallbacks {
 
     public static final String STATUS_PREF_KEY = "tba_status";
-    public static final String STATUS_CACHE_CLEAR_KEY = "last_okcache_clear";
+    private static final String STATUS_CACHE_CLEAR_KEY = "last_okcache_clear";
 
     /**
      * We use different timeouts for logged in users and not logged in users. Logged-in users will
@@ -67,63 +66,72 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     private boolean mUserIsLoggedIn;
 
     @Inject
-    public TBAStatusController(SharedPreferences prefs, Gson gson, Cache cache, Context context) {
+    public TBAStatusController(SharedPreferences prefs, Gson gson, Cache cache, AccountController accountController) {
         mPrefs = prefs;
         mGson = gson;
         mOkHttpCache = cache;
         mLastUpdateTime = Long.MIN_VALUE;
         mLastDialogTime = Long.MIN_VALUE;
 
-        mUserIsLoggedIn = AccountHelper.isMyTBAEnabled(context);
+        mUserIsLoggedIn = accountController.isMyTbaEnabled();
     }
 
     public void scheduleStatusUpdate(Context context) {
         context.startService(new Intent(context, StatusRefreshService.class));
     }
 
-    public @Nullable APIStatus fetchApiStatus() {
+    public @Nullable ApiStatus fetchApiStatus() {
         if (!mPrefs.contains(STATUS_PREF_KEY)) {
             return null;
         }
 
         String statusJson = mPrefs.getString(STATUS_PREF_KEY, "");
-        return mGson.fromJson(statusJson, APIStatus.class);
+        return mGson.fromJson(statusJson, ApiStatus.class);
     }
 
     public int getMaxCompYear() {
-        APIStatus status = fetchApiStatus();
-        if (status == null) {
+        ApiStatus status = fetchApiStatus();
+        if (status == null || status.getMaxSeason() == null) {
             Calendar cal = Calendar.getInstance();
             return cal.get(Calendar.YEAR);
         }
         return status.getMaxSeason();
     }
 
-    public int getMinAppVersion() {
-        APIStatus status = fetchApiStatus();
+    public Integer getCurrentCompYear() {
+        ApiStatus status = fetchApiStatus();
         if (status == null) {
+            Calendar cal = Calendar.getInstance();
+            return cal.get(Calendar.YEAR);
+        }
+        return status.getCurrentSeason();
+    }
+
+    public int getMinAppVersion() {
+        ApiStatus status = fetchApiStatus();
+        if (status == null || status.getMinAppVersion() == null) {
             /* Default to the current version */
             return BuildConfig.VERSION_CODE;
         }
         return status.getMinAppVersion();
     }
 
-    public int getLatestAppVersion() {
-        APIStatus status = fetchApiStatus();
-        if (status == null) {
+    private int getLatestAppVersion() {
+        ApiStatus status = fetchApiStatus();
+        if (status == null || status.getLatestAppVersion() == null) {
             /* Default to the current version */
             return BuildConfig.VERSION_CODE;
         }
-        return status.getLatestAppersion();
+        return status.getLatestAppVersion();
     }
 
-    public void clearOkCacheIfNeeded(@Nullable APIStatus status, boolean forceClear) {
+    public void clearOkCacheIfNeeded(@Nullable ApiStatus status, boolean forceClear) {
         long lastCacheClear = mPrefs.getLong(STATUS_CACHE_CLEAR_KEY, Long.MIN_VALUE);
         if (status != null
                 && mOkHttpCache != null
                 && (forceClear || lastCacheClear < status.getLastOkHttpCacheClear())) {
             Schedulers.io().createWorker().schedule(() -> {
-                Log.i(Constants.LOG_TAG, "Clearing OkHttp cache");
+                TbaLogger.i("Clearing OkHttp cache");
                 try {
                     mOkHttpCache.evictAll();
                     mPrefs.edit()
@@ -173,25 +181,21 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
                         i.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient"));
                         activity.startActivity(i);
                     })
-                    .setNegativeButton(R.string.cancel, (dialog, which) -> {
-                        dialog.dismiss();
-                    })
+                    .setNegativeButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
                     .show();
             mLastDialogTime = System.nanoTime();
         }
 
         /* Admin push message */
-        APIStatus status = fetchApiStatus();
+        ApiStatus status = fetchApiStatus();
         Date now = new Date();
-        if (status != null && status.hasMessage()
+        if (status != null && status.getHasMessage()
                 && mLastMessageTime + DIALOG_TIMEOUT < System.nanoTime()
-                && status.getMessageExipration().compareTo(now) > 0) {
+                && status.getMessageExpiration().compareTo(now.getTime()) > 0) {
             new AlertDialog.Builder(activity)
                     .setMessage(status.getMessageText())
                     .setCancelable(false)
-                    .setPositiveButton(R.string.ok, ((dialog, which) -> {
-                        dialog.dismiss();
-                    }))
+                    .setPositiveButton(R.string.ok, ((dialog, which) -> dialog.dismiss()))
                     .show();
             mLastMessageTime = System.nanoTime();
         }

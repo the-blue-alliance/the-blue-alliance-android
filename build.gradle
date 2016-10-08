@@ -12,9 +12,10 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'com.android.tools.build:gradle:2.1.3'
         classpath 'me.tatarka:gradle-retrolambda:3.2.2'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        classpath 'com.google.gms:google-services:3.0.0'
 
         // dependency analysis
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
@@ -50,14 +51,15 @@ allprojects {
     }
 
     ext {
-        supportLibVersion = '23.3.0'
-        playServicesVersion = '8.4.0'
+        supportLibVersion = '24.2.1'
+        playServicesVersion = '9.2.0'
         googleApiClientVersion = '1.21.0'
         retrofitVersion = '2.0.0'
         rxJavaVersion = '1.1.2'
         rxAndroidVersion = '1.1.0'
         gsonVersion = '2.6.2'
         daggerVersion = '2.2'
+        mockitoVersion = '2.0.31-beta'
 
         travisBuild = System.getenv("TRAVIS") == "true"
         // allows for -Dpre-dex=false to be set

@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.imgur.ImgurSuggestionService;
 import com.thebluealliance.androidclient.imgur.ImgurUtils;
@@ -16,7 +16,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -144,7 +143,7 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
                 mImageFile = ImgurUtils.createFile(uri, ConfirmImageSuggestionActivity.this);
                 if (mImageFile == null) {
                     // TODO error handling!
-                    Log.e(Constants.LOG_TAG, "Image was null!");
+                    TbaLogger.e("Image was null!");
                 }
                 return mImageFile;
             });

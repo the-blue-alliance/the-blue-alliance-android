@@ -7,44 +7,59 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 
-import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.models.ApiStatus;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
+public class APIStatusDeserializer implements JsonDeserializer<ApiStatus> {
 
     private static final int MS_PER_SECOND = 1000;
 
-    public static final String MAX_SEASON_TAG = "max_season";
-    public static final String FMS_API_DOWN_TAG = "is_datafeed_down";
-    public static final String DOWN_EVENTS_TAG = "down_events";
-    public static final String ANDROID_SETTINGS_TAG = "android";
-    public static final String MIN_APP_VERSION_TAG = "min_app_version";
-    public static final String LATEST_APP_VERSION_TAG = "latest_app_version";
-    public static final String MESSAGE_DICT = "message";
-    public static final String MESSAGE_TEXT = "text";
-    public static final String MESSAGE_EXPIRATION = "expiration";
-    public static final String LAST_OKHTTP_CACHE_CLEAR = "last_cache_clear";
-    public static final String CHAMPS_PIT_LOCATIONS_URL = "cmp_pit_locations_url";
-    public static final String CHAMPS_PIT_LOCATIONS_UPDATE_TIME = "cmp_pit_locations_update_time";
+    static final String MAX_SEASON_TAG = "max_season";
+    static final String CURRENT_SEASON_TAG = "current_season";
+    static final String FMS_API_DOWN_TAG = "is_datafeed_down";
+    static final String DOWN_EVENTS_TAG = "down_events";
+    static final String ANDROID_SETTINGS_TAG = "android";
+    static final String MIN_APP_VERSION_TAG = "min_app_version";
+    static final String LATEST_APP_VERSION_TAG = "latest_app_version";
+    static final String MESSAGE_DICT = "message";
+    static final String MESSAGE_TEXT = "text";
+    static final String MESSAGE_EXPIRATION = "expiration";
+    static final String LAST_OKHTTP_CACHE_CLEAR = "last_cache_clear";
+    static final String CHAMPS_PIT_LOCATIONS_URL = "cmp_pit_locations_url";
+    static final String CHAMPS_PIT_LOCATIONS_UPDATE_TIME = "cmp_pit_locations_update_time";
 
     @Override
-    public APIStatus deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+    public ApiStatus deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
         if (!json.isJsonObject()) {
             throw new JsonParseException("Data is not JsonObject");
         }
         JsonObject data = json.getAsJsonObject();
-        APIStatus status = new APIStatus();
+        ApiStatus status = new ApiStatus();
 
         JsonElement maxSeason = data.get(MAX_SEASON_TAG);
         if (maxSeason == null || !maxSeason.isJsonPrimitive()) {
             throw new JsonParseException("Max Season is not a primitive");
         }
         status.setMaxSeason(maxSeason.getAsInt());
+
+        JsonElement currentSeason = data.get(CURRENT_SEASON_TAG);
+        if (currentSeason == null || !currentSeason.isJsonPrimitive()) {
+            // Default to the current year if not set
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            status.setCurrentSeason(currentYear);
+        } else {
+            status.setCurrentSeason(currentSeason.getAsInt());
+        }
+
+        // Ensure that maxSeason always is max(current, given max)
+        int maxSeasonCheck = Math.max(status.getMaxSeason(), status.getCurrentSeason());
+        status.setMaxSeason(maxSeasonCheck);
 
         JsonElement fmsApiDown = data.get(FMS_API_DOWN_TAG);
         if (fmsApiDown == null || !fmsApiDown.isJsonPrimitive()) {
@@ -81,7 +96,7 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
         if (latestAppVersion == null || !latestAppVersion.isJsonPrimitive()) {
             throw new JsonParseException("Latest app version not found");
         }
-        status.setLatestAppersion(latestAppVersion.getAsInt());
+        status.setLatestAppVersion(latestAppVersion.getAsInt());
 
         JsonElement message = data.get(MESSAGE_DICT);
         if (message != null && !message.isJsonNull() && message.isJsonObject()) {
@@ -94,7 +109,8 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
             }
             status.setHasMessage(true);
             status.setMessageText(messageText.getAsString());
-            status.setMessageExipration(new Date(messageExpiration.getAsLong() * MS_PER_SECOND));
+            status.setMessageExpiration(new Date(messageExpiration.getAsLong() * MS_PER_SECOND)
+                                                .getTime());
         } else {
             status.setHasMessage(false);
         }
@@ -105,7 +121,7 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
             long lastTimestamp = lastCacheTime.getAsLong();
             status.setLastOkHttpCacheClear(lastTimestamp);
         } else {
-            status.setLastOkHttpCacheClear(-1);
+            status.setLastOkHttpCacheClear((long) -1);
         }
 
         JsonElement champsPitLocationsUrl = data.get(CHAMPS_PIT_LOCATIONS_URL);
@@ -119,7 +135,7 @@ public class APIStatusDeserializer implements JsonDeserializer<APIStatus> {
         if (champsPitLocationsUpdateTime != null && !champsPitLocationsUpdateTime.isJsonNull()) {
             status.setChampsPitLocationsUpdateTime(champsPitLocationsUpdateTime.getAsLong());
         } else {
-            status.setChampsPitLocationsUpdateTime(-1);
+            status.setChampsPitLocationsUpdateTime((long)-1);
         }
 
         status.setJsonBlob(json.toString());

@@ -2,8 +2,8 @@ package com.thebluealliance.androidclient.fragments.event;
 
 import com.google.gson.JsonElement;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -20,7 +20,6 @@ import com.thebluealliance.androidclient.views.NoDataView;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -147,7 +146,7 @@ public class EventStatsFragment
             if (!(adapterView.getAdapter() instanceof ListViewAdapter)
                     || position >= adapterView.getAdapter().getCount()
                     || !(((ListViewAdapter) adapterView.getAdapter()).getItem(position) instanceof ListElement)) {
-                Log.d(Constants.LOG_TAG, "Can't open stat item");
+                TbaLogger.d("Can't open stat item");
                 return;
             }
             String teamKey = ((ListElement) ((ListViewAdapter) adapterView.getAdapter()).getItem(position)).getKey();

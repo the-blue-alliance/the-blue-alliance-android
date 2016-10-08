@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.helpers;
 
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
 
@@ -12,10 +11,10 @@ public final class EventTeamHelper {
         // unused
     }
 
-    public static EventTeam fromEvent(String teamKey, Event in) throws BasicModel.FieldNotDefinedException {
+    public static EventTeam fromEvent(String teamKey, Event in)  {
         EventTeam eventTeam = new EventTeam();
         eventTeam.setEventKey(in.getKey());
-        eventTeam.setYear(in.getEventYear());
+        eventTeam.setYear(in.getYear());
         eventTeam.setCompWeek(in.getCompetitionWeek());
         eventTeam.setTeamKey(teamKey);
         eventTeam.setKey(EventTeamHelper.generateKey(in.getKey(), teamKey));

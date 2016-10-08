@@ -1,12 +1,11 @@
 package com.thebluealliance.androidclient.imgur;
 
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,7 +20,7 @@ public final class ImgurUtils {
     }
 
     public static File createFile(Uri uri, Context context) {
-        Log.d(Constants.LOG_TAG, "URI: " + uri);
+        TbaLogger.d("URI: " + uri);
         try {
             InputStream in = context.getContentResolver().openInputStream(uri);
 

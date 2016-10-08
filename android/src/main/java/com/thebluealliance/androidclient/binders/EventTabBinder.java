@@ -1,11 +1,10 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.models.EventWeekTab;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.util.List;
 
@@ -48,7 +47,7 @@ public class EventTabBinder extends AbstractDataBinder<List<EventWeekTab>> {
 
     @Override
     public void onError(Throwable throwable) {
-        Log.e(Constants.LOG_TAG, "Error fetching event years");
+        TbaLogger.e("Error fetching event years");
         throwable.printStackTrace();
     }
 }

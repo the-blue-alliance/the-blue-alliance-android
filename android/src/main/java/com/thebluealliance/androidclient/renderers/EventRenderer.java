@@ -3,20 +3,18 @@ package com.thebluealliance.androidclient.renderers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.datafeed.APICache;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.WebcastListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,37 +46,23 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
     @Override
     public @Nullable EventListElement renderFromModel(Event event, Boolean showMyTbaSettings) {
         boolean safeMyTba = showMyTbaSettings == null ? false : showMyTbaSettings;
-        try {
             return new EventListElement(
               event.getKey(),
-              event.getEventYear(),
-              event.getEventShortName(),
+              event.getYear(),
+              event.getShortName(),
               event.getDateString(),
               event.getLocation(),
               safeMyTba);
-        } catch (BasicModel.FieldNotDefinedException e) {
-            e.printStackTrace();
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering event\n"
-              + "Required fields: Database.Events.KEY, Database.Events.NAME, Database.Events.LOCATION");
-            return null;
-        }
     }
 
     @WorkerThread
     public List<WebcastListElement> renderWebcasts(Event event) {
         List<WebcastListElement> webcasts = new ArrayList<>();
-        try {
-            int i = 1;
-            for (JsonElement webcast : event.getWebcasts()) {
-                try {
-                    webcasts.add(new WebcastListElement(event.getKey(), event.getEventShortName(), webcast.getAsJsonObject(), i));
-                    i++;
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    Log.w(Constants.LOG_TAG, "Missing fields for rendering event webcasts: KEY, SHORTNAME");
-                }
-            }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields to get event webcasts");
+        JsonArray webcastJson = JSONHelper.getasJsonArray(event.getWebcasts());
+        JsonElement webcast;
+        for (int i = 1; i <= webcastJson.size(); i++) {
+            webcast = webcastJson.get(i - 1);
+            webcasts.add(new WebcastListElement(event.getKey(), event.getShortName(), webcast.getAsJsonObject(), i));
         }
         return webcasts;
     }
@@ -92,22 +76,18 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
 
     @WorkerThread
     public void renderAlliances(Event event, List<ListItem> destList, HashMap<String, PlayoffAdvancement> advancement) {
-        try {
-            JsonArray alliances = event.getAlliances();
-            int counter = 1;
-            for (JsonElement alliance : alliances) {
-                JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
-                PlayoffAdvancement adv = advancement != null
-                        ? getAdvancement(advancement, teams)
-                        : PlayoffAdvancement.NONE;
-                destList.add(new AllianceListElement(event.getKey(), counter, teams, adv));
-                counter++;
-            }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.w(Constants.LOG_TAG, "Missing fields for rendering alliances.\n"
-              + "Required field: Database.Events.ALLIANCES");
-        } catch (IllegalArgumentException e) {
-            Log.w(Constants.LOG_TAG, "Invalid alliance size. Can't render");
+        /*
+         * TODO(773) Needs EventDetails
+         */
+        JsonArray alliances = event.getAlliancesJson();
+        int counter = 1;
+        for (JsonElement alliance : alliances) {
+            JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
+            PlayoffAdvancement adv = advancement != null
+                                     ? getAdvancement(advancement, teams)
+                                     : PlayoffAdvancement.NONE;
+            destList.add(new AllianceListElement(event.getKey(), counter, teams, adv));
+            counter++;
         }
     }
 

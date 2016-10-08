@@ -1,14 +1,13 @@
 package com.thebluealliance.androidclient.helpers;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.models.APIStatus;
+import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.models.ApiStatus;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.JsonReader;
-import android.util.Log;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -89,7 +88,7 @@ public final class PitLocationHelper {
         }
     }
 
-    public static boolean shouldUpdateFromRemoteUrl(Context context, APIStatus status) {
+    public static boolean shouldUpdateFromRemoteUrl(Context context, ApiStatus status) {
         long lastUpdateTime = PreferenceManager.getDefaultSharedPreferences(context).getLong(LAST_UPDATED_PREF_KEY, -1);
         long remoteUpdateTime = status.getChampsPitLocationsUpdateTime();
         // TODO better URL validation
@@ -159,7 +158,7 @@ public final class PitLocationHelper {
                 reader.beginObject();
                 while(reader.hasNext()) {
                     String currentTeamKey = reader.nextName();
-                    Log.d(Constants.LOG_TAG, "reading team: " + currentTeamKey);
+                    TbaLogger.d("reading team: " + currentTeamKey);
                     if (!currentTeamKey.equals(teamKey)) {
                         reader.skipValue();
                     } else {

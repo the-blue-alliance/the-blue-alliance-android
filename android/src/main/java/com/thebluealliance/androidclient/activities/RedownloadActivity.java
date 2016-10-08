@@ -4,6 +4,7 @@ import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
 import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
@@ -26,7 +27,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
@@ -227,7 +227,7 @@ public class RedownloadActivity extends AppCompatActivity
             alertDialog.show();
         } catch (WindowManager.BadTokenException e) {
             // Activity is already gone. Just log the exception
-            Log.e(Constants.LOG_TAG, "Error loading data: " + stacktrace);
+            TbaLogger.e("Error loading data: " + stacktrace);
             e.printStackTrace();
         }
     }

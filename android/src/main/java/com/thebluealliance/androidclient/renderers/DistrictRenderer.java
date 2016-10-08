@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.renderers;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.listitems.DistrictListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.types.ModelType;
@@ -46,15 +45,10 @@ public class DistrictRenderer implements ModelRenderer<District, DistrictRendere
     @WorkerThread
     @Override
     public @Nullable DistrictListElement renderFromModel(District district, RenderArgs args) {
-        try {
-            return new DistrictListElement(
-              district,
-              args != null ? args.numEvents : 0,
-              args != null && args.showMyTba);
-        } catch (BasicModel.FieldNotDefinedException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return new DistrictListElement(
+                district,
+                args != null ? args.numEvents : 0,
+                args != null && args.showMyTba);
     }
 
     public static class RenderArgs {

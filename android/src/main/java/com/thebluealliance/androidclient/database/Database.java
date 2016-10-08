@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database;
 
 import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
@@ -20,7 +21,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import java.util.Map;
 
@@ -218,7 +218,7 @@ public class Database extends SQLiteOpenHelper {
 
     public static synchronized Database getInstance(Context context) {
         if (sDatabaseInstance == null) {
-            sDatabaseInstance = new Database(context);
+            sDatabaseInstance = new Database(context.getApplicationContext());
             sDatabaseInstance.setWriteAheadLoggingEnabled(true);
         }
         return sDatabaseInstance;
@@ -296,7 +296,7 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(Constants.LOG_TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
+        TbaLogger.w("Upgrading database from version " + oldVersion + " to " + newVersion);
 
         int upgradeTo = oldVersion + 1;
         while (upgradeTo <= newVersion) {

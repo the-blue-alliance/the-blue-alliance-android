@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 
 import javax.annotation.Nullable;
@@ -51,7 +50,7 @@ public class SubscriberTestController<API, VIEW> {
         return this;
     }
 
-    public SubscriberTestController<API, VIEW> parse() throws BasicModel.FieldNotDefinedException {
+    public SubscriberTestController<API, VIEW> parse()  {
         checkPreconditions();
         if (mSubscriber.isDataValid()) {
             mSubscriber.parseData();

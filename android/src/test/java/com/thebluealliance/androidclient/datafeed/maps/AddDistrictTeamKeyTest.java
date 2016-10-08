@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.datafeed.maps;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 
 import org.junit.Before;
@@ -25,7 +24,7 @@ public class AddDistrictTeamKeyTest {
     private AddDistrictTeamKey mKeyAdder;
     private DistrictTeam mDistrictTeam;
     private String mDistrictShort;
-    private int mYear;
+    private Integer mYear;
 
     @Before
     public void setUp() {
@@ -36,7 +35,7 @@ public class AddDistrictTeamKeyTest {
     }
 
     @Test
-    public void testAddDistrictTeamKey() throws BasicModel.FieldNotDefinedException {
+    public void testAddDistrictTeamKey()  {
         List<DistrictTeam> teamList = new ArrayList<>();
         teamList.add(mDistrictTeam);
 
@@ -47,7 +46,7 @@ public class AddDistrictTeamKeyTest {
 
         String districtKey = DistrictHelper.generateKey(mDistrictShort, mYear);
         String expectedKey = DistrictTeamHelper.generateKey(mDistrictTeam.getTeamKey(), districtKey);
-        int districtEnum = DistrictHelper.districtTypeFromKey(districtKey).ordinal();
+        Integer districtEnum = DistrictHelper.districtTypeFromKey(districtKey).ordinal();
         assertEquals(mDistrictTeam.getKey(), expectedKey);
         assertEquals(mDistrictTeam.getDistrictEnum(), districtEnum);
         assertEquals(mDistrictTeam.getYear(), mYear);

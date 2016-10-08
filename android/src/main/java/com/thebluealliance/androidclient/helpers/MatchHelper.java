@@ -3,9 +3,8 @@ package com.thebluealliance.androidclient.helpers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.models.BasicModel;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.types.MatchType;
@@ -13,7 +12,6 @@ import com.thebluealliance.androidclient.types.MatchType;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +53,7 @@ public final class MatchHelper {
      * @return Next match
      */
     public static @Nullable Match getNextMatchPlayed(List<Match> matches)
-      throws BasicModel.FieldNotDefinedException {
+       {
         if (matches == null || matches.isEmpty()) return null;
 
         Match last = null;
@@ -79,7 +77,7 @@ public final class MatchHelper {
      * @return Last match played
      */
     public static @Nullable Match getLastMatchPlayed(List<Match> matches)
-      throws BasicModel.FieldNotDefinedException {
+       {
         if (matches == null || matches.isEmpty()) return null;
         for (int i = matches.size() - 1; i >= 0; i--) {
             Match m = matches.get(i);
@@ -133,49 +131,45 @@ public final class MatchHelper {
             return alliance;
         }
         for (Match match : teamMatches) {
-            try {
-                if (match.getMatchType() == MatchType.QUARTER) {
-                    JsonObject matchAlliances = match.getAlliances();
-                    JsonArray redTeams = Match.getRedTeams(matchAlliances);
-                    Boolean isRed = Match.hasTeam(redTeams, teamKey);
+            if (MatchType.fromShortType(match.getCompLevel()) == MatchType.QUARTER) {
+                JsonObject matchAlliances = match.getAlliancesJson();
+                JsonArray redTeams = Match.getRedTeams(matchAlliances);
+                Boolean isRed = Match.hasTeam(redTeams, teamKey);
 
-                    if (match.getYear() != 2015) {
-                        switch (match.getSetNumber()) {
-                            case 1:
-                                alliance = isRed ? 1 : 8;
-                                break;
-                            case 2:
-                                alliance = isRed ? 4 : 5;
-                                break;
-                            case 3:
-                                alliance = isRed ? 2 : 7;
-                                break;
-                            case 4:
-                                alliance = isRed ? 3 : 6;
-                                break;
-                        }
-                    } else {
-                        /* Special format for 2015 */
-                        switch (match.getMatchNumber()) {
-                            case 1:
-                                alliance = isRed ? 4 : 5;
-                                break;
-                            case 2:
-                                alliance = isRed ? 3 : 6;
-                                break;
-                            case 3:
-                                alliance = isRed ? 2 : 7;
-                                break;
-                            case 4:
-                                alliance = isRed ? 1 : 8;
-                                break;
-                        }
+                if (match.getYear() != 2015) {
+                    switch (match.getSetNumber()) {
+                        case 1:
+                            alliance = isRed ? 1 : 8;
+                            break;
+                        case 2:
+                            alliance = isRed ? 4 : 5;
+                            break;
+                        case 3:
+                            alliance = isRed ? 2 : 7;
+                            break;
+                        case 4:
+                            alliance = isRed ? 3 : 6;
+                            break;
                     }
-
-                    break;
+                } else {
+                    /* Special format for 2015 */
+                    switch (match.getMatchNumber()) {
+                        case 1:
+                            alliance = isRed ? 4 : 5;
+                            break;
+                        case 2:
+                            alliance = isRed ? 3 : 6;
+                            break;
+                        case 3:
+                            alliance = isRed ? 2 : 7;
+                            break;
+                        case 4:
+                            alliance = isRed ? 1 : 8;
+                            break;
+                    }
                 }
-            } catch (BasicModel.FieldNotDefinedException e) {
-                Log.w(Constants.LOG_TAG, "Match doesn't have alliances defined. Can't determine alliance");
+
+                break;
             }
         }
         return alliance;
@@ -205,11 +199,11 @@ public final class MatchHelper {
      * @return team's past/current event status
      */
     public static EventStatus evaluateStatusOfTeam(Event e, List<Match> teamMatches, String teamKey)
-    throws BasicModel.FieldNotDefinedException {
+     {
 
         // There might be match info available,
         // but no alliance selection data (for old events)
-        JsonArray alliances = e.getAlliances();
+        JsonArray alliances = JSONHelper.getasJsonArray(e.getAlliances());
         int year = 2014;
 
         boolean inAlliance = false;
@@ -248,7 +242,8 @@ public final class MatchHelper {
             match.setSelectedTeam(teamKey);
             year = match.getYear();
 
-            JsonObject matchAlliances = match.getAlliances();
+            MatchType matchType = MatchType.fromShortType(match.getCompLevel());
+            JsonObject matchAlliances = match.getAlliancesJson();
             JsonArray redTeams = Match.getRedTeams(matchAlliances),
                     blueTeams = Match.getBlueTeams(matchAlliances);
 
@@ -257,7 +252,7 @@ public final class MatchHelper {
             }
 
             if (match.hasBeenPlayed()) {
-                switch (match.getMatchType()) {
+                switch (matchType) {
                     case OCTO:
                         elimMatchPlayed = true;
                         efPlayed++;
@@ -277,8 +272,8 @@ public final class MatchHelper {
                 }
             }
 
-            if (lastType != match.getMatchType()) {
-                switch (match.getMatchType()) {
+            if (lastType != matchType) {
+                switch (matchType) {
                     case QUAL:
                         currentGroup = qualMatches;
                         break;
@@ -297,12 +292,13 @@ public final class MatchHelper {
                 }
             }
             currentGroup.add(match);
+            lastType = matchType;
         }
 
-        Log.d(Constants.LOG_TAG, "qual size: " + qualMatches.size());
-        Log.d(Constants.LOG_TAG, "quarter size: " + quarterMatches.size());
-        Log.d(Constants.LOG_TAG, "semi size: " + semiMatches.size());
-        Log.d(Constants.LOG_TAG, "final size: " + finalMatches.size());
+        TbaLogger.d("qual size: " + qualMatches.size());
+        TbaLogger.d("quarter size: " + quarterMatches.size());
+        TbaLogger.d("semi size: " + semiMatches.size());
+        TbaLogger.d("final size: " + finalMatches.size());
 
         if (e.isHappeningNow() && quarterMatches.size() == 0) {
             return EventStatus.PLAYING_IN_QUALS;
@@ -312,14 +308,14 @@ public final class MatchHelper {
         boolean allQualMatchesPlayed = true;
         for (Match match : qualMatches) {
             if (!match.hasBeenPlayed()) {
-                Log.d(Constants.LOG_TAG, "Match " + match.getKey() + " not played!");
+                TbaLogger.d("Match " + match.getKey() + " not played!");
                 allQualMatchesPlayed = false;
                 break;
             }
         }
 
-        Log.d(Constants.LOG_TAG, "In alliance: " + inAlliance);
-        Log.d(Constants.LOG_TAG, "All qual matches played: " + allQualMatchesPlayed);
+        TbaLogger.d("In alliance: " + inAlliance);
+        TbaLogger.d("All qual matches played: " + allQualMatchesPlayed);
         if (qualMatches.isEmpty()
                 || (allQualMatchesPlayed && !teamIsHere)
                 || (!(elimMatchPlayed || allQualMatchesPlayed) && !e.isHappeningNow())) {
@@ -376,7 +372,7 @@ public final class MatchHelper {
             int countPlayed = 0, countWon = 0;
             for (Match match : octoMatches) {
                 if (match.hasBeenPlayed()) {
-                    JsonObject matchAlliances = match.getAlliances();
+                    JsonObject matchAlliances = match.getAlliancesJson();
                     JsonArray redTeams = Match.getRedTeams(matchAlliances),
                             blueTeams = Match.getBlueTeams(matchAlliances);
                     if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
@@ -403,7 +399,7 @@ public final class MatchHelper {
             int countPlayed = 0, countWon = 0;
             for (Match match : quarterMatches) {
                 if (match.hasBeenPlayed()) {
-                    JsonObject matchAlliances = match.getAlliances();
+                    JsonObject matchAlliances = match.getAlliancesJson();
                     JsonArray redTeams = Match.getRedTeams(matchAlliances),
                             blueTeams = Match.getBlueTeams(matchAlliances);
                     if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
@@ -434,7 +430,7 @@ public final class MatchHelper {
             int countPlayed = 0, countWon = 0;
             for (Match match : semiMatches) {
                 if (match.hasBeenPlayed()) {
-                    JsonObject matchAlliances = match.getAlliances();
+                    JsonObject matchAlliances = match.getAlliancesJson();
                     JsonArray redTeams = Match.getRedTeams(matchAlliances),
                             blueTeams = Match.getBlueTeams(matchAlliances);
                     if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
@@ -463,7 +459,7 @@ public final class MatchHelper {
             int countPlayed = 0, countWon = 0;
             for (Match match : finalMatches) {
                 if (match.hasBeenPlayed()) {
-                    JsonObject matchAlliances = match.getAlliances();
+                    JsonObject matchAlliances = match.getAlliancesJson();
                     JsonArray redTeams = Match.getRedTeams(matchAlliances),
                             blueTeams = Match.getBlueTeams(matchAlliances);
                     if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
@@ -546,15 +542,14 @@ public final class MatchHelper {
         return getMatchTitleFromMatchKey(context, matchKey, true);
     }
 
-    public static MatchType getMatchTypeFromKey(String matchKey) {
+    public static String getMatchTypeFromKey(String matchKey) {
         String keyWithoutEvent = matchKey.replaceAll(".*_", "");
         Pattern regexPattern = Pattern.compile("([a-z]+)([0-9]+)m?([0-9]*)");
         Matcher m = regexPattern.matcher(keyWithoutEvent);
         if (m.matches()) {
-            String typeCode = m.group(1);
-            return MatchType.fromShortType(typeCode);
+            return m.group(1);
         } else {
-            return MatchType.NONE;
+            return "";
         }
     }
 }

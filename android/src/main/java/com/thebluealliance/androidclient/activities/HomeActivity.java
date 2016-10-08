@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.activities;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
@@ -33,11 +34,12 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import java.util.Arrays;
 
 import javax.inject.Inject;
 
@@ -63,6 +65,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
     private boolean mFromSavedInstance = false;
     private int mCurrentSelectedNavigationItemId = -1;
     private int mCurrentSelectedYearPosition = -1;
+    private int mSelectedYear;
     private String[] mEventsDropdownItems, mDistrictsDropdownItems;
     private Toolbar mToolbar;
     private View mYearSelectorContainer;
@@ -112,14 +115,19 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
             }
         }
 
+        String currentYear = Integer.toString(mStatusController.getCurrentCompYear());
         if (savedInstanceState != null) {
             mFromSavedInstance = true;
-            Log.d(Constants.LOG_TAG, "StartActivity is from saved instance");
+            TbaLogger.d("StartActivity is from saved instance");
 
             if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION)) {
                 mCurrentSelectedYearPosition = savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION);
             } else {
-                mCurrentSelectedYearPosition = 0;
+                mCurrentSelectedYearPosition = Arrays.asList(mEventsDropdownItems)
+                                                     .indexOf(currentYear);
+                if (mCurrentSelectedNavigationItemId == -1) {
+                    mCurrentSelectedNavigationItemId = 0;
+                }
             }
 
             if (savedInstanceState.containsKey(STATE_SELECTED_NAV_ID)) {
@@ -129,7 +137,11 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                 switchToModeForId(R.id.nav_item_events, savedInstanceState);
             }
         } else {
-            mCurrentSelectedYearPosition = 0;
+            mCurrentSelectedYearPosition = Arrays.asList(mEventsDropdownItems)
+                                                 .indexOf(currentYear);
+            if (mCurrentSelectedNavigationItemId == -1) {
+                    mCurrentSelectedNavigationItemId = 0;
+            }
             switchToModeForId(initNavId, savedInstanceState);
         }
 
@@ -409,6 +421,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
                     .datafeedModule(application.getDatafeedModule())
                     .binderModule(application.getBinderModule())
                     .databaseWriterModule(application.getDatabaseWriterModule())
+                    .gceModule(application.getGceModule())
                     .subscriberModule(new SubscriberModule(this))
                     .clickListenerModule(new ClickListenerModule(this))
                     .build();

@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.binders;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 
@@ -136,6 +137,11 @@ public class RecentNotificationsListBinder extends RecyclerViewBinder {
 
 
     private void addItemToBeginningOfList(Object item) {
+        if (item == null) {
+            TbaLogger.w("Attempt to add a null ViewModel");
+            return;
+        }
+
         if (mList == null) {
             mList = new ArrayList<>();
         }

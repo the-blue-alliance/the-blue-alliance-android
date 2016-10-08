@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.database;
 
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
@@ -25,7 +25,6 @@ import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 
 import android.database.Cursor;
-import android.util.Log;
 
 import java.util.Date;
 
@@ -80,19 +79,19 @@ public final class ModelInflater {
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
                 case EventsTable.KEY:
-                    event.setEventKey(data.getString(i));
+                    event.setKey(data.getString(i));
                     break;
                 case EventsTable.NAME:
-                    event.setEventName(data.getString(i));
+                    event.setName(data.getString(i));
                     break;
                 case EventsTable.SHORTNAME:
-                    event.setEventShortName(data.getString(i));
+                    event.setShortName(data.getString(i));
                     break;
                 case EventsTable.LOCATION:
                     event.setLocation(data.getString(i));
                     break;
                 case EventsTable.VENUE:
-                    event.setVenue(data.getString(i));
+                    event.setVenueAddress(data.getString(i));
                     break;
                 case EventsTable.WEBSITE:
                     event.setWebsite(data.getString(i));
@@ -101,19 +100,20 @@ public final class ModelInflater {
                     event.setEventType(data.getInt(i));
                     break;
                 case EventsTable.DISTRICT:
-                    event.setDistrictEnum(data.getInt(i));
+                    event.setEventDistrict(data.getInt(i));
                     break;
                 case EventsTable.DISTRICT_STRING:
-                    event.setDistrictTitle(data.getString(i));
+                    event.setEventDistrictString(data.getString(i));
                     break;
                 case EventsTable.DISTRICT_POINTS:
-                    event.setDistrictPoints(data.getString(i));
+                    // TODO(773) Required EventDetails
+                    //event.setDistrictPoints(data.getString(i));
                     break;
                 case EventsTable.START:
-                    event.setStartDate(new Date(data.getLong(i)));
+                    event.setStartDate(data.getLong(i));
                     break;
                 case EventsTable.END:
-                    event.setEndDate(new Date(data.getLong(i)));
+                    event.setEndDate(data.getLong(i));
                     break;
                 case EventsTable.OFFICIAL:
                     event.setOfficial(data.getInt(i) == 1);
@@ -122,16 +122,19 @@ public final class ModelInflater {
                     event.setCompetitionWeek(data.getInt(i));
                     break;
                 case EventsTable.RANKINGS:
-                    event.setRankings(data.getString(i));
+                    //TODO(773) Requires EventDetails
+                    //event.setRankings(data.getString(i));
                     break;
                 case EventsTable.ALLIANCES:
                     event.setAlliances(data.getString(i));
                     break;
                 case EventsTable.STATS:
-                    event.setStats(data.getString(i));
+                    //TODO(773) Requires EventDetails
+                    //event.setStats(data.getString(i));
                     break;
                 case EventsTable.TEAMS:
-                    event.setTeams(data.getString(i));
+                    //TODO(773) Requires EventDetails
+                    ////event.setTeams(data.getString(i));
                     break;
                 case EventsTable.WEBCASTS:
                     event.setWebcasts(data.getString(i));
@@ -174,7 +177,7 @@ public final class ModelInflater {
                     match.setSetNumber(data.getInt(i));
                     break;
                 case MatchesTable.BREAKDOWN:
-                    match.setBreakdown(data.getString(i));
+                    match.setScoreBreakdown(data.getString(i));
                     break;
                 default:
             }
@@ -193,7 +196,7 @@ public final class ModelInflater {
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
                 case MediasTable.TYPE:
-                    media.setMediaType(data.getString(i));
+                    media.setType(data.getString(i));
                     break;
                 case MediasTable.FOREIGNKEY:
                     media.setForeignKey(data.getString(i));
@@ -221,7 +224,7 @@ public final class ModelInflater {
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
                 case TeamsTable.KEY:
-                    team.setTeamKey(data.getString(i));
+                    team.setKey(data.getString(i));
                     break;
                 case TeamsTable.NUMBER:
                     team.setTeamNumber(data.getInt(i));
@@ -230,7 +233,7 @@ public final class ModelInflater {
                     team.setNickname(data.getString(i));
                     break;
                 case TeamsTable.NAME:
-                    team.setFullName(data.getString(i));
+                    team.setName(data.getString(i));
                     break;
                 case TeamsTable.LOCATION:
                     team.setLocation(data.getString(i));
@@ -394,7 +397,7 @@ public final class ModelInflater {
                     subscription.setModelEnum(data.getInt(i));
                     break;
                 case SubscriptionsTable.NOTIFICATION_SETTINGS:
-                    Log.d(Constants.LOG_TAG, "Settings: " + data.getString(i));
+                    TbaLogger.d("Settings: " + data.getString(i));
                     subscription.setNotificationSettings(data.getString(i));
                     break;
                 default:

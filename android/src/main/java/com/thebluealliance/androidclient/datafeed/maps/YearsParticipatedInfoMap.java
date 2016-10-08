@@ -1,13 +1,12 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
-import com.google.gson.JsonArray;
+import com.thebluealliance.androidclient.database.writers.YearsParticipatedWriter.YearsParticipatedInfo;
 
-import com.thebluealliance.androidclient.database.writers.YearsParticipatedWriter
-        .YearsParticipatedInfo;
+import java.util.List;
 
 import rx.functions.Func1;
 
-public class YearsParticipatedInfoMap implements Func1<JsonArray, YearsParticipatedInfo> {
+public class YearsParticipatedInfoMap implements Func1<List<Integer>, YearsParticipatedInfo> {
 
     private final String mTeamKey;
 
@@ -16,7 +15,7 @@ public class YearsParticipatedInfoMap implements Func1<JsonArray, YearsParticipa
     }
 
     @Override
-    public YearsParticipatedInfo call(JsonArray jsonElements) {
-        return new YearsParticipatedInfo(mTeamKey, jsonElements);
+    public YearsParticipatedInfo call(List<Integer> elements) {
+        return new YearsParticipatedInfo(mTeamKey, elements);
     }
 }

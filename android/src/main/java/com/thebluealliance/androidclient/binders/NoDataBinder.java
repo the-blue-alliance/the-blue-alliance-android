@@ -1,11 +1,10 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.views.NoDataView;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -22,11 +21,11 @@ public class NoDataBinder {
 
     public void bindData(@Nullable NoDataViewParams data) {
         if (data == null) {
-            Log.d(Constants.LOG_TAG, "NoDataView not bound; NoDataViewParams cannot be null");
+            TbaLogger.d("NoDataView not bound; NoDataViewParams cannot be null");
             return;
         }
         if (mNoDataView == null) {
-            Log.d(Constants.LOG_TAG, "NoDataView not bound; view cannot be null");
+            TbaLogger.d("NoDataView not bound; view cannot be null");
             return;
         }
         mNoDataView.setVisibility(View.VISIBLE);

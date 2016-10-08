@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.listeners;
 
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -10,7 +10,6 @@ import com.thebluealliance.androidclient.listitems.ListElement;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -31,7 +30,8 @@ public class EventClickListener implements AdapterView.OnItemClickListener, View
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (!(parent.getAdapter() instanceof ListViewAdapter)) {
             //safety check. Shouldn't ever be tripped unless someone messed up in code somewhere
-            Log.w(Constants.LOG_TAG, "Someone done goofed. A ListView adapter doesn't extend ListViewAdapter. Try again...");
+            TbaLogger
+                    .w("Someone done goofed. A ListView adapter doesn't extend ListViewAdapter. Try again...");
             return;
         }
         Object item = ((ListViewAdapter) parent.getAdapter()).getItem(position);
@@ -51,7 +51,7 @@ public class EventClickListener implements AdapterView.OnItemClickListener, View
             }
             context.startActivity(intent);
         } else {
-            Log.d(Constants.LOG_TAG, "ListHeader clicked. Ignore...");
+            TbaLogger.d("ListHeader clicked. Ignore...");
         }
     }
 

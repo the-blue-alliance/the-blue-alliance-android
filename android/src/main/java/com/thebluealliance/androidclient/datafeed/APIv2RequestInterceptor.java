@@ -1,9 +1,8 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.datafeed.retrofit.APIv2;
-
-import android.util.Log;
+import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.api.ApiV2Constants;
 
 import java.io.IOException;
 
@@ -21,7 +20,7 @@ public class APIv2RequestInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request originalRequest = chain.request();
         String url = originalRequest.url().toString();
-        Log.d(Constants.LOG_TAG, "FETCHING " + url);
+        TbaLogger.d("FETCHING " + url);
 
         Request.Builder newRequestBuilder = originalRequest.newBuilder()
             .addHeader("X-TBA-App-Id", Constants.getApiHeader())
@@ -29,17 +28,17 @@ public class APIv2RequestInterceptor implements Interceptor {
 
         // If we've specified via a header that we want to force from cache/web, build the
         // proper CacheControl header to send with the requests
-        String internalCacheHeader = originalRequest.header(APIv2.TBA_CACHE_HEADER);
+        String internalCacheHeader = originalRequest.header(ApiV2Constants.TBA_CACHE_HEADER);
         if (internalCacheHeader != null) {
             switch (internalCacheHeader) {
-                case APIv2.TBA_CACHE_LOCAL:
+                case ApiV2Constants.TBA_CACHE_LOCAL:
                     newRequestBuilder.cacheControl(CacheControl.FORCE_CACHE);
                     break;
-                case APIv2.TBA_CACHE_WEB:
+                case ApiV2Constants.TBA_CACHE_WEB:
                     newRequestBuilder.cacheControl(CacheControl.FORCE_NETWORK);
                     break;
             }
-            newRequestBuilder.removeHeader(APIv2.TBA_CACHE_HEADER);
+            newRequestBuilder.removeHeader(ApiV2Constants.TBA_CACHE_HEADER);
         }
 
         Request newRequest = newRequestBuilder.build();

@@ -4,12 +4,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import java.util.Map;
 
@@ -46,7 +45,7 @@ public final class MyTBAHelper {
             }
         }
         data.add(INTENT_EXTRAS, extras);
-        Log.d(Constants.LOG_TAG, "Serialized: " + data.toString());
+        TbaLogger.d("Serialized: " + data.toString());
         return data.toString();
     }
 
@@ -55,7 +54,7 @@ public final class MyTBAHelper {
         Intent intent = new Intent();
         String pack = data.get(INTENT_PACKAGE).getAsString();
         String cls = data.get(INTENT_CLASS).getAsString();
-        Log.d(Constants.LOG_TAG, pack + "/" + cls);
+        TbaLogger.d(pack + "/" + cls);
         intent.setClassName(pack, cls);
         JsonObject extras = data.get(INTENT_EXTRAS).getAsJsonObject();
         for (Map.Entry<String, JsonElement> extra : extras.entrySet()) {

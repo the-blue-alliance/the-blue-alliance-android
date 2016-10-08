@@ -26,11 +26,8 @@ public class DistrictTeamsTable extends ModelTable<DistrictTeam> {
             TOTAL_POINTS = "totalPoints",
             JSON = "json";
 
-    private SQLiteDatabase mDb;
-
     public DistrictTeamsTable(SQLiteDatabase db){
         super(db);
-        this.mDb = db;
     }
 
     @Override

@@ -16,7 +16,6 @@ import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.Award;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
 
@@ -98,8 +97,7 @@ public class AwardsPostedNotification extends BaseNotification<AwardsPostedNotif
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(title)
-                .setContentText(contentText)
-                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_assessment_white_24dp));
+                .setContentText(contentText);
 
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
         builder.setStyle(style);
@@ -111,11 +109,7 @@ public class AwardsPostedNotification extends BaseNotification<AwardsPostedNotif
         if (awards != null) {
             // Set award keys for writing
             for (Award award : awards) {
-                try {
-                    award.setKey(AwardHelper.createAwardKey(award.getEventKey(), award.getEnum()));
-                } catch (BasicModel.FieldNotDefinedException e) {
-                    /* Can't write without a key */
-                }
+                award.setKey(AwardHelper.createAwardKey(award.getEventKey(), award.getEnum()));
             }
             mWriter.write(awards);
         }

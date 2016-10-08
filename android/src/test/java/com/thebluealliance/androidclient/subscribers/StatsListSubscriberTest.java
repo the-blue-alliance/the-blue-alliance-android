@@ -10,7 +10,6 @@ import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.eventbus.EventStatsEvent;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.StatsListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
@@ -53,18 +52,18 @@ public class StatsListSubscriberTest {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testSimpleBinding() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleBinding()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mStats);
         verify(mEventBus).post(eq(new EventStatsEvent("1. Team 195 - <b>87.96</b>")));
     }
 
     @Test
-    public void testParsedData() throws BasicModel.FieldNotDefinedException {
+    public void testParsedData()  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mStats);
         StatsListElement expected =
           new StatsListElement("frc195", "195", "Team 195", "Stats",

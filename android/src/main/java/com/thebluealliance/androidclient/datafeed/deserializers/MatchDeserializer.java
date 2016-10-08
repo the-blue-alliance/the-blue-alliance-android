@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Match;
 
 import java.lang.reflect.Type;
@@ -24,11 +25,14 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
         final Match match = new Match();
 
         if (object.has("key")) {
-            match.setKey(object.get("key").getAsString());
+            String matchKey = object.get("key").getAsString();
+            String eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
+            match.setKey(matchKey);
+            match.setEventKey(eventKey);
         }
 
         if (object.has("comp_level")) {
-            match.setTypeFromShort(object.get("comp_level").getAsString());
+            match.setCompLevel(object.get("comp_level").getAsString());
         }
 
         if (object.has("match_number")) {
@@ -39,8 +43,8 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
             match.setSetNumber(object.get("set_number").getAsInt());
         }
 
-        if (object.has(ALLIANCE_TAG)) {
-            match.setAlliances(object.get(ALLIANCE_TAG).getAsJsonObject());
+        if (object.has(ALLIANCE_TAG) && object.get(ALLIANCE_TAG).isJsonObject()) {
+            match.setAlliances(object.get(ALLIANCE_TAG).toString());
         }
 
         if (!isNull(object.get("time_string"))) {
@@ -51,12 +55,12 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
             match.setTime(object.get("time").getAsLong());
         }
 
-        if (object.has("videos")) {
-            match.setVideos(object.get("videos").getAsJsonArray());
+        if (object.has("videos") && object.get("videos").isJsonArray()) {
+            match.setVideos(object.get("videos").toString());
         }
 
         if (object.has("score_breakdown") && object.get("score_breakdown").isJsonObject()) {
-            match.setBreakdown(object.get("score_breakdown").getAsJsonObject());
+            match.setScoreBreakdown(object.get("score_breakdown").toString());
         }
 
         return match;

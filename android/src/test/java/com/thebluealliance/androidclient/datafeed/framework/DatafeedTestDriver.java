@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 
 import static org.mockito.Mockito.mock;
@@ -22,7 +21,7 @@ public final class DatafeedTestDriver {
     }
 
     public static <API, VIEW> void parseNullData(BaseAPISubscriber<API, VIEW> subscriber)
-      throws BasicModel.FieldNotDefinedException {
+       {
         SubscriberTestController<API, VIEW> controller = getSubscriberController(subscriber);
         controller
           .withApiData(null)
@@ -32,7 +31,7 @@ public final class DatafeedTestDriver {
 
     public static <API extends JsonElement, VIEW>
     void parseJsonNull(BaseAPISubscriber<API, VIEW> subscriber)
-    throws BasicModel.FieldNotDefinedException {
+     {
         SubscriberTestController<API, VIEW> controller = getSubscriberController(subscriber);
         controller
           .withApiData((API)JsonNull.INSTANCE)
@@ -42,7 +41,7 @@ public final class DatafeedTestDriver {
 
     public static <API, VIEW> void testSimpleParsing(
       BaseAPISubscriber<API, VIEW> subscriber,
-      API data) throws BasicModel.FieldNotDefinedException {
+      API data)  {
         DataConsumer<VIEW> consumer = mock(DataConsumer.class);
         SubscriberTestController<API, VIEW> controller = getSubscriberController(subscriber);
         controller = controller
@@ -61,7 +60,7 @@ public final class DatafeedTestDriver {
 
     public static <API, VIEW> VIEW getParsedData(
       BaseAPISubscriber<API, VIEW> subscriber,
-      API data) throws BasicModel.FieldNotDefinedException {
+      API data)  {
         SubscriberTestController<API, VIEW> controller = getSubscriberController(subscriber);
         return controller
           .withApiData(data)

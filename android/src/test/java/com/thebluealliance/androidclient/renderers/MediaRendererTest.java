@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.renderers;
 
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.types.MediaType;
 
@@ -18,9 +17,6 @@ import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 @Config(manifest = Config.NONE)
 @RunWith(ParameterizedRobolectricTestRunner.class)
@@ -53,7 +49,7 @@ public class MediaRendererTest {
     }
 
     @Test
-    public void testRenderFromModel() throws BasicModel.FieldNotDefinedException {
+    public void testRenderFromModel()  {
         ImageListElement listItem = mRenderer.renderFromModel(mMedia, null);
         assertNotNull(listItem);
         assertEquals(listItem.isVideo, mMediaType.isVideo());
@@ -68,14 +64,6 @@ public class MediaRendererTest {
             assertEquals(listItem.imageUrl, "http://www.chiefdelphi"
                      + ".com/media/img/fe3/fe38d320428adf4f51ac969efb3db32c_m.jpg");
         }
-    }
-
-    @Test
-    public void testModelThrowsFieldNotFound() throws BasicModel.FieldNotDefinedException {
-        mMedia = spy(mMedia);
-        when(mMedia.getForeignKey()).thenThrow(new BasicModel.FieldNotDefinedException(""));
-        ImageListElement listItem = mRenderer.renderFromModel(mMedia, null);
-        assertNull(listItem);
     }
 
 }

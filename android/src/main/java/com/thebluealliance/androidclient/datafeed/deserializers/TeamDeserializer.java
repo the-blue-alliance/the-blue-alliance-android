@@ -23,7 +23,7 @@ public class TeamDeserializer implements JsonDeserializer<Team> {
         // All the teams should have an associated key and team number,
         // but it doesn't hurt to check in the rare case something goes terribly wrong.
         if (!isNull(object.get("key"))) {
-            team.setTeamKey(object.get("key").getAsString());
+            team.setKey(object.get("key").getAsString());
         }
 
         if (!isNull(object.get("team_number"))) {
@@ -32,7 +32,7 @@ public class TeamDeserializer implements JsonDeserializer<Team> {
 
         // Some of the old teams don't have names and/or locations.
         if (!isNull(object.get("name"))) {
-            team.setFullName(object.get("name").getAsString());
+            team.setName(object.get("name").getAsString());
         }
 
         if (!isNull(object.get("nickname"))) {

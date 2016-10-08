@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import com.thebluealliance.androidclient.models.BasicModel;
-
 import android.support.annotation.Nullable;
 
 /**
@@ -19,7 +17,7 @@ public interface APISubscriber<T> {
      * and should be handled
      * Usually creates a {@link com.thebluealliance.androidclient.adapters.ListViewAdapter}
      */
-    void parseData() throws BasicModel.FieldNotDefinedException;
+    void parseData() ;
 
     /**
      * Callback for displaying data to be viewed

@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.helpers;
 
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.types.EventType;
 
@@ -297,7 +296,7 @@ public class EventHelperTest {
     }
 
     @Test
-    public void testGetLabelForEvent() throws BasicModel.FieldNotDefinedException {
+    public void testGetLabelForEvent()  {
         Event noType = mockEventType(EventType.NONE);
         assertEquals(EventHelper.generateLabelForEvent(noType), EventHelper.WEEKLESS_LABEL);
 
@@ -305,7 +304,7 @@ public class EventHelperTest {
         assertEquals(EventHelper.generateLabelForEvent(preseason), EventHelper.PRESEASON_LABEL);
 
         Event offseason = mockEventType(EventType.OFFSEASON);
-        when(offseason.getStartDate()).thenReturn(new Date(115, 4, 2));
+        when(offseason.getFormattedStartDate()).thenReturn(new Date(115, 4, 2));
         assertEquals(EventHelper.generateLabelForEvent(offseason), "May Offseason Events");
 
         Event cmpDivision = mockEventType(EventType.CMP_DIVISION);
@@ -356,15 +355,15 @@ public class EventHelperTest {
         assertEquals("CTWAT", EventHelper.getEventCode("2015ctwat_frc1124"));
     }
 
-    private static Event mockEventType(EventType type) throws BasicModel.FieldNotDefinedException {
+    private static Event mockEventType(EventType type)  {
         Event event = mock(Event.class);
-        when(event.getEventType()).thenReturn(type);
+        when(event.getEventTypeEnum()).thenReturn(type);
         return event;
     }
 
-    private static Event mockRegularEvent(EventType type, int year, int week) throws BasicModel.FieldNotDefinedException {
+    private static Event mockRegularEvent(EventType type, int year, int week)  {
         Event event = mockEventType(type);
-        when(event.getEventYear()).thenReturn(year);
+        when(event.getYear()).thenReturn(year);
         when(event.getCompetitionWeek()).thenReturn(week);
         return event;
     }

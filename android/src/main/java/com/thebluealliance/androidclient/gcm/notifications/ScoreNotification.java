@@ -4,7 +4,6 @@ import com.google.common.base.Predicate;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
@@ -16,7 +15,6 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
@@ -31,7 +29,6 @@ import android.content.res.Resources;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -94,14 +91,7 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
         String matchTitle = MatchHelper.getMatchTitleFromMatchKey(context, matchKey);
         String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);
 
-        JsonObject alliances;
-        try {
-            alliances = match.getAlliances();
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(getLogTag(), "Incoming match object does not contain alliance data. Can't post score update");
-            e.printStackTrace();
-            return null;
-        }
+        JsonObject alliances = match.getAlliancesJson();
 
         int redScore = Match.getRedScore(alliances);
         int blueScore = Match.getBlueScore(alliances);
@@ -125,13 +115,8 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
             scoreString = redScore + "-" + blueScore;
         }
 
-        boolean useSpecial2015Format;
-        try {
-            useSpecial2015Format = match.getYear() == 2015 && match.getMatchType() != MatchType.FINAL;
-        } catch (BasicModel.FieldNotDefinedException e) {
-            useSpecial2015Format = false;
-            Log.w(Constants.LOG_TAG, "Couldn't determine if we should use 2015 score format. Defaulting to no");
-        }
+        MatchType matchType = MatchType.fromShortType(match.getCompLevel());
+        boolean useSpecial2015Format = match.getYear() == 2015 && matchType != MatchType.FINAL;
 
         String eventShortName = EventHelper.shortName(eventName);
         String template;
@@ -160,8 +145,7 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(notificationTitle)
-                .setContentText(notificationBody)
-                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp));
+                .setContentText(notificationBody);
 
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(notificationBody);
         builder.setStyle(style);

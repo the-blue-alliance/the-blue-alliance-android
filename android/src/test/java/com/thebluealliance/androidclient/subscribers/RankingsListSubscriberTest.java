@@ -8,7 +8,6 @@ import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
 
 import org.greenrobot.eventbus.EventBus;
@@ -49,23 +48,23 @@ public class RankingsListSubscriberTest {
     }
 
     @Test
-    public void testParseNullData() throws BasicModel.FieldNotDefinedException {
+    public void testParseNullData()  {
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
-    public void testJsonNull() throws BasicModel.FieldNotDefinedException {
+    public void testJsonNull()  {
         DatafeedTestDriver.parseJsonNull(mSubscriber);
     }
 
     @Test
-    public void testSimpleParsing() throws BasicModel.FieldNotDefinedException {
+    public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mRankings);
         verify(mEventBus).post(any(EventRankingsEvent.class));
     }
 
     @Test
-    public void testParsedData() throws BasicModel.FieldNotDefinedException {
+    public void testParsedData()  {
         List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mRankings);
         EventHelper.CaseInsensitiveMap<String> rankingElements = new EventHelper.CaseInsensitiveMap<>();
         for (int j = 2; j < mRankings.get(0).getAsJsonArray().size(); j++) {
@@ -81,7 +80,7 @@ public class RankingsListSubscriberTest {
     }
 
     @Test
-    public void testParsedDataWithMultiTeam() throws BasicModel.FieldNotDefinedException {
+    public void testParsedDataWithMultiTeam()  {
         List<Object> data = DatafeedTestDriver.getParsedData(mSubscriber, mRankingsMultiTeam);
         EventHelper.CaseInsensitiveMap<String> rankingElements = new EventHelper.CaseInsensitiveMap<>();
         for (int j = 2; j < mRankingsMultiTeam.get(0).getAsJsonArray().size(); j++) {

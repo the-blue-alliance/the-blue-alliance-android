@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.listitems;
 
 import com.facebook.testing.screenshot.Screenshot;
 import com.facebook.testing.screenshot.ViewHelpers;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.types.DistrictType;
 
@@ -24,7 +23,7 @@ public class DistrictListElementTest extends InstrumentationTestCase {
         DISTRICT.setKey("2016ne");
     }
 
-    public void testRenderWithMyTba() throws BasicModel.FieldNotDefinedException {
+    public void testRenderWithMyTba() {
         View view = getView(DISTRICT, 4, true);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
@@ -34,7 +33,7 @@ public class DistrictListElementTest extends InstrumentationTestCase {
                   .record();
     }
 
-    public void testRenderWithoutMyTba() throws BasicModel.FieldNotDefinedException {
+    public void testRenderWithoutMyTba() {
         View view = getView(DISTRICT, 4, false);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
@@ -44,8 +43,7 @@ public class DistrictListElementTest extends InstrumentationTestCase {
                   .record();
     }
 
-    private View getView(District district, int numEvents, boolean showMyTba)
-    throws BasicModel.FieldNotDefinedException {
+    private View getView(District district, int numEvents, boolean showMyTba) {
         DistrictListElement element = new DistrictListElement(district, numEvents, showMyTba);
         Context targetContext = getInstrumentation().getTargetContext();
         LayoutInflater inflater = LayoutInflater.from(targetContext);

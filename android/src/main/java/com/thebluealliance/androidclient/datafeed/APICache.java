@@ -1,9 +1,7 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
-import com.thebluealliance.androidclient.accounts.AccountHelper;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
@@ -16,16 +14,14 @@ import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
-import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.DistrictType;
 
-import android.content.Context;
 import android.database.Cursor;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -37,7 +33,7 @@ import rx.Observable;
 @Singleton
 public class APICache {
 
-    private Database mDb;
+    private final Database mDb;
 
     @Inject
     public APICache(Database db) {
@@ -123,11 +119,11 @@ public class APICache {
         });
     }
 
-    public Observable<JsonArray> fetchTeamYearsParticipated(String teamKey) {
+    public Observable<List<Integer>> fetchTeamYearsParticipated(String teamKey) {
         return Observable.create((observer) -> {
             try {
                 Team team = mDb.getTeamsTable().get(teamKey);
-                observer.onNext(team == null ? new JsonArray() : team.getYearsParticipated());
+                observer.onNext(team == null ? new ArrayList<Integer>() : team.getYearsParticipated());
                 observer.onCompleted();
             } catch (Exception e) {
                 observer.onError(e);
@@ -235,7 +231,8 @@ public class APICache {
             try {
                 Event event = mDb.getEventsTable()
                   .get(eventKey, new String[]{EventsTable.RANKINGS});
-                observer.onNext(event != null ? event.getRankings() : null);
+                // TODO(#773) depends on EventDetails
+                // observer.onNext(event != null ? event.getRankings() : null);
                 observer.onCompleted();
             } catch (Exception e) {
                 observer.onError(e);
@@ -262,7 +259,8 @@ public class APICache {
             try {
                 Event event = mDb.getEventsTable()
                   .get(eventKey, new String[]{EventsTable.STATS});
-                observer.onNext(event != null ? event.getStats() : null);
+                // TODO(#773) depends on EventDetails
+                //observer.onNext(event != null ? event.getStats() : null);
                 observer.onCompleted();
             } catch (Exception e) {
                 observer.onError(e);
@@ -288,7 +286,8 @@ public class APICache {
         return Observable.create((observer) -> {
             try {
                 Event event = mDb.getEventsTable().get(eventKey);
-                observer.onNext(event != null ? event.getDistrictPoints() : null);
+                // TODO(#773) depends on EventDetails
+                //observer.onNext(event != null ? event.getDistrictPoints() : null);
                 observer.onCompleted();
             } catch (Exception e) {
                 observer.onError(e);
@@ -372,29 +371,4 @@ public class APICache {
         });
     }
 
-    public Observable<List<Subscription>> fetchUserSubscriptions(Context context) {
-        return Observable.create((observer) -> {
-            try {
-                String account = AccountHelper.getSelectedAccount(context);
-                List<Subscription> subscriptions = mDb.getSubscriptionsTable().getForUser(account);
-                observer.onNext(subscriptions);
-                observer.onCompleted();
-            } catch (Exception e) {
-                observer.onError(e);
-            }
-        });
-    }
-
-    public Observable<List<Favorite>> fetchUserFavorites(Context context) {
-        return Observable.create((observer) -> {
-            try {
-                String account = AccountHelper.getSelectedAccount(context);
-                List<Favorite> favorites = mDb.getFavoritesTable().getForUser(account);
-                observer.onNext(favorites);
-                observer.onCompleted();
-            } catch (Exception e) {
-                observer.onError(e);
-            }
-        });
-    }
 }

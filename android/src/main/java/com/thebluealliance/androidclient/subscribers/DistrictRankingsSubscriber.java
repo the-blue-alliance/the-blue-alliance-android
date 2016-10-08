@@ -1,14 +1,11 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Team;
-
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +22,7 @@ public class DistrictRankingsSubscriber
     }
 
     @Override
-    public void parseData() throws BasicModel.FieldNotDefinedException {
+    public void parseData()  {
         mDataToBind.clear();
         for (int i = 0; i < mAPIData.size(); i++) {
             DistrictTeam districtTeam = mAPIData.get(i);
@@ -34,7 +31,7 @@ public class DistrictRankingsSubscriber
             if (teamData != null) {
                 nickname = teamData.getNickname();
             } else {
-                Log.w(Constants.LOG_TAG, "Couldn't find " + districtTeam.getTeamKey() + " in db");
+                TbaLogger.w("Couldn't find " + districtTeam.getTeamKey() + " in db");
                 nickname = "Team " + districtTeam.getTeamKey().substring(3);
             }
             mDataToBind.add(

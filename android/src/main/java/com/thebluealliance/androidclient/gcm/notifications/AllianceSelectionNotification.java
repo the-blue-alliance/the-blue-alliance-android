@@ -11,7 +11,6 @@ import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
-import com.thebluealliance.androidclient.models.BasicModel;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
@@ -22,7 +21,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -62,14 +60,7 @@ public class AllianceSelectionNotification extends BaseNotification<AllianceSele
     @Override
     public Notification buildNotification(Context context, FollowsChecker followsChecker) {
         Resources r = context.getResources();
-        String eventName;
-        try {
-            eventName = event.getEventShortName();
-        } catch (BasicModel.FieldNotDefinedException e) {
-            Log.e(getLogTag(), "Event data passed in this notification does not contain an event short name. Can't post notification");
-            e.printStackTrace();
-            return null;
-        }
+        String eventName = event.getShortName();
 
         String contentText = r.getString(R.string.notification_alliances_updated, eventName);
         Intent instance = getIntent(context);
@@ -86,8 +77,7 @@ public class AllianceSelectionNotification extends BaseNotification<AllianceSele
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(title)
-                .setContentText(contentText)
-                .setLargeIcon(getLargeIconFormattedForPlatform(context, R.drawable.ic_info_outline_white_24dp));
+                .setContentText(contentText);
 
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
         builder.setStyle(style);
@@ -126,14 +116,9 @@ public class AllianceSelectionNotification extends BaseNotification<AllianceSele
             holder = (ViewHolder) convertView.getTag();
         }
 
-        String titleString, shortName, shortCode;
-        try {
-            shortName = event.getEventShortName();
-            shortCode = EventHelper.getShortCodeForEventKey(event.getKey()).toUpperCase();
-            titleString = c.getString(R.string.gameday_ticker_event_title_format, shortName, shortCode);
-        } catch (BasicModel.FieldNotDefinedException e) {
-            titleString = eventKey;
-        }
+        String shortName = event.getShortName();
+        String shortCode = EventHelper.getShortCodeForEventKey(event.getKey()).toUpperCase();
+        String titleString = c.getString(R.string.gameday_ticker_event_title_format, shortName, shortCode);
         holder.header.setText(titleString);
         holder.details.setText(c.getString(R.string.notification_alliances_updated_gameday_details));
         holder.time.setText(getNotificationTimeString(c));
@@ -144,12 +129,7 @@ public class AllianceSelectionNotification extends BaseNotification<AllianceSele
     @Nullable
     @Override
     public AllianceSelectionNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
-        String titleString;
-        try {
-            titleString = getNotificationCardHeader(context, event.getEventShortName(), event.getKey());
-        } catch (BasicModel.FieldNotDefinedException e) {
-            titleString = eventKey;
-        }
+        String titleString = getNotificationCardHeader(context, event.getShortName(), event.getKey());
 
         return new AllianceSelectionNotificationViewModel(titleString, getNotificationTimeString(context), getIntent(context));
     }
