@@ -31,7 +31,8 @@ public class AwardTest {
     public void testTeamAward()  {
         assertNotNull(mTeamAward);
         assertEquals(mTeamAward.getEventKey(), "2015cthar");
-        assertEquals(mTeamAward.getEnum(), 17);
+        assertNotNull(mTeamAward.getEnum());
+        assertEquals(mTeamAward.getEnum().intValue(), 17);
         assertEquals(mTeamAward.getName(), "Quality Award sponsored by Motorola");
         assertEquals(mTeamAward.getYear().intValue(), 2015);
 
@@ -49,7 +50,8 @@ public class AwardTest {
     public void testIndividualAward()  {
         assertNotNull(mIndividualAward);
         assertEquals(mIndividualAward.getEventKey(), "2015necmp");
-        assertEquals(mIndividualAward.getEnum(), 5);
+        assertNotNull(mIndividualAward.getEnum());
+        assertEquals(mIndividualAward.getEnum().intValue(), 5);
         assertEquals(mIndividualAward.getName(), "Volunteer of the Year");
         assertEquals(mIndividualAward.getYear().intValue(), 2015);
 

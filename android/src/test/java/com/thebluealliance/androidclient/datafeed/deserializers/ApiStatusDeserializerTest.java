@@ -56,11 +56,15 @@ public class ApiStatusDeserializerTest {
         assertEquals(mStatus.getLatestAppVersion().intValue(), 123488);
         assertEquals(mStatus.getFmsApiDown(), false);
         assertEquals(mStatus.getJsonBlob(), mJsonData.toString());
+        assertNotNull(mStatus.getHasMessage());
         assertTrue(mStatus.getHasMessage());
         assertEquals("This is only a test", mStatus.getMessageText());
+        assertNotNull(mStatus.getMessageExpiration());
         assertEquals(1449698422L * 1000, mStatus.getMessageExpiration().longValue());
+        assertNotNull(mStatus.getLastOkHttpCacheClear());
         assertEquals(1449698422, mStatus.getLastOkHttpCacheClear().longValue());
         assertEquals("https://www.thebluealliance.com", mStatus.getChampsPitLocationsUrl());
+        assertNotNull(mStatus.getChampsPitLocationsUpdateTime());
         assertEquals(12345678, mStatus.getChampsPitLocationsUpdateTime().longValue());
 
         List<String> downKeys = mStatus.getDownEvents();
@@ -101,6 +105,7 @@ public class ApiStatusDeserializerTest {
         mJsonData.remove(APIStatusDeserializer.CURRENT_SEASON_TAG);
         mStatus = mDeserializer.deserialize(mJsonData, ApiStatus.class, mContext);
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        assertNotNull(mStatus.getCurrentSeason());
         assertEquals(currentYear, mStatus.getCurrentSeason().intValue());
     }
 
@@ -109,6 +114,7 @@ public class ApiStatusDeserializerTest {
         mJsonData.add(APIStatusDeserializer.CURRENT_SEASON_TAG, new JsonArray());
         mStatus = mDeserializer.deserialize(mJsonData, ApiStatus.class, mContext);
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        assertNotNull(mStatus.getCurrentSeason());
         assertEquals(currentYear, mStatus.getCurrentSeason().intValue());
     }
 
@@ -180,6 +186,7 @@ public class ApiStatusDeserializerTest {
     public void testNoMessage() {
         mJsonData.remove(APIStatusDeserializer.MESSAGE_DICT);
         mStatus = mDeserializer.deserialize(mJsonData, ApiStatus.class, mContext);
+        assertNotNull(mStatus.getHasMessage());
         assertFalse(mStatus.getHasMessage());
     }
 
@@ -201,6 +208,7 @@ public class ApiStatusDeserializerTest {
     public void testNoLastCacheClear() {
         mJsonData.remove(APIStatusDeserializer.LAST_OKHTTP_CACHE_CLEAR);
         mStatus = mDeserializer.deserialize(mJsonData, ApiStatus.class, mContext);
+        assertNotNull(mStatus.getLastOkHttpCacheClear());
         assertEquals(-1, mStatus.getLastOkHttpCacheClear().intValue());
     }
 
@@ -215,6 +223,7 @@ public class ApiStatusDeserializerTest {
     public void testNoChampsPitLocationsUpdateTime() {
         mJsonData.remove(APIStatusDeserializer.CHAMPS_PIT_LOCATIONS_UPDATE_TIME);
         mStatus = mDeserializer.deserialize(mJsonData, ApiStatus.class, mContext);
+        assertNotNull(mStatus.getChampsPitLocationsUpdateTime());
         assertEquals(-1, mStatus.getChampsPitLocationsUpdateTime().intValue());
     }
 }

@@ -19,13 +19,15 @@ import static junit.framework.Assert.assertTrue;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class MediaTest {
-    Media cdMedia;
-    Media ytMedia;
+    private Media cdMedia;
+    private Media ytMedia;
+    private Media imgurMedia;
 
     @Before
     public void readJsonData(){
         cdMedia = ModelMaker.getModel(Media.class, "media_cdphotothread");
         ytMedia = ModelMaker.getModel(Media.class, "media_youtube");
+        imgurMedia = ModelMaker.getModel(Media.class, "media_imgur");
     }
 
     @Test
@@ -47,5 +49,14 @@ public class MediaTest {
                      MediaType.YOUTUBE);
         assertEquals(ytMedia.getForeignKey(), "RpSgUrsghv4");
         assertFalse(ytMedia.getDetailsJson().isJsonNull());
+    }
+
+    @Test
+    public void testImgurMedia() {
+        assertNotNull(imgurMedia);
+        assertEquals(MediaType.fromString(imgurMedia.getType()),
+                     MediaType.IMGUR);
+        assertEquals(imgurMedia.getForeignKey(), "aF8T5ZE");
+        assertFalse(imgurMedia.getDetailsJson().isJsonNull());
     }
 }

@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.types.MatchType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,11 +22,14 @@ import static junit.framework.Assert.assertTrue;
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class MatchTest {
-    Match mMatch;
+
+    private Match mMatch;
+    private Match mCleanMatch;
 
     @Before
     public void readJsonData(){
         mMatch = ModelMaker.getModel(Match.class, "2014cmp_f1m1");
+        mCleanMatch = new Match();
     }
 
     @Test
@@ -36,6 +40,7 @@ public class MatchTest {
         assertEquals(mMatch.getSetNumber().intValue(), 1);
         assertEquals(mMatch.getEventKey(), "2014cmp");
         assertEquals(mMatch.getTimeString(), "5:38 PM");
+        assertNotNull(mMatch.getTime());
         assertEquals(mMatch.getTime().intValue(), 1398551880);
         assertNotNull(mMatch.getVideos());
         assertNotNull(mMatch.getAlliances());
@@ -72,4 +77,38 @@ public class MatchTest {
         assertEquals(0, Match.teamKeys(emptyJsonArray).size());
         assertEquals(0, Match.teamNumbers(emptyJsonArray).size());
     }
+
+    @Test
+    public void testLazyLoadEventKey() {
+        mCleanMatch.setKey("2015cthar_qm1");
+        assertEquals(mCleanMatch.getEventKey(), "2015cthar");
+    }
+
+    @Test
+    public void testLazyLoadMatchType() {
+        mCleanMatch.setKey("2015cthar_qm2");
+        assertEquals(mCleanMatch.getCompLevel(), "qm");
+        assertEquals(mCleanMatch.getType(), MatchType.QUAL);
+
+        mCleanMatch = new Match();
+        mCleanMatch.setKey("2015cthar_ef1m2");
+        assertEquals(mCleanMatch.getCompLevel(), "ef");
+        assertEquals(mCleanMatch.getType(), MatchType.OCTO);
+
+        mCleanMatch = new Match();
+        mCleanMatch.setKey("2015cthar_qf1m2");
+        assertEquals(mCleanMatch.getCompLevel(), "qf");
+        assertEquals(mCleanMatch.getType(), MatchType.QUARTER);
+
+        mCleanMatch = new Match();
+        mCleanMatch.setKey("2015cthar_sf1m2");
+        assertEquals(mCleanMatch.getCompLevel(), "sf");
+        assertEquals(mCleanMatch.getType(), MatchType.SEMI);
+
+        mCleanMatch = new Match();
+        mCleanMatch.setKey("2015cthar_f1m2");
+        assertEquals(mCleanMatch.getCompLevel(), "f");
+        assertEquals(mCleanMatch.getType(), MatchType.FINAL);
+    }
+
 }

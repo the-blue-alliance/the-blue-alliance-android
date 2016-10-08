@@ -25,13 +25,18 @@ public class DistrictTeamTest {
     public void testDistrictTeamModel()  {
         assertNotNull(mDistrictTeam);
         assertEquals("frc1124", mDistrictTeam.getTeamKey());
-        assertEquals((Integer)26, mDistrictTeam.getRank());
+        assertNotNull(mDistrictTeam.getRank());
+        assertEquals(26, mDistrictTeam.getRank().intValue());
         assertEquals("2015ctwat", mDistrictTeam.getEvent1Key());
-        assertEquals((Integer)26, mDistrictTeam.getEvent1Points());
+        assertNotNull(mDistrictTeam.getEvent1Points());
+        assertEquals(26, mDistrictTeam.getEvent1Points().intValue());
         assertEquals("2015manda", mDistrictTeam.getEvent2Key());
-        assertEquals((Integer)44, mDistrictTeam.getEvent2Points());
+        assertNotNull(mDistrictTeam.getEvent2Points());
+        assertEquals(44, mDistrictTeam.getEvent2Points().intValue());
         assertEquals("2015necmp", mDistrictTeam.getCmpKey());
-        assertEquals((Integer)87, mDistrictTeam.getCmpPoints());
-        assertEquals((Integer)157, mDistrictTeam.getTotalPoints());
+        assertNotNull(mDistrictTeam.getCmpPoints());
+        assertEquals(87, mDistrictTeam.getCmpPoints().intValue());
+        assertNotNull(mDistrictTeam.getTotalPoints());
+        assertEquals(157, mDistrictTeam.getTotalPoints().intValue());
     }
 }

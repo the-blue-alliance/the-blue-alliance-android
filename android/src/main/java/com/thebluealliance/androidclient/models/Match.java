@@ -152,6 +152,9 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
     }
 
     public MatchType getType() {
+        if (type == MatchType.NONE) {
+            type = MatchType.fromKey(getKey());
+        }
         return type;
     }
 
@@ -161,14 +164,12 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
 
     @Override
     public String getEventKey() {
-        String apiValue = eventKey;
-        if (apiValue == null) {
+        if (this.eventKey == null) {
             // Lazy load this
             String eventKey = MatchHelper.getEventKeyFromMatchKey(getKey());
             setEventKey(eventKey);
-            return eventKey;
         }
-        return apiValue;
+        return this.eventKey;
     }
 
     public JsonObject getAlliancesJson() {

@@ -31,7 +31,7 @@ public class EventTeamTest {
         assertEquals("frc1124", mEventTeam.getTeamKey());
         assertEquals("2015necmp", mEventTeam.getEventKey());
         assertEquals("2015necmp_frc1124", mEventTeam.getKey());
-        assertEquals((Integer)2015, mEventTeam.getYear());
-        assertEquals((Integer)7, mEventTeam.getCompWeek());
+        assertEquals(2015, mEventTeam.getYear().intValue());
+        assertEquals(7, mEventTeam.getCompWeek().intValue());
     }
 }

@@ -118,7 +118,7 @@ public class Award implements IAward, RenderableModel, TbaDatabaseModel {
     }
 
     @Nullable
-    public int getEnum() {
+    public Integer getEnum() {
         return getAwardType();
     }
 

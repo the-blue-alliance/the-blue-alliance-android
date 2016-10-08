@@ -346,11 +346,11 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     }
 
     public String getDateString() {
-        Date startDate = getFormattedStartDate(),
-                endDate = getFormattedEndDate();
-        if (startDate == null || endDate == null) {
+        if (getStartDate() == null || getStartDate() == null) {
             return "";
         }
+       Date startDate = getFormattedStartDate(),
+                endDate = getFormattedEndDate();
         if (startDate.equals(endDate)) {
             return ThreadSafeFormatters.renderEventDate(startDate);
         }
