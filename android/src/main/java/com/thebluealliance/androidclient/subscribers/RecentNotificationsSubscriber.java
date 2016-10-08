@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.models.BasicModel;
@@ -36,7 +37,13 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
             BaseNotification renderable = notification.getNotification(mWriter, mMatchRenderer);
             if (renderable != null) {
                 renderable.parseMessageData();
-                mDataToBind.add(renderable.renderToViewModel(mContext, null));
+                Object viewModel = renderable.renderToViewModel(mContext, null);
+                if (viewModel == null) {
+                    TbaLogger.w("Attempt to bind to a null ViewModel from "
+                            + notification.getType());
+                } else {
+                    mDataToBind.add(viewModel);
+                }
             }
         }
     }
