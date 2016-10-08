@@ -11,7 +11,7 @@ common () {
 
 start_emulator () {
     pip install --user pillow
-    echo no | android create avd --force -n sdk23 -t android-23 --abi armeabi-v7a
+    echo no | android create avd --force -n sdk23 -t "Google Inc.:Google APIs:23" --abi google_apis/armeabi-v7a
     mksdcard -l e 512M sdcard.img
     emulator -avd sdk23 -no-audio -no-window -sdcard sdcard.img &
     android-wait-for-emulator
