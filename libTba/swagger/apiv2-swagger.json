@@ -281,7 +281,7 @@
         }
       }
     },
-    "/api/v2/events/{event_key}/teams": {
+    "/api/v2/event/{event_key}/teams": {
       "get": {
         "summary": "Event Teams Request",
         "operationId": "fetchEventTeams",
@@ -298,7 +298,7 @@
         }
       }
     },
-    "/api/v2/events/{event_key}/matches": {
+    "/api/v2/event/{event_key}/matches": {
       "get": {
         "summary": "Event Matches Request",
         "operationId": "fetchEventMatches",
@@ -355,7 +355,7 @@
         }
       }
     },
-    "/api/v2/events/{event_key}/awards": {
+    "/api/v2/event/{event_key}/awards": {
       "get": {
         "summary": "Event Awards Request",
         "operationId": "fetchEventAwards",

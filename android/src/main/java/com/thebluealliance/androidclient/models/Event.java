@@ -1,10 +1,13 @@
 package com.thebluealliance.androidclient.models;
 
+import com.google.gson.JsonArray;
+
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.types.EventType;
@@ -59,6 +62,7 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
 
     private Date startDate;
     private Date endDate;
+    private JsonArray alliancesJson;
 
     public static final String[] NOTIFICATION_TYPES = {
             NotificationTypes.UPCOMING_MATCH,
@@ -79,8 +83,17 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         return alliances;
     }
 
+    public JsonArray getAlliancesJson() {
+        return alliancesJson;
+    }
+
+    public void setAlliancesJson(JsonArray alliancesJson) {
+        this.alliancesJson = alliancesJson;
+    }
+
     @Override public void setAlliances(String alliances) {
         this.alliances = alliances;
+        setAlliancesJson(JSONHelper.getasJsonArray(alliances));
     }
 
     @Nullable @Override public Integer getCompetitionWeek() {
@@ -180,6 +193,9 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     }
 
     @Nullable @Override public String getShortName() {
+        if (shortName == null || shortName.isEmpty()) {
+            return getName();
+        }
         return shortName;
     }
 

@@ -107,6 +107,13 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setEventDistrictString(title.equals("null") ? "" : title);
         }
 
+        JsonElement alliances = object.get("alliances");
+        if (isNull(alliances)) {
+            event.setAlliances("");
+        } else {
+            event.setAlliancesJson(alliances.getAsJsonArray());
+        }
+
         return event;
     }
 }

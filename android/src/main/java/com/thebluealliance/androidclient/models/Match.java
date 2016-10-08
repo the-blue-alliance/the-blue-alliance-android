@@ -69,6 +69,9 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
     }
 
     @Override public String getCompLevel() {
+        if (compLevel == null) {
+            compLevel = MatchHelper.getMatchTypeFromKey(getKey()).toString();
+        }
         return compLevel;
     }
 

@@ -107,7 +107,7 @@ public interface TbaApiV2 {
    * @return Call&lt;List<Award>&gt;
    */
   
-  @GET("api/v2/events/{event_key}/awards")
+  @GET("api/v2/event/{event_key}/awards")
   Observable<Response<List<Award>>> fetchEventAwards(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
   );
@@ -133,7 +133,7 @@ public interface TbaApiV2 {
    * @return Call&lt;List<Match>&gt;
    */
   
-  @GET("api/v2/events/{event_key}/matches")
+  @GET("api/v2/event/{event_key}/matches")
   Observable<Response<List<Match>>> fetchEventMatches(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
   );
@@ -172,7 +172,7 @@ public interface TbaApiV2 {
    * @return Call&lt;List<Team>&gt;
    */
   
-  @GET("api/v2/events/{event_key}/teams")
+  @GET("api/v2/event/{event_key}/teams")
   Observable<Response<List<Team>>> fetchEventTeams(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
   );

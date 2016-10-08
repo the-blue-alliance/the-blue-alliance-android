@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.WebcastListElement;
@@ -77,24 +78,17 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
     public void renderAlliances(Event event, List<ListItem> destList, HashMap<String, PlayoffAdvancement> advancement) {
         /*
          * TODO(773) Needs EventDetails
-        try {
-            JsonArray alliances = event.getAlliances();
-            int counter = 1;
-            for (JsonElement alliance : alliances) {
-                JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
-                PlayoffAdvancement adv = advancement != null
-                        ? getAdvancement(advancement, teams)
-                        : PlayoffAdvancement.NONE;
-                destList.add(new AllianceListElement(event.getKey(), counter, teams, adv));
-                counter++;
-            }
-        } catch (BasicModel.FieldNotDefinedException e) {
-            TbaLogger.w("Missing fields for rendering alliances.\n"
-                        + "Required field: Database.Events.ALLIANCES");
-        } catch (IllegalArgumentException e) {
-            TbaLogger.w("Invalid alliance size. Can't render");
+         */
+        JsonArray alliances = event.getAlliancesJson();
+        int counter = 1;
+        for (JsonElement alliance : alliances) {
+            JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
+            PlayoffAdvancement adv = advancement != null
+                                     ? getAdvancement(advancement, teams)
+                                     : PlayoffAdvancement.NONE;
+            destList.add(new AllianceListElement(event.getKey(), counter, teams, adv));
+            counter++;
         }
-        */
     }
 
     private static PlayoffAdvancement getAdvancement(HashMap<String, PlayoffAdvancement> advancement, JsonArray teams) {
