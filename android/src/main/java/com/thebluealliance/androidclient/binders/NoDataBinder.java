@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.binders;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.views.NoDataView;
 
 import android.support.annotation.Nullable;
-import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 
 /**

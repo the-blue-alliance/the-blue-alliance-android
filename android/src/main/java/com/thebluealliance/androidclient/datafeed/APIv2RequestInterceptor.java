@@ -1,9 +1,8 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.api.ApiV2Constants;
-
 import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.api.ApiV2Constants;
 
 import java.io.IOException;
 

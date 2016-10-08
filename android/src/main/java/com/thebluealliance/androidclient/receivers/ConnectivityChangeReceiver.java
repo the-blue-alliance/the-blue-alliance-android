@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.receivers;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 
@@ -8,7 +9,6 @@ import org.greenrobot.eventbus.EventBus;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import com.thebluealliance.androidclient.TbaLogger;
 
 public class ConnectivityChangeReceiver extends BroadcastReceiver {
 

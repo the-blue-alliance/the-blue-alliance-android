@@ -1,12 +1,11 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Team;
-
-import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.ArrayList;
 import java.util.List;

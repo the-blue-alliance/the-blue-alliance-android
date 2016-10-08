@@ -32,7 +32,7 @@ public class YearsParticipatedDropdownSubscriberTest {
         mSubscriber = new YearsParticipatedDropdownSubscriber(mCallback);
         JsonArray yearsJson = ModelMaker.getModel(JsonArray.class, "frc1124_years_participated");
         mYearsParticipated = new ArrayList<>();
-        for (int i = 0; i < yearsJson.size(); i++ ) {
+        for (int i = 0; i < yearsJson.size(); i++) {
             mYearsParticipated.add(yearsJson.get(i).getAsInt());
         }
     }

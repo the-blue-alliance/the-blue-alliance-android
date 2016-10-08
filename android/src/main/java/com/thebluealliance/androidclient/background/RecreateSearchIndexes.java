@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.background;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
@@ -7,7 +8,6 @@ import com.thebluealliance.androidclient.models.Team;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.List;
 

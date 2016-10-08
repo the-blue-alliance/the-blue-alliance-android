@@ -7,10 +7,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.Event;
-
-import com.thebluealliance.androidclient.TbaLogger;
 
 import java.lang.reflect.Type;
 

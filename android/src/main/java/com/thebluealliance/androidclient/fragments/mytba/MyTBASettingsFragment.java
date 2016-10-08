@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.fragments.mytba;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPanel;
 import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
@@ -18,7 +19,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
-import com.thebluealliance.androidclient.TbaLogger;
 import android.view.View;
 import android.widget.ListView;
 

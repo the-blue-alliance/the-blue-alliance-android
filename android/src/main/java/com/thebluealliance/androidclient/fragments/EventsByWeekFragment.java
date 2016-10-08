@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.fragments;
 import com.google.common.base.Preconditions;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
 import com.thebluealliance.androidclient.binders.EventTabBinder;
@@ -17,7 +18,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
-import com.thebluealliance.androidclient.TbaLogger;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

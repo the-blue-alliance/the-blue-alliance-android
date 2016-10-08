@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.api;
 
-public class ApiV2Constants {
+public final class ApiV2Constants {
     public static final String DEV_TBA_PREF_KEY = "tba_host";
     public static final String TBA_URL = "https://www.thebluealliance.com/";
     /**
@@ -12,4 +12,8 @@ public class ApiV2Constants {
     public static final String TBA_CACHE_HEADER = "X-TBA-Cache";
     public static final String TBA_CACHE_WEB = "web";
     public static final String TBA_CACHE_LOCAL = "local";
+
+    private ApiV2Constants() {
+        // Unused
+    }
 }

@@ -307,8 +307,8 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
 
     public void addToRecord(String teamKey, int[] currentRecord /* {win, loss, tie} */) {
         JsonObject alliances = getAlliancesJson();
-        if (currentRecord == null || alliances == null ||
-            !(alliances.has("red") && alliances.has("blue"))) {
+        if (currentRecord == null || alliances == null
+            || !(alliances.has("red") && alliances.has("blue"))) {
             return;
         }
         JsonArray redTeams = getRedTeams(alliances),

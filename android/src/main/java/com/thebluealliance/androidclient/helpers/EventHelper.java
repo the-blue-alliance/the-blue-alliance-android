@@ -226,8 +226,8 @@ public final class EventHelper {
             if (currentType != lastType
                 || (currentType == EventType.DISTRICT && currentDistrict != lastDistrict)) {
                 if (currentType == EventType.DISTRICT) {
-                    output.add(new ListSectionHeaderViewModel(event.getEventDistrictString() + " " +
-                                                              "District Events"));
+                    output.add(new ListSectionHeaderViewModel(event.getEventDistrictString()
+                                                              + " District Events"));
                 } else {
                     output.add(new ListSectionHeaderViewModel(currentType.toString()));
                 }

@@ -98,8 +98,8 @@ public class TBAApiTest {
         assertEquals(MediaType.fromString(cd.getType()), MediaType.CD_PHOTO_THREAD);
         assertEquals(cd.getDetailsJson(),
                      JSONHelper.getasJsonObject(
-                             "{\"image_partial\": \"fe3/fe38d320428adf4f51ac969efb3db32c_l" +
-                             ".jpg\"}"));
+                             "{\"image_partial\": \"fe3/fe38d320428adf4f51ac969efb3db32c_l"
+                             + ".jpg\"}"));
 
         assertEquals(MediaType.fromString(yt.getType()), MediaType.YOUTUBE);
         assertEquals(yt.getForeignKey(), "RpSgUrsghv4");
@@ -118,9 +118,9 @@ public class TBAApiTest {
         assertEquals(MatchType.fromShortType(match.getCompLevel()), MatchType.FINAL);
         assertEquals(match.getAlliancesJson(),
                      JSONHelper.getasJsonObject(
-                             "{\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", " +
-                             "\"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", " +
-                             "\"frc237\", \"frc2064\"]}}"));
+                             "{\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", "
+                             + "\"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", "
+                             + "\"frc237\", \"frc2064\"]}}"));
         assertEquals(match.getTimeString(), "3:36 PM");
         assertEquals(match.getTime().longValue(), new Date(1394393760).getTime());
         assertEquals(match.getVideosJson(),

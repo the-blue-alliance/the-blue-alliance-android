@@ -39,8 +39,8 @@ public class EventTest {
         assertEquals(mEvent.getShortName(), "Hartford");
         assertEquals(mEvent.getEventDistrictEnum(),
                      DistrictType.NEW_ENGLAND);
-        assertEquals(mEvent.getVenueAddress(), "Hartford Public High School\n55 Forest Street\nHartford, " +
-                                      "CT 06105\nUSA");
+        assertEquals(mEvent.getVenueAddress(), "Hartford Public High School\n55 Forest Street\nHartford, "
+                                      + "CT 06105\nUSA");
         assertEquals(mEvent.getLocation(), "Hartford, CT, USA");
         assertEquals(mEvent.getYearAgnosticEventKey(), "cthar");
         assertEquals(mEvent.getYear(), (Integer)2015);

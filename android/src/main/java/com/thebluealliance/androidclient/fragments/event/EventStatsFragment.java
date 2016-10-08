@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.fragments.event;
 import com.google.gson.JsonElement;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -19,7 +20,6 @@ import com.thebluealliance.androidclient.views.NoDataView;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
-import com.thebluealliance.androidclient.TbaLogger;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;

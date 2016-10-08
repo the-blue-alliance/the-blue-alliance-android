@@ -14,8 +14,8 @@ import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesRegistrationReque
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesSubscriptionCollection;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesSubscriptionMessage;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.database.Database;

@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.activities;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtDistrictFragmentPagerAdapter;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
@@ -29,7 +30,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import com.thebluealliance.androidclient.TbaLogger;
 import android.view.Menu;
 import android.view.MenuItem;
 
