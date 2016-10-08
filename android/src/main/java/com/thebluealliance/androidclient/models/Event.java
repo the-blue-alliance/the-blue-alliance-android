@@ -258,12 +258,16 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     }
 
     public void setStartDate(String startString) {
+        if (startString.isEmpty()) {
+            return;
+        }
         try {
             startDate = ThreadSafeFormatters.parseEventDate(startString);
             setStartDate(startDate.getTime());
         } catch (ParseException ex) {
             //can't parse the date
-            throw new IllegalArgumentException("Invalid date format. Should be like yyyy-MM-dd");
+            throw new IllegalArgumentException(
+                    "Invalid date format: " + startString + ". Should be like yyyy-MM-dd");
         }
     }
 
@@ -275,6 +279,9 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     }
 
     public void setEndDate(String endString) {
+        if (endString.isEmpty()) {
+            return;
+        }
         try {
             endDate = ThreadSafeFormatters.parseEventDate(endString);
             setEndDate(endDate.getTime());

@@ -543,15 +543,14 @@ public final class MatchHelper {
         return getMatchTitleFromMatchKey(context, matchKey, true);
     }
 
-    public static MatchType getMatchTypeFromKey(String matchKey) {
+    public static String getMatchTypeFromKey(String matchKey) {
         String keyWithoutEvent = matchKey.replaceAll(".*_", "");
         Pattern regexPattern = Pattern.compile("([a-z]+)([0-9]+)m?([0-9]*)");
         Matcher m = regexPattern.matcher(keyWithoutEvent);
         if (m.matches()) {
-            String typeCode = m.group(1);
-            return MatchType.fromShortType(typeCode);
+            return m.group(1);
         } else {
-            return MatchType.NONE;
+            return "";
         }
     }
 }

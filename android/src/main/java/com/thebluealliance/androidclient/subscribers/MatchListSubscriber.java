@@ -96,7 +96,7 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
             MatchType currentType = MatchType.fromShortType(match.getCompLevel());
             JsonObject alliances = match.getAlliancesJson();
             if (lastType != currentType) {
-                switch (MatchType.fromShortType(match.getCompLevel())) {
+                switch (currentType) {
                     case QUAL:
                         currentGroup = mQualMatches;
                         break;
