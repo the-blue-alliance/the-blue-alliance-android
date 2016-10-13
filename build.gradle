@@ -59,7 +59,7 @@ allprojects {
         supportLibVersion = '24.2.1'
         playServicesVersion = '9.2.0'
         googleApiClientVersion = '1.21.0'
-        retrofitVersion = '2.0.0'
+        retrofitVersion = '2.1.0'
         rxJavaVersion = '1.1.2'
         rxAndroidVersion = '1.1.0'
         gsonVersion = '2.7'
