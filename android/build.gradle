@@ -265,7 +265,7 @@ dependencies {
     compile "com.google.code.gson:gson:${gsonVersion}"
     compile 'me.xuender:unidecode:0.0.7'
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'de.hdodenhof:circleimageview:1.3.0'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.facebook.stetho:stetho:1.4.1'
     compile 'com.facebook.stetho:stetho-okhttp3:1.4.1'
     compile 'com.firebase:firebase-client-android:2.5.2'
