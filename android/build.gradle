@@ -245,7 +245,7 @@ dependencies {
 
     // Play Services Libraries
     // See http://developer.android.com/google/play-services/setup.html
-    compile 'com.google.collections:google-collections:1.0-rc2'
+    compile 'com.google.collections:google-collections:1.0'
     compile "com.google.android.gms:play-services-base:${playServicesVersion}"
     compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"
     compile "com.google.android.gms:play-services-gcm:${playServicesVersion}"
