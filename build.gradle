@@ -64,6 +64,7 @@ allprojects {
         rxAndroidVersion = '1.1.0'
         gsonVersion = '2.7'
         daggerVersion = '2.2'
+        leakCanaryVersion = '1.5'
 
         travisBuild = System.getenv("TRAVIS") == "true"
         // allows for -Dpre-dex=false to be set

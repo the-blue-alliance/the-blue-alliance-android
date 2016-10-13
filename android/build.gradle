@@ -288,10 +288,10 @@ dependencies {
     testApt "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // Leak Canary
-    compile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+    compile "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
+    debugCompile "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
+    testCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
 }
 
 apply plugin: 'com.google.gms.google-services'
