@@ -66,6 +66,7 @@ public class TBAAndroid extends MultiDexApplication {
                     Stetho.newInitializerBuilder(this)
                             .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                             .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+
                             .build());
         }
 
