@@ -44,7 +44,6 @@ public class DatabaseTest {
     public void setUp() {
         mDbHelper = Database.getInstance(RuntimeEnvironment.application);
         mDb = SQLiteDatabase.create(null);
-
     }
 
     @Test

@@ -45,8 +45,11 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
         try {
             if (!exists(in.getKey())) {
                 if (lastModified != null
-                    && (in.getLastModified() == null || lastModified > in.getLastModified()))
-                in.setLastModified(lastModified);
+                    && (in.getLastModified() == null || lastModified > in.getLastModified())) {
+                    in.setLastModified(lastModified);
+                } else if (in.getLastModified() == null) {
+                    in.setLastModified(0L);
+                }
                 ret = mDb.insert(getTableName(), null, in.getParams());
                 if (ret != -1) {
                     insertCallback(in);
@@ -65,20 +68,26 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
      * Adds a List of items to the database via {@link #add(TbaDatabaseModel, Long)}
      * @param inList List of models to be added
      * @param lastModified the timestamp that came from the Last-Modified header
+     * @return the number of rows added
      */
-    public void add(@Nullable ImmutableList<T> inList, @Nullable Long lastModified){
+    public int add(@Nullable ImmutableList<T> inList, @Nullable Long lastModified){
         if (inList == null) {
-            return;
+            return 0;
         }
+        int inserted = 0;
         try {
             mDb.beginTransaction();
             for (T in : inList) {
-                add(in, lastModified);
+                long ret = add(in, lastModified);
+                if (ret > 0) {
+                    inserted++;
+                }
             }
             mDb.setTransactionSuccessful();
         } finally {
             mDb.endTransaction();
         }
+        return inserted;
     }
 
     /**
@@ -101,14 +110,14 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
             if (lastModified != null
                 && (in.getLastModified() == null || lastModified > in.getLastModified())) {
                 in.setLastModified(lastModified);
+            } else if (in.getLastModified() == null) {
+                in.setLastModified(0L);
             }
             affectedRows = mDb.update(
                     getTableName(),
                     in.getParams(),
-                    getKeyColumn() + " = ? AND  ? > " + getLastModifiedColumn(),
-                    new String[]{in.getKey(), lastModified != null
-                                                ? in.getLastModified().toString()
-                                                : "-1"});
+                    getKeyColumn() + " = ? AND  ? >= " + getLastModifiedColumn(),
+                    new String[]{in.getKey(), in.getLastModified().toString()});
             if (affectedRows > 0) {
                 updateCallback(in);
             }
