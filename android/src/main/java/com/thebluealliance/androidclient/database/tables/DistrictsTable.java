@@ -14,7 +14,8 @@ public class DistrictsTable extends ModelTable<District> {
             ABBREV = "abbrev",
             ENUM = "enum",
             YEAR = "year",
-            NAME = "name";
+            NAME = "name",
+            LAST_MODIFIED = "last_modified";
 
     private SQLiteDatabase mDb;
 

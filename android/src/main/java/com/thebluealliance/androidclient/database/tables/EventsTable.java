@@ -33,7 +33,8 @@ public class EventsTable extends ModelTable<Event> {
             ALLIANCES = "alliances",
             WEBCASTS = "webcasts",
             STATS = "stats",
-            WEBSITE = "website";
+            WEBSITE = "website",
+            LAST_MODIFIED = "last_modified";
 
     private SQLiteDatabase mDb;
 

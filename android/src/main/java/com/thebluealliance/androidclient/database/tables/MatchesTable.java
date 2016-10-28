@@ -20,7 +20,8 @@ public class MatchesTable extends ModelTable<Match> {
             TIME = "time",
             ALLIANCES = "alliances",
             VIDEOS = "videos",
-            BREAKDOWN = "breakdown";
+            BREAKDOWN = "breakdown",
+            LAST_MODIFIED = "last_modified";
 
     private SQLiteDatabase mDb;
 

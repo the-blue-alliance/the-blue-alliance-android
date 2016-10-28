@@ -19,7 +19,8 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
             TEAMKEY = "teamKey",
             EVENTKEY = "eventKey",
             YEAR = "year",
-            COMPWEEK = "week";
+            COMPWEEK = "week",
+            LAST_MODIFIED = "last_modified";
 
     private SQLiteDatabase mDb;
 

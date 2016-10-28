@@ -17,7 +17,8 @@ public class AwardsTable extends ModelTable<Award> {
             EVENTKEY = "eventKey",
             NAME = "name",
             YEAR = "year",
-            WINNERS = "winners";
+            WINNERS = "winners",
+            LAST_MODIFIED = "last_modified";
 
     private SQLiteDatabase mDb;
 

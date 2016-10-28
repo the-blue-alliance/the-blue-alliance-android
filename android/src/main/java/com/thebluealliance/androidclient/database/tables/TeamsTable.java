@@ -26,7 +26,8 @@ public class TeamsTable extends ModelTable<Team> {
             LOCATION = "location",
             WEBSITE = "website",
             YEARS_PARTICIPATED = "yearsParticipated",
-            MOTTO = "motto";
+            MOTTO = "motto",
+            LAST_MODIFIED = "last_modified";
 
     private SQLiteDatabase mDb;
 
