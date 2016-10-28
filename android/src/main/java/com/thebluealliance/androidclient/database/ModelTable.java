@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.database;
 
 import com.google.common.collect.ImmutableList;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
@@ -25,13 +24,16 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
 
     /**
      * Adds a model to the database, if it doesn't already exist
-     * If the model is already entered, update the existing row via {@link #update(TbaDatabaseModel)}
+     * If the model is already entered, update the existing row via
+     * {@link #update(TbaDatabaseModel, Long)}
      * If the insert was successful, call {@link #insertCallback(TbaDatabaseModel)}
      * @param in Model to be added
      * @param lastModified the timestamp that came from the Last-Modified header
-     * @return The value from {@link SQLiteDatabase#insert(String, String, ContentValues)} if a new
+     * @return The value from
+     * {@link SQLiteDatabase#insert(String, String, android.content.ContentValues)} if a new
      * row is inserted (row ID or -1 on error), or the value from
-     * {@link SQLiteDatabase#update(String, ContentValues, String, String[])} if an existing row
+     * {@link SQLiteDatabase#update(String, android.content.ContentValues, String, String[])} if an
+     * existing row
      * was updated (number of affected rows)
      */
     public long add(@Nullable T in, @Nullable Long lastModified) {
@@ -85,7 +87,8 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
      * If the update was successful, call {@link #updateCallback(TbaDatabaseModel)}
      * @param in Model to be updated
      * @param lastModified the timestamp that came from the Last-Modified header
-     * @return Value from {@link SQLiteDatabase#update(String, ContentValues, String, String[])},
+     * @return Value from
+     * {@link SQLiteDatabase#update(String, android.content.ContentValues, String, String[])},
      * or number of rows affected by the query
      */
     public int update(@Nullable T in, @Nullable Long lastModified){
