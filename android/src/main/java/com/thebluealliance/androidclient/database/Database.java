@@ -19,8 +19,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
-import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.VisibleForTesting;
 
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
     public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
-    private static final int DATABASE_VERSION = 31;
+    static final int DATABASE_VERSION = 31;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database";
     public static final @Deprecated String TABLE_API = "api";
@@ -166,14 +166,14 @@ public class Database extends SQLiteOpenHelper {
             + SubscriptionsTable.MODEL_ENUM + " INTEGER NOT NULL,"
             + SubscriptionsTable.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]'"
             + ")";
-    private static final String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE IF NOT EXISTS "
+    private static final String CREATE_SEARCH_TEAMS = "CREATE VIRTUAL TABLE "
             + TABLE_SEARCH_TEAMS + " USING fts3 ("
             + SearchTeam.KEY + " TEXT PRIMARY KEY, "
             + SearchTeam.TITLES + " TEXT, "
             + SearchTeam.NUMBER + " TEXT, "
             + ")";
 
-    private static final String CREATE_SEARCH_EVENTS = "CREATE VIRTUAL TABLE IF NOT EXISTS "
+    private static final String CREATE_SEARCH_EVENTS = "CREATE VIRTUAL TABLE "
             + TABLE_SEARCH_EVENTS + " USING fts3 ("
             + SearchEvent.KEY + " TEXT PRIMARY KEY, "
             + SearchEvent.TITLES + " TEXT, "
@@ -290,16 +290,48 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_SUBSCRIPTIONS);
         db.execSQL(CREATE_NOTIFICATIONS);
 
-        String createEvents = CREATE_SEARCH_EVENTS;
-        String createTeams = CREATE_SEARCH_TEAMS;
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            // bugfix for Android 4.0.x versions, using 'IF NOT EXISTS' throws errors
-            // http://stackoverflow.com/questions/19849068/near-not-syntax-error-while-compiling-create-virtual-table-if-not-exists
-            createEvents = CREATE_SEARCH_EVENTS.replace("IF NOT EXISTS", "");
-            createTeams = CREATE_SEARCH_TEAMS.replace("IF NOT EXISTS", "");
+
+        if (!tableExists(db, TABLE_SEARCH_EVENTS)) {
+            db.execSQL(CREATE_SEARCH_EVENTS);
         }
-        db.execSQL(createEvents);
-        db.execSQL(createTeams);
+        if (!tableExists(db, TABLE_SEARCH_TEAMS)) {
+            db.execSQL(CREATE_SEARCH_TEAMS);
+        }
+    }
+
+    @VisibleForTesting
+    boolean tableExists(SQLiteDatabase db, String tableName) {
+        if (tableName == null || db == null || !db.isOpen()) {
+            return false;
+        }
+        Cursor cursor = db.rawQuery("SELECT 1 FROM sqlite_master WHERE type = ? AND name = ?",
+                                    new String[] {"table", tableName});
+        if (cursor.moveToFirst()) {
+            cursor.close();
+            return true;
+        } else {
+            cursor.close();
+            return false;
+        }
+    }
+
+    @VisibleForTesting
+    boolean columnExists(SQLiteDatabase db, String tableName, String columnName) {
+        if (tableName == null || db == null || columnName == null) {
+            return false;
+        }
+        Cursor cursor = db.rawQuery("PRAGMA table_info(" + tableName + ")", null);
+        if (cursor.moveToFirst()) {
+            do {
+                int value = cursor.getColumnIndex("name");
+                if (value != -1 && cursor.getString(value).equals(columnName)) {
+                    cursor.close();
+                    return true;
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return false;
     }
 
     @Override
@@ -313,7 +345,10 @@ public class Database extends SQLiteOpenHelper {
                     //add districts tables
                     db.execSQL(CREATE_DISTRICTS);
                     db.execSQL(CREATE_DISTRICTTEAMS);
-                    db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN " + EventsTable.DISTRICT_POINTS + " TEXT DEFAULT '' ");
+                    if (!columnExists(db, TABLE_EVENTS, EventsTable.DISTRICT_POINTS)) {
+                        db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN " +
+                                   EventsTable.DISTRICT_POINTS + " TEXT DEFAULT '' ");
+                    }
                     break;
                 case 15:
                     //add favorites and subscriptions
@@ -322,35 +357,30 @@ public class Database extends SQLiteOpenHelper {
                     break;
                 case 16:
                     // add column for individual notification settings and sorting by model type
-                    Cursor sub = db.rawQuery("SELECT * FROM " + TABLE_SUBSCRIPTIONS + " LIMIT 0,1", null);
-                    if (sub.getColumnIndex(SubscriptionsTable.NOTIFICATION_SETTINGS) == -1) {
-                        db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " + SubscriptionsTable.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]' ");
+                    if (!columnExists(db, TABLE_SUBSCRIPTIONS, SubscriptionsTable.NOTIFICATION_SETTINGS)) {
+                        db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " +
+                                   SubscriptionsTable.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]' ");
                     }
-                    if (sub.getColumnIndex(SubscriptionsTable.MODEL_ENUM) == -1) {
-                        db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " + SubscriptionsTable.MODEL_ENUM + " INTEGER NOT NULL");
+                    if (!columnExists(db, TABLE_SUBSCRIPTIONS, SubscriptionsTable.MODEL_ENUM)) {
+                        db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " +
+                                   SubscriptionsTable.MODEL_ENUM + " INTEGER NOT NULL DEFAULT -1");
                     }
-                    sub.close();
-                    Cursor fav = db.rawQuery("SELECT * FROM " + TABLE_FAVORITES + " LIMIT 0,1", null);
-                    if (fav.getColumnIndex(FavoritesTable.MODEL_ENUM) == -1) {
-                        db.execSQL("ALTER TABLE " + TABLE_FAVORITES + " ADD COLUMN " + FavoritesTable.MODEL_ENUM + " INTEGER NOT NULL");
+                    if (!columnExists(db, TABLE_FAVORITES, FavoritesTable.MODEL_ENUM)) {
+                        db.execSQL("ALTER TABLE " + TABLE_FAVORITES + " ADD COLUMN " +
+                                   FavoritesTable.MODEL_ENUM + " INTEGER NOT NULL DEFAULT -1");
                     }
-                    fav.close();
                     break;
                 case 17:
                     // add column for district name
-                    Cursor dist = db.rawQuery("SELECT * FROM " + TABLE_DISTRICTS + " LIMIT 0,1", null);
-                    if (dist.getColumnIndex(DistrictsTable.NAME) == -1) {
+                    if (!columnExists(db, TABLE_DISTRICTS, DistrictsTable.NAME)) {
                         db.execSQL("ALTER TABLE " + TABLE_DISTRICTS + " ADD COLUMN " + DistrictsTable.NAME + " TEXT DEFAULT '' ");
                     }
-                    dist.close();
                     break;
                 case 18:
                     // add column for event short name
-                    Cursor event = db.rawQuery("SELECT * FROM " + TABLE_EVENTS + " LIMIT 0,1", null);
-                    if (event.getColumnIndex(EventsTable.SHORTNAME) == -1) {
+                    if (!columnExists(db, TABLE_EVENTS, EventsTable.SHORTNAME)) {
                         db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN " + EventsTable.SHORTNAME + " TEXT DEFAULT '' ");
                     }
-                    event.close();
                     break;
                 case 20:
                     // Create table for recent notification
@@ -359,8 +389,8 @@ public class Database extends SQLiteOpenHelper {
                 case 23:
                 case 24:
                     // remove and recreate search indexes to we can create them with foreign keys
-                    db.execSQL("DROP TABLE " + TABLE_SEARCH_TEAMS);
-                    db.execSQL("DROP TABLE " + TABLE_SEARCH_EVENTS);
+                    db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_TEAMS);
+                    db.execSQL("DROP TABLE IF EXISTS " + TABLE_SEARCH_EVENTS);
                     onCreate(db);
                     break;
                 case 25:
@@ -381,58 +411,41 @@ public class Database extends SQLiteOpenHelper {
                 case 29:
                     // Add team motto
                     db.beginTransaction();
-                    Cursor motto = null;
                     try {
-                        motto = db.rawQuery("SELECT * FROM " + TABLE_TEAMS + " LIMIT 0,1", null);
-                        if (motto.getColumnIndex(TeamsTable.MOTTO) == -1) {
+                        if (!columnExists(db, TABLE_TEAMS, TeamsTable.MOTTO)) {
                             db.execSQL("ALTER TABLE " + TABLE_TEAMS + " ADD COLUMN " + TeamsTable.MOTTO + " TEXT DEFAULT '' ");
                         }
                         db.setTransactionSuccessful();
                     } finally {
-                        if (motto != null) {
-                            motto.close();
-                        }
                         db.endTransaction();
                     }
                     break;
                 case 30:
                     // Add match breakdown
                     db.beginTransaction();
-                    Cursor breakdown = null;
                     try {
-                        breakdown = db.rawQuery("SELECT * FROM " + TABLE_MATCHES + " LIMIT 0,1",
-                                null);
-                        if (breakdown.getColumnIndex(MatchesTable.BREAKDOWN) == -1) {
+                        if (!columnExists(db, TABLE_MATCHES, MatchesTable.BREAKDOWN)) {
                             db.execSQL("ALTER TABLE " + TABLE_MATCHES + " ADD COLUMN " + MatchesTable.BREAKDOWN + " TEXT DEFAULT '' ");
                         }
                         db.setTransactionSuccessful();
                     } finally {
-                        if (breakdown != null) {
-                            breakdown.close();
-                        }
                         db.endTransaction();
                     }
                     break;
                 case 31:
                     // Add last_modified columns
-                    Cursor result = null;
                     String[] tables = {TABLE_AWARDS, TABLE_DISTRICTS, TABLE_DISTRICTTEAMS,
                             TABLE_EVENTS, TABLE_EVENTTEAMS, TABLE_MATCHES, TABLE_MEDIAS,
                             TABLE_TEAMS};
                     db.beginTransaction();
                     try {
                         for (int i = 0; i < tables.length; i++) {
-                            result = db.rawQuery(String.format("SELECT * FROM %1$s LIMIT 0,1",
-                                                               tables[i]), null);
-                            if (result.getColumnIndex("last_modified") == -1) {
-                                db.execSQL(String.format("ALTER TABLE %1$s ADD COLUMN last_modified TIMESTAMP"));
+                            if (!columnExists(db, tables[i], "last_modified")) {
+                                db.execSQL(String.format("ALTER TABLE %1$s ADD COLUMN last_modified TIMESTAMP", tables[i]));
                             }
-                            result.close();
                         }
+                        db.setTransactionSuccessful();
                     } finally {
-                        if (result != null && !result.isClosed()) {
-                            result.close();
-                        }
                         db.endTransaction();
                     }
                     break;
