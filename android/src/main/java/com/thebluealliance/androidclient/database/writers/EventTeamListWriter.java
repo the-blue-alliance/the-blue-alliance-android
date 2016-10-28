@@ -19,7 +19,7 @@ public class EventTeamListWriter extends BaseDbWriter<List<EventTeam>> {
 
     @Override
     @WorkerThread
-    public void write(List<EventTeam> eventTeams) {
-        mDb.getEventTeamsTable().add(ImmutableList.copyOf(eventTeams));
+    public void write(List<EventTeam> eventTeams, Long lastModified) {
+        mDb.getEventTeamsTable().add(ImmutableList.copyOf(eventTeams), lastModified);
     }
 }

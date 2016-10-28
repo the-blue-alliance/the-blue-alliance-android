@@ -40,7 +40,7 @@ public class AwardListWriterTest {
 
     @Test
     public void testAwardListWriter() {
-        mWriter.write(mAwards);
+        mWriter.write(mAwards, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         for (Award award : mAwards) {

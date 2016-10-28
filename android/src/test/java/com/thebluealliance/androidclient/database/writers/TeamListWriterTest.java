@@ -40,7 +40,7 @@ public class TeamListWriterTest {
 
     @Test
     public void testTeamListWriter() {
-        mWriter.write(mTeams);
+        mWriter.write(mTeams, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         for (Team team : mTeams) {

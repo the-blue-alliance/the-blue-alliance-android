@@ -28,12 +28,13 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
      * If the model is already entered, update the existing row via {@link #update(TbaDatabaseModel)}
      * If the insert was successful, call {@link #insertCallback(TbaDatabaseModel)}
      * @param in Model to be added
+     * @param lastModified the timestamp that came from the Last-Modified header
      * @return The value from {@link SQLiteDatabase#insert(String, String, ContentValues)} if a new
      * row is inserted (row ID or -1 on error), or the value from
      * {@link SQLiteDatabase#update(String, ContentValues, String, String[])} if an existing row
      * was updated (number of affected rows)
      */
-    public long add(@Nullable T in) {
+    public long add(@Nullable T in, @Nullable Long lastModified) {
         if (in == null) {
             return -1;
         }
@@ -41,12 +42,15 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
         long ret = -1;
         try {
             if (!exists(in.getKey())) {
+                if (lastModified != null
+                    && (in.getLastModified() == null || lastModified > in.getLastModified()))
+                in.setLastModified(lastModified);
                 ret = mDb.insert(getTableName(), null, in.getParams());
                 if (ret != -1) {
                     insertCallback(in);
                 }
             } else {
-                ret = update(in);
+                ret = update(in, lastModified);
             }
             mDb.setTransactionSuccessful();
         } finally {
@@ -56,17 +60,18 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
     }
 
     /**
-     * Adds a List of items to the database via {@link #add(TbaDatabaseModel)}
+     * Adds a List of items to the database via {@link #add(TbaDatabaseModel, Long)}
      * @param inList List of models to be added
+     * @param lastModified the timestamp that came from the Last-Modified header
      */
-    public void add(@Nullable ImmutableList<T> inList){
+    public void add(@Nullable ImmutableList<T> inList, @Nullable Long lastModified){
         if (inList == null) {
             return;
         }
         try {
             mDb.beginTransaction();
             for (T in : inList) {
-                add(in);
+                add(in, lastModified);
             }
             mDb.setTransactionSuccessful();
         } finally {
@@ -79,21 +84,28 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
      * Uses {@link #getKeyColumn()} = {@link TbaDatabaseModel#getKey()} as the WHERE clause
      * If the update was successful, call {@link #updateCallback(TbaDatabaseModel)}
      * @param in Model to be updated
+     * @param lastModified the timestamp that came from the Last-Modified header
      * @return Value from {@link SQLiteDatabase#update(String, ContentValues, String, String[])},
      * or number of rows affected by the query
      */
-    public int update(@Nullable T in){
+    public int update(@Nullable T in, @Nullable Long lastModified){
         int affectedRows;
         if (in == null) {
             return -1;
         }
         mDb.beginTransaction();
         try {
+            if (lastModified != null
+                && (in.getLastModified() == null || lastModified > in.getLastModified())) {
+                in.setLastModified(lastModified);
+            }
             affectedRows = mDb.update(
                     getTableName(),
                     in.getParams(),
                     getKeyColumn() + " = ? AND  ? > " + getLastModifiedColumn(),
-                    new String[]{in.getKey(), in.getLastModified().toString()});
+                    new String[]{in.getKey(), lastModified != null
+                                                ? in.getLastModified().toString()
+                                                : "-1"});
             if (affectedRows > 0) {
                 updateCallback(in);
             }
@@ -261,23 +273,6 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
     public void deleteAllRows() {
         mDb.execSQL("delete from " + getTableName());
         deleteAllCallback();
-    }
-
-    /**
-     * Updates given fields in the model with the given key
-     * @param key Model key to fetch and update
-     * @param values A {@link ContentValues} object mapping the column names to be updated to values
-     * @return Numbe of rows affected by the query
-     */
-    public int updateField(String key, ContentValues values) {
-        int returnVal = 0;
-        mDb.beginTransaction();
-        try {
-            returnVal = mDb.update(getTableName(), values, getKeyColumn() + " = ?", new String[]{key});
-        } finally {
-            mDb.endTransaction();
-        }
-        return returnVal;
     }
 
     /**

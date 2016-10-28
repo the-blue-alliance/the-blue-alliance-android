@@ -29,6 +29,8 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -69,7 +71,7 @@ public class AwardsPostedNotificationTest {
         mNotification.updateDataLocally();
 
         List<Award> awards = mNotification.getAwards();
-        verify(mWriter).write(awards);
+        verify(mWriter).write(eq(awards), anyLong());
     }
 
     @Test(expected = JsonParseException.class)

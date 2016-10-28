@@ -16,7 +16,7 @@ public class TeamWriter extends BaseDbWriter<Team> {
 
     @Override
     @WorkerThread
-    public void write(Team team) {
-        mDb.getTeamsTable().add(team);
+    public void write(Team team, Long lastModified) {
+        mDb.getTeamsTable().add(team, lastModified);
     }
 }

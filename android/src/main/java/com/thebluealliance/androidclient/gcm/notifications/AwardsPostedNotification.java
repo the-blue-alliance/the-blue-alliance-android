@@ -111,7 +111,8 @@ public class AwardsPostedNotification extends BaseNotification<AwardsPostedNotif
             for (Award award : awards) {
                 award.setKey(AwardHelper.createAwardKey(award.getEventKey(), award.getEnum()));
             }
-            mWriter.write(awards);
+            //TODO need last-modified time in notifications
+            mWriter.write(awards, new Date().getTime());
         }
     }
 

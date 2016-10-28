@@ -19,14 +19,14 @@ public class EventDistrictPointsWriter extends BaseDbWriter<KeyAndJson> {
     }
 
     @Override
-    public void write(KeyAndJson newData) {
+    public void write(KeyAndJson newData, Long lastModified) {
         mDb.getWritableDatabase().beginTransaction();
         try {
             Event event = mDb.getEventsTable().get(newData.key);
             if (event != null && newData.json != null && newData.json.isJsonObject()) {
                 //TODO(773) Requires EventDetails
                 //event.setDistrictPoints(newData.json.getAsJsonObject().toString());
-                mEventWriter.write(event);
+                mEventWriter.write(event, lastModified);
             }
             mDb.getWritableDatabase().setTransactionSuccessful();
         } finally {

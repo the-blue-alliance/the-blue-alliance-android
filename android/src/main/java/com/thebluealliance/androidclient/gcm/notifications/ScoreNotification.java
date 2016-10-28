@@ -155,7 +155,8 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
     @Override
     public void updateDataLocally() {
         if (match != null) {
-            mWriter.write(match);
+            //TODO need last-modified time in notifications
+            mWriter.write(match, new Date().getTime());
         }
     }
 

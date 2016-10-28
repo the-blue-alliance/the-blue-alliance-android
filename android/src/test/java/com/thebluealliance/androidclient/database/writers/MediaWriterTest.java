@@ -38,7 +38,7 @@ public class MediaWriterTest {
 
     @Test
     public void testEventListWriter() {
-        mWriter.write(mMedia);
+        mWriter.write(mMedia, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         verify(db).insert(Database.TABLE_MEDIAS, null, mMedia.getParams());

@@ -28,6 +28,8 @@ import android.content.res.Resources;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -66,7 +68,7 @@ public class AllianceSelectionNotificationTest {
         mNotification.updateDataLocally();
 
         Event event = mNotification.getEvent();
-        verify(mWriter).write(event);
+        verify(mWriter).write(eq(event), anyLong());
     }
 
     @Test(expected = JsonParseException.class)

@@ -44,6 +44,6 @@ public class EventStatsWriterTest {
 
     @Test
     public void testEventStatsWriter()  {
-        mWriter.write(mData);
+        mWriter.write(mData, 0L);
     }
 }
