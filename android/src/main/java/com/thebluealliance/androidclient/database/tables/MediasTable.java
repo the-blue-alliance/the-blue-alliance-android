@@ -34,6 +34,11 @@ public class MediasTable extends ModelTable<Media> {
     }
 
     @Override
+    public String getLastModifiedColumn() {
+        return LAST_MODIFIED;
+    }
+
+    @Override
     public Media inflate(Cursor cursor) {
         return ModelInflater.inflateMedia(cursor);
     }

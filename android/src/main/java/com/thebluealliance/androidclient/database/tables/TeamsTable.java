@@ -83,6 +83,11 @@ public class TeamsTable extends ModelTable<Team> {
     }
 
     @Override
+    public String getLastModifiedColumn() {
+        return LAST_MODIFIED;
+    }
+
+    @Override
     public Team inflate(Cursor cursor) {
         return ModelInflater.inflateTeam(cursor);
     }

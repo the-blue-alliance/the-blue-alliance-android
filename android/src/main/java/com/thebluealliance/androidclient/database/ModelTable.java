@@ -92,8 +92,8 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
             affectedRows = mDb.update(
                     getTableName(),
                     in.getParams(),
-                    getKeyColumn() + "=?",
-                    new String[]{in.getKey()});
+                    getKeyColumn() + " = ? AND  ? > " + getLastModifiedColumn(),
+                    new String[]{in.getKey(), in.getLastModified().toString()});
             if (affectedRows > 0) {
                 updateCallback(in);
             }
@@ -327,6 +327,11 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
      */
     @VisibleForTesting
     public abstract String getKeyColumn();
+
+    /**
+     * @return the column title for the last modified information
+     */
+    public abstract String getLastModifiedColumn();
 
     /**
      * Inflates a cursor row from the db to a model class

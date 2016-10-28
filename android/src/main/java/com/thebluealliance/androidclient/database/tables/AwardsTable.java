@@ -41,6 +41,11 @@ public class AwardsTable extends ModelTable<Award> {
     }
 
     @Override
+    public String getLastModifiedColumn() {
+        return LAST_MODIFIED;
+    }
+
+    @Override
     public Award inflate(Cursor cursor) {
         return ModelInflater.inflateAward(cursor);
     }

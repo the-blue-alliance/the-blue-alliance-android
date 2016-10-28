@@ -35,6 +35,11 @@ public class DistrictsTable extends ModelTable<District> {
     }
 
     @Override
+    public String getLastModifiedColumn() {
+        return LAST_MODIFIED;
+    }
+
+    @Override
     public District inflate(Cursor cursor) {
         return ModelInflater.inflateDistrict(cursor);
     }

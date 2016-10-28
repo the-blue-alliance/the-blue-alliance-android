@@ -41,6 +41,11 @@ public class MatchesTable extends ModelTable<Match> {
     }
 
     @Override
+    public String getLastModifiedColumn() {
+        return LAST_MODIFIED;
+    }
+
+    @Override
     public Match inflate(Cursor cursor) {
         return ModelInflater.inflateMatch(cursor);
     }

@@ -42,6 +42,11 @@ public class DistrictTeamsTable extends ModelTable<DistrictTeam> {
     }
 
     @Override
+    public String getLastModifiedColumn() {
+        return LAST_MODIFIED;
+    }
+
+    @Override
     public DistrictTeam inflate(Cursor cursor) {
         return ModelInflater.inflateDistrictTeam(cursor);
     }

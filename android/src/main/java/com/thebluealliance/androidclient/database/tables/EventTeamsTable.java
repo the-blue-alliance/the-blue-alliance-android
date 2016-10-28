@@ -76,6 +76,11 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
     }
 
     @Override
+    public String getLastModifiedColumn() {
+        return LAST_MODIFIED;
+    }
+
+    @Override
     public EventTeam inflate(Cursor cursor) {
         return ModelInflater.inflateEventTeam(cursor);
     }

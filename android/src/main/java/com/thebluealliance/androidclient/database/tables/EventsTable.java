@@ -128,6 +128,11 @@ public class EventsTable extends ModelTable<Event> {
     }
 
     @Override
+    public String getLastModifiedColumn() {
+        return LAST_MODIFIED;
+    }
+
+    @Override
     public Event inflate(Cursor cursor) {
         return ModelInflater.inflateEvent(cursor);
     }
