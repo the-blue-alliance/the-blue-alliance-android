@@ -32,7 +32,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
     public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
-    private static final int DATABASE_VERSION = 30;
+    private static final int DATABASE_VERSION = 31;
     private Context context;
     public static final String DATABASE_NAME = "the-blue-alliance-android-database";
     public static final @Deprecated String TABLE_API = "api";
@@ -59,7 +59,8 @@ public class Database extends SQLiteOpenHelper {
             + TeamsTable.LOCATION + " TEXT DEFAULT '',"
             + TeamsTable.WEBSITE + " TEXT DEFAULT '', "
             + TeamsTable.YEARS_PARTICIPATED + " TEXT DEFAULT '', "
-            + TeamsTable.MOTTO + " TEXT DEFAULT '' "
+            + TeamsTable.MOTTO + " TEXT DEFAULT '', "
+            + TeamsTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
     private static final String CREATE_EVENTS = "CREATE TABLE IF NOT EXISTS " + TABLE_EVENTS + "("
             + EventsTable.KEY + " TEXT PRIMARY KEY NOT NULL, "
@@ -81,7 +82,8 @@ public class Database extends SQLiteOpenHelper {
             + EventsTable.ALLIANCES + " TEXT DEFAULT '', "
             + EventsTable.WEBCASTS + " TEXT DEFAULT '', "
             + EventsTable.STATS + " TEXT DEFAULT '', "
-            + EventsTable.WEBSITE + " TEXT DEFAULT '' "
+            + EventsTable.WEBSITE + " TEXT DEFAULT '', "
+            + EventsTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
     private static final String CREATE_AWARDS = "CREATE TABLE IF NOT EXISTS " + TABLE_AWARDS + "("
             + AwardsTable.KEY + " TEXT PRIMARY KEY NOT NULL, "
@@ -89,7 +91,8 @@ public class Database extends SQLiteOpenHelper {
             + AwardsTable.EVENTKEY + " TEXT DEFAULT '', "
             + AwardsTable.NAME + " TEXT DEFAULT '', "
             + AwardsTable.YEAR + " INTEGER DEFAULT -1, "
-            + AwardsTable.WINNERS + " TEXT DEFAULT '' "
+            + AwardsTable.WINNERS + " TEXT DEFAULT '', "
+            + AwardsTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
     private static final String CREATE_MATCHES = "CREATE TABLE IF NOT EXISTS " + TABLE_MATCHES + "("
             + MatchesTable.KEY + " TEXT PRIMARY KEY NOT NULL, "
@@ -100,14 +103,16 @@ public class Database extends SQLiteOpenHelper {
             + MatchesTable.TIME + " TIMESTAMP, "
             + MatchesTable.ALLIANCES + " TEXT DEFAULT '', "
             + MatchesTable.VIDEOS + " TEXT DEFAULT '', "
-            + MatchesTable.BREAKDOWN + " TEXT DEFAULT '' "
+            + MatchesTable.BREAKDOWN + " TEXT DEFAULT '', "
+            + MatchesTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
     private static final String CREATE_MEDIAS = "CREATE TABLE IF NOT EXISTS " + TABLE_MEDIAS + "("
             + MediasTable.TYPE + " TEXT DEFAULT '', "
             + MediasTable.FOREIGNKEY + " TEXT DEFAULT '', "
             + MediasTable.TEAMKEY + " TEXT DEFAULT '', "
             + MediasTable.DETAILS + " TEXT DEFAULT '', "
-            + MediasTable.YEAR + " INTEGER  DEFAULT -1"
+            + MediasTable.YEAR + " INTEGER  DEFAULT -1, "
+            + MediasTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
     private static final String CREATE_EVENTTEAMS = "CREATE TABLE IF NOT EXISTS "
             + TABLE_EVENTTEAMS + "("
@@ -115,7 +120,8 @@ public class Database extends SQLiteOpenHelper {
             + EventTeamsTable.TEAMKEY + " TEXT DEFAULT '', "
             + EventTeamsTable.EVENTKEY + " TEXT DEFAULT '', "
             + EventTeamsTable.YEAR + " INTEGER DEFAULT -1, "
-            + EventTeamsTable.COMPWEEK + " INTEGER DEFAULT -1 "
+            + EventTeamsTable.COMPWEEK + " INTEGER DEFAULT -1, "
+            + EventTeamsTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
     private static final String CREATE_DISTRICTS = "CREATE TABLE IF NOT EXISTS "
             + TABLE_DISTRICTS + "("
@@ -123,7 +129,8 @@ public class Database extends SQLiteOpenHelper {
             + DistrictsTable.ABBREV + " TEXT NOT NULL, "
             + DistrictsTable.YEAR + " INTEGER NOT NULL, "
             + DistrictsTable.ENUM + " INTEGER NOT NULL,"
-            + DistrictsTable.NAME + " TEXT DEFAULT ''"
+            + DistrictsTable.NAME + " TEXT DEFAULT '', "
+            + DistrictsTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
     private static final String CREATE_DISTRICTTEAMS = "CREATE TABLE IF NOT EXISTS "
             + TABLE_DISTRICTTEAMS + "("
@@ -141,7 +148,8 @@ public class Database extends SQLiteOpenHelper {
             + DistrictTeamsTable.CMP_POINTS + " INTEGER DEFAULT 0, "
             + DistrictTeamsTable.ROOKIE_POINTS + " INTEGER DEFAULT 0, "
             + DistrictTeamsTable.TOTAL_POINTS + " INTEGER DEFAULT 0, "
-            + DistrictTeamsTable.JSON + " TEXT DEFAULT '' "
+            + DistrictTeamsTable.JSON + " TEXT DEFAULT '', "
+            + DistrictTeamsTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
     private static final String CREATE_FAVORITES = "CREATE TABLE IF NOT EXISTS "
             + TABLE_FAVORITES + "("
@@ -404,6 +412,30 @@ public class Database extends SQLiteOpenHelper {
                         }
                         db.endTransaction();
                     }
+                    break;
+                case 31:
+                    // Add last_modified columns
+                    Cursor result = null;
+                    String[] tables = {TABLE_AWARDS, TABLE_DISTRICTS, TABLE_DISTRICTTEAMS,
+                            TABLE_EVENTS, TABLE_EVENTTEAMS, TABLE_MATCHES, TABLE_MEDIAS,
+                            TABLE_TEAMS};
+                    db.beginTransaction();
+                    try {
+                        for (int i = 0; i < tables.length; i++) {
+                            result = db.rawQuery(String.format("SELECT * FROM %1$s LIMIT 0,1",
+                                                               tables[i]), null);
+                            if (result.getColumnIndex("last_modified") == -1) {
+                                db.execSQL(String.format("ALTER TABLE %1$s ADD COLUMN last_modified TIMESTAMP"));
+                            }
+                            result.close();
+                        }
+                    } finally {
+                        if (result != null && !result.isClosed()) {
+                            result.close();
+                        }
+                        db.endTransaction();
+                    }
+                    break;
             }
             upgradeTo++;
         }
