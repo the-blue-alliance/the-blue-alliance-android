@@ -188,7 +188,6 @@ public class Database extends SQLiteOpenHelper {
             + NotificationsTable.MSG_DATA + " TEXT DEFAULT '')";
 
     protected SQLiteDatabase mDb;
-    private static Database sDatabaseInstance;
 
     private TeamsTable mTeamsTable;
     private EventsTable mEventsTable;
@@ -219,11 +218,9 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public static synchronized Database getInstance(Context context) {
-        if (sDatabaseInstance == null) {
-            sDatabaseInstance = new Database(context.getApplicationContext());
-            sDatabaseInstance.setWriteAheadLoggingEnabled(true);
-        }
-        return sDatabaseInstance;
+        Database databaseInstance = new Database(context.getApplicationContext());
+        databaseInstance.setWriteAheadLoggingEnabled(true);
+        return databaseInstance;
     }
 
     public TeamsTable getTeamsTable() {

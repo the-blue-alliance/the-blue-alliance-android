@@ -17,19 +17,19 @@ case "$1" in
 
     "UNIT")
         echo "Running project unit tests"
-        ./gradlew testProdDebugProguardUnitTest --stacktrace --no-daemon
+        ./gradlew testProdDebugProguardUnitTest --stacktrace
         filter_code $?
         ;;
 
     "COVERAGE")
         echo "Generating project code coverage"
-        ./gradlew jacocoTestReport coveralls --no-daemon
+        ./gradlew jacocoTestReport coveralls
         filter_code $?
         ;;
 
     "CHECKSTYLE")
         echo "Running project checkstyle"
-        ./gradlew androidCheckstyle --no-daemon
+        ./gradlew androidCheckstyle
         filter_code $?
         ;;
 

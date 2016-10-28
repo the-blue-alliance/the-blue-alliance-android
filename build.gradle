@@ -40,6 +40,14 @@ buildscript {
     configurations.classpath.exclude group: 'com.android.tools.external.lombok'
 }
 
+plugins {
+    id 'com.gradle.build-scan' version '1.2'
+}
+
+buildScan {
+    licenseAgreementUrl = 'https://gradle.com/terms-of-service'
+    licenseAgree = 'yes'
+}
 
 allprojects {
     repositories {
@@ -62,3 +70,20 @@ allprojects {
         preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
     }
 }
+
+if (System.env.TRAVIS == 'true') {
+    allprojects {
+        tasks.withType(Test) {
+            // containers (currently) have 2 dedicated cores and 4GB of memory
+            maxParallelForks = 2
+            minHeapSize = '128m'
+            maxHeapSize = '768m'
+            forkEvery = 100   // helps when tests leak memory
+            afterSuite {
+                System.out.print('.')
+                System.out.flush()
+            }
+        }
+    }
+}
+
