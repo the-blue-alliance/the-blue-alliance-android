@@ -99,6 +99,7 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
         data.put(MediasTable.TEAMKEY, getTeamKey());
         data.put(MediasTable.DETAILS, getDetails());
         data.put(MediasTable.YEAR, getYear());
+        data.put(MediasTable.LAST_MODIFIED, getLastModified());
         return data;
     }
 
