@@ -340,8 +340,8 @@ public class Database extends SQLiteOpenHelper {
                     db.execSQL(CREATE_DISTRICTS);
                     db.execSQL(CREATE_DISTRICTTEAMS);
                     if (!columnExists(db, TABLE_EVENTS, EventsTable.DISTRICT_POINTS)) {
-                        db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN " +
-                                   EventsTable.DISTRICT_POINTS + " TEXT DEFAULT '' ");
+                        db.execSQL("ALTER TABLE " + TABLE_EVENTS + " ADD COLUMN "
+                                   + EventsTable.DISTRICT_POINTS + " TEXT DEFAULT '' ");
                     }
                     break;
                 case 15:
@@ -352,16 +352,16 @@ public class Database extends SQLiteOpenHelper {
                 case 16:
                     // add column for individual notification settings and sorting by model type
                     if (!columnExists(db, TABLE_SUBSCRIPTIONS, SubscriptionsTable.NOTIFICATION_SETTINGS)) {
-                        db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " +
-                                   SubscriptionsTable.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]' ");
+                        db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN "
+                                   + SubscriptionsTable.NOTIFICATION_SETTINGS + " TEXT DEFAULT '[]' ");
                     }
                     if (!columnExists(db, TABLE_SUBSCRIPTIONS, SubscriptionsTable.MODEL_ENUM)) {
-                        db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN " +
-                                   SubscriptionsTable.MODEL_ENUM + " INTEGER NOT NULL DEFAULT -1");
+                        db.execSQL("ALTER TABLE " + TABLE_SUBSCRIPTIONS + " ADD COLUMN "
+                                   + SubscriptionsTable.MODEL_ENUM + " INTEGER NOT NULL DEFAULT -1");
                     }
                     if (!columnExists(db, TABLE_FAVORITES, FavoritesTable.MODEL_ENUM)) {
-                        db.execSQL("ALTER TABLE " + TABLE_FAVORITES + " ADD COLUMN " +
-                                   FavoritesTable.MODEL_ENUM + " INTEGER NOT NULL DEFAULT -1");
+                        db.execSQL("ALTER TABLE " + TABLE_FAVORITES + " ADD COLUMN "
+                                    + FavoritesTable.MODEL_ENUM + " INTEGER NOT NULL DEFAULT -1");
                     }
                     break;
                 case 17:

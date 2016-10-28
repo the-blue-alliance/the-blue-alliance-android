@@ -14,7 +14,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 
-public class DbTableTestDriver {
+public final class DbTableTestDriver {
+
+    private DbTableTestDriver() {
+        // unused
+    }
 
     public static <T extends TbaDatabaseModel> void testNullValues(ModelTable<T> table) {
         T model = null;

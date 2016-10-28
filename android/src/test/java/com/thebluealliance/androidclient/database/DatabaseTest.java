@@ -190,9 +190,9 @@ public class DatabaseTest {
         mDbHelper.onUpgrade(mDb, 30, 31);
 
         // Should add last modified columns
-        String[] modified_tables = {TABLE_AWARDS, TABLE_DISTRICTS, TABLE_DISTRICTTEAMS,
+        String[] modifiedTables = {TABLE_AWARDS, TABLE_DISTRICTS, TABLE_DISTRICTTEAMS,
                 TABLE_EVENTS, TABLE_EVENTTEAMS, TABLE_MATCHES, TABLE_MEDIAS, TABLE_TEAMS};
-        for (String table : modified_tables) {
+        for (String table : modifiedTables) {
             assertTrue(mDbHelper.columnExists(mDb, table, "last_modified"));
         }
     }
