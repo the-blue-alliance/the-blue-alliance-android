@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.fragments;
 
-import com.thebluealliance.androidclient.IntegrationRobolectricRunner;
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.fragments.framework.BaseFragmentTest;
@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
-@RunWith(IntegrationRobolectricRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class EventListFragmentTest extends BaseFragmentTest {
 
     private EventListFragment mFragment;

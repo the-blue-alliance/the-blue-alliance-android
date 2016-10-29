@@ -6,6 +6,7 @@ import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -117,5 +118,10 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
         if (progressBar != null) {
             progressBar.setVisibility(View.VISIBLE);
         }
+    }
+
+    @VisibleForTesting
+    public ListView getListView() {
+        return listView;
     }
 }
