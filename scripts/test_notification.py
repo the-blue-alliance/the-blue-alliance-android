@@ -40,7 +40,7 @@ def notify(message_type, json_data):
     # Quoting for "Chairman's".
     json_text = json_data.replace("'", """'"'"'""")
 
-    template = """am broadcast -a com.google.android.c2dm.intent.RECEIVE \
+    template = """am broadcast -a com.google.firebase.MESSAGING_EVENT \
         -c com.thebluealliance.androidclient \
         --es message_type %s \
         --es message_data '%s'"""

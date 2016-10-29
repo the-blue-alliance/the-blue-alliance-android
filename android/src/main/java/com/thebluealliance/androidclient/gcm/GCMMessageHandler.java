@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.gcm;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.JsonParseException;
 
 import com.thebluealliance.androidclient.R;
@@ -40,19 +41,19 @@ import com.thebluealliance.androidclient.renderers.RendererModule;
 
 import org.greenrobot.eventbus.EventBus;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
-public class GCMMessageHandler extends IntentService implements FollowsChecker {
+public class GCMMessageHandler extends FirebaseMessagingService implements FollowsChecker {
 
     /**
      * Stack (bundle) notifications together into a Group for better UX on Nougat+ and Android Wear
@@ -83,11 +84,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     private NotificationComponent mComponenet;
 
     public GCMMessageHandler() {
-        this("GCMMessageHandler");
-    }
-
-    public GCMMessageHandler(String name) {
-        super(name);
+        super();
     }
 
     @Override
@@ -125,7 +122,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                 || subTable.hasNotificationType(teamInterestKey, notificationType)
                 || subTable.hasNotificationType(teamAtEventInterestKey, notificationType);
     }
-
+/*
     @Override
     protected void onHandleIntent(Intent intent) {
 
@@ -145,6 +142,16 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
         TbaLogger.i("Received : (" + type + ")  " + data);
 
         GCMBroadcastReceiver.completeWakefulIntent(intent);
+    }
+    */
+
+    @Override
+    public void onMessageReceived(RemoteMessage message) {
+        super.onMessageReceived(message);
+        String from = message.getFrom();
+        Map data = message.getData();
+        TbaLogger.i("Received message from: " + from);
+        TbaLogger.i("Message content: " + data.toString());
     }
 
     public void handleMessage(Context c, String messageType, String messageData) {

@@ -6,8 +6,8 @@ import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
-import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
+import com.thebluealliance.androidclient.mytba.SendFcmTokenToBackend;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -79,7 +79,7 @@ public class DevSettingsActivity extends AppCompatActivity {
             Preference gcmRegister = findPreference("gcm_register");
             gcmRegister.setOnPreferenceClickListener((preference) -> {
                 getActivity().startService(new Intent(getActivity(),
-                                                      MyTbaRegistrationService.class));
+                                                      SendFcmTokenToBackend.class));
                 return false;
             });
 

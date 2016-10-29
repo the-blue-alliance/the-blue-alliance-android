@@ -35,6 +35,7 @@ import com.thebluealliance.androidclient.types.ModelType;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Handler;
 import android.widget.Toast;
 
@@ -94,14 +95,18 @@ public class MyTbaDatafeed {
     }
 
     public boolean register(String regId) {
-        TbaLogger.d("Registering for GCM");
+        TbaLogger.d("Registering for FCM");
         if (!ConnectionDetector.isConnectedToInternet(mApplicationContext)) {
             return false;
         }
 
         String authHeader = mAuthController.getAuthHeader();
+        if (authHeader == null) {
+            return false;
+        }
         ModelsMobileApiMessagesRegistrationRequest request = new ModelsMobileApiMessagesRegistrationRequest();
         request.mobile_id = regId;
+        request.name = Build.MANUFACTURER + " " + Build.MODEL;
         request.operating_system = GcmController.OS_ANDROID;
         request.device_uuid = Utilities.getDeviceUUID(mApplicationContext);
 
@@ -116,7 +121,7 @@ public class MyTbaDatafeed {
     }
 
     public boolean unregister() {
-        TbaLogger.d("Unregistering for GCM");
+        TbaLogger.d("Unregistering for FCM");
         if (!ConnectionDetector.isConnectedToInternet(mApplicationContext)) {
             return false;
         }
@@ -124,6 +129,7 @@ public class MyTbaDatafeed {
         String authHeader = mAuthController.getAuthHeader();
         ModelsMobileApiMessagesRegistrationRequest request = new ModelsMobileApiMessagesRegistrationRequest();
         request.mobile_id = mGcmController.getRegistrationId();
+        request.name = Build.MANUFACTURER + " " + Build.MODEL;
         request.operating_system = GcmController.OS_ANDROID;
         request.device_uuid = Utilities.getDeviceUUID(mApplicationContext);
 

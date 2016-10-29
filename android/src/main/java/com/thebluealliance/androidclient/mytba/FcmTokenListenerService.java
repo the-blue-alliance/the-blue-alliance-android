@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.mytba;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
 
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -9,24 +10,19 @@ import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.di.components.MyTbaComponent;
 import com.thebluealliance.androidclient.gcm.GcmController;
 
-import android.app.IntentService;
-import android.content.Intent;
-
-import java.io.IOException;
-
 import javax.inject.Inject;
 
 /**
  * Service to send the newly registered user's GCM tokens to the backend
  */
-public class MyTbaRegistrationService extends IntentService {
+public class FcmTokenListenerService extends FirebaseInstanceIdService {
 
-    @Inject GoogleCloudMessaging mGoogleCloudMessaging;
+    @Inject FirebaseInstanceId mFirebaseInstanceId;
     @Inject GcmController mGcmController;
     @Inject MyTbaDatafeed mMyTbaDatafeed;
 
-    public MyTbaRegistrationService() {
-        super("Register MyTBA");
+    public FcmTokenListenerService() {
+        super();
     }
 
     @Override
@@ -36,25 +32,17 @@ public class MyTbaRegistrationService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        try {
-            String senderId = mGcmController.getSenderId();
-            String regid = mGoogleCloudMessaging.register(senderId);
+    public void onTokenRefresh() {
+        String regid = mFirebaseInstanceId.getToken();
 
-            TbaLogger.d("Device registered with GCM, ID: " + regid);
+        TbaLogger.d("Device registered with FCM, ID: " + regid);
+        mGcmController.storeRegistrationId(regid);
 
-            boolean storeOnServer = mMyTbaDatafeed.register(regid);
-            if (storeOnServer) {
-                TbaLogger.d("Storing registration ID");
-                // we had success on the server. Now store locally
-                // Store the registration ID locally, so we don't have to do this again
-                mGcmController.storeRegistrationId(regid);
-            }
-        } catch (IOException ex) {
-            TbaLogger.e("Error registering gcm:" + ex.getMessage());
-            // If there is an error, don't just keep trying to register.
-            // Require the user to click a button again, or perform
-            // exponential back-off.
+        boolean storeOnServer = mMyTbaDatafeed.register(regid);
+        if (storeOnServer) {
+            TbaLogger.d("Successfully sent FCM token to backend");
+        } else {
+            TbaLogger.d("Unable to send FCM token to backend");
         }
     }
 

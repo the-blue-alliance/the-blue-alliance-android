@@ -2,8 +2,8 @@ package com.thebluealliance.androidclient.accounts;
 
 import com.thebluealliance.androidclient.LocalProperties;
 import com.thebluealliance.androidclient.auth.User;
-import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
+import com.thebluealliance.androidclient.mytba.SendFcmTokenToBackend;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -94,7 +94,7 @@ public class AccountController {
     }
 
     private void registerForGcm(Context context) {
-        context.startService(new Intent(context, MyTbaRegistrationService.class));
+        context.startService(new Intent(context, SendFcmTokenToBackend.class));
     }
 
     private void loadMyTbaData(Context context) {

@@ -8,11 +8,6 @@
     <!-- For Android Beam support -->
     <uses-permission android:name="android.permission.NFC" />
 
-    <!-- GCM stuff -->
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="com.thebluealliance.androidclient.permission.C2D_MESSAGE" />
-
     <!-- Device Accounts -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
@@ -205,26 +200,30 @@
             </intent-filter>
         </receiver>
 
-        <!--
-             The receiver's android:permission filters Intents by sender permission.
-             ${gcmPermissionRequired} is defined in android/build.gradle so debug builds accept
-             Intents from 'adb shell am broadcast'. See test_notification.py .
-        -->
-        <receiver
-            android:name=".gcm.GCMBroadcastReceiver"
-            android:permission="${gcmPermissionRequired}">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-
-                <category android:name="com.thebluealliance.androidclient" />
-            </intent-filter>
-        </receiver>
 
         <receiver
             android:name=".receivers.NotificationChangedReceiver"
             android:exported="false" />
 
-        <service android:name=".gcm.GCMMessageHandler" />
+       <!--
+             The service's android:permission filters Intents by sender permission.
+             ${gcmPermissionRequired} is defined in android/build.gradle so debug builds accept
+             Intents from 'adb shell am broadcast'. See test_notification.py .
+        -->
+        <service
+                android:name=".gcm.GCMMessageHandler">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <!-- Service that gets notified when the firebase token changes -->
+         <service
+                android:name=".mytba.FcmTokenListenerService">
+             <intent-filter>
+                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+             </intent-filter>
+         </service>
+        <service android:name=".mytba.SendFcmTokenToBackend" />
         <service
             android:name=".accounts.AccountAuthenticatorService"
             android:exported="false">
@@ -251,9 +250,7 @@
         <service
                 android:name=".auth.firebase.MigrateLegacyUserToFirebase"
                 android:exported="false" />
-        <service
-                android:name=".mytba.MyTbaRegistrationService"
-                android:exported="false" />
+
     </application>
 
 </manifest>
