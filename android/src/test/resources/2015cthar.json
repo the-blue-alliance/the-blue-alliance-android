@@ -12,6 +12,7 @@
   "location": "Hartford, CT, USA",
   "event_code": "cthar",
   "year": 2015,
+  "week": 4,
   "webcast": [
     {
       "type": "twitch",

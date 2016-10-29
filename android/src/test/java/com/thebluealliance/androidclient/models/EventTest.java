@@ -28,11 +28,13 @@ import static junit.framework.Assert.assertTrue;
 public class EventTest {
     private Event mEvent;
     private Event mCleanEvent;
+    private Event mOffseasonEvent;
 
     @Before
     public void readJsonData(){
         mCleanEvent = new Event();
-       mEvent = ModelMaker.getModel(Event.class, "2015cthar");
+        mEvent = ModelMaker.getModel(Event.class, "2015cthar");
+        mOffseasonEvent = ModelMaker.getModel(Event.class, "2016cc");
     }
 
     @Test
@@ -85,6 +87,58 @@ public class EventTest {
         assertTrue(alliance1.has("picks") && alliance1.get("picks").isJsonArray());
         assertEquals(alliance1.get("picks").getAsJsonArray().size(), 3);
         assertEquals(alliance1.get("picks").getAsJsonArray().get(0).getAsString(), "frc195");
+    }
+
+    @Test
+    public void testOffseasonEventModel() throws ParseException {
+        assertNotNull(mOffseasonEvent);
+        assertEquals(mOffseasonEvent.getKey(), "2016cc");
+        assertEquals(mOffseasonEvent.getWebsite(), "");
+        assertNotNull(mOffseasonEvent.getOfficial());
+        assertFalse(mOffseasonEvent.getOfficial());
+        assertNotNull(mOffseasonEvent.getCompetitionWeek());
+        assertEquals(mOffseasonEvent.getCompetitionWeek().intValue(), 31);
+        assertEquals(mOffseasonEvent.getName(), "Chezy Champs");
+        assertEquals(mOffseasonEvent.getShortName(), "Chezy Champs");
+        assertEquals(mOffseasonEvent.getEventDistrictEnum(),
+                     DistrictType.NO_DISTRICT);
+        assertEquals(mOffseasonEvent.getVenueAddress(), "Bellarmine College Prep\n850 Elm St.\nSan Jose," +
+                                               " California 95126\nUSA");
+        assertEquals(mOffseasonEvent.getLocation(), "San Jose, CA, USA");
+        assertEquals(mOffseasonEvent.getYearAgnosticEventKey(), "cc");
+        assertEquals(mOffseasonEvent.getYear().intValue(), 2016);
+        assertEquals(mOffseasonEvent.getEventTypeEnum(),
+                     EventType.OFFSEASON);
+        assertNotNull(mOffseasonEvent.getWebcasts());
+
+        Date start = ThreadSafeFormatters.parseEventDate("2016-09-24");
+        Date end = ThreadSafeFormatters.parseEventDate("2016-09-25");
+        assertNotNull(mOffseasonEvent.getStartDate());
+        assertNotNull(mOffseasonEvent.getEndDate());
+        assertEquals(mOffseasonEvent.getStartDate().longValue(), start.getTime());
+        assertEquals(mOffseasonEvent.getEndDate().longValue(), end.getTime());
+        assertEquals(mOffseasonEvent.getFormattedStartDate(), start);
+        assertEquals(mOffseasonEvent.getFormattedEndDate(), end);
+        assertEquals(mOffseasonEvent.getDateString(), "Sep 24 to Sep 25, 2016");
+        assertFalse(mOffseasonEvent.isHappeningNow());
+        assertFalse(mOffseasonEvent.isChampsEvent());
+
+        JsonArray webcast = JSONHelper.getasJsonArray(mOffseasonEvent.getWebcasts());
+        assertEquals(webcast.size(), 1);
+        assertTrue(webcast.get(0).isJsonObject());
+        JsonObject castObject = webcast.get(0).getAsJsonObject();
+        assertEquals(castObject.get("type").getAsString(), "twitch");
+        assertEquals(castObject.get("channel").getAsString(), "frcgamesense");
+
+        JsonArray alliances = mOffseasonEvent.getAlliancesJson();
+        assertEquals(alliances.size(), 8);
+        assertTrue(alliances.get(0).isJsonObject());
+        JsonObject alliance1 = alliances.get(0).getAsJsonObject();
+        assertTrue(alliance1.has("declines") && alliance1.get("declines").isJsonArray());
+        assertEquals(alliance1.get("declines").getAsJsonArray().size(), 0);
+        assertTrue(alliance1.has("picks") && alliance1.get("picks").isJsonArray());
+        assertEquals(alliance1.get("picks").getAsJsonArray().size(), 4);
+        assertEquals(alliance1.get("picks").getAsJsonArray().get(0).getAsString(), "frc971");
     }
 
     @Test(expected = IllegalArgumentException.class)
