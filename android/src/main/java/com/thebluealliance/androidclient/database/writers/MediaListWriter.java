@@ -19,7 +19,7 @@ public class MediaListWriter extends BaseDbWriter<List<Media>> {
 
     @Override
     @WorkerThread
-    public void write(List<Media> medias) {
-        mDb.getMediasTable().add(ImmutableList.copyOf(medias));
+    public void write(List<Media> medias, Long lastModified) {
+        mDb.getMediasTable().add(ImmutableList.copyOf(medias), lastModified);
     }
 }

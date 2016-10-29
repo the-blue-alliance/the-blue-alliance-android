@@ -13,9 +13,13 @@ android:
     - extra-google-google_play_services
 
 env:
-  - JOB=UNIT
-  - JOB=COVERAGE
-  - JOB=CHECKSTYLE
+  matrix:
+    - JOB=UNIT
+    - JOB=COVERAGE
+    - JOB=CHECKSTYLE
+  global:
+    - GRADLE_OPTS="-Xmx512m -Xms128m -Xss1m"
+    - MALLOC_ARENA_MAX=1
 
 before_script:
   - mkdir android/src/main/assets

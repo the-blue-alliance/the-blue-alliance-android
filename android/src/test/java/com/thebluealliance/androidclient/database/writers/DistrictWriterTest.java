@@ -38,7 +38,7 @@ public class DistrictWriterTest {
 
     @Test
     public void testDistrictWriter() {
-        mWriter.write(mDistrict);
+        mWriter.write(mDistrict, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         verify(db).insert(Database.TABLE_DISTRICTS, null, mDistrict.getParams());

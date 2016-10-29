@@ -40,6 +40,6 @@ public class YearsParticipatedWriterTest {
 
     @Test
     public void testTeamListWriter()  {
-        mWriter.write(mInfo);
+        mWriter.write(mInfo, 0L);
     }
 }

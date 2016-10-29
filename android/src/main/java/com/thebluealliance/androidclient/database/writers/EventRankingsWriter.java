@@ -19,14 +19,14 @@ public class EventRankingsWriter extends BaseDbWriter<KeyAndJson> {
     }
 
     @Override
-    public void write(KeyAndJson newData) {
+    public void write(KeyAndJson newData, Long lastModified) {
         mDb.getWritableDatabase().beginTransaction();
         try {
             Event event = mDb.getEventsTable().get(newData.key);
             if (event != null && newData.json != null && newData.json.isJsonArray()) {
                 //TODO(773) Requires EventDetails
                 //event.setRankings(newData.json.getAsJsonArray());
-                mEventWriter.write(event);
+                mEventWriter.write(event, lastModified);
             }
             mDb.getWritableDatabase().setTransactionSuccessful();
         } finally {

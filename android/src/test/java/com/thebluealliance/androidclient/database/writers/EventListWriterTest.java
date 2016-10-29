@@ -40,7 +40,7 @@ public class EventListWriterTest  {
 
     @Test
     public void testEventListWriter() {
-        mWriter.write(mEvents);
+        mWriter.write(mEvents, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         for (Event event : mEvents) {

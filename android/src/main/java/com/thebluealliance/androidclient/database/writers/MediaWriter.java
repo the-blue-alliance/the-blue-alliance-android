@@ -15,7 +15,7 @@ public class MediaWriter extends BaseDbWriter<Media> {
 
     @Override
     @WorkerThread
-    public void write(Media media) {
-        mDb.getMediasTable().add(media);
+    public void write(Media media, Long lastModified) {
+        mDb.getMediasTable().add(media, lastModified);
     }
 }

@@ -19,7 +19,7 @@ public class AwardListWriter extends BaseDbWriter<List<Award>> {
 
     @Override
     @WorkerThread
-    public void write(List<Award> awards) {
-        mDb.getAwardsTable().add(ImmutableList.copyOf(awards));
+    public void write(List<Award> awards, Long lastModified) {
+        mDb.getAwardsTable().add(ImmutableList.copyOf(awards), lastModified);
     }
 }

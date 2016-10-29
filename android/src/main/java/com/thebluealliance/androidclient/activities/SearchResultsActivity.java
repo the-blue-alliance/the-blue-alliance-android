@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.activities;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -31,6 +32,8 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 public class SearchResultsActivity extends NavigationDrawerActivity implements SearchView.OnQueryTextListener {
 
     private static final int MAX_RESULTS_PER_CATEGORY = 5;
@@ -42,10 +45,14 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     private SearchResultsHeaderListElement teamsHeader, eventsHeader;
     private String currentQuery;
 
+    @Inject Database mDb;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
+
+        ((TBAAndroid)getApplication()).getDbComponent().inject(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
@@ -124,7 +131,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         ArrayList<ListItem> listItems = new ArrayList<>();
 
         // Teams
-        Cursor teamQueryResults = Database.getInstance(this).getMatchesForTeamQuery(preparedQuery);
+        Cursor teamQueryResults = mDb.getMatchesForTeamQuery(preparedQuery);
         if (teamQueryResults != null && teamQueryResults.moveToFirst()) {
             teamQueryResults.moveToPosition(-1);
 
@@ -143,12 +150,12 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     break;
                 }
                 String key = teamQueryResults.getString(teamQueryResults.getColumnIndex("_id"));
-                Team team = Database.getInstance(this).getTeamsTable().get(key);
+                Team team = mDb.getTeamsTable().get(key);
                 if (team == null) {
                     // Don't display models that don't exist anymore and delete them from search indexes
                     team = new Team();
                     team.setKey(key);
-                    Database.getInstance(this).getTeamsTable().deleteSearchIndex(team);
+                    mDb.getTeamsTable().deleteSearchIndex(team);
                     continue;
                 }
                 TeamListElement element;
@@ -165,7 +172,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         }
 
         // Events
-        Cursor eventQueryResults = Database.getInstance(this).getMatchesForEventQuery(preparedQuery);
+        Cursor eventQueryResults = mDb.getMatchesForEventQuery(preparedQuery);
         if (eventQueryResults != null && eventQueryResults.moveToFirst()) {
             eventQueryResults.moveToPosition(-1);
 
@@ -185,12 +192,12 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     break;
                 }
                 String key = eventQueryResults.getString(eventQueryResults.getColumnIndex("_id"));
-                Event event = Database.getInstance(this).getEventsTable().get(key);
+                Event event = mDb.getEventsTable().get(key);
                 if (event == null) {
                     // Don't display models that don't exist anymore and delete them from search indexes
                     event = new Event();
                     event.setKey(key);
-                    Database.getInstance(this).getEventsTable().deleteSearchIndex(event);
+                    mDb.getEventsTable().deleteSearchIndex(event);
                     continue;
                 }
                 EventListElement element;

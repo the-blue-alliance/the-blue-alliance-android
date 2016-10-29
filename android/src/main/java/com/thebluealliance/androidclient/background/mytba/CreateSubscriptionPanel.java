@@ -22,6 +22,7 @@ import android.preference.PreferenceScreen;
 public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
 
     private final Context context;
+    private final Database db;
     private final MyTBASettingsFragment fragment;
     private final Bundle savedState;
     private final ModelType type;
@@ -30,11 +31,13 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
     private String currentSettings;
 
     public CreateSubscriptionPanel(Context context,
+                                   Database db,
                                    AccountController accountController,
                                    MyTBASettingsFragment preferenceFragment,
                                    Bundle savedState,
                                    ModelType type) {
         this.context = context;
+        this.db = db;
         this.accountController = accountController;
         this.fragment = preferenceFragment;
         this.savedState = savedState;
@@ -45,8 +48,8 @@ public class CreateSubscriptionPanel extends AsyncTask<String, Void, Void> {
     protected Void doInBackground(String... params) {
         String modelKey = params[0];
 
-        FavoritesTable favTable = Database.getInstance(context).getFavoritesTable();
-        SubscriptionsTable subTable = Database.getInstance(context).getSubscriptionsTable();
+        FavoritesTable favTable = db.getFavoritesTable();
+        SubscriptionsTable subTable = db.getSubscriptionsTable();
 
         String currentUser = accountController.getSelectedAccount();
         String myKey = MyTBAHelper.createKey(currentUser, modelKey);

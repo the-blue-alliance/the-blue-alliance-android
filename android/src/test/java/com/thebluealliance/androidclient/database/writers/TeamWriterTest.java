@@ -38,7 +38,7 @@ public class TeamWriterTest {
 
     @Test
     public void testTeamListWriter() {
-        mWriter.write(mTeam);
+        mWriter.write(mTeam, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         verify(db).insert(Database.TABLE_TEAMS, null, mTeam.getParams());

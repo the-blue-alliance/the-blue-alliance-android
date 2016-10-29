@@ -24,7 +24,8 @@ public class DistrictTeamsTable extends ModelTable<DistrictTeam> {
             CMP_POINTS = "cmpPoints",
             ROOKIE_POINTS = "rookiePoints",
             TOTAL_POINTS = "totalPoints",
-            JSON = "json";
+            JSON = "json",
+            LAST_MODIFIED = "last_modified";
 
     public DistrictTeamsTable(SQLiteDatabase db){
         super(db);
@@ -38,6 +39,11 @@ public class DistrictTeamsTable extends ModelTable<DistrictTeam> {
     @Override
     public String getKeyColumn() {
         return KEY;
+    }
+
+    @Override
+    public String getLastModifiedColumn() {
+        return LAST_MODIFIED;
     }
 
     @Override

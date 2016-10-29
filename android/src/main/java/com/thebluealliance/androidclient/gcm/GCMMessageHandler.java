@@ -217,7 +217,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                 /* Store this notification for future access */
                 StoredNotification stored = notification.getStoredNotification();
                 if (stored != null) {
-                    NotificationsTable table = Database.getInstance(c).getNotificationsTable();
+                    NotificationsTable table = mDb.getNotificationsTable();
                     table.add(stored);
                     table.prune();
                 }
@@ -226,7 +226,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                 mEventBus.post(new NotificationsUpdatedEvent(notification));
 
                 if (notification.shouldShow()) {
-                    if (SummaryNotification.isNotificationActive(c)) {
+                    if (SummaryNotification.isNotificationActive(c, mDb)) {
                         // Multiple notifications: Stack them into a Group by posting the new
                         // notification THEN (re)posting a summary. If we can't stack them, post
                         // the new one XOR a summary, all with the same ID to replace any
@@ -235,7 +235,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                             notify(c, notification, built);
                         }
 
-                        notification = new SummaryNotification();
+                        notification = new SummaryNotification(mDb);
                         built = notification.buildNotification(c, this);
                     }
 
