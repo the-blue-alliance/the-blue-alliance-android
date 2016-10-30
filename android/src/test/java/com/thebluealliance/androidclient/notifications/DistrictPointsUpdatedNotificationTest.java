@@ -16,19 +16,14 @@ import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
+import org.robolectric.RuntimeEnvironment;
 
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(DefaultTestRunner.class)
 public class DistrictPointsUpdatedNotificationTest {
@@ -38,7 +33,7 @@ public class DistrictPointsUpdatedNotificationTest {
 
     @Before
     public void setUp() {
-        mContext = mock(Context.class, RETURNS_DEEP_STUBS);
+        mContext = RuntimeEnvironment.application.getApplicationContext();
         mData = ModelMaker.getModel(JsonObject.class, "notification_district_points_updated");
         mNotification = new DistrictPointsUpdatedNotification(mData.toString());
     }
@@ -68,20 +63,14 @@ public class DistrictPointsUpdatedNotificationTest {
     @Test
     public void testBuildNotification() {
         mNotification.parseMessageData();
-        Resources res = mock(Resources.class);
-        when(mContext.getResources()).thenReturn(res);
-        when(res.getString(R.string.notification_district_points_updated, "Pacific Northwest"))
-          .thenReturn("District point calculations have been updated for Pacific Northwest");
-        when(res.getString(R.string.notification_district_points_title, "PNW"))
-          .thenReturn("District Points Updated PNW");
         Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();
         assertNotNull(stored);
         assertEquals(stored.getType(), NotificationTypes.DISTRICT_POINTS_UPDATED);
-        assertEquals(stored.getTitle(), "District Points Updated PNW");
-        assertEquals(stored.getBody(), "District point calculations have been updated for Pacific Northwest");
+        assertEquals(stored.getTitle(), mContext.getString(R.string.notification_district_points_title, "PNW"));
+        assertEquals(stored.getBody(), mContext.getString(R.string.notification_district_points_updated,"Pacific Northwest"));
         assertEquals(stored.getMessageData(), mData.toString());
         assertEquals(stored.getIntent(), MyTBAHelper.serializeIntent(mNotification.getIntent(mContext)));
         assertNotNull(stored.getTime());

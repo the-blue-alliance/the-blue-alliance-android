@@ -16,20 +16,15 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
+import org.robolectric.RuntimeEnvironment;
 
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(DefaultTestRunner.class)
 public class CompLevelStartingNotificationTest {
@@ -39,7 +34,7 @@ public class CompLevelStartingNotificationTest {
 
     @Before
     public void setUp() {
-        mContext = mock(Context.class, RETURNS_DEEP_STUBS);
+        mContext = RuntimeEnvironment.application.getApplicationContext();
         mData = ModelMaker.getModel(JsonObject.class, "notification_level_starting");
         mNotification = new CompLevelStartingNotification(mData.toString());
     }
@@ -87,22 +82,14 @@ public class CompLevelStartingNotificationTest {
     @Test
     public void testBuildNotification() {
         mNotification.parseMessageData();
-        Resources res = mock(Resources.class);
-        when(mContext.getResources()).thenReturn(res);
-        when(res.getString(R.string.finals_header)).thenReturn("Finals Matches");
-        when(res.getString(R.string.notification_level_starting_with_time, mNotification.getEventName(), "Finals Matches", "15:18:00"))
-          .thenReturn("Finals Matches are scheduled for 15:18:00");
-        when(res.getString(R.string.notification_level_starting_title, "HIHO", "Finals Matches"))
-          .thenReturn("HIHO Finals Matches Starting");
-        when(res.getString(R.string.notification_level_starting, mNotification.getEventName(), "Finals Matches"))
-          .thenReturn("Finals Matches starting");
         Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();
         assertNotNull(stored);
         assertEquals(NotificationTypes.LEVEL_STARTING, stored.getType());
-        assertEquals("HIHO Finals Matches Starting", stored.getTitle());
+        assertEquals(mContext.getString(R.string.notification_level_starting_title, "HIHO", "Finals Matches"), stored.getTitle());
+        assertEquals(mContext.getString(R.string.notification_level_starting_with_time, mNotification.getEventName(), "Finals Matches", "15:18:00"), stored.getBody());
         assertEquals(mData.toString(), stored.getMessageData());
         assertEquals(MyTBAHelper.serializeIntent(mNotification.getIntent(mContext)), stored.getIntent());
         assertNotNull(stored.getTime());
@@ -113,21 +100,14 @@ public class CompLevelStartingNotificationTest {
         mData.remove("scheduled_time");
         mNotification = new CompLevelStartingNotification(mData.toString());
         mNotification.parseMessageData();
-        Resources res = mock(Resources.class);
-        when(mContext.getResources()).thenReturn(res);
-        when(res.getString(R.string.finals_header)).thenReturn("Finals Matches");
-        when(res.getString(R.string.notification_level_starting, mNotification.getEventName(), "Finals Matches"))
-          .thenReturn("Finals Matches starting");
-        when(res.getString(R.string.notification_level_starting_title, "HIHO", "Finals Matches"))
-          .thenReturn("HIHO Finals Matches Starting");
         Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();
         assertNotNull(stored);
         assertEquals(NotificationTypes.LEVEL_STARTING, stored.getType());
-        assertEquals("HIHO Finals Matches Starting", stored.getTitle());
-        assertEquals("Finals Matches starting", stored.getBody());
+        assertEquals(mContext.getString(R.string.notification_level_starting_title, "HIHO", "Finals Matches"), stored.getTitle());
+        assertEquals(mContext.getString(R.string.notification_level_starting, mNotification.getEventName(), "Finals Matches"), stored.getBody());
         assertEquals(stored.getMessageData(), mData.toString());
         assertEquals(stored.getIntent(), MyTBAHelper.serializeIntent(mNotification.getIntent(mContext)));
         assertNotNull(stored.getTime());
