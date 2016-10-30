@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient;
 
-import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -30,7 +29,7 @@ public class DefaultTestRunner extends RobolectricTestRunner {
                 defaultConfig.qualifiers(),
                 "com.thebluealliance.androidclient",
                 defaultConfig.abiSplit(),
-               defaultConfig.resourceDir(),
+                defaultConfig.resourceDir(),
                 defaultConfig.assetDir(),
                 defaultConfig.buildDir(),
                 defaultConfig.shadows(),

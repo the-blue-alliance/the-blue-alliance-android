@@ -16,8 +16,7 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
+import org.robolectric.RuntimeEnvironment;
 
 import android.app.Notification;
 import android.content.Context;
@@ -25,9 +24,6 @@ import android.content.Intent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(DefaultTestRunner.class)
 public class ScheduleUpdatedNotificationTest {
@@ -37,7 +33,7 @@ public class ScheduleUpdatedNotificationTest {
 
     @Before
     public void setUp() {
-        mContext = mock(Context.class, RETURNS_DEEP_STUBS);
+        mContext = RuntimeEnvironment.application.getApplicationContext();
         mData = ModelMaker.getModel(JsonObject.class, "notification_schedule_updated");
         mNotification = new ScheduleUpdatedNotification(mData.toString());
     }
@@ -69,19 +65,14 @@ public class ScheduleUpdatedNotificationTest {
     @Test
     public void testBuildNotification() {
         mNotification.parseMessageData();
-        when(mContext.getString(R.string.notification_schedule_updated_with_time, "Australia", "15:18:00"))
-          .thenReturn("The match schedule at Australia has been updated.");
-        when(mContext.getString(R.string.notification_schedule_updated_without_time, "Australia"))
-          .thenReturn("The match schedule at Australia has been updated. The next match starts at 15:18:00");
-        when(mContext.getString(R.string.notification_schedule_updated_title, "AUSY"))
-          .thenReturn("Event Schedule Updated AUSY");
         Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();
         assertNotNull(stored);
         assertEquals(stored.getType(), NotificationTypes.SCHEDULE_UPDATED);
-        assertEquals(stored.getTitle(), "Event Schedule Updated AUSY");
+        assertEquals(stored.getTitle(), mContext.getString(R.string.notification_schedule_updated_title, "AUSY"));
+        assertEquals(stored.getBody(), mContext.getString(R.string.notification_schedule_updated_with_time, "Australia", "15:18:00"));
         assertEquals(stored.getMessageData(), mData.toString());
         assertEquals(stored.getIntent(), MyTBAHelper.serializeIntent(mNotification.getIntent(mContext)));
         assertNotNull(stored.getTime());
