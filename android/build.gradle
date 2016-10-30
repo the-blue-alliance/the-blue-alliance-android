@@ -259,6 +259,7 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
 
     compile "com.google.dagger:dagger:${daggerVersion}"
+    apt 'com.google.guava:guava:19.0'
     apt "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // Other third party libraries
@@ -285,6 +286,7 @@ dependencies {
     testCompile "org.robolectric:shadows-multidex:${robolectricVersion}"
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.2.1'
+    testApt "com.google.guava:guava:19.0"
     testApt "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // Leak Canary
