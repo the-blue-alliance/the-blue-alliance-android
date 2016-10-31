@@ -22,6 +22,9 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -85,11 +88,16 @@ public class CompLevelStartingNotificationTest {
         Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
+        long scheduledStartTimeUNIX = mNotification.getScheduledTime().getAsLong();
+        Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
+        DateFormat format = android.text.format.DateFormat.getTimeFormat(mContext);
+        String startTime = format.format(scheduledStartTime);
+
         StoredNotification stored = mNotification.getStoredNotification();
         assertNotNull(stored);
         assertEquals(NotificationTypes.LEVEL_STARTING, stored.getType());
         assertEquals(mContext.getString(R.string.notification_level_starting_title, "HIHO", "Finals Matches"), stored.getTitle());
-        assertEquals(mContext.getString(R.string.notification_level_starting_with_time, mNotification.getEventName(), "Finals Matches", "15:18:00"), stored.getBody());
+        assertEquals(mContext.getString(R.string.notification_level_starting_with_time, mNotification.getEventName(), "Finals Matches", startTime), stored.getBody());
         assertEquals(mData.toString(), stored.getMessageData());
         assertEquals(MyTBAHelper.serializeIntent(mNotification.getIntent(mContext)), stored.getIntent());
         assertNotNull(stored.getTime());

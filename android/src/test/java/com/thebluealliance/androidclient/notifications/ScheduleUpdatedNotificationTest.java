@@ -22,6 +22,9 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -68,11 +71,16 @@ public class ScheduleUpdatedNotificationTest {
         Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
+        long scheduledStartTimeUNIX = mNotification.getMatchTime().getAsLong();
+        Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
+        DateFormat format = android.text.format.DateFormat.getTimeFormat(mContext);
+        String startTime = format.format(scheduledStartTime);
+
         StoredNotification stored = mNotification.getStoredNotification();
         assertNotNull(stored);
         assertEquals(stored.getType(), NotificationTypes.SCHEDULE_UPDATED);
         assertEquals(stored.getTitle(), mContext.getString(R.string.notification_schedule_updated_title, "AUSY"));
-        assertEquals(stored.getBody(), mContext.getString(R.string.notification_schedule_updated_with_time, "Australia", "15:18:00"));
+        assertEquals(stored.getBody(), mContext.getString(R.string.notification_schedule_updated_with_time, "Australia", startTime));
         assertEquals(stored.getMessageData(), mData.toString());
         assertEquals(stored.getIntent(), MyTBAHelper.serializeIntent(mNotification.getIntent(mContext)));
         assertNotNull(stored.getTime());
