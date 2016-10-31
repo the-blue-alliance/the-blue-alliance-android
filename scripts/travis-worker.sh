@@ -42,6 +42,7 @@ case "$1" in
         tar xf ci-keys.tar
         mv local.properties ..
         mv tba.properties ../android/src/main/assets
+        mv ci-google-services.json ../android/src/prod
         cd ..
         ./gradlew assembleProdRelease
         ;;
