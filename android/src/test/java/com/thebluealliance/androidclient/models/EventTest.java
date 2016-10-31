@@ -102,8 +102,8 @@ public class EventTest {
         assertEquals(mOffseasonEvent.getShortName(), "Chezy Champs");
         assertEquals(mOffseasonEvent.getEventDistrictEnum(),
                      DistrictType.NO_DISTRICT);
-        assertEquals(mOffseasonEvent.getVenueAddress(), "Bellarmine College Prep\n850 Elm St.\nSan Jose," +
-                                               " California 95126\nUSA");
+        assertEquals(mOffseasonEvent.getVenueAddress(), "Bellarmine College Prep\n850 Elm St.\nSan Jose,"
+                                                        + " California 95126\nUSA");
         assertEquals(mOffseasonEvent.getLocation(), "San Jose, CA, USA");
         assertEquals(mOffseasonEvent.getYearAgnosticEventKey(), "cc");
         assertEquals(mOffseasonEvent.getYear().intValue(), 2016);
