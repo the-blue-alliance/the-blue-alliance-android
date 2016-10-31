@@ -37,12 +37,10 @@ case "$1" in
         echo "Making sure we can build a prod apk (although with different keys)"
 
         # Move local.properties and tba.properties to proper location
-        openssl aes-256-cbc -K $encrypted_5e22a99c7891_key -iv $encrypted_5e22a99c7891_iv -in config/ci-keys.tar.enc -out config/ci-keys.tar -d
         cd config
-        tar xf ci-keys.tar
-        mv local.properties ..
-        mv tba.properties ../android/src/main/assets
-        mv ci-google-services.json ../android/src/prod/google-services.json
+        mv local.properties.ci ../local.properties
+        mv tba.properties.ci ../android/src/main/assets/tba.properties
+        mv google-services.json.ci ../android/src/prod/google-services.json
         cd ..
         ./gradlew assembleProdRelease
         ;;

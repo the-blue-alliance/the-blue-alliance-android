@@ -291,8 +291,9 @@ dependencies {
     testApt "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // Leak Canary
-    compile "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
     debugCompile "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
+    debugBlueCompile "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
+    debugProguardCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
     releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
 }
