@@ -27,7 +27,8 @@ buildVersionCode()
 tasks.withType(Test) {
     testLogging {
         events "passed", "skipped", "failed"
-        quiet.events = ["passed", "failed"]
+        exceptionFormat "full"
+        quiet.events = ["passed", "skipped"]
     }
 }
 
