@@ -24,7 +24,7 @@ env:
 
 before_install:
   # Decrypt files to do a test prod build
-  - openssl aes-256-cbc -K $encrypted_5e22a99c7891_key -iv $encrypted_5e22a99c7891_iv -in config/ci-keys.tar.enc -out config/ci-keys.tar -d
+  - openssl aes-256-cbc -K $encrypted_5e22a99c7891_key -iv $encrypted_5e22a99c7891_iv -in ci-keys.tar.enc -out config/ci-keys.tar -d
 
 before_script:
   - mkdir android/src/main/assets
