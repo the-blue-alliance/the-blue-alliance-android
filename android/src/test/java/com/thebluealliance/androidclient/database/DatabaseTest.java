@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.database;
 
-import com.thebluealliance.androidclient.IntegrationRobolectricRunner;
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
@@ -30,7 +30,7 @@ import static com.thebluealliance.androidclient.database.Database.TABLE_TEAMS;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(IntegrationRobolectricRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class DatabaseTest {
 
     private static final String BASE_TABLE_CREATE = "CREATE TABLE %1$s (id INTEGER PRIMARY KEY);";

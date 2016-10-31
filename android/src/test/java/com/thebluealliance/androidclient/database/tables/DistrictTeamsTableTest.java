@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.database.tables;
 
 import com.google.common.collect.ImmutableList;
 
-import com.thebluealliance.androidclient.IntegrationRobolectricRunner;
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DbTableTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.spy;
 
-@RunWith(IntegrationRobolectricRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class DistrictTeamsTableTest {
     private DistrictTeamsTable mTable;
     private List<DistrictTeam> mDistrictTeams;
