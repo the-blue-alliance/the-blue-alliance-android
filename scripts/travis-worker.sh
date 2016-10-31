@@ -33,6 +33,18 @@ case "$1" in
         filter_code $?
         ;;
 
+    "PROD-BUILD")
+        echo "Making sure we can build a prod apk (although with different keys)"
+
+        # Move local.properties and tba.properties to proper location
+        cd config
+        tar xf ci-keys.tar
+        mv local.properties ..
+        mv tba.properties ../android/src/main/assets
+        cd ..
+        ./gradlew assembleProdRelease
+        ;;
+
     *)
         echo "Unknown job type $JOB"
         exit -1
