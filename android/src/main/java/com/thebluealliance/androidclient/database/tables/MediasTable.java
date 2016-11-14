@@ -13,7 +13,8 @@ public class MediasTable extends ModelTable<Media> {
             FOREIGNKEY = "foreignKey",
             TEAMKEY = "teamKey",
             DETAILS = "details",
-            YEAR = "year";
+            YEAR = "year",
+            LAST_MODIFIED = "last_modified";
 
     private SQLiteDatabase mDb;
 
@@ -30,6 +31,11 @@ public class MediasTable extends ModelTable<Media> {
     @Override
     public String getKeyColumn() {
         return FOREIGNKEY;
+    }
+
+    @Override
+    public String getLastModifiedColumn() {
+        return LAST_MODIFIED;
     }
 
     @Override

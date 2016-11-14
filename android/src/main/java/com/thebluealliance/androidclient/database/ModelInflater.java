@@ -62,6 +62,9 @@ public final class ModelInflater {
                 case AwardsTable.ENUM:
                     award.setEnum(data.getInt(i));
                     break;
+                case AwardsTable.LAST_MODIFIED:
+                    award.setLastModified(data.getLong(i));
+                    break;
                 default:
             }
         }
@@ -139,6 +142,9 @@ public final class ModelInflater {
                 case EventsTable.WEBCASTS:
                     event.setWebcasts(data.getString(i));
                     break;
+                case EventsTable.LAST_MODIFIED:
+                    event.setLastModified(data.getLong(i));
+                    break;
                 default:
             }
         }
@@ -179,6 +185,9 @@ public final class ModelInflater {
                 case MatchesTable.BREAKDOWN:
                     match.setScoreBreakdown(data.getString(i));
                     break;
+                case MatchesTable.LAST_MODIFIED:
+                    match.setLastModified(data.getLong(i));
+                    break;
                 default:
             }
         }
@@ -206,6 +215,9 @@ public final class ModelInflater {
                     break;
                 case MediasTable.DETAILS:
                     media.setDetails(data.getString(i));
+                    break;
+                case MediasTable.LAST_MODIFIED:
+                    media.setLastModified(data.getLong(i));
                     break;
                 default:
             }
@@ -247,6 +259,9 @@ public final class ModelInflater {
                 case TeamsTable.MOTTO:
                     team.setMotto(data.getString(i));
                     break;
+                case TeamsTable.LAST_MODIFIED:
+                    team.setLastModified(data.getLong(i));
+                    break;
                 default:
             }
         }
@@ -278,6 +293,9 @@ public final class ModelInflater {
                 case EventTeamsTable.KEY:
                     eventTeam.setKey(data.getString(i));
                     break;
+                case EventTeamsTable.LAST_MODIFIED:
+                    eventTeam.setLastModified(data.getLong(i));
+                    break;
                 default:
             }
         }
@@ -302,6 +320,9 @@ public final class ModelInflater {
                     break;
                 case DistrictsTable.NAME:
                     district.setName(data.getString(i));
+                    break;
+                case DistrictsTable.LAST_MODIFIED:
+                    district.setLastModified(data.getLong(i));
                     break;
                 default:
             }
@@ -357,6 +378,9 @@ public final class ModelInflater {
                     break;
                 case DistrictTeamsTable.JSON:
                     districtTeam.setJson(data.getString(i));
+                    break;
+                case DistrictTeamsTable.LAST_MODIFIED:
+                    districtTeam.setLastModified(data.getLong(i));
                     break;
                 default:
             }

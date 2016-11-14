@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.fragments.district;
 
-import com.thebluealliance.androidclient.IntegrationRobolectricRunner;
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
-@RunWith(IntegrationRobolectricRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class DistrictEventsFragmentTest extends BaseFragmentTest {
 
     DistrictEventsFragment mFragment;

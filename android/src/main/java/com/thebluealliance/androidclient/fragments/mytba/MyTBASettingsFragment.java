@@ -5,6 +5,7 @@ import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPanel;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
@@ -41,6 +42,7 @@ public class MyTBASettingsFragment extends PreferenceFragment {
     private boolean preferencesLoaded = false;
 
     @Inject AccountController mAccountController;
+    @Inject Database mDb;
 
     public static MyTBASettingsFragment newInstance(String modelKey, ModelType modelType, Bundle savedStateBundle) {
         MyTBASettingsFragment fragment = new MyTBASettingsFragment();
@@ -88,7 +90,8 @@ public class MyTBASettingsFragment extends PreferenceFragment {
         this.setPreferenceScreen(p);
 
         // Create the list of preferences
-        new CreateSubscriptionPanel(getActivity(), mAccountController, this, savedStateBundle, modelType).execute(modelKey);
+        new CreateSubscriptionPanel(getActivity(), mDb, mAccountController, this, savedStateBundle,
+                                    modelType).execute(modelKey);
 
         // Setup padding on the view. Padding is needed at the bottom to account for the FAB.
         if (getView() != null) {
@@ -188,7 +191,7 @@ public class MyTBASettingsFragment extends PreferenceFragment {
     }
 
     public void refreshSettingsFromDatabase() {
-        new CreateSubscriptionPanel(getActivity(), mAccountController, this, savedStateBundle,
+        new CreateSubscriptionPanel(getActivity(), mDb, mAccountController, this, savedStateBundle,
                                     modelType).execute(modelKey);
     }
 }

@@ -177,6 +177,7 @@ public class DistrictTeam implements TbaDatabaseModel, IDistrictTeam {
         params.put(DistrictTeamsTable.ROOKIE_POINTS, getRookiePoints());
         params.put(DistrictTeamsTable.TOTAL_POINTS, getTotalPoints());
         params.put(DistrictTeamsTable.JSON, getJson());
+        params.put(DistrictTeamsTable.LAST_MODIFIED, getLastModified());
         return params;
     }
 }

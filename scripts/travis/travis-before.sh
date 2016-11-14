@@ -36,6 +36,11 @@ case "$1" in
         common
         ;;
 
+    "PROD-BUILD")
+        echo "Setting up environment for test production build"
+        common
+        ;;
+
     "SCREENSHOT")
         echo "Setting up environment for screenshot tests"
         common

@@ -38,7 +38,7 @@ public class DistrictTeamWriterTest {
 
     @Test
     public void testDistrictTeamWriter() {
-        mWriter.write(mDistrictTeam);
+        mWriter.write(mDistrictTeam, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         verify(db).insert(Database.TABLE_DISTRICTTEAMS, null, mDistrictTeam.getParams());

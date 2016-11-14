@@ -41,7 +41,7 @@ public class EventTeamListWriterTest {
 
     @Test
     public void testEventListWriter() {
-        mWriter.write(mEventTeams);
+        mWriter.write(mEventTeams, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         for (EventTeam eventTeam : mEventTeams) {

@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.auth;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.accounts.AccountModule;
 import com.thebluealliance.androidclient.auth.firebase.FirebaseAuthProvider;
@@ -9,6 +10,7 @@ import com.thebluealliance.androidclient.auth.google.GoogleAuthProvider;
 
 import android.content.Context;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -24,9 +26,17 @@ public class AuthModule {
         mContext = context;
     }
 
-    @Provides @Singleton
+    @Provides @Singleton @Nullable
     public FirebaseAuth provideFirebaseAuth() {
-        return FirebaseAuth.getInstance();
+        try {
+            return FirebaseAuth.getInstance();
+        } catch (IllegalStateException ex) {
+            /* When there is no google-secrets.json file found, the library throws an exception
+             * here which causes insta-crashes for us. Silently recover here...
+             */
+            TbaLogger.w("Unable to find google-secrets.json, disabling login");
+            return null;
+        }
     }
 
     @Provides
@@ -35,8 +45,8 @@ public class AuthModule {
     }
 
     @Provides @Named("firebase_auth")
-    public AuthProvider provideFirebaseAuthProvider(FirebaseAuth firebaseAuth,
-                                                            GoogleAuthProvider googleAuthProvider) {
+    public AuthProvider provideFirebaseAuthProvider(@Nullable FirebaseAuth firebaseAuth,
+                                                    GoogleAuthProvider googleAuthProvider) {
         return new FirebaseAuthProvider(firebaseAuth, googleAuthProvider);
     }
 }

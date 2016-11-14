@@ -45,7 +45,7 @@ public class MatchListWriterTest {
 
     @Test
     public void testMatchListWriter() {
-        mWriter.write(mMatches);
+        mWriter.write(mMatches, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         for (Match match : mMatches) {

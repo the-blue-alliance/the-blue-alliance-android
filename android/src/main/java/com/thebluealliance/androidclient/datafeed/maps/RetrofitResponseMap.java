@@ -2,6 +2,8 @@ package com.thebluealliance.androidclient.datafeed.maps;
 
 import com.thebluealliance.androidclient.database.writers.BaseDbWriter;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -49,7 +51,7 @@ public class RetrofitResponseMap {
         return response.map(response1 -> {
             T data = response1.body();
             if (shouldWriteData(response1)) {
-                writer.call(dbTable, sqlWhere, whereArgs, data);
+                writer.call(dbTable, sqlWhere, whereArgs, data, getLastModifiedTimestamp(response1));
             }
             return data;
         });
@@ -79,7 +81,8 @@ public class RetrofitResponseMap {
         return response.map(response1 -> {
             T data = response1.body();
             if (shouldWriteData(response1)) {
-                writer.call(dbTable, sqlWhere, whereArgs, writerMap.call(data));
+                writer.call(dbTable, sqlWhere, whereArgs, writerMap.call(data),
+                            getLastModifiedTimestamp(response1));
             }
             return data;
         });
@@ -109,7 +112,7 @@ public class RetrofitResponseMap {
         return response.map(response1 -> {
             W data = map.call(response1.body());
             if (shouldWriteData(response1)) {
-                writer.call(dbTable, sqlWhere, whereArgs, data);
+                writer.call(dbTable, sqlWhere, whereArgs, data, getLastModifiedTimestamp(response1));
             }
             return data;
         });
@@ -118,5 +121,10 @@ public class RetrofitResponseMap {
     private static synchronized boolean shouldWriteData(Response response) {
         okhttp3.Response cacheResponse = response.raw().cacheResponse();
         return cacheResponse == null || cacheResponse.code() == 504;
+    }
+
+    private static synchronized Long getLastModifiedTimestamp(Response response) {
+        Date modifiedDate = response.headers().getDate("Last-Modified");
+        return modifiedDate != null ? modifiedDate.getTime() : -1;
     }
 }

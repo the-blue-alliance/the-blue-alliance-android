@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.fragments.team;
 
-import com.thebluealliance.androidclient.IntegrationRobolectricRunner;
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
-@RunWith(IntegrationRobolectricRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class TeamEventsFragmentTest extends BaseFragmentTest {
 
     TeamEventsFragment mFragment;

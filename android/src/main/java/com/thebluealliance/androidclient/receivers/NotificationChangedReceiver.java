@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.receivers;
 
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
@@ -8,6 +9,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import javax.inject.Inject;
 
 /**
  * Android is predictably stupid when it comes to handling notifications. Specifically, clicking
@@ -30,8 +33,11 @@ public class NotificationChangedReceiver extends BroadcastReceiver {
         return new Intent(context, NotificationChangedReceiver.class);
     }
 
+    @Inject Database mDb;
+
     @Override
     public void onReceive(Context context, Intent intent) {
+        ((TBAAndroid)context.getApplicationContext()).getDbComponent().inject(this);
         if (intent.getAction().equals(ACTION_NOTIFICATION_CLICKED)) {
             // Check for an intent to launch
             Bundle extras = intent.getExtras();

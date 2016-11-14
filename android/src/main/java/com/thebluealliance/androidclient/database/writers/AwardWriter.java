@@ -15,7 +15,7 @@ public class AwardWriter extends BaseDbWriter<Award> {
 
     @Override
     @WorkerThread
-    public void write(Award award) {
-        mDb.getAwardsTable().add(award);
+    public void write(Award award, Long lastModified) {
+        mDb.getAwardsTable().add(award, lastModified);
     }
 }

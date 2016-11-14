@@ -18,6 +18,8 @@ import org.robolectric.annotation.Config;
 
 import java.util.List;
 
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -48,10 +50,10 @@ public class EventTeamAndTeamListWriterTest {
 
     @Test
     public void testEventListWriter() {
-        mWriter.write(mData);
+        mWriter.write(mData, 0L);
 
-        verify(mTeamListWriter).write(mData.teams);
-        verify(mEventTeamListWriter).write(mData.eventTeams);
+        verify(mTeamListWriter).write(eq(mData.teams), anyLong());
+        verify(mEventTeamListWriter).write(eq(mData.eventTeams), anyLong());
     }
 
 }

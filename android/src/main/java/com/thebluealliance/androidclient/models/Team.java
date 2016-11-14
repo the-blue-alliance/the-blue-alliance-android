@@ -224,6 +224,7 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
             data.put(TeamsTable.YEARS_PARTICIPATED, yearsParticipatedToJsonString(yearsParticipated));
         }
         data.put(TeamsTable.MOTTO, getMotto());
+        data.put(TeamsTable.LAST_MODIFIED, getLastModified());
         return data;
     }
 

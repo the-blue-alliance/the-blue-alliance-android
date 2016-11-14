@@ -21,6 +21,7 @@ public class EventTeam implements TbaDatabaseModel {
     private String eventKey;
     private Integer year;
     private Integer compWeek;
+    private Long lastModified;
 
     public EventTeam() {
     }
@@ -66,6 +67,14 @@ public class EventTeam implements TbaDatabaseModel {
         this.compWeek = compWeek;
     }
 
+    public Long getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Long lastModified) {
+        this.lastModified = lastModified;
+    }
+
     @Override
     public ContentValues getParams() {
         ContentValues params = new ContentValues();
@@ -74,6 +83,7 @@ public class EventTeam implements TbaDatabaseModel {
         params.put(EventTeamsTable.EVENTKEY, getEventKey());
         params.put(EventTeamsTable.YEAR, getYear());
         params.put(EventTeamsTable.COMPWEEK, getCompWeek());
+        params.put(EventTeamsTable.LAST_MODIFIED, getLastModified());
         return params;
     }
 }

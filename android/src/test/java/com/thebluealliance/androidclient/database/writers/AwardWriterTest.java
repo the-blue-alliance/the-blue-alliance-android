@@ -38,7 +38,7 @@ public class AwardWriterTest  {
 
     @Test
     public void testAwardWriter() {
-        mWriter.write(mAward);
+        mWriter.write(mAward, 0L);
 
         SQLiteDatabase db =  mDb.getWritableDatabase();
         verify(db).insert(Database.TABLE_AWARDS, null, mAward.getParams());

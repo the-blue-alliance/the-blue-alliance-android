@@ -38,7 +38,7 @@ public class EventWriterTest {
 
     @Test
     public void testEventWriter() {
-        mWriter.write(mEvent);
+        mWriter.write(mEvent, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         verify(db).insert(Database.TABLE_EVENTS, null, mEvent.getParams());

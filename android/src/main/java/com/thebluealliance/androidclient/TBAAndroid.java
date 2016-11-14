@@ -14,7 +14,9 @@ import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.di.components.ApplicationComponent;
 import com.thebluealliance.androidclient.di.components.DaggerApplicationComponent;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
+import com.thebluealliance.androidclient.di.components.DaggerDbComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
+import com.thebluealliance.androidclient.di.components.DbComponent;
 import com.thebluealliance.androidclient.gcm.GcmModule;
 import com.thebluealliance.androidclient.imgur.ImgurModule;
 
@@ -27,6 +29,7 @@ public class TBAAndroid extends MultiDexApplication {
     @Inject TBAStatusController mStatusController;
 
     private ApplicationComponent mComponent;
+    private DbComponent mDbComponent;
     private TBAAndroidModule mModule;
     private DatafeedModule mDatafeedModule;
     private BinderModule mBinderModule;
@@ -63,6 +66,7 @@ public class TBAAndroid extends MultiDexApplication {
                     Stetho.newInitializerBuilder(this)
                             .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                             .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+
                             .build());
         }
 
@@ -152,6 +156,15 @@ public class TBAAndroid extends MultiDexApplication {
               .build();
         }
         return mComponent;
+    }
+
+    public DbComponent getDbComponent() {
+        if (mDbComponent == null) {
+            mDbComponent = DaggerDbComponent.builder()
+                .tBAAndroidModule(getModule())
+                .build();
+        }
+        return mDbComponent;
     }
 
     private DatafeedComponent getDatafeedComponenet() {

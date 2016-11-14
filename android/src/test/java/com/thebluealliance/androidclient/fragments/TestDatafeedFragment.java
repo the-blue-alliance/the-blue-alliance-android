@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.fragments;
 import com.google.android.gms.analytics.Tracker;
 
 import com.thebluealliance.androidclient.BaseTestActivity;
-import com.thebluealliance.androidclient.IntegrationRobolectricRunner;
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-@RunWith(IntegrationRobolectricRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class TestDatafeedFragment extends BaseFragmentTest {
 
     private SimpleDatafeedFragment mFragment;
