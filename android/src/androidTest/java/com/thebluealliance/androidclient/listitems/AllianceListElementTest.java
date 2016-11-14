@@ -6,12 +6,17 @@ import com.facebook.testing.screenshot.Screenshot;
 import com.facebook.testing.screenshot.ViewHelpers;
 import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import android.content.Context;
-import android.test.InstrumentationTestCase;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.view.LayoutInflater;
 import android.view.View;
 
-public class AllianceListElementTest extends InstrumentationTestCase {
+@RunWith(AndroidJUnit4.class)
+public class AllianceListElementTest {
 
     private static final int WIDTH_DP = 400;
 
@@ -29,6 +34,7 @@ public class AllianceListElementTest extends InstrumentationTestCase {
         TEAM_LIST_4.add("frc4334");
     }
 
+    @Test
     public void testRender3Team() {
         View view = getView("2016test", 1, TEAM_LIST_3, PlayoffAdvancement.SEMI);
         ViewHelpers.setupView(view)
@@ -39,6 +45,7 @@ public class AllianceListElementTest extends InstrumentationTestCase {
                   .record();
     }
 
+    @Test
     public void testRender4Team() {
         View view = getView("2016test", 1, TEAM_LIST_4, PlayoffAdvancement.QUARTER);
         ViewHelpers.setupView(view)
@@ -55,7 +62,7 @@ public class AllianceListElementTest extends InstrumentationTestCase {
             JsonArray teams,
             PlayoffAdvancement advancement) {
         AllianceListElement element = new AllianceListElement(eventKey, number, teams, advancement);
-        Context targetContext = getInstrumentation().getTargetContext();
+        Context targetContext = InstrumentationRegistry.getTargetContext();
         LayoutInflater inflater = LayoutInflater.from(targetContext);
         return element.getView(targetContext, inflater, null);
     }

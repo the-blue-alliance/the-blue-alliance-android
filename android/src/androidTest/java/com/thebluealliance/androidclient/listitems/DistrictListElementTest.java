@@ -5,12 +5,17 @@ import com.facebook.testing.screenshot.ViewHelpers;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.types.DistrictType;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import android.content.Context;
-import android.test.InstrumentationTestCase;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.view.LayoutInflater;
 import android.view.View;
 
-public class DistrictListElementTest extends InstrumentationTestCase {
+@RunWith(AndroidJUnit4.class)
+public class DistrictListElementTest {
 
     public static final int WIDTH_DP = 400;
 
@@ -23,6 +28,7 @@ public class DistrictListElementTest extends InstrumentationTestCase {
         DISTRICT.setKey("2016ne");
     }
 
+    @Test
     public void testRenderWithMyTba() {
         View view = getView(DISTRICT, 4, true);
         ViewHelpers.setupView(view)
@@ -33,6 +39,7 @@ public class DistrictListElementTest extends InstrumentationTestCase {
                   .record();
     }
 
+    @Test
     public void testRenderWithoutMyTba() {
         View view = getView(DISTRICT, 4, false);
         ViewHelpers.setupView(view)
@@ -45,7 +52,7 @@ public class DistrictListElementTest extends InstrumentationTestCase {
 
     private View getView(District district, int numEvents, boolean showMyTba) {
         DistrictListElement element = new DistrictListElement(district, numEvents, showMyTba);
-        Context targetContext = getInstrumentation().getTargetContext();
+        Context targetContext = InstrumentationRegistry.getTargetContext();
         LayoutInflater inflater = LayoutInflater.from(targetContext);
         return element.getView(targetContext, inflater, null);
     }

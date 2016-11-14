@@ -10,15 +10,20 @@ import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.testing.ModelMaker;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import android.content.Context;
-import android.test.InstrumentationTestCase;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class CardedAwardListElementTest extends InstrumentationTestCase {
+@RunWith(AndroidJUnit4.class)
+public class CardedAwardListElementTest {
 
     private static final int WIDTH_DP = 400;
     private static final JsonArray SINGLE_TEAM = new JsonArray();
@@ -42,6 +47,7 @@ public class CardedAwardListElementTest extends InstrumentationTestCase {
         TEAM_MAP.put("frc254", team);
     }
 
+    @Test
     public void testRenderSingleTeam() {
         View view = getView(null, "Test Award", "2016test", SINGLE_TEAM, TEAM_MAP, null);
         ViewHelpers.setupView(view)
@@ -52,6 +58,7 @@ public class CardedAwardListElementTest extends InstrumentationTestCase {
                   .record();
     }
 
+    @Test
     public void testRenderSelectedTeam() {
         View view = getView(null, "Test Award", "2016test", SINGLE_TEAM, TEAM_MAP, "1124");
         ViewHelpers.setupView(view)
@@ -62,6 +69,7 @@ public class CardedAwardListElementTest extends InstrumentationTestCase {
                   .record();
     }
 
+    @Test
     public void testRenderMultiWinner() {
         View view = getView(null, "Test Award", "2016test", MULTI_TEAM, TEAM_MAP, null);
         ViewHelpers.setupView(view)
@@ -72,6 +80,7 @@ public class CardedAwardListElementTest extends InstrumentationTestCase {
                   .record();
     }
 
+    @Test
     public void testRenderIndividual() {
         View view = getView(null, "Test Award", "2016test", INDIVIDUAL, TEAM_MAP, null);
         ViewHelpers.setupView(view)
@@ -82,6 +91,7 @@ public class CardedAwardListElementTest extends InstrumentationTestCase {
                   .record();
     }
 
+    @Test
     public void testRenderIndividualNoTeam() {
         View view = getView(null, "Test Award", "2016test", INDIVIDUAL_NO_TEAM, TEAM_MAP, null);
         ViewHelpers.setupView(view)
@@ -92,6 +102,7 @@ public class CardedAwardListElementTest extends InstrumentationTestCase {
                   .record();
     }
 
+    @Test
     public void testRenderMultiIndividual() {
         View view = getView(null, "Test Award", "2016test", MULTI_INDIVIDUAL, TEAM_MAP, null);
         ViewHelpers.setupView(view)
@@ -112,7 +123,7 @@ public class CardedAwardListElementTest extends InstrumentationTestCase {
         CardedAwardListElement element = new CardedAwardListElement(datafeed, name, eventKey,
                                                                     winners, teams,
                                                                     selectedTeamKey);
-        Context targetContext = getInstrumentation().getTargetContext();
+        Context targetContext = InstrumentationRegistry.getTargetContext();
         LayoutInflater inflater = LayoutInflater.from(targetContext);
         return element.getView(targetContext, inflater, null);
     }

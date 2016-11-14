@@ -5,12 +5,17 @@ import com.google.gson.JsonObject;
 import com.facebook.testing.screenshot.Screenshot;
 import com.facebook.testing.screenshot.ViewHelpers;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import android.content.Context;
-import android.test.InstrumentationTestCase;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.view.LayoutInflater;
 import android.view.View;
 
-public class WebcastListElementTest extends InstrumentationTestCase {
+@RunWith(AndroidJUnit4.class)
+public class WebcastListElementTest {
 
     private static final int WIDTH_DP = 400;
     private static JsonObject WEBCAST = new JsonObject();
@@ -19,6 +24,7 @@ public class WebcastListElementTest extends InstrumentationTestCase {
         WEBCAST.addProperty("type", "twitch");
     }
 
+    @Test
     public void testRender(){
         View view = getView("2016test", "Test Event", WEBCAST, 1);
         ViewHelpers.setupView(view)
@@ -31,7 +37,7 @@ public class WebcastListElementTest extends InstrumentationTestCase {
 
     private View getView(String eventKey, String eventName, JsonObject webcast, int number) {
         WebcastListElement element = new WebcastListElement(eventKey, eventName, webcast, number);
-        Context targetContext = getInstrumentation().getTargetContext();
+        Context targetContext = InstrumentationRegistry.getTargetContext();
         LayoutInflater inflater = LayoutInflater.from(targetContext);
         return element.getView(targetContext, inflater, null);
     }
