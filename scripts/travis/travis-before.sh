@@ -12,7 +12,7 @@ common () {
 start_emulator () {
     pip install --user pillow
     android list targets
-    echo no | android create avd --force -n sdk21 -t "android-21" --abi armeabi-v7a
+    echo no | android create avd --force -n sdk23 -t "android-23" --abi armeabi-v7a --tag google_apis --device "Nexus 5"
     mksdcard -l e 512M sdcard.img
     emulator -avd sdk23 -no-audio -no-window -sdcard sdcard.img &
     android-wait-for-emulator
