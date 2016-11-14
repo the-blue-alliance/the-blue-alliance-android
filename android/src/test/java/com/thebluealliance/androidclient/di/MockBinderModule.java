@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.binders.RecentNotificationsListBinder;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.binders.StatsListBinder;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
+import com.thebluealliance.androidclient.fragments.framework.SimpleBinder;
 import com.thebluealliance.androidclient.helpers.FragmentBinder;
 import com.thebluealliance.androidclient.listeners.EventInfoContainerClickListener;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
@@ -23,6 +24,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.mockito.Mockito;
 
 import android.content.Context;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -107,4 +110,8 @@ public class MockBinderModule {
         return Mockito.spy(new NoDataBinder());
     }
 
+    @Provides @Singleton
+    public SimpleBinder provideSimpleBinder() {
+        return Mockito.mock(SimpleBinder.class);
+    }
 }

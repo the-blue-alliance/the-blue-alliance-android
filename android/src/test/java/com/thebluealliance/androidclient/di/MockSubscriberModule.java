@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
+import com.thebluealliance.androidclient.fragments.framework.SimpleSubscriber;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
 import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
 import com.thebluealliance.androidclient.renderers.DistrictRenderer;
@@ -42,6 +43,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.mockito.Mockito;
 
 import android.content.Context;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -185,4 +188,8 @@ public class MockSubscriberModule {
         return Mockito.mock(MatchBreakdownSubscriber.class);
     }
 
+    @Provides @Singleton
+    public SimpleSubscriber provideBaseSubscriber() {
+        return Mockito.mock(SimpleSubscriber.class);
+    }
 }
