@@ -13,10 +13,7 @@ start_emulator () {
     pip install --user pillow
     android list targets
     echo no | android create avd --force -n sdk23 -t "android-23" --abi armeabi-v7a --tag google_apis --device "Nexus 5"
-    emulator -avd sdk23 -no-audio -no-window &
-    ls -l ~/.android || true
-    ls -l ~/.android/avd || true
-    ls -l ~/.android/avd/sdk23.avd/ || true
+    emulator -avd sdk23 -no-audio -no-window -data ~/.android/avd/sdk23.avd/userdata.img &
     android-wait-for-emulator
     adb shell input keyevent 82 &
 }
