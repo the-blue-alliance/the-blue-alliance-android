@@ -1,6 +1,10 @@
 language: android
 jdk: oraclejdk8
 sudo: false
+addons:
+  apt:
+    packages:
+    - html2text
 android:
   components:
   - platform-tools
