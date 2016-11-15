@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.fragments.district;
 
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.fragments.framework.BaseFragmentTest;
 import com.thebluealliance.androidclient.fragments.framework.FragmentTestDriver;

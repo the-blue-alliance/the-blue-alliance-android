@@ -22,7 +22,11 @@ import java.util.List;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class FragmentTestDriver {
+public final class FragmentTestDriver {
+
+    private FragmentTestDriver() {
+        // Unused
+    }
 
     public static <F extends Fragment> DatafeedFragmentTestController<F> getController(F fragment) {
         return new DatafeedFragmentTestController<>(fragment);
