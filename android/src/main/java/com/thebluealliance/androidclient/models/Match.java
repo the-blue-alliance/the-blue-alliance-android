@@ -362,6 +362,7 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
         data.put(MatchesTable.ALLIANCES, getAlliances());
         data.put(MatchesTable.VIDEOS, getVideos());
         data.put(MatchesTable.BREAKDOWN, getScoreBreakdown());
+        data.put(MatchesTable.LAST_MODIFIED, getLastModified());
         return data;
     }
 

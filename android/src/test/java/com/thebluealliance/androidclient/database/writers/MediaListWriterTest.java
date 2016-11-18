@@ -40,7 +40,7 @@ public class MediaListWriterTest {
 
     @Test
     public void testEventListWriter() {
-        mWriter.write(mMedias);
+        mWriter.write(mMedias, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         for (Media media : mMedias) {

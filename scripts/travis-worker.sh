@@ -30,7 +30,21 @@ case "$1" in
     "CHECKSTYLE")
         echo "Running project checkstyle"
         ./gradlew androidCheckstyle
-        filter_code $?
+        CODE=$?
+        html2text android/build/outputs/checkstyle/checkstyle.html
+        filter_code $CODE
+        ;;
+
+    "PROD-BUILD")
+        echo "Making sure we can build a prod apk (although with different keys)"
+
+        # Move local.properties and tba.properties to proper location
+        cd config
+        mv local.properties.ci ../local.properties
+        mv tba.properties.ci ../android/src/main/assets/tba.properties
+        mv google-services.json.ci ../android/src/prod/google-services.json
+        cd ..
+        ./gradlew assembleProdRelease
         ;;
 
     *)

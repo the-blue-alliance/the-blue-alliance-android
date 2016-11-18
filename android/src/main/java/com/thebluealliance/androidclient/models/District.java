@@ -92,6 +92,7 @@ public class District implements IDistrict, TbaDatabaseModel {
         params.put(DistrictsTable.ENUM, getEnum());
         params.put(DistrictsTable.YEAR, getYear());
         params.put(DistrictsTable.NAME, getName());
+        params.put(DistrictsTable.LAST_MODIFIED, getLastModified());
         return params;
     }
 }

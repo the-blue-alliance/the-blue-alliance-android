@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 
-import org.mockito.internal.util.reflection.Whitebox;
 import org.robolectric.Shadows;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowListView;
@@ -45,7 +44,7 @@ public final class FragmentTestDriver {
 
         controller.attach();
 
-        B binder = (B) Whitebox.getInternalState(fragment, "mBinder");
+        B binder = fragment.getBinder();
         assertNotNull(binder);
 
         // Bind given data(binder);
@@ -56,9 +55,9 @@ public final class FragmentTestDriver {
     }
 
     public static ListView getListView(ListViewFragment fragment) {
-        ListViewBinder binder = (ListViewBinder) Whitebox.getInternalState(fragment, "mBinder");
+        ListViewBinder binder = (ListViewBinder) fragment.getBinder();
         assertNotNull(binder);
-        return (ListView) Whitebox.getInternalState(binder, "listView");
+        return binder.getListView();
     }
 
     public static void testListViewClick(ListViewFragment fragment, List<ListItem> items, Class expectedActivity) {

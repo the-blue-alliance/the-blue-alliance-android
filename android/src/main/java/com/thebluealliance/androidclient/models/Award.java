@@ -135,6 +135,7 @@ public class Award implements IAward, RenderableModel, TbaDatabaseModel {
         contentValues.put(AwardsTable.NAME, getName());
         contentValues.put(AwardsTable.YEAR, getYear());
         contentValues.put(AwardsTable.WINNERS, getRecipientList());
+        contentValues.put(AwardsTable.LAST_MODIFIED, getLastModified());
         return contentValues;
     }
 

@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.database;
 
 import com.google.common.collect.ImmutableList;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
@@ -25,15 +24,19 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
 
     /**
      * Adds a model to the database, if it doesn't already exist
-     * If the model is already entered, update the existing row via {@link #update(TbaDatabaseModel)}
+     * If the model is already entered, update the existing row via
+     * {@link #update(TbaDatabaseModel, Long)}
      * If the insert was successful, call {@link #insertCallback(TbaDatabaseModel)}
      * @param in Model to be added
-     * @return The value from {@link SQLiteDatabase#insert(String, String, ContentValues)} if a new
+     * @param lastModified the timestamp that came from the Last-Modified header
+     * @return The value from
+     * {@link SQLiteDatabase#insert(String, String, android.content.ContentValues)} if a new
      * row is inserted (row ID or -1 on error), or the value from
-     * {@link SQLiteDatabase#update(String, ContentValues, String, String[])} if an existing row
+     * {@link SQLiteDatabase#update(String, android.content.ContentValues, String, String[])} if an
+     * existing row
      * was updated (number of affected rows)
      */
-    public long add(@Nullable T in) {
+    public long add(@Nullable T in, @Nullable Long lastModified) {
         if (in == null) {
             return -1;
         }
@@ -41,12 +44,18 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
         long ret = -1;
         try {
             if (!exists(in.getKey())) {
+                if (lastModified != null
+                    && (in.getLastModified() == null || lastModified > in.getLastModified())) {
+                    in.setLastModified(lastModified);
+                } else if (in.getLastModified() == null) {
+                    in.setLastModified(0L);
+                }
                 ret = mDb.insert(getTableName(), null, in.getParams());
                 if (ret != -1) {
                     insertCallback(in);
                 }
             } else {
-                ret = update(in);
+                ret = update(in, lastModified);
             }
             mDb.setTransactionSuccessful();
         } finally {
@@ -56,22 +65,29 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
     }
 
     /**
-     * Adds a List of items to the database via {@link #add(TbaDatabaseModel)}
+     * Adds a List of items to the database via {@link #add(TbaDatabaseModel, Long)}
      * @param inList List of models to be added
+     * @param lastModified the timestamp that came from the Last-Modified header
+     * @return the number of rows added
      */
-    public void add(@Nullable ImmutableList<T> inList){
+    public int add(@Nullable ImmutableList<T> inList, @Nullable Long lastModified){
         if (inList == null) {
-            return;
+            return 0;
         }
+        int inserted = 0;
         try {
             mDb.beginTransaction();
             for (T in : inList) {
-                add(in);
+                long ret = add(in, lastModified);
+                if (ret > 0) {
+                    inserted++;
+                }
             }
             mDb.setTransactionSuccessful();
         } finally {
             mDb.endTransaction();
         }
+        return inserted;
     }
 
     /**
@@ -79,21 +95,29 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
      * Uses {@link #getKeyColumn()} = {@link TbaDatabaseModel#getKey()} as the WHERE clause
      * If the update was successful, call {@link #updateCallback(TbaDatabaseModel)}
      * @param in Model to be updated
-     * @return Value from {@link SQLiteDatabase#update(String, ContentValues, String, String[])},
+     * @param lastModified the timestamp that came from the Last-Modified header
+     * @return Value from
+     * {@link SQLiteDatabase#update(String, android.content.ContentValues, String, String[])},
      * or number of rows affected by the query
      */
-    public int update(@Nullable T in){
+    public int update(@Nullable T in, @Nullable Long lastModified){
         int affectedRows;
         if (in == null) {
             return -1;
         }
         mDb.beginTransaction();
         try {
+            if (lastModified != null
+                && (in.getLastModified() == null || lastModified > in.getLastModified())) {
+                in.setLastModified(lastModified);
+            } else if (in.getLastModified() == null) {
+                in.setLastModified(0L);
+            }
             affectedRows = mDb.update(
                     getTableName(),
                     in.getParams(),
-                    getKeyColumn() + "=?",
-                    new String[]{in.getKey()});
+                    getKeyColumn() + " = ? AND  ? >= " + getLastModifiedColumn(),
+                    new String[]{in.getKey(), in.getLastModified().toString()});
             if (affectedRows > 0) {
                 updateCallback(in);
             }
@@ -264,23 +288,6 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
     }
 
     /**
-     * Updates given fields in the model with the given key
-     * @param key Model key to fetch and update
-     * @param values A {@link ContentValues} object mapping the column names to be updated to values
-     * @return Numbe of rows affected by the query
-     */
-    public int updateField(String key, ContentValues values) {
-        int returnVal = 0;
-        mDb.beginTransaction();
-        try {
-            returnVal = mDb.update(getTableName(), values, getKeyColumn() + " = ?", new String[]{key});
-        } finally {
-            mDb.endTransaction();
-        }
-        return returnVal;
-    }
-
-    /**
      * Called after a successful row insert
      * Override to let concrete implementations do something with an inserted row
      * e.g. add Search Indexes
@@ -327,6 +334,11 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
      */
     @VisibleForTesting
     public abstract String getKeyColumn();
+
+    /**
+     * @return the column title for the last modified information
+     */
+    public abstract String getLastModifiedColumn();
 
     /**
      * Inflates a cursor row from the db to a model class

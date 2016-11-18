@@ -92,7 +92,8 @@ public class AllianceSelectionNotification extends BaseNotification<AllianceSele
     @Override
     public void updateDataLocally() {
         if (event != null) {
-            mWriter.write(event);
+            //TODO need last-modified time in notifications
+            mWriter.write(event, new Date().getTime());
         }
     }
 

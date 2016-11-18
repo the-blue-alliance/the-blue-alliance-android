@@ -15,7 +15,7 @@ public class EventTeamWriter extends BaseDbWriter<EventTeam> {
 
     @Override
     @WorkerThread
-    public void write(EventTeam eventTeam) {
-        mDb.getEventTeamsTable().add(eventTeam);
+    public void write(EventTeam eventTeam, Long lastModified) {
+        mDb.getEventTeamsTable().add(eventTeam, lastModified);
     }
 }

@@ -23,11 +23,11 @@ public class YearsParticipatedWriter extends BaseDbWriter<YearsParticipatedInfo>
 
     @Override
     @WorkerThread
-    public void write(YearsParticipatedInfo yearsParticipatedInfo) {
+    public void write(YearsParticipatedInfo yearsParticipatedInfo, Long lastModified) {
         Team team = mDb.getTeamsTable().get(yearsParticipatedInfo.teamKey);
         if (team != null && yearsParticipatedInfo.yearsParticipated != null) {
             team.setYearsParticipated(yearsParticipatedInfo.yearsParticipated);
-            mTeamWriter.write(team);
+            mTeamWriter.write(team, lastModified);
         }
     }
 

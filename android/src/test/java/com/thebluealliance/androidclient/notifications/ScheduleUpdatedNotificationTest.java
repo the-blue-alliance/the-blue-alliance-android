@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.notifications;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
@@ -15,21 +16,19 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
+import org.robolectric.RuntimeEnvironment;
 
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(DefaultTestRunner.class)
 public class ScheduleUpdatedNotificationTest {
     private Context mContext;
     private ScheduleUpdatedNotification mNotification;
@@ -37,7 +36,7 @@ public class ScheduleUpdatedNotificationTest {
 
     @Before
     public void setUp() {
-        mContext = mock(Context.class, RETURNS_DEEP_STUBS);
+        mContext = RuntimeEnvironment.application.getApplicationContext();
         mData = ModelMaker.getModel(JsonObject.class, "notification_schedule_updated");
         mNotification = new ScheduleUpdatedNotification(mData.toString());
     }
@@ -69,19 +68,19 @@ public class ScheduleUpdatedNotificationTest {
     @Test
     public void testBuildNotification() {
         mNotification.parseMessageData();
-        when(mContext.getString(R.string.notification_schedule_updated_with_time, "Australia", "15:18:00"))
-          .thenReturn("The match schedule at Australia has been updated.");
-        when(mContext.getString(R.string.notification_schedule_updated_without_time, "Australia"))
-          .thenReturn("The match schedule at Australia has been updated. The next match starts at 15:18:00");
-        when(mContext.getString(R.string.notification_schedule_updated_title, "AUSY"))
-          .thenReturn("Event Schedule Updated AUSY");
         Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
+
+        long scheduledStartTimeUNIX = mNotification.getMatchTime().getAsLong();
+        Date scheduledStartTime = new Date(scheduledStartTimeUNIX * 1000);
+        DateFormat format = android.text.format.DateFormat.getTimeFormat(mContext);
+        String startTime = format.format(scheduledStartTime);
 
         StoredNotification stored = mNotification.getStoredNotification();
         assertNotNull(stored);
         assertEquals(stored.getType(), NotificationTypes.SCHEDULE_UPDATED);
-        assertEquals(stored.getTitle(), "Event Schedule Updated AUSY");
+        assertEquals(stored.getTitle(), mContext.getString(R.string.notification_schedule_updated_title, "AUSY"));
+        assertEquals(stored.getBody(), mContext.getString(R.string.notification_schedule_updated_with_time, "Australia", startTime));
         assertEquals(stored.getMessageData(), mData.toString());
         assertEquals(stored.getIntent(), MyTBAHelper.serializeIntent(mNotification.getIntent(mContext)));
         assertNotNull(stored.getTime());

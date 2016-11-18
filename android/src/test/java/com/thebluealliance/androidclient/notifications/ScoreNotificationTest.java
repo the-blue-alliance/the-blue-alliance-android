@@ -22,6 +22,8 @@ import android.content.Intent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -61,7 +63,7 @@ public class ScoreNotificationTest {
         mNotification.updateDataLocally();
 
         Match match = mNotification.getMatch();
-        verify(mWriter).write(match);
+        verify(mWriter).write(eq(match), anyLong());
     }
 
     @Test(expected = JsonParseException.class)

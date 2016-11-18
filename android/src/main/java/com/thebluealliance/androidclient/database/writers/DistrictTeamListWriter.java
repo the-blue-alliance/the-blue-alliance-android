@@ -19,7 +19,7 @@ public class DistrictTeamListWriter extends BaseDbWriter<List<DistrictTeam>> {
 
     @Override
     @WorkerThread
-    public void write(List<DistrictTeam> districtTeams) {
-        mDb.getDistrictTeamsTable().add(ImmutableList.copyOf(districtTeams));
+    public void write(List<DistrictTeam> districtTeams, Long lastModified) {
+        mDb.getDistrictTeamsTable().add(ImmutableList.copyOf(districtTeams), lastModified);
     }
 }

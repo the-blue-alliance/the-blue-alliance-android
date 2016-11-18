@@ -27,6 +27,7 @@ import android.preference.PreferenceManager;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -122,7 +123,15 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                         // No teams found for a page; we are done
                         break;
                     }
-                    allTeams.addAll(teamListResponse.body());
+                    Date lastModified = teamListResponse.headers().getDate("Last-Modified");
+                    List<Team> responseBody = teamListResponse.body();
+                    if (lastModified != null) {
+                        long lastModifiedTimestamp = lastModified.getTime();
+                        for (int i = 0; i < responseBody.size(); i++) {
+                            responseBody.get(i).setLastModified(lastModifiedTimestamp);
+                        }
+                    }
+                    allTeams.addAll(responseBody);
                     maxPageNum = Math.max(maxPageNum, pageNum);
                 }
             }
@@ -145,7 +154,15 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                         onConnectionError();
                         return null;
                     }
-                    allEvents.addAll(eventListResponse.body());
+                    Date lastModified = eventListResponse.headers().getDate("Last-Modified");
+                    List<Event> responseBody = eventListResponse.body();
+                    if (lastModified != null) {
+                        long lastModifiedTimestamp = lastModified.getTime();
+                        for (int i = 0; i < responseBody.size(); i++) {
+                            responseBody.get(i).setLastModified(lastModifiedTimestamp);
+                        }
+                    }
+                    allEvents.addAll(responseBody);
                     TbaLogger.i(String.format("Loaded %1$d events in %2$d",
                                               eventListResponse.body().size(), year));
                 }
@@ -173,6 +190,13 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
 
                     List<District> newDistrictList = districtListResponse.body();
                     keyAdder.call(newDistrictList);
+                    Date lastModified = districtListResponse.headers().getDate("Last-Modified");
+                    if (lastModified != null) {
+                        long lastModifiedTimestamp = lastModified.getTime();
+                        for (int i = 0; i < newDistrictList.size(); i++) {
+                            newDistrictList.get(i).setLastModified(lastModifiedTimestamp);
+                        }
+                    }
                     allDistricts.addAll(newDistrictList);
                     TbaLogger.i(String.format("Loaded %1$d districts in %2$d",
                                               newDistrictList.size(), year));
@@ -183,15 +207,16 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                 return null;
             }
             // If no exception has been thrown at this point, we have all the data. We can now
-            // insert it into the database.
+            // insert it into the database. Pass a 0 as the last-modified time here, because we set
+            // it individually above
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, context.getString(R.string.loading_almost_finished)));
 
             TbaLogger.i("Writing " + allTeams.size() + " teams");
-            Schedulers.io().createWorker().schedule(() -> mTeamWriter.write(allTeams));
+            Schedulers.io().createWorker().schedule(() -> mTeamWriter.write(allTeams, 0L));
             TbaLogger.i("Writing " + allEvents.size() + " events");
-            Schedulers.io().createWorker().schedule(() -> mEventWriter.write(allEvents));
+            Schedulers.io().createWorker().schedule(() -> mEventWriter.write(allEvents, 0L));
             TbaLogger.i("Writing " + allDistricts.size() + " districts");
-            Schedulers.io().createWorker().schedule(() -> mDistrictWriter.write(allDistricts));
+            Schedulers.io().createWorker().schedule(() -> mDistrictWriter.write(allDistricts, 0L));
 
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
 

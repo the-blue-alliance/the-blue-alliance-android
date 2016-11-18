@@ -28,13 +28,16 @@ public class SummaryNotification extends BaseNotification<Void> {
      */
     static final int MAX = 7;
 
-    public SummaryNotification() {
+    private final Database mDb;
+
+    public SummaryNotification(Database db) {
         super(NotificationTypes.SUMMARY, "");
+        mDb = db;
     }
 
     @Override
     public Notification buildNotification(Context context, FollowsChecker followsChecker) {
-        NotificationsTable table = Database.getInstance(context).getNotificationsTable();
+        NotificationsTable table = mDb.getNotificationsTable();
 
         List<StoredNotification> active = table.getActive();
         NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
@@ -100,8 +103,8 @@ public class SummaryNotification extends BaseNotification<Void> {
     }
 
     /* Checks if we've already posted a notification */
-    public static boolean isNotificationActive(Context context) {
-        NotificationsTable table = Database.getInstance(context).getNotificationsTable();
+    public static boolean isNotificationActive(Context context, Database db) {
+        NotificationsTable table = db.getNotificationsTable();
         return table.getActive().size() > 1;
         // The newest notification has already been added to the table, so we're checking if there are 2+ active
     }

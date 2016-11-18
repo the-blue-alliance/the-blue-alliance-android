@@ -37,7 +37,7 @@ public class EventTeamWriterTest {
 
     @Test
     public void testEventListWriter() {
-        mWriter.write(mEventTeam);
+        mWriter.write(mEventTeam, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         verify(db).insert(Database.TABLE_EVENTTEAMS, null, mEventTeam.getParams());

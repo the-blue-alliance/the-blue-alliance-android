@@ -415,6 +415,7 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         params.put(EventsTable.WEEK, getCompetitionWeek());
         params.put(EventsTable.WEBCASTS, getWebcasts());
         params.put(EventsTable.WEBSITE, getWebsite());
+        params.put(EventsTable.LAST_MODIFIED, getLastModified());
         return params;
     }
 }

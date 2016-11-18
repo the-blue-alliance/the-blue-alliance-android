@@ -6,14 +6,14 @@ import com.thebluealliance.androidclient.database.ModelTable;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
-import rx.functions.Action4;
+import rx.functions.Action5;
 import rx.schedulers.Schedulers;
 
 /**
  * Common code for a Database Writer
  * @param <T> Type of object to be written (e.g. model type of list of models)
  */
-public abstract class BaseDbWriter<T> implements Action4<String, String, String[], T> {
+public abstract class BaseDbWriter<T> implements Action5<String, String, String[], T, Long> {
 
     protected final Database mDb;
 
@@ -26,7 +26,7 @@ public abstract class BaseDbWriter<T> implements Action4<String, String, String[
      * @param newModels New models to write
      */
     @WorkerThread
-    public abstract void write(T newModels);
+    public abstract void write(T newModels, Long lastModified);
 
     /**
      * Delete the objects associated with the query in the db
@@ -55,7 +55,8 @@ public abstract class BaseDbWriter<T> implements Action4<String, String, String[
       @Nullable String dbTable,
       @Nullable String sqlWhere,
       @Nullable String[] whereArgs,
-      T newModels) {
+      T newModels,
+      Long lastModified) {
         if (newModels == null) {
             return;
         }
@@ -63,7 +64,7 @@ public abstract class BaseDbWriter<T> implements Action4<String, String, String[
             mDb.getWritableDatabase().beginTransaction();
             try {
                 clear(dbTable, sqlWhere, whereArgs);
-                write(newModels);
+                write(newModels, lastModified);
                 mDb.getWritableDatabase().setTransactionSuccessful();
             } finally {
                 mDb.getWritableDatabase().endTransaction();

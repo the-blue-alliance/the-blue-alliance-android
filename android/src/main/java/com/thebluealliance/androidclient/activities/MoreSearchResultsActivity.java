@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.activities;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventCursorAdapter;
 import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
@@ -22,6 +23,8 @@ import android.view.MenuItem;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
+import javax.inject.Inject;
+
 public class MoreSearchResultsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final int TEAM_RESULTS = 1;
@@ -37,6 +40,8 @@ public class MoreSearchResultsActivity extends AppCompatActivity implements Load
 
     private int resultsType;
 
+    @Inject Database mDb;
+
     public static Intent newInstance(Context c, int mode, String query) {
         Intent i = new Intent(c, MoreSearchResultsActivity.class);
         i.putExtra(RESULTS_TYPE, mode);
@@ -48,6 +53,8 @@ public class MoreSearchResultsActivity extends AppCompatActivity implements Load
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
+
+        ((TBAAndroid)getApplication()).getDbComponent().inject(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
@@ -131,14 +138,14 @@ public class MoreSearchResultsActivity extends AppCompatActivity implements Load
                 return new SimpleCursorLoader(MoreSearchResultsActivity.this) {
                     @Override
                     public Cursor loadInBackground() {
-                        return Database.getInstance(MoreSearchResultsActivity.this).getTeamsTable().getForSearchQuery(preparedQuery);
+                        return mDb.getTeamsTable().getForSearchQuery(preparedQuery);
                     }
                 };
             case EVENT_RESULTS:
                 return new SimpleCursorLoader(MoreSearchResultsActivity.this) {
                     @Override
                     public Cursor loadInBackground() {
-                        return Database.getInstance(MoreSearchResultsActivity.this).getEventsTable().getForSearchQuery(preparedQuery);
+                        return mDb.getEventsTable().getForSearchQuery(preparedQuery);
                     }
                 };
         }

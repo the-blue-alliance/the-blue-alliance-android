@@ -44,6 +44,6 @@ public class EventRankingsWriterTest {
 
     @Test
     public void testEventRankingsWriter()  {
-        mWriter.write(mData);
+        mWriter.write(mData, 0L);
     }
 }

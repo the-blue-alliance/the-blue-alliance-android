@@ -26,7 +26,8 @@ public class TeamsTable extends ModelTable<Team> {
             LOCATION = "location",
             WEBSITE = "website",
             YEARS_PARTICIPATED = "yearsParticipated",
-            MOTTO = "motto";
+            MOTTO = "motto",
+            LAST_MODIFIED = "last_modified";
 
     private SQLiteDatabase mDb;
 
@@ -79,6 +80,11 @@ public class TeamsTable extends ModelTable<Team> {
     @Override
     public String getKeyColumn() {
         return KEY;
+    }
+
+    @Override
+    public String getLastModifiedColumn() {
+        return LAST_MODIFIED;
     }
 
     @Override

@@ -15,7 +15,7 @@ public class MatchWriter extends BaseDbWriter<Match> {
 
     @Override
     @WorkerThread
-    public void write(Match match) {
-        mDb.getMatchesTable().add(match);
+    public void write(Match match, Long lastModified) {
+        mDb.getMatchesTable().add(match, lastModified);
     }
 }

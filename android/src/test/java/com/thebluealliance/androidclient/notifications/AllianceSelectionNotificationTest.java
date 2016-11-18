@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.notifications;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
@@ -18,23 +19,20 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
+import org.robolectric.RuntimeEnvironment;
 
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(DefaultTestRunner.class)
 public class AllianceSelectionNotificationTest {
 
     @Mock private Context mContext;
@@ -44,7 +42,7 @@ public class AllianceSelectionNotificationTest {
 
     @Before
     public void setUp() {
-        mContext = mock(Context.class, RETURNS_DEEP_STUBS);
+        mContext = RuntimeEnvironment.application.getApplicationContext();
         mWriter = mock(EventWriter.class);
         mData = ModelMaker.getModel(JsonObject.class, "notification_alliance_selection");
         mNotification = new AllianceSelectionNotification(mData.toString(), mWriter);
@@ -66,7 +64,7 @@ public class AllianceSelectionNotificationTest {
         mNotification.updateDataLocally();
 
         Event event = mNotification.getEvent();
-        verify(mWriter).write(event);
+        verify(mWriter).write(eq(event), anyLong());
     }
 
     @Test(expected = JsonParseException.class)
@@ -79,20 +77,14 @@ public class AllianceSelectionNotificationTest {
     @Test
     public void testBuildNotification() {
         mNotification.parseMessageData();
-        Resources res = mock(Resources.class);
-        when(mContext.getResources()).thenReturn(res);
-        when(res.getString(R.string.notification_alliances_updated, "New England"))
-          .thenReturn("Alliances have been updated at New England.");
-        when(res.getString(R.string.notification_alliances_updated_title, "NECMP"))
-          .thenReturn("Event Alliances Updated NECMP");
         Notification notification = mNotification.buildNotification(mContext, null);
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();
         assertNotNull(stored);
         assertEquals(stored.getType(), NotificationTypes.ALLIANCE_SELECTION);
-        assertEquals(stored.getTitle(), "Event Alliances Updated NECMP");
-        assertEquals(stored.getBody(), "Alliances have been updated at New England.");
+        assertEquals(stored.getTitle(), mContext.getString(R.string.notification_alliances_updated_title, "NECMP"));
+        assertEquals(stored.getBody(), mContext.getString(R.string.notification_alliances_updated, "New England"));
         assertEquals(stored.getMessageData(), mData.toString());
         assertEquals(stored.getIntent(), MyTBAHelper.serializeIntent(mNotification.getIntent(mContext)));
         assertNotNull(stored.getTime());

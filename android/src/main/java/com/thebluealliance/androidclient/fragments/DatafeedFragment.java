@@ -201,6 +201,11 @@ public abstract class DatafeedFragment
         return null;
     }
 
+    @VisibleForTesting
+    public B getBinder() {
+        return mBinder;
+    }
+
     protected boolean shouldRegisterSubscriberToEventBus() {
         return false;
     }
