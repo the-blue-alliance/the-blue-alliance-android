@@ -49,7 +49,7 @@ case "$1" in
 
     "SCREENSHOT")
         echo "Running project screenshot tests"
-        ./gradlew verifyMode screenshotTests
+        ./gradlew verifyMode screenshotTests --info
         ;;
 
     *)
