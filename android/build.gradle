@@ -36,6 +36,9 @@ tasks.withType(Test) {
 project.afterEvaluate {
     def generateReleasePlayResources = project.tasks.getByName("generateProdReleasePlayResources")
     generateReleasePlayResources.dependsOn loadProperties
+
+    def pullScreenshots = project.tasks.getByName("pullScreenshots")
+    pullScreenshots.dependsOn updateScreenshotDirs
 }
 
 android {
@@ -207,6 +210,26 @@ task loadProperties << {
         throw new InvalidUserDataException("You need to have analytics key defined in tba.properties to build a release apk");
     }
     System.out.println("Building with analytics key: " + tba_config["analytics.id"]);
+}
+
+task updateScreenshotDirs << {
+    def codeNameOut = new ByteArrayOutputStream()
+    exec {
+        commandLine 'adb', 'shell', 'getprop', 'ro.product.name'
+        standardOutput codeNameOut
+    }
+
+    def sdkOut = new ByteArrayOutputStream()
+    exec {
+        commandLine 'adb', 'shell', 'getprop', 'ro.build.version.sdk'
+        standardOutput sdkOut
+    }
+    def deviceName = codeNameOut.toString().trim()
+    def deviceSdk = sdkOut.toString().trim()
+    def outputDir = project.screenshots.recordDir + "/" + deviceName + "_api" + deviceSdk
+    project.screenshots.recordDir = outputDir
+    System.out.println("New screenshot output dierctory: " + outputDir)
+
 }
 
 tasks.whenTaskAdded { theTask ->
