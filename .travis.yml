@@ -21,7 +21,6 @@ env:
   - JOB=UNIT
   - JOB=COVERAGE
   - JOB=CHECKSTYLE
-  - JOB=SCREENSHOT
   - JOB=PROD-BUILD
   global:
   - GRADLE_OPTS="-Xmx512m -Xms128m -Xss1m"
