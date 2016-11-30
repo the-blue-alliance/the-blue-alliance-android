@@ -14,10 +14,15 @@
     <uses-permission android:name="com.thebluealliance.androidclient.permission.C2D_MESSAGE" />
 
     <!-- Device Accounts -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+
+    <!-- This is not needed with android 6.0 (API 23) anymore, since we only need this to
+         interact with our own Authenticator to create a TBA system account
+         https://developer.android.com/reference/android/Manifest.permission.html#GET_ACCOUNTS -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"
+                     android:maxSdkVersion="22"/>
 
     <!-- Used so we can save images taken with the camera -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

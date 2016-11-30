@@ -82,6 +82,10 @@
     <string name="view_team_cd">View photos on Chief Delphi</string>
     <string name="error_loading_image">Error loading image</string>
     <string name="error_taking_picture">Error taking picture</string>
+    <string name="camera_permission_title">Allow access to external storage</string>
+    <string name="camera_permission_rationale">Granting this permission allows the app to save your media suggestions to local storage so they can be uploaded to The Blue Alliance.</string>
+    <string name="allow">Allow</string>
+    <string name="deny">Deny</string>
 
     <!-- View Match Details -->
     <string name="teams">Teams</string>

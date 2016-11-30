@@ -105,7 +105,7 @@ android {
     defaultConfig {
         applicationId "com.thebluealliance.androidclient"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode versionNum
         versionName version.toString()
         multiDexEnabled true
@@ -280,6 +280,8 @@ dependencies {
     compile 'com.wada811:android-material-design-colors:3.0.0'
     compile 'com.thebluealliance:spectrum:0.6.0'
     compile 'javax.annotation:javax.annotation-api:1.2'
+    compile "com.github.hotchemi:permissionsdispatcher:${permissionDispatcherVersion}"
+    apt "com.github.hotchemi:permissionsdispatcher-processor:${permissionDispatcherVersion}"
 
     // testing
     testCompile "org.robolectric:robolectric:${robolectricVersion}"
