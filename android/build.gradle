@@ -3,6 +3,7 @@ apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'gitsemver'
 apply plugin: 'com.github.triplet.play'
+apply plugin: 'com.facebook.testing.screenshot'
 apply plugin: 'com.noveogroup.android.check'
 
 apply from: "../code_coverage.gradle"
@@ -35,6 +36,9 @@ tasks.withType(Test) {
 project.afterEvaluate {
     def generateReleasePlayResources = project.tasks.getByName("generateProdReleasePlayResources")
     generateReleasePlayResources.dependsOn loadProperties
+
+    def pullScreenshots = project.tasks.getByName("pullScreenshots")
+    pullScreenshots.dependsOn updateScreenshotDirs
 }
 
 android {
@@ -110,6 +114,8 @@ android {
         versionName version.toString()
         multiDexEnabled true
 
+        testInstrumentationRunner "com.thebluealliance.androidclient.testing.TbaInstrumentationRunner"
+
         // Needed for support lib 23.2.0+ on pre-L devices
         vectorDrawables.useSupportLibrary = true
 
@@ -173,6 +179,11 @@ play {
     track = 'beta'
 }
 
+screenshots {
+    testApkTarget = 'packageDevDebugAndroidTest'
+    connectedAndroidTestTarget = 'connectedDevDebugAndroidTest'
+}
+
 println "Version: " + android.defaultConfig.versionName + "/" + android.defaultConfig.versionCode
 
 task loadProperties << {
@@ -199,6 +210,26 @@ task loadProperties << {
         throw new InvalidUserDataException("You need to have analytics key defined in tba.properties to build a release apk");
     }
     System.out.println("Building with analytics key: " + tba_config["analytics.id"]);
+}
+
+task updateScreenshotDirs << {
+    def codeNameOut = new ByteArrayOutputStream()
+    exec {
+        commandLine 'adb', 'shell', 'getprop', 'ro.product.name'
+        standardOutput codeNameOut
+    }
+
+    def sdkOut = new ByteArrayOutputStream()
+    exec {
+        commandLine 'adb', 'shell', 'getprop', 'ro.build.version.sdk'
+        standardOutput sdkOut
+    }
+    def deviceName = codeNameOut.toString().trim()
+    def deviceSdk = sdkOut.toString().trim()
+    def outputDir = project.screenshots.recordDir + "/" + deviceName + "_api" + deviceSdk
+    project.screenshots.recordDir = outputDir
+    System.out.println("New screenshot output dierctory: " + outputDir)
+
 }
 
 tasks.whenTaskAdded { theTask ->
@@ -288,9 +319,16 @@ dependencies {
     testCompile "org.robolectric:shadows-support-v4:${robolectricVersion}"
     testCompile "org.robolectric:shadows-multidex:${robolectricVersion}"
     testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.2.1'
+    testCompile "org.mockito:mockito-core:${mockitoVersion}"
     testApt "com.google.guava:guava:19.0"
     testApt "com.google.dagger:dagger-compiler:${daggerVersion}"
+
+    // instrumentation
+    androidTestCompile "com.android.support:support-annotations:${supportLibVersion}"
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestCompile 'com.google.code.findbugs:jsr305:3.0.1'
 
     // Leak Canary
     debugCompile "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"

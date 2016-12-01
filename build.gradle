@@ -32,6 +32,9 @@ buildscript {
         // Retrolambda + Lint fixes
         classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
 
+        // Automated Screenshot Testing
+        classpath 'com.facebook.testing.screenshot:plugin:0.4.2'
+
         // Static code check things
         classpath 'com.noveogroup.android:check:1.2.3'
     }
@@ -55,6 +58,7 @@ allprojects {
         supportLibVersion = '24.2.1'
         playServicesVersion = '9.2.0'
         googleApiClientVersion = '1.21.0'
+        mockitoVersion = '2.2.1'
         retrofitVersion = '2.1.0'
         rxJavaVersion = '1.2.1'
         rxAndroidVersion = '1.2.1'

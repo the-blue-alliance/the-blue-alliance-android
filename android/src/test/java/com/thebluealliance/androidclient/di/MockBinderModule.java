@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.listeners.SocialClickListener;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 
+import org.greenrobot.eventbus.EventBus;
 import org.mockito.Mockito;
 
 import android.content.Context;
@@ -94,6 +95,12 @@ public class MockBinderModule {
     }
 
     @Provides
+    public DistrictEventsBinder provideDistrictEventsBinder() {
+        EventBus eventBus = Mockito.mock(EventBus.class);
+        return Mockito.spy(new DistrictEventsBinder(eventBus, mContext.getResources()));
+    }
+
+    @Provides
     public MatchBreakdownBinder provideMatchbreakdownBinder() {
         return Mockito.spy(new MatchBreakdownBinder());
     }
@@ -106,10 +113,5 @@ public class MockBinderModule {
     @Provides @Singleton
     public SimpleBinder provideSimpleBinder() {
         return Mockito.mock(SimpleBinder.class);
-    }
-
-    @Provides @Singleton
-    public DistrictEventsBinder provideDistrictEventsBinder() {
-        return Mockito.mock(DistrictEventsBinder.class);
     }
 }

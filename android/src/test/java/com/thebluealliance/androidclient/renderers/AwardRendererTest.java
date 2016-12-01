@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.renderers;
 
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.listitems.AwardListElement;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Award;
@@ -47,15 +46,6 @@ public class AwardRendererTest {
     }
 
     @Test
-    public void testRenderIndividualNotCarded() {
-        Award award = ModelMaker.getModel(Award.class, AWARD_INDIVIDUAL);
-        ListItem rendered = mRenderer.renderFromModel(award, new AwardRenderer.RenderArgs());
-
-        assertNotNull(rendered);
-        assertTrue(rendered instanceof AwardListElement);
-    }
-
-    @Test
     public void testRenderTeamCarded() {
         Award award = ModelMaker.getModel(Award.class, AWARD_TEAM);
         ListItem rendered = mRenderer.renderFromModel(award, new AwardRenderer.RenderArgs(new HashMap<>(), null));
@@ -64,12 +54,4 @@ public class AwardRendererTest {
         assertTrue(rendered instanceof CardedAwardListElement);
     }
 
-    @Test
-    public void testRenderTeamNotCarded() {
-        Award award = ModelMaker.getModel(Award.class, AWARD_TEAM);
-        ListItem rendered = mRenderer.renderFromModel(award, new AwardRenderer.RenderArgs());
-
-        assertNotNull(rendered);
-        assertTrue(rendered instanceof AwardListElement);
-    }
 }

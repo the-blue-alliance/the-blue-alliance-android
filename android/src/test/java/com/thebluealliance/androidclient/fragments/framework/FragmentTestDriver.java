@@ -25,7 +25,7 @@ import static org.junit.Assert.assertNotNull;
 public final class FragmentTestDriver {
 
     private FragmentTestDriver() {
-        // unused
+        // Unused
     }
 
     public static <F extends Fragment> DatafeedFragmentTestController<F> getController(F fragment) {
