@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.subscribers.YearsParticipatedDropdownSu
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -30,10 +31,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresPermission;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
@@ -56,8 +60,15 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnShowRationale;
+import permissions.dispatcher.PermissionRequest;
+import permissions.dispatcher.RuntimePermissions;
 import rx.schedulers.Schedulers;
 
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+
+@RuntimePermissions
 public class ViewTeamActivity extends MyTBASettingsActivity implements
         ViewPager.OnPageChangeListener,
         View.OnClickListener,
@@ -206,6 +217,12 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         if (mCurrentPhotoUri != null) {
             outState.putString(CURRENT_PHOTO_URI, mCurrentPhotoUri);
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        ViewTeamActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 
     @Override
@@ -369,7 +386,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
                             .setAdapter(adapter, (dialog, position) -> {
                                 switch (position) {
                                     case 0: // take picture
-                                        takePicture();
+                                        ViewTeamActivityPermissionsDispatcher.takePictureWithCheck(this);
                                         dialog.cancel();
                                         break;
                                     case 1: // select from gallery
@@ -400,7 +417,15 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         }
     }
 
-    private void takePicture() {
+    @RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    void takePicture() {
+        if (!checkHasStoragePermission()) {
+            TbaLogger.e("Permission WRITE_EXTERNAL_STORAGE not granted");
+            showSnackbar(R.string.error_taking_picture);
+            return;
+        }
+
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -411,15 +436,31 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
             } catch (IOException ex) {
                 // Error occurred while creating the File
                 // TODO handle this
-                ex.printStackTrace();
+                TbaLogger.e("Unable to create image file", ex);
                 showSnackbar(R.string.error_taking_picture);
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
                 startActivityForResult(takePictureIntent, TAKE_PICTURE_REQUEST);
+            } else {
+                TbaLogger.w("Unable to open file for photo");
+                showSnackbar(R.string.error_taking_picture);
             }
+        } else {
+            TbaLogger.w("Unable to resolve ");
+            showSnackbar(R.string.error_taking_picture);
         }
+    }
+
+    @OnShowRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    void showRationaleForStorage(final PermissionRequest request) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.camera_permission_title)
+                .setMessage(R.string.camera_permission_rationale)
+                .setPositiveButton(R.string.allow, (dialog, button) -> request.proceed())
+                .setNegativeButton(R.string.deny, (dialog, button) -> request.cancel())
+                .show();
     }
 
     @Override
@@ -441,13 +482,14 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         }
     }
 
+    @RequiresPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         storageDir = new File(storageDir, "The Blue Alliance");
-        storageDir.mkdir();
+        storageDir.mkdirs();
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -456,6 +498,16 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
 
         mCurrentPhotoUri = "file:" + image.getAbsolutePath();
         return image;
+    }
+
+    private boolean checkHasStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return PERMISSION_GRANTED == checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        } else {
+            // No runtime permissions before API 23, so everything is "granted" as it's declared
+            // in the app Manifest
+            return true;
+        }
     }
 
     private void markMediaSnackbarAsDismissed() {

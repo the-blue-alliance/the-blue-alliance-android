@@ -34,7 +34,7 @@ public class AuthModule {
             /* When there is no google-secrets.json file found, the library throws an exception
              * here which causes insta-crashes for us. Silently recover here...
              */
-            TbaLogger.w("Unable to find google-secrets.json, disabling login");
+            TbaLogger.e("Unable to find google-secrets.json, disabling login");
             return null;
         }
     }

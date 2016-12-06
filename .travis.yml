@@ -7,13 +7,15 @@ addons:
     - html2text
 android:
   components:
-  - platform-tools
-  - tools
-  - build-tools-23.0.3
-  - android-24
-  - extra-android-m2repository
-  - extra-google-m2repository
-  - extra-google-google_play_services
+    - platform-tools
+    - tools
+    - build-tools-23.0.3
+    - android-24
+    - android-23
+    - extra-android-m2repository
+    - extra-google-m2repository
+    - extra-google-google_play_services
+    - sys-img-armeabi-v7a-google_apis-23
 env:
   matrix:
   - JOB=UNIT
@@ -24,10 +26,11 @@ env:
   - GRADLE_OPTS="-Xmx512m -Xms128m -Xss1m"
   - MALLOC_ARENA_MAX=1
 before_script:
-- mkdir android/src/main/assets
-- touch android/src/main/assets/tba.properties
+  - ./scripts/travis/travis-before.sh $JOB
+
 script:
-- "./scripts/travis-worker.sh $JOB"
+  - ./scripts/travis/travis-worker.sh $JOB
+
 before_cache:
 - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:

@@ -47,6 +47,11 @@ case "$1" in
         ./gradlew assembleProdRelease
         ;;
 
+    "SCREENSHOT")
+        echo "Running project screenshot tests"
+        ./gradlew verifyMode screenshotTests --info
+        ;;
+
     *)
         echo "Unknown job type $JOB"
         exit -1
