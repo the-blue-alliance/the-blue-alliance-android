@@ -12,17 +12,27 @@ public class MatchBreakdownSubscriber extends BaseAPISubscriber<Match, MatchBrea
 
     @Override
     public void parseData()  {
-        if (mAPIData.getYear() == 2016) {
-            // Currently only support 2016 matches
-            JsonObject scoreBreakdown = mAPIData.getScoreBreakdownJson();
-            JsonObject alliances = mAPIData.getAlliancesJson();
-            if (scoreBreakdown.entrySet().isEmpty() || alliances.entrySet().isEmpty()) {
-                mDataToBind = null;
-            }
+        JsonObject scoreBreakdown;
+        JsonObject alliances;
 
-            mDataToBind = new MatchBreakdownBinder.Model(alliances, scoreBreakdown);
-        } else {
-            mDataToBind = null;
+        switch (mAPIData.getYear()) {
+            case 2015:
+            case 2016:
+                scoreBreakdown = mAPIData.getScoreBreakdownJson();
+                alliances = mAPIData.getAlliancesJson();
+                if (scoreBreakdown.entrySet().isEmpty() || alliances.entrySet().isEmpty()) {
+                    mDataToBind = null;
+                    break;
+                }
+
+                mDataToBind = new MatchBreakdownBinder.Model(mAPIData.getType(),
+                                                            mAPIData.getYear(),
+                                                            alliances,
+                                                            scoreBreakdown);
+                break;
+            default:
+                mDataToBind = null;
+                break;
         }
     }
 

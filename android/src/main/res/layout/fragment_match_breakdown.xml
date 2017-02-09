@@ -9,7 +9,7 @@
             android:layout_height="match_parent"
             android:layout_above="@+id/info_container">
 
-        <com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2016
+        <FrameLayout
             android:id="@+id/match_breakdown"
             android:visibility="gone"
             android:layout_width="match_parent"

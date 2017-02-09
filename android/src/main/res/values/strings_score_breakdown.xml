@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="breakdown_team_stats">Team Stats</string>
+    <string name="breakdown_event_stats">Event Stats</string>
+    <string name="breakdown_match_stats">Match Stats</string>
+    <string name="breakdown_auto_total">Total Auto</string>
+    <string name="breakdown_teleop_total">Total Teleop</string>
+    <string name="breakdown_number_format">%1$d</string>
+    <string name="breakdown_addition_format">(+ %1$d)</string>
+    <string name="breakdown_rp_format">(+ %1$d RP)</string>
+    <string name="breakdown_total_rp">%1$d RP</string>
+    <string name="breakdown_foul">Fouls</string>
+    <string name="breakdown_foul_format_add">+ %1$d</string>
+    <string name="breakdown_foul_format_subtract">- %1$d</string>
+    <string name="breakdown_adjust">Adjustments</string>
+    <string name="breakdown_total">Total Score</string>
+    <string name="breakdown_rp">Ranking Points</string>
+    <string name="breakdown_teams">Teams</string>
+</resources>
