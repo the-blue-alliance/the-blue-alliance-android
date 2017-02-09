@@ -194,12 +194,13 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
     }
 
     public String getTitle(Resources resources, boolean lineBreak) {
-        int matchNumber = getMatchNumber(),
-                setNumber = getSetNumber();
-        if (type == MatchType.QUAL) {
-            return resources.getString(type.getTypeName()) + (lineBreak ? "\n" : " ") + matchNumber;
+        int matchNumber = getMatchNumber();
+        int setNumber = getSetNumber();
+        MatchType matchType = getType();
+        if (matchType == MatchType.QUAL) {
+            return resources.getString(matchType.getTypeName()) + (lineBreak ? "\n" : " ") + matchNumber;
         } else {
-            return resources.getString(type.getTypeName()) + (lineBreak ? "\n" : " ")
+            return resources.getString(matchType.getTypeName()) + (lineBreak ? "\n" : " ")
                    + setNumber + " - " + matchNumber;
         }
     }
@@ -211,13 +212,13 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
     public Integer getDisplayOrder() {
         int matchNumber = getMatchNumber(),
                 setNumber = getSetNumber();
-        return type.getPlayOrder() * 1000000 + setNumber * 1000 + matchNumber;
+        return getType().getPlayOrder() * 1000000 + setNumber * 1000 + matchNumber;
     }
 
     public Integer getPlayOrder() {
         int matchNumber = getMatchNumber(),
                 setNumber = getSetNumber();
-        return type.getPlayOrder() * 1000000 + matchNumber * 1000 + setNumber;
+        return getType().getPlayOrder() * 1000000 + matchNumber * 1000 + setNumber;
     }
 
     public int getYear() {
