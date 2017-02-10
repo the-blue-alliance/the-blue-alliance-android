@@ -15,12 +15,16 @@ public final class Analytics {
     }
 
     public static final String PROD_ANALYTICS_KEY = "analytics_id";
-    static HashMap<GAnalyticsTracker, Tracker> mTrackers = new HashMap<>();
+    private static HashMap<GAnalyticsTracker, Tracker> mTrackers = new HashMap<>();
     private static GoogleAnalytics analytics;
     private static String sAnalyticsId;
 
     public static void setAnalyticsId(String analyticsId) {
         sAnalyticsId = analyticsId;
+        TbaLogger.d("Using analytics ID " + analyticsId);
+
+        // Flush our cached Trackers
+        mTrackers.clear();
     }
 
     public static synchronized Tracker getTracker(GAnalyticsTracker trackerId, Context c) {
