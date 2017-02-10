@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.adapters;
 
-import com.thebluealliance.androidclient.fragments.gameday.GamedayTickerFragment;
 import com.thebluealliance.androidclient.fragments.gameday.GamedayWebcastsFragment;
 
 import android.support.v4.app.Fragment;
@@ -9,9 +8,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class GamedayFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    public static final String[] TITLES = {"Live Ticker", "Webcasts"};
-    public static final int TAB_TICKER = 0,
-            TAB_WEBCASTS = 1;
+    public static final String[] TITLES = {"Webcasts"};
+    public static final int TAB_WEBCASTS = 1;
 
     public GamedayFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -33,10 +31,11 @@ public class GamedayFragmentPagerAdapter extends FragmentPagerAdapter {
         Fragment fragment;
         switch (position) {
             default:
-            case TAB_TICKER:
+            /*case TAB_TICKER:
                 fragment = GamedayTickerFragment.newInstance();
                 fragment.setRetainInstance(true);
                 break;
+            */
             case TAB_WEBCASTS:
                 fragment = GamedayWebcastsFragment.newInstance();
                 fragment.setRetainInstance(true);

@@ -8,7 +8,6 @@ import com.thebluealliance.androidclient.fragments.event.EventMatchesFragment;
 import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventTeamsFragment;
-import com.thebluealliance.androidclient.fragments.event.EventTickerFragment;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,17 +23,17 @@ public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
     private List<WeakReference<Fragment>> mFragments = new ArrayList<>();
     private FragmentManager mFragmentManager;
 
-    public static final String[] TITLES = {"Ticker", "Info", "Teams", "Rankings", "Matches",
+    public static final String[] TITLES = {"Info", "Teams", "Rankings", "Matches",
             "Alliances", "District Points", "Stats", "Awards"};
-    public static final int TAB_TICKER = 0,
-            TAB_INFO = 1,
-            TAB_TEAMS = 2,
-            TAB_RANKINGS = 3,
-            TAB_MATCHES = 4,
-            TAB_ALLIANCES = 5,
-            TAB_DISTRICT_POINTS = 6,
-            TAB_STATS = 7,
-            TAB_AWARDS = 8;
+    public static final int
+            TAB_INFO = 0,
+            TAB_TEAMS = 1,
+            TAB_RANKINGS = 2,
+            TAB_MATCHES = 3,
+            TAB_ALLIANCES = 4,
+            TAB_DISTRICT_POINTS = 5,
+            TAB_STATS = 6,
+            TAB_AWARDS = 7;
 
     private String mEventKey;
 
@@ -59,9 +58,11 @@ public class ViewEventFragmentPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         Fragment fragment;
         switch (position) {
+            /*
             case TAB_TICKER:
                 fragment = EventTickerFragment.newInstance(mEventKey);
                 break;
+            */
             case TAB_INFO:
                 fragment = EventInfoFragment.newInstance(mEventKey);
                 break;
