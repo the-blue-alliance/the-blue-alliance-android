@@ -13,8 +13,9 @@ import com.thebluealliance.androidclient.fragments.mytba.MyTBAFragment;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
 import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
 import com.thebluealliance.androidclient.gcm.GcmModule;
-import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
+import com.thebluealliance.androidclient.mytba.FcmTokenListenerService;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
+import com.thebluealliance.androidclient.mytba.SendFcmTokenToBackend;
 
 import javax.inject.Singleton;
 
@@ -28,7 +29,7 @@ import dagger.Component;
 public interface MyTbaComponent {
 
     void inject(MyTbaUpdateService myTbaUpdateService);
-    void inject(MyTbaRegistrationService myTbaRegistrationService);
+    void inject(FcmTokenListenerService fcmTokenListenerService);
     void inject(MyTBAFragment myTBAFragment);
     void inject(MyTBASettingsFragment myTBASettingsFragment);
     void inject(SettingsActivity.SettingsFragment settingsFragment);
@@ -37,4 +38,5 @@ public interface MyTbaComponent {
     void inject(UpdateUserModelSettingsTaskFragment updateUserModelSettingsTaskFragment);
     void inject(MyTBAModelSettingsActivity myTBAModelSettingsActivity);
     void inject(MigrateLegacyUserToFirebase migrateLegacyUserToFirebase);
+    void inject(SendFcmTokenToBackend sendFcmTokenToBackend);
 }

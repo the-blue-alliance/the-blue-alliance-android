@@ -1,11 +1,10 @@
 package com.thebluealliance.androidclient.gcm;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import com.thebluealliance.androidclient.LocalProperties;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import javax.inject.Singleton;
@@ -17,8 +16,8 @@ import dagger.Provides;
 public class GcmModule {
 
     @Provides @Singleton
-    public GoogleCloudMessaging provideGoogleCloudMessaging(Context context) {
-        return GoogleCloudMessaging.getInstance(context);
+    public FirebaseInstanceId provideFirebaseInstanceId() {
+        return FirebaseInstanceId.getInstance();
     }
 
     @Provides @Singleton
