@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.accounts;
 
 import com.thebluealliance.androidclient.config.AppConfig;
-import com.thebluealliance.androidclient.config.LocalProperties;
 import com.thebluealliance.androidclient.auth.User;
 
 import org.junit.Before;
