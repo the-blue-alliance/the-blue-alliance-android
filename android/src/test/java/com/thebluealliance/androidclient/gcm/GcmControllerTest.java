@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.gcm;
 
-import com.thebluealliance.androidclient.config.LocalProperties;
+import com.thebluealliance.androidclient.config.AppConfig;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +22,7 @@ public class GcmControllerTest {
 
     private static final String TEST_ID = "meow";
 
-    @Mock LocalProperties mLocalProperties;
+    @Mock AppConfig mAppConfig;
     @Mock SharedPreferences mSharedPreferences;
     @Mock SharedPreferences.Editor mEditor;
 
@@ -34,12 +34,12 @@ public class GcmControllerTest {
 
         when(mSharedPreferences.edit()).thenReturn(mEditor);
         when(mEditor.putString(anyString(), anyString())).thenReturn(mEditor);
-        mController = new GcmController(mLocalProperties, mSharedPreferences);
+        mController = new GcmController(mAppConfig, mSharedPreferences);
     }
 
     @Test
     public void getSenderId() throws Exception {
-        when(mLocalProperties.readLocalProperty(GcmController.PREF_SENDER_ID))
+        when(mAppConfig.getString(GcmController.PREF_SENDER_ID))
                 .thenReturn(TEST_ID);
         String senderId = mController.getSenderId();
         assertEquals(senderId, TEST_ID);

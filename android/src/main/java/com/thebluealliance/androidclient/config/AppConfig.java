@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.config;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
+import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.TbaLogger;
 
 import javax.annotation.Nullable;
@@ -18,6 +19,12 @@ public class AppConfig {
         mFirebaseRemoteConfig = firebaseRemoteConfig;
     }
 
+    public String getString(String key) {
+        if (mFirebaseRemoteConfig == null) {
+            return "";
+        }
+        return mFirebaseRemoteConfig.getString(key);
+    }
 
     public void updateRemoteData() {
         if (mFirebaseRemoteConfig == null) {
@@ -33,6 +40,12 @@ public class AppConfig {
                     if (task.isSuccessful()) {
                         TbaLogger.i("Remote config update succeeded");
                         mFirebaseRemoteConfig.activateFetched();
+
+                        /* Update the analytics ID in a static class
+                         * This is horrible, nasty, good-for-nothing, hacky, and disgusting
+                         * Here, we atone for sins of the past
+                         */
+                        Analytics.setAnalyticsId(mFirebaseRemoteConfig.getString(Analytics.PROD_ANALYTICS_KEY));
                     } else {
                         TbaLogger.e("Unable to update remote config", task.getException());
                     }

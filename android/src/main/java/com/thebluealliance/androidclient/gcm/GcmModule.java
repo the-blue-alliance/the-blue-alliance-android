@@ -2,7 +2,8 @@ package com.thebluealliance.androidclient.gcm;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import com.thebluealliance.androidclient.config.LocalProperties;
+import com.thebluealliance.androidclient.config.AppConfig;
+import com.thebluealliance.androidclient.config.ConfigModule;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import android.content.Context;
@@ -13,7 +14,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 
-@Module(includes = TBAAndroidModule.class)
+@Module(includes = {TBAAndroidModule.class, ConfigModule.class})
 public class GcmModule {
 
     @Provides @Singleton
@@ -22,8 +23,8 @@ public class GcmModule {
     }
 
     @Provides @Singleton
-    public GcmController provideGcmController(LocalProperties localProperties,
+    public GcmController provideGcmController(AppConfig appConfig,
                                               SharedPreferences sharedPreferences) {
-        return new GcmController(localProperties, sharedPreferences);
+        return new GcmController(appConfig, sharedPreferences);
     }
 }

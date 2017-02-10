@@ -16,7 +16,6 @@ import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
-import com.thebluealliance.androidclient.fragments.FirebaseTickerFragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -60,13 +59,16 @@ public class DatafeedModule {
 
     @Provides @Singleton @Named("firebase_retrofit")
     public Retrofit provideFirebaseRetrofit(Context context, Gson gson, OkHttpClient okHttpClient) {
-        String firebaseUrl = Utilities.readLocalProperty(context, "firebase.url", FirebaseTickerFragment.FIREBASE_URL_DEFAULT);
+        //FIXME Read from FirebaseRemoteConfig
+        /*String firebaseUrl = Utilities.readLocalProperty(context, "firebase.url", FirebaseTickerFragment.FIREBASE_URL_DEFAULT);
         return new Retrofit.Builder()
                 .baseUrl(firebaseUrl)
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
+         */
+        return null;
     }
 
     @Provides @Singleton @Named("tba_api")

@@ -14,9 +14,14 @@ public final class Analytics {
         // unused
     }
 
-    private static final String PROD_ANALYTICS_KEY = "analytics.id";
+    public static final String PROD_ANALYTICS_KEY = "analytics_id";
     static HashMap<GAnalyticsTracker, Tracker> mTrackers = new HashMap<>();
     private static GoogleAnalytics analytics;
+    private static String sAnalyticsId;
+
+    public static void setAnalyticsId(String analyticsId) {
+        sAnalyticsId = analyticsId;
+    }
 
     public static synchronized Tracker getTracker(GAnalyticsTracker trackerId, Context c) {
         if (!mTrackers.containsKey(trackerId)) {
@@ -33,10 +38,9 @@ public final class Analytics {
                 TbaLogger.d("Setting analytics dry run? " + dryRun);
             }
 
-            String id = Utilities.readLocalProperty(c, PROD_ANALYTICS_KEY);
             Tracker t;
-            TbaLogger.d("Loaded analytics id: " + id);
-            t = analytics.newTracker(id);
+            TbaLogger.d("Loaded analytics id: " + sAnalyticsId);
+            t = analytics.newTracker(sAnalyticsId);
             t.setAppId(BuildConfig.VERSION_NAME);
             t.setAppName(c.getString(R.string.app_name));
             t.setAppVersion(Utilities.getVersionNumber());

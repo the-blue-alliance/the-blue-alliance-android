@@ -7,9 +7,9 @@ import com.appspot.tbatv_prod_hrd.Model;
 import com.appspot.tbatv_prod_hrd.Subscriptions;
 import com.appspot.tbatv_prod_hrd.Tbamobile;
 import com.appspot.tbatv_prod_hrd.TeamMedia;
-import com.thebluealliance.androidclient.config.LocalProperties;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.accounts.AccountModule;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
@@ -56,8 +56,8 @@ public class GceModule {
     Retrofit provideGceRetrofit(
             Gson gson,
             OkHttpClient okHttpClient,
-            LocalProperties localProperties) {
-        String appspotId = localProperties.readLocalProperty("appspot.projectId", "tbatv-prod-hrd");
+            AppConfig appConfig) {
+        String appspotId = appConfig.getString("appspot_projectId");
         return new Retrofit.Builder()
                 .baseUrl(String.format(GCE_URL_FORMAT, appspotId))
                 .client(okHttpClient)
