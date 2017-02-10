@@ -5,6 +5,7 @@ import com.thebluealliance.androidclient.fragments.framework.BaseFragmentTest;
 import com.thebluealliance.androidclient.fragments.framework.FragmentTestDriver;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -18,7 +19,7 @@ public class EventTickerFragmentTest extends BaseFragmentTest {
         mFragment = EventTickerFragment.newInstance("2015cthar");
     }
 
-    @Test
+    @Test @Ignore
     public void testLifecycle() {
         FragmentTestDriver.testLifecycle(mFragment);
     }

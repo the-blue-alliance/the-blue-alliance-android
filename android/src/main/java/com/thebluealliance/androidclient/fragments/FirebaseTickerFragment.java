@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.firebase.client.Firebase;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.ViewUtilities;
 import com.thebluealliance.androidclient.adapters.AnimatedRecyclerMultiAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -427,15 +426,19 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     }
 
     private void loadFirebaseParams() {
-        String firebaseBase = Utilities.readLocalProperty(getActivity(), "firebase.url", FIREBASE_URL_DEFAULT);
+        //FIXME read these from FirebaseRemoteConfig
+        /*
+        String firebaseBase = Utilities.readLocalProperty(getActivity(), "firebase.url",
+                                                           FIREBASE_URL_DEFAULT);
         mFirebaseUrl = firebaseBase + getFirebaseUrlSuffix();
-        String loadDepthTemp = Utilities.readLocalProperty(getActivity(), "firebase.depth", Integer.toString(FIREBASE_LOAD_DEPTH_DEFAULT));
+        String loadDepthTemp = Utilities.readLocalProperty(getActivity(), "firebase.depth",
+                                                            Integer.toString(FIREBASE_LOAD_DEPTH_DEFAULT));
 
         try {
             mFirebaseLoadDepth = Integer.parseInt(loadDepthTemp);
         } catch (NumberFormatException e) {
             mFirebaseLoadDepth = FIREBASE_LOAD_DEPTH_DEFAULT;
-        }
+        }*/
     }
 
     private void updateList() {

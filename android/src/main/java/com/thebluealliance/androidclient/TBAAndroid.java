@@ -5,6 +5,7 @@ import com.squareup.leakcanary.LeakCanary;
 import com.thebluealliance.androidclient.accounts.AccountModule;
 import com.thebluealliance.androidclient.auth.AuthModule;
 import com.thebluealliance.androidclient.binders.BinderModule;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
@@ -27,6 +28,7 @@ import javax.inject.Inject;
 public class TBAAndroid extends MultiDexApplication {
 
     @Inject TBAStatusController mStatusController;
+    @Inject AppConfig mAppConfig;
 
     private ApplicationComponent mComponent;
     private DbComponent mDbComponent;
@@ -59,6 +61,7 @@ public class TBAAndroid extends MultiDexApplication {
         super.onCreate();
         TbaLogger.i("Welcome to The Blue Alliance for Android, v" + BuildConfig.VERSION_NAME);
         getDatafeedComponenet().inject(this);
+        mAppConfig.updateRemoteData();
         registerActivityLifecycleCallbacks(mStatusController);
 
         if (Utilities.isDebuggable() && mShouldBindStetho) {

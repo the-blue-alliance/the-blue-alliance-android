@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.accounts;
 
-import com.thebluealliance.androidclient.LocalProperties;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import android.accounts.AccountManager;
@@ -19,9 +19,9 @@ public class AccountModule {
     @Provides @Singleton
     public AccountController provideAccountController(SharedPreferences preferences,
                                                       AccountManager accountManager,
-                                                      LocalProperties localProperties,
+                                                      AppConfig appConfig,
                                                       Resources resources) {
         String accountType = resources.getString(R.string.account_type);
-        return new AccountController(preferences, accountManager, localProperties, accountType);
+        return new AccountController(preferences, accountManager, appConfig, accountType);
     }
 }

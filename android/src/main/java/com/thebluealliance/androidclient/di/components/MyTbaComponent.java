@@ -6,6 +6,7 @@ import com.thebluealliance.androidclient.activities.settings.MyTBAModelSettingsA
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
 import com.thebluealliance.androidclient.auth.AuthModule;
 import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
+import com.thebluealliance.androidclient.config.ConfigModule;
 import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
 import com.thebluealliance.androidclient.datafeed.gce.GceModule;
 import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
@@ -23,7 +24,7 @@ import dagger.Component;
 @Singleton
 @Component(
         modules = {GceModule.class, DatabaseWriterModule.class,
-                AccountModule.class, AuthModule.class, GcmModule.class},
+                AccountModule.class, AuthModule.class, GcmModule.class, ConfigModule.class},
         dependencies = {ApplicationComponent.class})
 public interface MyTbaComponent {
 

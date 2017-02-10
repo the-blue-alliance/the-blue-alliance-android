@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.accounts;
 
-import com.thebluealliance.androidclient.LocalProperties;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.auth.User;
 import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
@@ -27,18 +27,18 @@ public class AccountController {
 
     private final SharedPreferences mPreferences;
     private final AccountManager mAccountManager;
-    private final LocalProperties mLocalProperties;
+    private final AppConfig mAppConfig;
     private final String mAccountType;
 
     @Inject
     public AccountController(
             SharedPreferences preferences,
             AccountManager accountManager,
-            LocalProperties localProperties,
+            AppConfig appConfig,
             String accountType) {
         mPreferences = preferences;
         mAccountManager = accountManager;
-        mLocalProperties = localProperties;
+        mAppConfig = appConfig;
         mAccountType = accountType;
     }
 
@@ -80,7 +80,7 @@ public class AccountController {
     }
 
     public String getWebClientId() {
-        return mLocalProperties.readLocalProperty("appspot.webClientId");
+        return mAppConfig.getString("appspot_webClientId");
     }
 
     private boolean registerSystemAccount(String accountName) {

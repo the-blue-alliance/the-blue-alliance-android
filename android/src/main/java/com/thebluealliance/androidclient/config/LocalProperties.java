@@ -1,4 +1,7 @@
-package com.thebluealliance.androidclient;
+package com.thebluealliance.androidclient.config;
+
+import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import android.content.Context;
 
@@ -14,7 +17,7 @@ import javax.inject.Singleton;
  * This reads the file at creation time, so we don't have to keep a {@link Context} reference
  * Therefore, you should {@link dagger.Lazy} inject this class
  */
-@Singleton
+@Singleton @Deprecated
 public class LocalProperties {
 
     private Properties mProperties;

@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.accounts;
 
-import com.thebluealliance.androidclient.LocalProperties;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.auth.User;
 
 import org.junit.Before;
@@ -39,7 +39,7 @@ public class AccountControllerTest {
     @Mock SharedPreferences mSharedPreferences;
     @Mock SharedPreferences.Editor mEditor;
     @Mock AccountManager mAccountManager;
-    @Mock LocalProperties mLocalProperties;
+    @Mock AppConfig mAppConfig;
     @Mock Context mContext;
     @Mock User mUser;
 
@@ -58,7 +58,7 @@ public class AccountControllerTest {
         when(mEditor.putBoolean(anyString(), anyBoolean())).thenReturn(mEditor);
         mAccountController = new AccountController(mSharedPreferences,
                                                    mAccountManager,
-                                                   mLocalProperties,
+                                                   mAppConfig,
                                                    TEST_ACCOUNT_TYPE);
     }
 
@@ -111,6 +111,6 @@ public class AccountControllerTest {
     @Test
     public void testGetWebClientId() {
         mAccountController.getWebClientId();
-        verify(mLocalProperties).readLocalProperty("appspot.webClientId");
+        verify(mAppConfig).getString("appspot_webClientId");
     }
 }

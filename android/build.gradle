@@ -283,6 +283,7 @@ dependencies {
     compile "com.google.android.gms:play-services-gcm:${playServicesVersion}"
     compile "com.google.android.gms:play-services-auth:${playServicesVersion}"
     compile "com.google.firebase:firebase-auth:${playServicesVersion}"
+    compile "com.google.firebase:firebase-config:${playServicesVersion}"
 
     // Square Libraries
     compile 'com.squareup.picasso:picasso:2.5.2'
