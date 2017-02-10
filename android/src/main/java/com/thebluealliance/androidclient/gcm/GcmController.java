@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.gcm;
 
-import com.thebluealliance.androidclient.LocalProperties;
+import com.thebluealliance.androidclient.config.LocalProperties;
 
 import android.content.SharedPreferences;
 

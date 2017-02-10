@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.di;
 import com.google.android.gms.analytics.Tracker;
 
 import com.thebluealliance.androidclient.Analytics;
-import com.thebluealliance.androidclient.LocalProperties;
+import com.thebluealliance.androidclient.config.LocalProperties;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;

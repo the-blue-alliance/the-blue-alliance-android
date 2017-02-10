@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.accounts;
 
-import com.thebluealliance.androidclient.LocalProperties;
+import com.thebluealliance.androidclient.config.LocalProperties;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 

@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.gcm;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import com.thebluealliance.androidclient.LocalProperties;
+import com.thebluealliance.androidclient.config.LocalProperties;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import android.content.Context;
