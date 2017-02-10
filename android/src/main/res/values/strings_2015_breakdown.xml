@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="breakdown2015_auto_totes">Auto Totes</string>
+    <string name="breakdown2015_auto_container_set">Auto Container Set</string>
+    <string name="breakdown2015_auto_robot_set">Auto Robot Set</string>
+
+    <string name="breakdown2015_tote_points">Tote Points</string>
+    <string name="breakdown2015_container_points">Container Points</string>
+    <string name="breakdown2015_litter_points">Litter Points</string>
+    <string name="breakdown2015_coopertition_points">Coopertition</string>
+</resources>
