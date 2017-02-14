@@ -1,12 +1,13 @@
 #! /bin/sh
 
 # Script to generate Retrofit datafeed from swagger spec
-# Usage ./scripts/update_datafeed.sh [-l <lib version>]
+# Usage ./scripts/update_datafeed.sh [-l <lib version>] [-a <tba-api version>]
 
-while getopts ":l:" opt; do
+TBA_VERSION=2
+while getopts ":l:a:" opt; do
   case $opt in
-    l) LIB_VERSION="$OPTARG" && echo "Setting GCE Library Version to $LIB_VERSION"
-    ;;
+    l) LIB_VERSION="$OPTARG" && echo "Setting GCE Library Version to $LIB_VERSION" ;;
+    a) TBA_VERSION="$OPTARG" && echo "Using TBA APIv$TBA_VERSION" ;;
     \?) echo "Unknown option -$OPTARG" && usage
     ;;
   esac
@@ -33,9 +34,9 @@ if [ ! -f libTba/swagger/swagger-codegen-cli.jar ]; then
 fi
 
 # Do our app mutations on the swagger spec
-INITIAL_SPEC=libTba/swagger/apiv2-swagger.json
-JSON_DIR=libTba/swagger/jsonFragments
-SPEC=libTba/swagger/apiv2-swagger.mod.json
+INITIAL_SPEC=libTba/swagger/apiv$TBA_VERSION-swagger.json
+JSON_DIR=libTba/swagger/jsonFragments-v$TBA_VERSION
+SPEC=libTba/swagger/apiv$TBA_VERSION-swagger.mod.json
 python libTba/swagger/mutate_spec.py --file $INITIAL_SPEC --json $JSON_DIR --out $SPEC
 
 # Generate all the classes in a temporary directory so we can filter out what we want
@@ -66,22 +67,23 @@ cp -r libTba/swagger/tmp/$PKG/model/ $DST
 echo "Patching"
 OLD_NAME=DefaultApi
 NEW_NAME=TbaApiV2
-mv android/$APP_PKG/call/DefaultApi.java android/$APP_PKG/call/TbaApiV2.java
-mv android/$APP_PKG/rx/DefaultApi.java android/$APP_PKG/rx/TbaApiV2.java
-perl -pi -e "s/$OLD_NAME/$NEW_NAME/g" android/$APP_PKG/{call,rx}/TbaApiV2.java
-perl -pi -e "s/thebluealliance/thebluealliance\.androidclient/g" android/$APP_PKG/{call,rx}/TbaApiV2.java
-perl -pi -e "s/api\.model/models/g" android/$APP_PKG/{call,rx}/TbaApiV2.java
-perl -pi -e "s/Response<String>/Response<JsonElement>/g" android/$APP_PKG/{call,rx}/TbaApiV2.java
-perl -pi -e "s/import rx\.Observable;/import com\.google\.gson\.JsonElement;\nimport rx\.Observable;/g" android/$APP_PKG/{call,rx}/TbaApiV2.java
+
+for api in android/$APP_PKG/call/*Api.java; do mv $api "android/$APP_PKG/call/`basename $api .java`V3.java"; done;
+for api in android/$APP_PKG/rx/*Api.java; do mv $api "android/$APP_PKG/rx/`basename $api .java`V3.java"; done;
+perl -pi -e "s/$OLD_NAME/$NEW_NAME/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
+perl -pi -e "s/thebluealliance/thebluealliance\.androidclient/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
+perl -pi -e "s/api\.model/models/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
+perl -pi -e "s/Response<String>/Response<JsonElement>/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
+perl -pi -e "s/import rx\.Observable;/import com\.google\.gson\.JsonElement;\nimport rx\.Observable;/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
 
 # Rename models to start with I<name>.java
-CUR=$(pwd)
-cd libTba/$PKG/model
-for f in *.java;  do
-    NAME=`basename $f .java`
-    mv "$f" "I$f";
-done
-cd $CUR
+#CUR=$(pwd)
+#cd libTba/$PKG/model
+#for f in *.java;  do
+#    NAME=`basename $f .java`
+#    mv "$f" "I$f";
+#done
+#cd $CUR
 
 echo
 echo "Cleaning up"
