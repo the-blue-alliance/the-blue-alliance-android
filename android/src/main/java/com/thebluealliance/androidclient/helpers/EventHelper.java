@@ -122,14 +122,16 @@ public final class EventHelper {
                  * See http://www.usfirst.org/roboticsprograms/frc/blog-The-Palmetto-Regional
                  */
                 if (e.getYear() == 2016) {
-                    int week = e.getCompetitionWeek();
-                    if (week == 1) {
+                    @Nullable Integer week = e.getWeek();
+                    if (week == null) {
+                        return String.format(REGIONAL_LABEL, 0);
+                    } else if ("2016scmb".equals(e.getKey())) {
                         return String.format(FLOAT_REGIONAL_LABEL, 0.5);
                     } else {
-                        return String.format(REGIONAL_LABEL, week - 1);
+                        return String.format(REGIONAL_LABEL, week);
                     }
                 } else {
-                    return String.format(REGIONAL_LABEL, e.getCompetitionWeek());
+                    return String.format(REGIONAL_LABEL, e.getWeek());
                 }
             case OFFSEASON:
                 String month = ThreadSafeFormatters.renderEventMonth(e.getFormattedStartDate());
@@ -220,8 +222,8 @@ public final class EventHelper {
         int lastDistrict = -1, currentDistrict = -1;
         for (Event event : events) {
             currentType = event.getEventTypeEnum();
-            currentDistrict = event.getEventDistrict() != null
-                              ? event.getEventDistrict()
+            currentDistrict = event.getEventDistrictEnum() != null
+                              ? event.getEventDistrictEnum().ordinal()
                               : -1;
             if (currentType != lastType
                 || (currentType == EventType.DISTRICT && currentDistrict != lastDistrict)) {
@@ -252,7 +254,7 @@ public final class EventHelper {
         Collections.sort(events, new EventSortByDateComparator());
         String lastHeader = null, currentHeader = null;
         for (Event event : events) {
-            currentHeader = weekLabelFromNum(event.getYear(), event.getCompetitionWeek());
+            currentHeader = weekLabelFromNum(event.getYear(), event.getWeek());
             if (!currentHeader.equals(lastHeader)) {
                 output.add(new ListSectionHeaderViewModel(currentHeader + " Events"));
             }

@@ -23,6 +23,7 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
     private String foreignKey = null;
     private Long lastModified = null;
     private String type = null;
+    private Boolean preferred;
 
     private JsonObject details;
     private String teamKey;
@@ -73,6 +74,14 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
 
     @Override public void setType(String type) {
         this.type = type;
+    }
+
+    @Override public Boolean getPreferred() {
+        return preferred;
+    }
+
+    @Override public void setPreferred(Boolean preferred) {
+        this.preferred = preferred;
     }
 
     public String getTeamKey() {

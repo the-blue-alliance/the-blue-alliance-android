@@ -13,8 +13,8 @@ public class District implements IDistrict, TbaDatabaseModel {
     private String key;
     private String abbreviation;
     private int districtEnum;
-    private int year;
-    private String name;
+    private Integer year;
+    private String displayName;
     private int numEvents;
     private Long lastModified;
 
@@ -60,20 +60,21 @@ public class District implements IDistrict, TbaDatabaseModel {
         this.districtEnum = districtEnum;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public int getNumEvents() {
@@ -91,7 +92,7 @@ public class District implements IDistrict, TbaDatabaseModel {
         params.put(DistrictsTable.ABBREV, getAbbreviation());
         params.put(DistrictsTable.ENUM, getEnum());
         params.put(DistrictsTable.YEAR, getYear());
-        params.put(DistrictsTable.NAME, getName());
+        params.put(DistrictsTable.NAME, getDisplayName());
         params.put(DistrictsTable.LAST_MODIFIED, getLastModified());
         return params;
     }

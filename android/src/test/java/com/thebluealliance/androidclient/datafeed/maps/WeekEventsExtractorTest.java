@@ -37,7 +37,7 @@ public class WeekEventsExtractorTest {
         assertEquals(events.size(), 21);
         for (int i = 0; i < events.size(); i++) {
             Event event = events.get(i);
-            assertEquals(event.getCompetitionWeek(), (Integer)mWeek);
+            assertEquals(event.getWeek(), (Integer)mWeek);
         }
     }
 }

@@ -25,7 +25,7 @@ public class DistrictTest {
     @Test
     public void testDistrictModel()  {
         assertNotNull(district);
-        assertEquals(district.getName(), "New England");
+        assertEquals(district.getDisplayName(), "New England");
         assertEquals(district.getAbbreviation(), "ne");
         assertEquals(district.getEnum(), DistrictType.NEW_ENGLAND.ordinal());
     }

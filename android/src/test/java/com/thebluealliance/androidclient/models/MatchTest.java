@@ -39,7 +39,6 @@ public class MatchTest {
         assertEquals(mMatch.getMatchNumber().intValue(), 1);
         assertEquals(mMatch.getSetNumber().intValue(), 1);
         assertEquals(mMatch.getEventKey(), "2014cmp");
-        assertEquals(mMatch.getTimeString(), "5:38 PM");
         assertNotNull(mMatch.getTime());
         assertEquals(mMatch.getTime().intValue(), 1398551880);
         assertNotNull(mMatch.getVideos());

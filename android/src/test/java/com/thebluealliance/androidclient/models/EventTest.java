@@ -42,17 +42,15 @@ public class EventTest {
         assertNotNull(mEvent);
         assertEquals(mEvent.getKey(), "2015cthar");
         assertEquals(mEvent.getWebsite(), "http://www.nefirst.org/");
-        assertNotNull(mEvent.getOfficial());
-        assertTrue(mEvent.getOfficial());
-        assertNotNull(mEvent.getCompetitionWeek());
-        assertEquals(mEvent.getCompetitionWeek().intValue(), 5);
+        assertNotNull(mEvent.getWeek());
+        assertEquals(mEvent.getWeek().intValue(), 5);
         assertEquals(mEvent.getName(), "NE District - Hartford Event");
         assertEquals(mEvent.getShortName(), "Hartford");
         assertEquals(mEvent.getEventDistrictEnum(),
                      DistrictType.NEW_ENGLAND);
-        assertEquals(mEvent.getVenueAddress(), "Hartford Public High School\n55 Forest Street\nHartford, "
+        assertEquals(mEvent.getAddress(), "Hartford Public High School\n55 Forest Street\nHartford, "
                                       + "CT 06105\nUSA");
-        assertEquals(mEvent.getLocation(), "Hartford, CT, USA");
+        assertEquals(mEvent.getLocationName(), "Hartford, CT, USA");
         assertEquals(mEvent.getYearAgnosticEventKey(), "cthar");
         assertEquals(mEvent.getYear().intValue(), 2015);
         assertEquals(mEvent.getEventTypeEnum(),
@@ -63,8 +61,8 @@ public class EventTest {
         Date end = ThreadSafeFormatters.parseEventDate("2015-03-29");
         assertNotNull(mEvent.getStartDate());
         assertNotNull(mEvent.getEndDate());
-        assertEquals(mEvent.getStartDate().longValue(), start.getTime());
-        assertEquals(mEvent.getEndDate().longValue(), end.getTime());
+        assertEquals(mEvent.getStartDate().getTime(), start.getTime());
+        assertEquals(mEvent.getEndDate().getTime(), end.getTime());
         assertEquals(mEvent.getFormattedStartDate(), start);
         assertEquals(mEvent.getFormattedEndDate(), end);
         assertEquals(mEvent.getDateString(), "Mar 27 to Mar 29, 2015");
@@ -77,16 +75,6 @@ public class EventTest {
         JsonObject castObject = webcast.get(0).getAsJsonObject();
         assertEquals(castObject.get("type").getAsString(), "twitch");
         assertEquals(castObject.get("channel").getAsString(), "nefirst_red");
-
-        JsonArray alliances = mEvent.getAlliancesJson();
-        assertEquals(alliances.size(), 8);
-        assertTrue(alliances.get(0).isJsonObject());
-        JsonObject alliance1 = alliances.get(0).getAsJsonObject();
-        assertTrue(alliance1.has("declines") && alliance1.get("declines").isJsonArray());
-        assertEquals(alliance1.get("declines").getAsJsonArray().size(), 0);
-        assertTrue(alliance1.has("picks") && alliance1.get("picks").isJsonArray());
-        assertEquals(alliance1.get("picks").getAsJsonArray().size(), 3);
-        assertEquals(alliance1.get("picks").getAsJsonArray().get(0).getAsString(), "frc195");
     }
 
     @Test
@@ -94,17 +82,15 @@ public class EventTest {
         assertNotNull(mOffseasonEvent);
         assertEquals(mOffseasonEvent.getKey(), "2016cc");
         assertEquals(mOffseasonEvent.getWebsite(), "");
-        assertNotNull(mOffseasonEvent.getOfficial());
-        assertFalse(mOffseasonEvent.getOfficial());
-        assertNotNull(mOffseasonEvent.getCompetitionWeek());
-        assertEquals(mOffseasonEvent.getCompetitionWeek().intValue(), 31);
+        assertNotNull(mOffseasonEvent.getWeek());
+        assertEquals(mOffseasonEvent.getWeek().intValue(), 31);
         assertEquals(mOffseasonEvent.getName(), "Chezy Champs");
         assertEquals(mOffseasonEvent.getShortName(), "Chezy Champs");
         assertEquals(mOffseasonEvent.getEventDistrictEnum(),
                      DistrictType.NO_DISTRICT);
-        assertEquals(mOffseasonEvent.getVenueAddress(), "Bellarmine College Prep\n850 Elm St.\nSan Jose,"
+        assertEquals(mOffseasonEvent.getAddress(), "Bellarmine College Prep\n850 Elm St.\nSan Jose,"
                                                         + " California 95126\nUSA");
-        assertEquals(mOffseasonEvent.getLocation(), "San Jose, CA, USA");
+        assertEquals(mOffseasonEvent.getLocationName(), "San Jose, CA, USA");
         assertEquals(mOffseasonEvent.getYearAgnosticEventKey(), "cc");
         assertEquals(mOffseasonEvent.getYear().intValue(), 2016);
         assertEquals(mOffseasonEvent.getEventTypeEnum(),
@@ -115,8 +101,8 @@ public class EventTest {
         Date end = ThreadSafeFormatters.parseEventDate("2016-09-25");
         assertNotNull(mOffseasonEvent.getStartDate());
         assertNotNull(mOffseasonEvent.getEndDate());
-        assertEquals(mOffseasonEvent.getStartDate().longValue(), start.getTime());
-        assertEquals(mOffseasonEvent.getEndDate().longValue(), end.getTime());
+        assertEquals(mOffseasonEvent.getStartDate().getTime(), start.getTime());
+        assertEquals(mOffseasonEvent.getEndDate().getTime(), end.getTime());
         assertEquals(mOffseasonEvent.getFormattedStartDate(), start);
         assertEquals(mOffseasonEvent.getFormattedEndDate(), end);
         assertEquals(mOffseasonEvent.getDateString(), "Sep 24 to Sep 25, 2016");
@@ -129,16 +115,6 @@ public class EventTest {
         JsonObject castObject = webcast.get(0).getAsJsonObject();
         assertEquals(castObject.get("type").getAsString(), "twitch");
         assertEquals(castObject.get("channel").getAsString(), "frcgamesense");
-
-        JsonArray alliances = mOffseasonEvent.getAlliancesJson();
-        assertEquals(alliances.size(), 8);
-        assertTrue(alliances.get(0).isJsonObject());
-        JsonObject alliance1 = alliances.get(0).getAsJsonObject();
-        assertTrue(alliance1.has("declines") && alliance1.get("declines").isJsonArray());
-        assertEquals(alliance1.get("declines").getAsJsonArray().size(), 0);
-        assertTrue(alliance1.has("picks") && alliance1.get("picks").isJsonArray());
-        assertEquals(alliance1.get("picks").getAsJsonArray().size(), 4);
-        assertEquals(alliance1.get("picks").getAsJsonArray().get(0).getAsString(), "frc971");
     }
 
     @Test(expected = IllegalArgumentException.class)

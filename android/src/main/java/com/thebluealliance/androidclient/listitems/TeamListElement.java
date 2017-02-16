@@ -24,7 +24,7 @@ public class TeamListElement extends ListElement {
         super(team.getKey());
         mTeamNumber = team.getTeamNumber();
         mTeamName = team.getNickname();
-        mTeamLocation = team.getLocation();
+        mTeamLocation = team.getLocationName();
         mShowLinkToTeamDetails = false;
         mShowMyTbaDetails = false;
     }

@@ -17,8 +17,8 @@ public class EventInfoSubscriber extends BaseAPISubscriber<Event, Model> {
         mDataToBind.nameString = mAPIData.getName();
         mDataToBind.actionBarTitle = mAPIData.getShortName();
         mDataToBind.actionBarSubtitle = String.valueOf(mAPIData.getYear());
-        mDataToBind.venueString = mAPIData.getVenueAddress();
-        mDataToBind.locationString = mAPIData.getLocation();
+        mDataToBind.venueString = mAPIData.getAddress();
+        mDataToBind.locationString = mAPIData.getLocationName();
         mDataToBind.eventWebsite = mAPIData.getWebsite();
         mDataToBind.dateString = mAPIData.getDateString();
         mDataToBind.isLive = mAPIData.isHappeningNow();

@@ -38,18 +38,18 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
             //NotificationTypes.MEDIA_POSTED
     };
 
-    private String countryName = null;
-    private String key = null;
-    private Long lastModified = null;
-    private String locality = null;
-    private String location = null;
-    private String motto = null;
-    private String name = null;
-    private String nickname = null;
-    private String region = null;
-    private Integer rookieYear = null;
-    private Integer teamNumber = null;
-    private String website = null;
+    private String key;
+    private String name;
+    private String nickname;
+    private Integer teamNumber;
+    private String website;
+
+    private @Nullable String address;
+    private @Nullable String gmapsUrl;
+    private @Nullable String locationName;
+    private @Nullable String motto;
+    private @Nullable Integer rookieYear;
+    private @Nullable Long lastModified;
 
     private List<Integer> yearsParticipated;
 
@@ -62,15 +62,7 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
         setKey(teamKey);
         setTeamNumber(teamNumber);
         setNickname(nickname);
-        setLocation(location);
-    }
-
-    @Nullable @Override public String getCountryName() {
-        return countryName;
-    }
-
-    @Override public void setCountryName(String countryName) {
-        this.countryName = countryName;
+        setLocationName(location);
     }
 
     @Override public String getKey() {
@@ -87,22 +79,6 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
 
     @Override public void setLastModified(Long lastModified) {
         this.lastModified = lastModified;
-    }
-
-    @Nullable @Override public String getLocality() {
-        return locality;
-    }
-
-    @Override public void setLocality(String locality) {
-        this.locality = locality;
-    }
-
-    @Nullable @Override public String getLocation() {
-        return location;
-    }
-
-    @Override public void setLocation(String location) {
-        this.location = location;
     }
 
     @Nullable @Override public String getMotto() {
@@ -129,14 +105,6 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
         this.nickname = nickname;
     }
 
-    @Nullable @Override public String getRegion() {
-        return region;
-    }
-
-    @Override public void setRegion(String region) {
-        this.region = region;
-    }
-
     @Nullable @Override public Integer getRookieYear() {
         return rookieYear;
     }
@@ -159,6 +127,30 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
 
     @Override public void setWebsite(String website) {
         this.website = website;
+    }
+
+    @Override @Nullable public String getGmapsUrl() {
+        return gmapsUrl;
+    }
+
+    @Override public void setGmapsUrl(@Nullable String gmapsUrl) {
+        this.gmapsUrl = gmapsUrl;
+    }
+
+    @Override @Nullable public String getAddress() {
+        return address;
+    }
+
+    @Override public void setAddress(@Nullable String address) {
+        this.address = address;
+    }
+
+    @Override @Nullable public String getLocationName() {
+        return locationName;
+    }
+
+    @Override public void setLocationName(@Nullable String locationName) {
+        this.locationName = locationName;
     }
 
     public List<Integer> getYearsParticipated() {
@@ -195,7 +187,7 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
             @Nullable @RenderType Integer renderType) {
         int safeRenderType = renderType == null ? RENDER_BASIC : renderType;
         TeamViewModel model = new TeamViewModel(getKey(), getTeamNumber(), getNickname(),
-                                                getLocation());
+                                                getLocationName());
         model.setShowLinkToTeamDetails(false);
         model.setShowMyTbaDetails(false);
         switch (safeRenderType) {
@@ -218,7 +210,7 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
         data.put(TeamsTable.NUMBER, getTeamNumber());
         data.put(TeamsTable.NAME, getName());
         data.put(TeamsTable.SHORTNAME, getNickname());
-        data.put(TeamsTable.LOCATION, getLocation());
+        data.put(TeamsTable.LOCATION, getLocationName());
         data.put(TeamsTable.WEBSITE, getWebsite());
         if (yearsParticipated != null) {
             data.put(TeamsTable.YEARS_PARTICIPATED, yearsParticipatedToJsonString(yearsParticipated));

@@ -10,7 +10,7 @@ public class EventSortByTypeAndNameComparator implements Comparator<Event> {
     public int compare(Event event, Event event2) {
         // Preseason < regional < district < district_cmp < cmp_division < cmp_finals < offseason
         if (event.getEventTypeEnum() == event2.getEventTypeEnum()) {
-            int districtSort = event.getEventDistrict().compareTo(event2.getEventDistrict());
+            int districtSort = event.getEventDistrictEnum().compareTo(event2.getEventDistrictEnum());
             int nameSort = event.getShortName().compareTo(event2.getShortName());
             if (districtSort == 0) {
                 return nameSort;
@@ -20,7 +20,7 @@ public class EventSortByTypeAndNameComparator implements Comparator<Event> {
         } else {
             int typeCompare = event.getEventType().compareTo(event2.getEventType());
             if (typeCompare == 0 && event.getEventTypeEnum() == EventType.DISTRICT) {
-                return event.getEventDistrict().compareTo(event2.getEventDistrict());
+                return event.getEventDistrictEnum().compareTo(event2.getEventDistrictEnum());
             } else {
                 return typeCompare;
             }

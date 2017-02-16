@@ -25,14 +25,11 @@
 
 package com.thebluealliance.api.model;
 
-import java.util.Objects;
-import com.google.gson.annotations.SerializedName;
-import com.thebluealliance.api.model.RankingItemRecord;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.Nullable;
+
+import io.swagger.annotations.ApiModelProperty;
 
 
 /**
@@ -108,9 +105,9 @@ public interface IRankingItem   {
   **/
   @ApiModelProperty(example = "null", value = "")
   @Nullable
-  public RankingItemRecord getRecord();
+  public IRankingItemRecord getRecord();
 
-  public void setRecord(RankingItemRecord record);
+  public void setRecord(IRankingItemRecord record);
 
 
 

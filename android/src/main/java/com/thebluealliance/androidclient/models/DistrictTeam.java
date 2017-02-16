@@ -2,13 +2,12 @@ package com.thebluealliance.androidclient.models;
 
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
-import com.thebluealliance.api.model.IDistrictTeam;
 
 import android.content.ContentValues;
 
 import javax.annotation.Nullable;
 
-public class DistrictTeam implements TbaDatabaseModel, IDistrictTeam {
+public class DistrictTeam implements TbaDatabaseModel {
 
     private String key;
     private String districtKey;

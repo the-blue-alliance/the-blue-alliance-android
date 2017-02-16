@@ -10,7 +10,6 @@ import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper.CaseInsensitiveMap;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.models.Award;
@@ -94,7 +93,9 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         }
 
         // Search for team in alliances
-        JsonArray alliances = JSONHelper.getasJsonArray(event.getAlliances());
+        // TODO EventDetail
+        // JsonArray alliances = JSONHelper.getasJsonArray(event.getAlliances());
+        JsonArray alliances = new JsonArray();
         int allianceNumber = 0, alliancePick = -1;
 
         if (alliances == null || alliances.size() == 0) {

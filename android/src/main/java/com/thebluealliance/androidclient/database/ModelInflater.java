@@ -91,10 +91,10 @@ public final class ModelInflater {
                     event.setShortName(data.getString(i));
                     break;
                 case EventsTable.LOCATION:
-                    event.setLocation(data.getString(i));
+                    event.setAddress(data.getString(i));
                     break;
                 case EventsTable.VENUE:
-                    event.setVenueAddress(data.getString(i));
+                    event.setLocationName(data.getString(i));
                     break;
                 case EventsTable.WEBSITE:
                     event.setWebsite(data.getString(i));
@@ -103,10 +103,8 @@ public final class ModelInflater {
                     event.setEventType(data.getInt(i));
                     break;
                 case EventsTable.DISTRICT:
-                    event.setEventDistrict(data.getInt(i));
-                    break;
-                case EventsTable.DISTRICT_STRING:
-                    event.setEventDistrictString(data.getString(i));
+                    // TODO should make district_key column
+                    //event.setEventDistrict(data.getInt(i));
                     break;
                 case EventsTable.DISTRICT_POINTS:
                     // TODO(773) Required EventDetails
@@ -118,18 +116,16 @@ public final class ModelInflater {
                 case EventsTable.END:
                     event.setEndDate(data.getLong(i));
                     break;
-                case EventsTable.OFFICIAL:
-                    event.setOfficial(data.getInt(i) == 1);
-                    break;
                 case EventsTable.WEEK:
-                    event.setCompetitionWeek(data.getInt(i));
+                    event.setWeek(data.getInt(i));
                     break;
                 case EventsTable.RANKINGS:
                     //TODO(773) Requires EventDetails
                     //event.setRankings(data.getString(i));
                     break;
                 case EventsTable.ALLIANCES:
-                    event.setAlliances(data.getString(i));
+                    //TODO(773) Requires EventDetails
+                    //event.setAlliances(data.getString(i));
                     break;
                 case EventsTable.STATS:
                     //TODO(773) Requires EventDetails
@@ -163,9 +159,6 @@ public final class ModelInflater {
             switch (data.getColumnName(i)) {
                 case MatchesTable.KEY:
                     match.setKey(data.getString(i));
-                    break;
-                case MatchesTable.TIMESTRING:
-                    match.setTimeString(data.getString(i));
                     break;
                 case MatchesTable.TIME:
                     match.setTime(data.getLong(i));
@@ -248,7 +241,7 @@ public final class ModelInflater {
                     team.setName(data.getString(i));
                     break;
                 case TeamsTable.LOCATION:
-                    team.setLocation(data.getString(i));
+                    team.setAddress(data.getString(i));
                     break;
                 case TeamsTable.WEBSITE:
                     team.setWebsite(data.getString(i));
@@ -319,7 +312,7 @@ public final class ModelInflater {
                     district.setYear(data.getInt(i));
                     break;
                 case DistrictsTable.NAME:
-                    district.setName(data.getString(i));
+                    district.setDisplayName(data.getString(i));
                     break;
                 case DistrictsTable.LAST_MODIFIED:
                     district.setLastModified(data.getLong(i));

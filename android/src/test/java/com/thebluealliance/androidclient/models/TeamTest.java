@@ -29,7 +29,7 @@ public class TeamTest {
         assertEquals("Avon Public Schools/UTC & AVON HIGH SCHOOL", mTeam.getName());
         assertEquals("UberBots", mTeam.getNickname());
         assertEquals("http://www.uberbots.org", mTeam.getWebsite());
-        assertEquals("Avon, Connecticut, USA", mTeam.getLocation());
+        assertEquals("Avon, Connecticut, USA", mTeam.getLocationName());
         assertNotNull(mTeam.getTeamNumber());
         assertEquals(1124, mTeam.getTeamNumber().intValue());
     }

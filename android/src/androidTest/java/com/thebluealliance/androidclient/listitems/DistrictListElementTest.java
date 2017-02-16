@@ -23,7 +23,7 @@ public class DistrictListElementTest {
     static {
         DISTRICT.setAbbreviation("ne");
         DISTRICT.setEnum(DistrictType.NEW_ENGLAND.ordinal());
-        DISTRICT.setName("New England");
+        DISTRICT.setDisplayName("New England");
         DISTRICT.setYear(2016);
         DISTRICT.setKey("2016ne");
     }

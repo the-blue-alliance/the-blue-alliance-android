@@ -44,8 +44,8 @@ public class EventInfoSubscriberTest extends TestCase {
         assertEquals(data.nameString, mEvent.getName());
         assertEquals(data.actionBarTitle, mEvent.getShortName());
         assertEquals(data.actionBarSubtitle, String.valueOf(mEvent.getYear()));
-        assertEquals(data.venueString, mEvent.getVenueAddress());
-        assertEquals(data.locationString, mEvent.getLocation());
+        assertEquals(data.venueString, mEvent.getAddress());
+        assertEquals(data.locationString, mEvent.getLocationName());
         assertEquals(data.eventWebsite, mEvent.getWebsite());
         assertEquals(data.dateString, mEvent.getDateString());
         assertEquals(data.isLive, mEvent.isHappeningNow());

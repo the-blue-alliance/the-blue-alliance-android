@@ -203,7 +203,9 @@ public final class MatchHelper {
 
         // There might be match info available,
         // but no alliance selection data (for old events)
-        JsonArray alliances = JSONHelper.getasJsonArray(e.getAlliances());
+        //TODO EventDetail
+        // JsonArray alliances = JSONHelper.getasJsonArray(e.getAlliances());
+         JsonArray alliances = new JsonArray();
         int year = 2014;
 
         boolean inAlliance = false;

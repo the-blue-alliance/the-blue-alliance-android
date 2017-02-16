@@ -41,7 +41,7 @@ public class AddDistrictKeysTest {
         assertEquals(districtList.size(), 1);
         assertEquals(districtList.get(0), mDistrict);
 
-        assertEquals(mDistrict.getYear(), mYear);
+        assertEquals(mDistrict.getYear().intValue(), mYear);
         assertEquals(mDistrict.getKey(), DistrictHelper.generateKey(mDistrict.getAbbreviation(), mYear));
     }
 }

@@ -55,9 +55,9 @@ public class DistrictsTableTest {
     public void testUpdate() {
         District result = DbTableTestDriver.testUpdate(mTable,
                                                        mDistricts.get(0),
-                                                       district -> district.setName("Test Dist"));
+                                                       district -> district.setDisplayName("Test Dist"));
         assertNotNull(result);
-        assertEquals("Test Dist", result.getName());
+        assertEquals("Test Dist", result.getDisplayName());
     }
 
     @Test

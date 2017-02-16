@@ -50,7 +50,7 @@ public class TeamRenderer implements ModelRenderer<Team, Integer> {
                 team.getKey(),
                 team.getTeamNumber(),
                 team.getNickname(),
-                team.getLocation(),
+                team.getLocationName(),
                 safeRenderType == RENDER_DETAILS_BUTTON,
                 safeRenderType == RENDER_MYTBA_DETAILS);
     }

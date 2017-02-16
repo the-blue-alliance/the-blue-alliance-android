@@ -51,7 +51,7 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
               event.getYear(),
               event.getShortName(),
               event.getDateString(),
-              event.getLocation(),
+              event.getAddress(),
               safeMyTba);
     }
 
@@ -79,7 +79,7 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
         /*
          * TODO(773) Needs EventDetails
          */
-        JsonArray alliances = event.getAlliancesJson();
+        JsonArray alliances = new JsonArray();
         int counter = 1;
         for (JsonElement alliance : alliances) {
             JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();

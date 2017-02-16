@@ -20,7 +20,7 @@ public class WeekEventsExtractor implements Func1<List<Event>, List<Event>> {
         List<Event> weekEvents = new ArrayList<>();
         for (int i = 0; i < events.size(); i++) {
             Event event = events.get(i);
-            if (event.getCompetitionWeek() != null && event.getCompetitionWeek() == mWeek) {
+            if (event.getWeek() != null && event.getWeek() == mWeek) {
                 weekEvents.add(event);
             }
         }

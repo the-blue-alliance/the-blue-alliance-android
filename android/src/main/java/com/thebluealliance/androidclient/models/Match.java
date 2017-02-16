@@ -43,8 +43,9 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
     private String scoreBreakdown = null;
     private Integer setNumber = null;
     private Long time = null;
-    private String timeString = null;
+    private Long actualTime = null;
     private String videos = null;
+    private String winningAlliance;
 
     private String selectedTeam;
     private int year;
@@ -131,20 +132,28 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
         this.time = time;
     }
 
-    @Nullable @Override public String getTimeString() {
-        return timeString;
-    }
-
-    @Override public void setTimeString(String timeString) {
-        this.timeString = timeString;
-    }
-
     @Nullable @Override public String getVideos() {
         return videos;
     }
 
     @Override public void setVideos(String videos) {
         this.videos = videos;
+    }
+
+    @Nullable @Override public Long getActualTime() {
+        return actualTime;
+    }
+
+    @Override public void setActualTime(Long actualTime) {
+        this.actualTime = actualTime;
+    }
+
+    @Nullable @Override public String getWinningAlliance() {
+        return winningAlliance;
+    }
+
+    @Override public void setWinningAlliance(String winningAlliance) {
+        this.winningAlliance = winningAlliance;
     }
 
     public void setYear(int year) {
@@ -358,7 +367,6 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
         data.put(MatchesTable.MATCHNUM, getMatchNumber());
         data.put(MatchesTable.SETNUM, getSetNumber());
         data.put(MatchesTable.EVENT, getEventKey());
-        data.put(MatchesTable.TIMESTRING, getTimeString());
         data.put(MatchesTable.TIME, getTime());
         data.put(MatchesTable.ALLIANCES, getAlliances());
         data.put(MatchesTable.VIDEOS, getVideos());

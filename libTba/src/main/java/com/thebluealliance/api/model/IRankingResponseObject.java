@@ -25,15 +25,11 @@
 
 package com.thebluealliance.api.model;
 
-import java.util.Objects;
-import com.google.gson.annotations.SerializedName;
-import com.thebluealliance.api.model.RankingItem;
-import com.thebluealliance.api.model.RankingResponseObjectSortOrderInfo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.Nullable;
+
+import io.swagger.annotations.ApiModelProperty;
 
 
 /**
@@ -61,9 +57,9 @@ public interface IRankingResponseObject   {
   **/
   @ApiModelProperty(example = "null", required = true, value = "")
   
-  public RankingItem getRankings();
+  public IRankingItem getRankings();
 
-  public void setRankings(RankingItem rankings);
+  public void setRankings(IRankingItem rankings);
 
 
 
@@ -75,9 +71,9 @@ public interface IRankingResponseObject   {
   **/
   @ApiModelProperty(example = "null", required = true, value = "")
   
-  public List<RankingResponseObjectSortOrderInfo> getSortOrderInfo();
+  public List<IRankingResponseObjectSortOrderInfo> getSortOrderInfo();
 
-  public void setSortOrderInfo(List<RankingResponseObjectSortOrderInfo> sortOrderInfo);
+  public void setSortOrderInfo(List<IRankingResponseObjectSortOrderInfo> sortOrderInfo);
 
 }
 

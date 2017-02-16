@@ -33,12 +33,11 @@ public class TBAApiTest {
 
         //now, assert that all the properties are there
         assertEquals(event.getKey(), "2014ctgro");
-        assertEquals(event.getStartDate().longValue(), new Date(114, 2, 8).getTime());
-        assertEquals(event.getEndDate().longValue(), new Date(114, 2, 9).getTime());
+        assertEquals(event.getStartDate().getTime(), new Date(114, 2, 8).getTime());
+        assertEquals(event.getEndDate().getTime(), new Date(114, 2, 9).getTime());
         assertEquals(event.getName(), "Groton District Event");
         assertEquals(event.getShortName(), "Groton");
-        assertEquals(event.getOfficial(), true);
-        assertEquals(event.getLocation(), "Groton, CT, USA");
+        assertEquals(event.getAddress(), "Groton, CT, USA");
         assertEquals(event.getEventTypeEnum(), EventType.DISTRICT);
     }
 
@@ -60,7 +59,7 @@ public class TBAApiTest {
 
         assertEquals(team.getWebsite(), "http://www.uberbots.org");
         assertEquals(team.getName(), "UTC Fire and Security & Avon High School");
-        assertEquals(team.getLocation(), "Avon, CT, USA");
+        assertEquals(team.getAddress(), "Avon, CT, USA");
         assertEquals((int) team.getTeamNumber(), 1124);
         assertEquals(team.getKey(), "frc1124");
         assertEquals(team.getNickname(), "ÜberBots");
@@ -121,7 +120,6 @@ public class TBAApiTest {
                              "{\"blue\": {\"score\": 113, \"teams\": [\"frc1991\", \"frc230\", "
                              + "\"frc1699\"]}, \"red\": {\"score\": 120, \"teams\": [\"frc236\", "
                              + "\"frc237\", \"frc2064\"]}}"));
-        assertEquals(match.getTimeString(), "3:36 PM");
         assertEquals(match.getTime().longValue(), new Date(1394393760).getTime());
         assertEquals(match.getVideosJson(),
                      JSONHelper

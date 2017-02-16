@@ -364,7 +364,7 @@ public class EventHelperTest {
     private static Event mockRegularEvent(EventType type, int year, int week)  {
         Event event = mockEventType(type);
         when(event.getYear()).thenReturn(year);
-        when(event.getCompetitionWeek()).thenReturn(week);
+        when(event.getWeek()).thenReturn(week);
         return event;
     }
 }

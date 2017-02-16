@@ -1,13 +1,10 @@
 package com.thebluealliance.androidclient.models;
 
-import com.google.gson.JsonArray;
-
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.types.EventType;
@@ -38,31 +35,25 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     public static final int RENDER_BASIC = 0;
     public static final int RENDER_MYTBA_BUTTON = 1;
 
-    private String alliances = null;
-    private Integer competitionWeek = null;
-    private Long endTimestamp = null;
-    private String eventCode = null;
-    private Integer eventDistrict = null;
-    private String eventDistrictString = null;
-    private Integer eventType = null;
-    private String eventTypeString = null;
-    private String key = null;
-    private Long lastModified = null;
-    private String location = null;
-    private String name = null;
-    private Boolean official = null;
-    private String shortName = null;
-    private Long startTimestamp = null;
-    private String timezone = null;
-    private String venueAddress = null;
-    private String webcasts = null;
-    private String website = null;
-    private Integer year = null;
+    private String key;
+    private String eventCode;
+    private String name;
+    private Integer year;
 
-
-    private Date startDate;
-    private Date endDate;
-    private JsonArray alliancesJson;
+    private @Nullable Integer week;
+    private @Nullable Integer eventType;
+    private @Nullable String eventTypeString;
+    private @Nullable String shortName;
+    private @Nullable String address;
+    private @Nullable String district;
+    private @Nullable String gmapsUrl;
+    private @Nullable String locationName;
+    private @Nullable String webcasts;
+    private @Nullable String website;
+    private @Nullable Date endDate;
+    private @Nullable Date startDate;
+    private @Nullable String timezone;
+    private @Nullable Long lastModified;
 
     public static final String[] NOTIFICATION_TYPES = {
             NotificationTypes.UPCOMING_MATCH,
@@ -79,61 +70,43 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         endDate = null;
     }
 
-    @Nullable @Override public String getAlliances() {
-        return alliances;
+    @Nullable @Override
+    public Integer getWeek() {
+        return week;
     }
 
-    public JsonArray getAlliancesJson() {
-        return alliancesJson;
+    @Override
+    public void setWeek(@Nullable Integer competitionWeek) {
+        this.week = competitionWeek;
     }
 
-    public void setAlliancesJson(JsonArray alliancesJson) {
-        this.alliancesJson = alliancesJson;
+    @Override
+    public @Nullable Date getEndDate() {
+        return endDate;
     }
 
-    @Override public void setAlliances(String alliances) {
-        this.alliances = alliances;
-        setAlliancesJson(JSONHelper.getasJsonArray(alliances));
+    public void setEndDate(@Nullable Date endDate) {
+        this.endDate = endDate;
     }
 
-    @Nullable @Override public Integer getCompetitionWeek() {
-        return competitionWeek;
-    }
-
-    @Override public void setCompetitionWeek(Integer competitionWeek) {
-        this.competitionWeek = competitionWeek;
-    }
-
-    public Long getEndDate() {
-        return endTimestamp;
-    }
-
-    public void setEndDate(Long endTimestamp) {
-        this.endTimestamp = endTimestamp;
-    }
-
-    @Override public String getEventCode() {
+    @Override
+    public String getEventCode() {
         return eventCode;
     }
 
-    @Override public void setEventCode(String eventCode) {
+    @Override
+    public void setEventCode(String eventCode) {
         this.eventCode = eventCode;
     }
 
-    @Nullable @Override public Integer getEventDistrict() {
-        return eventDistrict;
+    @Override @Nullable
+    public String getDistrict() {
+        return district;
     }
 
-    @Override public void setEventDistrict(Integer eventDistrict) {
-        this.eventDistrict = eventDistrict;
-    }
-
-    @Nullable @Override public String getEventDistrictString() {
-        return eventDistrictString;
-    }
-
-    @Override public void setEventDistrictString(String eventDistrictString) {
-        this.eventDistrictString = eventDistrictString;
+    @Override
+    public void setDistrict(@Nullable String district) {
+        this.district = district;
     }
 
     @Nullable @Override public Integer getEventType() {
@@ -148,7 +121,7 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         return eventTypeString;
     }
 
-    @Override public void setEventTypeString(String eventTypeString) {
+    @Override public void setEventTypeString(@Nullable String eventTypeString) {
         this.eventTypeString = eventTypeString;
     }
 
@@ -164,16 +137,18 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         return lastModified;
     }
 
-    @Override public void setLastModified(Long lastModified) {
+    @Override public void setLastModified(@Nullable Long lastModified) {
         this.lastModified = lastModified;
     }
 
-    @Nullable @Override public String getLocation() {
-        return location;
+    @Override @Nullable
+    public String getAddress() {
+        return address;
     }
 
-    @Override public void setLocation(String location) {
-        this.location = location;
+    @Override
+    public void setAddress(@Nullable String address) {
+        this.address = address;
     }
 
     @Override public String getName() {
@@ -184,54 +159,41 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         this.name = name;
     }
 
-    @Nullable @Override public Boolean getOfficial() {
-        return official;
-    }
-
-    @Override public void setOfficial(Boolean official) {
-        this.official = official;
-    }
-
-    @Nullable @Override public String getShortName() {
+    @Nullable @Override
+    public String getShortName() {
         if (shortName == null || shortName.isEmpty()) {
             return getName();
         }
         return shortName;
     }
 
-    @Override public void setShortName(String shortName) {
+    @Override public void setShortName(@Nullable String shortName) {
         this.shortName = shortName;
     }
 
-    public Long getStartDate() {
-        return startTimestamp;
+    @Override
+    public void setStartDate(@Nullable Date startDate) {
+        this.startDate = startDate;
     }
 
-    public void setStartDate(Long startTimestamp) {
-        this.startTimestamp = startTimestamp;
+    @Override @Nullable
+    public Date getStartDate() {
+        return startDate;
     }
 
     @Nullable @Override public String getTimezone() {
         return timezone;
     }
 
-    @Override public void setTimezone(String timezone) {
+    @Override public void setTimezone(@Nullable String timezone) {
         this.timezone = timezone;
-    }
-
-    @Nullable @Override public String getVenueAddress() {
-        return venueAddress;
-    }
-
-    @Override public void setVenueAddress(String venueAddress) {
-        this.venueAddress = venueAddress;
     }
 
     @Nullable @Override public String getWebcasts() {
         return webcasts;
     }
 
-    @Override public void setWebcasts(String webcasts) {
+    @Override public void setWebcasts(@Nullable String webcasts) {
         this.webcasts = webcasts;
     }
 
@@ -257,13 +219,33 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         return year;
     }
 
+    @Override @Nullable
+    public String getGmapsUrl() {
+        return gmapsUrl;
+    }
+
+    @Override
+    public void setGmapsUrl(@Nullable String gmapsUrl) {
+        this.gmapsUrl = gmapsUrl;
+    }
+
+    @Override @Nullable
+    public String getLocationName() {
+        return locationName;
+    }
+
+    @Override public void
+    setLocationName(@Nullable String locationName) {
+        this.locationName = locationName;
+    }
+
     public void setStartDate(String startString) {
         if (startString.isEmpty()) {
             return;
         }
         try {
             startDate = ThreadSafeFormatters.parseEventDate(startString);
-            setStartDate(startDate.getTime());
+            setStartDate(startDate);
         } catch (ParseException ex) {
             //can't parse the date
             throw new IllegalArgumentException(
@@ -271,9 +253,13 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         }
     }
 
+    public void setStartDate(long timestamp) {
+        startDate = new Date(timestamp);
+    }
+
     public Date getFormattedStartDate() {
         if (startDate == null) {
-            startDate = new Date(getStartDate() != null ? getStartDate() : 0);
+            startDate = new Date(0);
         }
         return startDate;
     }
@@ -284,16 +270,20 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         }
         try {
             endDate = ThreadSafeFormatters.parseEventDate(endString);
-            setEndDate(endDate.getTime());
+            setEndDate(endDate);
         } catch (ParseException ex) {
             //can't parse the date
             throw new IllegalArgumentException("Invalid date format. Should be like yyyy-MM-dd");
         }
     }
 
+    public void setEndDate(long timestamp) {
+        endDate = new Date(timestamp);
+    }
+
     public Date getFormattedEndDate() {
         if (endDate == null) {
-            endDate = new Date(getEndDate() != null ? getEndDate() : 0);
+            endDate = new Date(0);
         }
         return endDate;
     }
@@ -315,7 +305,7 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         int firstWeek = Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
         int week = eventWeek - firstWeek;
         week = Math.max(week, 0); // Ensure that week is never <0
-        setCompetitionWeek(week);
+        setWeek(week);
     }
 
     public boolean isHappeningNow() {
@@ -366,10 +356,15 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     }
 
     public DistrictType getEventDistrictEnum() {
-        @Nullable Integer districtEnum = getEventDistrict();
-        return districtEnum != null
-               ? DistrictType.fromEnum(districtEnum)
+        @Nullable String districtKey = getDistrict();
+        return districtKey != null
+               ? DistrictType.fromAbbreviation(districtKey.substring(4))
                : DistrictType.NO_DISTRICT;
+    }
+
+    public String getEventDistrictString() {
+        DistrictType districtType = getEventDistrictEnum();
+        return districtType.getName();
     }
 
     public String getSearchTitles() {
@@ -388,7 +383,7 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
                                    getYear(),
                                    getShortName(),
                                    getDateString(),
-                                   getLocation(),
+                                   getAddress(),
                                    getEventDistrictString());
         switch (renderType) {
             case RENDER_MYTBA_BUTTON:
@@ -399,20 +394,22 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
 
     @Override
     public ContentValues getParams() {
+        @Nullable Date startDate = getStartDate();
+        @Nullable Date endDate = getEndDate();
         ContentValues params = new ContentValues();
         params.put(EventsTable.KEY, getKey());
         params.put(EventsTable.YEAR, getYear());
         params.put(EventsTable.NAME, getName());
         params.put(EventsTable.SHORTNAME, getShortName());
-        params.put(EventsTable.LOCATION, getLocation());
-        params.put(EventsTable.VENUE, getVenueAddress());
+        params.put(EventsTable.LOCATION, getAddress());
+        params.put(EventsTable.VENUE, getLocationName());
         params.put(EventsTable.TYPE, getEventType());
-        params.put(EventsTable.DISTRICT, getEventDistrict());
+        params.put(EventsTable.DISTRICT, getEventDistrictEnum().ordinal());
         params.put(EventsTable.DISTRICT_STRING, getEventDistrictString());
-        params.put(EventsTable.START, getStartDate());
-        params.put(EventsTable.END, getEndDate());
-        params.put(EventsTable.OFFICIAL, getOfficial());
-        params.put(EventsTable.WEEK, getCompetitionWeek());
+        params.put(EventsTable.START, startDate != null ? startDate.getTime() : 0);
+        params.put(EventsTable.END, endDate != null ? endDate.getTime() : 0);
+        params.put(EventsTable.OFFICIAL, false); // Deprecated
+        params.put(EventsTable.WEEK, getWeek());
         params.put(EventsTable.WEBCASTS, getWebcasts());
         params.put(EventsTable.WEBSITE, getWebsite());
         params.put(EventsTable.LAST_MODIFIED, getLastModified());

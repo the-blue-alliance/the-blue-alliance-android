@@ -25,7 +25,7 @@ public class DistrictListElement extends ListElement {
         super(district.getKey());
         key = district.getKey();
         year = district.getYear();
-        name = district.getName();
+        name = district.getDisplayName();
         this.numEvents = numEvents;
         this.showMyTba = showMyTba;
     }
