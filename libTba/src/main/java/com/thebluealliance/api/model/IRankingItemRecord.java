@@ -33,69 +33,45 @@ import javax.annotation.Nullable;
 
 
 /**
- * Robot
+ * RankingItemRecord
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-16T16:55:35.065-05:00")
-public interface IRobot   {
+public interface IRankingItemRecord   {
 
 
    /**
-   * A key identifying the robot object. Formed like [team_key]_[year]
-   * @return key
+   * Number of losses
+   * @return losses
   **/
-  @ApiModelProperty(example = "null", required = true, value = "A key identifying the robot object. Formed like [team_key]_[year]")
+  @ApiModelProperty(example = "null", required = true, value = "Number of losses")
   
-  public String getKey();
+  public Integer getLosses();
 
-  public void setKey(String key);
-
-
-
-   /**
-   * Timestamp this model was last modified
-   * @return lastModified
-  **/
-  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
-  @Nullable
-  public Long getLastModified();
-
-  public void setLastModified(Long lastModified);
+  public void setLosses(Integer losses);
 
 
 
    /**
-   * The robot name in this year
-   * @return name
+   * Number of ties
+   * @return ties
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The robot name in this year")
+  @ApiModelProperty(example = "null", required = true, value = "Number of ties")
   
-  public String getName();
+  public Integer getTies();
 
-  public void setName(String name);
-
-
-
-   /**
-   * The associated Team key
-   * @return teamKey
-  **/
-  @ApiModelProperty(example = "null", required = true, value = "The associated Team key")
-  
-  public String getTeamKey();
-
-  public void setTeamKey(String teamKey);
+  public void setTies(Integer ties);
 
 
 
    /**
-   * The year this Robot model referes to
-   * @return year
+   * Number of wins
+   * @return wins
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The year this Robot model referes to")
+  @ApiModelProperty(example = "null", required = true, value = "Number of wins")
   
-  public Integer getYear();
+  public Integer getWins();
 
-  public void setYear(Integer year);
+  public void setWins(Integer wins);
 
 }
 

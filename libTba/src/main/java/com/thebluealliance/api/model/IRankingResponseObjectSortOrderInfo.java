@@ -33,41 +33,17 @@ import javax.annotation.Nullable;
 
 
 /**
- * Robot
+ * RankingResponseObjectSortOrderInfo
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-16T16:55:35.065-05:00")
-public interface IRobot   {
+public interface IRankingResponseObjectSortOrderInfo   {
 
 
    /**
-   * A key identifying the robot object. Formed like [team_key]_[year]
-   * @return key
-  **/
-  @ApiModelProperty(example = "null", required = true, value = "A key identifying the robot object. Formed like [team_key]_[year]")
-  
-  public String getKey();
-
-  public void setKey(String key);
-
-
-
-   /**
-   * Timestamp this model was last modified
-   * @return lastModified
-  **/
-  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
-  @Nullable
-  public Long getLastModified();
-
-  public void setLastModified(Long lastModified);
-
-
-
-   /**
-   * The robot name in this year
+   * Description of this ranking column
    * @return name
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The robot name in this year")
+  @ApiModelProperty(example = "null", required = true, value = "Description of this ranking column")
   
   public String getName();
 
@@ -76,26 +52,14 @@ public interface IRobot   {
 
 
    /**
-   * The associated Team key
-   * @return teamKey
+   * How many significant figures to display
+   * @return precision
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The associated Team key")
+  @ApiModelProperty(example = "null", required = true, value = "How many significant figures to display")
   
-  public String getTeamKey();
+  public Integer getPrecision();
 
-  public void setTeamKey(String teamKey);
-
-
-
-   /**
-   * The year this Robot model referes to
-   * @return year
-  **/
-  @ApiModelProperty(example = "null", required = true, value = "The year this Robot model referes to")
-  
-  public Integer getYear();
-
-  public void setYear(Integer year);
+  public void setPrecision(Integer precision);
 
 }
 

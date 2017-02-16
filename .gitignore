@@ -67,3 +67,4 @@ libTba/swagger/swagger-codegen-cli.jar
 
 # Swagger spec for generation
 libTba/swagger/apiv2-swagger.mod.json
+libTba/swagger/apiv3-swagger.mod.json

@@ -27,28 +27,20 @@ package com.thebluealliance.api.model;
 
 import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
+import com.thebluealliance.api.model.RankingItem;
+import com.thebluealliance.api.model.RankingResponseObjectSortOrderInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Nullable;
 
 
 /**
- * Robot
+ * RankingResponseObject
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-16T16:55:35.065-05:00")
-public interface IRobot   {
-
-
-   /**
-   * A key identifying the robot object. Formed like [team_key]_[year]
-   * @return key
-  **/
-  @ApiModelProperty(example = "null", required = true, value = "A key identifying the robot object. Formed like [team_key]_[year]")
-  
-  public String getKey();
-
-  public void setKey(String key);
-
+public interface IRankingResponseObject   {
 
 
    /**
@@ -64,38 +56,28 @@ public interface IRobot   {
 
 
    /**
-   * The robot name in this year
-   * @return name
+   * Get rankings
+   * @return rankings
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The robot name in this year")
+  @ApiModelProperty(example = "null", required = true, value = "")
   
-  public String getName();
+  public RankingItem getRankings();
 
-  public void setName(String name);
+  public void setRankings(RankingItem rankings);
+
+
 
 
 
    /**
-   * The associated Team key
-   * @return teamKey
+   * Get sortOrderInfo
+   * @return sortOrderInfo
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The associated Team key")
+  @ApiModelProperty(example = "null", required = true, value = "")
   
-  public String getTeamKey();
+  public List<RankingResponseObjectSortOrderInfo> getSortOrderInfo();
 
-  public void setTeamKey(String teamKey);
-
-
-
-   /**
-   * The year this Robot model referes to
-   * @return year
-  **/
-  @ApiModelProperty(example = "null", required = true, value = "The year this Robot model referes to")
-  
-  public Integer getYear();
-
-  public void setYear(Integer year);
+  public void setSortOrderInfo(List<RankingResponseObjectSortOrderInfo> sortOrderInfo);
 
 }
 

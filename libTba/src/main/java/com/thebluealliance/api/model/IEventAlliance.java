@@ -29,25 +29,29 @@ import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Nullable;
 
 
 /**
- * Robot
+ * EventAlliance
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-16T16:55:35.065-05:00")
-public interface IRobot   {
+public interface IEventAlliance   {
+
+
 
 
    /**
-   * A key identifying the robot object. Formed like [team_key]_[year]
-   * @return key
+   * Get declines
+   * @return declines
   **/
-  @ApiModelProperty(example = "null", required = true, value = "A key identifying the robot object. Formed like [team_key]_[year]")
-  
-  public String getKey();
+  @ApiModelProperty(example = "null", value = "")
+  @Nullable
+  public List<String> getDeclines();
 
-  public void setKey(String key);
+  public void setDeclines(List<String> declines);
 
 
 
@@ -64,10 +68,10 @@ public interface IRobot   {
 
 
    /**
-   * The robot name in this year
+   * Name of this alliance that can be displayed
    * @return name
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The robot name in this year")
+  @ApiModelProperty(example = "null", required = true, value = "Name of this alliance that can be displayed")
   
   public String getName();
 
@@ -75,27 +79,17 @@ public interface IRobot   {
 
 
 
-   /**
-   * The associated Team key
-   * @return teamKey
-  **/
-  @ApiModelProperty(example = "null", required = true, value = "The associated Team key")
-  
-  public String getTeamKey();
-
-  public void setTeamKey(String teamKey);
-
 
 
    /**
-   * The year this Robot model referes to
-   * @return year
+   * Get picks
+   * @return picks
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The year this Robot model referes to")
+  @ApiModelProperty(example = "null", required = true, value = "")
   
-  public Integer getYear();
+  public List<String> getPicks();
 
-  public void setYear(Integer year);
+  public void setPicks(List<String> picks);
 
 }
 

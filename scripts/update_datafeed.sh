@@ -4,10 +4,10 @@
 # Usage ./scripts/update_datafeed.sh [-l <lib version>] [-a <tba-api version>]
 
 TBA_VERSION=2
-while getopts ":l:a:" opt; do
+while getopts ":l:v:" opt; do
   case $opt in
     l) LIB_VERSION="$OPTARG" && echo "Setting GCE Library Version to $LIB_VERSION" ;;
-    a) TBA_VERSION="$OPTARG" && echo "Using TBA APIv$TBA_VERSION" ;;
+    v) TBA_VERSION="$OPTARG" && echo "Using TBA APIv$TBA_VERSION" ;;
     \?) echo "Unknown option -$OPTARG" && usage
     ;;
   esac
@@ -57,19 +57,22 @@ PKG=src/main/java/com/thebluealliance/api
 APP_PKG=src/main/java/com/thebluealliance/androidclient/api
 DST=libTba/$PKG/
 rm -rf $DST
-rm -rf android/$APP_PKG/{call,rx}
+rm -f android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
+rm -f android/$APP_PKG/{call,rx}/DefaultApi.java
 mkdir -p $DST
 mkdir -p android/$APP_PKG
 cp -r libTba/swagger/tmp/$PKG/call/ android/$APP_PKG
 cp -r libTba/swagger/tmp/$PKG/rx/ android/$APP_PKG
 cp -r libTba/swagger/tmp/$PKG/model/ $DST
+cp libTba/swagger/tmp/docs/* doc/api/
 
 echo "Patching"
 OLD_NAME=DefaultApi
-NEW_NAME=TbaApiV2
+NEW_NAME=TbaApiV$TBA_VERSION
 
-for api in android/$APP_PKG/call/*Api.java; do mv $api "android/$APP_PKG/call/`basename $api .java`V3.java"; done;
-for api in android/$APP_PKG/rx/*Api.java; do mv $api "android/$APP_PKG/rx/`basename $api .java`V3.java"; done;
+mv android/$APP_PKG/call/DefaultApi.java android/$APP_PKG/call/TbaApiV$TBA_VERSION.java
+mv android/$APP_PKG/rx/DefaultApi.java android/$APP_PKG/rx/TbaApiV$TBA_VERSION.java
+perl -pi -e "s/$OLD_NAME/$NEW_NAME/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
 perl -pi -e "s/$OLD_NAME/$NEW_NAME/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
 perl -pi -e "s/thebluealliance/thebluealliance\.androidclient/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
 perl -pi -e "s/api\.model/models/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
@@ -77,13 +80,13 @@ perl -pi -e "s/Response<String>/Response<JsonElement>/g" android/$APP_PKG/{call,
 perl -pi -e "s/import rx\.Observable;/import com\.google\.gson\.JsonElement;\nimport rx\.Observable;/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
 
 # Rename models to start with I<name>.java
-#CUR=$(pwd)
-#cd libTba/$PKG/model
-#for f in *.java;  do
-#    NAME=`basename $f .java`
-#    mv "$f" "I$f";
-#done
-#cd $CUR
+CUR=$(pwd)
+cd libTba/$PKG/model
+for f in *.java;  do
+    NAME=`basename $f .java`
+    mv "$f" "I$f";
+done
+cd $CUR
 
 echo
 echo "Cleaning up"

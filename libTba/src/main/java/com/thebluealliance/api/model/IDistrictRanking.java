@@ -27,27 +27,28 @@ package com.thebluealliance.api.model;
 
 import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
+import com.thebluealliance.api.model.DistrictRankingEventPoints;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.annotation.Nullable;
 
 
 /**
- * Robot
+ * DistrictRanking
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-16T16:55:35.065-05:00")
-public interface IRobot   {
+public interface IDistrictRanking   {
 
 
    /**
-   * A key identifying the robot object. Formed like [team_key]_[year]
-   * @return key
+   * Get eventPoints
+   * @return eventPoints
   **/
-  @ApiModelProperty(example = "null", required = true, value = "A key identifying the robot object. Formed like [team_key]_[year]")
-  
-  public String getKey();
+  @ApiModelProperty(example = "null", value = "")
+  @Nullable
+  public DistrictRankingEventPoints getEventPoints();
 
-  public void setKey(String key);
+  public void setEventPoints(DistrictRankingEventPoints eventPoints);
 
 
 
@@ -64,38 +65,50 @@ public interface IRobot   {
 
 
    /**
-   * The robot name in this year
-   * @return name
+   * Number of points earned, in total
+   * @return pointTotal
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The robot name in this year")
+  @ApiModelProperty(example = "null", required = true, value = "Number of points earned, in total")
   
-  public String getName();
+  public Integer getPointTotal();
 
-  public void setName(String name);
+  public void setPointTotal(Integer pointTotal);
 
 
 
    /**
-   * The associated Team key
+   * Ranking of this team in the district
+   * @return rank
+  **/
+  @ApiModelProperty(example = "null", required = true, value = "Ranking of this team in the district")
+  
+  public Integer getRank();
+
+  public void setRank(Integer rank);
+
+
+
+   /**
+   * Extra points based on begin a first or second year team
+   * @return rookieBonus
+  **/
+  @ApiModelProperty(example = "null", required = true, value = "Extra points based on begin a first or second year team")
+  
+  public Integer getRookieBonus();
+
+  public void setRookieBonus(Integer rookieBonus);
+
+
+
+   /**
+   * Team these rankings are for
    * @return teamKey
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The associated Team key")
+  @ApiModelProperty(example = "null", required = true, value = "Team these rankings are for")
   
   public String getTeamKey();
 
   public void setTeamKey(String teamKey);
-
-
-
-   /**
-   * The year this Robot model referes to
-   * @return year
-  **/
-  @ApiModelProperty(example = "null", required = true, value = "The year this Robot model referes to")
-  
-  public Integer getYear();
-
-  public void setYear(Integer year);
 
 }
 
