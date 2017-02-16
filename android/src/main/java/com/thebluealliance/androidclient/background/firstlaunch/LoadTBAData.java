@@ -5,7 +5,7 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.api.ApiV2Constants;
+import com.thebluealliance.androidclient.api.ApiConstants;
 import com.thebluealliance.androidclient.api.call.TbaApiV2;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
@@ -111,7 +111,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     start = start == 0 ? 1 : start;
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_teams), start, end)));
                     Call<List<Team>> teamListCall =
-                            datafeed.fetchTeamPage(pageNum, ApiV2Constants.TBA_CACHE_WEB);
+                            datafeed.fetchTeamPage(pageNum, ApiConstants.TBA_CACHE_WEB);
                     Response<List<Team>> teamListResponse = teamListCall.execute();
                     if (teamListResponse == null
                             || !teamListResponse.isSuccessful()
@@ -146,7 +146,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     }
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_events), Integer.toString(year))));
                     Call<List<Event>> eventListCall =
-                            datafeed.fetchEventsInYear(year, ApiV2Constants.TBA_CACHE_WEB);
+                            datafeed.fetchEventsInYear(year, ApiConstants.TBA_CACHE_WEB);
                     Response<List<Event>> eventListResponse = eventListCall.execute();
                     if (eventListResponse == null
                             || !eventListResponse.isSuccessful()
@@ -179,7 +179,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_districts), year)));
                     AddDistrictKeys keyAdder = new AddDistrictKeys(year);
                     Call<List<District>> districtListCall =
-                            datafeed.fetchDistrictList(year, ApiV2Constants.TBA_CACHE_WEB);
+                            datafeed.fetchDistrictList(year, ApiConstants.TBA_CACHE_WEB);
                     Response<List<District>> districtListResponse = districtListCall.execute();
                     if (districtListResponse == null
                             || !districtListResponse.isSuccessful()

@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.di;
 
 import com.google.gson.Gson;
 
-import com.thebluealliance.androidclient.api.ApiV2Constants;
+import com.thebluealliance.androidclient.api.ApiConstants;
 import com.thebluealliance.androidclient.api.rx.TbaApiV2;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.APICache;
@@ -40,7 +40,7 @@ public class MockDatafeedModule {
             OkHttpClient okHttpClient,
             SharedPreferences prefs) {
         return new Retrofit.Builder()
-                .baseUrl(ApiV2Constants.TBA_URL)
+                .baseUrl(ApiConstants.TBA_URL)
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())

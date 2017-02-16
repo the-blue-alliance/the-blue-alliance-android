@@ -63,9 +63,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         }
 
         if (!isNull(object.get("week"))) {
-            // TBA server returns the first competition week as Week 0
-            // We consider "Week 0" to be preseason events
-            event.setWeek(object.get("week").getAsInt() + 1);
+            event.setWeek(object.get("week").getAsInt());
         } else {
             event.setCompetitionWeekFromStartDate();
         }

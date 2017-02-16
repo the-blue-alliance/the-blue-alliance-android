@@ -1,10 +1,12 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.config.ConfigModule;
 import com.thebluealliance.androidclient.datafeed.deserializers.APIStatusDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictDeserializer;
@@ -34,6 +36,7 @@ import com.thebluealliance.api.model.ITeam;
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
 
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -44,7 +47,7 @@ import okhttp3.OkHttpClient;
 /**
  * Dagger module that handles OkHttp and Gson
  */
-@Module(includes = {TBAAndroidModule.class})
+@Module(includes = {TBAAndroidModule.class, ConfigModule.class})
 public class HttpModule {
 
     public static int CACHE_SIZE = 10 * 1024 * 1024;
@@ -57,9 +60,14 @@ public class HttpModule {
     }
 
     @Provides @Singleton
-    public OkHttpClient getOkHttp(Cache responseCache) {
+    public APIv3RequestInterceptor provideApiRequestInterceptor(@Nullable FirebaseRemoteConfig config) {
+        return new APIv3RequestInterceptor(config);
+    }
+
+    @Provides @Singleton
+    public OkHttpClient getOkHttp(Cache responseCache, APIv3RequestInterceptor interceptor) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.addInterceptor(new APIv2RequestInterceptor());
+        builder.addInterceptor(interceptor);
         if (Utilities.isDebuggable()) {
             builder.addNetworkInterceptor(new StethoInterceptor());
         }
