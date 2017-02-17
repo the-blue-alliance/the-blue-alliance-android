@@ -73,6 +73,7 @@ public class EventAlliance implements IEventAlliance {
     public static EventDetail toEventDetail(List<EventAlliance> alliances,
                                             String eventKey,
                                             Gson gson) {
+        if (alliances == null) return null;
         JsonArray allianceArray = new JsonArray();
         for (int i = 0; i < alliances.size(); i++) {
             EventAlliance alliance = alliances.get(i);
@@ -81,7 +82,7 @@ public class EventAlliance implements IEventAlliance {
         }
 
         EventDetail eventDetail = new EventDetail(eventKey, EventDetailType.ALLIANCES);
-        eventDetail.setJsonData(allianceArray.getAsString());
+        eventDetail.setJsonData(allianceArray.toString());
         return eventDetail;
     }
 

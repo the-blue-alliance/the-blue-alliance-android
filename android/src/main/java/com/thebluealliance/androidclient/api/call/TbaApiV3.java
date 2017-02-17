@@ -293,7 +293,7 @@ public interface TbaApiV3 {
    * @return Call&lt;List<Event>&gt;
    */
   
-  @GET("api/v3/team/{team_key}/{year}/events")
+  @GET("api/v3/team/{team_key}//events/{year}")
   Call<List<Event>> fetchTeamEvents(
     @Path("team_key") String teamKey, @Path("year") Integer year, @Header("X-TBA-Cache") String xTBACache
   );

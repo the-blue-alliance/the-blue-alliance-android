@@ -19,8 +19,11 @@ public class JsonToEventDetail implements Func1<JsonElement, EventDetail> {
 
     @Override
     public EventDetail call(JsonElement data) {
+        if (data == null || data.isJsonNull()) {
+            return null;
+        }
         EventDetail detail = new EventDetail(mEventKey, mEventDetailType);
-        detail.setJsonData(data.getAsString());
+        detail.setJsonData(data.toString());
         return detail;
     }
 }

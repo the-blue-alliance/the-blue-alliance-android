@@ -6,6 +6,8 @@ import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.api.ApiConstants;
 
+import android.content.SharedPreferences;
+
 import java.io.IOException;
 
 import okhttp3.CacheControl;
@@ -18,31 +20,41 @@ import okhttp3.Response;
  */
 public class APIv3RequestInterceptor implements Interceptor {
 
-    public static final String APIV3_KEY = "apiv3_auth_key";
-    public static final String APIV3_CACHE_BUST = "apiv3_edge_cache_bust";
-    private static String sApiKey;
-    private static String sCacheBust;
+    private static final String APIV3_KEY = "apiv3_auth_key";
+    private static final String APIV3_CACHE_BUST = "apiv3_edge_cache_bust";
 
-    public APIv3RequestInterceptor() {
+    private final SharedPreferences mPrefs;
+
+    public APIv3RequestInterceptor(SharedPreferences sharedPreferences) {
+        mPrefs = sharedPreferences;
     }
 
-    public static void updateApiKey(FirebaseRemoteConfig config) {
-        sApiKey = config.getString(APIV3_KEY);
-        sCacheBust = config.getString(APIV3_CACHE_BUST);
+    public static void updateApiKeys(FirebaseRemoteConfig config, SharedPreferences prefs) {
+        prefs.edit()
+                .putString(APIV3_KEY, config.getString(APIV3_KEY))
+                .putString(APIV3_CACHE_BUST, config.getString(APIV3_CACHE_BUST))
+                .apply();
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request originalRequest = chain.request();
         String url = originalRequest.url().toString();
+        if (!url.contains("thebluealliance.com/api/v3")) {
+            return chain.proceed(originalRequest);
+        }
 
         Request.Builder newRequestBuilder = originalRequest.newBuilder()
-            .addHeader("X-TBA-Auth-Key", sApiKey)
             .addHeader("User-Agent", Constants.getUserAgent() + " (gzip)");  // Include 'gzip' to force App Engine to serve gzipped content. https://cloud.google.com/appengine/kb/#compression
 
+
+        String apiKey = mPrefs.getString(APIV3_KEY, "");
+        newRequestBuilder.addHeader("X-TBA-Auth-Key", apiKey);
+
         // Configurable Edge-Cache busting
-        if (sCacheBust != null && url.contains("thebluealliance.com/api/v3")) {
-            url += "?cacheBust=" + sCacheBust;
+        String cacheBust = mPrefs.getString(APIV3_CACHE_BUST, "");
+        if (!cacheBust.isEmpty()) {
+            url += "?cacheBust=" + cacheBust;
             newRequestBuilder.url(url);
         }
         TbaLogger.d("FETCHING " + url);
@@ -64,6 +76,11 @@ public class APIv3RequestInterceptor implements Interceptor {
 
         Request newRequest = newRequestBuilder.build();
 
-        return chain.proceed(newRequest);
+        Response response = chain.proceed(newRequest);
+
+        if (!response.isSuccessful()) {
+            TbaLogger.w("NET ERROR " + url + " " + response.code() + " " + response.message());
+        }
+        return response;
     }
 }

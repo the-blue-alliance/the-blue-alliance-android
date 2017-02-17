@@ -415,7 +415,7 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
                                    getYear(),
                                    getShortName(),
                                    getDateString(),
-                                   getAddress(),
+                                   getLocation(),
                                    getEventDistrictString());
         switch (renderType) {
             case RENDER_MYTBA_BUTTON:

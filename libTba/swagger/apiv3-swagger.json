@@ -55,7 +55,7 @@
         }
       }
     },
-    "/api/v3/team/{team_key}/{year}/events": {
+    "/api/v3/team/{team_key}//events/{year}": {
       "get": {
         "summary": "Team Events Request",
         "operationId": "fetchTeamEvents",

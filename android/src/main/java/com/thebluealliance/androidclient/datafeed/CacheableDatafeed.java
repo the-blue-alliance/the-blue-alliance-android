@@ -185,7 +185,7 @@ public class CacheableDatafeed {
                 Database.TABLE_EVENTDETAILS, EventDetailsTable.KEY + " = ?", new
                         String[]{EventDetail.buildKey(eventKey, EventDetailType.RANKINGS)}
         );
-        return mAPICache.fetchEventAlliancse(eventKey).concatWith(apiData);
+        return mAPICache.fetchEventAlliances(eventKey).concatWith(apiData);
     }
 
     public Observable<List<Match>> fetchEventMatches(String eventKey, String cacheHeader) {

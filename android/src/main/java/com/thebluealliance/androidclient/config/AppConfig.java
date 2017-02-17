@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.APIv3RequestInterceptor;
 
+import android.content.SharedPreferences;
 import android.support.annotation.WorkerThread;
 
 import java.util.concurrent.ExecutionException;
@@ -20,11 +21,13 @@ public class AppConfig {
     private static final long CACHE_EXIPIRATION = 3600; // One hour in seconds
 
     private final @Nullable FirebaseRemoteConfig mFirebaseRemoteConfig;
+    private final SharedPreferences mPrefs;
     private Task<Void> mActiveTask;
 
     @Inject
-    public AppConfig(@Nullable FirebaseRemoteConfig firebaseRemoteConfig) {
+    public AppConfig(@Nullable FirebaseRemoteConfig firebaseRemoteConfig, SharedPreferences prefs) {
         mFirebaseRemoteConfig = firebaseRemoteConfig;
+        mPrefs = prefs;
         mActiveTask = null;
     }
 
@@ -73,7 +76,7 @@ public class AppConfig {
                          * Here, we atone for sins of the past
                          */
                         Analytics.setAnalyticsId(mFirebaseRemoteConfig.getString(Analytics.PROD_ANALYTICS_KEY));
-                        APIv3RequestInterceptor.updateApiKey(mFirebaseRemoteConfig);
+                        APIv3RequestInterceptor.updateApiKeys(mFirebaseRemoteConfig, mPrefs);
                     } else {
                         TbaLogger.e("Unable to update remote config", task.getException());
                     }

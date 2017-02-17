@@ -19,6 +19,7 @@ public class AddEventKeyToRankings implements Func1<RankingResponseObject, Event
 
     @Override
     public EventDetail call(RankingResponseObject rankingResponseObject) {
+        if (rankingResponseObject == null) return null;
         rankingResponseObject.setEventKey(mEventKey);
         return rankingResponseObject.toEventDetail(mGson);
     }

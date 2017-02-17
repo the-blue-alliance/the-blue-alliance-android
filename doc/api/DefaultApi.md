@@ -24,7 +24,7 @@ Method | HTTP request | Description
 [**fetchTeamAtEventAwards**](DefaultApi.md#fetchTeamAtEventAwards) | **GET** api/v3/team/{team_key}/event/{event_key}/awards | Team Event Awards Request
 [**fetchTeamAtEventMatches**](DefaultApi.md#fetchTeamAtEventMatches) | **GET** api/v3/team/{team_key}/event/{event_key}/matches | Team Event Matches Request
 [**fetchTeamDistricts**](DefaultApi.md#fetchTeamDistricts) | **GET** api/v3/team/{team_key}/districts | Team Districts Request
-[**fetchTeamEvents**](DefaultApi.md#fetchTeamEvents) | **GET** api/v3/team/{team_key}/{year}/events | Team Events Request
+[**fetchTeamEvents**](DefaultApi.md#fetchTeamEvents) | **GET** api/v3/team/{team_key}//events/{year} | Team Events Request
 [**fetchTeamMediaInYear**](DefaultApi.md#fetchTeamMediaInYear) | **GET** api/v3/team/{team_key}/media/{year} | Team Media Request
 [**fetchTeamPage**](DefaultApi.md#fetchTeamPage) | **GET** api/v3/teams/{page} | Team List Request
 [**fetchTeamRobots**](DefaultApi.md#fetchTeamRobots) | **GET** api/v3/team/{team_key}/robots | Team Robots Request

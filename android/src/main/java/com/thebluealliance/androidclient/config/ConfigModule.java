@@ -6,6 +6,8 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.TbaLogger;
 
+import android.content.SharedPreferences;
+
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
@@ -34,7 +36,7 @@ public class ConfigModule {
     }
 
     @Provides @Singleton
-    public AppConfig provideAppConfig(@Nullable FirebaseRemoteConfig config) {
-        return new AppConfig(config);
+    public AppConfig provideAppConfig(@Nullable FirebaseRemoteConfig config, SharedPreferences prefs) {
+        return new AppConfig(config, prefs);
     }
 }

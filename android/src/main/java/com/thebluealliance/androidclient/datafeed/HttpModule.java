@@ -40,6 +40,7 @@ import com.thebluealliance.api.model.IRankingResponseObject;
 import com.thebluealliance.api.model.ITeam;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.VisibleForTesting;
 
 import javax.inject.Singleton;
@@ -65,8 +66,8 @@ public class HttpModule {
     }
 
     @Provides @Singleton
-    public APIv3RequestInterceptor provideApiRequestInterceptor() {
-        return new APIv3RequestInterceptor();
+    public APIv3RequestInterceptor provideApiRequestInterceptor(SharedPreferences prefs) {
+        return new APIv3RequestInterceptor(prefs);
     }
 
     @Provides @Singleton

@@ -238,7 +238,9 @@ public class APICache {
             try {
                 String dbKey = EventDetail.buildKey(eventKey, EventDetailType.RANKINGS);
                 EventDetail detail = mDb.getEventDetailsTable().get(dbKey);
-                observer.onNext(detail.getDataForRankings(mGson));
+                if (detail != null) {
+                    observer.onNext(detail.getDataForRankings(mGson));
+                }
                 observer.onCompleted();
             } catch (Exception e) {
                 observer.onError(e);
@@ -246,12 +248,14 @@ public class APICache {
         });
     }
 
-    public Observable<List<EventAlliance>> fetchEventAlliancse(String eventKey) {
+    public Observable<List<EventAlliance>> fetchEventAlliances(String eventKey) {
         return Observable.create((observer) -> {
             try {
                 String dbKey = EventDetail.buildKey(eventKey, EventDetailType.ALLIANCES);
                 EventDetail detail = mDb.getEventDetailsTable().get(dbKey);
-                observer.onNext(detail.getDataForAlliances(mGson));
+                if (detail != null) {
+                    observer.onNext(detail.getDataForAlliances(mGson));
+                }
                 observer.onCompleted();
             } catch (Exception e) {
                 observer.onError(e);
@@ -278,7 +282,9 @@ public class APICache {
            try {
                String dbKey = EventDetail.buildKey(eventKey, type);
                EventDetail detail = mDb.getEventDetailsTable().get(dbKey);
-               observer.onNext(detail.getDataAsJson(mGson));
+               if (detail != null) {
+                   observer.onNext(detail.getDataAsJson(mGson));
+               }
                observer.onCompleted();
            } catch (Exception e) {
                observer.onError(e);

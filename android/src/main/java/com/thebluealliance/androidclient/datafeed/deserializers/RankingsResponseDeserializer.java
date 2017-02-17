@@ -31,19 +31,24 @@ public class RankingsResponseDeserializer implements JsonDeserializer<RankingRes
         List<IRankingItem> teamRanks = new ArrayList<>();
         List<IRankingResponseObjectSortOrderInfo> sortOrders = new ArrayList<>();
 
-        JsonArray rankJson = rankingsObject.get("rankings").getAsJsonArray();
-        JsonArray sortOrderJson = rankingsObject.get("sort_order_info").getAsJsonArray();
 
-        for (int i = 0; i < rankJson.size(); i++) {
-            teamRanks.add(context.deserialize(rankJson.get(i), RankingItem.class));
+        if (!isNull(rankingsObject.get("rankings"))) {
+            JsonArray rankJson = rankingsObject.get("rankings").getAsJsonArray();
+            for (int i = 0; i < rankJson.size(); i++) {
+                teamRanks.add(context.deserialize(rankJson.get(i), RankingItem.class));
+            }
         }
 
-        for (int i = 0; i < sortOrderJson.size(); i++) {
-            RankingResponseObjectSortOrderInfo column = new RankingResponseObjectSortOrderInfo();
-            JsonObject sortItem = sortOrderJson.get(i).getAsJsonObject();
-            column.setName(sortItem.get("name").getAsString());
-            column.setPrecision(sortItem.get("precision").getAsInt());
-            sortOrders.add(column);
+        if (!isNull(rankingsObject.get("sort_order_info"))) {
+            JsonArray sortOrderJson = rankingsObject.get("sort_order_info").getAsJsonArray();
+            for (int i = 0; i < sortOrderJson.size(); i++) {
+                RankingResponseObjectSortOrderInfo column = new RankingResponseObjectSortOrderInfo();
+
+                JsonObject sortItem = sortOrderJson.get(i).getAsJsonObject();
+                column.setName(sortItem.get("name").getAsString());
+                column.setPrecision(sortItem.get("precision").getAsInt());
+                sortOrders.add(column);
+            }
         }
 
         rankingResponse.setRankings(teamRanks);
@@ -70,5 +75,9 @@ public class RankingsResponseDeserializer implements JsonDeserializer<RankingRes
         }
         data.add("sort_order_info", sortOrders);
         return data;
+    }
+
+    private static boolean isNull(JsonElement element) {
+        return element == null || element.isJsonNull();
     }
 }

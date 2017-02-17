@@ -56,7 +56,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         if (isNull(object.get("city")) || isNull(object.get("state_prov")) || isNull(object.get("country"))) {
             event.setLocation("");
         } else {
-            event.setLocation(object.get("city") + ", " + object.get("state_prov") + ", " + object.get("country"));
+            event.setLocation(object.get("city").getAsString() + ", " + object.get("state_prov").getAsString() + ", " + object.get("country").getAsString());
         }
 
         if (object.has("event_type")) {
@@ -70,7 +70,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         }
 
         if (!isNull(object.get("week"))) {
-            event.setWeek(object.get("week").getAsInt());
+            event.setWeek(object.get("week").getAsInt() + 1);
         } else {
             event.setCompetitionWeekFromStartDate();
         }

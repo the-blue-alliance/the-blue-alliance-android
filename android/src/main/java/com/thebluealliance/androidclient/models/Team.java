@@ -196,7 +196,7 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
             @Nullable @RenderType Integer renderType) {
         int safeRenderType = renderType == null ? RENDER_BASIC : renderType;
         TeamViewModel model = new TeamViewModel(getKey(), getTeamNumber(), getNickname(),
-                                                getLocationName());
+                                                getLocation());
         model.setShowLinkToTeamDetails(false);
         model.setShowMyTbaDetails(false);
         switch (safeRenderType) {
