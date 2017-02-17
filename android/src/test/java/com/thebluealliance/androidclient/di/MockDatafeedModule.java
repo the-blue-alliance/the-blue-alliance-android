@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.api.ApiConstants;
 import com.thebluealliance.androidclient.api.rx.TbaApiV2;
+import com.thebluealliance.androidclient.api.rx.TbaApiV3;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
@@ -62,6 +63,16 @@ public class MockDatafeedModule {
     @Provides @Singleton @Named("tba_api")
     public TbaApiV2 provideRxTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
         return Mockito.mock(TbaApiV2.class);
+    }
+
+    @Provides @Singleton @Named("tba_apiv3_rx")
+    public TbaApiV3 provideRxApiv3() {
+        return Mockito.mock(TbaApiV3.class);
+    }
+
+    @Provides @Singleton @Named("tba_apiv3_call")
+    public com.thebluealliance.androidclient.api.call.TbaApiV3 provideCallApiV3() {
+        return Mockito.mock(com.thebluealliance.androidclient.api.call.TbaApiV3.class);
     }
 
     @Provides @Singleton

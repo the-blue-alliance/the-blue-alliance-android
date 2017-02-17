@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Match
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-16T16:55:35.065-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T11:25:52.522-05:00")
 public interface IMatch   {
 
 
@@ -76,7 +76,7 @@ public interface IMatch   {
 
 
    /**
-   * Event key of the event the match was played at.
+   * IEvent key of the event the match was played at.
    * @return eventKey
   **/
   @ApiModelProperty(example = "null", required = true, value = "Event key of the event the match was played at.")

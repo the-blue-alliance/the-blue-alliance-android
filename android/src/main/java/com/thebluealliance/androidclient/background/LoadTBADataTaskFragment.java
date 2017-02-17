@@ -1,7 +1,8 @@
 package com.thebluealliance.androidclient.background;
 
-import com.thebluealliance.androidclient.api.call.TbaApiV2;
+import com.thebluealliance.androidclient.api.call.TbaApiV3;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
 import com.thebluealliance.androidclient.database.writers.EventListWriter;
@@ -14,11 +15,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.LoadTBADataCallbacks {
 
     DatafeedComponent mComponent;
-    @Inject TbaApiV2 mDatafeed;
+    @Inject @Named("tba_apiv3_call") TbaApiV3 mDatafeed;
+    @Inject AppConfig mConfig;
     @Inject Database mDb;
     @Inject TeamListWriter mTeamWriter;
     @Inject EventListWriter mEventWriter;
@@ -61,7 +64,7 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
         }
 
         if (task == null) {
-            task = new LoadTBAData(mDatafeed, this, getActivity(), mDb, mTeamWriter, mEventWriter, mDistrictWriter);
+            task = new LoadTBAData(mDatafeed, mConfig, this, getActivity(), mDb, mTeamWriter, mEventWriter, mDistrictWriter);
             task.execute(dataToLoad);
         }
     }

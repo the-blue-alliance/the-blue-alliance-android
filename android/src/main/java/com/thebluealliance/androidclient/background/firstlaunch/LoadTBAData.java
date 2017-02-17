@@ -6,7 +6,8 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.api.ApiConstants;
-import com.thebluealliance.androidclient.api.call.TbaApiV2;
+import com.thebluealliance.androidclient.api.call.TbaApiV3;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
 import com.thebluealliance.androidclient.database.writers.EventListWriter;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -41,7 +43,8 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             LOAD_EVENTS = 1,
             LOAD_DISTRICTS = 2;
 
-    private TbaApiV2 datafeed;
+    private TbaApiV3 datafeed;
+    private AppConfig config;
     private LoadTBADataCallbacks callbacks;
     private Context context;
     private long startTime;
@@ -50,9 +53,10 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
     private EventListWriter mEventWriter;
     private DistrictListWriter mDistrictWriter;
 
-    public LoadTBAData(TbaApiV2 datafeed, LoadTBADataCallbacks callbacks, Context c,
+    public LoadTBAData(TbaApiV3 datafeed, AppConfig config, LoadTBADataCallbacks callbacks, Context c,
                        Database db, TeamListWriter teamWriter, EventListWriter eventWriter, DistrictListWriter districtWriter) {
         this.datafeed = datafeed;
+        this.config = config;
         this.callbacks = callbacks;
         this.context = c.getApplicationContext();
         this.startTime = System.currentTimeMillis();
@@ -88,6 +92,10 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
          */
 
         try {
+            /* First, do a blocking update of Remote Config */
+            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, context.getString(R.string.loading_config)));
+            config.updateRemoteDataBlocking();
+
             Call<ApiStatus> statusCall = datafeed.fetchApiStatus();
             Response<ApiStatus> statusResponse = statusCall.execute();
             if (!statusResponse.isSuccessful() || statusResponse.body() == null) {
@@ -113,13 +121,11 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     Call<List<Team>> teamListCall =
                             datafeed.fetchTeamPage(pageNum, ApiConstants.TBA_CACHE_WEB);
                     Response<List<Team>> teamListResponse = teamListCall.execute();
-                    if (teamListResponse == null
-                            || !teamListResponse.isSuccessful()
-                            || teamListResponse.body() == null) {
+                    if (teamListResponse == null || !teamListResponse.isSuccessful()) {
                         onConnectionError();
                         return null;
                     }
-                    if (teamListResponse.body().isEmpty()) {
+                    if (teamListResponse.body() == null || teamListResponse.body().isEmpty()) {
                         // No teams found for a page; we are done
                         break;
                     }
@@ -149,11 +155,11 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                             datafeed.fetchEventsInYear(year, ApiConstants.TBA_CACHE_WEB);
                     Response<List<Event>> eventListResponse = eventListCall.execute();
                     if (eventListResponse == null
-                            || !eventListResponse.isSuccessful()
-                            || eventListResponse.body() == null) {
+                            || !eventListResponse.isSuccessful()) {
                         onConnectionError();
                         return null;
                     }
+                    if (eventListResponse.body() == null) continue;
                     Date lastModified = eventListResponse.headers().getDate("Last-Modified");
                     List<Event> responseBody = eventListResponse.body();
                     if (lastModified != null) {
@@ -244,10 +250,12 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             ex.printStackTrace();
             // Alert the user that there was a problem
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_ERROR, Utilities.exceptionStacktraceToString(ex)));
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             /* Some sort of network error */
             e.printStackTrace();
             onConnectionError();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
         return null;
     }

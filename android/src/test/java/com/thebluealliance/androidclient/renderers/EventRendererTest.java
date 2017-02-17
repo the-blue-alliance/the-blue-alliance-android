@@ -3,10 +3,12 @@ package com.thebluealliance.androidclient.renderers;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
+import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.WebcastListElement;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.types.ModelType;
 
 import org.junit.Before;
@@ -25,6 +27,7 @@ import rx.Observable;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @Config(manifest = Config.NONE)
@@ -36,12 +39,14 @@ public class EventRendererTest  {
     @Mock APICache mDatafeed;
 
     private EventRenderer mRenderer;
+    private List<EventAlliance> mAlliances;
     private Event mEvent;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         mEvent = ModelMaker.getModel(Event.class, EVENT_KEY);
+        mAlliances = ModelMaker.getModelList(EventAlliance.class, "2016nytr_alliances_apiv3");
         mRenderer = new EventRenderer(mDatafeed);
     }
 
@@ -83,32 +88,22 @@ public class EventRendererTest  {
     }
 
     @Test
-    public void testRenderAlliances() {
-        List<ListItem> elements = mRenderer.renderAlliances(mEvent);
-        assertAllianceList(elements);
-    }
-
-    @Test
     public void testRenderAlliancesWithList() {
         List<ListItem> elements = new ArrayList<>();
-        mRenderer.renderAlliances(mEvent, elements, null);
+        mRenderer.renderAlliances(mAlliances, elements, null);
         assertAllianceList(elements);
     }
 
     private void assertAllianceList(List<ListItem> alliances) {
         assertNotNull(alliances);
-        // TODO(773) Needs EventDetailsA
-        /*
         assertEquals(alliances.size(), 8);
 
-        JsonArray jsonData = JSONHelper.getasJsonArray(mEvent.getAlliances());
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < mAlliances.size(); i++) {
             assertTrue(alliances.get(i) instanceof AllianceListElement);
             AllianceListElement alliance = (AllianceListElement)alliances.get(i);
             assertEquals(alliance.eventKey, EVENT_KEY);
             assertEquals(alliance.number, (i + 1));
-            assertEquals(alliance.teams, jsonData.get(i).getAsJsonObject().get("picks"));
+            assertEquals(alliance.teams, mAlliances.get(i).getPicks());
         }
-        */
     }
 }

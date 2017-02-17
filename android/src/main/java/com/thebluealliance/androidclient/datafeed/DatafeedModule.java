@@ -104,8 +104,8 @@ public class DatafeedModule {
 
 
     @Provides @Singleton
-    public APICache provideApiCache(Database db) {
-        return new APICache(db);
+    public APICache provideApiCache(Database db, Gson gson) {
+        return new APICache(db, gson);
     }
 
     @Provides @Singleton
@@ -113,8 +113,9 @@ public class DatafeedModule {
       @Named("tba_apiv3_rx") TbaApiV3 retrofit,
       APICache cache,
       DatabaseWriter writer,
+      Gson gson,
       RetrofitResponseMap responseMap) {
-        return new CacheableDatafeed(retrofit, cache, writer, responseMap);
+        return new CacheableDatafeed(retrofit, cache, writer, gson, responseMap);
     }
 
     @Provides @Singleton

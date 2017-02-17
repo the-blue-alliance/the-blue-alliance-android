@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.models;
 
+import com.google.gson.Gson;
+
+import com.thebluealliance.androidclient.types.EventDetailType;
 import com.thebluealliance.api.model.IRankingItem;
 import com.thebluealliance.api.model.IRankingResponseObject;
 import com.thebluealliance.api.model.IRankingResponseObjectSortOrderInfo;
@@ -10,15 +13,17 @@ import javax.annotation.Nullable;
 
 public class RankingResponseObject implements IRankingResponseObject {
 
-    private IRankingItem rankings;
+    private List<IRankingItem> rankings;
     private List<IRankingResponseObjectSortOrderInfo> sortOrderInfo;
+    private String eventKey;
+
     private @Nullable Long lastModified;
 
-    @Override public IRankingItem getRankings() {
+    @Override public List<IRankingItem> getRankings() {
         return rankings;
     }
 
-    @Override public void setRankings(IRankingItem rankings) {
+    @Override public void setRankings(List<IRankingItem> rankings) {
         this.rankings = rankings;
     }
 
@@ -31,11 +36,27 @@ public class RankingResponseObject implements IRankingResponseObject {
         this.sortOrderInfo = sortOrderInfo;
     }
 
+    public String getEventKey() {
+        return eventKey;
+    }
+
+    public void setEventKey(String eventKey) {
+        this.eventKey = eventKey;
+    }
+
     @Override @Nullable public Long getLastModified() {
         return lastModified;
     }
 
     @Override public void setLastModified(@Nullable Long lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public EventDetail toEventDetail(Gson gson) {
+        EventDetail eventDetail = new EventDetail(eventKey, EventDetailType.RANKINGS);
+        String rankingJson = gson.toJson(this, RankingResponseObject.class);
+        eventDetail.setJsonData(rankingJson);
+        eventDetail.setLastModified(lastModified);
+        return eventDetail;
     }
 }

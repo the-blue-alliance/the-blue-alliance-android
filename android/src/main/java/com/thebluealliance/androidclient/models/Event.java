@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
 import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
+import com.thebluealliance.api.model.IDistrict;
 import com.thebluealliance.api.model.IEvent;
 
 import android.content.ContentValues;
@@ -45,9 +46,11 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     private @Nullable String eventTypeString;
     private @Nullable String shortName;
     private @Nullable String address;
-    private @Nullable String district;
+    private @Nullable IDistrict district;
+    private @Nullable String districtKey;
     private @Nullable String gmapsUrl;
     private @Nullable String locationName;
+    private @Nullable String location;
     private @Nullable String webcasts;
     private @Nullable String website;
     private @Nullable Date endDate;
@@ -77,7 +80,20 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
 
     @Override
     public void setWeek(@Nullable Integer competitionWeek) {
-        this.week = competitionWeek;
+        if (competitionWeek == null) {
+            /* Fall back and calculate the week, mainly for offseason events */
+            Date start;
+            start = getFormattedStartDate();
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(start.getTime());
+            int eventWeek = cal.get(Calendar.WEEK_OF_YEAR);
+            int firstWeek = Utilities.getFirstCompWeek(cal.get(Calendar.YEAR));
+            int week = eventWeek - firstWeek;
+            this.week = Math.max(week, 0); // Ensure that week is never <0
+        } else {
+            /* TBA Server regards 'week 0' as the first competition week */
+            this.week = competitionWeek;
+        }
     }
 
     @Override
@@ -100,12 +116,12 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     }
 
     @Override @Nullable
-    public String getDistrict() {
+    public IDistrict getDistrict() {
         return district;
     }
 
     @Override
-    public void setDistrict(@Nullable String district) {
+    public void setDistrict(@Nullable IDistrict district) {
         this.district = district;
     }
 
@@ -239,6 +255,22 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         this.locationName = locationName;
     }
 
+    @Nullable public String getDistrictKey() {
+        return districtKey;
+    }
+
+    public void setDistrictKey(@Nullable String districtKey) {
+        this.districtKey = districtKey;
+    }
+
+    @Nullable public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(@Nullable String location) {
+        this.location = location;
+    }
+
     public void setStartDate(String startString) {
         if (startString.isEmpty()) {
             return;
@@ -356,9 +388,9 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     }
 
     public DistrictType getEventDistrictEnum() {
-        @Nullable String districtKey = getDistrict();
-        return districtKey != null
-               ? DistrictType.fromAbbreviation(districtKey.substring(4))
+        @Nullable IDistrict district = getDistrict();
+        return district != null
+               ? DistrictType.fromAbbreviation(district.getAbbreviation())
                : DistrictType.NO_DISTRICT;
     }
 
@@ -396,19 +428,19 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     public ContentValues getParams() {
         @Nullable Date startDate = getStartDate();
         @Nullable Date endDate = getEndDate();
+        @Nullable IDistrict district = getDistrict();
         ContentValues params = new ContentValues();
         params.put(EventsTable.KEY, getKey());
         params.put(EventsTable.YEAR, getYear());
         params.put(EventsTable.NAME, getName());
         params.put(EventsTable.SHORTNAME, getShortName());
-        params.put(EventsTable.LOCATION, getAddress());
+        params.put(EventsTable.LOCATION, getLocation());
         params.put(EventsTable.VENUE, getLocationName());
+        params.put(EventsTable.ADDRESS, getAddress());
         params.put(EventsTable.TYPE, getEventType());
-        params.put(EventsTable.DISTRICT, getEventDistrictEnum().ordinal());
-        params.put(EventsTable.DISTRICT_STRING, getEventDistrictString());
+        params.put(EventsTable.DISTRICT_KEY, district != null ? district.getKey() : "");
         params.put(EventsTable.START, startDate != null ? startDate.getTime() : 0);
         params.put(EventsTable.END, endDate != null ? endDate.getTime() : 0);
-        params.put(EventsTable.OFFICIAL, false); // Deprecated
         params.put(EventsTable.WEEK, getWeek());
         params.put(EventsTable.WEBCASTS, getWebcasts());
         params.put(EventsTable.WEBSITE, getWebsite());

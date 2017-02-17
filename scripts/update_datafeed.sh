@@ -84,6 +84,7 @@ CUR=$(pwd)
 cd libTba/$PKG/model
 for f in *.java;  do
     NAME=`basename $f .java`
+    perl -pi -e "s/([ \.\(\<])$NAME([\; \>])/\$1I$NAME\$2/g" *.java
     mv "$f" "I$f";
 done
 cd $CUR

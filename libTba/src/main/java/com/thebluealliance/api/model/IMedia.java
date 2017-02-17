@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Media
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-16T16:55:35.065-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T11:25:52.522-05:00")
 public interface IMedia   {
 
 

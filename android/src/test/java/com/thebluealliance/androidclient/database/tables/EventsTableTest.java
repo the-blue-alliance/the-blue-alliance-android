@@ -30,7 +30,8 @@ public class EventsTableTest {
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_EVENTS);
         db.execSQL(Database.CREATE_SEARCH_EVENTS);
-        mTable = spy(new EventsTable(db));
+        DistrictsTable districtsTable = spy(new DistrictsTable(db));
+        mTable = spy(new EventsTable(db, districtsTable));
         mEvents = ModelMaker.getModelList(Event.class, "2015_events");
     }
 

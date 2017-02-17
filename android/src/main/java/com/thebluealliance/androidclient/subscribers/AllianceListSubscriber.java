@@ -3,8 +3,10 @@ package com.thebluealliance.androidclient.subscribers;
 import com.thebluealliance.androidclient.firebase.AllianceAdvancementEvent;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 import com.thebluealliance.androidclient.types.PlayoffAdvancement;
+import com.thebluealliance.api.model.IEventAlliance;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AllianceListSubscriber extends BaseAPISubscriber<Event, List<ListItem>> {
+public class AllianceListSubscriber extends BaseAPISubscriber<List<EventAlliance>, List<ListItem>> {
 
     EventRenderer mRenderer;
     private boolean mIsAdvancementLoaded;

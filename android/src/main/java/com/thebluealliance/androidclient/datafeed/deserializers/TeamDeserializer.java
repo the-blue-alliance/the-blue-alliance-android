@@ -47,6 +47,10 @@ public class TeamDeserializer implements JsonDeserializer<Team> {
             team.setAddress(object.get("address").getAsString());
         }
 
+        if (!isNull(object.get("city")) && !isNull(object.get("state_prov")) && !isNull(object.get("country"))) {
+            team.setLocation(object.get("city") + ", " + object.get("state_prov") + ", " + object.get("country"));
+        }
+
         // Some teams don't have websites
         if (!isNull(object.get("website"))) {
             team.setWebsite(object.get("website").getAsString());

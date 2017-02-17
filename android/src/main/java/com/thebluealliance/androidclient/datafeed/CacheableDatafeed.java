@@ -1,20 +1,22 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 
 import com.thebluealliance.androidclient.api.rx.TbaApiV3;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
+import com.thebluealliance.androidclient.database.tables.EventDetailsTable;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
-import com.thebluealliance.androidclient.datafeed.combiners.JsonAndKeyCombiner;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamAndEventTeamCombiner;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
+import com.thebluealliance.androidclient.datafeed.maps.AddEventKeyToRankings;
 import com.thebluealliance.androidclient.datafeed.maps.DistrictTeamExtractor;
+import com.thebluealliance.androidclient.datafeed.maps.EventAlliancesToEventDetail;
+import com.thebluealliance.androidclient.datafeed.maps.JsonToEventDetail;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
-import com.thebluealliance.androidclient.datafeed.maps.TeamRankExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.WeekEventsExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.YearsParticipatedInfoMap;
@@ -23,9 +25,13 @@ import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventAlliance;
+import com.thebluealliance.androidclient.models.EventDetail;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.types.EventDetailType;
 
 import java.util.List;
 
@@ -38,20 +44,23 @@ import rx.Observable;
 @Singleton
 public class CacheableDatafeed {
 
-    private TbaApiV3 mApiv3;
-    private APICache mAPICache;
-    private DatabaseWriter mWriter;
-    private RetrofitResponseMap mResponseMap;
+    private final TbaApiV3 mApiv3;
+    private final APICache mAPICache;
+    private final DatabaseWriter mWriter;
+    private final Gson mGson;
+    private final RetrofitResponseMap mResponseMap;
 
     @Inject
     public CacheableDatafeed(
       @Named("tba_apiv3") TbaApiV3 apiv3,
       @Named("cache") APICache apiCache,
       DatabaseWriter writer,
+      Gson gson,
       RetrofitResponseMap responseMap) {
         mApiv3 = apiv3;
         mAPICache = apiCache;
         mWriter = writer;
+        mGson = gson;
         mResponseMap = responseMap;
     }
 
@@ -113,8 +122,10 @@ public class CacheableDatafeed {
       String teamKey,
       String eventKey,
       String cacheHeader) {
-        TeamRankExtractor extractor = new TeamRankExtractor(teamKey);
-        return fetchEventRankings(eventKey, cacheHeader).map(extractor);
+        //TODO needs team@event status
+        //TeamRankExtractor extractor = new TeamRankExtractor(teamKey);
+        //return fetchEventRankings(eventKey, cacheHeader).map(extractor);
+        return Observable.just(new JsonArray());
     }
 
     public Observable<List<Integer>> fetchTeamYearsParticipated(String teamKey, String cacheHeader) {
@@ -155,14 +166,26 @@ public class CacheableDatafeed {
         return mAPICache.fetchEventTeams(eventKey).concatWith(apiData);
     }
 
-    public Observable<? extends JsonElement> fetchEventRankings(String eventKey, String cacheHeader) {
-        //TODO EventDetail
-        /*Observable<JsonElement> apiData = mResponseMap.getAndWriteMappedResponseBody(
-          mApiv3.fetchEventRankings(eventKey, cacheHeader),
-          new JsonAndKeyCombiner(eventKey),
-          mWriter.getEventRankingsWriter().get());
-        return mAPICache.fetchEventRankings(eventKey).concatWith(apiData);*/
-        return Observable.just(JsonNull.INSTANCE);
+    public Observable<RankingResponseObject> fetchEventRankings(String eventKey, String cacheHeader) {
+        Observable<RankingResponseObject> apiData = mResponseMap.getAndWriteMappedResponseBody(
+                mApiv3.fetchEventRankings(eventKey, cacheHeader),
+                new AddEventKeyToRankings(eventKey, mGson),
+                mWriter.getEventDetailWriter().get(),
+                Database.TABLE_EVENTDETAILS, EventDetailsTable.KEY + " = ?", new
+                        String[]{EventDetail.buildKey(eventKey, EventDetailType.RANKINGS)}
+        );
+        return mAPICache.fetchEventRankings(eventKey).concatWith(apiData);
+    }
+
+    public Observable<List<EventAlliance>> fetchEventAlliances(String eventKey, String cacheHeader) {
+        Observable<List<EventAlliance>> apiData = mResponseMap.getAndWriteMappedResponseBody(
+                mApiv3.fetchEventAlliances(eventKey, cacheHeader),
+                new EventAlliancesToEventDetail(eventKey, mGson),
+                mWriter.getEventDetailWriter().get(),
+                Database.TABLE_EVENTDETAILS, EventDetailsTable.KEY + " = ?", new
+                        String[]{EventDetail.buildKey(eventKey, EventDetailType.RANKINGS)}
+        );
+        return mAPICache.fetchEventAlliancse(eventKey).concatWith(apiData);
     }
 
     public Observable<List<Match>> fetchEventMatches(String eventKey, String cacheHeader) {
@@ -176,9 +199,18 @@ public class CacheableDatafeed {
     public Observable<? extends JsonElement> fetchEventStats(String eventKey, String cacheHeader) {
         Observable<JsonElement> apiData = mResponseMap.getAndWriteMappedResponseBody(
           mApiv3.fetchEventOPR(eventKey, cacheHeader),
-          new JsonAndKeyCombiner(eventKey),
-          mWriter.getEventStatsWriter().get());
-        return mAPICache.fetchEventStats(eventKey).concatWith(apiData);
+          new JsonToEventDetail(eventKey, EventDetailType.OPRS),
+          mWriter.getEventDetailWriter().get());
+        return mAPICache.fetchJsonEventDetail(eventKey, EventDetailType.OPRS).concatWith(apiData);
+    }
+
+    public Observable<? extends JsonElement> fetchEventInsights(String eventKey, String cacheHeader) {
+        Observable<JsonElement> apiData = mResponseMap.getAndWriteMappedResponseBody(
+                mApiv3.fetchEventInsights(eventKey, cacheHeader),
+                new JsonToEventDetail(eventKey, EventDetailType.INSIGHTS),
+                mWriter.getEventDetailWriter().get()
+        );
+        return mAPICache.fetchJsonEventDetail(eventKey, EventDetailType.INSIGHTS).concatWith(apiData);
     }
 
     public Observable<? extends JsonElement> fetchTeamAtEventStats(
@@ -199,9 +231,9 @@ public class CacheableDatafeed {
     public Observable<? extends JsonElement> fetchEventDistrictPoints(String eventKey, String cacheHeader) {
         Observable<JsonElement> apiData = mResponseMap.getAndWriteMappedResponseBody(
           mApiv3.fetchEventDistrictPoints(eventKey, cacheHeader),
-          new JsonAndKeyCombiner(eventKey),
-          mWriter.getEventDistrictPointsWriter().get());
-        return mAPICache.fetchEventDistrictPoints(eventKey).concatWith(apiData);
+          new JsonToEventDetail(eventKey, EventDetailType.DISTRICT_POINTS),
+          mWriter.getEventDetailWriter().get());
+        return mAPICache.fetchJsonEventDetail(eventKey, EventDetailType.DISTRICT_POINTS).concatWith(apiData);
     }
 
     public Observable<List<District>> fetchDistrictList(int year, String cacheHeader) {

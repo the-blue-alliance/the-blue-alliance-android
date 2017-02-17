@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Robot
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-16T16:55:35.065-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T11:25:52.522-05:00")
 public interface IRobot   {
 
 
@@ -76,10 +76,10 @@ public interface IRobot   {
 
 
    /**
-   * The associated Team key
+   * The associated ITeam key
    * @return teamKey
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The associated Team key")
+  @ApiModelProperty(example = "null", required = true, value = "The associated ITeam key")
   
   public String getTeamKey();
 
@@ -88,10 +88,10 @@ public interface IRobot   {
 
 
    /**
-   * The year this Robot model referes to
+   * The year this IRobot model referes to
    * @return year
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The year this Robot model referes to")
+  @ApiModelProperty(example = "null", required = true, value = "The year this IRobot model referes to")
   
   public Integer getYear();
 

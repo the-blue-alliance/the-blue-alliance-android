@@ -1,22 +1,22 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventHelper.CaseInsensitiveMap;
+import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
+import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
+import com.thebluealliance.api.model.IRankingItem;
+import com.thebluealliance.api.model.IRankingResponseObjectSortOrderInfo;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-public class RankingsListSubscriber extends BaseAPISubscriber<JsonElement, List<Object>> {
+public class RankingsListSubscriber extends BaseAPISubscriber<RankingResponseObject, List<Object>> {
 
     private Database mDb;
     private EventBus mEventBus;
@@ -31,38 +31,58 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonElement, List<
     @Override
     public void parseData()  {
         mDataToBind.clear();
-        JsonArray rankingsData = mAPIData.getAsJsonArray();
-        if (rankingsData.size() == 0) return;
-        JsonArray headerRow = rankingsData.get(0).getAsJsonArray();
-        for (int i = 1; i < rankingsData.size(); i++) {
-            JsonArray row = rankingsData.get(i).getAsJsonArray();
+        if (mAPIData == null || mAPIData.getRankings() == null || mAPIData.getRankings().isEmpty()) {
+            return;
+        }
+
+        List<IRankingItem> rankings = mAPIData.getRankings();
+        for (int i = 1; i < rankings.size(); i++) {
+            IRankingItem row = rankings.get(i);
             /* Assume that the list of lists has rank first and team # second, always */
-            String teamKey = "frc" + row.get(1).getAsString();
+            String teamKey = row.getTeamKey();
             String rankingString;
+            String record;
             // use a CaseInsensitiveMap in order to find wins, losses, and ties below
             CaseInsensitiveMap<String> rankingElements = new CaseInsensitiveMap<>();
-            for (int j = 2; j < row.size(); j++) {
-                rankingElements.put(headerRow.get(j).getAsString(), row.get(j).getAsString());
+           if (row.getQualAverage() != null) {
+                rankingElements.put("Qual Average", ThreadSafeFormatters.formatDoubleOnePlace(row.getQualAverage()));
             }
-
-            String record = EventHelper.extractRankingString(rankingElements);
-
-            if (record == null) {
-                Set<String> keys = rankingElements.keySet();
-                if (keys.contains("wins") && keys.contains("losses") && keys.contains("ties")) {
-                    record = String.format("(%1$s-%2$s-%3$s",
-                            rankingElements.get("wins"),
-                            rankingElements.get("losses"),
-                            rankingElements.get("ties"));
-                    rankingElements.remove("wins");
-                    rankingElements.remove("losses");
-                    rankingElements.remove("ties");
+            for (int j = 0; j < mAPIData.getSortOrderInfo().size(); j++) {
+                String rankString;
+                Double rankValue = row.getSortOrders().get(j);
+                IRankingResponseObjectSortOrderInfo sort = mAPIData.getSortOrderInfo().get(j);
+                switch (sort.getPrecision()) {
+                    case 0:
+                        rankString = ThreadSafeFormatters.formatDoubleNoPlaces(rankValue);
+                        break;
+                    case 1:
+                        rankString = ThreadSafeFormatters.formatDoubleOnePlace(rankValue);
+                        break;
+                    default:
+                    case 2:
+                        rankString = ThreadSafeFormatters.formatDoubleTwoPlaces(rankValue);
+                        break;
                 }
+                rankingElements.put(sort.getName(), rankString);
             }
-            if (record == null) {
+
+            if (row.getWins() != null && row.getLosses() != null && row.getTies() != null) {
+                StringBuilder recordBuilder = new StringBuilder();
+                recordBuilder.append("(");
+                recordBuilder.append(row.getWins());
+                recordBuilder.append("-");
+                recordBuilder.append(row.getLosses());
+                if (row.getTies() > 0) {
+                    recordBuilder.append("-");
+                    recordBuilder.append(row.getTies());
+                }
+                recordBuilder.append(")");
+                record = recordBuilder.toString();
+            } else {
                 record = "";
             }
-
+            rankingElements.put("Played", Integer.toString(row.getMatchesPlayed()));
+            rankingElements.put("DQ", Integer.toString(row.getDq()));
             rankingString = EventHelper.createRankingBreakdown(rankingElements);
 
             Team team = mDb.getTeamsTable().get(teamKey);
@@ -77,25 +97,29 @@ public class RankingsListSubscriber extends BaseAPISubscriber<JsonElement, List<
                     new TeamRankingViewModel(
                             teamKey,
                             nickname,
-                            row.get(1).getAsString(), // team number
-                            row.get(0).getAsInt(), // rank
+                            teamKey.substring(3), // team number
+                            row.getRank(), // rank
                             record,
                             rankingString));
         }
-        mEventBus.post(new EventRankingsEvent(generateTopRanksString(rankingsData)));
+        mEventBus.post(new EventRankingsEvent(generateTopRanksString(mAPIData)));
     }
 
     @Override public boolean isDataValid() {
-        return super.isDataValid() && mAPIData.isJsonArray();
+        return super.isDataValid()
+               && mAPIData.getRankings() != null
+               && !mAPIData.getRankings().isEmpty()
+               && mAPIData.getSortOrderInfo() != null;
     }
 
-    private String generateTopRanksString(JsonArray rankingsData) {
+    private String generateTopRanksString(RankingResponseObject rankings) {
         String rankString = "";
-        if (rankingsData.size() <= 1) {
+        if (rankings.getRankings().isEmpty()) {
             return rankString;
         }
-        for (int i = 1; i < Math.min(EventRankingsEvent.SIZE + 1, rankingsData.size()); i++) {
-            rankString += ((i) + ". <b>" + rankingsData.get(i).getAsJsonArray().get(1).getAsString()) + "</b>";
+        List<IRankingItem> rankingsData = rankings.getRankings();
+        for (int i = 0; i < Math.min(EventRankingsEvent.SIZE, rankingsData.size()); i++) {
+            rankString += ((i) + ". <b>" + rankingsData.get(i).getTeamKey().substring(3)) + "</b>";
             if (i < Math.min(6, rankingsData.size()) - 1) {
                 rankString += "<br>";
             }

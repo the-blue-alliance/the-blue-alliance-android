@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.binders.StatsListBinder;
+import com.thebluealliance.androidclient.datafeed.combiners.TwoJsonCombiner;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
@@ -44,7 +45,7 @@ import rx.Observable;
  * @author Nathan Walters
  */
 public class EventStatsFragment
-  extends DatafeedFragment<JsonElement, List<ListItem>, StatsListSubscriber, StatsListBinder> {
+  extends DatafeedFragment<StatsListSubscriber.Model, List<ListItem>, StatsListSubscriber, StatsListBinder> {
 
     private static final String KEY = "eventKey", SORT = "sort";
 
@@ -197,8 +198,12 @@ public class EventStatsFragment
     }
 
     @Override
-    protected Observable<? extends JsonElement> getObservable(String tbaCacheHeader) {
-        return mDatafeed.fetchEventStats(mEventKey, tbaCacheHeader);
+    protected Observable<StatsListSubscriber.Model> getObservable(String tbaCacheHeader) {
+        return Observable.zip(
+                mDatafeed.fetchEventStats(mEventKey, tbaCacheHeader),
+                mDatafeed.fetchEventInsights(mEventKey, tbaCacheHeader),
+                new TwoJsonCombiner()
+        );
     }
 
     @Override

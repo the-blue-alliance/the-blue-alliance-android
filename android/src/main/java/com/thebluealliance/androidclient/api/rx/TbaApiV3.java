@@ -1,29 +1,26 @@
 package com.thebluealliance.androidclient.api.rx;
 
 import com.google.gson.JsonElement;
-import rx.Observable;
-import retrofit2.Response;
-
-import retrofit2.http.*;
-
-import okhttp3.RequestBody;
 
 import com.thebluealliance.androidclient.models.ApiStatus;
-import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictRanking;
-import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventAlliance;
-import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Match;
-import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.Robot;
+import com.thebluealliance.androidclient.models.Team;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import retrofit2.Response;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Path;
+import rx.Observable;
 
 public interface TbaApiV3 {
   /**
@@ -137,6 +134,19 @@ public interface TbaApiV3 {
   
   @GET("api/v3/event/{event_key}/district_points")
   Observable<Response<JsonElement>> fetchEventDistrictPoints(
+    @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
+  );
+
+  /**
+   * Event Insights Request
+   * Fetch insights for one event.
+   * @param eventKey Key identifying a single event, has format [year][event code] (required)
+   * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
+   * @return Call&lt;String&gt;
+   */
+  
+  @GET("api/v3/event/{event_key}/insights")
+  Observable<Response<JsonElement>> fetchEventInsights(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
   );
 

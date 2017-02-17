@@ -47,6 +47,7 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
     private @Nullable String address;
     private @Nullable String gmapsUrl;
     private @Nullable String locationName;
+    private @Nullable String location;
     private @Nullable String motto;
     private @Nullable Integer rookieYear;
     private @Nullable Long lastModified;
@@ -153,6 +154,14 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
         this.locationName = locationName;
     }
 
+    @Nullable public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(@Nullable String location) {
+        this.location = location;
+    }
+
     public List<Integer> getYearsParticipated() {
         return yearsParticipated;
     }
@@ -210,7 +219,9 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
         data.put(TeamsTable.NUMBER, getTeamNumber());
         data.put(TeamsTable.NAME, getName());
         data.put(TeamsTable.SHORTNAME, getNickname());
-        data.put(TeamsTable.LOCATION, getLocationName());
+        data.put(TeamsTable.LOCATION, getLocation());
+        data.put(TeamsTable.ADDRESS, getAddress());
+        data.put(TeamsTable.LOCATION_NAME, getLocationName());
         data.put(TeamsTable.WEBSITE, getWebsite());
         if (yearsParticipated != null) {
             data.put(TeamsTable.YEARS_PARTICIPATED, yearsParticipatedToJsonString(yearsParticipated));

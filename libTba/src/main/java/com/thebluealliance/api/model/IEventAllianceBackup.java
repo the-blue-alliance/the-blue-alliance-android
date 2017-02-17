@@ -33,45 +33,33 @@ import javax.annotation.Nullable;
 
 
 /**
- * RankingItemRecord
+ * EventAllianceBackup
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-16T16:55:35.065-05:00")
-public interface IRankingItemRecord   {
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T11:25:52.522-05:00")
+public interface IEventAllianceBackup   {
 
 
    /**
-   * Number of losses
-   * @return losses
+   * ITeam key of incoming team
+   * @return in
   **/
-  @ApiModelProperty(example = "null", required = true, value = "Number of losses")
+  @ApiModelProperty(example = "null", required = true, value = "Team key of incoming team")
   
-  public Integer getLosses();
+  public String getIn();
 
-  public void setLosses(Integer losses);
-
-
-
-   /**
-   * Number of ties
-   * @return ties
-  **/
-  @ApiModelProperty(example = "null", required = true, value = "Number of ties")
-  
-  public Integer getTies();
-
-  public void setTies(Integer ties);
+  public void setIn(String in);
 
 
 
    /**
-   * Number of wins
-   * @return wins
+   * ITeam key of outgoing team
+   * @return out
   **/
-  @ApiModelProperty(example = "null", required = true, value = "Number of wins")
+  @ApiModelProperty(example = "null", required = true, value = "Team key of outgoing team")
   
-  public Integer getWins();
+  public String getOut();
 
-  public void setWins(Integer wins);
+  public void setOut(String out);
 
 }
 

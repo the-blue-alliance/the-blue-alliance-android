@@ -13,6 +13,7 @@ Method | HTTP request | Description
 [**fetchEventAlliances**](DefaultApi.md#fetchEventAlliances) | **GET** api/v3/event/{event_key}/alliances | Event Alliances Request
 [**fetchEventAwards**](DefaultApi.md#fetchEventAwards) | **GET** api/v3/event/{event_key}/awards | Event Awards Request
 [**fetchEventDistrictPoints**](DefaultApi.md#fetchEventDistrictPoints) | **GET** api/v3/event/{event_key}/district_points | Event District Points Request
+[**fetchEventInsights**](DefaultApi.md#fetchEventInsights) | **GET** api/v3/event/{event_key}/insights | Event Insights Request
 [**fetchEventMatches**](DefaultApi.md#fetchEventMatches) | **GET** api/v3/event/{event_key}/matches | Event Matches Request
 [**fetchEventOPR**](DefaultApi.md#fetchEventOPR) | **GET** api/v3/event/{event_key}/oprs | Event OPR Request
 [**fetchEventRankings**](DefaultApi.md#fetchEventRankings) | **GET** api/v3/event/{event_key}/rankings | Event Rankings Request
@@ -424,6 +425,53 @@ try {
     System.out.println(result);
 } catch (ApiException e) {
     System.err.println("Exception when calling DefaultApi#fetchEventDistrictPoints");
+    e.printStackTrace();
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **eventKey** | **String**| Key identifying a single event, has format [year][event code] |
+ **xTBACache** | **String**| Special TBA App Internal Header to indicate caching strategy. | [optional]
+
+### Return type
+
+**String**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+<a name="fetchEventInsights"></a>
+# **fetchEventInsights**
+> String fetchEventInsights(eventKey, xTBACache)
+
+Event Insights Request
+
+Fetch insights for one event.
+
+### Example
+```java
+// Import classes:
+//import com.thebluealliance.api.ApiException;
+//import com.thebluealliance.api.call.DefaultApi;
+
+
+DefaultApi apiInstance = new DefaultApi();
+String eventKey = "eventKey_example"; // String | Key identifying a single event, has format [year][event code]
+String xTBACache = "xTBACache_example"; // String | Special TBA App Internal Header to indicate caching strategy.
+try {
+    String result = apiInstance.fetchEventInsights(eventKey, xTBACache);
+    System.out.println(result);
+} catch (ApiException e) {
+    System.err.println("Exception when calling DefaultApi#fetchEventInsights");
     e.printStackTrace();
 }
 ```

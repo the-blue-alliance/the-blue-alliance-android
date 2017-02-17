@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * DistrictRankingEventPoints
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-16T16:55:35.065-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T11:25:52.522-05:00")
 public interface IDistrictRankingEventPoints   {
 
 
@@ -64,10 +64,10 @@ public interface IDistrictRankingEventPoints   {
 
 
    /**
-   * Does this event get the District CMP multiplier?
+   * Does this event get the IDistrict CMP multiplier?
    * @return districtCmp
   **/
-  @ApiModelProperty(example = "null", required = true, value = "Does this event get the District CMP multiplier?")
+  @ApiModelProperty(example = "null", required = true, value = "Does this event get the IDistrict CMP multiplier?")
   
   public Boolean getDistrictCmp();
 
@@ -88,7 +88,7 @@ public interface IDistrictRankingEventPoints   {
 
 
    /**
-   * Event where these points were earned
+   * IEvent where these points were earned
    * @return eventKey
   **/
   @ApiModelProperty(example = "null", required = true, value = "Event where these points were earned")

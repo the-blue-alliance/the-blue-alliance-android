@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.WebcastListElement;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
@@ -51,7 +52,7 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
               event.getYear(),
               event.getShortName(),
               event.getDateString(),
-              event.getAddress(),
+              event.getLocation(),
               safeMyTba);
     }
 
@@ -68,34 +69,26 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
     }
 
     @WorkerThread
-    public List<ListItem> renderAlliances(Event event) {
-        List<ListItem> output = new ArrayList<>();
-        renderAlliances(event, output, null);
-        return output;
-    }
-
-    @WorkerThread
-    public void renderAlliances(Event event, List<ListItem> destList, HashMap<String, PlayoffAdvancement> advancement) {
-        /*
-         * TODO(773) Needs EventDetails
-         */
-        JsonArray alliances = new JsonArray();
+    public void renderAlliances(List<EventAlliance> alliances,
+                                List<ListItem> destList,
+                                HashMap<String, PlayoffAdvancement> advancement) {
         int counter = 1;
-        for (JsonElement alliance : alliances) {
-            JsonArray teams = alliance.getAsJsonObject().get("picks").getAsJsonArray();
+        for (EventAlliance alliance : alliances) {
+            List<String> teams = alliance.getPicks();
             PlayoffAdvancement adv = advancement != null
                                      ? getAdvancement(advancement, teams)
                                      : PlayoffAdvancement.NONE;
-            destList.add(new AllianceListElement(event.getKey(), counter, teams, adv));
+            destList.add(new AllianceListElement(alliance.getEventKey(), counter, teams, adv));
             counter++;
         }
     }
 
-    private static PlayoffAdvancement getAdvancement(HashMap<String, PlayoffAdvancement> advancement, JsonArray teams) {
+    private static PlayoffAdvancement getAdvancement(HashMap<String, PlayoffAdvancement> advancement,
+                                                     List<String> teams) {
         PlayoffAdvancement adv = PlayoffAdvancement.NONE;
         int level = 0;
         for (int i = 0; i < teams.size(); i++) {
-            String teamKey = teams.get(i).getAsString();
+            String teamKey = teams.get(i);
             if (advancement.containsKey(teamKey)) {
                 PlayoffAdvancement next = advancement.get(teamKey);
                 if (next.getLevel() > level) {

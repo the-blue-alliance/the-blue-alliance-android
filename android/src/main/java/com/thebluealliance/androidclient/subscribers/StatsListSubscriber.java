@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
-public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<ListItem>> {
+public class StatsListSubscriber extends BaseAPISubscriber<StatsListSubscriber.Model, List<ListItem>> {
 
     private static DecimalFormat df = new DecimalFormat("#.##");
 
@@ -63,7 +63,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
     @Override
     public void parseData()  {
         mTeamStats.clear();
-        JsonObject statsData = mAPIData.getAsJsonObject();
+        JsonObject statsData = mAPIData.getStats().getAsJsonObject();
         if (!statsData.has("oprs") || !statsData.get("oprs").isJsonObject()
                 || !statsData.has("dprs") || !statsData.get("dprs").isJsonObject()
                 || !statsData.has("ccwms") || !statsData.get("ccwms").isJsonObject()) {
@@ -98,8 +98,8 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
         Collections.sort(mTeamStats, new StatListElementComparator(mStatToSortBy));
 
         // Event stats
-        if (mEventYear == 2016 && statsData.has("year_specific") && statsData.get("year_specific").isJsonObject()) {
-            generateEventInsights(statsData.get("year_specific").getAsJsonObject());
+        if (mEventYear == 2016 && mAPIData.getInsights() != null && mAPIData.getInsights().isJsonObject()) {
+            generateEventInsights(mAPIData.getInsights().getAsJsonObject());
         }
 
         mEventBus.post(new EventStatsEvent(getTopStatsString()));
@@ -107,7 +107,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
 
     @Override
     public boolean isDataValid() {
-        return super.isDataValid() && mAPIData.isJsonObject();
+        return super.isDataValid() && mAPIData.getStats() != null && mAPIData.getStats().isJsonObject();
     }
 
     private void generateEventInsights(JsonObject eventInsights) {
@@ -249,5 +249,23 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
             }
         }
         return statsString.trim();
+    }
+
+    public static class Model {
+        private final JsonElement mStats;
+        private final JsonElement mInsights;
+
+        public Model(JsonElement stats, JsonElement insights) {
+            mStats = stats;
+            mInsights = insights;
+        }
+
+        public JsonElement getStats() {
+            return mStats;
+        }
+
+        public JsonElement getInsights() {
+            return mInsights;
+        }
     }
 }

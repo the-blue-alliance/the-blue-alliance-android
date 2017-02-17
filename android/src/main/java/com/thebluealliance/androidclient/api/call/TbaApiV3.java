@@ -140,6 +140,19 @@ public interface TbaApiV3 {
   );
 
   /**
+   * Event Insights Request
+   * Fetch insights for one event.
+   * @param eventKey Key identifying a single event, has format [year][event code] (required)
+   * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
+   * @return Call&lt;String&gt;
+   */
+  
+  @GET("api/v3/event/{event_key}/insights")
+  Call<String> fetchEventInsights(
+    @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
+  );
+
+  /**
    * Event Matches Request
    * Fetch matches for the given event
    * @param eventKey Key identifying a single event, has format [year][event code] (required)

@@ -3,6 +3,8 @@ package com.thebluealliance.androidclient.datafeed.retrofit;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 
+import com.thebluealliance.androidclient.TbaLogger;
+
 import java.io.IOException;
 import java.io.Reader;
 
@@ -29,6 +31,9 @@ public class LenientGsonResponseBodyConverter<T> implements Converter<ResponseBo
             JsonReader reader = new JsonReader(in);
             reader.setLenient(true);
             return adapter.read(reader);
+        } catch (Exception e) {
+            TbaLogger.e("Got bad JSON", e);
+            return null;
         } finally {
             try {
                 in.close();

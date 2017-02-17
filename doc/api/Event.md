@@ -5,7 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **address** | **String** | Address of the event venue |  [optional]
-**district** | **String** | District key this event is associated with |  [optional]
+**district** | [**District**](District.md) |  |  [optional]
 **endDate** | [**Date**](Date.md) | When the event ends |  [optional]
 **eventCode** | **String** | Event short code, as provided by FIRST | 
 **eventType** | **Integer** | An integer that represents the event type as a constant. |  [optional]

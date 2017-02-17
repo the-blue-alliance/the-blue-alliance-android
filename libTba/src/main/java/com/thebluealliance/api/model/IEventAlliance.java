@@ -27,6 +27,7 @@ package com.thebluealliance.api.model;
 
 import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
+import com.thebluealliance.api.model.IEventAllianceBackup;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -37,8 +38,20 @@ import javax.annotation.Nullable;
 /**
  * EventAlliance
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-16T16:55:35.065-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T11:25:52.522-05:00")
 public interface IEventAlliance   {
+
+
+   /**
+   * Get backup
+   * @return backup
+  **/
+  @ApiModelProperty(example = "null", value = "")
+  @Nullable
+  public IEventAllianceBackup getBackup();
+
+  public void setBackup(IEventAllianceBackup backup);
+
 
 
 
@@ -71,8 +84,8 @@ public interface IEventAlliance   {
    * Name of this alliance that can be displayed
    * @return name
   **/
-  @ApiModelProperty(example = "null", required = true, value = "Name of this alliance that can be displayed")
-  
+  @ApiModelProperty(example = "null", value = "Name of this alliance that can be displayed")
+  @Nullable
   public String getName();
 
   public void setName(String name);

@@ -32,4 +32,9 @@ public class ConfigModule {
             return null;
         }
     }
+
+    @Provides @Singleton
+    public AppConfig provideAppConfig(@Nullable FirebaseRemoteConfig config) {
+        return new AppConfig(config);
+    }
 }

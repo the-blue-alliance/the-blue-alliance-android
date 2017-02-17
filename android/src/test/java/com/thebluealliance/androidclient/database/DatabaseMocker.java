@@ -34,7 +34,8 @@ public final class DatabaseMocker {
 
     public static EventsTable mockEventsTable(Database database) {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
-        EventsTable table = new EventsTable(db);
+        DistrictsTable districtsTable = new DistrictsTable(db);
+        EventsTable table = new EventsTable(db, districtsTable);
         when(database.getEventsTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;

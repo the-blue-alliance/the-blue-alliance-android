@@ -4,6 +4,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
+import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 
 import android.content.ContentValues;
@@ -20,27 +21,34 @@ public class EventsTable extends ModelTable<Event> {
             SHORTNAME = "shortName",
             LOCATION = "location",
             VENUE = "venue",
+            ADDRESS = "venue_address",
             TYPE = "eventType",
+            START = "startDate",
+            END = "endDate",
+            WEEK = "competitionWeek",
+            WEBCASTS = "webcasts",
+            WEBSITE = "website",
+            DISTRICT_KEY = "district_key",
+            LAST_MODIFIED = "last_modified";
+
+
+    public static @Deprecated final String
             DISTRICT = "eventDistrict",
             DISTRICT_STRING = "districtString",
             DISTRICT_POINTS = "districtPoints",
-            START = "startDate",
-            END = "endDate",
-            OFFICIAL = "official",
-            WEEK = "competitionWeek",
-            TEAMS = "teams",
             RANKINGS = "rankings",
             ALLIANCES = "alliances",
-            WEBCASTS = "webcasts",
-            STATS = "stats",
-            WEBSITE = "website",
-            LAST_MODIFIED = "last_modified";
+            OFFICIAL = "official",
+            TEAMS = "teams",
+            STATS = "stats";
 
     private SQLiteDatabase mDb;
+    private DistrictsTable mDistrictsTable;
 
-    public EventsTable(SQLiteDatabase db) {
+    public EventsTable(SQLiteDatabase db, DistrictsTable districtsTable) {
         super(db);
         mDb = db;
+        mDistrictsTable = districtsTable;
     }
 
     /**
@@ -62,19 +70,12 @@ public class EventsTable extends ModelTable<Event> {
         columns.add(LOCATION);
         columns.add(VENUE);
         columns.add(TYPE);
-        columns.add(DISTRICT);
-        columns.add(DISTRICT_STRING);
-        columns.add(DISTRICT_POINTS);
         columns.add(START);
         columns.add(END);
-        columns.add(OFFICIAL);
         columns.add(WEEK);
-        columns.add(TEAMS);
-        columns.add(RANKINGS);
-        columns.add(ALLIANCES);
         columns.add(WEBCASTS);
-        columns.add(STATS);
         columns.add(WEBSITE);
+        columns.add(DISTRICT_KEY);
 
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < columns.size(); i++) {
@@ -134,7 +135,12 @@ public class EventsTable extends ModelTable<Event> {
 
     @Override
     public Event inflate(Cursor cursor) {
-        return ModelInflater.inflateEvent(cursor);
+        Event event = ModelInflater.inflateEvent(cursor);
+        if (event.getDistrictKey() != null && !event.getDistrictKey().isEmpty()) {
+            District eventDistrict = mDistrictsTable.get(event.getDistrictKey());
+            event.setDistrict(eventDistrict);
+        }
+        return event;
     }
 
     public void deleteAllSearchIndexes() {
@@ -170,13 +176,10 @@ public class EventsTable extends ModelTable<Event> {
                 + table + "." + NAME + ","
                 + table + "." + SHORTNAME + ","
                 + table + "." + TYPE + ","
-                + table + "." + DISTRICT + ","
                 + table + "." + START + ","
                 + table + "." + END + ","
                 + table + "." + LOCATION + ","
                 + table + "." + VENUE + ","
-                + table + "." + OFFICIAL + ","
-                + table + "." + DISTRICT_STRING
                 + " FROM " + getTableName()
                 + " JOIN (SELECT " + searchTable + "." + Database.SearchEvent.KEY + " FROM " + searchTable + " WHERE " + searchTable + "." + Database.SearchEvent.TITLES + " MATCH ?)"
                 + " as 'tempevents' ON tempevents." + Database.SearchEvent.KEY + " = " + table + "." + KEY + " ORDER BY " + table + "." + YEAR + " DESC";

@@ -25,15 +25,18 @@
 
 package com.thebluealliance.api.model;
 
-import javax.annotation.Nullable;
-
+import java.util.Objects;
+import com.google.gson.annotations.SerializedName;
+import com.thebluealliance.api.model.IDistrictRankingEventPoints;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.annotation.Nullable;
 
 
 /**
  * DistrictRanking
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-16T16:55:35.065-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T11:25:52.522-05:00")
 public interface IDistrictRanking   {
 
 
@@ -98,7 +101,7 @@ public interface IDistrictRanking   {
 
 
    /**
-   * Team these rankings are for
+   * ITeam these rankings are for
    * @return teamKey
   **/
   @ApiModelProperty(example = "null", required = true, value = "Team these rankings are for")

@@ -1,0 +1,85 @@
+[
+  {
+    "backup": null, 
+    "declines": [], 
+    "name": "Alliance 1", 
+    "picks": [
+      "frc359", 
+      "frc3990", 
+      "frc4508"
+    ]
+  }, 
+  {
+    "backup": {
+      "in": "frc1665", 
+      "out": "frc229"
+    }, 
+    "declines": [], 
+    "name": "Alliance 2", 
+    "picks": [
+      "frc5254", 
+      "frc20", 
+      "frc229"
+    ]
+  }, 
+  {
+    "backup": null, 
+    "declines": [], 
+    "name": "Alliance 3", 
+    "picks": [
+      "frc5236", 
+      "frc2791", 
+      "frc3624"
+    ]
+  }, 
+  {
+    "backup": null, 
+    "declines": [], 
+    "name": "Alliance 4", 
+    "picks": [
+      "frc3419", 
+      "frc5240", 
+      "frc663"
+    ]
+  }, 
+  {
+    "backup": null, 
+    "declines": [], 
+    "name": "Alliance 5", 
+    "picks": [
+      "frc48", 
+      "frc1493", 
+      "frc1551"
+    ]
+  }, 
+  {
+    "backup": null, 
+    "declines": [], 
+    "name": "Alliance 6", 
+    "picks": [
+      "frc250", 
+      "frc333", 
+      "frc145"
+    ]
+  }, 
+  {
+    "backup": null, 
+    "declines": [], 
+    "name": "Alliance 7", 
+    "picks": [
+      "frc358", 
+      "frc3003", 
+      "frc527"
+    ]
+  }, 
+  {
+    "backup": null, 
+    "declines": [], 
+    "name": "Alliance 8", 
+    "picks": [
+      "frc4930", 
+      "frc3044", 
+      "frc4481"
+    ]
+  }
+]

@@ -9,6 +9,7 @@ import com.google.gson.JsonSyntaxException;
 
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.lang.reflect.Type;
@@ -52,6 +53,12 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setLocationName(object.get("location_name").getAsString());
         }
 
+        if (isNull(object.get("city")) || isNull(object.get("state_prov")) || isNull(object.get("country"))) {
+            event.setLocation("");
+        } else {
+            event.setLocation(object.get("city") + ", " + object.get("state_prov") + ", " + object.get("country"));
+        }
+
         if (object.has("event_type")) {
             event.setEventType(object.get("event_type").getAsInt());
         }
@@ -90,11 +97,13 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setWebcasts(object.get("webcast").toString());
         }
 
-        JsonElement districtKey = object.get("district");
-        if (isNull(districtKey)) {
+        JsonElement district = object.get("district");
+        if (isNull(district)) {
             event.setDistrict(null);
         } else {
-            event.setDistrict(districtKey.getAsString());
+            District districtModel = context.deserialize(object.get("district"), District.class);
+            event.setDistrict(districtModel);
+            event.setDistrictKey(districtModel.getKey());
         }
 
         return event;

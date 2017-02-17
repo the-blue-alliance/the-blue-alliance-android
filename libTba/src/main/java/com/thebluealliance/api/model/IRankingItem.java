@@ -25,17 +25,19 @@
 
 package com.thebluealliance.api.model;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
+import java.util.Objects;
+import com.google.gson.annotations.SerializedName;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Nullable;
 
 
 /**
  * RankingItem
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-16T16:55:35.065-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T11:25:52.522-05:00")
 public interface IRankingItem   {
 
 
@@ -64,6 +66,18 @@ public interface IRankingItem   {
 
 
    /**
+   * Number of losses
+   * @return losses
+  **/
+  @ApiModelProperty(example = "null", value = "Number of losses")
+  @Nullable
+  public Integer getLosses();
+
+  public void setLosses(Integer losses);
+
+
+
+   /**
    * Number of matches this team has played
    * @return matchesPlayed
   **/
@@ -81,9 +95,9 @@ public interface IRankingItem   {
   **/
   @ApiModelProperty(example = "null", value = "For some years, average qualification score")
   @Nullable
-  public Integer getQualAverage();
+  public Double getQualAverage();
 
-  public void setQualAverage(Integer qualAverage);
+  public void setQualAverage(Double qualAverage);
 
 
 
@@ -96,18 +110,6 @@ public interface IRankingItem   {
   public Integer getRank();
 
   public void setRank(Integer rank);
-
-
-
-   /**
-   * Get record
-   * @return record
-  **/
-  @ApiModelProperty(example = "null", value = "")
-  @Nullable
-  public IRankingItemRecord getRecord();
-
-  public void setRecord(IRankingItemRecord record);
 
 
 
@@ -126,7 +128,7 @@ public interface IRankingItem   {
 
 
    /**
-   * Team this item is for
+   * ITeam this item is for
    * @return teamKey
   **/
   @ApiModelProperty(example = "null", required = true, value = "Team this item is for")
@@ -134,6 +136,30 @@ public interface IRankingItem   {
   public String getTeamKey();
 
   public void setTeamKey(String teamKey);
+
+
+
+   /**
+   * Number of ties
+   * @return ties
+  **/
+  @ApiModelProperty(example = "null", value = "Number of ties")
+  @Nullable
+  public Integer getTies();
+
+  public void setTies(Integer ties);
+
+
+
+   /**
+   * Number of wins
+   * @return wins
+  **/
+  @ApiModelProperty(example = "null", value = "Number of wins")
+  @Nullable
+  public Integer getWins();
+
+  public void setWins(Integer wins);
 
 }
 

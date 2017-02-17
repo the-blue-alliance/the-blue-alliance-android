@@ -1,19 +1,21 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.config.ConfigModule;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.deserializers.APIStatusDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.AllianceDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.EventDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MediaDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.RankingItemDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.RankingsResponseDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDistrictPointsDeserializer;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
@@ -23,20 +25,24 @@ import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.RankingItem;
+import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.api.model.IApiStatus;
 import com.thebluealliance.api.model.IAward;
 import com.thebluealliance.api.model.IEvent;
+import com.thebluealliance.api.model.IEventAlliance;
 import com.thebluealliance.api.model.IMatch;
 import com.thebluealliance.api.model.IMedia;
+import com.thebluealliance.api.model.IRankingResponseObject;
 import com.thebluealliance.api.model.ITeam;
 
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
 
-import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -47,7 +53,7 @@ import okhttp3.OkHttpClient;
 /**
  * Dagger module that handles OkHttp and Gson
  */
-@Module(includes = {TBAAndroidModule.class, ConfigModule.class})
+@Module(includes = {TBAAndroidModule.class})
 public class HttpModule {
 
     public static int CACHE_SIZE = 10 * 1024 * 1024;
@@ -60,7 +66,7 @@ public class HttpModule {
     }
 
     @Provides @Singleton
-    public APIv3RequestInterceptor provideApiRequestInterceptor(@Nullable FirebaseRemoteConfig config) {
+    public APIv3RequestInterceptor provideApiRequestInterceptor(AppConfig config) {
         return new APIv3RequestInterceptor(config);
     }
 
@@ -89,6 +95,8 @@ public class HttpModule {
         TeamDeserializer teamDeserializer = new TeamDeserializer();
         MediaDeserializer mediaDeserializer = new MediaDeserializer();
         APIStatusDeserializer apiStatusDeserializer = new APIStatusDeserializer();
+        RankingsResponseDeserializer rankingsResponseDeserializer = new RankingsResponseDeserializer();
+        AllianceDeserializer allianceDeserializer = new AllianceDeserializer();
 
         builder.registerTypeAdapter(IAward.class, awardDeserializer);
         builder.registerTypeAdapter(Award.class, awardDeserializer);
@@ -107,6 +115,13 @@ public class HttpModule {
 
         builder.registerTypeAdapter(IApiStatus.class, apiStatusDeserializer);
         builder.registerTypeAdapter(ApiStatus.class, apiStatusDeserializer);
+
+        builder.registerTypeAdapter(IRankingResponseObject.class, rankingsResponseDeserializer);
+        builder.registerTypeAdapter(RankingResponseObject.class, rankingsResponseDeserializer);
+        builder.registerTypeAdapter(RankingItem.class, new RankingItemDeserializer());
+
+        builder.registerTypeAdapter(IEventAlliance.class, allianceDeserializer);
+        builder.registerTypeAdapter(EventAlliance.class, allianceDeserializer);
 
         builder.registerTypeAdapter(District.class, new DistrictDeserializer());
         builder.registerTypeAdapter(DistrictTeam.class, new DistrictTeamDeserializer());

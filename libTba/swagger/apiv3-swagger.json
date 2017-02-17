@@ -324,6 +324,26 @@
         }
       }
     },
+    "/api/v3/event/{event_key}/insights": {
+      "get": {
+        "summary": "Event Insights Request",
+        "operationId": "fetchEventInsights",
+        "description": "Fetch insights for one event.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/event_key_param"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a json dict with year specific insight data",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/api/v3/event/{event_key}/rankings": {
       "get": {
         "summary": "Event Rankings Request",
@@ -676,8 +696,7 @@
           "description": "An integer that represents the event type as a constant."
         },
         "district": {
-          "type": "string",
-          "description": "District key this event is associated with"
+            "$ref": "#/definitions/District"
         },
         "year": {
           "type": "integer",
@@ -965,7 +984,6 @@
     "EventAlliance": {
       "type": "object",
       "required": [
-        "name",
         "picks"
       ],
       "properties": {
@@ -984,6 +1002,23 @@
           "items": {
             "type": "string"
           }
+        },
+        "backup": {
+            "type": "object",
+            "required": [
+              "in",
+              "out"
+            ],
+           "properties": {
+              "in": {
+                "type": "string",
+                "description": "Team key of incoming team"
+              },
+              "out": {
+                "type": "string",
+                "description": "Team key of outgoing team"
+              }
+            }
         }
       }
     },
@@ -1007,34 +1042,25 @@
           "description": "Number of matches this team has played"
         },
         "qual_average": {
-          "type": "integer",
+          "type": "number",
+          "format": "double",
           "description": "For some years, average qualification score"
         },
         "rank": {
           "type": "integer",
           "description": "Ranking of this team"
         },
-        "record": {
-          "type": "object",
-          "required": [
-            "wins",
-            "losses",
-            "ties"
-          ],
-          "properties": {
-            "wins": {
-              "type": "integer",
-              "description": "Number of wins"
-            },
-            "losses": {
-              "type": "integer",
-              "description": "Number of losses"
-            },
-            "ties": {
-              "type": "integer",
-              "description": "Number of ties"
-            }
-          }
+        "wins": {
+          "type": "integer",
+          "description": "Number of wins"
+        },
+        "losses": {
+          "type": "integer",
+          "description": "Number of losses"
+        },
+        "ties": {
+          "type": "integer",
+          "description": "Number of ties"
         },
         "sort_orders": {
           "type": "array",
@@ -1058,7 +1084,10 @@
       ],
       "properties": {
         "rankings": {
-          "$ref": "#/definitions/RankingItem"
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RankingItem"
+          }
         },
         "sort_order_info": {
           "type": "array",

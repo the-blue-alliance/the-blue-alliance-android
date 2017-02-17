@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
 import com.thebluealliance.api.model.IRankingItem;
-import com.thebluealliance.api.model.IRankingItemRecord;
 
 import java.util.List;
 
@@ -15,8 +14,10 @@ public class RankingItem implements IRankingItem {
     private List<Double> sortOrders;
     private String teamKey;
 
-    private @Nullable IRankingItemRecord record;
-    private @Nullable Integer qualAverage;
+    private @Nullable Integer wins;
+    private @Nullable Integer losses;
+    private @Nullable Integer ties;
+    private @Nullable Double qualAverage;
     private @Nullable Long lastModified;
 
     @Override public Integer getMatchesPlayed() {
@@ -59,19 +60,35 @@ public class RankingItem implements IRankingItem {
         this.teamKey = teamKey;
     }
 
-    @Override @Nullable public IRankingItemRecord getRecord() {
-        return record;
+    @Override @Nullable public Integer getWins() {
+        return wins;
     }
 
-    public void setRecord(@Nullable IRankingItemRecord record) {
-        this.record = record;
+    @Override public void setWins(@Nullable Integer wins) {
+        this.wins = wins;
     }
 
-    @Override @Nullable public Integer getQualAverage() {
+    @Override @Nullable public Integer getLosses() {
+        return losses;
+    }
+
+    @Override public void setLosses(@Nullable Integer losses) {
+        this.losses = losses;
+    }
+
+    @Override @Nullable public Integer getTies() {
+        return ties;
+    }
+
+    @Override public void setTies(@Nullable Integer ties) {
+        this.ties = ties;
+    }
+
+    @Override @Nullable public Double getQualAverage() {
         return qualAverage;
     }
 
-    @Override public void setQualAverage(@Nullable Integer qualAverage) {
+    @Override public void setQualAverage(@Nullable Double qualAverage) {
         this.qualAverage = qualAverage;
     }
 

@@ -51,7 +51,7 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement,
             boolean isDistrict = (event.getDistrict() != null);
             ((Type)mDataToBind).isDistrict = isDistrict;
             if (isDistrict) {
-                districtKey = event.getDistrict();
+                districtKey = event.getDistrict().getKey();
             }
         }
 

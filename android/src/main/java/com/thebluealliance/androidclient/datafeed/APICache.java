@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 import com.thebluealliance.androidclient.database.Database;
@@ -14,10 +15,14 @@ import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventAlliance;
+import com.thebluealliance.androidclient.models.EventDetail;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.DistrictType;
+import com.thebluealliance.androidclient.types.EventDetailType;
 
 import android.database.Cursor;
 
@@ -34,10 +39,12 @@ import rx.Observable;
 public class APICache {
 
     private final Database mDb;
+    private final Gson mGson;
 
     @Inject
-    public APICache(Database db) {
+    public APICache(Database db, Gson gson) {
         mDb = db;
+        mGson = gson;
     }
 
     public Observable<List<Team>> fetchTeamPage(int pageNum) {
@@ -226,13 +233,25 @@ public class APICache {
         });
     }
 
-    public Observable<JsonElement> fetchEventRankings(String eventKey) {
+    public Observable<RankingResponseObject> fetchEventRankings(String eventKey) {
         return Observable.create((observer) -> {
             try {
-                Event event = mDb.getEventsTable()
-                  .get(eventKey, new String[]{EventsTable.RANKINGS});
-                // TODO(#773) depends on EventDetails
-                // observer.onNext(event != null ? event.getRankings() : null);
+                String dbKey = EventDetail.buildKey(eventKey, EventDetailType.RANKINGS);
+                EventDetail detail = mDb.getEventDetailsTable().get(dbKey);
+                observer.onNext(detail.getDataForRankings(mGson));
+                observer.onCompleted();
+            } catch (Exception e) {
+                observer.onError(e);
+            }
+        });
+    }
+
+    public Observable<List<EventAlliance>> fetchEventAlliancse(String eventKey) {
+        return Observable.create((observer) -> {
+            try {
+                String dbKey = EventDetail.buildKey(eventKey, EventDetailType.ALLIANCES);
+                EventDetail detail = mDb.getEventDetailsTable().get(dbKey);
+                observer.onNext(detail.getDataForAlliances(mGson));
                 observer.onCompleted();
             } catch (Exception e) {
                 observer.onError(e);
@@ -254,17 +273,16 @@ public class APICache {
         });
     }
 
-    public Observable<JsonElement> fetchEventStats(String eventKey) {
+    public Observable<JsonElement> fetchJsonEventDetail(String eventKey, EventDetailType type) {
         return Observable.create((observer) -> {
-            try {
-                Event event = mDb.getEventsTable()
-                  .get(eventKey, new String[]{EventsTable.STATS});
-                // TODO(#773) depends on EventDetails
-                //observer.onNext(event != null ? event.getStats() : null);
-                observer.onCompleted();
-            } catch (Exception e) {
-                observer.onError(e);
-            }
+           try {
+               String dbKey = EventDetail.buildKey(eventKey, type);
+               EventDetail detail = mDb.getEventDetailsTable().get(dbKey);
+               observer.onNext(detail.getDataAsJson(mGson));
+               observer.onCompleted();
+           } catch (Exception e) {
+               observer.onError(e);
+           }
         });
     }
 
@@ -275,19 +293,6 @@ public class APICache {
                 List<Award> awards = mDb.getAwardsTable()
                   .getForQuery(null, where, new String[]{eventKey});
                 observer.onNext(awards);
-                observer.onCompleted();
-            } catch (Exception e) {
-                observer.onError(e);
-            }
-        });
-    }
-
-    public Observable<JsonElement> fetchEventDistrictPoints(String eventKey) {
-        return Observable.create((observer) -> {
-            try {
-                Event event = mDb.getEventsTable().get(eventKey);
-                // TODO(#773) depends on EventDetails
-                //observer.onNext(event != null ? event.getDistrictPoints() : null);
                 observer.onCompleted();
             } catch (Exception e) {
                 observer.onError(e);

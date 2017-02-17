@@ -4,6 +4,7 @@ import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
+import com.thebluealliance.androidclient.database.tables.EventDetailsTable;
 import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
@@ -28,7 +29,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
     public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
-    static final int DATABASE_VERSION = 31;
+    static final int DATABASE_VERSION = 32;
     private static final String DATABASE_NAME = "the-blue-alliance-android-database";
     static final @Deprecated String TABLE_API = "api";
     public static final String TABLE_TEAMS = "teams",
@@ -39,6 +40,7 @@ public class Database extends SQLiteOpenHelper {
             TABLE_EVENTTEAMS = "eventTeams",
             TABLE_DISTRICTS = "districts",
             TABLE_DISTRICTTEAMS = "districtTeams",
+            TABLE_EVENTDETAILS = "eventDetails",
             TABLE_FAVORITES = "favorites",
             TABLE_SUBSCRIPTIONS = "subscriptions",
             TABLE_SEARCH = "search",
@@ -51,7 +53,9 @@ public class Database extends SQLiteOpenHelper {
             + TeamsTable.NUMBER + " INTEGER NOT NULL, "
             + TeamsTable.NAME + " TEXT DEFAULT '', "
             + TeamsTable.SHORTNAME + " TEXT DEFAULT '', "
-            + TeamsTable.LOCATION + " TEXT DEFAULT '',"
+            + TeamsTable.LOCATION + " TEXT DEFAULT '', "
+            + TeamsTable.ADDRESS + " TEXT DEFAULT '', "
+            + TeamsTable.LOCATION_NAME + " TEXT DEFAULT '', "
             + TeamsTable.WEBSITE + " TEXT DEFAULT '', "
             + TeamsTable.YEARS_PARTICIPATED + " TEXT DEFAULT '', "
             + TeamsTable.MOTTO + " TEXT DEFAULT '', "
@@ -64,20 +68,14 @@ public class Database extends SQLiteOpenHelper {
             + EventsTable.SHORTNAME + " TEXT DEFAULT '', "
             + EventsTable.LOCATION + " TEXT DEFAULT '', "
             + EventsTable.VENUE + " TEXT DEFAULT '', "
+            + EventsTable.ADDRESS + " TEXT DEFAULT '', "
             + EventsTable.TYPE + " INTEGER DEFAULT -1, "
-            + EventsTable.DISTRICT + " INTEGER DEFAULT -1, "
-            + EventsTable.DISTRICT_STRING + " TEXT DEFAULT '', "
-            + EventsTable.DISTRICT_POINTS + " TEXT DEFAULT '', "
             + EventsTable.START + " TIMESTAMP, "
             + EventsTable.END + " TIMESTAMP, "
-            + EventsTable.OFFICIAL + " INTEGER DEFAULT 0, "
             + EventsTable.WEEK + " INTEGER DEFAULT -1, "
-            + EventsTable.TEAMS + " TEXT DEFAULT '', "
-            + EventsTable.RANKINGS + " TEXT DEFAULT '', "
-            + EventsTable.ALLIANCES + " TEXT DEFAULT '', "
             + EventsTable.WEBCASTS + " TEXT DEFAULT '', "
-            + EventsTable.STATS + " TEXT DEFAULT '', "
             + EventsTable.WEBSITE + " TEXT DEFAULT '', "
+            + EventsTable.DISTRICT_KEY + " TEXT DEFAULT '', "
             + EventsTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
     public static final String CREATE_AWARDS = "CREATE TABLE IF NOT EXISTS " + TABLE_AWARDS + "("
@@ -146,6 +144,14 @@ public class Database extends SQLiteOpenHelper {
             + DistrictTeamsTable.JSON + " TEXT DEFAULT '', "
             + DistrictTeamsTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
+    public static final String CREATE_EVENTDETAILS = "CREATE TABLE IF NOT EXISTS "
+            + TABLE_EVENTDETAILS + "("
+            + EventDetailsTable.KEY + " TEXT PRIMARY KEY NOT NULL, "
+            + EventDetailsTable.EVENT_KEY + " TEXT NOT NULL, "
+            + EventDetailsTable.DETAIL_TYPE + " INTEGER NOT NULL, "
+            + EventDetailsTable.JSON_DATA + " TEXT DEFAULT '', "
+            + EventDetailsTable.LAST_MODIFIED + " TIMESTAMP"
+            + ")";
     public static final String CREATE_FAVORITES = "CREATE TABLE IF NOT EXISTS "
             + TABLE_FAVORITES + "("
             + FavoritesTable.KEY + " TEXT PRIMARY KEY NOT NULL,"
@@ -197,6 +203,7 @@ public class Database extends SQLiteOpenHelper {
     private EventTeamsTable mEventTeamsTable;
     private DistrictsTable mDistrictsTable;
     private DistrictTeamsTable mDistrictTeamsTable;
+    private EventDetailsTable mEventDetailsTable;
     private FavoritesTable mFavoritesTable;
     private SubscriptionsTable mSubscriptionsTable;
     private NotificationsTable mNotificationsTable;
@@ -205,12 +212,13 @@ public class Database extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         mDb = getWritableDatabase();
         mTeamsTable = new TeamsTable(mDb);
-        mEventsTable = new EventsTable(mDb);
         mAwardsTable = new AwardsTable(mDb);
         mMatchesTable = new MatchesTable(mDb);
         mMediasTable = new MediasTable(mDb);
         mEventTeamsTable = new EventTeamsTable(mDb);
         mDistrictsTable = new DistrictsTable(mDb);
+        mEventsTable = new EventsTable(mDb, mDistrictsTable);
+        mEventDetailsTable = new EventDetailsTable(mDb);
         mDistrictTeamsTable = new DistrictTeamsTable(mDb);
         mFavoritesTable = new FavoritesTable(mDb);
         mSubscriptionsTable = new SubscriptionsTable(mDb);
@@ -229,6 +237,10 @@ public class Database extends SQLiteOpenHelper {
 
     public EventsTable getEventsTable() {
         return mEventsTable;
+    }
+
+    public EventDetailsTable getEventDetailsTable() {
+        return mEventDetailsTable;
     }
 
     public AwardsTable getAwardsTable() {
@@ -276,6 +288,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_MEDIAS);
         db.execSQL(CREATE_EVENTTEAMS);
         db.execSQL(CREATE_DISTRICTS);
+        db.execSQL(CREATE_EVENTDETAILS);
         db.execSQL(CREATE_DISTRICTTEAMS);
         db.execSQL(CREATE_FAVORITES);
         db.execSQL(CREATE_SUBSCRIPTIONS);
@@ -440,6 +453,20 @@ public class Database extends SQLiteOpenHelper {
                         db.endTransaction();
                     }
                     break;
+                case 32:
+                    // Updates for apiv3 - just start over
+                    db.beginTransaction();
+                    String[] tables32 = {TABLE_EVENTS, TABLE_TEAMS};
+                    try {
+                        for (int i = 0; i < tables32.length; i++) {
+                            db.execSQL("DROP TABLE IF EXISTS " + tables32[i]);
+                        }
+                        // Recreate Events, Teams. Create EventDetail
+                        onCreate(db);
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
             }
             upgradeTo++;
         }

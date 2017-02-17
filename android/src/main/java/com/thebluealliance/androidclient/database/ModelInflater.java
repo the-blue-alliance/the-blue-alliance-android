@@ -4,6 +4,7 @@ import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
+import com.thebluealliance.androidclient.database.tables.EventDetailsTable;
 import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
@@ -16,6 +17,7 @@ import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventDetail;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Match;
@@ -96,19 +98,17 @@ public final class ModelInflater {
                 case EventsTable.VENUE:
                     event.setLocationName(data.getString(i));
                     break;
+                case EventsTable.ADDRESS:
+                    event.setAddress(data.getString(i));
+                    break;
                 case EventsTable.WEBSITE:
                     event.setWebsite(data.getString(i));
                     break;
                 case EventsTable.TYPE:
                     event.setEventType(data.getInt(i));
                     break;
-                case EventsTable.DISTRICT:
-                    // TODO should make district_key column
-                    //event.setEventDistrict(data.getInt(i));
-                    break;
-                case EventsTable.DISTRICT_POINTS:
-                    // TODO(773) Required EventDetails
-                    //event.setDistrictPoints(data.getString(i));
+                case EventsTable.DISTRICT_KEY:
+                    event.setDistrictKey(data.getString(i));
                     break;
                 case EventsTable.START:
                     event.setStartDate(data.getLong(i));
@@ -118,22 +118,6 @@ public final class ModelInflater {
                     break;
                 case EventsTable.WEEK:
                     event.setWeek(data.getInt(i));
-                    break;
-                case EventsTable.RANKINGS:
-                    //TODO(773) Requires EventDetails
-                    //event.setRankings(data.getString(i));
-                    break;
-                case EventsTable.ALLIANCES:
-                    //TODO(773) Requires EventDetails
-                    //event.setAlliances(data.getString(i));
-                    break;
-                case EventsTable.STATS:
-                    //TODO(773) Requires EventDetails
-                    //event.setStats(data.getString(i));
-                    break;
-                case EventsTable.TEAMS:
-                    //TODO(773) Requires EventDetails
-                    ////event.setTeams(data.getString(i));
                     break;
                 case EventsTable.WEBCASTS:
                     event.setWebcasts(data.getString(i));
@@ -241,7 +225,13 @@ public final class ModelInflater {
                     team.setName(data.getString(i));
                     break;
                 case TeamsTable.LOCATION:
+                    team.setLocation(data.getString(i));
+                    break;
+                case TeamsTable.ADDRESS:
                     team.setAddress(data.getString(i));
+                    break;
+                case TeamsTable.LOCATION_NAME:
+                    team.setLocationName(data.getString(i));
                     break;
                 case TeamsTable.WEBSITE:
                     team.setWebsite(data.getString(i));
@@ -379,6 +369,23 @@ public final class ModelInflater {
             }
         }
         return districtTeam;
+    }
+
+    public static EventDetail inflateEventDetail(Cursor data) {
+        int eventKeyIndex = data.getColumnIndex(EventDetailsTable.EVENT_KEY);
+        int typeIndex = data.getColumnIndex(EventDetailsTable.DETAIL_TYPE);
+        EventDetail detail = new EventDetail(data.getString(eventKeyIndex), data.getInt(typeIndex));
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
+                case EventDetailsTable.JSON_DATA:
+                    detail.setJsonData(data.getString(i));
+                    break;
+                case EventDetailsTable.LAST_MODIFIED:
+                    detail.setLastModified(data.getLong(i));
+                    break;
+            }
+        }
+        return detail;
     }
 
     public static Favorite inflateFavorite(Cursor data) {

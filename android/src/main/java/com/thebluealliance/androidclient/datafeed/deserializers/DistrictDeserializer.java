@@ -19,7 +19,7 @@ public class DistrictDeserializer implements JsonDeserializer<District> {
         String key = data.get("key").getAsString();
         district.setAbbreviation(key);
         district.setEnum(DistrictType.fromAbbreviation(key).ordinal());
-        district.setDisplayName(data.get("name").getAsString());
+        district.setDisplayName(data.get("display_name").getAsString());
         return district;
     }
 }

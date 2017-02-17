@@ -1,0 +1,166 @@
+{
+  "playoff": {
+    "A_ChevalDeFrise": [
+      6, 
+      9, 
+      66.666666666666671
+    ], 
+    "A_Portcullis": [
+      16, 
+      21, 
+      76.19047619047619
+    ], 
+    "B_Moat": [
+      21, 
+      22, 
+      95.454545454545453
+    ], 
+    "B_Ramparts": [
+      8, 
+      8, 
+      100.0
+    ], 
+    "C_Drawbridge": [
+      0, 
+      5, 
+      0.0
+    ], 
+    "C_SallyPort": [
+      4, 
+      25, 
+      16.0
+    ], 
+    "D_RockWall": [
+      25, 
+      26, 
+      96.15384615384616
+    ], 
+    "D_RoughTerrain": [
+      4, 
+      4, 
+      100.0
+    ], 
+    "LowBar": [
+      30, 
+      30, 
+      100.0
+    ], 
+    "average_auto_score": 24.266666666666666, 
+    "average_boulder_score": 14.133333333333333, 
+    "average_crossing_score": 28.0, 
+    "average_foul_score": 3.5, 
+    "average_high_goals": 1.7, 
+    "average_low_goals": 3.0666666666666669, 
+    "average_score": 97.733333333333334, 
+    "average_tower_score": 11.0, 
+    "average_win_margin": 28.133333333333333, 
+    "average_win_score": 111.8, 
+    "breaches": [
+      24, 
+      30, 
+      80.0
+    ], 
+    "captures": [
+      1, 
+      30, 
+      3.3333333333333335
+    ], 
+    "challenges": [
+      57, 
+      90, 
+      63.333333333333336
+    ], 
+    "high_score": [
+      133, 
+      "2016nyny_qf3m1", 
+      "QF3-1"
+    ], 
+    "scales": [
+      3, 
+      90, 
+      3.3333333333333335
+    ]
+  }, 
+  "qual": {
+    "A_ChevalDeFrise": [
+      36, 
+      126, 
+      28.571428571428573
+    ], 
+    "A_Portcullis": [
+      14, 
+      50, 
+      28.0
+    ], 
+    "B_Moat": [
+      39, 
+      58, 
+      67.241379310344826
+    ], 
+    "B_Ramparts": [
+      86, 
+      118, 
+      72.881355932203391
+    ], 
+    "C_Drawbridge": [
+      9, 
+      57, 
+      15.789473684210526
+    ], 
+    "C_SallyPort": [
+      31, 
+      119, 
+      26.050420168067227
+    ], 
+    "D_RockWall": [
+      73, 
+      113, 
+      64.601769911504419
+    ], 
+    "D_RoughTerrain": [
+      54, 
+      63, 
+      85.714285714285708
+    ], 
+    "LowBar": [
+      132, 
+      176, 
+      75.0
+    ], 
+    "average_auto_score": 13.869318181818182, 
+    "average_boulder_score": 5.2159090909090908, 
+    "average_crossing_score": 24.261363636363637, 
+    "average_foul_score": 4.2329545454545459, 
+    "average_high_goals": 0.64204545454545459, 
+    "average_low_goals": 1.1022727272727273, 
+    "average_score": 55.5625, 
+    "average_tower_score": 7.9261363636363633, 
+    "average_win_margin": 24.511363636363637, 
+    "average_win_score": 67.818181818181813, 
+    "breaches": [
+      56, 
+      176, 
+      31.818181818181817
+    ], 
+    "captures": [
+      2, 
+      176, 
+      1.1363636363636365
+    ], 
+    "challenges": [
+      246, 
+      528, 
+      46.590909090909093
+    ], 
+    "high_score": [
+      107, 
+      "2016nyny_qm63", 
+      "Q63"
+    ], 
+    "scales": [
+      11, 
+      528, 
+      2.0833333333333335
+    ]
+  }
+}

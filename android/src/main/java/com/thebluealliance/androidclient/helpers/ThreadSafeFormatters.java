@@ -29,7 +29,8 @@ public final class ThreadSafeFormatters {
       new SimpleDateFormat("MMM d", ENGLISH);
     private static final DateFormat MONTH_FORMAT = new SimpleDateFormat("MMM", ENGLISH);
 
-    private static final NumberFormat DOUBLE_ONE_PLACE_FORMAT = new DecimalFormat("##.#");
+    private static final NumberFormat DOUBLE_NO_PLACE_FORMAT = new DecimalFormat("###");
+    private static final NumberFormat DOUBLE_ONE_PLACE_FORMAT = new DecimalFormat("###.#");
     private static final NumberFormat DOUBLE_TWO_PLACES_FORMAT = new DecimalFormat("###.##");
 
     public static synchronized Date parseEventDate(String dateString) throws ParseException{
@@ -46,6 +47,10 @@ public final class ThreadSafeFormatters {
 
     public static synchronized String renderEventMonth(Date date) {
         return MONTH_FORMAT.format(date);
+    }
+
+    public static synchronized String formatDoubleNoPlaces(double input) {
+        return DOUBLE_NO_PLACE_FORMAT.format(input);
     }
 
     public static synchronized String formatDoubleOnePlace(double input) {

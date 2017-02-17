@@ -24,6 +24,8 @@ public class TeamsTable extends ModelTable<Team> {
             NAME = "name",
             SHORTNAME = "shortname",
             LOCATION = "location",
+            ADDRESS = "address",
+            LOCATION_NAME = "location_name",
             WEBSITE = "website",
             YEARS_PARTICIPATED = "yearsParticipated",
             MOTTO = "motto",

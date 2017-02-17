@@ -27,6 +27,7 @@ package com.thebluealliance.api.model;
 
 import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
+import com.thebluealliance.api.model.IDistrict;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
@@ -36,7 +37,7 @@ import javax.annotation.Nullable;
 /**
  * Event
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-16T16:55:35.065-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T11:25:52.522-05:00")
 public interface IEvent   {
 
 
@@ -53,14 +54,14 @@ public interface IEvent   {
 
 
    /**
-   * District key this event is associated with
+   * Get district
    * @return district
   **/
-  @ApiModelProperty(example = "null", value = "District key this event is associated with")
+  @ApiModelProperty(example = "null", value = "")
   @Nullable
-  public String getDistrict();
+  public IDistrict getDistrict();
 
-  public void setDistrict(String district);
+  public void setDistrict(IDistrict district);
 
 
 
@@ -77,7 +78,7 @@ public interface IEvent   {
 
 
    /**
-   * Event short code, as provided by FIRST
+   * IEvent short code, as provided by FIRST
    * @return eventCode
   **/
   @ApiModelProperty(example = "null", required = true, value = "Event short code, as provided by FIRST")

@@ -121,17 +121,19 @@ public final class EventHelper {
                  * Week 1 is actually Week 0.5, everything else is one less
                  * See http://www.usfirst.org/roboticsprograms/frc/blog-The-Palmetto-Regional
                  */
+                @Nullable Integer week = e.getWeek();
                 if (e.getYear() == 2016) {
-                    @Nullable Integer week = e.getWeek();
                     if (week == null) {
                         return String.format(REGIONAL_LABEL, 0);
                     } else if ("2016scmb".equals(e.getKey())) {
                         return String.format(FLOAT_REGIONAL_LABEL, 0.5);
                     } else {
-                        return String.format(REGIONAL_LABEL, week);
+                        return String.format(REGIONAL_LABEL, week - 1);
                     }
+                } else if (week != null){
+                    return String.format(REGIONAL_LABEL, week);
                 } else {
-                    return String.format(REGIONAL_LABEL, e.getWeek());
+                    return String.format(REGIONAL_LABEL, 0);
                 }
             case OFFSEASON:
                 String month = ThreadSafeFormatters.renderEventMonth(e.getFormattedStartDate());
@@ -311,12 +313,6 @@ public final class EventHelper {
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry) it.next();
             String value = entry.getValue().toString();
-            // If we have a number like 235.00, remove the useless .00 so it looks cleaner
-            try {
-                value = ThreadSafeFormatters.formatDoubleTwoPlaces(Double.parseDouble(value));
-            } catch (NumberFormatException e) {
-                //Item is not a number
-            }
 
             // Capitalization hack
             String rankingKey = entry.getKey().toString();
