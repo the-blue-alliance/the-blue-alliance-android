@@ -73,7 +73,7 @@ public class AppConfig {
                          * Here, we atone for sins of the past
                          */
                         Analytics.setAnalyticsId(mFirebaseRemoteConfig.getString(Analytics.PROD_ANALYTICS_KEY));
-                        APIv3RequestInterceptor.updateApiKey(mFirebaseRemoteConfig.getString(APIv3RequestInterceptor.APIV3_KEY));
+                        APIv3RequestInterceptor.updateApiKey(mFirebaseRemoteConfig);
                     } else {
                         TbaLogger.e("Unable to update remote config", task.getException());
                     }

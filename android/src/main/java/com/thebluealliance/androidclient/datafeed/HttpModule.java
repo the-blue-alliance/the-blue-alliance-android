@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.deserializers.APIStatusDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AllianceDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
@@ -66,8 +65,8 @@ public class HttpModule {
     }
 
     @Provides @Singleton
-    public APIv3RequestInterceptor provideApiRequestInterceptor(AppConfig config) {
-        return new APIv3RequestInterceptor(config);
+    public APIv3RequestInterceptor provideApiRequestInterceptor() {
+        return new APIv3RequestInterceptor();
     }
 
     @Provides @Singleton
