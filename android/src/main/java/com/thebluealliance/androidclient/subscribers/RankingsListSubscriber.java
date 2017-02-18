@@ -119,7 +119,7 @@ public class RankingsListSubscriber extends BaseAPISubscriber<RankingResponseObj
         }
         List<IRankingItem> rankingsData = rankings.getRankings();
         for (int i = 0; i < Math.min(EventRankingsEvent.SIZE, rankingsData.size()); i++) {
-            rankString += ((i) + ". <b>" + rankingsData.get(i).getTeamKey().substring(3)) + "</b>";
+            rankString += ((i+1) + ". <b>" + rankingsData.get(i).getTeamKey().substring(3)) + "</b>";
             if (i < Math.min(6, rankingsData.size()) - 1) {
                 rankString += "<br>";
             }
