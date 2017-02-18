@@ -9,6 +9,8 @@ import com.thebluealliance.androidclient.eventbus.LiveEventUpdateEvent;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
+import com.thebluealliance.api.model.IRankingItem;
+import com.thebluealliance.api.model.IRankingSortOrder;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -19,12 +21,10 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -280,33 +280,41 @@ public final class EventHelper {
                 + ThreadSafeFormatters.renderEventDate(endDate);
     }
 
-    public static String extractRankingString(CaseInsensitiveMap rankingElements) {
-        // Find if the rankings contain a record; remove it if it does
-        Iterator it = rankingElements.entrySet().iterator();
-        String record = null;
-        while (it.hasNext()) {
-            Map.Entry<String, Object> entry = (Map.Entry) it.next();
-            if (entry.getKey().toLowerCase().contains("record".toLowerCase())) {
-                record = "(" + rankingElements.get(entry.getKey()) + ")";
-                it.remove();
-                break;
+    public static String buildRankingString(IRankingItem rankData,
+                                            List<IRankingSortOrder> sortOrders,
+                                            Resources resources) {
+        Map<String, String> rankingElements = Utilities.getMapForPlatform(String.class, String.class);
+        if (rankData.getQualAverage() != null) {
+            rankingElements.put(resources.getString(R.string.rank_qual_average),
+                                ThreadSafeFormatters.formatDoubleOnePlace(rankData.getQualAverage()));
+        }
+        for (int j = 0; j < sortOrders.size(); j++) {
+            String rankString;
+            Double rankValue = rankData.getSortOrders().get(j);
+            IRankingSortOrder sort = sortOrders.get(j);
+            switch (sort.getPrecision()) {
+                case 0:
+                    rankString = ThreadSafeFormatters.formatDoubleNoPlaces(rankValue);
+                    break;
+                case 1:
+                    rankString = ThreadSafeFormatters.formatDoubleOnePlace(rankValue);
+                    break;
+                default:
+                case 2:
+                    rankString = ThreadSafeFormatters.formatDoubleTwoPlaces(rankValue);
+                    break;
             }
+            rankingElements.put(sort.getName(), rankString);
         }
 
-        if (record == null) {
-            Set<String> keys = rankingElements.keySet();
-            if (keys.contains("wins") && keys.contains("losses") && keys.contains("ties")) {
-                record = "(" + rankingElements.get("wins") + "-" + rankingElements.get("losses") + "-" + rankingElements.get("ties") + ")";
-                rankingElements.remove("wins");
-                rankingElements.remove("losses");
-                rankingElements.remove("ties");
-            }
-        }
-
-        return record;
+        rankingElements.put(resources.getString(R.string.rank_played),
+                            Integer.toString(rankData.getMatchesPlayed()));
+        rankingElements.put(resources.getString(R.string.rank_dq),
+                            Integer.toString(rankData.getDq()));
+        return EventHelper.createRankingBreakdown(rankingElements);
     }
 
-    public static String createRankingBreakdown(CaseInsensitiveMap rankingElements) {
+    private static String createRankingBreakdown(Map<String, String> rankingElements) {
         String rankingString = "";
         // Construct rankings string
         Iterator it = rankingElements.entrySet().iterator();
@@ -328,6 +336,7 @@ public final class EventHelper {
         }
         return rankingString;
     }
+
 
     /**
      * Hacky capitalize method to remove dependency on apache lib for only one method Stupid DEX
@@ -356,22 +365,6 @@ public final class EventHelper {
         }
     }
 
-    public static class CaseInsensitiveMap<K> extends HashMap<String, K> {
-
-        @Override
-        public K put(String key, K value) {
-            return super.put(key.toLowerCase(), value);
-        }
-
-        public K get(String key) {
-            return super.get(key.toLowerCase());
-        }
-
-        public boolean contains(String key) {
-            return get(key) != null;
-        }
-    }
-
     /**
      * Returns an abbreviated event or district code like "CALB" from a match key like
      * "2014calb_qm17" or event key like "2014necmp" or district key like "2014pnw". Returns "" if
@@ -383,31 +376,4 @@ public final class EventHelper {
         return m.find() ? m.group().toUpperCase(Locale.US) : "";
     }
 
-    public static String generateAllianceSummary(Resources r, int allianceNumber, int alliancePick) {
-        String[] args = new String[2];
-        String summary;
-        if (allianceNumber > 0) {
-            switch (alliancePick) {
-                case 0:
-                    args[0] = r.getString(R.string.team_at_event_captain);
-                    args[1] = allianceNumber + Utilities.getOrdinalFor(allianceNumber);
-                    break;
-                case -1:
-                    args[0] = allianceNumber + Utilities.getOrdinalFor(allianceNumber);
-                    break;
-                default:
-                    args[0] = alliancePick + Utilities.getOrdinalFor(alliancePick) + " " + r.getString(R.string.team_at_event_pick);
-                    args[1] = allianceNumber + Utilities.getOrdinalFor(allianceNumber);
-                    break;
-            }
-            if (alliancePick == -1) {
-                summary = String.format(r.getString(R.string.alliance_summary_no_pick_num), args[0]);
-            } else {
-                summary = String.format(r.getString(R.string.alliance_summary), args[0], args[1]);
-            }
-        } else {
-            summary = r.getString(R.string.not_picked);
-        }
-        return summary;
-    }
 }

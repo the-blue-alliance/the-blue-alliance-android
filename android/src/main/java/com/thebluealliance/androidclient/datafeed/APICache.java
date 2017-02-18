@@ -11,12 +11,14 @@ import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
+import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.models.EventDetail;
+import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.RankingResponseObject;
@@ -225,6 +227,19 @@ public class APICache {
             try {
                 List<Team> teams = mDb.getEventTeamsTable().getTeams(eventKey);
                 observer.onNext(teams);
+                observer.onCompleted();
+            } catch (Exception e) {
+                observer.onError(e);
+            }
+        });
+    }
+
+    public Observable<EventTeam> fetchEventTeam(String teamKey, String eventKey) {
+        return Observable.create((observer) -> {
+            try {
+                String etKey = EventTeamHelper.generateKey(eventKey, teamKey);
+                EventTeam eventTeam = mDb.getEventTeamsTable().get(etKey);
+                observer.onNext(eventTeam);
                 observer.onCompleted();
             } catch (Exception e) {
                 observer.onError(e);

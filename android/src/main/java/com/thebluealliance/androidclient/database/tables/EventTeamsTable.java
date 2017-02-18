@@ -21,8 +21,10 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
             TEAMKEY = "teamKey",
             EVENTKEY = "eventKey",
             YEAR = "year",
-            COMPWEEK = "week",
+            STATUS = "status",
             LAST_MODIFIED = "last_modified";
+    @Deprecated
+    public static final String COMPWEEK = "week";
 
     public EventTeamsTable(SQLiteDatabase db, Gson gson) {
         super(db, gson);
@@ -81,6 +83,6 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
 
     @Override
     public EventTeam inflate(Cursor cursor) {
-        return ModelInflater.inflateEventTeam(cursor);
+        return ModelInflater.inflateEventTeam(cursor, mGson);
     }
 }

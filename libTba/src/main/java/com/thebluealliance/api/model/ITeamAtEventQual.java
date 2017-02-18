@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
 /**
  * TeamAtEventQual
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T16:02:48.764-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T16:42:56.465-05:00")
 public interface ITeamAtEventQual   {
 
 
@@ -56,14 +56,14 @@ public interface ITeamAtEventQual   {
 
 
    /**
-   * Get rankings
-   * @return rankings
+   * Get ranking
+   * @return ranking
   **/
-  @ApiModelProperty(example = "null", value = "")
-  @Nullable
-  public IRankingItem getRankings();
+  @ApiModelProperty(example = "null", required = true, value = "")
+  
+  public IRankingItem getRanking();
 
-  public void setRankings(IRankingItem rankings);
+  public void setRanking(IRankingItem ranking);
 
 
 

@@ -118,7 +118,7 @@ public class Database extends SQLiteOpenHelper {
             + EventTeamsTable.TEAMKEY + " TEXT DEFAULT '', "
             + EventTeamsTable.EVENTKEY + " TEXT DEFAULT '', "
             + EventTeamsTable.YEAR + " INTEGER DEFAULT -1, "
-            + EventTeamsTable.COMPWEEK + " INTEGER DEFAULT -1, "
+            + EventTeamsTable.STATUS + " TEXT DEFAULT '', "
             + EventTeamsTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
     public static final String CREATE_DISTRICTS = "CREATE TABLE IF NOT EXISTS "
@@ -461,7 +461,8 @@ public class Database extends SQLiteOpenHelper {
                 case 32:
                     // Updates for apiv3 - just start over
                     db.beginTransaction();
-                    String[] tables32 = {TABLE_EVENTS, TABLE_TEAMS, TABLE_DISTRICTTEAMS};
+                    String[] tables32 = {TABLE_EVENTS, TABLE_TEAMS, TABLE_DISTRICTTEAMS,
+                            TABLE_EVENTTEAMS};
                     try {
                         for (int i = 0; i < tables32.length; i++) {
                             db.execSQL("DROP TABLE IF EXISTS " + tables32[i]);

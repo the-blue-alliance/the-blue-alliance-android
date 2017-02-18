@@ -170,17 +170,17 @@ public class TeamAtEventStatus implements ITeamAtEventStatus {
     }
 
     public static class TeamAtEventQual implements ITeamAtEventQual {
-        private IRankingItem rankings;
+        private IRankingItem ranking;
         private List<IRankingSortOrder> sortOrderInfo;
         private Integer numTeams;
         private String status;
 
-        @Nullable @Override public IRankingItem getRankings() {
-            return rankings;
+        @Nullable @Override public IRankingItem getRanking() {
+            return ranking;
         }
 
-        @Override public void setRankings(IRankingItem rankings) {
-            this.rankings = rankings;
+        @Override public void setRanking(IRankingItem ranking) {
+            this.ranking = ranking;
         }
 
         @Override public List<IRankingSortOrder> getSortOrderInfo() {

@@ -17,7 +17,6 @@ public class RankingItem implements IRankingItem {
 
     private @Nullable ITeamRecord record;
     private @Nullable Double qualAverage;
-    private @Nullable Long lastModified;
 
     @Override public Integer getMatchesPlayed() {
         return matchesPlayed;
@@ -102,6 +101,37 @@ public class RankingItem implements IRankingItem {
 
         @Override public void setTies(Integer ties) {
             this.ties = ties;
+        }
+
+        public static String buildRecordString(ITeamRecord record) {
+            if (record.getWins() == null
+                || record.getLosses() == null
+                || record.getTies() == null) {
+                return "";
+            }
+            StringBuilder recordBuilder = new StringBuilder();
+            recordBuilder.append("(");
+            recordBuilder.append(record.getWins());
+            recordBuilder.append("-");
+            recordBuilder.append(record.getLosses());
+            if (record.getTies() > 0) {
+                recordBuilder.append("-");
+                recordBuilder.append(record.getTies());
+            }
+            recordBuilder.append(")");
+            return recordBuilder.toString();
+        }
+
+        public static boolean isEmpty(ITeamRecord record) {
+            if (record.getWins() == null
+                || record.getLosses() == null
+                || record.getTies() == null) {
+                return true;
+            }
+
+            return record.getWins() == 0
+                    && record.getLosses() == 0
+                    && record.getTies() == 0;
         }
     }
 }

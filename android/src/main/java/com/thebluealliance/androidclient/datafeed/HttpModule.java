@@ -23,6 +23,7 @@ import com.thebluealliance.androidclient.datafeed.deserializers.RankingItemDeser
 import com.thebluealliance.androidclient.datafeed.deserializers.RankingItemDeserializer
         .RecordDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.RankingsResponseDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.TeamAtEventStatusDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.ApiStatus;
@@ -38,6 +39,7 @@ import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.RankingItem;
 import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.api.model.IApiStatus;
 import com.thebluealliance.api.model.IAward;
 import com.thebluealliance.api.model.IAwardRecipient;
@@ -52,6 +54,7 @@ import com.thebluealliance.api.model.IMatchVideo;
 import com.thebluealliance.api.model.IMedia;
 import com.thebluealliance.api.model.IRankingResponseObject;
 import com.thebluealliance.api.model.ITeam;
+import com.thebluealliance.api.model.ITeamAtEventStatus;
 import com.thebluealliance.api.model.ITeamRecord;
 
 import android.content.Context;
@@ -121,6 +124,7 @@ public class HttpModule {
         DistrictTeamDeserializer districtTeamDeserializer = new DistrictTeamDeserializer();
         DistrictEventPointsDeserializer eventPointsDeserializer = new DistrictEventPointsDeserializer();
         RecordDeserializer recordDeserializer = new RecordDeserializer();
+        TeamAtEventStatusDeserializer teamAtEventStatusDeserializer = new TeamAtEventStatusDeserializer();
 
         builder.registerTypeAdapter(IAward.class, awardDeserializer);
         builder.registerTypeAdapter(Award.class, awardDeserializer);
@@ -163,6 +167,10 @@ public class HttpModule {
         builder.registerTypeAdapter(DistrictRanking.class, districtTeamDeserializer);
         builder.registerTypeAdapter(IDistrictEventPoints.class, eventPointsDeserializer);
         builder.registerTypeAdapter(DistrictPointBreakdown.class, eventPointsDeserializer);
+
+        builder.registerTypeAdapter(ITeamAtEventStatus.class, teamAtEventStatusDeserializer);
+        builder.registerTypeAdapter(TeamAtEventStatus.class, teamAtEventStatusDeserializer);
+
         sGson = builder.create();
         return sGson;
     }

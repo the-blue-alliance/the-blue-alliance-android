@@ -52,7 +52,7 @@ public class AllianceDeserializer implements JsonDeserializer<EventAlliance>,
 
         if (!isNull(data.get("backup"))) {
             JsonObject backupJson = data.get("backup").getAsJsonObject();
-            EventAlliance.Backup backup = new EventAlliance.Backup();
+            EventAlliance.AllianceBackup backup = new EventAlliance.AllianceBackup();
             backup.setIn(backupJson.get("in").getAsString());
             backup.setOut(backupJson.get("out").getAsString());
             alliance.setBackup(backup);

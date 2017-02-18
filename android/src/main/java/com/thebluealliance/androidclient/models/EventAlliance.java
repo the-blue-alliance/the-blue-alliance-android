@@ -86,7 +86,7 @@ public class EventAlliance implements IEventAlliance {
         return eventDetail;
     }
 
-    public static class Backup implements IAllianceBackup {
+    public static class AllianceBackup implements IAllianceBackup {
         private String in;
         private String out;
 

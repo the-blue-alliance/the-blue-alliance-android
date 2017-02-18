@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 import com.thebluealliance.androidclient.api.rx.TbaApiV3;
@@ -18,6 +17,8 @@ import com.thebluealliance.androidclient.datafeed.maps.DistrictTeamExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.EventAlliancesToEventDetail;
 import com.thebluealliance.androidclient.datafeed.maps.JsonToEventDetail;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
+import com.thebluealliance.androidclient.datafeed.maps.TeamAtEventStatusExtractor;
+import com.thebluealliance.androidclient.datafeed.maps.TeamAtEventStatusToEventTeam;
 import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.WeekEventsExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.YearsParticipatedInfoMap;
@@ -31,6 +32,7 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.androidclient.types.EventDetailType;
 
 import java.util.List;
@@ -118,14 +120,17 @@ public class CacheableDatafeed {
         return mAPICache.fetchTeamAtEventMatches(teamKey, eventKey).concatWith(apiData);
     }
 
-    public Observable<JsonArray> fetchTeamAtEventRank(
-      String teamKey,
-      String eventKey,
-      String cacheHeader) {
-        //TODO needs team@event status
-        //TeamRankExtractor extractor = new TeamRankExtractor(teamKey);
-        //return fetchEventRankings(eventKey, cacheHeader).map(extractor);
-        return Observable.just(new JsonArray());
+    public Observable<TeamAtEventStatus> fetchTeamAtEventStatus(
+            String teamKey,
+            String eventKey,
+            String cacheHeader) {
+        Observable<TeamAtEventStatus> apiData = mResponseMap.getAndWriteMappedResponseBody(
+                mApiv3.fetchTeamAtEventStatus(teamKey, eventKey, cacheHeader),
+                new TeamAtEventStatusToEventTeam(teamKey, eventKey),
+                mWriter.getEventTeamWriter().get());
+        return mAPICache.fetchEventTeam(teamKey, eventKey)
+                        .map(new TeamAtEventStatusExtractor())
+                        .concatWith(apiData);
     }
 
     public Observable<List<Integer>> fetchTeamYearsParticipated(String teamKey, String cacheHeader) {

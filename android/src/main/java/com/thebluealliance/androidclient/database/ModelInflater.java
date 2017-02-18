@@ -29,6 +29,7 @@ import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.api.model.IDistrictEventPoints;
 
@@ -267,7 +268,7 @@ public final class ModelInflater {
      * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
      * @return EventTeam model containing the fields as defined in the cursor
      */
-    public static EventTeam inflateEventTeam(Cursor data) {
+    public static EventTeam inflateEventTeam(Cursor data, Gson gson) {
         EventTeam eventTeam = new EventTeam();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
@@ -285,6 +286,9 @@ public final class ModelInflater {
                     break;
                 case EventTeamsTable.KEY:
                     eventTeam.setKey(data.getString(i));
+                    break;
+                case EventTeamsTable.STATUS:
+                    eventTeam.setStatus(gson.fromJson(data.getString(i), TeamAtEventStatus.class));
                     break;
                 case EventTeamsTable.LAST_MODIFIED:
                     eventTeam.setLastModified(data.getLong(i));

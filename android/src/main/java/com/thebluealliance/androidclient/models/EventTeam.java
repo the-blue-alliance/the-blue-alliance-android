@@ -8,6 +8,8 @@ import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 
 import android.content.ContentValues;
 
+import javax.annotation.Nullable;
+
 public class EventTeam implements TbaDatabaseModel {
 
     public static final String[] NOTIFICATION_TYPES = {
@@ -22,7 +24,7 @@ public class EventTeam implements TbaDatabaseModel {
     private String teamKey;
     private String eventKey;
     private Integer year;
-    private Integer compWeek;
+    private @Nullable TeamAtEventStatus status;
     private Long lastModified;
 
     public EventTeam() {
@@ -61,12 +63,12 @@ public class EventTeam implements TbaDatabaseModel {
         this.year = year;
     }
 
-    public Integer getCompWeek() {
-        return compWeek;
+    @Nullable public TeamAtEventStatus getStatus() {
+        return status;
     }
 
-    public void setCompWeek(Integer compWeek) {
-        this.compWeek = compWeek;
+    public void setStatus(@Nullable TeamAtEventStatus status) {
+        this.status = status;
     }
 
     public Long getLastModified() {
@@ -84,7 +86,7 @@ public class EventTeam implements TbaDatabaseModel {
         params.put(EventTeamsTable.TEAMKEY, getTeamKey());
         params.put(EventTeamsTable.EVENTKEY, getEventKey());
         params.put(EventTeamsTable.YEAR, getYear());
-        params.put(EventTeamsTable.COMPWEEK, getCompWeek());
+        params.put(EventTeamsTable.STATUS, status != null ? gson.toJson(status, TeamAtEventStatus.class) : "");
         params.put(EventTeamsTable.LAST_MODIFIED, getLastModified());
         return params;
     }

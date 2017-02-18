@@ -5,7 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **numTeams** | **Integer** |  | 
-**rankings** | [**RankingItem**](RankingItem.md) |  |  [optional]
+**ranking** | [**RankingItem**](RankingItem.md) |  | 
 **sortOrderInfo** | [**List&lt;RankingSortOrder&gt;**](RankingSortOrder.md) |  | 
 **status** | **String** |  | 
 

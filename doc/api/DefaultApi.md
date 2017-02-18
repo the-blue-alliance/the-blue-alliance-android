@@ -7,7 +7,7 @@ Method | HTTP request | Description
 [**fetchApiStatus**](DefaultApi.md#fetchApiStatus) | **GET** api/v3/status | API Status Request
 [**fetchDistrictEvents**](DefaultApi.md#fetchDistrictEvents) | **GET** api/v3/district/{district_key}/events | District Events Request
 [**fetchDistrictList**](DefaultApi.md#fetchDistrictList) | **GET** api/v3/districts/{year} | District List Request
-[**fetchDistrictRankings**](DefaultApi.md#fetchDistrictRankings) | **GET** api/v3/district/{district_key}/rankings | District Rankings Reques
+[**fetchDistrictRankings**](DefaultApi.md#fetchDistrictRankings) | **GET** api/v3/district/{district_key}/ranking | District Rankings Reques
 [**fetchDistrictTeamsInYear**](DefaultApi.md#fetchDistrictTeamsInYear) | **GET** api/v3/district/{district_key}/teams | District Teams Request
 [**fetchEvent**](DefaultApi.md#fetchEvent) | **GET** api/v3/event/{event_key} | Event Info Request
 [**fetchEventAlliances**](DefaultApi.md#fetchEventAlliances) | **GET** api/v3/event/{event_key}/alliances | Event Alliances Request
@@ -16,7 +16,7 @@ Method | HTTP request | Description
 [**fetchEventInsights**](DefaultApi.md#fetchEventInsights) | **GET** api/v3/event/{event_key}/insights | Event Insights Request
 [**fetchEventMatches**](DefaultApi.md#fetchEventMatches) | **GET** api/v3/event/{event_key}/matches | Event Matches Request
 [**fetchEventOPR**](DefaultApi.md#fetchEventOPR) | **GET** api/v3/event/{event_key}/oprs | Event OPR Request
-[**fetchEventRankings**](DefaultApi.md#fetchEventRankings) | **GET** api/v3/event/{event_key}/rankings | Event Rankings Request
+[**fetchEventRankings**](DefaultApi.md#fetchEventRankings) | **GET** api/v3/event/{event_key}/ranking | Event Rankings Request
 [**fetchEventTeams**](DefaultApi.md#fetchEventTeams) | **GET** api/v3/event/{event_key}/teams | Event Teams Request
 [**fetchEventsInYear**](DefaultApi.md#fetchEventsInYear) | **GET** api/v3/events/{year} | Event List Request
 [**fetchMatch**](DefaultApi.md#fetchMatch) | **GET** api/v3/match/{match_key} | Match Request
@@ -174,7 +174,7 @@ No authorization required
 
 District Rankings Reques
 
-Fetch district rankings
+Fetch district ranking
 
 ### Example
 ```java
