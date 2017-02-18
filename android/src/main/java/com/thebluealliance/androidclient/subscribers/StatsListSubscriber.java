@@ -75,7 +75,8 @@ public class StatsListSubscriber extends BaseAPISubscriber<StatsListSubscriber.M
         JsonObject ccwms = statsData.get("ccwms").getAsJsonObject();
 
         for (Entry<String, JsonElement> stat : oprs.entrySet()) {
-            String teamKey = "frc" + stat.getKey();
+            String teamKey = stat.getKey();
+            String teamNumber = teamKey.substring(3);
             Team team = mDb.getTeamsTable().get(teamKey);
             String teamName = team == null ? "Team " + stat.getKey() : team.getNickname();
             double opr = stat.getValue().getAsDouble();
@@ -88,7 +89,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<StatsListSubscriber.M
                     ThreadSafeFormatters.formatDoubleTwoPlaces(ccwm));
             mTeamStats.add(new StatsListElement(
                     teamKey,
-                    stat.getKey(),
+                    teamNumber,
                     teamName,
                     displayString,
                     opr,
