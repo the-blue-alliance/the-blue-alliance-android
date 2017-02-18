@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
@@ -101,7 +102,7 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
     }
 
     @Override
-    public ContentValues getParams() {
+    public ContentValues getParams(Gson gson) {
         ContentValues data = new ContentValues();
         data.put(MediasTable.TYPE, getType());
         data.put(MediasTable.FOREIGNKEY, getForeignKey());

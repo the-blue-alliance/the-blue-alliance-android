@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
@@ -425,7 +427,7 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     }
 
     @Override
-    public ContentValues getParams() {
+    public ContentValues getParams(Gson gson) {
         @Nullable Date startDate = getStartDate();
         @Nullable Date endDate = getEndDate();
         @Nullable IDistrict district = getDistrict();

@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
@@ -76,7 +78,7 @@ public class EventTeam implements TbaDatabaseModel {
     }
 
     @Override
-    public ContentValues getParams() {
+    public ContentValues getParams(Gson gson) {
         ContentValues params = new ContentValues();
         params.put(EventTeamsTable.KEY, getKey());
         params.put(EventTeamsTable.TEAMKEY, getTeamKey());

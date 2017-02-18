@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * DistrictRankingEventPoints
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T13:55:00.854-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T15:36:46.899-05:00")
 public interface IDistrictRankingEventPoints   {
 
 

@@ -1,22 +1,22 @@
 package com.thebluealliance.androidclient.renderers;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
+import com.thebluealliance.api.model.IMatchVideo;
 
 import android.content.res.Resources;
 import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 @Singleton
@@ -56,53 +56,64 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
     @Override
     public @Nullable MatchListElement renderFromModel(Match match, Integer renderMode) {
         RenderArgs args = argsFromMode(renderMode);
-        JsonObject alliances = match.getAlliancesJson();
-        JsonArray videos = match.getVideosJson();
+        @Nullable IMatchAlliancesContainer alliances = match.getAlliances();
+        @Nullable List<IMatchVideo> videos = match.getVideos();
+
         String key = match.getKey();
         if (key.isEmpty()) {
             return null;
         }
 
-        JsonArray redTeams = Match.getRedTeams(alliances),
-          blueTeams = Match.getBlueTeams(alliances);
-        String redScore = Match.getRedAlliance(alliances).get("score").getAsString(),
-          blueScore = Match.getBlueAlliance(alliances).get("score").getAsString();
+        String redScore = (alliances == null)
+                                ? "-1"
+                                : Integer.toString(alliances.getRed().getScore());
+        String blueScore = (alliances == null)
+                                ? "-1"
+                                : Integer.toString(alliances.getBlue().getScore());
 
         if (Integer.parseInt(redScore) < 0) redScore = "?";
         if (Integer.parseInt(blueScore) < 0) blueScore = "?";
 
         String youTubeVideoKey = null;
-        for (int i = 0; i < videos.size(); i++) {
-            JsonObject video = videos.get(i).getAsJsonObject();
-            if (video.get("type").getAsString().equals("youtube")) {
-                youTubeVideoKey = video.get("key").getAsString();
+        if (videos != null) {
+            for (IMatchVideo video : videos) {
+                if ("youtube".equals(video.getType())) {
+                    youTubeVideoKey = video.getKey();
+                    break;
+                }
             }
         }
 
         String[] redAlliance, blueAlliance;
         // Add teams based on alliance size (or none if there isn't for some reason)
-        if (redTeams.size() == 3) {
+        List<String> redTeams = (alliances != null)
+                ? alliances.getRed().getTeamKeys()
+                : null;
+        if (redTeams != null && redTeams.size() == 3) {
             redAlliance = new String[]{
-              redTeams.get(0).getAsString().substring(3),
-              redTeams.get(1).getAsString().substring(3),
-              redTeams.get(2).getAsString().substring(3)};
-        } else if (redTeams.size() == 2) {
+              redTeams.get(0).substring(3),
+              redTeams.get(1).substring(3),
+              redTeams.get(2).substring(3)};
+        } else if (redTeams != null && redTeams.size() == 2) {
             redAlliance = new String[]{
-              redTeams.get(0).getAsString().substring(3),
-              redTeams.get(1).getAsString().substring(3)};
+              redTeams.get(0).substring(3),
+              redTeams.get(1).substring(3)};
         } else {
             redAlliance = new String[]{"", "", ""};
         }
 
-        if (blueTeams.size() == 3) {
+        List<String> blueTeams = (alliances != null)
+                                ? alliances.getBlue().getTeamKeys()
+                                : null;
+        if (blueTeams != null && blueTeams.size() == 3) {
             blueAlliance = new String[]{
-              blueTeams.get(0).getAsString().substring(3),
-              blueTeams.get(1).getAsString().substring(3),
-              blueTeams.get(2).getAsString().substring(3)};
-        } else if (blueTeams.size() == 2) {
+              blueTeams.get(0).substring(3),
+              blueTeams.get(1).substring(3),
+              blueTeams.get(2).substring(3)};
+        } else if (blueTeams != null && blueTeams.size() == 2) {
             blueAlliance = new String[]{
-              blueTeams.get(0).getAsString().substring(3),
-              blueTeams.get(1).getAsString().substring(3)};
+              blueTeams.get(0).substring(3),
+              blueTeams.get(1).substring(3)};
         } else {
             blueAlliance = new String[]{"", "", ""};
         }

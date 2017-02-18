@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
@@ -11,6 +12,8 @@ import com.thebluealliance.androidclient.models.Event;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -22,16 +25,18 @@ import static org.mockito.Mockito.spy;
 
 @RunWith(DefaultTestRunner.class)
 public class EventsTableTest {
+    @Mock Gson mGson;
     private EventsTable mTable;
     private List<Event> mEvents;
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_EVENTS);
         db.execSQL(Database.CREATE_SEARCH_EVENTS);
-        DistrictsTable districtsTable = spy(new DistrictsTable(db));
-        mTable = spy(new EventsTable(db, districtsTable));
+        DistrictsTable districtsTable = spy(new DistrictsTable(db, mGson));
+        mTable = spy(new EventsTable(db, mGson, districtsTable));
         mEvents = ModelMaker.getModelList(Event.class, "2015_events");
     }
 
@@ -42,7 +47,7 @@ public class EventsTableTest {
 
     @Test
     public void testAddAndGet() {
-        DbTableTestDriver.testAddAndGet(mTable, mEvents.get(0));
+        DbTableTestDriver.testAddAndGet(mTable, mEvents.get(0), mGson);
     }
 
     @Test
@@ -54,7 +59,8 @@ public class EventsTableTest {
     public void testUpdate() {
         Event result = DbTableTestDriver.testUpdate(mTable,
                                                        mEvents.get(0),
-                                                       event -> event.setName("Test"));
+                                                       event -> event.setName("Test"),
+                                                    mGson);
         assertNotNull(result);
         assertEquals("Test", result.getName());
     }

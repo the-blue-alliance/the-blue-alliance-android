@@ -1,15 +1,13 @@
 package com.thebluealliance.androidclient.models;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.reflect.TypeToken;
 
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
@@ -17,12 +15,15 @@ import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.api.model.IMatch;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
+import com.thebluealliance.api.model.IMatchVideo;
 
 import android.content.ContentValues;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -34,54 +35,25 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
             NotificationTypes.MATCH_SCORE
     };
 
-    private String alliances = null;
-    private String compLevel = null;
-    private String eventKey = null;
-    private String key = null;
-    private Long lastModified = null;
-    private Integer matchNumber = null;
-    private String scoreBreakdown = null;
-    private Integer setNumber = null;
-    private Long time = null;
-    private Long actualTime = null;
-    private String videos = null;
-    private String winningAlliance;
+    private String key;
+    private String eventKey;
+    private String compLevel;
+    private Integer matchNumber;
+    private Integer setNumber;
 
+    private @Nullable IMatchAlliancesContainer alliances;
+    private @Nullable String scoreBreakdown;
+    private @Nullable List<IMatchVideo> videos;
+    private @Nullable Long time;
+    private @Nullable Long actualTime;
+    private @Nullable String winningAlliance;
+    private @Nullable Long lastModified;
+
+    // Other variables
     private String selectedTeam;
-    private int year;
-    private MatchType type;
-    private JsonObject alliancesObject;
-    private JsonArray videosArray;
-    private JsonObject breakdownObject;
 
-    public Match() {
-        year = -1;
-        type = MatchType.NONE;
-        alliancesObject = null;
-        videosArray = null;
-    }
-
-    @Nullable @Override public String getAlliances() {
-        return alliances;
-    }
-
-    @Override public void setAlliances(String alliances) {
-        this.alliances = alliances;
-    }
-
-    @Override public String getCompLevel() {
-        if (compLevel == null) {
-            compLevel = MatchHelper.getMatchTypeFromKey(getKey());
-        }
-        return compLevel;
-    }
-
-    @Override public void setCompLevel(String compLevel) {
-        this.compLevel = compLevel;
-    }
-
-    @Override public void setEventKey(String eventKey) {
-        this.eventKey = eventKey;
+    public static String[] getNotificationTypes() {
+        return NOTIFICATION_TYPES;
     }
 
     @Override public String getKey() {
@@ -92,12 +64,20 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
         this.key = key;
     }
 
-    @Nullable @Override public Long getLastModified() {
-        return lastModified;
+    @Override public String getEventKey() {
+        return eventKey;
     }
 
-    @Override public void setLastModified(Long lastModified) {
-        this.lastModified = lastModified;
+    @Override public void setEventKey(String eventKey) {
+        this.eventKey = eventKey;
+    }
+
+    @Override public String getCompLevel() {
+        return compLevel;
+    }
+
+    @Override public void setCompLevel(String compLevel) {
+        this.compLevel = compLevel;
     }
 
     @Override public Integer getMatchNumber() {
@@ -108,14 +88,6 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
         this.matchNumber = matchNumber;
     }
 
-    @Nullable @Override public String getScoreBreakdown() {
-        return scoreBreakdown;
-    }
-
-    @Override public void setScoreBreakdown(String scoreBreakdown) {
-        this.scoreBreakdown = scoreBreakdown;
-    }
-
     @Override public Integer getSetNumber() {
         return setNumber;
     }
@@ -124,82 +96,64 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
         this.setNumber = setNumber;
     }
 
-    @Nullable @Override public Long getTime() {
-        return time;
+    @Override @Nullable public IMatchAlliancesContainer getAlliances() {
+        return alliances;
     }
 
-    @Override public void setTime(Long time) {
-        this.time = time;
+    @Override public void setAlliances(@Nullable IMatchAlliancesContainer alliances) {
+        this.alliances = alliances;
     }
 
-    @Nullable @Override public String getVideos() {
+    @Override @Nullable public String getScoreBreakdown() {
+        return scoreBreakdown;
+    }
+
+    @Override public void setScoreBreakdown(@Nullable String scoreBreakdown) {
+        this.scoreBreakdown = scoreBreakdown;
+    }
+
+    @Override @Nullable public List<IMatchVideo> getVideos() {
         return videos;
     }
 
-    @Override public void setVideos(String videos) {
+    @Override public void setVideos(@Nullable List<IMatchVideo> videos) {
         this.videos = videos;
     }
 
-    @Nullable @Override public Long getActualTime() {
+    @Override @Nullable public Long getTime() {
+        return time;
+    }
+
+    @Override public void setTime(@Nullable Long time) {
+        this.time = time;
+    }
+
+    @Override @Nullable public Long getActualTime() {
         return actualTime;
     }
 
-    @Override public void setActualTime(Long actualTime) {
+    @Override public void setActualTime(@Nullable Long actualTime) {
         this.actualTime = actualTime;
     }
 
-    @Nullable @Override public String getWinningAlliance() {
+    @Override @Nullable public String getWinningAlliance() {
         return winningAlliance;
     }
 
-    @Override public void setWinningAlliance(String winningAlliance) {
+    @Override public void setWinningAlliance(@Nullable String winningAlliance) {
         this.winningAlliance = winningAlliance;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    @Override @Nullable public Long getLastModified() {
+        return lastModified;
+    }
+
+    @Override public void setLastModified(@Nullable Long lastModified) {
+        this.lastModified = lastModified;
     }
 
     public MatchType getType() {
-        if (type == MatchType.NONE) {
-            type = MatchType.fromKey(getKey());
-        }
-        return type;
-    }
-
-    public void setType(MatchType type) {
-        this.type = type;
-    }
-
-    @Override
-    public String getEventKey() {
-        if (this.eventKey == null) {
-            // Lazy load this
-            String eventKey = MatchHelper.getEventKeyFromMatchKey(getKey());
-            setEventKey(eventKey);
-        }
-        return this.eventKey;
-    }
-
-    public JsonObject getAlliancesJson() {
-        if (alliancesObject == null) {
-            alliancesObject = JSONHelper.getasJsonObject(getAlliances());
-        }
-        return alliancesObject;
-    }
-
-    public JsonArray getVideosJson() {
-        if (videosArray == null) {
-            videosArray = JSONHelper.getasJsonArray(getVideos());
-        }
-        return videosArray;
-    }
-
-    public JsonObject getScoreBreakdownJson() {
-        if (breakdownObject == null) {
-            breakdownObject = JSONHelper.getasJsonObject(getScoreBreakdown());
-        }
-        return breakdownObject;
+        return MatchType.fromKey(getKey());
     }
 
     public String getTitle(Resources resources, boolean lineBreak) {
@@ -243,47 +197,33 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
     }
 
     public boolean didSelectedTeamWin() {
-        if (selectedTeam.isEmpty()) {
+        if (selectedTeam.isEmpty() || alliances == null || winningAlliance == null || winningAlliance.isEmpty()) {
             return false;
         }
-        JsonObject alliances = getAlliancesJson();
-        JsonArray redTeams = getRedTeams(alliances),
-                blueTeams = getBlueTeams(alliances);
-        int redScore = getRedScore(alliances),
-                blueScore = getBlueScore(alliances);
 
-        if (Match.hasTeam(redTeams, selectedTeam)) {
-            return redScore > blueScore;
-        } else if (Match.hasTeam(blueTeams, selectedTeam)) {
-            return blueScore > redScore;
+        if ("red".equals(winningAlliance)) {
+            return getRedTeams(alliances).contains(selectedTeam);
+        } else if ("blue".equals(winningAlliance)) {
+            return getBlueTeams(alliances).contains(selectedTeam);
         } else {
-            // team did not play in match
             return false;
         }
     }
 
-    public static JsonObject getRedAlliance(JsonObject alliances) {
-        return alliances.getAsJsonObject("red");
+    public static Integer getRedScore(IMatchAlliancesContainer alliances) {
+        return alliances.getRed().getScore();
     }
 
-    public static JsonObject getBlueAlliance(JsonObject alliances) {
-        return alliances.getAsJsonObject("blue");
+    public static Integer getBlueScore(IMatchAlliancesContainer alliances) {
+        return alliances.getBlue().getScore();
     }
 
-    public static int getRedScore(JsonObject alliances) {
-        return getRedAlliance(alliances).get("score").getAsInt();
+    public static List<String> getRedTeams(IMatchAlliancesContainer alliances) {
+        return alliances.getRed().getTeamKeys();
     }
 
-    public static int getBlueScore(JsonObject alliances) {
-        return getBlueAlliance(alliances).get("score").getAsInt();
-    }
-
-    public static JsonArray getRedTeams(JsonObject alliances) {
-        return getRedAlliance(alliances).getAsJsonArray("teams");
-    }
-
-    public static JsonArray getBlueTeams(JsonObject alliances) {
-        return getBlueAlliance(alliances).getAsJsonArray("teams");
+    public static List<String> getBlueTeams(IMatchAlliancesContainer alliances) {
+        return alliances.getBlue().getTeamKeys();
     }
 
     /** @return team keys from {@link #getRedTeams} or {@link #getBlueTeams}. */
@@ -299,8 +239,7 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
 
     /** @return team number strings from {@link #getRedTeams} or {@link #getBlueTeams}. */
     @NonNull
-    public static ArrayList<String> teamNumbers(JsonArray teamsJson) {
-        ArrayList<String> teamKeys = teamKeys(teamsJson);
+    public static ArrayList<String> teamNumbers(List<String> teamKeys) {
         ArrayList<String> teamNumbers = new ArrayList<>(teamKeys.size());
 
         for (String key : teamKeys) {
@@ -309,37 +248,28 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
         return teamNumbers;
     }
 
-    /**
-     * @return true if the given team array contains the given team key, e.g. "frc111".
-     */
-    public static boolean hasTeam(JsonArray teams, String teamKey) {
-        return teams.contains(new JsonPrimitive(teamKey));
-    }
-
     public void addToRecord(String teamKey, int[] currentRecord /* {win, loss, tie} */) {
-        JsonObject alliances = getAlliancesJson();
-        if (currentRecord == null || alliances == null
-            || !(alliances.has("red") && alliances.has("blue"))) {
+        if (alliances == null || alliances.getBlue() == null || alliances.getRed() == null) {
             return;
         }
-        JsonArray redTeams = getRedTeams(alliances),
-                blueTeams = getBlueTeams(alliances);
+        List<String> redTeams = getRedTeams(alliances),
+                     blueTeams = getBlueTeams(alliances);
         int redScore = getRedScore(alliances),
-                blueScore = getBlueScore(alliances);
+            blueScore = getBlueScore(alliances);
 
         if (hasBeenPlayed(redScore, blueScore)) {
-            if (Match.hasTeam(redTeams, teamKey)) {
-                if (redScore > blueScore) {
+            if (redTeams.contains(teamKey)) {
+                if ("red".equals(winningAlliance)) {
                     currentRecord[0]++;
-                } else if (redScore < blueScore) {
+                } else if ("blue".equals(winningAlliance)) {
                     currentRecord[1]++;
                 } else {
                     currentRecord[2]++;
                 }
-            } else if (Match.hasTeam(blueTeams, teamKey)) {
-                if (blueScore > redScore) {
+            } else if (blueTeams.contains(teamKey)) {
+                if ("blue".equals(winningAlliance)) {
                     currentRecord[0]++;
-                } else if (blueScore < redScore) {
+                } else if ("red".equals(winningAlliance)) {
                     currentRecord[1]++;
                 } else {
                     currentRecord[2]++;
@@ -353,23 +283,22 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
     }
 
     public boolean hasBeenPlayed() {
-        JsonObject alliances = getAlliancesJson();
-        int redScore = getRedScore(alliances),
-                blueScore = getBlueScore(alliances);
+        int redScore = getRedScore(alliances);
+        int blueScore = getBlueScore(alliances);
 
         return redScore >= 0 && blueScore >= 0;
     }
 
     @Override
-    public ContentValues getParams() {
+    public ContentValues getParams(Gson gson) {
         ContentValues data = new ContentValues();
         data.put(MatchesTable.KEY, getKey());
         data.put(MatchesTable.MATCHNUM, getMatchNumber());
         data.put(MatchesTable.SETNUM, getSetNumber());
         data.put(MatchesTable.EVENT, getEventKey());
         data.put(MatchesTable.TIME, getTime());
-        data.put(MatchesTable.ALLIANCES, getAlliances());
-        data.put(MatchesTable.VIDEOS, getVideos());
+        data.put(MatchesTable.ALLIANCES, gson.toJson(alliances, IMatchAlliancesContainer.class));
+        data.put(MatchesTable.VIDEOS, gson.toJson(videos, new TypeToken<List<IMatchVideo>>(){}.getType()));
         data.put(MatchesTable.BREAKDOWN, getScoreBreakdown());
         data.put(MatchesTable.LAST_MODIFIED, getLastModified());
         return data;
@@ -383,5 +312,42 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
         }
         return renderer.renderFromModel(this, MatchRenderer.RENDER_DEFAULT);
 
+    }
+
+    public static class MatchVideo implements IMatchVideo {
+        private String key;
+        private String type;
+        private @Nullable Long lastModified;
+
+        @Override public String getKey() {
+            return key;
+        }
+
+        @Override public void setKey(String key) {
+            this.key = key;
+        }
+
+        @Override public String getType() {
+            return type;
+        }
+
+        @Override public void setType(String type) {
+            this.type = type;
+        }
+
+        @Nullable public Long getLastModified() {
+            return lastModified;
+        }
+
+        public void setLastModified(@Nullable Long lastModified) {
+            this.lastModified = lastModified;
+        }
+
+        public Media asMedia() {
+            Media media = new Media();
+            media.setForeignKey(getKey());
+            media.setType(getType());
+            return media;
+        }
     }
 }

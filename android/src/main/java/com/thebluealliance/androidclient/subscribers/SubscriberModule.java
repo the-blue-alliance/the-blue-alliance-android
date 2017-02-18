@@ -169,7 +169,7 @@ public class SubscriberModule {
     }
 
     @Provides
-    public MatchBreakdownSubscriber provideMatchBreakdownSubscriber() {
-        return new MatchBreakdownSubscriber();
+    public MatchBreakdownSubscriber provideMatchBreakdownSubscriber(Gson gson) {
+        return new MatchBreakdownSubscriber(gson);
     }
 }

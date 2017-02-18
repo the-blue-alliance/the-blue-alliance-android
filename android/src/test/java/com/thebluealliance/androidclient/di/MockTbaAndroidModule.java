@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.di;
 
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -75,6 +76,11 @@ public class MockTbaAndroidModule  {
     @Provides @Singleton
     public AccountManager provideAccountManager() {
         return Mockito.mock(AccountManager.class);
+    }
+
+    @Provides @Singleton
+    public FirebaseRemoteConfig provideFirebaseRemoteConfig() {
+        return Mockito.mock(FirebaseRemoteConfig.class);
     }
 
     @Provides

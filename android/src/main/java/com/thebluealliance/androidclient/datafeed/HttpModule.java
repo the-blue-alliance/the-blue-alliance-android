@@ -11,7 +11,9 @@ import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserialize
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.EventDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.MatchAllianceDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.MatchVideoDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MediaDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.RankingItemDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.RankingsResponseDeserializer;
@@ -26,15 +28,19 @@ import com.thebluealliance.androidclient.models.DistrictTeam;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.MatchAlliancesContainer;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.RankingItem;
 import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.api.model.IApiStatus;
 import com.thebluealliance.api.model.IAward;
+import com.thebluealliance.api.model.IAwardRecipient;
 import com.thebluealliance.api.model.IEvent;
 import com.thebluealliance.api.model.IEventAlliance;
 import com.thebluealliance.api.model.IMatch;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
+import com.thebluealliance.api.model.IMatchVideo;
 import com.thebluealliance.api.model.IMedia;
 import com.thebluealliance.api.model.IRankingResponseObject;
 import com.thebluealliance.api.model.ITeam;
@@ -57,6 +63,7 @@ import okhttp3.OkHttpClient;
 public class HttpModule {
 
     public static int CACHE_SIZE = 10 * 1024 * 1024;
+    private static Gson sGson;
 
     public HttpModule() {}
 
@@ -88,6 +95,7 @@ public class HttpModule {
 
     @VisibleForTesting
     public static Gson getGson() {
+        if (sGson != null) return sGson;
         GsonBuilder builder = new GsonBuilder();
         AwardDeserializer awardDeserializer = new AwardDeserializer();
         EventDeserializer eventDeserializer = new EventDeserializer();
@@ -97,9 +105,14 @@ public class HttpModule {
         APIStatusDeserializer apiStatusDeserializer = new APIStatusDeserializer();
         RankingsResponseDeserializer rankingsResponseDeserializer = new RankingsResponseDeserializer();
         AllianceDeserializer allianceDeserializer = new AllianceDeserializer();
+        MatchAllianceDeserializer matchAllianceDeserializer = new MatchAllianceDeserializer();
+        MatchVideoDeserializer matchVideoDeserializer = new MatchVideoDeserializer();
+        AwardDeserializer.AwardRecipientDeserializer recipientDeserializer = new AwardDeserializer.AwardRecipientDeserializer();
 
         builder.registerTypeAdapter(IAward.class, awardDeserializer);
         builder.registerTypeAdapter(Award.class, awardDeserializer);
+        builder.registerTypeAdapter(IAwardRecipient.class, recipientDeserializer);
+        builder.registerTypeAdapter(Award.AwardRecipient.class, recipientDeserializer);
 
         builder.registerTypeAdapter(IEvent.class, eventDeserializer);
         builder.registerTypeAdapter(Event.class, eventDeserializer);
@@ -123,10 +136,17 @@ public class HttpModule {
         builder.registerTypeAdapter(IEventAlliance.class, allianceDeserializer);
         builder.registerTypeAdapter(EventAlliance.class, allianceDeserializer);
 
+        builder.registerTypeAdapter(IMatchAlliancesContainer.class, matchAllianceDeserializer);
+        builder.registerTypeAdapter(MatchAlliancesContainer.class, matchAllianceDeserializer);
+
+        builder.registerTypeAdapter(IMatchVideo.class, matchVideoDeserializer);
+        builder.registerTypeAdapter(Match.MatchVideo.class, matchVideoDeserializer);
+
         builder.registerTypeAdapter(District.class, new DistrictDeserializer());
         builder.registerTypeAdapter(DistrictTeam.class, new DistrictTeamDeserializer());
         builder.registerTypeAdapter(DistrictPointBreakdown.class, new TeamDistrictPointsDeserializer());
-        return builder.create();
+        sGson = builder.create();
+        return sGson;
     }
 
 }

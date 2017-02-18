@@ -1,8 +1,11 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Award;
 
@@ -29,6 +32,7 @@ public class AwardListWriterTest {
 
     private List<Award> mAwards;
     private AwardListWriter mWriter;
+    private Gson mGson;
 
     @Before
     public void setUp() {
@@ -36,6 +40,7 @@ public class AwardListWriterTest {
         mAwardsTable = DatabaseMocker.mockAwardsTable(mDb);
         mAwards = ModelMaker.getModelList(Award.class, "2015necmp_awards");
         mWriter = new AwardListWriter(mDb);
+        mGson = HttpModule.getGson();
     }
 
     @Test
@@ -44,7 +49,7 @@ public class AwardListWriterTest {
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         for (Award award : mAwards) {
-            verify(db).insert(Database.TABLE_AWARDS, null, award.getParams());
+            verify(db).insert(Database.TABLE_AWARDS, null, award.getParams(mGson));
         }
     }
 }

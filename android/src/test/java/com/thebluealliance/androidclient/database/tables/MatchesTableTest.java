@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
@@ -11,6 +12,8 @@ import com.thebluealliance.androidclient.models.Match;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -23,14 +26,16 @@ import static org.mockito.Mockito.spy;
 @RunWith(DefaultTestRunner.class)
 public class MatchesTableTest {
 
+    @Mock Gson mGson;
     private MatchesTable mTable;
     private List<Match> mMatches;
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_MATCHES);
-        mTable = spy(new MatchesTable(db));
+        mTable = spy(new MatchesTable(db, mGson));
         mMatches = ModelMaker.getModelList(Match.class, "2016nytr_matches");
     }
 
@@ -41,7 +46,7 @@ public class MatchesTableTest {
 
     @Test
     public void testAddAndGet() {
-        DbTableTestDriver.testAddAndGet(mTable, mMatches.get(0));
+        DbTableTestDriver.testAddAndGet(mTable, mMatches.get(0), mGson);
     }
 
     @Test
@@ -53,7 +58,8 @@ public class MatchesTableTest {
     public void testUpdate() {
         Match result = DbTableTestDriver.testUpdate(mTable,
                                                     mMatches.get(0),
-                                                    match -> match.setSetNumber(2));
+                                                    match -> match.setSetNumber(2),
+                                                    mGson);
         assertNotNull(result);
         assertEquals(2, result.getSetNumber().intValue());
     }

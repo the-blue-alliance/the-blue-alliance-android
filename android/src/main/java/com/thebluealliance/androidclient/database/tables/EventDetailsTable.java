@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -16,8 +18,8 @@ public class EventDetailsTable extends ModelTable<EventDetail> {
             JSON_DATA = "json_data",
             LAST_MODIFIED = "last_modified";
 
-    public EventDetailsTable(SQLiteDatabase db) {
-        super(db);
+    public EventDetailsTable(SQLiteDatabase db, Gson gson) {
+        super(db, gson);
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -18,7 +19,6 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
-import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNotificationViewModel> {
 
@@ -96,7 +97,7 @@ public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNot
 
         eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
         teamKeys = jsonData.get("team_keys").getAsJsonArray();
-        ArrayList<String> teamNumbers = Match.teamNumbers(teamKeys);
+        ArrayList<String> teamNumbers = gson.fromJson(teamKeys, new TypeToken<List<String>>(){}.getType());
         int allianceSize = teamNumbers.size() / 2;
         redTeams = new String[allianceSize];
         blueTeams = new String[allianceSize];

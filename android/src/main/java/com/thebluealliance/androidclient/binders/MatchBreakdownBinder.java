@@ -4,10 +4,12 @@ import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.models.MatchAlliancesContainer;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.views.breakdowns.AbstractMatchBreakdownView;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2015;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2016;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -110,12 +112,12 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
     }
 
     public static class Model {
-        public final JsonObject allianceData;
+        public final IMatchAlliancesContainer allianceData;
         public final JsonObject scoreData;
         public final MatchType matchType;
         public final int year;
 
-        public Model(MatchType matchType, int year, JsonObject allianceData, JsonObject scoreData) {
+        public Model(MatchType matchType, int year, IMatchAlliancesContainer allianceData, JsonObject scoreData) {
             this.matchType = matchType;
             this.year = year;
             this.allianceData = allianceData;

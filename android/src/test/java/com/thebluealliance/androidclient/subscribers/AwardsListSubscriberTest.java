@@ -111,6 +111,6 @@ public class AwardsListSubscriberTest {
         assertEquals(element.mAwardName, award.getName());
         assertEquals(element.mEventKey, award.getEventKey());
         assertEquals(element.mSelectedTeamNum, "");
-        assertTrue(element.mAwardWinners.equals(award.getWinners()));
+        assertTrue(element.mAwardWinners.equals(award.getRecipientList()));
     }
 }

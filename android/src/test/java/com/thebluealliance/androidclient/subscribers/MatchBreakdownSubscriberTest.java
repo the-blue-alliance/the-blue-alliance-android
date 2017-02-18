@@ -1,6 +1,10 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.binders.MatchBreakdownBinder;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Match;
@@ -18,6 +22,7 @@ import static org.junit.Assert.assertNull;
 @RunWith(RobolectricTestRunner.class)
 public class MatchBreakdownSubscriberTest {
 
+    private Gson mGson;
     private MatchBreakdownSubscriber mSubscriber;
     private Match mMatch2014;
     private Match mMatch2015;
@@ -25,7 +30,8 @@ public class MatchBreakdownSubscriberTest {
 
     @Before
     public void setUp() {
-        mSubscriber = new MatchBreakdownSubscriber();
+        mGson = HttpModule.getGson();
+        mSubscriber = new MatchBreakdownSubscriber(mGson);
         mMatch2014 = ModelMaker.getModel(Match.class, "2014necmp_qf2m1");
         mMatch2015 = ModelMaker.getModel(Match.class, "2015necmp_qm1");
         mMatch2016 = ModelMaker.getModel(Match.class, "2016ctwat_qm6");
@@ -54,8 +60,9 @@ public class MatchBreakdownSubscriberTest {
         MatchBreakdownBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mMatch2015);
         assertEquals(new MatchBreakdownBinder.Model(mMatch2015.getType(),
                                                     mMatch2015.getYear(),
-                                                    mMatch2015.getAlliancesJson(),
-                                                    mMatch2015.getScoreBreakdownJson()), data);
+                                                    mMatch2015.getAlliances(),
+                                                    mGson.fromJson(mMatch2015.getScoreBreakdown(), JsonObject.class)),
+                     data);
     }
 
     @Test
@@ -63,7 +70,8 @@ public class MatchBreakdownSubscriberTest {
         MatchBreakdownBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mMatch2016);
         assertEquals(new MatchBreakdownBinder.Model(mMatch2016.getType(),
                                                     mMatch2016.getYear(),
-                                                    mMatch2016.getAlliancesJson(),
-                                                    mMatch2016.getScoreBreakdownJson()), data);
+                                                    mMatch2016.getAlliances(),
+                                                    mGson.fromJson(mMatch2016.getScoreBreakdown(), JsonObject.class)),
+                     data);
     }
 }

@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
@@ -31,12 +33,9 @@ public class TeamsTable extends ModelTable<Team> {
             MOTTO = "motto",
             LAST_MODIFIED = "last_modified";
 
-    private SQLiteDatabase mDb;
-
     @Inject
-    public TeamsTable(SQLiteDatabase db) {
-        super(db);
-        mDb = db;
+    public TeamsTable(SQLiteDatabase db, Gson gson) {
+        super(db, gson);
     }
 
     @Override

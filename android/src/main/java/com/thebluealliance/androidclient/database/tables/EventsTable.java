@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
@@ -42,12 +44,10 @@ public class EventsTable extends ModelTable<Event> {
             TEAMS = "teams",
             STATS = "stats";
 
-    private SQLiteDatabase mDb;
     private DistrictsTable mDistrictsTable;
 
-    public EventsTable(SQLiteDatabase db, DistrictsTable districtsTable) {
-        super(db);
-        mDb = db;
+    public EventsTable(SQLiteDatabase db, Gson gson, DistrictsTable districtsTable) {
+        super(db, gson);
         mDistrictsTable = districtsTable;
     }
 

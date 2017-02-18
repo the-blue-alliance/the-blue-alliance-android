@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
@@ -11,6 +12,8 @@ import com.thebluealliance.androidclient.models.Team;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -23,16 +26,18 @@ import static org.mockito.Mockito.spy;
 @RunWith(DefaultTestRunner.class)
 public class TeamsTableTest {
 
+    @Mock Gson mGson;
     private TeamsTable mTable;
     private List<Team> mTeams;
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_TEAMS);
         db.execSQL(Database.CREATE_SEARCH_TEAMS);
 
-        mTable = spy(new TeamsTable(db));
+        mTable = spy(new TeamsTable(db, mGson));
         mTeams = ModelMaker.getModelList(Team.class, "2015necmp_teams");
         for (int i = 0; i < mTeams.size(); i++) {
             mTeams.get(i).setYearsParticipated("[2015, 2016]");
@@ -46,7 +51,7 @@ public class TeamsTableTest {
 
     @Test
     public void testAddAndGet() {
-        DbTableTestDriver.testAddAndGet(mTable, mTeams.get(0));
+        DbTableTestDriver.testAddAndGet(mTable, mTeams.get(0), mGson);
     }
 
     @Test
@@ -58,7 +63,8 @@ public class TeamsTableTest {
     public void testUpdate() {
         Team result = DbTableTestDriver.testUpdate(mTable,
                                                     mTeams.get(0),
-                                                    team -> team.setName("Meow"));
+                                                    team -> team.setName("Meow"),
+                                                   mGson);
         assertNotNull(result);
         assertEquals("Meow", result.getName());
     }

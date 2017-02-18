@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 
@@ -159,7 +161,7 @@ public class DistrictTeam implements TbaDatabaseModel {
     }
 
     @Override
-    public ContentValues getParams() {
+    public ContentValues getParams(Gson gson) {
         ContentValues params = new ContentValues();
         params.put(DistrictTeamsTable.KEY, getKey());
         params.put(DistrictTeamsTable.TEAM_KEY, getTeamKey());

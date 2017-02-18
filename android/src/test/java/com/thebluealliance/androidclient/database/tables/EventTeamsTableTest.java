@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
@@ -10,6 +11,7 @@ import com.thebluealliance.androidclient.models.EventTeam;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -22,6 +24,7 @@ import static org.mockito.Mockito.spy;
 
 @RunWith(DefaultTestRunner.class)
 public class EventTeamsTableTest {
+    @Mock Gson mGson;
     private EventTeamsTable mTable;
     private List<EventTeam> mEventTeams;
 
@@ -29,7 +32,7 @@ public class EventTeamsTableTest {
     public void setUp() {
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_EVENTTEAMS);
-        mTable = spy(new EventTeamsTable(db));
+        mTable = spy(new EventTeamsTable(db, mGson));
         mEventTeams = new ArrayList<>();
         EventTeam et1 = new EventTeam();
         et1.setKey("2015necmp_frc1124");
@@ -56,7 +59,7 @@ public class EventTeamsTableTest {
 
     @Test
     public void testAddAndGet() {
-        DbTableTestDriver.testAddAndGet(mTable, mEventTeams.get(0));
+        DbTableTestDriver.testAddAndGet(mTable, mEventTeams.get(0), mGson);
     }
 
     @Test
@@ -68,7 +71,8 @@ public class EventTeamsTableTest {
     public void testUpdate() {
         EventTeam result = DbTableTestDriver.testUpdate(mTable,
                                                     mEventTeams.get(0),
-                                                    et -> et.setCompWeek(96));
+                                                    et -> et.setCompWeek(96),
+                                                        mGson);
         assertNotNull(result);
         assertEquals(96, result.getCompWeek().intValue());
     }

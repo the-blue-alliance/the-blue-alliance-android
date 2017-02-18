@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -20,11 +22,8 @@ public class AwardsTable extends ModelTable<Award> {
             WINNERS = "winners",
             LAST_MODIFIED = "last_modified";
 
-    private SQLiteDatabase mDb;
-
-    public AwardsTable(SQLiteDatabase db){
-        super(db);
-        this.mDb = db;
+    public AwardsTable(SQLiteDatabase db, Gson gson){
+        super(db, gson);
     }
 
     @Override
@@ -47,7 +46,7 @@ public class AwardsTable extends ModelTable<Award> {
 
     @Override
     public Award inflate(Cursor cursor) {
-        return ModelInflater.inflateAward(cursor);
+        return ModelInflater.inflateAward(cursor, mGson);
     }
 
     public List<Award> getTeamAtEventAwards(String teamNumber, String eventKey) {

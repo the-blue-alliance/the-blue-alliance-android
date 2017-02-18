@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -27,8 +29,8 @@ public class DistrictTeamsTable extends ModelTable<DistrictTeam> {
             JSON = "json",
             LAST_MODIFIED = "last_modified";
 
-    public DistrictTeamsTable(SQLiteDatabase db){
-        super(db);
+    public DistrictTeamsTable(SQLiteDatabase db, Gson gson){
+        super(db, gson);
     }
 
     @Override

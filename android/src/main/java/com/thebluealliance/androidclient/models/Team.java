@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
@@ -213,7 +214,7 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
     }
 
     @Override
-    public ContentValues getParams() {
+    public ContentValues getParams(Gson gson) {
         ContentValues data = new ContentValues();
         data.put(TeamsTable.KEY, getKey());
         data.put(TeamsTable.NUMBER, getTeamNumber());

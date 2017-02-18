@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.views.breakdowns;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -28,6 +29,6 @@ public abstract class AbstractMatchBreakdownView extends FrameLayout {
     abstract void init();
 
     public abstract boolean initWithData(MatchType matchType,
-                                         JsonObject allianceData,
+                                         IMatchAlliancesContainer allianceData,
                                          JsonObject scoredata);
 }

@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
@@ -11,6 +12,8 @@ import com.thebluealliance.androidclient.models.Award;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -23,14 +26,16 @@ import static org.mockito.Mockito.spy;
 @RunWith(DefaultTestRunner.class)
 public class AwardsTableTest {
 
+    @Mock Gson mGson;
     private AwardsTable mTable;
     private List<Award> mAwards;
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_AWARDS);
-        mTable = spy(new AwardsTable(db));
+        mTable = spy(new AwardsTable(db, mGson));
         mAwards = ModelMaker.getModelList(Award.class, "2015necmp_awards");
     }
 
@@ -41,7 +46,7 @@ public class AwardsTableTest {
 
     @Test
     public void testAddAndGet() {
-        DbTableTestDriver.testAddAndGet(mTable, mAwards.get(0));
+        DbTableTestDriver.testAddAndGet(mTable, mAwards.get(0), mGson);
     }
 
     @Test
@@ -53,7 +58,7 @@ public class AwardsTableTest {
     public void testUpdate() {
         Award result = DbTableTestDriver.testUpdate(mTable,
                                      mAwards.get(0),
-                                     award -> award.setName("This is an award"));
+                                     award -> award.setName("This is an award"), mGson);
         assertNotNull(result);
         assertEquals("This is an award", result.getName());
     }

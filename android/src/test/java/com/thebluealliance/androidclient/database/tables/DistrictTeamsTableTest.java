@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
@@ -12,6 +13,7 @@ import com.thebluealliance.androidclient.models.DistrictTeam;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -23,6 +25,7 @@ import static org.mockito.Mockito.spy;
 
 @RunWith(DefaultTestRunner.class)
 public class DistrictTeamsTableTest {
+    @Mock Gson mGson;
     private DistrictTeamsTable mTable;
     private List<DistrictTeam> mDistrictTeams;
 
@@ -30,7 +33,7 @@ public class DistrictTeamsTableTest {
     public void setUp() {
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_DISTRICTTEAMS);
-        mTable = spy(new DistrictTeamsTable(db));
+        mTable = spy(new DistrictTeamsTable(db, mGson));
         AddDistrictTeamKey keyAdder = new AddDistrictTeamKey("ne", 2015);
         mDistrictTeams = ModelMaker.getModelList(DistrictTeam.class, "2015ne_rankings");
         keyAdder.call(mDistrictTeams);
@@ -43,7 +46,7 @@ public class DistrictTeamsTableTest {
 
     @Test
     public void testAddAndGet() {
-        DbTableTestDriver.testAddAndGet(mTable, mDistrictTeams.get(0));
+        DbTableTestDriver.testAddAndGet(mTable, mDistrictTeams.get(0), mGson);
     }
 
     @Test
@@ -55,7 +58,8 @@ public class DistrictTeamsTableTest {
     public void testUpdate() {
         DistrictTeam result = DbTableTestDriver.testUpdate(mTable,
                                                        mDistrictTeams.get(0),
-                                                       dt -> dt.setRank(1124));
+                                                       dt -> dt.setRank(1124),
+                                                           mGson);
         assertNotNull(result);
         assertEquals(1124, result.getRank().intValue());
     }

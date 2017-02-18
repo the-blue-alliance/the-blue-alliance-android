@@ -1,13 +1,13 @@
 package com.thebluealliance.androidclient.helpers;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -132,9 +132,9 @@ public final class MatchHelper {
         }
         for (Match match : teamMatches) {
             if (MatchType.fromShortType(match.getCompLevel()) == MatchType.QUARTER) {
-                JsonObject matchAlliances = match.getAlliancesJson();
-                JsonArray redTeams = Match.getRedTeams(matchAlliances);
-                Boolean isRed = Match.hasTeam(redTeams, teamKey);
+                IMatchAlliancesContainer matchAlliances = match.getAlliances();
+                List<String> redTeams = Match.getRedTeams(matchAlliances);
+                Boolean isRed = redTeams.contains(teamKey);
 
                 if (match.getYear() != 2015) {
                     switch (match.getSetNumber()) {
@@ -245,11 +245,11 @@ public final class MatchHelper {
             year = match.getYear();
 
             MatchType matchType = MatchType.fromShortType(match.getCompLevel());
-            JsonObject matchAlliances = match.getAlliancesJson();
-            JsonArray redTeams = Match.getRedTeams(matchAlliances),
-                    blueTeams = Match.getBlueTeams(matchAlliances);
+            IMatchAlliancesContainer matchAlliances = match.getAlliances();
+            List<String> redTeams = Match.getRedTeams(matchAlliances);
+            List<String> blueTeams = Match.getBlueTeams(matchAlliances);
 
-            if (Match.hasTeam(redTeams, teamKey) || Match.hasTeam(blueTeams, teamKey)) {
+            if (redTeams.contains(teamKey) || blueTeams.contains(teamKey)) {
                 teamIsHere = true;
             }
 
@@ -374,10 +374,10 @@ public final class MatchHelper {
             int countPlayed = 0, countWon = 0;
             for (Match match : octoMatches) {
                 if (match.hasBeenPlayed()) {
-                    JsonObject matchAlliances = match.getAlliancesJson();
-                    JsonArray redTeams = Match.getRedTeams(matchAlliances),
-                            blueTeams = Match.getBlueTeams(matchAlliances);
-                    if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
+                    IMatchAlliancesContainer matchAlliances = match.getAlliances();
+                    List<String> redTeams = Match.getRedTeams(matchAlliances);
+                    List<String> blueTeams = Match.getBlueTeams(matchAlliances);
+                    if (!redTeams.contains(teamKey) && !blueTeams.contains(teamKey)) {
                         continue;
                     }
                     countPlayed++;
@@ -401,10 +401,10 @@ public final class MatchHelper {
             int countPlayed = 0, countWon = 0;
             for (Match match : quarterMatches) {
                 if (match.hasBeenPlayed()) {
-                    JsonObject matchAlliances = match.getAlliancesJson();
-                    JsonArray redTeams = Match.getRedTeams(matchAlliances),
-                            blueTeams = Match.getBlueTeams(matchAlliances);
-                    if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
+                    IMatchAlliancesContainer matchAlliances = match.getAlliances();
+                    List<String> redTeams = Match.getRedTeams(matchAlliances);
+                    List<String> blueTeams = Match.getBlueTeams(matchAlliances);
+                    if (!redTeams.contains(teamKey) && !blueTeams.contains(teamKey))  {
                         continue;
                     }
                     countPlayed++;
@@ -432,10 +432,10 @@ public final class MatchHelper {
             int countPlayed = 0, countWon = 0;
             for (Match match : semiMatches) {
                 if (match.hasBeenPlayed()) {
-                    JsonObject matchAlliances = match.getAlliancesJson();
-                    JsonArray redTeams = Match.getRedTeams(matchAlliances),
-                            blueTeams = Match.getBlueTeams(matchAlliances);
-                    if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
+                    IMatchAlliancesContainer matchAlliances = match.getAlliances();
+                    List<String> redTeams = Match.getRedTeams(matchAlliances);
+                    List<String> blueTeams = Match.getBlueTeams(matchAlliances);
+                    if (!redTeams.contains(teamKey) && !blueTeams.contains(teamKey)) {
                         continue;
                     }
                     countPlayed++;
@@ -461,10 +461,10 @@ public final class MatchHelper {
             int countPlayed = 0, countWon = 0;
             for (Match match : finalMatches) {
                 if (match.hasBeenPlayed()) {
-                    JsonObject matchAlliances = match.getAlliancesJson();
-                    JsonArray redTeams = Match.getRedTeams(matchAlliances),
-                            blueTeams = Match.getBlueTeams(matchAlliances);
-                    if (!Match.hasTeam(redTeams, teamKey) && !Match.hasTeam(blueTeams, teamKey)) {
+                    IMatchAlliancesContainer matchAlliances = match.getAlliances();
+                    List<String> redTeams = Match.getRedTeams(matchAlliances);
+                    List<String> blueTeams = Match.getBlueTeams(matchAlliances);
+                    if (!redTeams.contains(teamKey) && !blueTeams.contains(teamKey)) {
                         continue;
                     }
                     countPlayed++;

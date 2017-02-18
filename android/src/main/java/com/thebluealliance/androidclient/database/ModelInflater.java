@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.database;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
@@ -21,6 +24,7 @@ import com.thebluealliance.androidclient.models.EventDetail;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.MatchAlliancesContainer;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.models.Subscription;
@@ -29,6 +33,7 @@ import com.thebluealliance.androidclient.models.Team;
 import android.database.Cursor;
 
 import java.util.Date;
+import java.util.List;
 
 public final class ModelInflater {
 
@@ -42,7 +47,7 @@ public final class ModelInflater {
      * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
      * @return Award model containing the fields as defined in the cursor
      */
-    public static Award inflateAward(Cursor data) {
+    public static Award inflateAward(Cursor data, Gson gson) {
         Award award = new Award();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
@@ -56,7 +61,8 @@ public final class ModelInflater {
                     award.setYear(data.getInt(i));
                     break;
                 case AwardsTable.WINNERS:
-                    award.setWinners(data.getString(i));
+                    award.setRecipientList(gson.fromJson(data.getString(i), new
+                            TypeToken<List<Award.AwardRecipient>>(){}.getType()));
                     break;
                 case AwardsTable.KEY:
                     award.setKey(data.getString(i));
@@ -137,7 +143,7 @@ public final class ModelInflater {
      * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
      * @return Match model containing the fields as defined in the cursor
      */
-    public static Match inflateMatch(Cursor data) {
+    public static Match inflateMatch(Cursor data, Gson gson) {
         Match match = new Match();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
@@ -148,10 +154,10 @@ public final class ModelInflater {
                     match.setTime(data.getLong(i));
                     break;
                 case MatchesTable.ALLIANCES:
-                    match.setAlliances(data.getString(i));
+                    match.setAlliances(gson.fromJson(data.getString(i), MatchAlliancesContainer.class));
                     break;
                 case MatchesTable.VIDEOS:
-                    match.setVideos(data.getString(i));
+                    match.setVideos(gson.fromJson(data.getString(i), new TypeToken<List<Match.MatchVideo>>(){}.getType()));
                     break;
                 case MatchesTable.MATCHNUM:
                     match.setMatchNumber(data.getInt(i));

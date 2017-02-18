@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -16,11 +18,8 @@ public class MediasTable extends ModelTable<Media> {
             YEAR = "year",
             LAST_MODIFIED = "last_modified";
 
-    private SQLiteDatabase mDb;
-
-    public MediasTable(SQLiteDatabase db){
-        super(db);
-        this.mDb = db;
+    public MediasTable(SQLiteDatabase db, Gson gson){
+        super(db, gson);
     }
 
     @Override

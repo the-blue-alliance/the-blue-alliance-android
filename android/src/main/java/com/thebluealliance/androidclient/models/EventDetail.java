@@ -73,7 +73,7 @@ public class EventDetail implements TbaDatabaseModel {
     }
 
     @Override
-    public ContentValues getParams() {
+    public ContentValues getParams(Gson gson) {
         ContentValues params = new ContentValues();
         params.put(EventDetailsTable.KEY, key);
         params.put(EventDetailsTable.EVENT_KEY, eventKey);

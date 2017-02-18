@@ -27,15 +27,19 @@ package com.thebluealliance.api.model;
 
 import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
+import com.thebluealliance.api.model.IMatchVideo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Nullable;
 
 
 /**
  * Match
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T13:55:00.854-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T15:36:46.899-05:00")
 public interface IMatch   {
 
 
@@ -52,14 +56,14 @@ public interface IMatch   {
 
 
    /**
-   * A list of alliances, the teams on the alliances, and their score.
+   * Get alliances
    * @return alliances
   **/
-  @ApiModelProperty(example = "null", value = "A list of alliances, the teams on the alliances, and their score.")
+  @ApiModelProperty(example = "null", value = "")
   @Nullable
-  public String getAlliances();
+  public IMatchAlliancesContainer getAlliances();
 
-  public void setAlliances(String alliances);
+  public void setAlliances(IMatchAlliancesContainer alliances);
 
 
 
@@ -159,15 +163,17 @@ public interface IMatch   {
 
 
 
+
+
    /**
-   * JSON array of videos associated with this match and corresponding information
+   * Get videos
    * @return videos
   **/
-  @ApiModelProperty(example = "null", value = "JSON array of videos associated with this match and corresponding information")
+  @ApiModelProperty(example = "null", value = "")
   @Nullable
-  public String getVideos();
+  public List<IMatchVideo> getVideos();
 
-  public void setVideos(String videos);
+  public void setVideos(List<IMatchVideo> videos);
 
 
 

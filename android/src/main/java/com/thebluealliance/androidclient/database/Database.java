@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.database;
 
+import com.google.gson.Gson;
+
+import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
@@ -20,6 +23,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.support.annotation.VisibleForTesting;
+
+import javax.inject.Inject;
 
 
 //SUPPRESS CHECKSTYLE FinalClass
@@ -208,18 +213,21 @@ public class Database extends SQLiteOpenHelper {
     private SubscriptionsTable mSubscriptionsTable;
     private NotificationsTable mNotificationsTable;
 
+    @Inject Gson mGson;
+
     private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        ((TBAAndroid)context.getApplicationContext()).getDbComponent().inject(this);
         mDb = getWritableDatabase();
-        mTeamsTable = new TeamsTable(mDb);
-        mAwardsTable = new AwardsTable(mDb);
-        mMatchesTable = new MatchesTable(mDb);
-        mMediasTable = new MediasTable(mDb);
-        mEventTeamsTable = new EventTeamsTable(mDb);
-        mDistrictsTable = new DistrictsTable(mDb);
-        mEventsTable = new EventsTable(mDb, mDistrictsTable);
-        mEventDetailsTable = new EventDetailsTable(mDb);
-        mDistrictTeamsTable = new DistrictTeamsTable(mDb);
+        mTeamsTable = new TeamsTable(mDb, mGson);
+        mAwardsTable = new AwardsTable(mDb, mGson);
+        mMatchesTable = new MatchesTable(mDb, mGson);
+        mMediasTable = new MediasTable(mDb, mGson);
+        mEventTeamsTable = new EventTeamsTable(mDb, mGson);
+        mDistrictsTable = new DistrictsTable(mDb, mGson);
+        mEventsTable = new EventsTable(mDb, mGson, mDistrictsTable);
+        mEventDetailsTable = new EventDetailsTable(mDb, mGson);
+        mDistrictTeamsTable = new DistrictTeamsTable(mDb, mGson);
         mFavoritesTable = new FavoritesTable(mDb);
         mSubscriptionsTable = new SubscriptionsTable(mDb);
         mNotificationsTable = new NotificationsTable(mDb);

@@ -27,15 +27,18 @@ package com.thebluealliance.api.model;
 
 import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
+import com.thebluealliance.api.model.IAwardRecipient;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Nullable;
 
 
 /**
  * Award
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T13:55:00.854-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T15:36:46.899-05:00")
 public interface IAward   {
 
 
@@ -99,15 +102,17 @@ public interface IAward   {
 
 
 
+
+
    /**
-   * A list of recipients of the award at the event. Either team_number or awardee for individual awards.
+   * Get recipientList
    * @return recipientList
   **/
-  @ApiModelProperty(example = "null", value = "A list of recipients of the award at the event. Either team_number or awardee for individual awards.")
+  @ApiModelProperty(example = "null", value = "")
   @Nullable
-  public String getRecipientList();
+  public List<IAwardRecipient> getRecipientList();
 
-  public void setRecipientList(String recipientList);
+  public void setRecipientList(List<IAwardRecipient> recipientList);
 
 
 
