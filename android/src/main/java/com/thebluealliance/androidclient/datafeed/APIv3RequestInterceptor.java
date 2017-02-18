@@ -30,9 +30,10 @@ public class APIv3RequestInterceptor implements Interceptor {
     }
 
     public static void updateApiKeys(FirebaseRemoteConfig config, SharedPreferences prefs) {
+        String cacheBust = config.getString(APIV3_CACHE_BUST);
         prefs.edit()
                 .putString(APIV3_KEY, config.getString(APIV3_KEY))
-                .putString(APIV3_CACHE_BUST, config.getString(APIV3_CACHE_BUST))
+                .putString(APIV3_CACHE_BUST, cacheBust != null ? cacheBust : "")
                 .apply();
     }
 
@@ -68,6 +69,7 @@ public class APIv3RequestInterceptor implements Interceptor {
                     newRequestBuilder.cacheControl(CacheControl.FORCE_CACHE);
                     break;
                 case ApiConstants.TBA_CACHE_WEB:
+                    TbaLogger.d("Getting from WEB");
                     newRequestBuilder.cacheControl(CacheControl.FORCE_NETWORK);
                     break;
             }

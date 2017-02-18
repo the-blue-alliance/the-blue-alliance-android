@@ -167,7 +167,7 @@ public abstract class DatafeedFragment
         if (mSubscriber != null && mBinder != null) {
             mBinder.unbind(false);
             setShouldBindOnce(isCurrentlyVisible);
-            getNewObservables(RefreshController.REQUESTED_BY_USER);
+            getNewObservables(refreshType);
         }
     }
 

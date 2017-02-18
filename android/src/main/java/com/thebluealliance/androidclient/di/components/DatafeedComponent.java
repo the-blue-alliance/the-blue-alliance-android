@@ -4,6 +4,7 @@ import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.accounts.AccountModule;
 import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
+import com.thebluealliance.androidclient.activities.settings.DevSettingsActivity;
 import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.config.ConfigModule;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
@@ -28,4 +29,5 @@ public interface DatafeedComponent {
     void inject(HomeActivity homeActivity);
     void inject(LaunchActivity launchActivity);
     void inject(LoadTBADataTaskFragment loadTBADataTaskFragment);
+    void inject(DevSettingsActivity.DevSettingsFragment fragment);
 }

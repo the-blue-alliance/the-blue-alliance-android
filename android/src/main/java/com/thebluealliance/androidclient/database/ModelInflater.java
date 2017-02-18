@@ -29,6 +29,7 @@ import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.types.MatchType;
 
 import android.database.Cursor;
 
@@ -149,6 +150,7 @@ public final class ModelInflater {
             switch (data.getColumnName(i)) {
                 case MatchesTable.KEY:
                     match.setKey(data.getString(i));
+                    match.setCompLevel(MatchType.fromKey(match.getKey()).getCompLevel());
                     break;
                 case MatchesTable.TIME:
                     match.setTime(data.getLong(i));

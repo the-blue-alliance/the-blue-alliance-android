@@ -2,6 +2,8 @@ package com.thebluealliance.androidclient.activities.settings;
 
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
@@ -18,6 +20,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.IOException;
+
+import javax.inject.Inject;
+
+import okhttp3.Cache;
+
 public class DevSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +39,12 @@ public class DevSettingsActivity extends AppCompatActivity {
 
     public static class DevSettingsFragment extends PreferenceFragment {
 
+        @Inject Cache mOkCache;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            ((TBAAndroid)(getActivity().getApplication())).getDatafeedComponenet().inject(this);
             addPreferencesFromResource(R.xml.dev_preferences);
 
             Preference analyticsDryRun = findPreference("analytics_dry_run");
@@ -42,6 +53,22 @@ public class DevSettingsActivity extends AppCompatActivity {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Analytics.setAnalyticsDryRun(getActivity(), (boolean) newValue);
                     return true;
+                }
+            });
+
+            Preference clearOkCache = findPreference("clear_okhttp_cache");
+            clearOkCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    if (mOkCache != null) {
+                        TbaLogger.i("Clearing okhttp cache");
+                        try {
+                            mOkCache.evictAll();
+                        } catch (IOException e) {
+                            TbaLogger.e("Error clearing okcache", e);
+                        }
+                    }
+                    return false;
                 }
             });
 

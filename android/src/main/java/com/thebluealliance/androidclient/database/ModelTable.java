@@ -47,12 +47,12 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
         long ret = -1;
         try {
             if (!exists(in.getKey())) {
-                if (lastModified != null
-                    && (in.getLastModified() == null || lastModified > in.getLastModified())) {
-                    in.setLastModified(lastModified);
-                } else if (in.getLastModified() == null) {
-                    in.setLastModified(0L);
-                }
+                //if (lastModified != null
+                //    && (in.getLastModified() == null || lastModified > in.getLastModified())) {
+                //    in.setLastModified(lastModified);
+                //} else if (in.getLastModified() == null) {
+                //    in.setLastModified(0L);
+                //}
                 ret = mDb.insert(getTableName(), null, in.getParams(mGson));
                 if (ret != -1) {
                     insertCallback(in);
@@ -110,17 +110,17 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
         }
         mDb.beginTransaction();
         try {
-            if (lastModified != null
-                && (in.getLastModified() == null || lastModified > in.getLastModified())) {
-                in.setLastModified(lastModified);
-            } else if (in.getLastModified() == null) {
-                in.setLastModified(0L);
-            }
+            //if (lastModified != null
+            //    && (in.getLastModified() == null || lastModified > in.getLastModified())) {
+            //    in.setLastModified(lastModified);
+            //} else if (in.getLastModified() == null) {
+            //    in.setLastModified(0L);
+            //}
             affectedRows = mDb.update(
                     getTableName(),
                     in.getParams(mGson),
-                    getKeyColumn() + " = ? AND  ? >= " + getLastModifiedColumn(),
-                    new String[]{in.getKey(), in.getLastModified().toString()});
+                    getKeyColumn() + " = ?",
+                    new String[]{in.getKey()});
             if (affectedRows > 0) {
                 updateCallback(in);
             }

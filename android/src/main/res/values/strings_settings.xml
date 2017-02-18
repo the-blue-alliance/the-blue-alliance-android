@@ -13,6 +13,7 @@
     <string name="pref_header_api">API</string>
     <string name="pref_header_analytics">Analytics</string>
 
+    <string name="pref_clear_okhttp">Clear OkHttp Cache</string>
     <string name="pref_dry_run">Analytics Dry Run</string>
     <string name="pref_dry_run_detail">Skip sending analytics data</string>
 
