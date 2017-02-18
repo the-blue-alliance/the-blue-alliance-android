@@ -7,7 +7,7 @@ import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class TeamAtDistrictBreakdownSubscriberTest {
 
     Gson mGson;
     TeamAtDistrictBreakdownSubscriber mSubscriber;
-    DistrictTeam mDistrictTeam;
+    DistrictRanking mDistrictTeam;
 
     @Before
     public void setUp() {
@@ -41,7 +41,7 @@ public class TeamAtDistrictBreakdownSubscriberTest {
 
         mGson = HttpModule.getGson();
         mSubscriber = new TeamAtDistrictBreakdownSubscriber(mResources, mDb, mGson);
-        mDistrictTeam = ModelMaker.getModelList(DistrictTeam.class, "2015ne_rankings").get(0);
+        mDistrictTeam = ModelMaker.getModelList(DistrictRanking.class, "2015ne_rankings").get(0);
     }
 
     @Test

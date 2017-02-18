@@ -6,7 +6,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,14 +30,14 @@ public class DistrictTeamListWriterTest {
     @Mock DistrictTeamsTable mTable;
     @Mock Gson mGson;
 
-    private List<DistrictTeam> mDistrictTeams;
+    private List<DistrictRanking> mDistrictTeams;
     private DistrictTeamListWriter mWriter;
 
     @Before
     public void setUp() {
         mDb = mock(Database.class);
         mTable = DatabaseMocker.mockDistrictTeamsTable(mDb);
-        mDistrictTeams = ModelMaker.getModelList(DistrictTeam.class, "2015ne_rankings");
+        mDistrictTeams = ModelMaker.getModelList(DistrictRanking.class, "2015ne_rankings");
         mWriter = new DistrictTeamListWriter(mDb);
     }
 
@@ -46,7 +46,7 @@ public class DistrictTeamListWriterTest {
         mWriter.write(mDistrictTeams, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
-        for (DistrictTeam districtTeam : mDistrictTeams) {
+        for (DistrictRanking districtTeam : mDistrictTeams) {
             verify(db).insert(Database.TABLE_DISTRICTTEAMS, null, districtTeam.getParams(mGson));
         }
     }

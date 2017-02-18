@@ -9,8 +9,9 @@ import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.listitems.LabelValueDetailListItem;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.api.model.IDistrictEventPoints;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -19,8 +20,10 @@ import android.content.res.Resources;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 public class TeamAtDistrictSummarySubscriber
-  extends BaseAPISubscriber<DistrictTeam, List<ListItem>> {
+  extends BaseAPISubscriber<DistrictRanking, List<ListItem>> {
 
     private Database mDb;
     private Resources mResources;
@@ -51,40 +54,25 @@ public class TeamAtDistrictSummarySubscriber
         mDataToBind.add(new LabelValueListItem(mResources.getString(R.string.district_point_rank),
           mAPIData.getRank() + Utilities.getOrdinalFor(mAPIData.getRank())));
 
-        if (mAPIData.getEvent1Key() != null
-                && mAPIData.getEvent1Points() != null) {
-            Event event1 = eventsTable.get(mAPIData.getEvent1Key());
-            String event1Name = event1 != null ? event1.getShortName() : mAPIData.getEvent1Key();
-            mDataToBind.add(new LabelValueDetailListItem(event1Name,
-                    String.format(
-                            mResources.getString(R.string.district_points_format), mAPIData.getEvent1Points()),
-                    EventTeamHelper.generateKey(mAPIData.getEvent1Key(), mAPIData.getTeamKey())));
+        @Nullable IDistrictEventPoints event1Points = getEventPoints(mAPIData, 0);
+        if (event1Points != null) {
+            mDataToBind.add(renderEventPoints(mAPIData.getTeamKey(), event1Points, eventsTable, mResources));
         }
 
-        if (mAPIData.getEvent2Key() != null
-                && mAPIData.getEvent2Points() != null) {
-            Event event2 = eventsTable.get(mAPIData.getEvent2Key());
-            String event2Name = event2 != null ? event2.getShortName() : mAPIData.getEvent2Key();
-            mDataToBind.add(new LabelValueDetailListItem(event2Name,
-                    String.format(
-                            mResources.getString(R.string.district_points_format), mAPIData.getEvent2Points()),
-                    EventTeamHelper.generateKey(mAPIData.getEvent2Key(), mAPIData.getTeamKey())));
+        @Nullable IDistrictEventPoints event2Points = getEventPoints(mAPIData, 1);
+        if (event2Points != null) {
+            mDataToBind.add(renderEventPoints(mAPIData.getTeamKey(), event2Points, eventsTable, mResources));
         }
 
-        if (mAPIData.getCmpKey() != null
-                && mAPIData.getCmpPoints() != null) {
-            Event districtCmp = eventsTable.get(mAPIData.getCmpKey());
-            String cmpName = districtCmp != null ? districtCmp.getShortName() : mAPIData.getCmpKey();
-            mDataToBind.add(new LabelValueDetailListItem(cmpName,
-                    String.format(
-                            mResources.getString(R.string.district_points_format), mAPIData.getCmpPoints()),
-                    EventTeamHelper.generateKey(mAPIData.getCmpKey(), mAPIData.getTeamKey())));
+        @Nullable IDistrictEventPoints cmpPoints = getEventPoints(mAPIData, 2);
+        if (cmpPoints != null) {
+            mDataToBind.add(renderEventPoints(mAPIData.getTeamKey(), cmpPoints, eventsTable, mResources));
         }
 
-        if (mAPIData.getTotalPoints() != null) {
+        if (mAPIData.getPointTotal() != null) {
             mDataToBind.add(new LabelValueListItem(mResources.getString(R.string.total_district_points),
                     String.format(
-                            mResources.getString(R.string.district_points_format), mAPIData.getTotalPoints())));
+                            mResources.getString(R.string.district_points_format), mAPIData.getPointTotal())));
         }
 
         String actionBarTitle =
@@ -93,5 +81,24 @@ public class TeamAtDistrictSummarySubscriber
           mDistrictKey.substring(0, 4),
           mDistrictKey.substring(4).toUpperCase());
         mEventBus.post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
+    }
+
+    private static LabelValueDetailListItem renderEventPoints(String teamKey,
+                                                              IDistrictEventPoints points,
+                                                              EventsTable eventsTable,
+                                                              Resources resources) {
+        Event event = eventsTable.get(points.getEventKey());
+        String event1Name = event != null ? event.getShortName() : points.getEventKey();
+        return new LabelValueDetailListItem(event1Name,
+                                            String.format(resources.getString(R.string.district_points_format),
+                                                          points.getTotal()),
+                                            points.getEventKey());
+    }
+
+    private static @Nullable IDistrictEventPoints getEventPoints(DistrictRanking ranking, int index) {
+        if (ranking.getEventPoints() == null || ranking.getEventPoints().size() < (index + 1)) {
+            return null;
+        }
+        return ranking.getEventPoints().get(index);
     }
 }

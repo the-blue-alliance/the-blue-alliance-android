@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamAndEventTeamCombiner;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
+import com.thebluealliance.androidclient.datafeed.maps.AddDistrictTeamKey;
 import com.thebluealliance.androidclient.datafeed.maps.AddEventKeyToRankings;
 import com.thebluealliance.androidclient.datafeed.maps.DistrictTeamExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.EventAlliancesToEventDetail;
@@ -22,7 +23,7 @@ import com.thebluealliance.androidclient.datafeed.maps.WeekEventsExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.YearsParticipatedInfoMap;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.models.EventDetail;
@@ -250,22 +251,18 @@ public class CacheableDatafeed {
         return mAPICache.fetchDistrictEvents(districtKey).concatWith(apiData);
     }
 
-    public Observable<List<DistrictTeam>> fetchDistrictRankings(String districtShort, int year, String cacheHeader) {
-        /* TODO
-        Observable<List<DistrictTeam>> apiData = mResponseMap.mapAndWriteResponseBody(
-          mApiv3.fetchDistrictRankings(DistrictHelper.generateKey(districtShort, year), cacheHeader),
-          new AddDistrictTeamKey(districtShort, year),
+    public Observable<List<DistrictRanking>> fetchDistrictRankings(String districtKey, String cacheHeader) {
+        Observable<List<DistrictRanking>> apiData = mResponseMap.mapAndWriteResponseBody(
+          mApiv3.fetchDistrictRankings(districtKey, cacheHeader),
+          new AddDistrictTeamKey(districtKey),
           mWriter.getDistrictTeamListWriter().get());
-        return mAPICache.fetchDistrictRankings(districtShort, year).concatWith(apiData);
-        */
-        return Observable.just(null);
+        return mAPICache.fetchDistrictRankings(districtKey).concatWith(apiData);
     }
 
-    public Observable<DistrictTeam> fetchTeamAtDistrictRankings(
+    public Observable<DistrictRanking> fetchTeamAtDistrictRankings(
       String teamKey,
-      String districtShort,
-      int year, String cacheHeader) {
-        return fetchDistrictRankings(districtShort, year, cacheHeader)
+      String districtKey, String cacheHeader) {
+        return fetchDistrictRankings(districtKey, cacheHeader)
           .map(new DistrictTeamExtractor(teamKey));
     }
 

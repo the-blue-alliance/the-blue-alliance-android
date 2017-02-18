@@ -33,6 +33,6 @@ public class DistrictPointBreakdownRenderer implements ModelRenderer<DistrictPoi
           breakdown.getDistrictKey(),
           breakdown.getTeamName(),
           breakdown.getRank(),
-          breakdown.getTotalPoints());
+          breakdown.getTotal());
     }
 }

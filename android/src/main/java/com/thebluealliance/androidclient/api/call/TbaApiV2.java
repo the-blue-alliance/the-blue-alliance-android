@@ -5,22 +5,17 @@ package com.thebluealliance.androidclient.api.call;
 import retrofit2.Call;
 import retrofit2.http.*;
 
-import okhttp3.RequestBody;
-
 import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Robot;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public interface TbaApiV2 {
   /**
@@ -66,11 +61,11 @@ public interface TbaApiV2 {
    * @param districtShort Short string identifying a district (e.g. &#39;ne&#39;) (required)
    * @param year A specific year to request data for. (required)
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
-   * @return Call&lt;List<DistrictTeam>&gt;
+   * @return Call&lt;List<DistrictRanking>&gt;
    */
   
   @GET("api/v2/district/{district_short}/{year}/rankings")
-  Call<List<DistrictTeam>> fetchDistrictRankings(
+  Call<List<DistrictRanking>> fetchDistrictRankings(
     @Path("district_short") String districtShort, @Path("year") Integer year, @Header("X-TBA-Cache") String xTBACache
   );
 

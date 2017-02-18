@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 **lastModified** | **Long** | Timestamp this model was last modified |  [optional]
 **rank** | **Integer** | Placing of this team |  [optional]
 **rookiePoints** | **Integer** | How many points this team gets by nature of their age |  [optional]
-**totalPoints** | **Integer** | Total number of points this team has earned |  [optional]
+**total** | **Integer** | Total number of points this team has earned |  [optional]
 
 
 

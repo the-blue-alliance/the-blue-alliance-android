@@ -982,44 +982,48 @@
         ],
         "properties": {
           "event_points": {
-            "type": "object",
-            "required": [
-              "alliance_points",
-              "award_points",
-              "district_cmp",
-              "elim_points",
-              "event_key",
-              "qual_points",
-              "total"
-            ],
-            "properties": {
-              "alliance_points": {
-                "type": "integer",
-                "description": "Number of points from alliance selection"
-              },
-              "award_points": {
-                "type": "integer",
-                "description": "Number of points from awards"
-              },
-              "district_cmp": {
-                "type": "boolean",
-                "description": "Does this event get the District CMP multiplier?"
-              },
-              "elim_points": {
-                "type": "integer",
-                "description": "Number of points from playoff matches"
-              },
-              "event_key": {
-                "type": "string",
-                "description": "Event where these points were earned"
-              },
-              "qual_points": {
-                "type": "integer",
-                "description": "Number of points from qualification matches"
-              },
-              "total": {
-                "type": "integer",
-                "description": "Total number of points from this event"
+            "type": "array",
+            "items": {
+              "type": "object",
+              "title": "DistrictEventPoints",
+              "required": [
+                "alliance_points",
+                "award_points",
+                "district_cmp",
+                "elim_points",
+                "event_key",
+                "qual_points",
+                "total"
+              ],
+              "properties": {
+                "alliance_points": {
+                  "type": "integer",
+                  "description": "Number of points from alliance selection"
+                },
+                "award_points": {
+                  "type": "integer",
+                  "description": "Number of points from awards"
+                },
+                "district_cmp": {
+                  "type": "boolean",
+                  "description": "Does this event get the District CMP multiplier?"
+                },
+                "elim_points": {
+                  "type": "integer",
+                  "description": "Number of points from playoff matches"
+                },
+                "event_key": {
+                  "type": "string",
+                  "description": "Event where these points were earned"
+                },
+                "qual_points": {
+                  "type": "integer",
+                  "description": "Number of points from qualification matches"
+                },
+                "total": {
+                  "type": "integer",
+                  "description": "Total number of points from this event"
+                }
               }
             }
           },

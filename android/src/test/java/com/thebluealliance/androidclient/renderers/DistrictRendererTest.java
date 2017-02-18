@@ -45,7 +45,7 @@ public class DistrictRendererTest {
     @Test
     public void testRenderFromKey() {
         when(mDatafeed.fetchDistrict(DISTRICT_KEY)).thenReturn(Observable.just(mDistrict));
-        when(mDatafeed.fetchDistrictEvents("ne", 2015)).thenReturn(Observable.just(new ArrayList<>()));
+        when(mDatafeed.fetchDistrictEvents("2015ne")).thenReturn(Observable.just(new ArrayList<>()));
         DistrictListElement element = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, null);
         assertDistrictItem(element, 0, 2015, false);
     }
@@ -53,7 +53,7 @@ public class DistrictRendererTest {
     @Test
     public void testNullRenderFromKey(){
         when(mDatafeed.fetchDistrict(DISTRICT_KEY)).thenReturn(Observable.just(null));
-        when(mDatafeed.fetchDistrictEvents("ne", 2015)).thenReturn(Observable.just(new ArrayList<>()));
+        when(mDatafeed.fetchDistrictEvents("2015ne")).thenReturn(Observable.just(new ArrayList<>()));
         DistrictListElement element = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, null);
         assertNull(element);
     }
@@ -61,7 +61,7 @@ public class DistrictRendererTest {
     @Test
     public void testRenderFromKeyNullEvents() {
         when(mDatafeed.fetchDistrict(DISTRICT_KEY)).thenReturn(Observable.just(mDistrict));
-        when(mDatafeed.fetchDistrictEvents("ne", 2015)).thenReturn(Observable.just(null));
+        when(mDatafeed.fetchDistrictEvents("2015ne")).thenReturn(Observable.just(null));
         DistrictListElement element = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, null);
         assertDistrictItem(element, 0, 2015, false);
     }

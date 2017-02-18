@@ -64,6 +64,7 @@ public class DevSettingsActivity extends AppCompatActivity {
                         TbaLogger.i("Clearing okhttp cache");
                         try {
                             mOkCache.evictAll();
+                            Toast.makeText(getActivity(), "Evicted OkHttp Cache", Toast.LENGTH_SHORT).show();
                         } catch (IOException e) {
                             TbaLogger.e("Error clearing okcache", e);
                         }

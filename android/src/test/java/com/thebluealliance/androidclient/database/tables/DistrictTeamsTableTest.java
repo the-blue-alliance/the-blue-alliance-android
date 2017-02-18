@@ -8,7 +8,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DbTableTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictTeamKey;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,15 +27,15 @@ import static org.mockito.Mockito.spy;
 public class DistrictTeamsTableTest {
     @Mock Gson mGson;
     private DistrictTeamsTable mTable;
-    private List<DistrictTeam> mDistrictTeams;
+    private List<DistrictRanking> mDistrictTeams;
 
     @Before
     public void setUp() {
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_DISTRICTTEAMS);
         mTable = spy(new DistrictTeamsTable(db, mGson));
-        AddDistrictTeamKey keyAdder = new AddDistrictTeamKey("ne", 2015);
-        mDistrictTeams = ModelMaker.getModelList(DistrictTeam.class, "2015ne_rankings");
+        AddDistrictTeamKey keyAdder = new AddDistrictTeamKey("2015ne");
+        mDistrictTeams = ModelMaker.getModelList(DistrictRanking.class, "2015ne_rankings");
         keyAdder.call(mDistrictTeams);
     }
 
@@ -56,10 +56,10 @@ public class DistrictTeamsTableTest {
 
     @Test
     public void testUpdate() {
-        DistrictTeam result = DbTableTestDriver.testUpdate(mTable,
-                                                       mDistrictTeams.get(0),
+        DistrictRanking result = DbTableTestDriver.testUpdate(mTable,
+                                                              mDistrictTeams.get(0),
                                                        dt -> dt.setRank(1124),
-                                                           mGson);
+                                                              mGson);
         assertNotNull(result);
         assertEquals(1124, result.getRank().intValue());
     }

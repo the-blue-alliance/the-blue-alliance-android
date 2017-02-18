@@ -1,33 +1,28 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
-import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import java.util.List;
 
 import rx.functions.Func1;
 
-public class AddDistrictTeamKey implements Func1<List<DistrictTeam>, List<DistrictTeam>> {
+public class AddDistrictTeamKey implements Func1<List<DistrictRanking>, List<DistrictRanking>> {
 
-    private String mDistrictShort;
-    private int mYear;
+    private String districtKey;
 
-    public AddDistrictTeamKey(String districtShort, int year) {
-        mDistrictShort = districtShort;
-        mYear = year;
+    public AddDistrictTeamKey(String districtKey) {
+        this.districtKey = districtKey;
     }
 
     @Override
-    public List<DistrictTeam> call(List<DistrictTeam> districtTeams) {
+    public List<DistrictRanking> call(List<DistrictRanking> districtTeams) {
+        if (districtTeams == null) return null;
         for (int i = 0; i < districtTeams.size(); i++) {
-            DistrictTeam dt = districtTeams.get(i);
-            String districtKey = DistrictHelper.generateKey(mDistrictShort, mYear);
+            DistrictRanking dt = districtTeams.get(i);
             String dtKey;
             dtKey = DistrictTeamHelper.generateKey(dt.getTeamKey(), districtKey);
             dt.setKey(dtKey);
-            dt.setDistrictEnum(DistrictHelper.districtTypeFromKey(districtKey).ordinal());
-            dt.setYear(mYear);
             dt.setDistrictKey(districtKey);
         }
         return districtTeams;

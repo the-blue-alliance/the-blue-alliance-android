@@ -18,7 +18,7 @@ import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventDetail;
 import com.thebluealliance.androidclient.models.EventTeam;
@@ -30,9 +30,11 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.api.model.IDistrictEventPoints;
 
 import android.database.Cursor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -321,8 +323,9 @@ public final class ModelInflater {
         return district;
     }
 
-    public static DistrictTeam inflateDistrictTeam(Cursor data) {
-        DistrictTeam districtTeam = new DistrictTeam();
+    public static DistrictRanking inflateDistrictTeam(Cursor data, Gson gson) {
+        DistrictRanking districtTeam = new DistrictRanking();
+        IDistrictEventPoints events[] = new IDistrictEventPoints[3];
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
                 case DistrictTeamsTable.KEY:
@@ -334,41 +337,23 @@ public final class ModelInflater {
                 case DistrictTeamsTable.DISTRICT_KEY:
                     districtTeam.setDistrictKey(data.getString(i));
                     break;
-                case DistrictTeamsTable.DISTRICT_ENUM:
-                    districtTeam.setDistrictEnum(data.getInt(i));
-                    break;
-                case DistrictTeamsTable.YEAR:
-                    districtTeam.setYear(data.getInt(i));
-                    break;
                 case DistrictTeamsTable.RANK:
                     districtTeam.setRank(data.getInt(i));
                     break;
-                case DistrictTeamsTable.EVENT1_KEY:
-                    districtTeam.setEvent1Key(data.getString(i));
-                    break;
                 case DistrictTeamsTable.EVENT1_POINTS:
-                    districtTeam.setEvent1Points(data.getInt(i));
-                    break;
-                case DistrictTeamsTable.EVENT2_KEY:
-                    districtTeam.setEvent2Key(data.getString(i));
+                    events[0] = gson.fromJson(data.getString(i), IDistrictEventPoints.class);
                     break;
                 case DistrictTeamsTable.EVENT2_POINTS:
-                    districtTeam.setEvent2Points(data.getInt(i));
-                    break;
-                case DistrictTeamsTable.CMP_KEY:
-                    districtTeam.setCmpKey(data.getString(i));
+                    events[1] = gson.fromJson(data.getString(i), IDistrictEventPoints.class);
                     break;
                 case DistrictTeamsTable.CMP_POINTS:
-                    districtTeam.setCmpPoints(data.getInt(i));
+                    events[2] = gson.fromJson(data.getString(i), IDistrictEventPoints.class);
                     break;
                 case DistrictTeamsTable.ROOKIE_POINTS:
-                    districtTeam.setRookiePoints(data.getInt(i));
+                    districtTeam.setRookieBonus(data.getInt(i));
                     break;
                 case DistrictTeamsTable.TOTAL_POINTS:
-                    districtTeam.setTotalPoints(data.getInt(i));
-                    break;
-                case DistrictTeamsTable.JSON:
-                    districtTeam.setJson(data.getString(i));
+                    districtTeam.setPointTotal(data.getInt(i));
                     break;
                 case DistrictTeamsTable.LAST_MODIFIED:
                     districtTeam.setLastModified(data.getLong(i));
@@ -376,6 +361,12 @@ public final class ModelInflater {
                 default:
             }
         }
+        List<IDistrictEventPoints> eventPoints = new ArrayList<>();
+        for (IDistrictEventPoints event : events) {
+            if (event == null) break;
+            eventPoints.add(event);
+        }
+        districtTeam.setEventPoints(eventPoints);
         return districtTeam;
     }
 

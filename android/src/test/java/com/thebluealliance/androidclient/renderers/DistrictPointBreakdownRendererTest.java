@@ -40,8 +40,8 @@ public class DistrictPointBreakdownRendererTest {
         assertEquals(element.districtKey, mBreakdown.getDistrictKey());
         assertEquals(element.teamKey, mBreakdown.getTeamKey());
         assertEquals(element.teamName, mBreakdown.getTeamName());
-        assertEquals(element.teamRank, mBreakdown.getRank());
-        assertEquals(element.totalPoints, mBreakdown.getTotalPoints());
+        assertEquals(element.teamRank, mBreakdown.getRank().intValue());
+        assertEquals(element.totalPoints, mBreakdown.getTotal().intValue());
     }
 
 }

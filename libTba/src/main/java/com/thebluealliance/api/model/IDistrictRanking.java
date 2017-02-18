@@ -25,30 +25,31 @@
 
 package com.thebluealliance.api.model;
 
-import java.util.Objects;
-import com.google.gson.annotations.SerializedName;
-import com.thebluealliance.api.model.IDistrictRankingEventPoints;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import java.util.List;
+
 import javax.annotation.Nullable;
+
+import io.swagger.annotations.ApiModelProperty;
 
 
 /**
  * DistrictRanking
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-17T15:36:46.899-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T12:56:17.757-05:00")
 public interface IDistrictRanking   {
+
+
 
 
    /**
    * Get eventPoints
    * @return eventPoints
   **/
-  @ApiModelProperty(example = "null", value = "")
-  @Nullable
-  public IDistrictRankingEventPoints getEventPoints();
+  @ApiModelProperty(example = "null", required = true, value = "")
+  
+  public List<IDistrictEventPoints> getEventPoints();
 
-  public void setEventPoints(IDistrictRankingEventPoints eventPoints);
+  public void setEventPoints(List<IDistrictEventPoints> eventPoints);
 
 
 

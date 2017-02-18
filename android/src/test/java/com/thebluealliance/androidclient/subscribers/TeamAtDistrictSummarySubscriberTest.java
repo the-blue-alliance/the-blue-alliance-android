@@ -10,7 +10,7 @@ import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.listitems.LabelValueDetailListItem;
 import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
@@ -39,7 +39,7 @@ public class TeamAtDistrictSummarySubscriberTest {
     @Mock EventBus mEventBus;
 
     private TeamAtDistrictSummarySubscriber mSubscriber;
-    private DistrictTeam mDistrictTeam;
+    private DistrictRanking mDistrictTeam;
 
     @Before
     public void setUp() {
@@ -53,7 +53,7 @@ public class TeamAtDistrictSummarySubscriberTest {
         mSubscriber = new TeamAtDistrictSummarySubscriber(mDb, mResources, mEventBus);
         mSubscriber.setTeamKey("frc1124");
         mSubscriber.setDistrictKey("2015ne");
-        mDistrictTeam = ModelMaker.getModelList(DistrictTeam.class, "2015ne_rankings").get(0);
+        mDistrictTeam = ModelMaker.getModelList(DistrictRanking.class, "2015ne_rankings").get(0);
     }
 
     @Test

@@ -8,62 +8,121 @@ import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.api.model.IDistrictEventPoints;
 
 import android.content.res.Resources;
 
-public class DistrictPointBreakdown implements RenderableModel {
+public class DistrictPointBreakdown implements RenderableModel, IDistrictEventPoints {
 
-    private int qualPoints, elimPoints, alliancePoints, awardPoints, totalPoints;
-    private String teamKey, districtKey, teamName;
-    private int rank;
+    private Integer qualPoints, elimPoints, alliancePoints, awardPoints, total;
+    private String teamKey, districtKey, teamName, eventKey;
+    private Integer rank;
+    private Boolean districtCmp;
+    private Long lastModified;
 
     public DistrictPointBreakdown() {
         this.qualPoints = -1;
         this.elimPoints = -1;
         this.alliancePoints = -1;
         this.awardPoints = -1;
-        this.totalPoints = -1;
+        this.total = -1;
         rank = -1;
     }
 
-    public int getQualPoints() {
+    @Override public Integer getQualPoints() {
         return qualPoints;
     }
 
-    public void setQualPoints(int qualPoints) {
+    @Override public void setQualPoints(Integer qualPoints) {
         this.qualPoints = qualPoints;
     }
 
-    public int getElimPoints() {
+    @Override public Integer getElimPoints() {
         return elimPoints;
     }
 
-    public void setElimPoints(int elimPoints) {
+    @Override public void setElimPoints(Integer elimPoints) {
         this.elimPoints = elimPoints;
     }
 
-    public int getAlliancePoints() {
+    @Override public Integer getAlliancePoints() {
         return alliancePoints;
     }
 
-    public void setAlliancePoints(int alliancePoints) {
+    @Override public void setAlliancePoints(Integer alliancePoints) {
         this.alliancePoints = alliancePoints;
     }
 
-    public int getAwardPoints() {
+    @Override public Integer getAwardPoints() {
         return awardPoints;
     }
 
-    public void setAwardPoints(int awardPoints) {
+    @Override public void setAwardPoints(Integer awardPoints) {
         this.awardPoints = awardPoints;
     }
 
-    public int getTotalPoints() {
-        return totalPoints;
+    public Integer getTotal() {
+        return total;
     }
 
-    public void setTotalPoints(int totalPoints) {
-        this.totalPoints = totalPoints;
+    public void setTotal(Integer total) {
+        this.total = total;
+    }
+
+    public String getTeamKey() {
+        return teamKey;
+    }
+
+    public void setTeamKey(String teamKey) {
+        this.teamKey = teamKey;
+    }
+
+    public String getDistrictKey() {
+        return districtKey;
+    }
+
+    public void setDistrictKey(String districtKey) {
+        this.districtKey = districtKey;
+    }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
+    }
+
+    @Override public String getEventKey() {
+        return eventKey;
+    }
+
+    @Override public void setEventKey(String eventKey) {
+        this.eventKey = eventKey;
+    }
+
+    public Integer getRank() {
+        return rank;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    @Override public Boolean getDistrictCmp() {
+        return districtCmp;
+    }
+
+    @Override public void setDistrictCmp(Boolean districtCmp) {
+        this.districtCmp = districtCmp;
+    }
+
+    public Long getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Long lastModified) {
+        this.lastModified = lastModified;
     }
 
     public RenderableModel renderQualPoints(Resources resources) {
@@ -92,42 +151,10 @@ public class DistrictPointBreakdown implements RenderableModel {
 
     public RenderableModel renderTotalPoints(Resources resources) {
         return new BreakdownItem(resources.getString(R.string.total_district_points),
-          String.format(resources.getString(R.string.district_points_format), totalPoints));
+          String.format(resources.getString(R.string.district_points_format), total));
     }
 
-    public String getTeamKey() {
-        return teamKey;
-    }
-
-    public void setTeamKey(String teamKey) {
-        this.teamKey = teamKey;
-    }
-
-    public String getTeamName() {
-        return teamName;
-    }
-
-    public void setTeamName(String teamName) {
-        this.teamName = teamName;
-    }
-
-    public int getRank() {
-        return rank;
-    }
-
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
-
-    public String getDistrictKey() {
-        return districtKey;
-    }
-
-    public void setDistrictKey(String districtKey) {
-        this.districtKey = districtKey;
-    }
-
-    @Override
+   @Override
     public DistrictTeamListElement render(ModelRendererSupplier supplier) {
         DistrictPointBreakdownRenderer renderer =
           (DistrictPointBreakdownRenderer)supplier.getRendererForType(ModelType.DISTRICTPOINTS);

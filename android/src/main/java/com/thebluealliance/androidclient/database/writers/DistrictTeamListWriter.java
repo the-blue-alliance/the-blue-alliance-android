@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.database.writers;
 import com.google.common.collect.ImmutableList;
 
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import android.support.annotation.WorkerThread;
 
@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class DistrictTeamListWriter extends BaseDbWriter<List<DistrictTeam>> {
+public class DistrictTeamListWriter extends BaseDbWriter<List<DistrictRanking>> {
     @Inject
     public DistrictTeamListWriter(Database db) {
         super(db);
@@ -19,7 +19,7 @@ public class DistrictTeamListWriter extends BaseDbWriter<List<DistrictTeam>> {
 
     @Override
     @WorkerThread
-    public void write(List<DistrictTeam> districtTeams, Long lastModified) {
+    public void write(List<DistrictRanking> districtTeams, Long lastModified) {
         mDb.getDistrictTeamsTable().add(ImmutableList.copyOf(districtTeams), lastModified);
     }
 }

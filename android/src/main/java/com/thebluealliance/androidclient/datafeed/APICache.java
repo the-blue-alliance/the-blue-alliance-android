@@ -13,7 +13,7 @@ import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.models.EventDetail;
@@ -21,7 +21,6 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.Team;
-import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.types.EventDetailType;
 
 import android.database.Cursor;
@@ -349,18 +348,15 @@ public class APICache {
         });
     }
 
-    public Observable<List<DistrictTeam>> fetchDistrictRankings(String districtShort, int year) {
+    public Observable<List<DistrictRanking>> fetchDistrictRankings(String districtKey) {
         return Observable.create((observer) -> {
             try {
                 String where = String.format(
-                  "%1$s = ? AND %2$s = ?",
-                  DistrictTeamsTable.YEAR,
-                  DistrictTeamsTable.DISTRICT_ENUM);
-                int districtEnum = DistrictType.fromAbbreviation(districtShort).ordinal();
-                List<DistrictTeam> districtTeams = mDb.getDistrictTeamsTable().getForQuery(
+                  "%1$s = ?", DistrictTeamsTable.DISTRICT_KEY);
+                List<DistrictRanking> districtTeams = mDb.getDistrictTeamsTable().getForQuery(
                   null,
                   where,
-                  new String[]{Integer.toString(year), Integer.toString(districtEnum)});
+                  new String[]{districtKey});
                 observer.onNext(districtTeams);
                 observer.onCompleted();
             } catch (Exception e) {

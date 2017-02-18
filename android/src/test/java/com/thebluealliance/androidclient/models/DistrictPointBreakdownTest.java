@@ -25,11 +25,11 @@ public class DistrictPointBreakdownTest {
     @Test
     public void testDistrictPointBreakdown() {
         assertNotNull(mBreakdown);
-        assertEquals(mBreakdown.getTotalPoints(), 87);
-        assertEquals(mBreakdown.getQualPoints(), 36);
-        assertEquals(mBreakdown.getElimPoints(), 30);
-        assertEquals(mBreakdown.getAlliancePoints(), 6);
-        assertEquals(mBreakdown.getAwardPoints(), 15);
+        assertEquals(mBreakdown.getTotal().intValue(), 87);
+        assertEquals(mBreakdown.getQualPoints().intValue(), 36);
+        assertEquals(mBreakdown.getElimPoints().intValue(), 30);
+        assertEquals(mBreakdown.getAlliancePoints().intValue(), 6);
+        assertEquals(mBreakdown.getAwardPoints().intValue(), 15);
     }
 
 }

@@ -7,7 +7,7 @@ import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictTeamKey;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,16 +30,16 @@ public class DistrictRankingsSubscriberTest {
     @Mock public Database mDb;
 
     private DistrictRankingsSubscriber mSubscriber;
-    private List<DistrictTeam> mDistrictTeams;
+    private List<DistrictRanking> mDistrictTeams;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         DatabaseMocker.mockTeamsTable(mDb);
 
-        AddDistrictTeamKey keyAdder = new AddDistrictTeamKey("ne", 2015);
+        AddDistrictTeamKey keyAdder = new AddDistrictTeamKey("2015ne");
         mSubscriber = new DistrictRankingsSubscriber(mDb);
-        mDistrictTeams = ModelMaker.getModelList(DistrictTeam.class, "2015ne_rankings");
+        mDistrictTeams = ModelMaker.getModelList(DistrictRanking.class, "2015ne_rankings");
         keyAdder.call(mDistrictTeams);
     }
 
