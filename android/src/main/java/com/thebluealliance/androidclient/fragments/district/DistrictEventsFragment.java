@@ -26,8 +26,7 @@ public class DistrictEventsFragment extends RecyclerViewFragment<List<Event>,
 
     public static final String KEY = "districtKey";
 
-    private String mShort;
-    private int mYear;
+    private String mKey;
 
     public static DistrictEventsFragment newInstance(String key) {
         DistrictEventsFragment f = new DistrictEventsFragment();
@@ -43,8 +42,7 @@ public class DistrictEventsFragment extends RecyclerViewFragment<List<Event>,
         if (!DistrictHelper.validateDistrictKey(key)) {
             throw new IllegalArgumentException("Invalid district key + " + key);
         }
-        mShort = key.substring(4);
-        mYear = Integer.parseInt(key.substring(0, 4));
+        mKey = key;
         super.onCreate(savedInstanceState);
         mSubscriber.setRenderMode(EventListSubscriber.MODE_DISTRICT);
     }
@@ -56,12 +54,12 @@ public class DistrictEventsFragment extends RecyclerViewFragment<List<Event>,
 
     @Override
     protected Observable<List<Event>> getObservable(String tbaCacheHeader) {
-        return mDatafeed.fetchDistrictEvents(mShort, mYear, tbaCacheHeader);
+        return mDatafeed.fetchDistrictEvents(mKey, tbaCacheHeader);
     }
 
     @Override
     protected String getRefreshTag() {
-        return String.format("districtEvents_%1$s_%2$d", mShort, mYear);
+        return String.format("districtEvents_%1$s", mKey);
     }
 
     @Override public NoDataViewParams getNoDataParams() {

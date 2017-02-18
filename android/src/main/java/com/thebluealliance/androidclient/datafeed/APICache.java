@@ -332,16 +332,15 @@ public class APICache {
         });
     }
 
-    public Observable<List<Event>> fetchDistrictEvents(String districtShort, int year) {
+    public Observable<List<Event>> fetchDistrictEvents(String districtKey) {
         return Observable.create((observer) -> {
             try {
                 String where =
-                  String.format("%1$s = ? AND %2$s = ?", EventsTable.YEAR, EventsTable.DISTRICT);
-                int districtEnum = DistrictType.fromAbbreviation(districtShort).ordinal();
+                  String.format("%1$s = ?", EventsTable.DISTRICT_KEY);
                 List<Event> events = mDb.getEventsTable().getForQuery(
                   null,
                   where,
-                  new String[]{Integer.toString(year), Integer.toString(districtEnum)});
+                  new String[]{districtKey});
                 observer.onNext(events);
                 observer.onCompleted();
             } catch (Exception e) {

@@ -20,7 +20,6 @@ import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
 import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.WeekEventsExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.YearsParticipatedInfoMap;
-import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictTeam;
@@ -244,14 +243,11 @@ public class CacheableDatafeed {
         return mAPICache.fetchDistrictList(year).concatWith(apiData);
     }
 
-    public Observable<List<Event>> fetchDistrictEvents(
-      String districtShort,
-      int year,
-      String cacheHeader) {
+    public Observable<List<Event>> fetchDistrictEvents(String districtKey, String cacheHeader) {
         Observable<List<Event>> apiData = mResponseMap.getAndWriteResponseBody(
-          mApiv3.fetchDistrictEvents(DistrictHelper.generateKey(districtShort, year), cacheHeader),
+          mApiv3.fetchDistrictEvents(districtKey, cacheHeader),
           mWriter.getEventListWriter().get());
-        return mAPICache.fetchDistrictEvents(districtShort, year).concatWith(apiData);
+        return mAPICache.fetchDistrictEvents(districtKey).concatWith(apiData);
     }
 
     public Observable<List<DistrictTeam>> fetchDistrictRankings(String districtShort, int year, String cacheHeader) {
