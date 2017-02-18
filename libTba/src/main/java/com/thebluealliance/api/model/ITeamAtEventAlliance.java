@@ -27,39 +27,64 @@ package com.thebluealliance.api.model;
 
 import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
+import com.thebluealliance.api.model.IAllianceBackup;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.annotation.Nullable;
 
 
 /**
- * AwardRecipient
+ * TeamAtEventAlliance
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T16:02:48.764-05:00")
-public interface IAwardRecipient   {
+public interface ITeamAtEventAlliance   {
 
 
    /**
-   * Name of the winning person
-   * @return awardee
+   * Get backup
+   * @return backup
   **/
-  @ApiModelProperty(example = "null", value = "Name of the winning person")
+  @ApiModelProperty(example = "null", value = "")
   @Nullable
-  public String getAwardee();
+  public IAllianceBackup getBackup();
 
-  public void setAwardee(String awardee);
+  public void setBackup(IAllianceBackup backup);
 
 
 
    /**
-   * Key of the winning team
-   * @return teamKey
+   * Get name
+   * @return name
   **/
-  @ApiModelProperty(example = "null", value = "Key of the winning team")
-  @Nullable
-  public String getTeamKey();
+  @ApiModelProperty(example = "null", required = true, value = "")
+  
+  public String getName();
 
-  public void setTeamKey(String teamKey);
+  public void setName(String name);
+
+
+
+   /**
+   * Get number
+   * @return number
+  **/
+  @ApiModelProperty(example = "null", required = true, value = "")
+  
+  public Integer getNumber();
+
+  public void setNumber(Integer number);
+
+
+
+   /**
+   * Get pick
+   * @return pick
+  **/
+  @ApiModelProperty(example = "null", required = true, value = "")
+  
+  public Integer getPick();
+
+  public void setPick(Integer pick);
 
 }
 

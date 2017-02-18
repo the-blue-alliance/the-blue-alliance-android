@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.types.EventDetailType;
 import com.thebluealliance.api.model.IRankingItem;
 import com.thebluealliance.api.model.IRankingResponseObject;
-import com.thebluealliance.api.model.IRankingResponseObjectSortOrderInfo;
+import com.thebluealliance.api.model.IRankingSortOrder;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 public class RankingResponseObject implements IRankingResponseObject {
 
     private List<IRankingItem> rankings;
-    private List<IRankingResponseObjectSortOrderInfo> sortOrderInfo;
+    private List<IRankingSortOrder> sortOrderInfo;
     private String eventKey;
 
     private @Nullable Long lastModified;
@@ -27,12 +27,12 @@ public class RankingResponseObject implements IRankingResponseObject {
         this.rankings = rankings;
     }
 
-    @Override public List<IRankingResponseObjectSortOrderInfo> getSortOrderInfo() {
+    @Override public List<IRankingSortOrder> getSortOrderInfo() {
         return sortOrderInfo;
     }
 
     @Override
-    public void setSortOrderInfo(List<IRankingResponseObjectSortOrderInfo> sortOrderInfo) {
+    public void setSortOrderInfo(List<IRankingSortOrder> sortOrderInfo) {
         this.sortOrderInfo = sortOrderInfo;
     }
 

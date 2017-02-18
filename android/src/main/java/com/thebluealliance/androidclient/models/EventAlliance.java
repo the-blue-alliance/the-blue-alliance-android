@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 
 import com.thebluealliance.androidclient.types.EventDetailType;
+import com.thebluealliance.api.model.IAllianceBackup;
 import com.thebluealliance.api.model.IEventAlliance;
-import com.thebluealliance.api.model.IEventAllianceBackup;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class EventAlliance implements IEventAlliance {
     private @Nullable String eventKey;
     private @Nullable List<String> declines;
     private @Nullable String name;
-    private @Nullable IEventAllianceBackup backup;
+    private @Nullable IAllianceBackup backup;
     private @Nullable Long lastModified;
 
     @Override @Nullable public String getName() {
@@ -45,12 +45,12 @@ public class EventAlliance implements IEventAlliance {
     }
 
     @Override @Nullable
-    public IEventAllianceBackup getBackup() {
+    public IAllianceBackup getBackup() {
         return backup;
     }
 
     @Override
-    public void setBackup(@Nullable IEventAllianceBackup backup) {
+    public void setBackup(@Nullable IAllianceBackup backup) {
         this.backup = backup;
     }
 
@@ -86,7 +86,7 @@ public class EventAlliance implements IEventAlliance {
         return eventDetail;
     }
 
-    public static class Backup implements IEventAllianceBackup {
+    public static class Backup implements IAllianceBackup {
         private String in;
         private String out;
 

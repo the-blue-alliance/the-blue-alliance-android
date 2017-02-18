@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.models;
 
-import com.thebluealliance.api.model.IRankingResponseObjectSortOrderInfo;
+import com.thebluealliance.api.model.IRankingSortOrder;
 
-public class RankingResponseObjectSortOrderInfo implements IRankingResponseObjectSortOrderInfo {
+public class RankingSortOrder implements IRankingSortOrder {
     private String name;
     private Integer precision;
 

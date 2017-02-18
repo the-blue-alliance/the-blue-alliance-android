@@ -27,39 +27,76 @@ package com.thebluealliance.api.model;
 
 import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
+import com.thebluealliance.api.model.ITeamRecord;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.annotation.Nullable;
 
 
 /**
- * AwardRecipient
+ * TeamAtEventPlayoff
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T16:02:48.764-05:00")
-public interface IAwardRecipient   {
+public interface ITeamAtEventPlayoff   {
 
 
    /**
-   * Name of the winning person
-   * @return awardee
+   * Get currentLevelRecord
+   * @return currentLevelRecord
   **/
-  @ApiModelProperty(example = "null", value = "Name of the winning person")
+  @ApiModelProperty(example = "null", value = "")
   @Nullable
-  public String getAwardee();
+  public ITeamRecord getCurrentLevelRecord();
 
-  public void setAwardee(String awardee);
+  public void setCurrentLevelRecord(ITeamRecord currentLevelRecord);
 
 
 
    /**
-   * Key of the winning team
-   * @return teamKey
+   * Get level
+   * @return level
   **/
-  @ApiModelProperty(example = "null", value = "Key of the winning team")
-  @Nullable
-  public String getTeamKey();
+  @ApiModelProperty(example = "null", required = true, value = "")
+  
+  public String getLevel();
 
-  public void setTeamKey(String teamKey);
+  public void setLevel(String level);
+
+
+
+   /**
+   * Get playoffAverage
+   * @return playoffAverage
+  **/
+  @ApiModelProperty(example = "null", value = "")
+  @Nullable
+  public Double getPlayoffAverage();
+
+  public void setPlayoffAverage(Double playoffAverage);
+
+
+
+   /**
+   * Get record
+   * @return record
+  **/
+  @ApiModelProperty(example = "null", value = "")
+  @Nullable
+  public ITeamRecord getRecord();
+
+  public void setRecord(ITeamRecord record);
+
+
+
+   /**
+   * Get status
+   * @return status
+  **/
+  @ApiModelProperty(example = "null", required = true, value = "")
+  
+  public String getStatus();
+
+  public void setStatus(String status);
 
 }
 

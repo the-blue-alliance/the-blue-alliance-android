@@ -12,9 +12,9 @@ import com.google.gson.JsonSerializer;
 
 import com.thebluealliance.androidclient.models.RankingItem;
 import com.thebluealliance.androidclient.models.RankingResponseObject;
-import com.thebluealliance.androidclient.models.RankingResponseObjectSortOrderInfo;
+import com.thebluealliance.androidclient.models.RankingSortOrder;
 import com.thebluealliance.api.model.IRankingItem;
-import com.thebluealliance.api.model.IRankingResponseObjectSortOrderInfo;
+import com.thebluealliance.api.model.IRankingSortOrder;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class RankingsResponseDeserializer implements JsonDeserializer<RankingRes
         RankingResponseObject rankingResponse = new RankingResponseObject();
 
         List<IRankingItem> teamRanks = new ArrayList<>();
-        List<IRankingResponseObjectSortOrderInfo> sortOrders = new ArrayList<>();
+        List<IRankingSortOrder> sortOrders = new ArrayList<>();
 
 
         if (!isNull(rankingsObject.get("rankings"))) {
@@ -42,7 +42,7 @@ public class RankingsResponseDeserializer implements JsonDeserializer<RankingRes
         if (!isNull(rankingsObject.get("sort_order_info"))) {
             JsonArray sortOrderJson = rankingsObject.get("sort_order_info").getAsJsonArray();
             for (int i = 0; i < sortOrderJson.size(); i++) {
-                RankingResponseObjectSortOrderInfo column = new RankingResponseObjectSortOrderInfo();
+                RankingSortOrder column = new RankingSortOrder();
 
                 JsonObject sortItem = sortOrderJson.get(i).getAsJsonObject();
                 column.setName(sortItem.get("name").getAsString());

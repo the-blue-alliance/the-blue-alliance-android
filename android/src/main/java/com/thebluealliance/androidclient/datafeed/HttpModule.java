@@ -8,14 +8,20 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.deserializers.APIStatusDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AllianceDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer
+        .AwardRecipientDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer
+        .DistrictEventPointsDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.EventDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchAllianceDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchVideoDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MediaDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.RankingItemDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.RankingItemDeserializer
+        .RecordDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.RankingsResponseDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
@@ -46,6 +52,7 @@ import com.thebluealliance.api.model.IMatchVideo;
 import com.thebluealliance.api.model.IMedia;
 import com.thebluealliance.api.model.IRankingResponseObject;
 import com.thebluealliance.api.model.ITeam;
+import com.thebluealliance.api.model.ITeamRecord;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -110,9 +117,10 @@ public class HttpModule {
         AllianceDeserializer allianceDeserializer = new AllianceDeserializer();
         MatchAllianceDeserializer matchAllianceDeserializer = new MatchAllianceDeserializer();
         MatchVideoDeserializer matchVideoDeserializer = new MatchVideoDeserializer();
-        AwardDeserializer.AwardRecipientDeserializer recipientDeserializer = new AwardDeserializer.AwardRecipientDeserializer();
+        AwardRecipientDeserializer recipientDeserializer = new AwardRecipientDeserializer();
         DistrictTeamDeserializer districtTeamDeserializer = new DistrictTeamDeserializer();
-        DistrictTeamDeserializer.DistrictEventPointsDeserializer eventPointsDeserializer = new DistrictTeamDeserializer.DistrictEventPointsDeserializer();
+        DistrictEventPointsDeserializer eventPointsDeserializer = new DistrictEventPointsDeserializer();
+        RecordDeserializer recordDeserializer = new RecordDeserializer();
 
         builder.registerTypeAdapter(IAward.class, awardDeserializer);
         builder.registerTypeAdapter(Award.class, awardDeserializer);
@@ -137,6 +145,8 @@ public class HttpModule {
         builder.registerTypeAdapter(IRankingResponseObject.class, rankingsResponseDeserializer);
         builder.registerTypeAdapter(RankingResponseObject.class, rankingsResponseDeserializer);
         builder.registerTypeAdapter(RankingItem.class, new RankingItemDeserializer());
+        builder.registerTypeAdapter(RankingItem.TeamRecord.class, recordDeserializer);
+        builder.registerTypeAdapter(ITeamRecord.class, recordDeserializer);
 
         builder.registerTypeAdapter(IEventAlliance.class, allianceDeserializer);
         builder.registerTypeAdapter(EventAlliance.class, allianceDeserializer);

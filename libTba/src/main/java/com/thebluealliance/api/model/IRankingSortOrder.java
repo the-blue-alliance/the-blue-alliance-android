@@ -33,33 +33,33 @@ import javax.annotation.Nullable;
 
 
 /**
- * AwardRecipient
+ * RankingSortOrder
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T16:02:48.764-05:00")
-public interface IAwardRecipient   {
+public interface IRankingSortOrder   {
 
 
    /**
-   * Name of the winning person
-   * @return awardee
+   * Description of this ranking column
+   * @return name
   **/
-  @ApiModelProperty(example = "null", value = "Name of the winning person")
-  @Nullable
-  public String getAwardee();
+  @ApiModelProperty(example = "null", required = true, value = "Description of this ranking column")
+  
+  public String getName();
 
-  public void setAwardee(String awardee);
+  public void setName(String name);
 
 
 
    /**
-   * Key of the winning team
-   * @return teamKey
+   * How many significant figures to display
+   * @return precision
   **/
-  @ApiModelProperty(example = "null", value = "Key of the winning team")
-  @Nullable
-  public String getTeamKey();
+  @ApiModelProperty(example = "null", required = true, value = "How many significant figures to display")
+  
+  public Integer getPrecision();
 
-  public void setTeamKey(String teamKey);
+  public void setPrecision(Integer precision);
 
 }
 

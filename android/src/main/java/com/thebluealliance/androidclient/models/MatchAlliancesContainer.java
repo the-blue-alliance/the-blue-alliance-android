@@ -32,7 +32,6 @@ public class MatchAlliancesContainer implements IMatchAlliancesContainer {
         private Integer score;
         private List<String> teamKeys;
         private @Nullable List<String> surrogateTeamKeys;
-        private @Nullable Long lastModified;
 
         @Override public Integer getScore() {
             return score;
@@ -58,12 +57,5 @@ public class MatchAlliancesContainer implements IMatchAlliancesContainer {
             this.teamKeys = teamKeys;
         }
 
-        @Override @Nullable public Long getLastModified() {
-            return lastModified;
-        }
-
-        @Override public void setLastModified(@Nullable Long lastModified) {
-            this.lastModified = lastModified;
-        }
     }
 }

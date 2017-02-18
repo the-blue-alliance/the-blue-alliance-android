@@ -317,7 +317,6 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
     public static class MatchVideo implements IMatchVideo {
         private String key;
         private String type;
-        private @Nullable Long lastModified;
 
         @Override public String getKey() {
             return key;
@@ -333,14 +332,6 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
 
         @Override public void setType(String type) {
             this.type = type;
-        }
-
-        @Nullable public Long getLastModified() {
-            return lastModified;
-        }
-
-        public void setLastModified(@Nullable Long lastModified) {
-            this.lastModified = lastModified;
         }
 
         public Media asMedia() {

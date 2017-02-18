@@ -17,6 +17,7 @@ import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.RankingResponseObject;
+import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Robot;
 
@@ -269,6 +270,20 @@ public interface TbaApiV3 {
   
   @GET("api/v3/team/{team_key}/event/{event_key}/matches")
   Observable<Response<List<Match>>> fetchTeamAtEventMatches(
+    @Path("team_key") String teamKey, @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
+  );
+
+  /**
+   * Team Event Status Request
+   * 
+   * @param teamKey Key identifying a single team, has format frcXXXX, where XXXX is the team number (required)
+   * @param eventKey Key identifying a single event, has format [year][event code] (required)
+   * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
+   * @return Call&lt;TeamAtEventStatus&gt;
+   */
+  
+  @GET("api/v3/team/{team_key}/event/{event_key}/status")
+  Observable<Response<TeamAtEventStatus>> fetchTeamAtEventStatus(
     @Path("team_key") String teamKey, @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
   );
 

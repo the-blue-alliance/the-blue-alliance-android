@@ -27,6 +27,7 @@ package com.thebluealliance.api.model;
 
 import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
+import com.thebluealliance.api.model.ITeamRecord;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import javax.annotation.Nullable;
 /**
  * RankingItem
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T12:56:17.757-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T16:02:48.764-05:00")
 public interface IRankingItem   {
 
 
@@ -50,30 +51,6 @@ public interface IRankingItem   {
   public Integer getDq();
 
   public void setDq(Integer dq);
-
-
-
-   /**
-   * Timestamp this model was last modified
-   * @return lastModified
-  **/
-  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
-  @Nullable
-  public Long getLastModified();
-
-  public void setLastModified(Long lastModified);
-
-
-
-   /**
-   * Number of losses
-   * @return losses
-  **/
-  @ApiModelProperty(example = "null", value = "Number of losses")
-  @Nullable
-  public Integer getLosses();
-
-  public void setLosses(Integer losses);
 
 
 
@@ -113,6 +90,18 @@ public interface IRankingItem   {
 
 
 
+   /**
+   * Get record
+   * @return record
+  **/
+  @ApiModelProperty(example = "null", required = true, value = "")
+  
+  public ITeamRecord getRecord();
+
+  public void setRecord(ITeamRecord record);
+
+
+
 
 
    /**
@@ -136,30 +125,6 @@ public interface IRankingItem   {
   public String getTeamKey();
 
   public void setTeamKey(String teamKey);
-
-
-
-   /**
-   * Number of ties
-   * @return ties
-  **/
-  @ApiModelProperty(example = "null", value = "Number of ties")
-  @Nullable
-  public Integer getTies();
-
-  public void setTies(Integer ties);
-
-
-
-   /**
-   * Number of wins
-   * @return wins
-  **/
-  @ApiModelProperty(example = "null", value = "Number of wins")
-  @Nullable
-  public Integer getWins();
-
-  public void setWins(Integer wins);
 
 }
 

@@ -1,12 +1,13 @@
 
-# RankingResponseObject
+# TeamAtEventQual
 
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**lastModified** | **Long** | Timestamp this model was last modified |  [optional]
-**rankings** | [**List&lt;RankingItem&gt;**](RankingItem.md) |  | 
+**numTeams** | **Integer** |  | 
+**rankings** | [**RankingItem**](RankingItem.md) |  |  [optional]
 **sortOrderInfo** | [**List&lt;RankingSortOrder&gt;**](RankingSortOrder.md) |  | 
+**status** | **String** |  | 
 
 
 

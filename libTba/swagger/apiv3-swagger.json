@@ -115,6 +115,26 @@
         }
       }
     },
+    "/api/v3/team/{team_key}/event/{event_key}/status": {
+      "get": {
+        "summary": "Team Event Status Request",
+        "operationId": "fetchTeamAtEventStatus",
+        "parameters": [
+          {
+            "$ref": "#/parameters/team_key_param"
+          },
+          {
+            "$ref": "#/parameters/event_key_param"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/team_at_event_status_response"
+          }
+        }
+      }
+
+    },
     "/api/v3/team/{team_key}/years_participated": {
       "get": {
         "summary": "Team Years Participated Request",
@@ -609,6 +629,11 @@
           "$ref": "#/definitions/Award"
         }
       }
+    },
+    "team_at_event_status_response": {
+      "schema": {
+        "$ref": "#/definitions/TeamAtEventStatus"
+      }
     }
   },
   "definitions": {
@@ -1068,21 +1093,46 @@
           }
         },
         "backup": {
-            "type": "object",
-            "required": [
-              "in",
-              "out"
-            ],
-           "properties": {
-              "in": {
-                "type": "string",
-                "description": "Team key of incoming team"
-              },
-              "out": {
-                "type": "string",
-                "description": "Team key of outgoing team"
-              }
-            }
+          "$ref": "#/definitions/AllianceBackup"
+        }
+      }
+    },
+    "AllianceBackup": {
+      "type": "object",
+      "required": [
+        "in",
+        "out"
+      ],
+      "properties": {
+        "in": {
+          "type": "string",
+          "description": "Team key of incoming team"
+        },
+        "out": {
+          "type": "string",
+          "description": "Team key of outgoing team"
+        }
+      }
+    },
+    "TeamRecord": {
+      "type": "object",
+      "required": [
+        "wins",
+        "losses",
+        "ties"
+      ],
+      "properties": {
+        "wins": {
+          "type": "integer",
+          "description": "Number of wins"
+        },
+        "losses": {
+          "type": "integer",
+          "description": "Number of losses"
+        },
+        "ties": {
+          "type": "integer",
+          "description": "Number of ties"
         }
       }
     },
@@ -1114,17 +1164,8 @@
           "type": "integer",
           "description": "Ranking of this team"
         },
-        "wins": {
-          "type": "integer",
-          "description": "Number of wins"
-        },
-        "losses": {
-          "type": "integer",
-          "description": "Number of losses"
-        },
-        "ties": {
-          "type": "integer",
-          "description": "Number of ties"
+        "record": {
+          "$ref": "#/definitions/TeamRecord"
         },
         "sort_orders": {
           "type": "array",
@@ -1137,6 +1178,23 @@
         "team_key": {
           "type": "string",
           "description": "Team this item is for"
+        }
+      }
+    },
+    "RankingSortOrder": {
+      "type": "object",
+      "required": [
+        "name",
+        "precision"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Description of this ranking column"
+        },
+        "precision": {
+          "type": "integer",
+          "description": "How many significant figures to display"
         }
       }
     },
@@ -1156,20 +1214,98 @@
         "sort_order_info": {
           "type": "array",
           "items": {
-            "type": "object",
-            "required": [
-              "name",
-              "precision"
-            ],
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Description of this ranking column"
-              },
-              "precision": {
-                "type": "integer",
-                "description": "How many significant figures to display"
+            "$ref": "#/definitions/RankingSortOrder"
+          }
+        }
+      }
+    },
+    "TeamAtEventStatus": {
+      "type": "object",
+      "required": [
+        "alliance_status_str",
+        "overall_status_str",
+        "playoff_status_str"
+      ],
+      "properties": {
+        "alliance": {
+          "type": "object",
+          "title": "TeamAtEventAlliance",
+          "required": [
+            "name",
+            "number",
+            "pick"
+          ],
+          "properties": {
+            "backup": {
+              "$ref": "#/definitions/AllianceBackup"
+            },
+            "name": {
+              "type": "string"
+            },
+            "number": {
+              "type": "integer"
+            },
+            "pick": {
+              "type": "integer"
+            }
+          }
+        },
+        "alliance_status_str": {
+          "type": "string"
+        },
+        "overall_status_str": {
+          "type": "string"
+        },
+        "playoff": {
+          "type": "object",
+          "title": "TeamAtEventPlayoff",
+          "required": [
+            "level",
+            "status"
+          ],
+          "properties": {
+            "current_level_record": {
+              "$ref": "#/definitions/TeamRecord"
+            },
+            "level": {
+              "type": "string"
+            },
+            "playoff_average": {
+              "type": "number",
+              "format": "double"
+            },
+            "record": {
+              "$ref": "#/definitions/TeamRecord"
+            },
+            "status": {
+              "type": "string"
+            }
+          }
+        },
+        "qual": {
+          "type": "object",
+          "title": "TeamAtEventQual",
+          "required": [
+            "ranking",
+            "sort_order_info",
+            "num_teams",
+            "status"
+          ],
+          "properties": {
+            "rankings": {
+              "$ref": "#/definitions/RankingItem"
+            },
+            "sort_order_info": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/RankingSortOrder"
               }
+            },
+            "num_teams": {
+              "type": "integer"
+            },
+            "status": {
+              "type": "string"
             }
           }
         }

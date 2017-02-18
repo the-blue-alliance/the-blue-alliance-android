@@ -12,6 +12,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 import com.thebluealliance.androidclient.models.RankingItem;
+import com.thebluealliance.api.model.ITeamRecord;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -33,16 +34,7 @@ public class RankingItemDeserializer implements JsonDeserializer<RankingItem>,
         }
 
         if (!isNull(data.get("record"))) {
-            JsonObject record = data.get("record").getAsJsonObject();
-            if (!isNull(record.get("wins"))) {
-                rankItem.setWins(record.get("wins").getAsInt());
-            }
-            if (!isNull(record.get("losses"))) {
-                rankItem.setLosses(record.get("losses").getAsInt());
-            }
-            if (!isNull(record.get("ties"))) {
-                rankItem.setTies(record.get("ties").getAsInt());
-            }
+            rankItem.setRecord(context.deserialize(data.get("record"), ITeamRecord.class));
         }
 
         List<Double> sortOrders = new ArrayList<>();
@@ -69,11 +61,12 @@ public class RankingItemDeserializer implements JsonDeserializer<RankingItem>,
             out.add("qual_average", JsonNull.INSTANCE);
         }
 
-        JsonObject record = new JsonObject();
-        record.add("wins", src.getWins() != null ? new JsonPrimitive(src.getWins()) : JsonNull.INSTANCE);
-        record.add("losses", src.getLosses() != null ? new JsonPrimitive(src.getLosses()) : JsonNull.INSTANCE);
-        record.add("ties", src.getTies() != null ? new JsonPrimitive(src.getTies()) : JsonNull.INSTANCE);
-        out.add("record", record);
+        if (src.getRecord() != null) {
+            JsonElement record = context.serialize(src.getRecord(), RankingItem.TeamRecord.class);
+            out.add("record", record);
+        } else {
+            out.add("record", JsonNull.INSTANCE);
+        }
 
         JsonArray sortOrders = new JsonArray();
         for (int i = 0; i < src.getSortOrders().size(); i++) {
@@ -85,5 +78,30 @@ public class RankingItemDeserializer implements JsonDeserializer<RankingItem>,
 
     private static boolean isNull(JsonElement element) {
         return element == null || element.isJsonNull();
+    }
+
+    public static class RecordDeserializer implements JsonDeserializer<RankingItem.TeamRecord>,
+                                                      JsonSerializer<RankingItem.TeamRecord> {
+
+        @Override
+        public RankingItem.TeamRecord deserialize(JsonElement json, Type typeOfT,
+                                                  JsonDeserializationContext context) throws JsonParseException {
+            JsonObject data = json.getAsJsonObject();
+            RankingItem.TeamRecord record = new RankingItem.TeamRecord();
+
+            record.setWins(data.get("wins").getAsInt());
+            record.setLosses(data.get("losses").getAsInt());
+            record.setTies(data.get("ties").getAsInt());
+            return record;
+        }
+
+        @Override
+        public JsonElement serialize(RankingItem.TeamRecord src, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject data = new JsonObject();
+            data.addProperty("wins", src.getWins());
+            data.addProperty("losses", src.getLosses());
+            data.addProperty("ties", src.getTies());
+            return data;
+        }
     }
 }

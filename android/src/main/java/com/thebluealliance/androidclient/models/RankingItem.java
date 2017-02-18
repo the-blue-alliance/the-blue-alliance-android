@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
 import com.thebluealliance.api.model.IRankingItem;
+import com.thebluealliance.api.model.ITeamRecord;
 
 import java.util.List;
 
@@ -14,9 +15,7 @@ public class RankingItem implements IRankingItem {
     private List<Double> sortOrders;
     private String teamKey;
 
-    private @Nullable Integer wins;
-    private @Nullable Integer losses;
-    private @Nullable Integer ties;
+    private @Nullable ITeamRecord record;
     private @Nullable Double qualAverage;
     private @Nullable Long lastModified;
 
@@ -60,28 +59,12 @@ public class RankingItem implements IRankingItem {
         this.teamKey = teamKey;
     }
 
-    @Override @Nullable public Integer getWins() {
-        return wins;
+    @Override @Nullable public ITeamRecord getRecord() {
+        return record;
     }
 
-    @Override public void setWins(@Nullable Integer wins) {
-        this.wins = wins;
-    }
-
-    @Override @Nullable public Integer getLosses() {
-        return losses;
-    }
-
-    @Override public void setLosses(@Nullable Integer losses) {
-        this.losses = losses;
-    }
-
-    @Override @Nullable public Integer getTies() {
-        return ties;
-    }
-
-    @Override public void setTies(@Nullable Integer ties) {
-        this.ties = ties;
+    @Override public void setRecord(@Nullable ITeamRecord record) {
+        this.record = record;
     }
 
     @Override @Nullable public Double getQualAverage() {
@@ -92,11 +75,33 @@ public class RankingItem implements IRankingItem {
         this.qualAverage = qualAverage;
     }
 
-    @Override @Nullable public Long getLastModified() {
-        return lastModified;
-    }
+    public static class TeamRecord implements ITeamRecord {
+        private Integer wins;
+        private Integer losses;
+        private Integer ties;
 
-    @Override public void setLastModified(@Nullable Long lastModified) {
-        this.lastModified = lastModified;
+        @Override public Integer getWins() {
+            return wins;
+        }
+
+        @Override public void setWins(Integer wins) {
+            this.wins = wins;
+        }
+
+        @Override public Integer getLosses() {
+            return losses;
+        }
+
+        @Override public void setLosses(Integer losses) {
+            this.losses = losses;
+        }
+
+        @Override public Integer getTies() {
+            return ties;
+        }
+
+        @Override public void setTies(Integer ties) {
+            this.ties = ties;
+        }
     }
 }

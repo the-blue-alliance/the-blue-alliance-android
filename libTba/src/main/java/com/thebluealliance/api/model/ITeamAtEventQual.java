@@ -27,39 +27,69 @@ package com.thebluealliance.api.model;
 
 import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
+import com.thebluealliance.api.model.IRankingItem;
+import com.thebluealliance.api.model.IRankingSortOrder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Nullable;
 
 
 /**
- * AwardRecipient
+ * TeamAtEventQual
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T16:02:48.764-05:00")
-public interface IAwardRecipient   {
+public interface ITeamAtEventQual   {
 
 
    /**
-   * Name of the winning person
-   * @return awardee
+   * Get numTeams
+   * @return numTeams
   **/
-  @ApiModelProperty(example = "null", value = "Name of the winning person")
-  @Nullable
-  public String getAwardee();
+  @ApiModelProperty(example = "null", required = true, value = "")
+  
+  public Integer getNumTeams();
 
-  public void setAwardee(String awardee);
+  public void setNumTeams(Integer numTeams);
 
 
 
    /**
-   * Key of the winning team
-   * @return teamKey
+   * Get rankings
+   * @return rankings
   **/
-  @ApiModelProperty(example = "null", value = "Key of the winning team")
+  @ApiModelProperty(example = "null", value = "")
   @Nullable
-  public String getTeamKey();
+  public IRankingItem getRankings();
 
-  public void setTeamKey(String teamKey);
+  public void setRankings(IRankingItem rankings);
+
+
+
+
+
+   /**
+   * Get sortOrderInfo
+   * @return sortOrderInfo
+  **/
+  @ApiModelProperty(example = "null", required = true, value = "")
+  
+  public List<IRankingSortOrder> getSortOrderInfo();
+
+  public void setSortOrderInfo(List<IRankingSortOrder> sortOrderInfo);
+
+
+
+   /**
+   * Get status
+   * @return status
+  **/
+  @ApiModelProperty(example = "null", required = true, value = "")
+  
+  public String getStatus();
+
+  public void setStatus(String status);
 
 }
 

@@ -27,39 +27,42 @@ package com.thebluealliance.api.model;
 
 import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
+import com.thebluealliance.api.model.ITeamAtEventAlliance;
+import com.thebluealliance.api.model.ITeamAtEventPlayoff;
+import com.thebluealliance.api.model.ITeamAtEventQual;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.annotation.Nullable;
 
 
 /**
- * Media
+ * TeamAtEventStatus
  */
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T16:02:48.764-05:00")
-public interface IMedia   {
+public interface ITeamAtEventStatus   {
 
 
    /**
-   * If the media requires it, a json dict of additional information
-   * @return details
+   * Get alliance
+   * @return alliance
   **/
-  @ApiModelProperty(example = "null", value = "If the media requires it, a json dict of additional information")
+  @ApiModelProperty(example = "null", value = "")
   @Nullable
-  public String getDetails();
+  public ITeamAtEventAlliance getAlliance();
 
-  public void setDetails(String details);
+  public void setAlliance(ITeamAtEventAlliance alliance);
 
 
 
    /**
-   * The key used to indentify this media element on the remote site (e.g YouTube video key)
-   * @return foreignKey
+   * Get allianceStatusStr
+   * @return allianceStatusStr
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The key used to indentify this media element on the remote site (e.g YouTube video key)")
+  @ApiModelProperty(example = "null", required = true, value = "")
   
-  public String getForeignKey();
+  public String getAllianceStatusStr();
 
-  public void setForeignKey(String foreignKey);
+  public void setAllianceStatusStr(String allianceStatusStr);
 
 
 
@@ -76,26 +79,38 @@ public interface IMedia   {
 
 
    /**
-   * Is this a high quality robot picture
-   * @return preferred
+   * Get overallStatusStr
+   * @return overallStatusStr
   **/
-  @ApiModelProperty(example = "null", required = true, value = "Is this a high quality robot picture")
+  @ApiModelProperty(example = "null", required = true, value = "")
   
-  public Boolean getPreferred();
+  public String getOverallStatusStr();
 
-  public void setPreferred(Boolean preferred);
+  public void setOverallStatusStr(String overallStatusStr);
 
 
 
    /**
-   * The string type of the media element
-   * @return type
+   * Get playoff
+   * @return playoff
   **/
-  @ApiModelProperty(example = "null", required = true, value = "The string type of the media element")
-  
-  public String getType();
+  @ApiModelProperty(example = "null", value = "")
+  @Nullable
+  public ITeamAtEventPlayoff getPlayoff();
 
-  public void setType(String type);
+  public void setPlayoff(ITeamAtEventPlayoff playoff);
+
+
+
+   /**
+   * Get qual
+   * @return qual
+  **/
+  @ApiModelProperty(example = "null", value = "")
+  @Nullable
+  public ITeamAtEventQual getQual();
+
+  public void setQual(ITeamAtEventQual qual);
 
 }
 

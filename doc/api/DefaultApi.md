@@ -23,6 +23,7 @@ Method | HTTP request | Description
 [**fetchTeam**](DefaultApi.md#fetchTeam) | **GET** api/v3/team/{team_key} | Single Team Request
 [**fetchTeamAtEventAwards**](DefaultApi.md#fetchTeamAtEventAwards) | **GET** api/v3/team/{team_key}/event/{event_key}/awards | Team Event Awards Request
 [**fetchTeamAtEventMatches**](DefaultApi.md#fetchTeamAtEventMatches) | **GET** api/v3/team/{team_key}/event/{event_key}/matches | Team Event Matches Request
+[**fetchTeamAtEventStatus**](DefaultApi.md#fetchTeamAtEventStatus) | **GET** api/v3/team/{team_key}/event/{event_key}/status | Team Event Status Request
 [**fetchTeamDistricts**](DefaultApi.md#fetchTeamDistricts) | **GET** api/v3/team/{team_key}/districts | Team Districts Request
 [**fetchTeamEvents**](DefaultApi.md#fetchTeamEvents) | **GET** api/v3/team/{team_key}//events/{year} | Team Events Request
 [**fetchTeamMediaInYear**](DefaultApi.md#fetchTeamMediaInYear) | **GET** api/v3/team/{team_key}/media/{year} | Team Media Request
@@ -913,6 +914,53 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**List&lt;Match&gt;**](Match.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json
+
+<a name="fetchTeamAtEventStatus"></a>
+# **fetchTeamAtEventStatus**
+> TeamAtEventStatus fetchTeamAtEventStatus(teamKey, eventKey, xTBACache)
+
+Team Event Status Request
+
+### Example
+```java
+// Import classes:
+//import com.thebluealliance.api.ApiException;
+//import com.thebluealliance.api.call.DefaultApi;
+
+
+DefaultApi apiInstance = new DefaultApi();
+String teamKey = "teamKey_example"; // String | Key identifying a single team, has format frcXXXX, where XXXX is the team number
+String eventKey = "eventKey_example"; // String | Key identifying a single event, has format [year][event code]
+String xTBACache = "xTBACache_example"; // String | Special TBA App Internal Header to indicate caching strategy.
+try {
+    TeamAtEventStatus result = apiInstance.fetchTeamAtEventStatus(teamKey, eventKey, xTBACache);
+    System.out.println(result);
+} catch (ApiException e) {
+    System.err.println("Exception when calling DefaultApi#fetchTeamAtEventStatus");
+    e.printStackTrace();
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **teamKey** | **String**| Key identifying a single team, has format frcXXXX, where XXXX is the team number |
+ **eventKey** | **String**| Key identifying a single event, has format [year][event code] |
+ **xTBACache** | **String**| Special TBA App Internal Header to indicate caching strategy. | [optional]
+
+### Return type
+
+[**TeamAtEventStatus**](TeamAtEventStatus.md)
 
 ### Authorization
 

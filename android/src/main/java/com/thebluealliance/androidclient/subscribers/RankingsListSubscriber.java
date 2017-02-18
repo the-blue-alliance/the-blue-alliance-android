@@ -9,12 +9,15 @@ import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
 import com.thebluealliance.api.model.IRankingItem;
-import com.thebluealliance.api.model.IRankingResponseObjectSortOrderInfo;
+import com.thebluealliance.api.model.IRankingSortOrder;
+import com.thebluealliance.api.model.ITeamRecord;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class RankingsListSubscriber extends BaseAPISubscriber<RankingResponseObject, List<Object>> {
 
@@ -44,13 +47,15 @@ public class RankingsListSubscriber extends BaseAPISubscriber<RankingResponseObj
             String record;
             // use a CaseInsensitiveMap in order to find wins, losses, and ties below
             CaseInsensitiveMap<String> rankingElements = new CaseInsensitiveMap<>();
-           if (row.getQualAverage() != null) {
-                rankingElements.put("Qual Average", ThreadSafeFormatters.formatDoubleOnePlace(row.getQualAverage()));
+            if (row.getQualAverage() != null) {
+                rankingElements.put("Qual Average",
+                                    ThreadSafeFormatters
+                                            .formatDoubleOnePlace(row.getQualAverage()));
             }
             for (int j = 0; j < mAPIData.getSortOrderInfo().size(); j++) {
                 String rankString;
                 Double rankValue = row.getSortOrders().get(j);
-                IRankingResponseObjectSortOrderInfo sort = mAPIData.getSortOrderInfo().get(j);
+                IRankingSortOrder sort = mAPIData.getSortOrderInfo().get(j);
                 switch (sort.getPrecision()) {
                     case 0:
                         rankString = ThreadSafeFormatters.formatDoubleNoPlaces(rankValue);
@@ -66,15 +71,19 @@ public class RankingsListSubscriber extends BaseAPISubscriber<RankingResponseObj
                 rankingElements.put(sort.getName(), rankString);
             }
 
-            if (row.getWins() != null && row.getLosses() != null && row.getTies() != null) {
+            @Nullable ITeamRecord teamRecord = row.getRecord();
+            if (teamRecord != null
+                    && teamRecord.getWins() != null
+                    && teamRecord.getLosses() != null
+                    && teamRecord.getTies() != null) {
                 StringBuilder recordBuilder = new StringBuilder();
                 recordBuilder.append("(");
-                recordBuilder.append(row.getWins());
+                recordBuilder.append(teamRecord.getWins());
                 recordBuilder.append("-");
-                recordBuilder.append(row.getLosses());
-                if (row.getTies() > 0) {
+                recordBuilder.append(teamRecord.getLosses());
+                if (teamRecord.getTies() > 0) {
                     recordBuilder.append("-");
-                    recordBuilder.append(row.getTies());
+                    recordBuilder.append(teamRecord.getTies());
                 }
                 recordBuilder.append(")");
                 record = recordBuilder.toString();

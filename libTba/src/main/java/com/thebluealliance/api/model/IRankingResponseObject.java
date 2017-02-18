@@ -28,7 +28,7 @@ package com.thebluealliance.api.model;
 import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
 import com.thebluealliance.api.model.IRankingItem;
-import com.thebluealliance.api.model.IRankingResponseObjectSortOrderInfo;
+import com.thebluealliance.api.model.IRankingSortOrder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
 /**
  * RankingResponseObject
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T12:56:17.757-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T16:02:48.764-05:00")
 public interface IRankingResponseObject   {
 
 
@@ -77,9 +77,9 @@ public interface IRankingResponseObject   {
   **/
   @ApiModelProperty(example = "null", required = true, value = "")
   
-  public List<IRankingResponseObjectSortOrderInfo> getSortOrderInfo();
+  public List<IRankingSortOrder> getSortOrderInfo();
 
-  public void setSortOrderInfo(List<IRankingResponseObjectSortOrderInfo> sortOrderInfo);
+  public void setSortOrderInfo(List<IRankingSortOrder> sortOrderInfo);
 
 }
 

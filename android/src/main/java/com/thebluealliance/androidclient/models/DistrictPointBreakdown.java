@@ -18,7 +18,6 @@ public class DistrictPointBreakdown implements RenderableModel, IDistrictEventPo
     private String teamKey, districtKey, teamName, eventKey;
     private Integer rank;
     private Boolean districtCmp;
-    private Long lastModified;
 
     public DistrictPointBreakdown() {
         this.qualPoints = -1;
@@ -115,14 +114,6 @@ public class DistrictPointBreakdown implements RenderableModel, IDistrictEventPo
 
     @Override public void setDistrictCmp(Boolean districtCmp) {
         this.districtCmp = districtCmp;
-    }
-
-    public Long getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(Long lastModified) {
-        this.lastModified = lastModified;
     }
 
     public RenderableModel renderQualPoints(Resources resources) {

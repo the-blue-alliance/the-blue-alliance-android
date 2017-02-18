@@ -33,33 +33,45 @@ import javax.annotation.Nullable;
 
 
 /**
- * RankingResponseObjectSortOrderInfo
+ * TeamRecord
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T12:56:17.757-05:00")
-public interface IRankingResponseObjectSortOrderInfo   {
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T16:02:48.764-05:00")
+public interface ITeamRecord   {
 
 
    /**
-   * Description of this ranking column
-   * @return name
+   * Number of losses
+   * @return losses
   **/
-  @ApiModelProperty(example = "null", required = true, value = "Description of this ranking column")
+  @ApiModelProperty(example = "null", required = true, value = "Number of losses")
   
-  public String getName();
+  public Integer getLosses();
 
-  public void setName(String name);
+  public void setLosses(Integer losses);
 
 
 
    /**
-   * How many significant figures to display
-   * @return precision
+   * Number of ties
+   * @return ties
   **/
-  @ApiModelProperty(example = "null", required = true, value = "How many significant figures to display")
+  @ApiModelProperty(example = "null", required = true, value = "Number of ties")
   
-  public Integer getPrecision();
+  public Integer getTies();
 
-  public void setPrecision(Integer precision);
+  public void setTies(Integer ties);
+
+
+
+   /**
+   * Number of wins
+   * @return wins
+  **/
+  @ApiModelProperty(example = "null", required = true, value = "Number of wins")
+  
+  public Integer getWins();
+
+  public void setWins(Integer wins);
 
 }
 
