@@ -36,6 +36,7 @@ import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.api.model.IApiStatus;
 import com.thebluealliance.api.model.IAward;
 import com.thebluealliance.api.model.IAwardRecipient;
+import com.thebluealliance.api.model.IDistrict;
 import com.thebluealliance.api.model.IEvent;
 import com.thebluealliance.api.model.IEventAlliance;
 import com.thebluealliance.api.model.IMatch;
@@ -102,6 +103,7 @@ public class HttpModule {
         MatchDeserializer matchDeserializer = new MatchDeserializer();
         TeamDeserializer teamDeserializer = new TeamDeserializer();
         MediaDeserializer mediaDeserializer = new MediaDeserializer();
+        DistrictDeserializer districtDeserializer = new DistrictDeserializer();
         APIStatusDeserializer apiStatusDeserializer = new APIStatusDeserializer();
         RankingsResponseDeserializer rankingsResponseDeserializer = new RankingsResponseDeserializer();
         AllianceDeserializer allianceDeserializer = new AllianceDeserializer();
@@ -142,7 +144,8 @@ public class HttpModule {
         builder.registerTypeAdapter(IMatchVideo.class, matchVideoDeserializer);
         builder.registerTypeAdapter(Match.MatchVideo.class, matchVideoDeserializer);
 
-        builder.registerTypeAdapter(District.class, new DistrictDeserializer());
+        builder.registerTypeAdapter(District.class, districtDeserializer);
+        builder.registerTypeAdapter(IDistrict.class, districtDeserializer);
         builder.registerTypeAdapter(DistrictTeam.class, new DistrictTeamDeserializer());
         builder.registerTypeAdapter(DistrictPointBreakdown.class, new TeamDistrictPointsDeserializer());
         sGson = builder.create();

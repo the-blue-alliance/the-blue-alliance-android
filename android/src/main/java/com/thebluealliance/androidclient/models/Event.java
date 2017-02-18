@@ -127,6 +127,14 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         this.district = district;
     }
 
+    @Nullable public String getDistrictKey() {
+        return districtKey;
+    }
+
+    public void setDistrictKey(@Nullable String districtKey) {
+        this.districtKey = districtKey;
+    }
+
     @Nullable @Override public Integer getEventType() {
         return eventType;
     }
@@ -255,14 +263,6 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     @Override public void
     setLocationName(@Nullable String locationName) {
         this.locationName = locationName;
-    }
-
-    @Nullable public String getDistrictKey() {
-        return districtKey;
-    }
-
-    public void setDistrictKey(@Nullable String districtKey) {
-        this.districtKey = districtKey;
     }
 
     @Nullable public String getLocation() {

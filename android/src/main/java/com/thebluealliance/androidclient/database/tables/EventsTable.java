@@ -96,6 +96,11 @@ public class EventsTable extends ModelTable<Event> {
         cv.put(Database.SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
         cv.put(Database.SearchEvent.YEAR, event.getYear());
         mDb.insert(Database.TABLE_SEARCH_EVENTS, null, cv);
+
+        if (event.getDistrict() != null) {
+            District district = (District)event.getDistrict();
+            mDistrictsTable.add(district, event.getLastModified());
+        }
     }
 
     @Override
@@ -136,9 +141,9 @@ public class EventsTable extends ModelTable<Event> {
     @Override
     public Event inflate(Cursor cursor) {
         Event event = ModelInflater.inflateEvent(cursor);
-        if (event.getDistrictKey() != null && !event.getDistrictKey().isEmpty()) {
-            District eventDistrict = mDistrictsTable.get(event.getDistrictKey());
-            event.setDistrict(eventDistrict);
+        if (event.getDistrictKey() != null) {
+            District district = mDistrictsTable.get(event.getDistrictKey());
+            event.setDistrict(district);
         }
         return event;
     }
