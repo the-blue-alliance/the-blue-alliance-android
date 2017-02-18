@@ -93,8 +93,8 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setWebsite(object.get("website").getAsString());
         }
 
-        if (object.has("webcast")) {
-            event.setWebcasts(object.get("webcast").toString());
+        if (object.has("webcasts")) {
+            event.setWebcasts(object.get("webcasts").toString());
         }
 
         JsonElement district = object.get("district");
