@@ -41,7 +41,7 @@ public class RankingsListSubscriber extends BaseAPISubscriber<RankingResponseObj
         }
 
         List<IRankingItem> rankings = mAPIData.getRankings();
-        for (int i = 1; i < rankings.size(); i++) {
+        for (int i = 0; i < rankings.size(); i++) {
             IRankingItem row = rankings.get(i);
             /* Assume that the list of lists has rank first and team # second, always */
             String teamKey = row.getTeamKey();
