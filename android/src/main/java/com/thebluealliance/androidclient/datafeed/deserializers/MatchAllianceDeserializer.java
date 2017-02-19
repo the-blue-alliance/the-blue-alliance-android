@@ -26,6 +26,10 @@ public class MatchAllianceDeserializer implements JsonDeserializer<MatchAlliance
             MatchAlliancesContainer.MatchAlliance red = new MatchAlliancesContainer.MatchAlliance();
             red.setScore(redAlliance.get("score").getAsInt());
             red.setTeamKeys(context.deserialize(redAlliance.get("team_keys"), new TypeToken<List<String>>(){}.getType()));
+            if (red.getTeamKeys() == null || red.getTeamKeys().isEmpty()) {
+                // Fall back to apiv2 format so push notifications don't break
+                red.setTeamKeys(context.deserialize(redAlliance.get("teams"), new TypeToken<List<String>>(){}.getType()));
+            }
             if (!isNull(data.get("surrogate_team_keys"))) {
                 red.setSurrogateTeamKeys(context.deserialize(redAlliance.get("surrogate_team_keys"), new TypeToken<List<String>>(){}.getType()));
             }
@@ -37,6 +41,10 @@ public class MatchAllianceDeserializer implements JsonDeserializer<MatchAlliance
             MatchAlliancesContainer.MatchAlliance blue = new MatchAlliancesContainer.MatchAlliance();
             blue.setScore(blueAlliance.get("score").getAsInt());
             blue.setTeamKeys(context.deserialize(blueAlliance.get("team_keys"), new TypeToken<List<String>>(){}.getType()));
+            if (blue.getTeamKeys() == null || blue.getTeamKeys().isEmpty()) {
+                // Fall back to apiv2 format so push notifications don't break
+                blue.setTeamKeys(context.deserialize(blueAlliance.get("teams"), new TypeToken<List<String>>(){}.getType()));
+            }
             if (!isNull(data.get("surrogate_team_keys"))) {
                 blue.setSurrogateTeamKeys(context.deserialize(blueAlliance.get("surrogate_team_keys"), new TypeToken<List<String>>(){}.getType()));
             }

@@ -97,13 +97,13 @@ public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNot
 
         eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
         teamKeys = jsonData.get("team_keys").getAsJsonArray();
-        ArrayList<String> teamNumbers = gson.fromJson(teamKeys, new TypeToken<List<String>>(){}.getType());
-        int allianceSize = teamNumbers.size() / 2;
+        ArrayList<String> teamKeyList = gson.fromJson(teamKeys, new TypeToken<List<String>>(){}.getType());
+        int allianceSize = teamKeyList.size() / 2;
         redTeams = new String[allianceSize];
         blueTeams = new String[allianceSize];
         for (int i = 0; i < allianceSize; ++i) {
-            redTeams[i] = teamNumbers.get(i);
-            blueTeams[i] = teamNumbers.get(i + allianceSize);
+            redTeams[i] = teamKeyList.get(i).substring(3);
+            blueTeams[i] = teamKeyList.get(i + allianceSize).substring(3);
         }
         if (jsonData.has("scheduled_time")) {
             matchTime = jsonData.get("scheduled_time");
