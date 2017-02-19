@@ -51,6 +51,10 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
                                                    MatchAlliancesContainer.class));
         }
 
+        if (object.has("winning_alliance")) {
+            match.setWinningAlliance(object.get("winning_alliance").getAsString());
+        }
+
         if (!isNull(object.get("time"))) {
             match.setTime(object.get("time").getAsLong());
         }

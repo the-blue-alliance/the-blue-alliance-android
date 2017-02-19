@@ -97,9 +97,9 @@ public class Database extends SQLiteOpenHelper {
             + MatchesTable.SETNUM + " INTEGER DEFAULT -1,"
             + MatchesTable.MATCHNUM + " INTEGER DEFAULT -1,"
             + MatchesTable.EVENT + " TEXT DEFAULT '', "
-            + MatchesTable.TIMESTRING + " TEXT DEFAULT '', "
             + MatchesTable.TIME + " TIMESTAMP, "
             + MatchesTable.ALLIANCES + " TEXT DEFAULT '', "
+            + MatchesTable.WINNER + " TEXT DEFAULT '', "
             + MatchesTable.VIDEOS + " TEXT DEFAULT '', "
             + MatchesTable.BREAKDOWN + " TEXT DEFAULT '', "
             + MatchesTable.LAST_MODIFIED + " TIMESTAMP"
@@ -462,7 +462,7 @@ public class Database extends SQLiteOpenHelper {
                     // Updates for apiv3 - just start over
                     db.beginTransaction();
                     String[] tables32 = {TABLE_EVENTS, TABLE_TEAMS, TABLE_DISTRICTTEAMS,
-                            TABLE_EVENTTEAMS};
+                            TABLE_EVENTTEAMS, TABLE_MATCHES};
                     try {
                         for (int i = 0; i < tables32.length; i++) {
                             db.execSQL("DROP TABLE IF EXISTS " + tables32[i]);

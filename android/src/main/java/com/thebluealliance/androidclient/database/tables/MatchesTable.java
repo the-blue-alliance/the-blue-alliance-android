@@ -18,12 +18,13 @@ public class MatchesTable extends ModelTable<Match> {
             MATCHNUM = "matchNumber",
             SETNUM = "setNumber",
             EVENT = "eventKey",
-            TIMESTRING = "timeString",
             TIME = "time",
             ALLIANCES = "alliances",
+            WINNER = "winner",
             VIDEOS = "videos",
             BREAKDOWN = "breakdown",
             LAST_MODIFIED = "last_modified";
+    @Deprecated public static final String TIMESTRING = "timeString";
 
     public MatchesTable(SQLiteDatabase db, Gson gson){
         super(db, gson);

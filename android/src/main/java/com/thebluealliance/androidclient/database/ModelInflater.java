@@ -161,6 +161,9 @@ public final class ModelInflater {
                 case MatchesTable.ALLIANCES:
                     match.setAlliances(gson.fromJson(data.getString(i), MatchAlliancesContainer.class));
                     break;
+                case MatchesTable.WINNER:
+                    match.setWinningAlliance(data.getString(i));
+                    break;
                 case MatchesTable.VIDEOS:
                     match.setVideos(gson.fromJson(data.getString(i), new TypeToken<List<Match.MatchVideo>>(){}.getType()));
                     break;

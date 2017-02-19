@@ -298,6 +298,7 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
         data.put(MatchesTable.EVENT, getEventKey());
         data.put(MatchesTable.TIME, getTime());
         data.put(MatchesTable.ALLIANCES, gson.toJson(alliances, IMatchAlliancesContainer.class));
+        data.put(MatchesTable.WINNER, getWinningAlliance());
         data.put(MatchesTable.VIDEOS, gson.toJson(videos, new TypeToken<List<IMatchVideo>>(){}.getType()));
         data.put(MatchesTable.BREAKDOWN, getScoreBreakdown());
         data.put(MatchesTable.LAST_MODIFIED, getLastModified());

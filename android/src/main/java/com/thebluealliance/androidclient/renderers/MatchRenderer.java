@@ -122,7 +122,7 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
 
         return new MatchListElement(youTubeVideoKey, match.getTitle(mResources, true),
           redAlliance, blueAlliance,
-          redScore, blueScore,
+          redScore, blueScore, match.getWinningAlliance(),
           key, matchTime, match.getSelectedTeam(),
           args.showVideo, args.showHeaders, args.showMatchTitle, args.clickable);
     }
