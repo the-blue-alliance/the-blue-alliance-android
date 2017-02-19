@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
 import com.thebluealliance.api.model.IRankingItem;
 import com.thebluealliance.api.model.IRankingSortOrder;
 import com.thebluealliance.api.model.ITeamAtEventAlliance;
+import com.thebluealliance.api.model.ITeamAtEventPlayoff;
 import com.thebluealliance.api.model.ITeamAtEventQual;
 import com.thebluealliance.api.model.ITeamRecord;
 
@@ -30,6 +31,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.text.Html;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,6 +78,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
 
         @Nullable ITeamAtEventAlliance allianceData = mAPIData.getAlliance();
         @Nullable ITeamAtEventQual qualData = mAPIData.getQual();
+        @Nullable ITeamAtEventPlayoff playoffData = mAPIData.getPlayoff();
 
         Event event = mEventsTable.get(mEventKey);
         if (event == null) {
@@ -91,6 +94,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
 
         String playoffStatusString = mAPIData.getPlayoffStatusStr();
         String allianceStatusString= mAPIData.getAllianceStatusStr();
+        String overallStatusString = mAPIData.getOverallStatusStr();
 
         String qualRecordString;
         @Nullable ITeamRecord qualRecord = null;
@@ -166,13 +170,13 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
         if (allianceData != null) {
             mDataToBind.add(new LabelValueViewModel(
                     mResources.getString(R.string.team_at_event_alliance),
-                    allianceStatusString));
+                    Html.fromHtml(allianceStatusString)));
         }
 
         // Alliance Status
         mDataToBind.add(new LabelValueViewModel(
                     mResources.getString(R.string.team_at_event_status),
-                    playoffStatusString));
+                    Html.fromHtml(playoffData != null ? playoffStatusString : overallStatusString)));
 
         // Ranking Breakdown
         if (rankingString != null && !rankingString.isEmpty()) {
@@ -202,7 +206,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
      */
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    void onEventMatchesLoaded(EventMatchesEvent matches) {
+    public void onEventMatchesLoaded(EventMatchesEvent matches) {
         if (matches == null) {
             return;
         }
@@ -220,7 +224,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
      */
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.ASYNC)
-    void onEventAwardsLoaded(EventAwardsEvent awards) {
+    public void onEventAwardsLoaded(EventAwardsEvent awards) {
         if (awards == null) {
             return;
         }

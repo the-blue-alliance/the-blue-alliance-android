@@ -1,0 +1,68 @@
+{
+  "alliance": {
+    "backup": null, 
+    "name": "Alliance 1", 
+    "number": 1, 
+    "pick": 0
+  }, 
+  "alliance_status_str": "<b>Captain</b> of <b>Alliance 1</b>", 
+  "overall_status_str": "Team 1519 was <b>Rank 1/60</b> with an average score of <b>200.1</b> in quals, competed in the playoffs as the <b>Captain</b> of <b>Alliance 1</b>, and <b>won the event</b> with a playoff average of <b>228.4</b>.", 
+  "playoff": {
+    "current_level_record": {
+      "losses": 0, 
+      "ties": 0, 
+      "wins": 2
+    }, 
+    "level": "f", 
+    "playoff_average": 228.42857142857142, 
+    "record": null, 
+    "status": "won"
+  }, 
+  "playoff_status_str": "<b>Won the event</b> with a playoff average of <b>228.4</b>", 
+  "qual": {
+    "num_teams": 60, 
+    "ranking": {
+      "dq": 0, 
+      "matches_played": 12, 
+      "qual_average": 200.08000000000001, 
+      "rank": 1, 
+      "record": null, 
+      "sort_orders": [
+        200.08000000000001, 
+        440.0, 
+        214.0, 
+        880.0, 
+        566.0, 
+        313.0
+      ], 
+      "team_key": "frc1519"
+    }, 
+    "sort_order_info": [
+      {
+        "name": "Qual Avg.", 
+        "precision": 1
+      }, 
+      {
+        "name": "Coopertition", 
+        "precision": 0
+      }, 
+      {
+        "name": "Auto", 
+        "precision": 0
+      }, 
+      {
+        "name": "Container", 
+        "precision": 0
+      }, 
+      {
+        "name": "Tote", 
+        "precision": 0
+      }, 
+      {
+        "name": "Litter", 
+        "precision": 0
+      }
+    ], 
+    "status": "completed"
+  }
+}

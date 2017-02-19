@@ -71,7 +71,7 @@ public class TeamAtEventSummaryFragment extends RecyclerViewFragment<TeamAtEvent
 
     @Override
     protected Observable<TeamAtEventStatus> getObservable(String cacheHeader) {
-        return mDatafeed.fetchTeamAtEventStatus(mEventKey, mTeamKey, cacheHeader);
+        return mDatafeed.fetchTeamAtEventStatus(mTeamKey, mEventKey, cacheHeader);
     }
 
     @Override

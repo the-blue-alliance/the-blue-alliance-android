@@ -281,9 +281,6 @@ public final class ModelInflater {
                 case EventTeamsTable.YEAR:
                     eventTeam.setYear(data.getInt(i));
                     break;
-                case EventTeamsTable.COMPWEEK:
-                    eventTeam.setCompWeek(data.getInt(i));
-                    break;
                 case EventTeamsTable.KEY:
                     eventTeam.setKey(data.getString(i));
                     break;

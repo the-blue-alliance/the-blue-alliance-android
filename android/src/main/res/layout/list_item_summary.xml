@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout android:id="@+id/summary_container"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:minHeight="72dp"
-    android:orientation="vertical"
-    android:padding="16dp">
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical"
+              android:minHeight="72dp"
+              android:orientation="vertical"
+              android:padding="16dp" xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
         android:id="@+id/label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Title"
+        tools:text="Title"
         android:textColor="@color/secondary_text_color"
         android:textSize="14sp" />
 
@@ -21,8 +21,7 @@
         android:id="@+id/value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Details"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        tools:text="Details"
+        android:textSize="18sp" />
 
 </LinearLayout>

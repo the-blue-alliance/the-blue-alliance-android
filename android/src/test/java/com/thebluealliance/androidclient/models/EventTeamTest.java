@@ -22,7 +22,6 @@ public class EventTeamTest {
         mEventTeam.setEventKey("2015necmp");
         mEventTeam.setKey("2015necmp_frc1124");
         mEventTeam.setYear(2015);
-        mEventTeam.setCompWeek(7);
     }
 
     @Test
@@ -32,6 +31,5 @@ public class EventTeamTest {
         assertEquals("2015necmp", mEventTeam.getEventKey());
         assertEquals("2015necmp_frc1124", mEventTeam.getKey());
         assertEquals(2015, mEventTeam.getYear().intValue());
-        assertEquals(7, mEventTeam.getCompWeek().intValue());
     }
 }

@@ -16,6 +16,8 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import android.content.res.Resources;
+
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -28,6 +30,7 @@ public class RankingsListSubscriberTest {
 
     @Mock Database mDb;
     @Mock EventBus mEventBus;
+    @Mock Resources mResources;
 
     private RankingsListSubscriber mSubscriber;
     private RankingResponseObject mRankings;
@@ -39,7 +42,7 @@ public class RankingsListSubscriberTest {
         MockitoAnnotations.initMocks(this);
         DatabaseMocker.mockTeamsTable(mDb);
 
-        mSubscriber = new RankingsListSubscriber(mDb, mEventBus);
+        mSubscriber = new RankingsListSubscriber(mDb, mEventBus, mResources);
         mRankings = ModelMaker.getModel(RankingResponseObject.class, "2015necmp_rankings_apiv3");
         mRankingsMultiTeam = ModelMaker.getModel(RankingResponseObject.class, "2015ohri_rankings_apiv3");
     }

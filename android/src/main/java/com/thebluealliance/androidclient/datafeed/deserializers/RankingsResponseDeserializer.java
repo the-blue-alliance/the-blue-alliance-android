@@ -9,6 +9,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
 
 import com.thebluealliance.androidclient.models.RankingItem;
 import com.thebluealliance.androidclient.models.RankingResponseObject;
@@ -29,7 +30,7 @@ public class RankingsResponseDeserializer implements JsonDeserializer<RankingRes
         RankingResponseObject rankingResponse = new RankingResponseObject();
 
         List<IRankingItem> teamRanks = new ArrayList<>();
-        List<IRankingSortOrder> sortOrders = new ArrayList<>();
+        List<IRankingSortOrder> sortOrders;
 
 
         if (!isNull(rankingsObject.get("rankings"))) {
@@ -41,14 +42,10 @@ public class RankingsResponseDeserializer implements JsonDeserializer<RankingRes
 
         if (!isNull(rankingsObject.get("sort_order_info"))) {
             JsonArray sortOrderJson = rankingsObject.get("sort_order_info").getAsJsonArray();
-            for (int i = 0; i < sortOrderJson.size(); i++) {
-                RankingSortOrder column = new RankingSortOrder();
-
-                JsonObject sortItem = sortOrderJson.get(i).getAsJsonObject();
-                column.setName(sortItem.get("name").getAsString());
-                column.setPrecision(sortItem.get("precision").getAsInt());
-                sortOrders.add(column);
-            }
+            sortOrders = context.deserialize(sortOrderJson,
+                                             new TypeToken<List<RankingSortOrder>>(){}.getType());
+        } else {
+            sortOrders = new ArrayList<>();
         }
 
         rankingResponse.setRankings(teamRanks);
@@ -66,18 +63,34 @@ public class RankingsResponseDeserializer implements JsonDeserializer<RankingRes
         }
         data.add("rankings", rankings);
 
-        JsonArray sortOrders = new JsonArray();
-        for (int i = 0; i < src.getSortOrderInfo().size(); i++) {
-            JsonObject sortOrder = new JsonObject();
-            sortOrder.add("name", new JsonPrimitive(src.getSortOrderInfo().get(i).getName()));
-            sortOrder.add("precision", new JsonPrimitive(src.getSortOrderInfo().get(i).getPrecision()));
-            sortOrders.add(sortOrder);
-        }
-        data.add("sort_order_info", sortOrders);
+        data.add("sort_order_info", context.serialize(src.getSortOrderInfo(),
+                                                      new TypeToken<List<RankingSortOrder>>(){}.getType()));
         return data;
     }
 
     private static boolean isNull(JsonElement element) {
         return element == null || element.isJsonNull();
+    }
+
+    public static class RankingSortOrderDeserializer implements JsonDeserializer<RankingSortOrder>,
+                                                                JsonSerializer<RankingSortOrder> {
+
+        @Override
+        public RankingSortOrder deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject data = json.getAsJsonObject();
+            RankingSortOrder column = new RankingSortOrder();
+
+            column.setName(data.get("name").getAsString());
+            column.setPrecision(data.get("precision").getAsInt());
+            return column;
+        }
+
+        @Override
+        public JsonElement serialize(RankingSortOrder src, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject sortOrder = new JsonObject();
+            sortOrder.add("name", new JsonPrimitive(src.getName()));
+            sortOrder.add("precision", new JsonPrimitive(src.getPrecision()));
+            return sortOrder;
+        }
     }
 }

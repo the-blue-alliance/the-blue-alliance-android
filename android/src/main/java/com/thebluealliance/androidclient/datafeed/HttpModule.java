@@ -38,6 +38,7 @@ import com.thebluealliance.androidclient.models.MatchAlliancesContainer;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.RankingItem;
 import com.thebluealliance.androidclient.models.RankingResponseObject;
+import com.thebluealliance.androidclient.models.RankingSortOrder;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.api.model.IApiStatus;
@@ -53,6 +54,7 @@ import com.thebluealliance.api.model.IMatchAlliancesContainer;
 import com.thebluealliance.api.model.IMatchVideo;
 import com.thebluealliance.api.model.IMedia;
 import com.thebluealliance.api.model.IRankingResponseObject;
+import com.thebluealliance.api.model.IRankingSortOrder;
 import com.thebluealliance.api.model.ITeam;
 import com.thebluealliance.api.model.ITeamAtEventStatus;
 import com.thebluealliance.api.model.ITeamRecord;
@@ -67,6 +69,9 @@ import dagger.Module;
 import dagger.Provides;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
+
+import static com.thebluealliance.androidclient.datafeed.deserializers
+        .RankingsResponseDeserializer.*;
 
 /**
  * Dagger module that handles OkHttp and Gson
@@ -117,6 +122,7 @@ public class HttpModule {
         DistrictDeserializer districtDeserializer = new DistrictDeserializer();
         APIStatusDeserializer apiStatusDeserializer = new APIStatusDeserializer();
         RankingsResponseDeserializer rankingsResponseDeserializer = new RankingsResponseDeserializer();
+        RankingSortOrderDeserializer sortOrderDeserializer = new RankingSortOrderDeserializer();
         AllianceDeserializer allianceDeserializer = new AllianceDeserializer();
         MatchAllianceDeserializer matchAllianceDeserializer = new MatchAllianceDeserializer();
         MatchVideoDeserializer matchVideoDeserializer = new MatchVideoDeserializer();
@@ -151,6 +157,8 @@ public class HttpModule {
         builder.registerTypeAdapter(RankingItem.class, new RankingItemDeserializer());
         builder.registerTypeAdapter(RankingItem.TeamRecord.class, recordDeserializer);
         builder.registerTypeAdapter(ITeamRecord.class, recordDeserializer);
+        builder.registerTypeAdapter(IRankingSortOrder.class, sortOrderDeserializer);
+        builder.registerTypeAdapter(RankingSortOrder.class, sortOrderDeserializer);
 
         builder.registerTypeAdapter(IEventAlliance.class, allianceDeserializer);
         builder.registerTypeAdapter(EventAlliance.class, allianceDeserializer);

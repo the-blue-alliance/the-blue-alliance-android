@@ -110,7 +110,6 @@ public class RankingItem implements IRankingItem {
                 return "";
             }
             StringBuilder recordBuilder = new StringBuilder();
-            recordBuilder.append("(");
             recordBuilder.append(record.getWins());
             recordBuilder.append("-");
             recordBuilder.append(record.getLosses());
@@ -118,7 +117,6 @@ public class RankingItem implements IRankingItem {
                 recordBuilder.append("-");
                 recordBuilder.append(record.getTies());
             }
-            recordBuilder.append(")");
             return recordBuilder.toString();
         }
 

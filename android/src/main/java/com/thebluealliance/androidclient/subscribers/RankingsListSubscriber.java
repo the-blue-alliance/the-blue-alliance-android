@@ -50,7 +50,7 @@ public class RankingsListSubscriber extends BaseAPISubscriber<RankingResponseObj
 
             @Nullable ITeamRecord teamRecord = row.getRecord();
             if (teamRecord != null) {
-                record = RankingItem.TeamRecord.buildRecordString(teamRecord);
+                record = "(" + RankingItem.TeamRecord.buildRecordString(teamRecord) + ")";
             } else {
                 record = "";
             }
