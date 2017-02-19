@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.listitems;
 
-import com.google.gson.JsonArray;
-
 import com.facebook.testing.screenshot.Screenshot;
 import com.facebook.testing.screenshot.ViewHelpers;
 import com.thebluealliance.androidclient.types.PlayoffAdvancement;
@@ -15,13 +13,16 @@ import android.support.test.runner.AndroidJUnit4;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RunWith(AndroidJUnit4.class)
 public class AllianceListElementTest {
 
     private static final int WIDTH_DP = 400;
 
-    private static final JsonArray TEAM_LIST_3 = new JsonArray();
-    private static final JsonArray TEAM_LIST_4 = new JsonArray();
+    private static final List<String> TEAM_LIST_3 = new ArrayList<>();
+    private static final List<String> TEAM_LIST_4 = new ArrayList<>();
 
     static {
         TEAM_LIST_3.add("frc1124");
@@ -36,7 +37,7 @@ public class AllianceListElementTest {
 
     @Test
     public void testRender3Team() {
-        View view = getView("2016test", 1, TEAM_LIST_3, PlayoffAdvancement.SEMI);
+        View view = getView("2016test", "Alliance 1", 1, TEAM_LIST_3, PlayoffAdvancement.SEMI);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -47,7 +48,7 @@ public class AllianceListElementTest {
 
     @Test
     public void testRender4Team() {
-        View view = getView("2016test", 1, TEAM_LIST_4, PlayoffAdvancement.QUARTER);
+        View view = getView("2016test", "Alliance 1", 1, TEAM_LIST_4, PlayoffAdvancement.QUARTER);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -58,10 +59,12 @@ public class AllianceListElementTest {
 
     private View getView(
             String eventKey,
+            String allianceName,
             int number,
-            JsonArray teams,
+            List<String> teams,
             PlayoffAdvancement advancement) {
-        AllianceListElement element = new AllianceListElement(eventKey, number, teams, advancement);
+        AllianceListElement element = new AllianceListElement(eventKey, allianceName, number,
+                                                              teams, advancement);
         Context targetContext = InstrumentationRegistry.getTargetContext();
         LayoutInflater inflater = LayoutInflater.from(targetContext);
         return element.getView(targetContext, inflater, null);

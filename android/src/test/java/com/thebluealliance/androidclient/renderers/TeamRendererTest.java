@@ -67,7 +67,7 @@ public class TeamRendererTest {
     private void assertTeamElement(TeamListElement element, boolean showDetails) {
         assertNotNull(element);
         assertEquals(element.getKey(), TEAM_KEY);
-        assertEquals(element.mTeamLocation, "Avon, Connecticut, USA");
+        assertEquals(element.mTeamLocation, "Avon, Connecticut, United States");
         assertEquals(element.mShowLinkToTeamDetails, showDetails);
         assertEquals(element.mTeamName, "UberBots");
         assertEquals(element.mTeamNumber, 1124);

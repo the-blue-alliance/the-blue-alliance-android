@@ -26,7 +26,7 @@ public class AddDistrictKeysTest {
 
     @Before
     public void setUp() {
-        mDistrict = ModelMaker.getModel(District.class, "district_ne");
+        mDistrict = ModelMaker.getModelList(District.class, "2015_districts").get(3);
         mYear = 2015;
         mKeyAdder = new AddDistrictKeys(mYear);
     }
@@ -41,7 +41,7 @@ public class AddDistrictKeysTest {
         assertEquals(districtList.size(), 1);
         assertEquals(districtList.get(0), mDistrict);
 
-        assertEquals(mDistrict.getYear(), mYear);
+        assertEquals(mDistrict.getYear().intValue(), mYear);
         assertEquals(mDistrict.getKey(), DistrictHelper.generateKey(mDistrict.getAbbreviation(), mYear));
     }
 }

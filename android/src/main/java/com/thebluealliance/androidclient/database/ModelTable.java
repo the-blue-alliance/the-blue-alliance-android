@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,10 +17,12 @@ import java.util.List;
  */
 public abstract class ModelTable<T extends TbaDatabaseModel> {
 
-    private SQLiteDatabase mDb;
+    protected final SQLiteDatabase mDb;
+    protected final Gson mGson;
 
-    public ModelTable(SQLiteDatabase db){
+    public ModelTable(SQLiteDatabase db, Gson gson){
         mDb = db;
+        mGson = gson;
     }
 
     /**
@@ -50,7 +53,7 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
                 } else if (in.getLastModified() == null) {
                     in.setLastModified(0L);
                 }
-                ret = mDb.insert(getTableName(), null, in.getParams());
+                ret = mDb.insert(getTableName(), null, in.getParams(mGson));
                 if (ret != -1) {
                     insertCallback(in);
                 }
@@ -115,9 +118,9 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
             }
             affectedRows = mDb.update(
                     getTableName(),
-                    in.getParams(),
-                    getKeyColumn() + " = ? AND  ? >= " + getLastModifiedColumn(),
-                    new String[]{in.getKey(), in.getLastModified().toString()});
+                    in.getParams(mGson),
+                    getKeyColumn() + " = ?",
+                    new String[]{in.getKey()});
             if (affectedRows > 0) {
                 updateCallback(in);
             }

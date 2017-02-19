@@ -1,8 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -12,6 +10,7 @@ import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.MediaRenderer;
 import com.thebluealliance.androidclient.types.MediaType;
+import com.thebluealliance.api.model.IMatchVideo;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -63,12 +62,11 @@ public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>
 
         mMatchTitle = mAPIData.match.getTitle(mResources);
         mMatchKey = mAPIData.match.getKey();
-        JsonArray matchVideos = mAPIData.match.getVideosJson();
-        for (int i = 0; i < matchVideos.size(); i++) {
-            JsonElement video = matchVideos.get(i);
-            if (MediaType.fromString(video.getAsJsonObject().get("type").getAsString())
-              != MediaType.NONE) {
-                Media media = mGson.fromJson(video, Media.class);
+        List<IMatchVideo> matchVideos = mAPIData.match.getVideos();
+        for (int i = 0; matchVideos != null && i < matchVideos.size(); i++) {
+            Match.MatchVideo video = (Match.MatchVideo)matchVideos.get(i);
+            if (MediaType.fromString(video.getType()) != MediaType.NONE) {
+                Media media = video.asMedia();
                 mDataToBind.add(mMediaRenderer.renderFromModel(media, null));
             }
         }

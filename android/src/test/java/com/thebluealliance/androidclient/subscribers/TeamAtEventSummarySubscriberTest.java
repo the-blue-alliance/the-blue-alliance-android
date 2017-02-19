@@ -1,14 +1,13 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.google.gson.JsonArray;
-
+import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
-import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber.Model;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,20 +32,19 @@ public class TeamAtEventSummarySubscriberTest {
     @Mock EventMatchesEvent mMatchesEvent;
     @Mock EventAwardsEvent mAwardsEvent;
     @Mock MatchRenderer mMatchRenderer;
+    @Mock EventsTable mEventsTable;
 
     TeamAtEventSummarySubscriber mSubscriber;
-    Model mData;
+    TeamAtEventStatus mData;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         mContext = mock(Context.class, RETURNS_DEEP_STUBS);
         when(mContext.getResources().getString(anyInt())).thenReturn("");
-        mSubscriber = new TeamAtEventSummarySubscriber(mContext, mMatchRenderer);
-        mSubscriber.setTeamKey("frc1519");
-        mData = new Model(
-          ModelMaker.getModel(JsonArray.class, "2015necmp_rankings"),
-          ModelMaker.getModel(Event.class, "2015necmp"));
+        mSubscriber = new TeamAtEventSummarySubscriber(mContext, mMatchRenderer, mEventsTable);
+        mSubscriber.setTeamAndEventKeys("frc1519", "2015necmp");
+        mData = ModelMaker.getModel(TeamAtEventStatus.class, "frc1519_2015necmp_status");
     }
 
     @Test

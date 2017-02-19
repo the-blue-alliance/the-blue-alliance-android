@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 public class MatchListElement extends ListElement implements Serializable {
 
-    public final String videoKey, matchTitle, matchKey, redScore, blueScore, selectedTeamKey;
+    public final String videoKey, matchTitle, matchKey, redScore, blueScore, selectedTeamKey, winner;
     public final String[] redTeams, blueTeams;
     public final long time;
     public final boolean showVideoIcon, showColumnHeaders, showMatchTitle, clickable;
@@ -24,7 +24,7 @@ public class MatchListElement extends ListElement implements Serializable {
             String matchKey,
             long time,
             String selectedTeamKey) {
-        this("", "", redTeams, blueTeams, "?", "?", matchKey, time, selectedTeamKey,
+        this("", "", redTeams, blueTeams, "?", "?", "", matchKey, time, selectedTeamKey,
              false, false, false, false);
     }
 
@@ -35,6 +35,7 @@ public class MatchListElement extends ListElement implements Serializable {
             String[] blueTeams,
             String redScore,
             String blueScore,
+            String winner,
             String matchKey,
             long time,
             String selectedTeamKey,
@@ -49,6 +50,7 @@ public class MatchListElement extends ListElement implements Serializable {
         this.blueTeams = blueTeams;
         this.redScore = redScore;
         this.blueScore = blueScore;
+        this.winner = winner;
         this.matchKey = matchKey;
         this.selectedTeamKey = selectedTeamKey;
         this.time = time;
@@ -69,7 +71,8 @@ public class MatchListElement extends ListElement implements Serializable {
             played = true;
         }
 
-        match.initWithParams(videoKey, matchTitle, redTeams, blueTeams, redScore, blueScore, matchKey, time, selectedTeamKey, showVideoIcon);
+        match.initWithParams(videoKey, matchTitle, redTeams, blueTeams, redScore, blueScore,
+                             winner, matchKey, time, selectedTeamKey, showVideoIcon);
         match.showColumnHeaders(showColumnHeaders);
         if (played) {
             match.showTime(false);

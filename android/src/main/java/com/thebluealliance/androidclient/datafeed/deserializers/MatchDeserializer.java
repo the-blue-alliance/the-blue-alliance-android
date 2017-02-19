@@ -5,11 +5,14 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.MatchAlliancesContainer;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import static com.thebluealliance.androidclient.helpers.JSONHelper.isNull;
 
@@ -44,11 +47,12 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
         }
 
         if (object.has(ALLIANCE_TAG) && object.get(ALLIANCE_TAG).isJsonObject()) {
-            match.setAlliances(object.get(ALLIANCE_TAG).toString());
+            match.setAlliances(context.deserialize(object.get(ALLIANCE_TAG),
+                                                   MatchAlliancesContainer.class));
         }
 
-        if (!isNull(object.get("time_string"))) {
-            match.setTimeString(object.get("time_string").getAsString());
+        if (object.has("winning_alliance")) {
+            match.setWinningAlliance(object.get("winning_alliance").getAsString());
         }
 
         if (!isNull(object.get("time"))) {
@@ -56,7 +60,8 @@ public class MatchDeserializer implements JsonDeserializer<Match> {
         }
 
         if (object.has("videos") && object.get("videos").isJsonArray()) {
-            match.setVideos(object.get("videos").toString());
+            match.setVideos(context.deserialize(object.get("videos"), new
+                    TypeToken<List<Match.MatchVideo>>(){}.getType()));
         }
 
         if (object.has("score_breakdown") && object.get("score_breakdown").isJsonObject()) {

@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.types;
 
-import com.thebluealliance.androidclient.helpers.EventHelper;
-
 /** Do not insert any new entries above the existing enums!!!
  * Things depend on their ordinal values, so you can only to the bottom of the list
  */
@@ -37,27 +35,6 @@ public enum EventType {
         }
     }
 
-    public static EventType fromString(String str) {
-        switch (str) {
-            case "Regional":
-                return REGIONAL;
-            case "District":
-                return DISTRICT;
-            case "District Championship":
-                return DISTRICT_CMP;
-            case "Championship Division":
-                return CMP_DIVISION;
-            case "Championship Finals":
-                return CMP_FINALS;
-            case "Offseason":
-                return OFFSEASON;
-            case "Preseason":
-                return PRESEASON;
-            default:
-                return NONE;
-        }
-    }
-
     public static EventType fromInt(int num) {
         switch (num) {
             case 0:
@@ -79,18 +56,4 @@ public enum EventType {
         }
     }
 
-    public static EventType fromLabel(String label) {
-        switch (label) {
-            case EventHelper.OFFSEASON_LABEL:
-                return OFFSEASON;
-            case EventHelper.PRESEASON_LABEL:
-                return PRESEASON;
-            case EventHelper.CHAMPIONSHIP_LABEL:
-                return CMP_DIVISION;
-            case EventHelper.WEEKLESS_LABEL:
-                return NONE;
-            default:
-                return REGIONAL;
-        }
-    }
 }

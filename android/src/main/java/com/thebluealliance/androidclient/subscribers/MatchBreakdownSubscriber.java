@@ -1,26 +1,37 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.binders.MatchBreakdownBinder;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import javax.inject.Inject;
+
 public class MatchBreakdownSubscriber extends BaseAPISubscriber<Match, MatchBreakdownBinder.Model> {
+
+    private final Gson mGson;
+
+    @Inject
+    public MatchBreakdownSubscriber(Gson gson) {
+        mGson = gson;
+    }
 
     @Override
     public void parseData()  {
         JsonObject scoreBreakdown;
-        JsonObject alliances;
+        IMatchAlliancesContainer alliances;
 
         switch (mAPIData.getYear()) {
             case 2015:
             case 2016:
-                scoreBreakdown = mAPIData.getScoreBreakdownJson();
-                alliances = mAPIData.getAlliancesJson();
-                if (scoreBreakdown.entrySet().isEmpty() || alliances.entrySet().isEmpty()) {
+                scoreBreakdown = mGson.fromJson(mAPIData.getScoreBreakdown(), JsonObject.class);
+                alliances = mAPIData.getAlliances();
+                if (scoreBreakdown.entrySet().isEmpty() || alliances == null) {
                     mDataToBind = null;
                     break;
                 }

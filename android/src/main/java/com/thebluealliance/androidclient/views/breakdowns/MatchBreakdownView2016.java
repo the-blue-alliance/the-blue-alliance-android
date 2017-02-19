@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.views.breakdowns;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import android.content.Context;
 import android.support.annotation.StringRes;
@@ -13,6 +13,8 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.List;
 
 public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
 
@@ -142,29 +144,27 @@ public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
         blueRanking = (TextView) findViewById(R.id.breakdown2016_blue_rp);
     }
 
-    public boolean initWithData(MatchType matchType, JsonObject allianceData, JsonObject scoredata) {
+    public boolean initWithData(MatchType matchType, IMatchAlliancesContainer allianceData, JsonObject scoredata) {
         if (scoredata == null || scoredata.entrySet().isEmpty()
-                || allianceData == null || !allianceData.has("red") || !allianceData.has("blue")) {
+                || allianceData == null || allianceData.getRed() == null || allianceData.getBlue() == null) {
             breakdownContainer.setVisibility(GONE);
             return false;
         }
 
         int redRp = 0;
         int blueRp = 0;
-        JsonObject redAlliance = allianceData.get("red").getAsJsonObject();
-        JsonArray redTeams = redAlliance.get("teams").getAsJsonArray();
-        JsonObject blueAlliance = allianceData.get("blue").getAsJsonObject();
-        JsonArray blueTeams = blueAlliance.get("teams").getAsJsonArray();
+        List<String> redTeams = allianceData.getRed().getTeamKeys();
+        List<String> blueTeams = allianceData.getBlue().getTeamKeys();
         JsonObject redData = scoredata.get("red").getAsJsonObject();
         JsonObject blueData = scoredata.get("blue").getAsJsonObject();
 
-        red1.setText(MatchBreakdownHelper.teamNumberFromKey(redTeams.get(0).getAsString()));
-        red2.setText(MatchBreakdownHelper.teamNumberFromKey(redTeams.get(1).getAsString()));
-        red3.setText(MatchBreakdownHelper.teamNumberFromKey(redTeams.get(2).getAsString()));
+        red1.setText(MatchBreakdownHelper.teamNumberFromKey(redTeams.get(0)));
+        red2.setText(MatchBreakdownHelper.teamNumberFromKey(redTeams.get(1)));
+        red3.setText(MatchBreakdownHelper.teamNumberFromKey(redTeams.get(2)));
 
-        blue1.setText(MatchBreakdownHelper.teamNumberFromKey(blueTeams.get(0).getAsString()));
-        blue2.setText(MatchBreakdownHelper.teamNumberFromKey(blueTeams.get(1).getAsString()));
-        blue3.setText(MatchBreakdownHelper.teamNumberFromKey(blueTeams.get(2).getAsString()));
+        blue1.setText(MatchBreakdownHelper.teamNumberFromKey(blueTeams.get(0)));
+        blue2.setText(MatchBreakdownHelper.teamNumberFromKey(blueTeams.get(1)));
+        blue3.setText(MatchBreakdownHelper.teamNumberFromKey(blueTeams.get(2)));
 
         redAutoBoulder.setText(getAutoBoulder(redData));
         blueAutoBoulder.setText(getAutoBoulder(blueData));
@@ -296,8 +296,8 @@ public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
         redTotal.setText(MatchBreakdownHelper.getIntDefault(redData, "totalPoints"));
         blueTotal.setText(MatchBreakdownHelper.getIntDefault(blueData, "totalPoints"));
 
-        int redScore = MatchBreakdownHelper.getIntDefaultValue(redAlliance, "score");
-        int blueScore = MatchBreakdownHelper.getIntDefaultValue(blueAlliance, "score");
+        int redScore = allianceData.getRed().getScore();
+        int blueScore = allianceData.getBlue().getScore();
         if (redScore > blueScore) {
             redRp += 2;
         } else if (blueScore > redScore) {

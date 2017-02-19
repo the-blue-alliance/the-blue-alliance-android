@@ -170,7 +170,7 @@ public class TBAAndroid extends MultiDexApplication {
         return mDbComponent;
     }
 
-    private DatafeedComponent getDatafeedComponenet() {
+    public DatafeedComponent getDatafeedComponenet() {
         return DaggerDatafeedComponent.builder()
           .applicationComponent(getComponent())
           .datafeedModule(getDatafeedModule())

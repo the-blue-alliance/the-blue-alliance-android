@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.subscribers;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 
 import junit.framework.TestCase;
@@ -27,13 +27,17 @@ public class AllianceListSubscriberTest extends TestCase {
     @Mock EventRenderer mRenderer;
 
     private AllianceListSubscriber mSubscriber;
-    private Event mEvent;
+    private List<EventAlliance> m2016nytrAlliances;
+    private List<EventAlliance> m2014ctharAlliances;
+    private List<EventAlliance> m2015arcAlliances;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mSubscriber = new AllianceListSubscriber(mRenderer);
-        mEvent = ModelMaker.getModel(Event.class, "2015necmp");
+        m2016nytrAlliances = ModelMaker.getModelList(EventAlliance.class, "2016nytr_alliances_apiv3");
+        m2014ctharAlliances = ModelMaker.getModelList(EventAlliance.class, "2014cthar_alliances_apiv3");
+        m2015arcAlliances = ModelMaker.getModelList(EventAlliance.class, "2015arc_alliances_apiv3");
     }
 
     @Test
@@ -43,16 +47,28 @@ public class AllianceListSubscriberTest extends TestCase {
     }
 
     @Test
-    public void testSimpleParsing()  {
+    public void testParse2016()  {
         mSubscriber.onAllianceAdvancementLoaded(null);
-        DatafeedTestDriver.testSimpleParsing(mSubscriber, mEvent);
+        DatafeedTestDriver.testSimpleParsing(mSubscriber, m2016nytrAlliances);
+    }
+
+    @Test
+    public void testParse2014() {
+        mSubscriber.onAllianceAdvancementLoaded(null);
+        DatafeedTestDriver.testSimpleParsing(mSubscriber, m2014ctharAlliances);
+    }
+
+    @Test
+    public void testParse4Team2015() {
+        mSubscriber.onAllianceAdvancementLoaded(null);
+        DatafeedTestDriver.testSimpleParsing(mSubscriber, m2015arcAlliances);
     }
 
     @Test
     public void testParse()  {
         mSubscriber.onAllianceAdvancementLoaded(null);
-        List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mEvent);
+        List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, m2016nytrAlliances);
 
-        verify(mRenderer).renderAlliances(mEvent, data, null);
+        verify(mRenderer).renderAlliances(m2016nytrAlliances, data, null);
     }
 }

@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.google.gson.JsonElement;
-
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
@@ -10,6 +8,7 @@ import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRenderer;
+import com.thebluealliance.api.model.IAwardRecipient;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -40,10 +39,10 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
         Map<String, Team> teams = Utilities.getMapForPlatform(String.class, Team.class);
         for (int i = 0; i < mAPIData.size(); i++) {
             Award award = mAPIData.get(i);
-            for (JsonElement winner : award.getWinners()) {
-                if (winner.isJsonObject()
-                  && !winner.getAsJsonObject().get("team_number").isJsonNull()) {
-                    String teamKey = "frc" + winner.getAsJsonObject().get("team_number");
+            if (award.getRecipientList() == null) continue;
+            for (IAwardRecipient winner : award.getRecipientList()) {
+                if (winner != null && winner.getTeamKey() != null){
+                    String teamKey = winner.getTeamKey();
                     Team team = mDb.getTeamsTable().get(teamKey);
                     teams.put(teamKey, team);
                 }

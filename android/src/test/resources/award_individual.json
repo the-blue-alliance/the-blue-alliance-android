@@ -1,12 +1,12 @@
 {
-  "event_key": "2015necmp",
-  "award_type": 5,
-  "name": "Volunteer of the Year",
-  "recipient_list": [
-    {
-      "team_number": 319,
-      "awardee": "Ty Tremblay"
-    }
-  ],
-  "year": 2015
+    "award_type": 5,
+    "event_key": "2015necmp",
+    "name": "Volunteer of the Year",
+    "recipient_list": [
+      {
+        "awardee": "Ty Tremblay",
+        "team_key": "frc319"
+      }
+    ],
+    "year": 2015
 }

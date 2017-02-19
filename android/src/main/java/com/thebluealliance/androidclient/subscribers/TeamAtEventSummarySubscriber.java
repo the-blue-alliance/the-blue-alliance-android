@@ -1,24 +1,29 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.google.gson.JsonArray;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
+import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.helpers.EventHelper.CaseInsensitiveMap;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.RankingItem;
+import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
+import com.thebluealliance.api.model.IRankingItem;
+import com.thebluealliance.api.model.IRankingSortOrder;
+import com.thebluealliance.api.model.ITeamAtEventAlliance;
+import com.thebluealliance.api.model.ITeamAtEventPlayoff;
+import com.thebluealliance.api.model.ITeamAtEventQual;
+import com.thebluealliance.api.model.ITeamRecord;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -26,29 +31,22 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.text.Html;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber.Model;
+import javax.annotation.Nullable;
 
-public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<Object>> {
+public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventStatus, List<Object>> {
 
-    public static class Model {
-        public final JsonArray teamAtEventRank;
-        public final Event event;
-
-        public Model(JsonArray teamAtEventRank, Event event) {
-            this.teamAtEventRank = teamAtEventRank;
-            this.event = event;
-        }
-    }
-
+    private final Context mContext;
+    private final Resources mResources;
+    private final MatchRenderer mMatchRenderer;
+    private final EventsTable mEventsTable;
     private String mTeamKey;
-    private Context mContext;
-    private Resources mResources;
-    private MatchRenderer mMatchRenderer;
+    private String mEventKey;
     private boolean mIsMatchListLoaded;
     private boolean mIsAwardListLoaded;
 
@@ -56,18 +54,20 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
     private List<Match> mMatches;
     private List<Award> mAwards;
 
-    public TeamAtEventSummarySubscriber(Context context, MatchRenderer matchRenderer) {
+    public TeamAtEventSummarySubscriber(Context context, MatchRenderer matchRenderer, EventsTable eventsTable) {
         super();
         mContext = context;
         mResources = context.getResources();
         mMatchRenderer = matchRenderer;
+        mEventsTable = eventsTable;
         mIsMatchListLoaded = false;
         mIsAwardListLoaded = false;
         mDataToBind = new ArrayList<>();
     }
 
-    public void setTeamKey(String teamKey) {
+    public void setTeamAndEventKeys(String teamKey, String eventKey) {
         mTeamKey = teamKey;
+        mEventKey = eventKey;
     }
 
     @Override
@@ -76,56 +76,54 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
         Match nextMatch = null, lastMatch = null;
         Collections.sort(mMatches, new MatchSortByPlayOrderComparator());
 
-        int[] record = MatchHelper.getRecordForTeam(mMatches, mTeamKey);
-        String recordString =
-                String.format("%1$d - %2$d - %3$d", record[0], record[1], record[2]);
+        @Nullable ITeamAtEventAlliance allianceData = mAPIData.getAlliance();
+        @Nullable ITeamAtEventQual qualData = mAPIData.getQual();
+        @Nullable ITeamAtEventPlayoff playoffData = mAPIData.getPlayoff();
 
-        Event event = mAPIData.event;
+        Event event = mEventsTable.get(mEventKey);
+        if (event == null) {
+            return;
+        }
+
         int year = event.getYear();
         boolean activeEvent = event.isHappeningNow();
-        String actionBarTitle =
-                String.format(mResources.getString(R.string.team_actionbar_title), mTeamKey.substring(3));
-        String actionBarSubtitle = String.format("@ %1$d %2$s", year, event.getShortName());
+        String actionBarTitle = mResources.getString(R.string.team_actionbar_title, mTeamKey.substring(3));
+        String actionBarSubtitle = mResources.getString(R.string.team_at_event_actionbar_subtitle, year, event.getShortName());
         EventBus.getDefault().post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
+
+
+        String playoffStatusString = mAPIData.getPlayoffStatusStr();
+        String allianceStatusString= mAPIData.getAllianceStatusStr();
+        String overallStatusString = mAPIData.getOverallStatusStr();
+
+        String qualRecordString;
+        @Nullable ITeamRecord qualRecord = null;
+        if (qualData != null
+                && qualData.getRanking() != null
+                && qualData.getRanking().getRecord() != null) {
+            qualRecord = qualData.getRanking().getRecord();
+        }
+        if (qualRecord != null) {
+            qualRecordString = RankingItem.TeamRecord.buildRecordString(qualRecord);
+        } else {
+            qualRecordString = "";
+        }
 
         if (activeEvent) {
             nextMatch = MatchHelper.getNextMatchPlayed(mMatches);
             lastMatch = MatchHelper.getLastMatchPlayed(mMatches);
         }
 
-        // Search for team in alliances
-        JsonArray alliances = JSONHelper.getasJsonArray(event.getAlliances());
-        int allianceNumber = 0, alliancePick = -1;
-
-        if (alliances == null || alliances.size() == 0) {
-            // We don't have alliance data. Try to determine from matches.
-            allianceNumber = MatchHelper.getAllianceForTeam(mMatches, mTeamKey);
-        } else {
-            for (int i = 0; i < alliances.size(); i++) {
-                JsonArray teams = alliances.get(i).getAsJsonObject().get("picks").getAsJsonArray();
-                for (int j = 0; j < teams.size(); j++) {
-                    if (teams.get(j).getAsString().equals(mTeamKey)) {
-                        allianceNumber = i + 1;
-                        alliancePick = j;
-                    }
-                }
-            }
-        }
-
-        JsonArray rankData = mAPIData.teamAtEventRank;
         int rank = 0;
         String rankingString = "";
-        if (rankData.size() > 0) {
-            // fist index of second child is the rank
-            rank = rankData.get(1).getAsJsonArray().get(0).getAsInt();
-            JsonArray headerRow = rankData.get(0).getAsJsonArray();
-            JsonArray teamRank = rankData.get(1).getAsJsonArray();
-            CaseInsensitiveMap<String> rankingElements = new CaseInsensitiveMap<>();
-            for (int i = 2; i < teamRank.size(); i++) {
-                rankingElements.put(headerRow.get(i).getAsString(), teamRank.get(i).getAsString());
-            }
-            EventHelper.extractRankingString(rankingElements);
-            rankingString = EventHelper.createRankingBreakdown(rankingElements);
+        LabelValueViewModel rankBreakdownItem = null;
+        @Nullable IRankingItem rankData = qualData != null ? qualData.getRanking() : null;
+        @Nullable List<IRankingSortOrder> sortOrders = qualData != null ? qualData.getSortOrderInfo() : null;
+        if (rankData != null && sortOrders != null) {
+            rank = rankData.getRank();
+            rankingString = EventHelper.buildRankingString(rankData, sortOrders, mResources);
+            rankBreakdownItem = new LabelValueViewModel(mResources.getString(R.string.team_at_event_rank_breakdown),
+                                                        rankingString);
         }
 
         // Rank
@@ -135,10 +133,6 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
                     rank + Utilities.getOrdinalFor(rank)));
         }
 
-        LabelValueViewModel rankBreakdownItem = new LabelValueViewModel("Ranking Breakdown", rankingString);
-
-        MatchHelper.EventStatus status;
-        status = MatchHelper.evaluateStatusOfTeam(event, mMatches, mTeamKey);
 
         // Number of awards, only if nonzero
         if (mAwards.size() > 0) {
@@ -164,59 +158,46 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<Model, List<
             }
         }
 
-        if (status != MatchHelper.EventStatus.NOT_AVAILABLE) {
+        /* Team Qual Record
+         * Don't show for 2015 events, because no wins and such */
+        if (year != 2015 && !RankingItem.TeamRecord.isEmpty(qualRecord)) {
+            mDataToBind.add(new LabelValueViewModel(
+                    mResources.getString(R.string.team_at_event_qual_record),
+                    qualRecordString));
+        }
 
-            // Record
-            /* Don't show for 2015 events, because no wins and such */
-            if (year != 2015 && !recordString.equals("0-0-0")) {
-                mDataToBind.add(new LabelValueViewModel(
-                        mResources.getString(R.string.team_at_event_record),
-                        recordString));
-            }
+        // Alliance
+        if (allianceData != null) {
+            mDataToBind.add(new LabelValueViewModel(
+                    mResources.getString(R.string.team_at_event_alliance),
+                    Html.fromHtml(allianceStatusString)));
+        }
 
-            // Alliance
-            if (status != MatchHelper.EventStatus.PLAYING_IN_QUALS
-                    && status != MatchHelper.EventStatus.NO_ALLIANCE_DATA) {
-                mDataToBind.add(new LabelValueViewModel(
-                        mResources.getString(R.string.team_at_event_alliance),
-                        EventHelper.generateAllianceSummary(
-                                mResources,
-                                allianceNumber,
-                                alliancePick)));
-            }
+        // Alliance Status
+        mDataToBind.add(new LabelValueViewModel(
+                    mResources.getString(R.string.team_at_event_status),
+                    Html.fromHtml(playoffData != null ? playoffStatusString : overallStatusString)));
 
-            // Status
-            if (status != MatchHelper.EventStatus.NOT_PICKED) {
-                mDataToBind.add(new LabelValueViewModel(
-                        mResources.getString(R.string.team_at_event_status),
-                        status.getDescriptionString(mResources)));
-            }
-
-            // Ranking Breakdown
-            if (rankingString != null && !rankingString.isEmpty()) {
-                mDataToBind.add(rankBreakdownItem);
-            }
-
-            if (lastMatch != null) {
-                mDataToBind.add(new LabeledMatchViewModel(
-                        mResources.getString(R.string.title_last_match),
-                        mMatchRenderer.renderFromModel(lastMatch, MatchRenderer.RENDER_DEFAULT)));
-            }
-            if (nextMatch != null) {
-                mDataToBind.add(new LabeledMatchViewModel(
-                        mResources.getString(R.string.title_next_match),
-                        mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));
-            }
-        } else if (rank > 0) {
-            // Only show ranking breakdown if rankings are available
+        // Ranking Breakdown
+        if (rankingString != null && !rankingString.isEmpty()) {
             mDataToBind.add(rankBreakdownItem);
+        }
+
+        if (lastMatch != null) {
+            mDataToBind.add(new LabeledMatchViewModel(
+                    mResources.getString(R.string.title_last_match),
+                    mMatchRenderer.renderFromModel(lastMatch, MatchRenderer.RENDER_DEFAULT)));
+        }
+        if (nextMatch != null) {
+            mDataToBind.add(new LabeledMatchViewModel(
+                    mResources.getString(R.string.title_next_match),
+                    mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));
         }
     }
 
     @Override
     public boolean isDataValid() {
-        return super.isDataValid() && mIsMatchListLoaded && mIsAwardListLoaded
-                && mAPIData.event != null && mAPIData.teamAtEventRank != null;
+        return super.isDataValid() && mIsMatchListLoaded && mIsAwardListLoaded;
     }
 
     /**

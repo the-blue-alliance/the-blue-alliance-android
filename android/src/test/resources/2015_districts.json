@@ -1,1 +1,32 @@
-[{"name": "Indiana", "key": "in"}, {"name": "Michigan", "key": "fim"}, {"name": "Mid Atlantic", "key": "mar"}, {"name": "New England", "key": "ne"}, {"name": "Pacific Northwest", "key": "pnw"}]
+[
+ {
+  "abbreviation": "fim", 
+  "display_name": "Michigan", 
+  "key": "2015fim", 
+  "year": 2015
+ }, 
+ {
+  "abbreviation": "in", 
+  "display_name": "Indiana", 
+  "key": "2015in", 
+  "year": 2015
+ }, 
+ {
+  "abbreviation": "mar", 
+  "display_name": "Mid-Atlantic", 
+  "key": "2015mar", 
+  "year": 2015
+ }, 
+ {
+  "abbreviation": "ne", 
+  "display_name": "New England", 
+  "key": "2015ne", 
+  "year": 2015
+ }, 
+ {
+  "abbreviation": "pnw", 
+  "display_name": "Pacific Northwest", 
+  "key": "2015pnw", 
+  "year": 2015
+ }
+]

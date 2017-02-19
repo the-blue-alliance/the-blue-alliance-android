@@ -30,13 +30,21 @@ public class GoogleAuthProvider implements AuthProvider,
                                            GoogleApiClient.ConnectionCallbacks
 {
 
-    private final @Nullable GoogleApiClient mGoogleApiClient;
+    private final Context mContext;
+    private final AccountController mAccountController;
+    private @Nullable GoogleApiClient mGoogleApiClient;
     private @Nullable GoogleSignInUser mCurrentUser;
 
     @Inject
     public GoogleAuthProvider(Context context, AccountController accountController) {
         mCurrentUser = null;
-        String clientId = accountController.getWebClientId();
+        mAccountController = accountController;
+        mContext = context;
+
+    }
+
+    private void loadGoogleApiClient() {
+        String clientId = mAccountController.getWebClientId();
         if (clientId.isEmpty()) {
             // No client id set in tba.properties, can't continue
             TbaLogger.w("Oauth client ID not set, can't enable myTBA. See https://goo.gl/Swp5PC "
@@ -48,7 +56,7 @@ public class GoogleAuthProvider implements AuthProvider,
                 .requestEmail()
                 .requestIdToken(clientId)
                 .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
+        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -89,6 +97,9 @@ public class GoogleAuthProvider implements AuthProvider,
 
     @Override
     public Intent buildSignInIntent() {
+        if (mGoogleApiClient == null) {
+            loadGoogleApiClient();
+        }
         return Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
     }
 

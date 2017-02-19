@@ -49,6 +49,7 @@
     <string name="mytba_prompt_cancel">Maybe Later</string>
 
     <!-- Status Messages -->
+    <string name="loading_config">Loading app configuration</string>
     <string name="loading_teams" formatted="false">Loading teams from %1$d to %2$d</string>
     <string name="loading_events">Loading %s events</string>
     <string name="loading_districts">Loading %d districts</string>

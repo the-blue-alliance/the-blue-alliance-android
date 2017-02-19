@@ -1,0 +1,74 @@
+[
+  {
+    "declines": [], 
+    "picks": [
+      "frc1023", 
+      "frc2338", 
+      "frc3996", 
+      "frc1089"
+    ]
+  }, 
+  {
+    "declines": [], 
+    "picks": [
+      "frc135", 
+      "frc68", 
+      "frc51", 
+      "frc201"
+    ]
+  }, 
+  {
+    "declines": [], 
+    "picks": [
+      "frc234", 
+      "frc503", 
+      "frc188", 
+      "frc836"
+    ]
+  }, 
+  {
+    "declines": [], 
+    "picks": [
+      "frc1640", 
+      "frc1310", 
+      "frc217", 
+      "frc2383"
+    ]
+  }, 
+  {
+    "declines": [], 
+    "picks": [
+      "frc1538", 
+      "frc2848", 
+      "frc5048", 
+      "frc360"
+    ]
+  }, 
+  {
+    "declines": [], 
+    "picks": [
+      "frc857", 
+      "frc2363", 
+      "frc3322", 
+      "frc4213"
+    ]
+  }, 
+  {
+    "declines": [], 
+    "picks": [
+      "frc2342", 
+      "frc4201", 
+      "frc5403", 
+      "frc3602"
+    ]
+  }, 
+  {
+    "declines": [], 
+    "picks": [
+      "frc2974", 
+      "frc4451", 
+      "frc314", 
+      "frc5571"
+    ]
+  }
+]

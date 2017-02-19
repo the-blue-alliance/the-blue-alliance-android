@@ -1,10 +1,14 @@
 package com.thebluealliance.androidclient.models;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 
 import android.content.ContentValues;
+
+import javax.annotation.Nullable;
 
 public class EventTeam implements TbaDatabaseModel {
 
@@ -20,7 +24,7 @@ public class EventTeam implements TbaDatabaseModel {
     private String teamKey;
     private String eventKey;
     private Integer year;
-    private Integer compWeek;
+    private @Nullable TeamAtEventStatus status;
     private Long lastModified;
 
     public EventTeam() {
@@ -59,12 +63,12 @@ public class EventTeam implements TbaDatabaseModel {
         this.year = year;
     }
 
-    public Integer getCompWeek() {
-        return compWeek;
+    @Nullable public TeamAtEventStatus getStatus() {
+        return status;
     }
 
-    public void setCompWeek(Integer compWeek) {
-        this.compWeek = compWeek;
+    public void setStatus(@Nullable TeamAtEventStatus status) {
+        this.status = status;
     }
 
     public Long getLastModified() {
@@ -76,13 +80,13 @@ public class EventTeam implements TbaDatabaseModel {
     }
 
     @Override
-    public ContentValues getParams() {
+    public ContentValues getParams(Gson gson) {
         ContentValues params = new ContentValues();
         params.put(EventTeamsTable.KEY, getKey());
         params.put(EventTeamsTable.TEAMKEY, getTeamKey());
         params.put(EventTeamsTable.EVENTKEY, getEventKey());
         params.put(EventTeamsTable.YEAR, getYear());
-        params.put(EventTeamsTable.COMPWEEK, getCompWeek());
+        params.put(EventTeamsTable.STATUS, status != null ? gson.toJson(status, TeamAtEventStatus.class) : "");
         params.put(EventTeamsTable.LAST_MODIFIED, getLastModified());
         return params;
     }

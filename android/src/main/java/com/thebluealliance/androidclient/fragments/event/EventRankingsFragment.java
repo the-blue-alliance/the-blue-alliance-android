@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import com.google.gson.JsonElement;
-
 import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
@@ -10,6 +8,7 @@ import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.itemviews.TeamRankingItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
+import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
 import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
 
@@ -25,7 +24,7 @@ import rx.Observable;
  * @author Bryce Matsuda
  * @author Nathan Walters
  */
-public class EventRankingsFragment extends RecyclerViewFragment<JsonElement, RankingsListSubscriber, RecyclerViewBinder> {
+public class EventRankingsFragment extends RecyclerViewFragment<RankingResponseObject, RankingsListSubscriber, RecyclerViewBinder> {
 
     private static final String KEY = "eventKey";
 
@@ -60,7 +59,7 @@ public class EventRankingsFragment extends RecyclerViewFragment<JsonElement, Ran
     }
 
     @Override
-    protected Observable<? extends JsonElement> getObservable(String tbaCacheHeader) {
+    protected Observable<RankingResponseObject> getObservable(String tbaCacheHeader) {
         return mDatafeed.fetchEventRankings(mEventKey, tbaCacheHeader);
     }
 

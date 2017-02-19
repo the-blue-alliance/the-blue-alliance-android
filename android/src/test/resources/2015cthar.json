@@ -1,91 +1,37 @@
 {
-  "key": "2015cthar",
-  "website": "http://www.nefirst.org/",
-  "official": true,
-  "end_date": "2015-03-29",
-  "name": "NE District - Hartford Event",
-  "short_name": "Hartford",
-  "facebook_eid": null,
-  "event_district_string": "New England",
-  "venue_address": "Hartford Public High School\n55 Forest Street\nHartford, CT 06105\nUSA",
-  "event_district": 3,
-  "location": "Hartford, CT, USA",
-  "event_code": "cthar",
-  "year": 2015,
-  "week": 4,
-  "webcast": [
+  "address": "55 Forest St, Hartford, CT 06105, USA", 
+  "city": "Hartford", 
+  "country": "United States", 
+  "district": {
+    "abbreviation": "ne", 
+    "display_name": "New England", 
+    "key": "2015ne", 
+    "year": 2015
+  }, 
+  "end_date": "2015-03-29", 
+  "event_code": "cthar", 
+  "event_type": 1, 
+  "event_type_string": "District", 
+  "first_event_id": "13443", 
+  "gmaps_place_id": "ChIJJXtBS05T5okRl3RS1A9iLHE", 
+  "gmaps_url": "https://maps.google.com/?cid=8155000845387330711", 
+  "key": "2015cthar", 
+  "lat": 41.765225800000003, 
+  "lng": -72.701010499999995, 
+  "location_name": "Hartford Public High School", 
+  "name": "NE District - Hartford Event", 
+  "postal_code": "06105", 
+  "short_name": "Hartford", 
+  "start_date": "2015-03-27", 
+  "state_prov": "Connecticut", 
+  "timezone": "America/New_York", 
+  "webcasts": [
     {
-      "type": "twitch",
-      "channel": "nefirst_red"
+      "channel": "nefirst_red", 
+      "type": "twitch"
     }
-  ],
-  "alliances": [
-    {
-      "declines": [],
-      "picks": [
-        "frc195",
-        "frc230",
-        "frc2064"
-      ]
-    },
-    {
-      "declines": [],
-      "picks": [
-        "frc2067",
-        "frc2170",
-        "frc3464"
-      ]
-    },
-    {
-      "declines": [],
-      "picks": [
-        "frc2836",
-        "frc999",
-        "frc181"
-      ]
-    },
-    {
-      "declines": [],
-      "picks": [
-        "frc1699",
-        "frc175",
-        "frc228"
-      ]
-    },
-    {
-      "declines": [],
-      "picks": [
-        "frc3146",
-        "frc173",
-        "frc95"
-      ]
-    },
-    {
-      "declines": [],
-      "picks": [
-        "frc4055",
-        "frc839",
-        "frc4557"
-      ]
-    },
-    {
-      "declines": [],
-      "picks": [
-        "frc177",
-        "frc1124",
-        "frc236"
-      ]
-    },
-    {
-      "declines": [],
-      "picks": [
-        "frc1740",
-        "frc1991",
-        "frc558"
-      ]
-    }
-  ],
-  "event_type_string": "District",
-  "start_date": "2015-03-27",
-  "event_type": 1
+  ], 
+  "website": "http://www.nefirst.org/", 
+  "week": 4, 
+  "year": 2015
 }

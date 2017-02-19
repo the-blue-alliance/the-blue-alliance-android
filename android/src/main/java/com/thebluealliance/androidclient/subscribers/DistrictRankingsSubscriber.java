@@ -4,14 +4,14 @@ import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DistrictRankingsSubscriber
-  extends BaseAPISubscriber<List<DistrictTeam>, List<ListItem>> {
+  extends BaseAPISubscriber<List<DistrictRanking>, List<ListItem>> {
 
     Database mDb;
 
@@ -25,7 +25,7 @@ public class DistrictRankingsSubscriber
     public void parseData()  {
         mDataToBind.clear();
         for (int i = 0; i < mAPIData.size(); i++) {
-            DistrictTeam districtTeam = mAPIData.get(i);
+            DistrictRanking districtTeam = mAPIData.get(i);
             Team teamData = mDb.getTeamsTable().get(districtTeam.getTeamKey());
             String nickname;
             if (teamData != null) {
@@ -40,7 +40,7 @@ public class DistrictRankingsSubscriber
                 districtTeam.getDistrictKey(),
                 nickname,
                 districtTeam.getRank(),
-                districtTeam.getTotalPoints()));
+                districtTeam.getPointTotal()));
         }
     }
 }

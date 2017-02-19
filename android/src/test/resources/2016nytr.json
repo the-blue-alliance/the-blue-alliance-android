@@ -1,0 +1,32 @@
+{
+  "address": "110 8th St, Troy, NY 12180, USA", 
+  "city": "Troy", 
+  "country": "United States", 
+  "district": null, 
+  "end_date": "2016-03-19", 
+  "event_code": "nytr", 
+  "event_type": 0, 
+  "event_type_string": "Regional", 
+  "first_event_id": "17461", 
+  "gmaps_place_id": "ChIJfQn6654P3okRAlMf2xMrWaU", 
+  "gmaps_url": "https://maps.google.com/?cid=11914601653465993986", 
+  "key": "2016nytr", 
+  "lat": 42.730171999999989, 
+  "lng": -73.678802599999997, 
+  "location_name": "Rensselaer Polytechnic Institute", 
+  "name": "New York Tech Valley Regional", 
+  "postal_code": "12180", 
+  "short_name": "New York Tech Valley", 
+  "start_date": "2016-03-16", 
+  "state_prov": "New York", 
+  "timezone": "America/New_York", 
+  "webcasts": [
+    {
+      "channel": "<iframe scrolling=\"no\" frameborder=\"0\" width=\"100%\" height=\"100%\" style=\"margin:0 auto;\" src=\"http://mediasite.mms.rpi.edu/Mediasite5/Play/3d2665bb904a476aaa8d537654e47ccd1d?autoStart=true\" allowfullscreen></iframe>", 
+      "type": "iframe"
+    }
+  ], 
+  "website": "http://www.techvalleyfirst.org\r", 
+  "week": 3, 
+  "year": 2016
+}

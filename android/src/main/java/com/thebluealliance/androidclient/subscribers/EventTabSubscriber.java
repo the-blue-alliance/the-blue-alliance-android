@@ -33,8 +33,8 @@ public class EventTabSubscriber extends BaseAPISubscriber<List<Event>, List<Even
         for (int i = 0; i < mAPIData.size(); i++) {
             Event event = mAPIData.get(i);
             cal.setTime(event.getFormattedStartDate());
-            int competitionWeek = event.getCompetitionWeek() != null
-                    ? event.getCompetitionWeek()
+            int competitionWeek = event.getWeek() != null
+                    ? event.getWeek()
                     : 0;
             int month = cal.get(Calendar.MONTH);
 

@@ -1,32 +1,35 @@
 {
-  "point_total": 157,
-  "team_key": "frc1124",
-  "event_points": {
-    "2015necmp": {
-      "alliance_points": 6,
-      "award_points": 15,
-      "elim_points": 30,
-      "district_cmp": true,
-      "total": 87,
-      "qual_points": 36
-    },
-    "2015ctwat": {
-      "alliance_points": 12,
-      "award_points": 0,
-      "elim_points": 0,
-      "district_cmp": false,
-      "total": 26,
-      "qual_points": 14
-    },
-    "2015manda": {
-      "alliance_points": 13,
-      "award_points": 5,
-      "elim_points": 10,
-      "district_cmp": false,
-      "total": 44,
-      "qual_points": 16
-    }
-  },
-  "rank": 26,
-  "rookie_bonus": 0
-}
+  "event_points": [
+   {
+    "alliance_points": 16,
+    "award_points": 5,
+    "district_cmp": false,
+    "elim_points": 30.0,
+    "event_key": "2015nhnas",
+    "qual_points": 22,
+    "total": 73.0
+   },
+   {
+    "alliance_points": 16,
+    "award_points": 5,
+    "district_cmp": false,
+    "elim_points": 30.0,
+    "event_key": "2015manda",
+    "qual_points": 22,
+    "total": 73.0
+   },
+   {
+    "alliance_points": 48,
+    "award_points": 15,
+    "district_cmp": true,
+    "elim_points": 90.0,
+    "event_key": "2015necmp",
+    "qual_points": 66,
+    "total": 219.0
+   }
+  ],
+  "point_total": 365.0,
+  "rank": 1,
+  "rookie_bonus": 0,
+  "team_key": "frc1519"
+ }

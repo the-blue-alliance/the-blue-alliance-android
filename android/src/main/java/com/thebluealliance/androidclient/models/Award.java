@@ -1,18 +1,21 @@
 package com.thebluealliance.androidclient.models;
 
-import com.google.gson.JsonArray;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
-import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.renderers.ModelRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.api.model.IAward;
+import com.thebluealliance.api.model.IAwardRecipient;
 
 import android.content.ContentValues;
+
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -23,22 +26,8 @@ public class Award implements IAward, RenderableModel, TbaDatabaseModel {
     private String key = null;
     private Long lastModified = null;
     private String name = null;
-    private String recipientList = null;
+    private List<IAwardRecipient> recipientList = null;
     private Integer year = null;
-
-    private JsonArray winners;
-
-    public Award() {
-        winners = null;
-    }
-
-    public Award(String eventKey, String name, int year, JsonArray winners) {
-        this();
-        setEventKey(eventKey);
-        setName(name);
-        setYear(year);
-        setWinners(winners);
-    }
 
     @Override public Integer getAwardType() {
         return awardType;
@@ -80,11 +69,11 @@ public class Award implements IAward, RenderableModel, TbaDatabaseModel {
         this.name = name;
     }
 
-    @Nullable @Override public String getRecipientList() {
+    @Nullable @Override public List<IAwardRecipient> getRecipientList() {
         return recipientList;
     }
 
-    @Override public void setRecipientList(String recipientList) {
+    @Override public void setRecipientList(List<IAwardRecipient> recipientList) {
         this.recipientList = recipientList;
     }
 
@@ -97,27 +86,6 @@ public class Award implements IAward, RenderableModel, TbaDatabaseModel {
     }
 
     @Nullable
-    public JsonArray getWinners() {
-        if (winners == null) {
-            String recipients = getRecipientList();
-            if (recipients == null) {
-                return null;
-            }
-            winners = JSONHelper.getasJsonArray(recipients);
-        }
-        return winners;
-    }
-
-    public void setWinners(JsonArray winners) {
-        setRecipientList(winners.toString());
-        this.winners = winners;
-    }
-
-    public void setWinners(String winnersJson) {
-        setRecipientList(winnersJson);
-    }
-
-    @Nullable
     public Integer getEnum() {
         return getAwardType();
     }
@@ -127,14 +95,14 @@ public class Award implements IAward, RenderableModel, TbaDatabaseModel {
     }
 
     @Override
-    public ContentValues getParams() {
+    public ContentValues getParams(Gson gson) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(AwardsTable.KEY, getKey());
         contentValues.put(AwardsTable.ENUM, getEnum());
         contentValues.put(AwardsTable.EVENTKEY, getEventKey());
         contentValues.put(AwardsTable.NAME, getName());
         contentValues.put(AwardsTable.YEAR, getYear());
-        contentValues.put(AwardsTable.WINNERS, getRecipientList());
+        contentValues.put(AwardsTable.WINNERS, gson.toJson(getRecipientList(), new TypeToken<List<AwardRecipient>>(){}.getType()));
         contentValues.put(AwardsTable.LAST_MODIFIED, getLastModified());
         return contentValues;
     }
@@ -144,5 +112,35 @@ public class Award implements IAward, RenderableModel, TbaDatabaseModel {
     public ListElement render(ModelRendererSupplier supplier) {
         ModelRenderer<Award, ?> renderer = supplier.getRendererForType(ModelType.AWARD);
         return renderer != null ? renderer.renderFromModel(this, null) : null;
+    }
+
+    public static class AwardRecipient implements IAwardRecipient {
+        private @Nullable String awardee;
+        private @Nullable String teamKey;
+        private @Nullable Long lastModified;
+
+        @Override @Nullable public String getAwardee() {
+            return awardee;
+        }
+
+        @Override public void setAwardee(@Nullable String awardee) {
+            this.awardee = awardee;
+        }
+
+        @Override @Nullable public String getTeamKey() {
+            return teamKey;
+        }
+
+        @Override public void setTeamKey(@Nullable String teamKey) {
+            this.teamKey = teamKey;
+        }
+
+        @Nullable public Long getLastModified() {
+            return lastModified;
+        }
+
+        public void setLastModified(@Nullable Long lastModified) {
+            this.lastModified = lastModified;
+        }
     }
 }

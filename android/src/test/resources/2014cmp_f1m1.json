@@ -1,38 +1,41 @@
 {
-  "comp_level": "f",
-  "match_number": 1,
-  "videos": [
-    {
-      "type": "youtube",
-      "key": "jdJutaggCMk"
-    },
-    {
-      "type": "youtube",
-      "key": "N8g_llmz9bw"
-    }
-  ],
-  "time_string": "5:38 PM",
-  "set_number": 1,
-  "key": "2014cmp_f1m1",
-  "time": 1398551880,
-  "score_breakdown": null,
+  "actual_time": null, 
   "alliances": {
     "blue": {
-      "score": 361,
-      "teams": [
-        "frc469",
-        "frc2848",
+      "score": 361, 
+      "surrogate_team_keys": [], 
+      "team_keys": [
+        "frc469", 
+        "frc2848", 
         "frc254"
       ]
-    },
+    }, 
     "red": {
-      "score": 236,
-      "teams": [
-        "frc1678",
-        "frc1640",
+      "score": 236, 
+      "surrogate_team_keys": [], 
+      "team_keys": [
+        "frc1678", 
+        "frc1640", 
         "frc1114"
       ]
     }
-  },
-  "event_key": "2014cmp"
+  }, 
+  "comp_level": "f", 
+  "event_key": "2014cmp", 
+  "key": "2014cmp_f1m1", 
+  "match_number": 1, 
+  "score_breakdown": null, 
+  "set_number": 1, 
+  "time": 1398551880, 
+  "videos": [
+    {
+      "key": "jdJutaggCMk", 
+      "type": "youtube"
+    }, 
+    {
+      "key": "N8g_llmz9bw", 
+      "type": "youtube"
+    }
+  ], 
+  "winning_alliance": "blue"
 }

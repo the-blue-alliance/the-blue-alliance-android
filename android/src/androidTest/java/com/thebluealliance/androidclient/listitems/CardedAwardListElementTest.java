@@ -1,14 +1,12 @@
 package com.thebluealliance.androidclient.listitems;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-
 import com.facebook.testing.screenshot.Screenshot;
 import com.facebook.testing.screenshot.ViewHelpers;
 import com.thebluealliance.androidclient.datafeed.APICache;
+import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.testing.ModelMaker;
+import com.thebluealliance.api.model.IAwardRecipient;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,28 +17,30 @@ import android.support.test.runner.AndroidJUnit4;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RunWith(AndroidJUnit4.class)
 public class CardedAwardListElementTest {
 
     private static final int WIDTH_DP = 400;
-    private static final JsonArray SINGLE_TEAM = new JsonArray();
-    private static final JsonArray MULTI_TEAM = new JsonArray();
-    private static final JsonArray INDIVIDUAL = new JsonArray();
-    private static final JsonArray INDIVIDUAL_NO_TEAM = new JsonArray();
-    private static final JsonArray MULTI_INDIVIDUAL = new JsonArray();
+    private static final List<IAwardRecipient> SINGLE_TEAM = new ArrayList<>();
+    private static final List<IAwardRecipient> MULTI_TEAM = new ArrayList<>();
+    private static final List<IAwardRecipient> INDIVIDUAL = new ArrayList<>();
+    private static final List<IAwardRecipient> INDIVIDUAL_NO_TEAM = new ArrayList<>();
+    private static final List<IAwardRecipient> MULTI_INDIVIDUAL = new ArrayList<>();
     private static final Map<String, Team> TEAM_MAP = new HashMap<>();
 
     static {
-        SINGLE_TEAM.add(buildWinnerDict(null, 1124));
-        MULTI_TEAM.add(buildWinnerDict(null, 1124));
-        MULTI_TEAM.add(buildWinnerDict(null, 254));
-        INDIVIDUAL.add(buildWinnerDict("Foo Bar", 1124));
+        SINGLE_TEAM.add(buildWinnerDict(null, "frc1124"));
+        MULTI_TEAM.add(buildWinnerDict(null, "frc1124"));
+        MULTI_TEAM.add(buildWinnerDict(null, "frc254"));
+        INDIVIDUAL.add(buildWinnerDict("Foo Bar", "frc1124"));
         INDIVIDUAL_NO_TEAM.add(buildWinnerDict("Foo Bar",  null));
-        MULTI_INDIVIDUAL.add(buildWinnerDict("Foo Bar", 1124));
-        MULTI_INDIVIDUAL.add(buildWinnerDict("Foo Baz", 254));
+        MULTI_INDIVIDUAL.add(buildWinnerDict("Foo Bar", "frc1124"));
+        MULTI_INDIVIDUAL.add(buildWinnerDict("Foo Baz", "frc254"));
 
         Team team = ModelMaker.getModel(Team.class, "frc1124");
         TEAM_MAP.put("frc1124", team);
@@ -117,7 +117,7 @@ public class CardedAwardListElementTest {
             APICache datafeed,
             String name,
             String eventKey,
-            JsonArray winners,
+            List<IAwardRecipient> winners,
             Map<String, Team> teams,
             String selectedTeamKey) {
         CardedAwardListElement element = new CardedAwardListElement(datafeed, name, eventKey,
@@ -128,10 +128,10 @@ public class CardedAwardListElementTest {
         return element.getView(targetContext, inflater, null);
     }
 
-    private static JsonObject buildWinnerDict(String awardee, Integer teamNumber) {
-        JsonObject winner = new JsonObject();
-        winner.add("awardee", awardee != null ? new JsonPrimitive(awardee) : null);
-        winner.add("team_number", teamNumber != null ? new JsonPrimitive(teamNumber): null);
+    private static IAwardRecipient buildWinnerDict(String awardee, String teamKey) {
+        Award.AwardRecipient winner = new Award.AwardRecipient();
+        if (awardee != null) winner.setAwardee(awardee);
+        if (teamKey != null) winner.setTeamKey(teamKey);
         return winner;
     }
 }

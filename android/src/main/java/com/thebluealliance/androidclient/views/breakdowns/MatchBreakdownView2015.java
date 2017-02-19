@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.views.breakdowns;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import android.content.Context;
 import android.support.v7.widget.GridLayout;
@@ -12,6 +12,8 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -95,28 +97,26 @@ public class MatchBreakdownView2015 extends AbstractMatchBreakdownView {
     }
 
     public boolean initWithData(MatchType matchType,
-                                JsonObject allianceData,
+                                IMatchAlliancesContainer allianceData,
                                 JsonObject scoreData) {
         if (scoreData == null || scoreData.entrySet().isEmpty()
-            || allianceData == null || !allianceData.has("red") || !allianceData.has("blue")) {
+            || allianceData == null || allianceData.getRed() == null || allianceData.getBlue() == null) {
             breakdownContainer.setVisibility(GONE);
             return false;
         }
 
-        JsonObject redAlliance = allianceData.get("red").getAsJsonObject();
-        JsonArray redTeams = redAlliance.get("teams").getAsJsonArray();
-        JsonObject blueAlliance = allianceData.get("blue").getAsJsonObject();
-        JsonArray blueTeams = blueAlliance.get("teams").getAsJsonArray();
+        List<String> redTeams = allianceData.getRed().getTeamKeys();
+        List<String> blueTeams = allianceData.getBlue().getTeamKeys();
         JsonObject redData = scoreData.get("red").getAsJsonObject();
         JsonObject blueData = scoreData.get("blue").getAsJsonObject();
 
-        red1.setText(teamNumberFromKey(redTeams.get(0).getAsString()));
-        red2.setText(teamNumberFromKey(redTeams.get(1).getAsString()));
-        red3.setText(teamNumberFromKey(redTeams.get(2).getAsString()));
+        red1.setText(teamNumberFromKey(redTeams.get(0)));
+        red2.setText(teamNumberFromKey(redTeams.get(1)));
+        red3.setText(teamNumberFromKey(redTeams.get(2)));
 
-        blue1.setText(teamNumberFromKey(blueTeams.get(0).getAsString()));
-        blue2.setText(teamNumberFromKey(blueTeams.get(1).getAsString()));
-        blue3.setText(teamNumberFromKey(blueTeams.get(2).getAsString()));
+        blue1.setText(teamNumberFromKey(blueTeams.get(0)));
+        blue2.setText(teamNumberFromKey(blueTeams.get(1)));
+        blue3.setText(teamNumberFromKey(blueTeams.get(2)));
 
         /* Auto Totes */
         if (redData.get("tote_set").getAsBoolean()) {

@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import android.app.Notification;
 import android.content.Context;
@@ -91,7 +92,7 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
         String matchTitle = MatchHelper.getMatchTitleFromMatchKey(context, matchKey);
         String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);
 
-        JsonObject alliances = match.getAlliancesJson();
+        IMatchAlliancesContainer alliances = match.getAlliances();
 
         int redScore = Match.getRedScore(alliances);
         int blueScore = Match.getBlueScore(alliances);

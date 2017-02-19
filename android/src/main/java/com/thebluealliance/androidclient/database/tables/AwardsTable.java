@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -20,11 +22,8 @@ public class AwardsTable extends ModelTable<Award> {
             WINNERS = "winners",
             LAST_MODIFIED = "last_modified";
 
-    private SQLiteDatabase mDb;
-
-    public AwardsTable(SQLiteDatabase db){
-        super(db);
-        this.mDb = db;
+    public AwardsTable(SQLiteDatabase db, Gson gson){
+        super(db, gson);
     }
 
     @Override
@@ -47,12 +46,12 @@ public class AwardsTable extends ModelTable<Award> {
 
     @Override
     public Award inflate(Cursor cursor) {
-        return ModelInflater.inflateAward(cursor);
+        return ModelInflater.inflateAward(cursor, mGson);
     }
 
     public List<Award> getTeamAtEventAwards(String teamNumber, String eventKey) {
         Cursor cursor = mDb.rawQuery("SELECT * FROM `" + Database.TABLE_AWARDS + "` WHERE `" + EVENTKEY
-          + "` = ? AND `" + WINNERS + "` LIKE '%\"team_number\":" + teamNumber + "%'", new String[]{eventKey});
+          + "` = ? AND `" + WINNERS + "` LIKE '%\"team_key\":\"frc" + teamNumber + "\"%'", new String[]{eventKey});
         List<Award> models = new ArrayList<>(cursor == null ? 0 : cursor.getCount());
         if (cursor == null || !cursor.moveToFirst()) {
             return models;

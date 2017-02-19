@@ -5,7 +5,6 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.firebase.AllianceAdvancementEvent;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Event;
@@ -42,7 +41,6 @@ public class MatchListSubscriberTest {
 
     MatchListSubscriber mSubscriber;
     List<Match> mMatches;
-    String[] mKeys;
 
     @Before
     public void setUp() {
@@ -57,9 +55,7 @@ public class MatchListSubscriberTest {
 
         mSubscriber = new MatchListSubscriber(mResources, mDb, mEventBus);
         mSubscriber.setEventKey("2015necmp");
-        mKeys = new String[]{"2015necmp_qm1", "2015necmp_qf1m1", "2015necmp_qf1m2",
-                "2014necmp_qf2m1", "2015necmp_sf1m1", "2015necmp_f1m1"};
-        mMatches = ModelMaker.getMultiModelList(Match.class, mKeys);
+        mMatches = ModelMaker.getModelList(Match.class, "2015necmp_matches");
     }
 
     @Test
@@ -70,7 +66,6 @@ public class MatchListSubscriberTest {
     @Test
     public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mMatches);
-        verify(mEventBus).post(eq(new LiveEventMatchUpdateEvent(mMatches.get(5), null)));
         verify(mEventBus).post(eq(new AllianceAdvancementEvent(mSubscriber.getAdvancement())));
     }
 
@@ -80,10 +75,10 @@ public class MatchListSubscriberTest {
 
         /* This event is not live, so matches should be sorted by display order */
         assertEquals(4, data.size());
-        assertMatchGroup(data.get(0), 1, R.string.quals_header, 0);
-        assertMatchGroup(data.get(1), 3, R.string.quarters_header, 1, 2, 3);
-        assertMatchGroup(data.get(2), 1, R.string.semis_header, 4);
-        assertMatchGroup(data.get(3), 1, R.string.finals_header, 5);
+        assertMatchGroup(data.get(0), 120, R.string.quals_header);
+        assertMatchGroup(data.get(1), 8, R.string.quarters_header);
+        assertMatchGroup(data.get(2), 6, R.string.semis_header);
+        assertMatchGroup(data.get(3), 2, R.string.finals_header);
     }
 
     @Test
@@ -93,18 +88,14 @@ public class MatchListSubscriberTest {
 
         /* This event is live, so matches should be sorted by play order */
         assertEquals(4, data.size());
-        assertMatchGroup(data.get(0), 1, R.string.quals_header, 0);
-        assertMatchGroup(data.get(1), 3, R.string.quarters_header, 1, 3, 2);
-        assertMatchGroup(data.get(2), 1, R.string.semis_header, 4);
-        assertMatchGroup(data.get(3), 1, R.string.finals_header, 5);
+        assertMatchGroup(data.get(0), 120, R.string.quals_header);
+        assertMatchGroup(data.get(1), 8, R.string.quarters_header);
+        assertMatchGroup(data.get(2), 6, R.string.semis_header);
+        assertMatchGroup(data.get(3), 2, R.string.finals_header);
     }
 
-    private void assertMatchGroup(ListGroup group, int size, @StringRes int titleRes, int... indexes) {
+    private void assertMatchGroup(ListGroup group, int size, @StringRes int titleRes) {
         assertEquals(group.getTitle(), mResources.getString(titleRes));
         assertEquals(group.children.size(), size);
-        assertEquals(size, indexes.length);
-        for (int i = 0; i < group.children.size(); i++) {
-            assertEquals(((Match)group.children.get(i)).getKey(), mKeys[indexes[i]]);
-        }
     }
 }

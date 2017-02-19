@@ -1,9 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.api.model.IAwardRecipient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,9 +9,11 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.List;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.assertNull;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
@@ -36,14 +36,13 @@ public class AwardTest {
         assertEquals(mTeamAward.getName(), "Quality Award sponsored by Motorola");
         assertEquals(mTeamAward.getYear().intValue(), 2015);
 
-        JsonArray recipientList = mTeamAward.getWinners();
+        List<IAwardRecipient> recipientList = mTeamAward.getRecipientList();
         assertNotNull(recipientList);
         assertEquals(recipientList.size(), 1);
-        assertTrue(recipientList.get(0).isJsonObject());
 
-        JsonObject recipient = recipientList.get(0).getAsJsonObject();
-        assertEquals(recipient.get("team_number").getAsInt(), 195);
-        assertTrue(recipient.get("awardee").isJsonNull());
+        IAwardRecipient recipient = recipientList.get(0);
+        assertEquals(recipient.getTeamKey(), "frc195");
+        assertNull(recipient.getAwardee());
     }
 
     @Test
@@ -55,13 +54,12 @@ public class AwardTest {
         assertEquals(mIndividualAward.getName(), "Volunteer of the Year");
         assertEquals(mIndividualAward.getYear().intValue(), 2015);
 
-        JsonArray recipientList = mIndividualAward.getWinners();
+        List<IAwardRecipient> recipientList = mIndividualAward.getRecipientList();
         assertNotNull(recipientList);
         assertEquals(recipientList.size(), 1);
-        assertTrue(recipientList.get(0).isJsonObject());
 
-        JsonObject recipient = recipientList.get(0).getAsJsonObject();
-        assertEquals(recipient.get("team_number").getAsInt(), 319);
-        assertEquals(recipient.get("awardee").getAsString(), "Ty Tremblay");
+        IAwardRecipient recipient = recipientList.get(0);
+        assertEquals(recipient.getTeamKey(), "frc319");
+        assertEquals(recipient.getAwardee(), "Ty Tremblay");
     }
 }

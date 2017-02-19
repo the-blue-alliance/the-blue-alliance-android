@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.di;
 
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -10,10 +11,8 @@ import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictTeamWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictWriter;
-import com.thebluealliance.androidclient.database.writers.EventDistrictPointsWriter;
+import com.thebluealliance.androidclient.database.writers.EventDetailWriter;
 import com.thebluealliance.androidclient.database.writers.EventListWriter;
-import com.thebluealliance.androidclient.database.writers.EventRankingsWriter;
-import com.thebluealliance.androidclient.database.writers.EventStatsWriter;
 import com.thebluealliance.androidclient.database.writers.EventTeamAndTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.EventTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.EventTeamWriter;
@@ -79,6 +78,11 @@ public class MockTbaAndroidModule  {
         return Mockito.mock(AccountManager.class);
     }
 
+    @Provides @Singleton
+    public FirebaseRemoteConfig provideFirebaseRemoteConfig() {
+        return Mockito.mock(FirebaseRemoteConfig.class);
+    }
+
     @Provides
     @Singleton
     public DatabaseWriter provideDatabaseWriter(
@@ -100,12 +104,9 @@ public class MockTbaAndroidModule  {
             Lazy<TeamListWriter> teamList,
             Lazy<YearsParticipatedWriter> yearsParticipated,
             Lazy<EventTeamAndTeamListWriter> eventTeamAndTeamList,
-            Lazy<EventRankingsWriter> eventRankings,
-            Lazy<EventStatsWriter> eventStats,
-            Lazy<EventDistrictPointsWriter> eventDistrictPoints) {
+            Lazy<EventDetailWriter> eventDetail) {
         return spy(new DatabaseWriter(award, awardList, district, districtList, districtTeam,
                 districtTeamList, event, eventList, eventTeam, eventTeamList, match, matchList, media,
-                mediaList, team, teamList, yearsParticipated, eventTeamAndTeamList, eventRankings,
-                eventStats, eventDistrictPoints));
+                mediaList, team, teamList, yearsParticipated, eventTeamAndTeamList, eventDetail));
     }
 }

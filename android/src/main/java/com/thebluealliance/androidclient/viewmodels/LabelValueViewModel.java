@@ -1,13 +1,24 @@
 package com.thebluealliance.androidclient.viewmodels;
 
+import android.text.SpannableString;
+import android.text.Spanned;
+
 public class LabelValueViewModel extends BaseViewModel{
 
     private String mLabel;
-    private String mValue;
+    private Spanned mValue;
+    private boolean mBoldText;
 
     public LabelValueViewModel(String label, String value) {
         mLabel = label;
+        mValue = new SpannableString(value);
+        mBoldText = true;
+    }
+
+    public LabelValueViewModel(String label, Spanned value) {
+        mLabel = label;
         mValue = value;
+        mBoldText = false;
     }
 
     public String getLabel() {
@@ -18,12 +29,16 @@ public class LabelValueViewModel extends BaseViewModel{
         mLabel = label;
     }
 
-    public String getValue() {
+    public Spanned getValue() {
         return mValue;
     }
 
-    public void setValue(String value) {
+    public void setValue(Spanned value) {
         mValue = value;
+    }
+
+    public boolean getBoldText() {
+        return mBoldText;
     }
 
     @Override public boolean equals(Object o) {

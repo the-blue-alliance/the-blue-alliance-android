@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
-public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<ListItem>> {
+public class StatsListSubscriber extends BaseAPISubscriber<StatsListSubscriber.Model, List<ListItem>> {
 
     private static DecimalFormat df = new DecimalFormat("#.##");
 
@@ -50,6 +50,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
         ((ListPair) mDataToBind).setSelectedList(ListPair.LIST0);
         mDb = db;
         mEventYear = -1;
+        mStatToSortBy = "";
     }
 
     public void setEventYear(int year) {
@@ -63,7 +64,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
     @Override
     public void parseData()  {
         mTeamStats.clear();
-        JsonObject statsData = mAPIData.getAsJsonObject();
+        JsonObject statsData = mAPIData.getStats().getAsJsonObject();
         if (!statsData.has("oprs") || !statsData.get("oprs").isJsonObject()
                 || !statsData.has("dprs") || !statsData.get("dprs").isJsonObject()
                 || !statsData.has("ccwms") || !statsData.get("ccwms").isJsonObject()) {
@@ -75,9 +76,10 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
         JsonObject ccwms = statsData.get("ccwms").getAsJsonObject();
 
         for (Entry<String, JsonElement> stat : oprs.entrySet()) {
-            String teamKey = "frc" + stat.getKey();
+            String teamKey = stat.getKey();
+            String teamNumber = teamKey.substring(3);
             Team team = mDb.getTeamsTable().get(teamKey);
-            String teamName = team == null ? "Team " + stat.getKey() : team.getNickname();
+            String teamName = team == null ? "Team " + teamNumber : team.getNickname();
             double opr = stat.getValue().getAsDouble();
             double dpr = dprs.has(stat.getKey()) ? dprs.get(stat.getKey()).getAsDouble() : 0;
             double ccwm = ccwms.has(stat.getKey()) ? ccwms.get(stat.getKey()).getAsDouble() : 0;
@@ -88,7 +90,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
                     ThreadSafeFormatters.formatDoubleTwoPlaces(ccwm));
             mTeamStats.add(new StatsListElement(
                     teamKey,
-                    stat.getKey(),
+                    teamNumber,
                     teamName,
                     displayString,
                     opr,
@@ -98,8 +100,8 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
         Collections.sort(mTeamStats, new StatListElementComparator(mStatToSortBy));
 
         // Event stats
-        if (mEventYear == 2016 && statsData.has("year_specific") && statsData.get("year_specific").isJsonObject()) {
-            generateEventInsights(statsData.get("year_specific").getAsJsonObject());
+        if (mEventYear == 2016 && mAPIData.getInsights() != null && mAPIData.getInsights().isJsonObject()) {
+            generateEventInsights(mAPIData.getInsights().getAsJsonObject());
         }
 
         mEventBus.post(new EventStatsEvent(getTopStatsString()));
@@ -107,7 +109,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
 
     @Override
     public boolean isDataValid() {
-        return super.isDataValid() && mAPIData.isJsonObject();
+        return super.isDataValid() && mAPIData.getStats() != null && mAPIData.getStats().isJsonObject();
     }
 
     private void generateEventInsights(JsonObject eventInsights) {
@@ -249,5 +251,23 @@ public class StatsListSubscriber extends BaseAPISubscriber<JsonElement, List<Lis
             }
         }
         return statsString.trim();
+    }
+
+    public static class Model {
+        private final JsonElement mStats;
+        private final JsonElement mInsights;
+
+        public Model(JsonElement stats, JsonElement insights) {
+            mStats = stats;
+            mInsights = insights;
+        }
+
+        public JsonElement getStats() {
+            return mStats;
+        }
+
+        public JsonElement getInsights() {
+            return mInsights;
+        }
     }
 }

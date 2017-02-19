@@ -45,7 +45,7 @@ public class AwardRenderer implements ModelRenderer<Award, AwardRenderer.RenderA
                         mDatafeed,
                         award.getName(),
                         award.getEventKey(),
-                        award.getWinners(),
+                        award.getRecipientList(),
                         args.teams,
                         args.selectedTeamKey);
         }

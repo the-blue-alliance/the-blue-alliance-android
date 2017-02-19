@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.renderers;
 
 import com.thebluealliance.androidclient.datafeed.APICache;
-import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.listitems.DistrictListElement;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
@@ -35,9 +34,7 @@ public class DistrictRenderer implements ModelRenderer<District, DistrictRendere
         if (district == null) {
             return null;
         }
-        int year = DistrictHelper.extractYearFromKey(key);
-        String districtShort = DistrictHelper.extractAbbrevFromKey(key);
-        List<Event> events = mDatafeed.fetchDistrictEvents(districtShort, year).toBlocking().first();
+        List<Event> events = mDatafeed.fetchDistrictEvents(key).toBlocking().first();
         RenderArgs newArgs = new RenderArgs(events != null ? events.size() : 0, args != null && args.showMyTba);
         return renderFromModel(district, newArgs);
     }

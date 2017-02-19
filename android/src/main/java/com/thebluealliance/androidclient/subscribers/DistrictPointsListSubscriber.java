@@ -11,14 +11,11 @@ import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
-import com.thebluealliance.androidclient.types.DistrictType;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nullable;
 
 public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement, List<ListItem>>{
 
@@ -51,14 +48,10 @@ public class DistrictPointsListSubscriber extends BaseAPISubscriber<JsonElement,
         Event event = mDb.getEventsTable().get(mEventKey);
 
         if (event != null) {
-            @Nullable Integer eventDistrict = event.getEventDistrict();
-            DistrictType type = eventDistrict != null
-                ? DistrictType.fromEnum(eventDistrict)
-                : DistrictType.NO_DISTRICT;
-            boolean isDistrict = type != DistrictType.NO_DISTRICT;
+            boolean isDistrict = (event.getDistrict() != null);
             ((Type)mDataToBind).isDistrict = isDistrict;
             if (isDistrict) {
-                districtKey = mEventKey.substring(0, 4) + type.getAbbreviation();
+                districtKey = event.getDistrict().getKey();
             }
         }
 

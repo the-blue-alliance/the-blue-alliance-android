@@ -6,7 +6,6 @@ import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
 import com.thebluealliance.androidclient.listeners.MatchClickListener;
-import com.thebluealliance.androidclient.types.MatchType;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -22,6 +21,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MatchView extends FrameLayout {
+
+    @SuppressLint("SimpleDateFormat")
+    private static java.text.DateFormat dowFormat = new SimpleDateFormat("E ");
 
     private TextView matchTitle, red1, red2, red3, blue1, blue2, blue3, redScore, blueScore, time;
     private View matchContainer, matchTitleContainer, columnHeadersContainer, teamsHeader,
@@ -77,7 +79,9 @@ public class MatchView extends FrameLayout {
         time = (TextView) findViewById(R.id.match_time);
     }
 
-    public void initWithParams(String videoKey, String title, String[] redTeams, String[] blueTeams, String redScore, String blueScore, String matchKey, long time, String selectedTeamKey, boolean showVideoIcon) {
+    public void initWithParams(String videoKey, String title, String[] redTeams, String[] blueTeams,
+                               String redScore, String blueScore, String winner, String matchKey,
+                               long time, String selectedTeamKey, boolean showVideoIcon) {
 
         // Parse selected team key for a number
         String selectedTeamNumber;
@@ -87,22 +91,16 @@ public class MatchView extends FrameLayout {
             selectedTeamNumber = "";
         }
 
-        int year = Integer.parseInt(matchKey.substring(0, 4));
-        MatchType type = MatchType.fromKey(matchKey);
-        boolean hasWinner = (year != 2015) || (type == MatchType.FINAL); // 2015 non-finals matches have no winner
-
         matchTitle.setTag(matchKey);
         red1.setLines(1);  // To prevent layout issues when ListView recycles items
 
         if (!redScore.contains("?") && !blueScore.contains("?")) {
             try {
-                int bScore = Integer.parseInt(blueScore),
-                        rScore = Integer.parseInt(redScore);
-                if (hasWinner && bScore > rScore) {
+                if ("blue".equals(winner)) {
                     // blue wins
                     blueAlliance.setBackgroundResource(R.drawable.blue_border);
                     redAlliance.setBackgroundResource(R.drawable.no_border);
-                } else if (hasWinner && bScore < rScore) {
+                } else if ("red".equals(winner)) {
                     // red wins
                     redAlliance.setBackgroundResource(R.drawable.red_border);
                     blueAlliance.setBackgroundResource(R.drawable.no_border);
@@ -243,8 +241,6 @@ public class MatchView extends FrameLayout {
                 // and from yesterday's matches with delayed results.
                 Date date = new Date(time * 1000L);
                 java.text.DateFormat format = DateFormat.getTimeFormat(getContext());
-                @SuppressLint("SimpleDateFormat")
-                java.text.DateFormat dowFormat = new SimpleDateFormat("E ");
                 localTimeString = dowFormat.format(date) + format.format(date);
             }
 

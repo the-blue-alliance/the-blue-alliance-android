@@ -1,10 +1,12 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DbTableTestDriver;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.models.District;
@@ -23,6 +25,7 @@ import static org.mockito.Mockito.spy;
 
 @RunWith(DefaultTestRunner.class)
 public class DistrictsTableTest {
+    private Gson mGson;
     private DistrictsTable mTable;
     private List<District> mDistricts;
 
@@ -30,7 +33,8 @@ public class DistrictsTableTest {
     public void setUp() {
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_DISTRICTS);
-        mTable = spy(new DistrictsTable(db));
+        mGson = HttpModule.getGson();
+        mTable = spy(new DistrictsTable(db, mGson));
         AddDistrictKeys keyAdder = new AddDistrictKeys(2015);
         mDistricts = ModelMaker.getModelList(District.class, "2015_districts");
         keyAdder.call(mDistricts);
@@ -43,7 +47,7 @@ public class DistrictsTableTest {
 
     @Test
     public void testAddAndGet() {
-        DbTableTestDriver.testAddAndGet(mTable, mDistricts.get(0));
+        DbTableTestDriver.testAddAndGet(mTable, mDistricts.get(0), mGson);
     }
 
     @Test
@@ -55,9 +59,10 @@ public class DistrictsTableTest {
     public void testUpdate() {
         District result = DbTableTestDriver.testUpdate(mTable,
                                                        mDistricts.get(0),
-                                                       district -> district.setName("Test Dist"));
+                                                       district -> district.setDisplayName("Test Dist"),
+                                                       mGson);
         assertNotNull(result);
-        assertEquals("Test Dist", result.getName());
+        assertEquals("Test Dist", result.getDisplayName());
     }
 
     @Test

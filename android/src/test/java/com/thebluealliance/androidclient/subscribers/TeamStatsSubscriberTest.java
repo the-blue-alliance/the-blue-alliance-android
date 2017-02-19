@@ -1,9 +1,11 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 
 import org.junit.Before;
@@ -29,7 +31,7 @@ public class TeamStatsSubscriberTest {
     @Mock Resources mResources;
 
     TeamStatsSubscriber mSubscriber;
-    JsonObject mStats;
+    JsonElement mStats;
 
     @Before
     public void setUp() {
@@ -37,7 +39,11 @@ public class TeamStatsSubscriberTest {
         when(mResources.getString(anyInt())).thenReturn("Stat");
 
         mSubscriber = new TeamStatsSubscriber(mResources);
-        mStats = ModelMaker.getModel(JsonObject.class, "2015necmp_frc195_stats");
+        TeamStatsExtractor extractor = new TeamStatsExtractor("frc195");
+        mStats = ModelMaker.getModel(JsonObject.class, "2015necmp_oprs");
+        System.out.println(mStats.toString());
+        mStats = extractor.call(mStats);
+        System.out.println(mStats.toString());
     }
 
     @Test
@@ -63,9 +69,9 @@ public class TeamStatsSubscriberTest {
         LabelValueViewModel dpr = getItem(1, data);
         LabelValueViewModel ccwm = getItem(2, data);
 
-        assertEquals(new LabelValueViewModel("Stat", "87.96"), opr);
-        assertEquals(new LabelValueViewModel("Stat", "50.89"), dpr);
-        assertEquals(new LabelValueViewModel("Stat", "37.07"), ccwm);
+        assertEquals("87.96", opr.getValue().toString());
+        assertEquals("50.89", dpr.getValue().toString());
+        assertEquals("37.07", ccwm.getValue().toString());
     }
 
     private static LabelValueViewModel getItem(int position, List<Object> data) {

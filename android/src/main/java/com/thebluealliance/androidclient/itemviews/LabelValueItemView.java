@@ -4,6 +4,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.widget.TextView;
 
 import butterknife.Bind;
@@ -30,5 +31,8 @@ public class LabelValueItemView extends BindableFrameLayout<LabelValueViewModel>
     @Override public void bind(LabelValueViewModel model) {
         label.setText(model.getLabel());
         value.setText(model.getValue());
+        if (model.getBoldText()) {
+            value.setTypeface(null, Typeface.BOLD);
+        }
     }
 }

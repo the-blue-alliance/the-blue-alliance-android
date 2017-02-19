@@ -28,7 +28,7 @@ public class EventListElement extends ListElement implements Serializable {
         eventKey = "";
         eventName = event.getName();
         eventDates = event.getDateString();
-        eventLocation = event.getLocation();
+        eventLocation = event.getAddress();
         eventYear = event.getYear();
         this.showMyTba = false;
     }
