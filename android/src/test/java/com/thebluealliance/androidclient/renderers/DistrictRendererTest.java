@@ -36,7 +36,7 @@ public class DistrictRendererTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        mDistrict = ModelMaker.getModel(District.class, "district_ne");
+        mDistrict = ModelMaker.getModelList(District.class, "2015_districts").get(3);
         mDistrict.setYear(2015);
         mDistrict.setKey(DISTRICT_KEY);
         mRenderer = new DistrictRenderer(mDatafeed);

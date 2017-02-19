@@ -18,7 +18,7 @@ public class DistrictTeamTest {
 
     @Before
     public void readJson() {
-        mDistrictTeam = ModelMaker.getModelList(DistrictRanking.class, "2015ne_rankings").get(0);
+        mDistrictTeam = ModelMaker.getModelList(DistrictRanking.class, "2015ne_rankings").get(25);
     }
 
     @Test

@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Media;
 
@@ -28,10 +29,10 @@ public class MediaListWriterTest {
 
     @Mock Database mDb;
     @Mock MediasTable mTable;
-    @Mock Gson mGson;
 
     private List<Media> mMedias;
     private MediaListWriter mWriter;
+    private Gson mGson;
 
     @Before
     public void setUp() {
@@ -39,6 +40,7 @@ public class MediaListWriterTest {
         mTable = DatabaseMocker.mockMediasTable(mDb);
         mMedias = ModelMaker.getModelList(Media.class, "media_frc254_2014");
         mWriter = new MediaListWriter(mDb);
+        mGson = HttpModule.getGson();
     }
 
     @Test

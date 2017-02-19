@@ -20,4 +20,9 @@ public class EventStatsEvent {
                 && (((EventStatsEvent) o).getStatString() == null && getStatString() == null
                     || ((EventStatsEvent) o).getStatString().equals(getStatString()));
     }
+
+    @Override
+    public String toString() {
+        return "EventStatsEvent: " + mTopStatString;
+    }
 }

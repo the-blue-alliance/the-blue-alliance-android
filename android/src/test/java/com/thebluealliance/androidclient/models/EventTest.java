@@ -48,9 +48,8 @@ public class EventTest {
         assertEquals(mEvent.getShortName(), "Hartford");
         assertEquals(mEvent.getEventDistrictEnum(),
                      DistrictType.NEW_ENGLAND);
-        assertEquals(mEvent.getAddress(), "Hartford Public High School\n55 Forest Street\nHartford, "
-                                      + "CT 06105\nUSA");
-        assertEquals(mEvent.getLocationName(), "Hartford, CT, USA");
+        assertEquals(mEvent.getAddress(), "55 Forest St, Hartford, CT 06105, USA");
+        assertEquals(mEvent.getLocationName(), "Hartford Public High School");
         assertEquals(mEvent.getYearAgnosticEventKey(), "cthar");
         assertEquals(mEvent.getYear().intValue(), 2015);
         assertEquals(mEvent.getEventTypeEnum(),
@@ -88,9 +87,8 @@ public class EventTest {
         assertEquals(mOffseasonEvent.getShortName(), "Chezy Champs");
         assertEquals(mOffseasonEvent.getEventDistrictEnum(),
                      DistrictType.NO_DISTRICT);
-        assertEquals(mOffseasonEvent.getAddress(), "Bellarmine College Prep\n850 Elm St.\nSan Jose,"
-                                                        + " California 95126\nUSA");
-        assertEquals(mOffseasonEvent.getLocationName(), "San Jose, CA, USA");
+        assertEquals(mOffseasonEvent.getAddress(), "960 W Hedding St, San Jose, CA 95126, USA");
+        assertEquals(mOffseasonEvent.getLocationName(), "Bellarmine College Preparatory");
         assertEquals(mOffseasonEvent.getYearAgnosticEventKey(), "cc");
         assertEquals(mOffseasonEvent.getYear().intValue(), 2016);
         assertEquals(mOffseasonEvent.getEventTypeEnum(),
@@ -140,6 +138,7 @@ public class EventTest {
 
         // Now, test when only the end date is done
         // Should still have an empty date string
+        mCleanEvent = new Event();
         mCleanEvent.setEndDate("2015-03-27");
         dateString = mCleanEvent.getDateString();
         assertEquals("", dateString);

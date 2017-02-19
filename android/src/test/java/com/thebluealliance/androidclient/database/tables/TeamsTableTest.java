@@ -6,13 +6,13 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DbTableTestDriver;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Team;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import android.database.sqlite.SQLiteDatabase;
@@ -26,9 +26,9 @@ import static org.mockito.Mockito.spy;
 @RunWith(DefaultTestRunner.class)
 public class TeamsTableTest {
 
-    @Mock Gson mGson;
     private TeamsTable mTable;
     private List<Team> mTeams;
+    private Gson mGson;
 
     @Before
     public void setUp() {
@@ -37,6 +37,7 @@ public class TeamsTableTest {
         db.execSQL(Database.CREATE_TEAMS);
         db.execSQL(Database.CREATE_SEARCH_TEAMS);
 
+        mGson = HttpModule.getGson();
         mTable = spy(new TeamsTable(db, mGson));
         mTeams = ModelMaker.getModelList(Team.class, "2015necmp_teams");
         for (int i = 0; i < mTeams.size(); i++) {

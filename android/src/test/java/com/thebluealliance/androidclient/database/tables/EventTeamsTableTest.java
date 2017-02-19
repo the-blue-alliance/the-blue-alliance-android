@@ -6,27 +6,27 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DbTableTestDriver;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
+import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.spy;
 
 @RunWith(DefaultTestRunner.class)
 public class EventTeamsTableTest {
-    @Mock Gson mGson;
-    @Mock TeamAtEventStatus mStatus;
+    private TeamAtEventStatus mStatus;
+    private Gson mGson;
     private EventTeamsTable mTable;
     private List<EventTeam> mEventTeams;
 
@@ -34,6 +34,8 @@ public class EventTeamsTableTest {
     public void setUp() {
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_EVENTTEAMS);
+        mStatus = ModelMaker.getModel(TeamAtEventStatus.class, "2015necmp_frc1124_status");
+        mGson = HttpModule.getGson();
         mTable = spy(new EventTeamsTable(db, mGson));
         mEventTeams = new ArrayList<>();
         EventTeam et1 = new EventTeam();
@@ -74,7 +76,7 @@ public class EventTeamsTableTest {
                                                     et -> et.setStatus(mStatus),
                                                         mGson);
         assertNotNull(result);
-        assertEquals(mStatus, result.getStatus());
+        assertNotNull(result.getStatus());
     }
 
     @Test

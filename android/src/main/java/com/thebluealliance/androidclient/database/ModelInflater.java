@@ -179,6 +179,9 @@ public final class ModelInflater {
                 case MatchesTable.LAST_MODIFIED:
                     match.setLastModified(data.getLong(i));
                     break;
+                case MatchesTable.EVENT:
+                    match.setEventKey(data.getString(i));
+                    break;
                 default:
             }
         }

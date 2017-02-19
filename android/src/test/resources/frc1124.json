@@ -1,1 +1,23 @@
-{"website": "http://www.uberbots.org", "name": "Avon Public Schools/UTC & AVON HIGH SCHOOL", "locality": "Avon", "rookie_year": 2003, "region": "Connecticut", "team_number": 1124, "location": "Avon, Connecticut, USA", "key": "frc1124", "country_name": "USA", "nickname": "UberBots"}
+{
+  "address": "510 W Avon Rd, Avon, CT 06001, USA", 
+  "city": "Avon", 
+  "country": "United States", 
+  "gmaps_place_id": "ChIJ_4VGxyKv54kRmLyNergRp0Y", 
+  "gmaps_url": "https://maps.google.com/?cid=5091057387793398936", 
+  "home_championship": {
+    "2017": "St. Louis", 
+    "2018": "Detroit"
+  }, 
+  "key": "frc1124", 
+  "lat": 41.783438599999997, 
+  "lng": -72.862195799999995, 
+  "location_name": "Avon High School", 
+  "motto": "We eat Kryptonite for breakfast!", 
+  "name": "Avon Public Schools/UTC/OFS Fitel/Walmart/Wittman Battenfeld/Simsbury Bank&Avon High School", 
+  "nickname": "UberBots", 
+  "postal_code": "06001", 
+  "rookie_year": 2003, 
+  "state_prov": "Connecticut", 
+  "team_number": 1124, 
+  "website": "http://www.uberbots.org"
+}

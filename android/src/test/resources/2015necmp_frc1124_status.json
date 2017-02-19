@@ -1,0 +1,64 @@
+{
+  "alliance": {
+    "backup": null, 
+    "name": "Alliance 2", 
+    "number": 2, 
+    "pick": 2
+  }, 
+  "alliance_status_str": "<b>2nd Pick</b> of <b>Alliance 2</b>", 
+  "overall_status_str": "Team 1124 was <b>Rank 34/60</b> with an average score of <b>132.3</b> in quals, competed in the playoffs as the <b>2nd Pick</b> of <b>Alliance 2</b>, and was <b>eliminated in the Semifinals</b> with a playoff average of <b>156.0</b>.", 
+  "playoff": {
+    "current_level_record": null, 
+    "level": "sf", 
+    "playoff_average": 156.0, 
+    "record": null, 
+    "status": "eliminated"
+  }, 
+  "playoff_status_str": "<b>Eliminated in the Semifinals</b> with a playoff average of <b>156.0</b>", 
+  "qual": {
+    "num_teams": 60, 
+    "ranking": {
+      "dq": 0, 
+      "matches_played": 12, 
+      "qual_average": 132.33000000000001, 
+      "rank": 34, 
+      "record": null, 
+      "sort_orders": [
+        132.33000000000001, 
+        320.0, 
+        52.0, 
+        620.0, 
+        426.0, 
+        188.0
+      ], 
+      "team_key": "frc1124"
+    }, 
+    "sort_order_info": [
+      {
+        "name": "Qual Avg.", 
+        "precision": 1
+      }, 
+      {
+        "name": "Coopertition", 
+        "precision": 0
+      }, 
+      {
+        "name": "Auto", 
+        "precision": 0
+      }, 
+      {
+        "name": "Container", 
+        "precision": 0
+      }, 
+      {
+        "name": "Tote", 
+        "precision": 0
+      }, 
+      {
+        "name": "Litter", 
+        "precision": 0
+      }
+    ], 
+    "status": "completed"
+  }
+}

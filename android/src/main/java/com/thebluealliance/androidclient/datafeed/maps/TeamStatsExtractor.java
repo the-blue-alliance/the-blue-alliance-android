@@ -21,23 +21,22 @@ public class TeamStatsExtractor implements Func1<JsonElement, JsonElement> {
         }
         JsonObject allObject = allStats.getAsJsonObject();
         JsonObject teamStats = new JsonObject();
-        String teamNumber = mTeamKey.substring(3);
         if (allObject.has("oprs")) {
             JsonObject oprs = allObject.get("oprs").getAsJsonObject();
-            if (oprs.has(teamNumber)) {
-                teamStats.addProperty("opr", oprs.get(teamNumber).getAsDouble());
+            if (oprs.has(mTeamKey)) {
+                teamStats.addProperty("opr", oprs.get(mTeamKey).getAsDouble());
             }
         }
         if (allObject.has("dprs")) {
             JsonObject oprs = allObject.get("dprs").getAsJsonObject();
-            if (oprs.has(teamNumber)) {
-                teamStats.addProperty("dpr", oprs.get(teamNumber).getAsDouble());
+            if (oprs.has(mTeamKey)) {
+                teamStats.addProperty("dpr", oprs.get(mTeamKey).getAsDouble());
             }
         }
         if (allObject.has("ccwms")) {
             JsonObject oprs = allObject.get("ccwms").getAsJsonObject();
-            if (oprs.has(teamNumber)) {
-                teamStats.addProperty("ccwm", oprs.get(teamNumber).getAsDouble());
+            if (oprs.has(mTeamKey)) {
+                teamStats.addProperty("ccwm", oprs.get(mTeamKey).getAsDouble());
             }
         }
         return teamStats;

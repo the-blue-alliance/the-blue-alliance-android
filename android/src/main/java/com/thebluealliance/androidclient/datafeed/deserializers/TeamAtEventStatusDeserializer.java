@@ -14,7 +14,6 @@ import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.models.RankingItem;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.api.model.IAllianceBackup;
-import com.thebluealliance.api.model.IRankingResponseObject;
 import com.thebluealliance.api.model.IRankingSortOrder;
 import com.thebluealliance.api.model.ITeamRecord;
 
@@ -141,7 +140,7 @@ public class TeamAtEventStatusDeserializer implements JsonDeserializer<TeamAtEve
 
             if (src.getQual().getRanking() != null) {
                 qualJson.add("ranking", context.serialize(src.getQual().getRanking(),
-                                                          IRankingResponseObject.class));
+                                                          RankingItem.class));
             }
 
             if (src.getQual().getSortOrderInfo() != null) {

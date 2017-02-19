@@ -90,9 +90,8 @@ public class TeamAtDistrictSummarySubscriber
         Event event = eventsTable.get(points.getEventKey());
         String event1Name = event != null ? event.getShortName() : points.getEventKey();
         return new LabelValueDetailListItem(event1Name,
-                                            String.format(resources.getString(R.string.district_points_format),
-                                                          points.getTotal()),
-                                            points.getEventKey());
+                                            String.format(resources.getString(R.string.district_points_format), points.getTotal()),
+                                            EventTeamHelper.generateKey(points.getEventKey(), teamKey));
     }
 
     private static @Nullable IDistrictEventPoints getEventPoints(DistrictRanking ranking, int index) {

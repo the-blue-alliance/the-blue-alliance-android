@@ -21,8 +21,10 @@ import android.content.res.Resources;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
@@ -45,6 +47,7 @@ public class RankingsListSubscriberTest {
         mSubscriber = new RankingsListSubscriber(mDb, mEventBus, mResources);
         mRankings = ModelMaker.getModel(RankingResponseObject.class, "2015necmp_rankings_apiv3");
         mRankingsMultiTeam = ModelMaker.getModel(RankingResponseObject.class, "2015ohri_rankings_apiv3");
+        when(mResources.getString(anyInt())).thenReturn("Thing");
     }
 
     @Test

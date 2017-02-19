@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.renderers;
 
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.datafeed.maps.AllianceEventKeyAdder;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
 import com.thebluealliance.androidclient.listitems.EventListElement;
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.when;
 @RunWith(RobolectricTestRunner.class)
 public class EventRendererTest  {
 
-    private static final String EVENT_KEY = "2015cthar";
+    private static final String EVENT_KEY = "2016nytr";
 
     @Mock APICache mDatafeed;
 
@@ -45,8 +46,10 @@ public class EventRendererTest  {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        AllianceEventKeyAdder keyAdder = new AllianceEventKeyAdder("2016nytr");
         mEvent = ModelMaker.getModel(Event.class, EVENT_KEY);
         mAlliances = ModelMaker.getModelList(EventAlliance.class, "2016nytr_alliances_apiv3");
+        mAlliances = keyAdder.call(mAlliances);
         mRenderer = new EventRenderer(mDatafeed);
     }
 
@@ -82,7 +85,7 @@ public class EventRendererTest  {
         WebcastListElement webcast = elements.get(0);
         assertNotNull(webcast);
         assertEquals(webcast.eventKey, EVENT_KEY);
-        assertEquals(webcast.eventName, "Hartford");
+        assertEquals(webcast.eventName, "New York Tech Valley");
         assertEquals(webcast.webcast, JSONHelper.getasJsonArray(mEvent.getWebcasts()).get(0));
         assertEquals(webcast.number, 1);
     }

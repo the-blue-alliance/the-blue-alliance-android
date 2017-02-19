@@ -37,7 +37,7 @@ public class AllianceListElementTest {
 
     @Test
     public void testRender3Team() {
-        View view = getView("2016test", 1, TEAM_LIST_3, PlayoffAdvancement.SEMI);
+        View view = getView("2016test", "Alliance 1", 1, TEAM_LIST_3, PlayoffAdvancement.SEMI);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -48,7 +48,7 @@ public class AllianceListElementTest {
 
     @Test
     public void testRender4Team() {
-        View view = getView("2016test", 1, TEAM_LIST_4, PlayoffAdvancement.QUARTER);
+        View view = getView("2016test", "Alliance 1", 1, TEAM_LIST_4, PlayoffAdvancement.QUARTER);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -59,10 +59,12 @@ public class AllianceListElementTest {
 
     private View getView(
             String eventKey,
+            String allianceName,
             int number,
             List<String> teams,
             PlayoffAdvancement advancement) {
-        AllianceListElement element = new AllianceListElement(eventKey, number, teams, advancement);
+        AllianceListElement element = new AllianceListElement(eventKey, allianceName, number,
+                                                              teams, advancement);
         Context targetContext = InstrumentationRegistry.getTargetContext();
         LayoutInflater inflater = LayoutInflater.from(targetContext);
         return element.getView(targetContext, inflater, null);

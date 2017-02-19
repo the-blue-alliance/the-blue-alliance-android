@@ -35,7 +35,7 @@ public class DistrictWriterTest {
     public void setUp() {
         mDb = mock(Database.class);
         mTable = DatabaseMocker.mockDistrictsTable(mDb);
-        mDistrict = ModelMaker.getModel(District.class, "district_ne");
+        mDistrict = ModelMaker.getModelList(District.class, "2015_districts").get(3);
         mWriter = new DistrictWriter(mDb);
     }
 

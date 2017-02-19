@@ -26,10 +26,10 @@ public class TeamTest {
     public void testTeamModel()  {
         assertNotNull(mTeam);
         assertEquals("frc1124", mTeam.getKey());
-        assertEquals("Avon Public Schools/UTC & AVON HIGH SCHOOL", mTeam.getName());
+        assertEquals("Avon Public Schools/UTC/OFS Fitel/Walmart/Wittman Battenfeld/Simsbury Bank&Avon High School", mTeam.getName());
         assertEquals("UberBots", mTeam.getNickname());
         assertEquals("http://www.uberbots.org", mTeam.getWebsite());
-        assertEquals("Avon, Connecticut, USA", mTeam.getLocationName());
+        assertEquals("Avon, Connecticut, United States", mTeam.getLocation());
         assertNotNull(mTeam.getTeamNumber());
         assertEquals(1124, mTeam.getTeamNumber().intValue());
     }

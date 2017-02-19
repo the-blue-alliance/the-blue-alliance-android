@@ -1,34 +1,5186 @@
 [
-  {
-    "point_total": 157,
-    "team_key": "frc1124",
-    "event_points": {
-      "2015necmp": {
-        "alliance_points": 6,
-        "award_points": 15,
-        "elim_points": 30,
-        "district_cmp": true,
-        "total": 87,
-        "qual_points": 36
-      },
-      "2015ctwat": {
-        "alliance_points": 12,
-        "award_points": 0,
-        "elim_points": 0,
-        "district_cmp": false,
-        "total": 26,
-        "qual_points": 14
-      },
-      "2015manda": {
-        "alliance_points": 13,
-        "award_points": 5,
-        "elim_points": 10,
-        "district_cmp": false,
-        "total": 44,
-        "qual_points": 16
-      }
-    },
-    "rank": 26,
-    "rookie_bonus": 0
-  }
+ {
+  "event_points": [
+   {
+    "alliance_points": 16, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 22, 
+    "total": 73.0
+   }, 
+   {
+    "alliance_points": 16, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015manda", 
+    "qual_points": 22, 
+    "total": 73.0
+   }, 
+   {
+    "alliance_points": 48, 
+    "award_points": 15, 
+    "district_cmp": true, 
+    "elim_points": 90.0, 
+    "event_key": "2015necmp", 
+    "qual_points": 66, 
+    "total": 219.0
+   }
+  ], 
+  "point_total": 365.0, 
+  "rank": 1, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1519"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 8, 
+    "award_points": 10, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 9, 
+    "total": 27
+   }, 
+   {
+    "alliance_points": 16, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015cthar", 
+    "qual_points": 22, 
+    "total": 73.0
+   }, 
+   {
+    "alliance_points": 48, 
+    "award_points": 30, 
+    "district_cmp": true, 
+    "elim_points": 90.0, 
+    "event_key": "2015necmp", 
+    "qual_points": 66, 
+    "total": 234.0
+   }
+  ], 
+  "point_total": 334.0, 
+  "rank": 2, 
+  "rookie_bonus": 0, 
+  "team_key": "frc195"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 11, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015ctwat", 
+    "qual_points": 17, 
+    "total": 43
+   }, 
+   {
+    "alliance_points": 13, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015rismi", 
+    "qual_points": 18, 
+    "total": 41
+   }, 
+   {
+    "alliance_points": 3, 
+    "award_points": 24, 
+    "district_cmp": true, 
+    "elim_points": 90.0, 
+    "event_key": "2015necmp", 
+    "qual_points": 48, 
+    "total": 165.0
+   }
+  ], 
+  "point_total": 249.0, 
+  "rank": 3, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2067"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 16, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 22, 
+    "total": 43
+   }, 
+   {
+    "alliance_points": 15, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015mabos", 
+    "qual_points": 21, 
+    "total": 61
+   }, 
+   {
+    "alliance_points": 45, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 30, 
+    "event_key": "2015necmp", 
+    "qual_points": 63, 
+    "total": 138
+   }
+  ], 
+  "point_total": 242, 
+  "rank": 4, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1768"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 14, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 19, 
+    "total": 38
+   }, 
+   {
+    "alliance_points": 15, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015cthar", 
+    "qual_points": 19, 
+    "total": 59
+   }, 
+   {
+    "alliance_points": 45, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 30, 
+    "event_key": "2015necmp", 
+    "qual_points": 60, 
+    "total": 135
+   }
+  ], 
+  "point_total": 232, 
+  "rank": 5, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2170"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 8, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 13, 
+    "total": 26
+   }, 
+   {
+    "alliance_points": 12, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015rismi", 
+    "qual_points": 13, 
+    "total": 60.0
+   }, 
+   {
+    "alliance_points": 39, 
+    "award_points": 15, 
+    "district_cmp": true, 
+    "elim_points": 60, 
+    "event_key": "2015necmp", 
+    "qual_points": 30, 
+    "total": 144
+   }
+  ], 
+  "point_total": 230.0, 
+  "rank": 6, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1100"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 15, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015maspr", 
+    "qual_points": 14, 
+    "total": 44
+   }, 
+   {
+    "alliance_points": 13, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 17, 
+    "total": 30
+   }, 
+   {
+    "alliance_points": 39, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 60, 
+    "event_key": "2015necmp", 
+    "qual_points": 57, 
+    "total": 156
+   }
+  ], 
+  "point_total": 230, 
+  "rank": 7, 
+  "rookie_bonus": 0, 
+  "team_key": "frc175"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 16, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 21, 
+    "total": 67.0
+   }, 
+   {
+    "alliance_points": 16, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015manda", 
+    "qual_points": 18, 
+    "total": 69.0
+   }, 
+   {
+    "alliance_points": 33, 
+    "award_points": 15, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 42, 
+    "total": 90
+   }
+  ], 
+  "point_total": 226.0, 
+  "rank": 8, 
+  "rookie_bonus": 0, 
+  "team_key": "frc230"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 16, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 22, 
+    "total": 73.0
+   }, 
+   {
+    "alliance_points": 7, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015cthar", 
+    "qual_points": 14, 
+    "total": 31
+   }, 
+   {
+    "alliance_points": 12, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 60, 
+    "event_key": "2015necmp", 
+    "qual_points": 42, 
+    "total": 114
+   }
+  ], 
+  "point_total": 218.0, 
+  "rank": 9, 
+  "rookie_bonus": 0, 
+  "team_key": "frc236"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 12, 
+    "award_points": 10, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015manda", 
+    "qual_points": 12, 
+    "total": 44
+   }, 
+   {
+    "alliance_points": 15, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015mabos", 
+    "qual_points": 18, 
+    "total": 53
+   }, 
+   {
+    "alliance_points": 33, 
+    "award_points": 30, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 54, 
+    "total": 117
+   }
+  ], 
+  "point_total": 214, 
+  "rank": 10, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2877"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 12, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015maspr", 
+    "qual_points": 18, 
+    "total": 60.0
+   }, 
+   {
+    "alliance_points": 12, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015cthar", 
+    "qual_points": 17, 
+    "total": 39
+   }, 
+   {
+    "alliance_points": 42, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 60, 
+    "total": 102
+   }
+  ], 
+  "point_total": 201.0, 
+  "rank": 11, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3146"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 15, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015manda", 
+    "qual_points": 18, 
+    "total": 58
+   }, 
+   {
+    "alliance_points": 16, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015rismi", 
+    "qual_points": 22, 
+    "total": 53
+   }, 
+   {
+    "alliance_points": 24, 
+    "award_points": 15, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 42, 
+    "total": 81
+   }
+  ], 
+  "point_total": 192, 
+  "rank": 12, 
+  "rookie_bonus": 0, 
+  "team_key": "frc125"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 16, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015melew", 
+    "qual_points": 22, 
+    "total": 73.0
+   }, 
+   {
+    "alliance_points": 15, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015nhdur", 
+    "qual_points": 18, 
+    "total": 58
+   }, 
+   {
+    "alliance_points": 9, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 51, 
+    "total": 60
+   }
+  ], 
+  "point_total": 191.0, 
+  "rank": 13, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4564"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 13, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015ctwat", 
+    "qual_points": 14, 
+    "total": 52
+   }, 
+   {
+    "alliance_points": 16, 
+    "award_points": 10, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015rismi", 
+    "qual_points": 16, 
+    "total": 52
+   }, 
+   {
+    "alliance_points": 18, 
+    "award_points": 30, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 39, 
+    "total": 87
+   }
+  ], 
+  "point_total": 191, 
+  "rank": 14, 
+  "rookie_bonus": 0, 
+  "team_key": "frc558"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 9, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 15, 
+    "total": 29
+   }, 
+   {
+    "alliance_points": 6, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 8, 
+    "total": 44.0
+   }, 
+   {
+    "alliance_points": 30, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 30, 
+    "event_key": "2015necmp", 
+    "qual_points": 54, 
+    "total": 114
+   }
+  ], 
+  "point_total": 187.0, 
+  "rank": 15, 
+  "rookie_bonus": 0, 
+  "team_key": "frc501"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 12, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015nhnas", 
+    "qual_points": 17, 
+    "total": 44
+   }, 
+   {
+    "alliance_points": 13, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015marea", 
+    "qual_points": 19, 
+    "total": 67.0
+   }, 
+   {
+    "alliance_points": 27, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 42, 
+    "total": 69
+   }
+  ], 
+  "point_total": 180.0, 
+  "rank": 16, 
+  "rookie_bonus": 0, 
+  "team_key": "frc246"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 15, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015nhnas", 
+    "qual_points": 20, 
+    "total": 50
+   }, 
+   {
+    "alliance_points": 14, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 16, 
+    "total": 35
+   }, 
+   {
+    "alliance_points": 27, 
+    "award_points": 15, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 51, 
+    "total": 93
+   }
+  ], 
+  "point_total": 178, 
+  "rank": 17, 
+  "rookie_bonus": 0, 
+  "team_key": "frc88"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 4, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015marea", 
+    "qual_points": 10, 
+    "total": 49.0
+   }, 
+   {
+    "alliance_points": 16, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015melew", 
+    "qual_points": 19, 
+    "total": 73.0
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 15, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 27, 
+    "total": 42
+   }
+  ], 
+  "point_total": 174.0, 
+  "rank": 18, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5687"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 16, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 18, 
+    "total": 39
+   }, 
+   {
+    "alliance_points": 13, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 19, 
+    "total": 37
+   }, 
+   {
+    "alliance_points": 21, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 30, 
+    "event_key": "2015necmp", 
+    "qual_points": 45, 
+    "total": 96
+   }
+  ], 
+  "point_total": 172, 
+  "rank": 19, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3467"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 14, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015marea", 
+    "qual_points": 14, 
+    "total": 53
+   }, 
+   {
+    "alliance_points": 12, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 12, 
+    "total": 29
+   }, 
+   {
+    "alliance_points": 42, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 48, 
+    "total": 90
+   }
+  ], 
+  "point_total": 172, 
+  "rank": 20, 
+  "rookie_bonus": 0, 
+  "team_key": "frc319"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 15, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 16, 
+    "total": 36
+   }, 
+   {
+    "alliance_points": 14, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 19, 
+    "total": 38
+   }, 
+   {
+    "alliance_points": 36, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 57, 
+    "total": 93
+   }
+  ], 
+  "point_total": 167, 
+  "rank": 21, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2836"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 13, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015ctwat", 
+    "qual_points": 18, 
+    "total": 51
+   }, 
+   {
+    "alliance_points": 6, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 11, 
+    "total": 22
+   }, 
+   {
+    "alliance_points": 30, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 30, 
+    "event_key": "2015necmp", 
+    "qual_points": 33, 
+    "total": 93
+   }
+  ], 
+  "point_total": 166, 
+  "rank": 22, 
+  "rookie_bonus": 0, 
+  "team_key": "frc237"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 14, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015melew", 
+    "qual_points": 16, 
+    "total": 55
+   }, 
+   {
+    "alliance_points": 11, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 17, 
+    "total": 63.0
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 15, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 33, 
+    "total": 48
+   }
+  ], 
+  "point_total": 166.0, 
+  "rank": 23, 
+  "rookie_bonus": 0, 
+  "team_key": "frc133"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 14, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015maspr", 
+    "qual_points": 16, 
+    "total": 55
+   }, 
+   {
+    "alliance_points": 15, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015rismi", 
+    "qual_points": 21, 
+    "total": 61
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 45, 
+    "total": 45
+   }
+  ], 
+  "point_total": 161, 
+  "rank": 24, 
+  "rookie_bonus": 0, 
+  "team_key": "frc61"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 14, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015melew", 
+    "qual_points": 20, 
+    "total": 59
+   }, 
+   {
+    "alliance_points": 15, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015nhdur", 
+    "qual_points": 21, 
+    "total": 61
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 39, 
+    "total": 39
+   }
+  ], 
+  "point_total": 159, 
+  "rank": 25, 
+  "rookie_bonus": 0, 
+  "team_key": "frc58"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 12, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 14, 
+    "total": 26
+   }, 
+   {
+    "alliance_points": 13, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015manda", 
+    "qual_points": 16, 
+    "total": 44
+   }, 
+   {
+    "alliance_points": 6, 
+    "award_points": 15, 
+    "district_cmp": true, 
+    "elim_points": 30, 
+    "event_key": "2015necmp", 
+    "qual_points": 36, 
+    "total": 87
+   }
+  ], 
+  "point_total": 157, 
+  "rank": 26, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1124"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 15, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 20, 
+    "total": 35
+   }, 
+   {
+    "alliance_points": 14, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 18, 
+    "total": 32
+   }, 
+   {
+    "alliance_points": 36, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 54, 
+    "total": 90
+   }
+  ], 
+  "point_total": 157, 
+  "rank": 27, 
+  "rookie_bonus": 0, 
+  "team_key": "frc999"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 15, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015nhnas", 
+    "qual_points": 21, 
+    "total": 51
+   }, 
+   {
+    "alliance_points": 16, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015nhdur", 
+    "qual_points": 22, 
+    "total": 53
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 51, 
+    "total": 51
+   }
+  ], 
+  "point_total": 155, 
+  "rank": 28, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2342"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 7, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015ctwat", 
+    "qual_points": 12, 
+    "total": 34
+   }, 
+   {
+    "alliance_points": 13, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015manda", 
+    "qual_points": 17, 
+    "total": 45
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 15, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 48, 
+    "total": 63
+   }
+  ], 
+  "point_total": 142, 
+  "rank": 29, 
+  "rookie_bonus": 0, 
+  "team_key": "frc155"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 5, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015maspr", 
+    "qual_points": 13, 
+    "total": 48.0
+   }, 
+   {
+    "alliance_points": 14, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 19, 
+    "total": 33
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 15, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 42, 
+    "total": 57
+   }
+  ], 
+  "point_total": 138.0, 
+  "rank": 30, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2168"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 12, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015manda", 
+    "qual_points": 15, 
+    "total": 45
+   }, 
+   {
+    "alliance_points": 8, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 14, 
+    "total": 22
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 24, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 33, 
+    "total": 57
+   }
+  ], 
+  "point_total": 134, 
+  "rank": 31, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5735"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 2, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015nhdur", 
+    "qual_points": 15, 
+    "total": 37
+   }, 
+   {
+    "alliance_points": 13, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015mabos", 
+    "qual_points": 19, 
+    "total": 47
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 48, 
+    "total": 48
+   }
+  ], 
+  "point_total": 132, 
+  "rank": 32, 
+  "rookie_bonus": 0, 
+  "team_key": "frc126"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 13, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015melew", 
+    "qual_points": 15, 
+    "total": 38
+   }, 
+   {
+    "alliance_points": 14, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015nhdur", 
+    "qual_points": 19, 
+    "total": 43
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 45, 
+    "total": 45
+   }
+  ], 
+  "point_total": 131, 
+  "rank": 33, 
+  "rookie_bonus": 5, 
+  "team_key": "frc5122"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 13, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015marea", 
+    "qual_points": 13, 
+    "total": 56.0
+   }, 
+   {
+    "alliance_points": 12, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015cthar", 
+    "qual_points": 16, 
+    "total": 38
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 36, 
+    "total": 36
+   }
+  ], 
+  "point_total": 130.0, 
+  "rank": 34, 
+  "rookie_bonus": 0, 
+  "team_key": "frc173"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 16, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 17, 
+    "total": 68.0
+   }, 
+   {
+    "alliance_points": 11, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015melew", 
+    "qual_points": 13, 
+    "total": 34
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 24, 
+    "total": 24
+   }
+  ], 
+  "point_total": 126.0, 
+  "rank": 35, 
+  "rookie_bonus": 0, 
+  "team_key": "frc95"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 14, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 18, 
+    "total": 37
+   }, 
+   {
+    "alliance_points": 15, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015maspr", 
+    "qual_points": 21, 
+    "total": 54
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 30, 
+    "total": 30
+   }
+  ], 
+  "point_total": 121, 
+  "rank": 36, 
+  "rookie_bonus": 0, 
+  "team_key": "frc176"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 12, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 16, 
+    "total": 33
+   }, 
+   {
+    "alliance_points": 14, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 20, 
+    "total": 42
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 45, 
+    "total": 45
+   }
+  ], 
+  "point_total": 120, 
+  "rank": 37, 
+  "rookie_bonus": 0, 
+  "team_key": "frc172"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 15, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 20, 
+    "total": 35
+   }, 
+   {
+    "alliance_points": 11, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 16, 
+    "total": 32
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 15, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 30, 
+    "total": 45
+   }
+  ], 
+  "point_total": 117, 
+  "rank": 38, 
+  "rookie_bonus": 5, 
+  "team_key": "frc4909"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 13, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015nhnas", 
+    "qual_points": 13, 
+    "total": 54
+   }, 
+   {
+    "alliance_points": 12, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 17, 
+    "total": 37
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 24, 
+    "total": 24
+   }
+  ], 
+  "point_total": 115, 
+  "rank": 39, 
+  "rookie_bonus": 0, 
+  "team_key": "frc811"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 10, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015ctwat", 
+    "qual_points": 15, 
+    "total": 35
+   }, 
+   {
+    "alliance_points": 1, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015cthar", 
+    "qual_points": 8, 
+    "total": 39.0
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 39, 
+    "total": 39
+   }
+  ], 
+  "point_total": 113.0, 
+  "rank": 40, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2064"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 15, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 11, 
+    "total": 34
+   }, 
+   {
+    "alliance_points": 14, 
+    "award_points": 10, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015nhdur", 
+    "qual_points": 20, 
+    "total": 54
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 24, 
+    "total": 24
+   }
+  ], 
+  "point_total": 112, 
+  "rank": 41, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3930"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 16, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015maspr", 
+    "qual_points": 22, 
+    "total": 48
+   }, 
+   {
+    "alliance_points": 9, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 15, 
+    "total": 24
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 39, 
+    "total": 39
+   }
+  ], 
+  "point_total": 111, 
+  "rank": 42, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4048"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 10, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015marea", 
+    "qual_points": 11, 
+    "total": 36
+   }, 
+   {
+    "alliance_points": 7, 
+    "award_points": 10, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 10, 
+    "total": 27
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 15, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 33, 
+    "total": 48
+   }
+  ], 
+  "point_total": 111, 
+  "rank": 43, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1058"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 13, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015nhnas", 
+    "qual_points": 19, 
+    "total": 52
+   }, 
+   {
+    "alliance_points": 13, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 16, 
+    "total": 34
+   }, 
+   {
+    "alliance_points": 15, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 9, 
+    "total": 24
+   }
+  ], 
+  "point_total": 110, 
+  "rank": 44, 
+  "rookie_bonus": 0, 
+  "team_key": "frc138"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 2, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 8, 
+    "total": 18
+   }, 
+   {
+    "alliance_points": 12, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015rismi", 
+    "qual_points": 18, 
+    "total": 60.0
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 30, 
+    "total": 30
+   }
+  ], 
+  "point_total": 108.0, 
+  "rank": 45, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1735"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 9, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 16, 
+    "total": 30
+   }, 
+   {
+    "alliance_points": 16, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015nhdur", 
+    "qual_points": 18, 
+    "total": 44
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 33, 
+    "total": 33
+   }
+  ], 
+  "point_total": 107, 
+  "rank": 46, 
+  "rookie_bonus": 0, 
+  "team_key": "frc885"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 10, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 14, 
+    "total": 29
+   }, 
+   {
+    "alliance_points": 12, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015marea", 
+    "qual_points": 18, 
+    "total": 40
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 36, 
+    "total": 36
+   }
+  ], 
+  "point_total": 105, 
+  "rank": 47, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2876"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 5, 
+    "award_points": 10, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015nhnas", 
+    "qual_points": 10, 
+    "total": 35
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 12, 
+    "total": 17
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 30, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 21, 
+    "total": 51
+   }
+  ], 
+  "point_total": 103, 
+  "rank": 48, 
+  "rookie_bonus": 0, 
+  "team_key": "frc467"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 12, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 17, 
+    "total": 34
+   }, 
+   {
+    "alliance_points": 10, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 17, 
+    "total": 32
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 36, 
+    "total": 36
+   }
+  ], 
+  "point_total": 102, 
+  "rank": 49, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4055"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 1, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 4, 
+    "total": 35.0
+   }, 
+   {
+    "alliance_points": 2, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015cthar", 
+    "qual_points": 6, 
+    "total": 28
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 36, 
+    "total": 36
+   }
+  ], 
+  "point_total": 99.0, 
+  "rank": 50, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3464"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 13, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 19, 
+    "total": 37
+   }, 
+   {
+    "alliance_points": 11, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 17, 
+    "total": 33
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 27, 
+    "total": 27
+   }
+  ], 
+  "point_total": 97, 
+  "rank": 51, 
+  "rookie_bonus": 0, 
+  "team_key": "frc166"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 12, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015marea", 
+    "qual_points": 17, 
+    "total": 44
+   }, 
+   {
+    "alliance_points": 12, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 14, 
+    "total": 31
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 21, 
+    "total": 21
+   }
+  ], 
+  "point_total": 96, 
+  "rank": 52, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1073"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 14, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 19, 
+    "total": 33
+   }, 
+   {
+    "alliance_points": 15, 
+    "award_points": 10, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 21, 
+    "total": 46
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 12, 
+    "total": 12
+   }
+  ], 
+  "point_total": 96, 
+  "rank": 53, 
+  "rookie_bonus": 5, 
+  "team_key": "frc4905"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 4, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 9, 
+    "total": 18
+   }, 
+   {
+    "alliance_points": 11, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 9, 
+    "total": 50.0
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 27, 
+    "total": 27
+   }
+  ], 
+  "point_total": 95.0, 
+  "rank": 54, 
+  "rookie_bonus": 0, 
+  "team_key": "frc213"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 3, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 11, 
+    "total": 14
+   }, 
+   {
+    "alliance_points": 12, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015maspr", 
+    "qual_points": 18, 
+    "total": 60.0
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 21, 
+    "total": 21
+   }
+  ], 
+  "point_total": 95.0, 
+  "rank": 55, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3718"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 14, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 19, 
+    "total": 38
+   }, 
+   {
+    "alliance_points": 11, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 14, 
+    "total": 33
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 24, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 0, 
+    "total": 24
+   }
+  ], 
+  "point_total": 95, 
+  "rank": 56, 
+  "rookie_bonus": 0, 
+  "team_key": "frc78"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 6, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015ctwat", 
+    "qual_points": 7, 
+    "total": 23
+   }, 
+   {
+    "alliance_points": 13, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015rismi", 
+    "qual_points": 19, 
+    "total": 42
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 27, 
+    "total": 27
+   }
+  ], 
+  "point_total": 92, 
+  "rank": 57, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1099"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 3, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015maspr", 
+    "qual_points": 11, 
+    "total": 34
+   }, 
+   {
+    "alliance_points": 2, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015mabos", 
+    "qual_points": 9, 
+    "total": 31
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 18, 
+    "total": 18
+   }
+  ], 
+  "point_total": 83, 
+  "rank": 58, 
+  "rookie_bonus": 0, 
+  "team_key": "frc663"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 10, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015marea", 
+    "qual_points": 16, 
+    "total": 41
+   }, 
+   {
+    "alliance_points": 7, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 14, 
+    "total": 26
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 15, 
+    "total": 15
+   }
+  ], 
+  "point_total": 82, 
+  "rank": 59, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4761"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 1, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015melew", 
+    "qual_points": 7, 
+    "total": 43.0
+   }, 
+   {
+    "alliance_points": 10, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 16, 
+    "total": 26
+   }
+  ], 
+  "point_total": 74.0, 
+  "rank": 60, 
+  "rookie_bonus": 5, 
+  "team_key": "frc5265"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 10, 
+    "award_points": 10, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 10, 
+    "total": 30
+   }, 
+   {
+    "alliance_points": 10, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 16, 
+    "total": 26
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 15, 
+    "total": 15
+   }
+  ], 
+  "point_total": 71, 
+  "rank": 61, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2648"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 15, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 21, 
+    "total": 41
+   }, 
+   {
+    "alliance_points": 12, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 17, 
+    "total": 29
+   }
+  ], 
+  "point_total": 70, 
+  "rank": 62, 
+  "rookie_bonus": 0, 
+  "team_key": "frc348"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 4, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015nhnas", 
+    "qual_points": 12, 
+    "total": 36
+   }, 
+   {
+    "alliance_points": 7, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015marea", 
+    "qual_points": 12, 
+    "total": 29
+   }
+  ], 
+  "point_total": 65, 
+  "rank": 63, 
+  "rookie_bonus": 0, 
+  "team_key": "frc190"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 5, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015marea", 
+    "qual_points": 14, 
+    "total": 29
+   }, 
+   {
+    "alliance_points": 10, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015mabos", 
+    "qual_points": 16, 
+    "total": 36
+   }
+  ], 
+  "point_total": 65, 
+  "rank": 64, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2713"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 9, 
+    "total": 17
+   }, 
+   {
+    "alliance_points": 11, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015melew", 
+    "qual_points": 17, 
+    "total": 38
+   }
+  ], 
+  "point_total": 65, 
+  "rank": 65, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5782"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 11, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 12, 
+    "total": 23
+   }, 
+   {
+    "alliance_points": 1, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015mabos", 
+    "qual_points": 9, 
+    "total": 40.0
+   }
+  ], 
+  "point_total": 63.0, 
+  "rank": 66, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1786"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 9, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 12, 
+    "total": 21
+   }, 
+   {
+    "alliance_points": 16, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015maspr", 
+    "qual_points": 16, 
+    "total": 42
+   }
+  ], 
+  "point_total": 63, 
+  "rank": 67, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1991"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 9, 
+    "total": 9
+   }, 
+   {
+    "alliance_points": 14, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015marea", 
+    "qual_points": 19, 
+    "total": 53
+   }
+  ], 
+  "point_total": 62, 
+  "rank": 68, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3566"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 4, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015ctwat", 
+    "qual_points": 14, 
+    "total": 43
+   }, 
+   {
+    "alliance_points": 6, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 13, 
+    "total": 19
+   }
+  ], 
+  "point_total": 62, 
+  "rank": 69, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4557"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 13, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 10, 
+    "total": 23
+   }, 
+   {
+    "alliance_points": 13, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015mabos", 
+    "qual_points": 16, 
+    "total": 39
+   }
+  ], 
+  "point_total": 62, 
+  "rank": 70, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3205"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 12, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015nhnas", 
+    "qual_points": 18, 
+    "total": 40
+   }, 
+   {
+    "alliance_points": 8, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 14, 
+    "total": 22
+   }
+  ], 
+  "point_total": 62, 
+  "rank": 71, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1831"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 9, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 12, 
+    "total": 29
+   }, 
+   {
+    "alliance_points": 11, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 17, 
+    "total": 28
+   }
+  ], 
+  "point_total": 62, 
+  "rank": 72, 
+  "rookie_bonus": 5, 
+  "team_key": "frc5112"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 11, 
+    "award_points": 10, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 16, 
+    "total": 37
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 7, 
+    "total": 7
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 18, 
+    "total": 18
+   }
+  ], 
+  "point_total": 62, 
+  "rank": 73, 
+  "rookie_bonus": 0, 
+  "team_key": "frc178"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 2, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 13, 
+    "total": 15
+   }, 
+   {
+    "alliance_points": 13, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015melew", 
+    "qual_points": 18, 
+    "total": 46
+   }
+  ], 
+  "point_total": 61, 
+  "rank": 74, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3525"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 10, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 16, 
+    "total": 31
+   }, 
+   {
+    "alliance_points": 9, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 15, 
+    "total": 29
+   }
+  ], 
+  "point_total": 60, 
+  "rank": 75, 
+  "rookie_bonus": 0, 
+  "team_key": "frc157"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 6, 
+    "award_points": 10, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 13, 
+    "total": 29
+   }, 
+   {
+    "alliance_points": 11, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 15, 
+    "total": 31
+   }
+  ], 
+  "point_total": 60, 
+  "rank": 76, 
+  "rookie_bonus": 0, 
+  "team_key": "frc839"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 1, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015manda", 
+    "qual_points": 9, 
+    "total": 40.0
+   }, 
+   {
+    "alliance_points": 3, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 11, 
+    "total": 14
+   }
+  ], 
+  "point_total": 59.0, 
+  "rank": 77, 
+  "rookie_bonus": 5, 
+  "team_key": "frc4908"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 14, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015maspr", 
+    "qual_points": 20, 
+    "total": 59
+   }
+  ], 
+  "point_total": 59, 
+  "rank": 78, 
+  "rookie_bonus": 0, 
+  "team_key": "frc316"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 9, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 16, 
+    "total": 25
+   }, 
+   {
+    "alliance_points": 3, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015melew", 
+    "qual_points": 11, 
+    "total": 34
+   }
+  ], 
+  "point_total": 59, 
+  "rank": 79, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3609"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 10, 
+    "total": 15
+   }, 
+   {
+    "alliance_points": 10, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 16, 
+    "total": 34
+   }
+  ], 
+  "point_total": 59, 
+  "rank": 80, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5494"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 14, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 7, 
+    "total": 21
+   }, 
+   {
+    "alliance_points": 7, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015mabos", 
+    "qual_points": 15, 
+    "total": 37
+   }
+  ], 
+  "point_total": 58, 
+  "rank": 81, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2084"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 8, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 15, 
+    "total": 23
+   }, 
+   {
+    "alliance_points": 14, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 15, 
+    "total": 34
+   }
+  ], 
+  "point_total": 57, 
+  "rank": 82, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1517"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 10, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 14, 
+    "total": 24
+   }, 
+   {
+    "alliance_points": 2, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015rismi", 
+    "qual_points": 10, 
+    "total": 32
+   }
+  ], 
+  "point_total": 56, 
+  "rank": 83, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2079"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 10, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015ctwat", 
+    "qual_points": 10, 
+    "total": 38
+   }, 
+   {
+    "alliance_points": 4, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 9, 
+    "total": 18
+   }
+  ], 
+  "point_total": 56, 
+  "rank": 84, 
+  "rookie_bonus": 0, 
+  "team_key": "frc228"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 8, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 12, 
+    "total": 20
+   }, 
+   {
+    "alliance_points": 13, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 18, 
+    "total": 36
+   }
+  ], 
+  "point_total": 56, 
+  "rank": 85, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1699"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 7, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 12, 
+    "total": 24
+   }, 
+   {
+    "alliance_points": 11, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 15, 
+    "total": 31
+   }
+  ], 
+  "point_total": 55, 
+  "rank": 86, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3958"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 7, 
+    "total": 7
+   }, 
+   {
+    "alliance_points": 5, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015rismi", 
+    "qual_points": 12, 
+    "total": 47.0
+   }
+  ], 
+  "point_total": 54.0, 
+  "rank": 87, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2523"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 1, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 30.0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 12, 
+    "total": 43.0
+   }, 
+   {
+    "alliance_points": 4, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 7, 
+    "total": 11
+   }
+  ], 
+  "point_total": 54.0, 
+  "rank": 88, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1307"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 4, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015melew", 
+    "qual_points": 9, 
+    "total": 23
+   }, 
+   {
+    "alliance_points": 4, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015mabos", 
+    "qual_points": 12, 
+    "total": 31
+   }
+  ], 
+  "point_total": 54, 
+  "rank": 89, 
+  "rookie_bonus": 0, 
+  "team_key": "frc69"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 10, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 15, 
+    "total": 25
+   }, 
+   {
+    "alliance_points": 9, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 15, 
+    "total": 29
+   }
+  ], 
+  "point_total": 54, 
+  "rank": 90, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3451"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 8, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 14, 
+    "total": 22
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 14, 
+    "total": 22
+   }
+  ], 
+  "point_total": 54, 
+  "rank": 91, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5506"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 7, 
+    "total": 15
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 5, 
+    "total": 5
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 24, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 0, 
+    "total": 24
+   }
+  ], 
+  "point_total": 54, 
+  "rank": 92, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5422"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 14, 
+    "total": 14
+   }, 
+   {
+    "alliance_points": 3, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015marea", 
+    "qual_points": 15, 
+    "total": 38
+   }
+  ], 
+  "point_total": 52, 
+  "rank": 93, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1474"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 7, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 11, 
+    "total": 18
+   }, 
+   {
+    "alliance_points": 10, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015mabos", 
+    "qual_points": 13, 
+    "total": 33
+   }
+  ], 
+  "point_total": 51, 
+  "rank": 94, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3236"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 5, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 12, 
+    "total": 25
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 10, 
+    "total": 15
+   }
+  ], 
+  "point_total": 50, 
+  "rank": 95, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5746"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 9, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 11, 
+    "total": 20
+   }, 
+   {
+    "alliance_points": 9, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 14, 
+    "total": 28
+   }
+  ], 
+  "point_total": 48, 
+  "rank": 96, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4041"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 12, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 17, 
+    "total": 29
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 13, 
+    "total": 13
+   }
+  ], 
+  "point_total": 47, 
+  "rank": 97, 
+  "rookie_bonus": 5, 
+  "team_key": "frc4906"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 5, 
+    "total": 10
+   }, 
+   {
+    "alliance_points": 10, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015cthar", 
+    "qual_points": 16, 
+    "total": 36
+   }
+  ], 
+  "point_total": 46, 
+  "rank": 98, 
+  "rookie_bonus": 0, 
+  "team_key": "frc177"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 3, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 13, 
+    "total": 16
+   }, 
+   {
+    "alliance_points": 6, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015melew", 
+    "qual_points": 9, 
+    "total": 30
+   }
+  ], 
+  "point_total": 46, 
+  "rank": 99, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4042"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 1, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015maspr", 
+    "qual_points": 11, 
+    "total": 22
+   }, 
+   {
+    "alliance_points": 8, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 15, 
+    "total": 23
+   }
+  ], 
+  "point_total": 45, 
+  "rank": 100, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3719"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 11, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 17, 
+    "total": 28
+   }, 
+   {
+    "alliance_points": 5, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 12, 
+    "total": 17
+   }
+  ], 
+  "point_total": 45, 
+  "rank": 101, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3466"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 9, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 14, 
+    "total": 28
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 11, 
+    "total": 16
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 0, 
+    "total": 0
+   }
+  ], 
+  "point_total": 44, 
+  "rank": 102, 
+  "rookie_bonus": 0, 
+  "team_key": "frc716"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 13, 
+    "total": 18
+   }, 
+   {
+    "alliance_points": 1, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015rismi", 
+    "qual_points": 14, 
+    "total": 25
+   }
+  ], 
+  "point_total": 43, 
+  "rank": 103, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1071"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 10, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 11, 
+    "total": 21
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 7, 
+    "total": 12
+   }
+  ], 
+  "point_total": 43, 
+  "rank": 104, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5738"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 2, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 20, 
+    "event_key": "2015manda", 
+    "qual_points": 7, 
+    "total": 29
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 13, 
+    "total": 13
+   }
+  ], 
+  "point_total": 42, 
+  "rank": 105, 
+  "rookie_bonus": 0, 
+  "team_key": "frc97"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 11, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015ctwat", 
+    "qual_points": 16, 
+    "total": 42
+   }
+  ], 
+  "point_total": 42, 
+  "rank": 106, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3314"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 8, 
+    "total": 13
+   }, 
+   {
+    "alliance_points": 3, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015nhdur", 
+    "qual_points": 11, 
+    "total": 24
+   }
+  ], 
+  "point_total": 42, 
+  "rank": 107, 
+  "rookie_bonus": 5, 
+  "team_key": "frc5286"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 12, 
+    "total": 12
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 12, 
+    "total": 20
+   }
+  ], 
+  "point_total": 42, 
+  "rank": 108, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5459"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 6, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 15, 
+    "total": 21
+   }, 
+   {
+    "alliance_points": 9, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 11, 
+    "total": 20
+   }
+  ], 
+  "point_total": 41, 
+  "rank": 109, 
+  "rookie_bonus": 0, 
+  "team_key": "frc131"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 11, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 17, 
+    "total": 28
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 13, 
+    "total": 13
+   }
+  ], 
+  "point_total": 41, 
+  "rank": 110, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3623"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 10, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 15, 
+    "total": 25
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 11, 
+    "total": 16
+   }
+  ], 
+  "point_total": 41, 
+  "rank": 111, 
+  "rookie_bonus": 0, 
+  "team_key": "frc571"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 8, 
+    "total": 13
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 13, 
+    "total": 18
+   }
+  ], 
+  "point_total": 41, 
+  "rank": 112, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5491"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 2, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015nhnas", 
+    "qual_points": 6, 
+    "total": 18
+   }, 
+   {
+    "alliance_points": 1, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015nhdur", 
+    "qual_points": 11, 
+    "total": 22
+   }
+  ], 
+  "point_total": 40, 
+  "rank": 113, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1512"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 11, 
+    "total": 11
+   }, 
+   {
+    "alliance_points": 2, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015maspr", 
+    "qual_points": 10, 
+    "total": 27
+   }
+  ], 
+  "point_total": 38, 
+  "rank": 114, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2370"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 11, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 18, 
+    "total": 29
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 9, 
+    "total": 9
+   }
+  ], 
+  "point_total": 38, 
+  "rank": 115, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1729"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 5, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015manda", 
+    "qual_points": 4, 
+    "total": 24
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 8, 
+    "total": 13
+   }
+  ], 
+  "point_total": 37, 
+  "rank": 116, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1027"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 11, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 16, 
+    "total": 27
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 4, 
+    "total": 4
+   }
+  ], 
+  "point_total": 36, 
+  "rank": 117, 
+  "rookie_bonus": 5, 
+  "team_key": "frc5000"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 13, 
+    "total": 13
+   }, 
+   {
+    "alliance_points": 9, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 14, 
+    "total": 23
+   }
+  ], 
+  "point_total": 36, 
+  "rank": 118, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3597"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 2, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 12, 
+    "total": 14
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 12, 
+    "total": 12
+   }
+  ], 
+  "point_total": 36, 
+  "rank": 119, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5471"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 9, 
+    "total": 9
+   }, 
+   {
+    "alliance_points": 4, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015rismi", 
+    "qual_points": 12, 
+    "total": 26
+   }
+  ], 
+  "point_total": 35, 
+  "rank": 120, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1153"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 10, 
+    "total": 18
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 7, 
+    "total": 7
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 0, 
+    "total": 0
+   }
+  ], 
+  "point_total": 35, 
+  "rank": 121, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5400"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 8, 
+    "total": 13
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 8, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 4, 
+    "total": 12
+   }
+  ], 
+  "point_total": 35, 
+  "rank": 122, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5686"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 10, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 9, 
+    "total": 19
+   }, 
+   {
+    "alliance_points": 3, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 12, 
+    "total": 15
+   }
+  ], 
+  "point_total": 34, 
+  "rank": 123, 
+  "rookie_bonus": 0, 
+  "team_key": "frc181"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 3, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 11, 
+    "total": 14
+   }, 
+   {
+    "alliance_points": 9, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 11, 
+    "total": 20
+   }
+  ], 
+  "point_total": 34, 
+  "rank": 124, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1757"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 9, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 16, 
+    "total": 25
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 9, 
+    "total": 9
+   }
+  ], 
+  "point_total": 34, 
+  "rank": 125, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4311"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 9, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 15, 
+    "total": 24
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 5, 
+    "total": 5
+   }
+  ], 
+  "point_total": 34, 
+  "rank": 126, 
+  "rookie_bonus": 5, 
+  "team_key": "frc5129"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 9, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 14, 
+    "total": 23
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 6, 
+    "total": 11
+   }
+  ], 
+  "point_total": 34, 
+  "rank": 127, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2423"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 8, 
+    "total": 8
+   }, 
+   {
+    "alliance_points": 3, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 8, 
+    "total": 16
+   }
+  ], 
+  "point_total": 34, 
+  "rank": 128, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5752"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 11, 
+    "total": 16
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 12, 
+    "total": 17
+   }
+  ], 
+  "point_total": 33, 
+  "rank": 129, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1922"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 12, 
+    "total": 12
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 6, 
+    "total": 11
+   }
+  ], 
+  "point_total": 33, 
+  "rank": 130, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5556"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 5, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 13, 
+    "total": 18
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 9, 
+    "total": 9
+   }
+  ], 
+  "point_total": 32, 
+  "rank": 131, 
+  "rookie_bonus": 5, 
+  "team_key": "frc4925"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 10, 
+    "total": 10
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 12, 
+    "total": 12
+   }
+  ], 
+  "point_total": 32, 
+  "rank": 132, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5563"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 8, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 13, 
+    "total": 21
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 10, 
+    "total": 10
+   }
+  ], 
+  "point_total": 31, 
+  "rank": 133, 
+  "rookie_bonus": 0, 
+  "team_key": "frc121"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 6, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 15, 
+    "total": 21
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 10, 
+    "total": 10
+   }
+  ], 
+  "point_total": 31, 
+  "rank": 134, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4169"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 9, 
+    "total": 14
+   }, 
+   {
+    "alliance_points": 6, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 11, 
+    "total": 17
+   }
+  ], 
+  "point_total": 31, 
+  "rank": 135, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1965"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 14, 
+    "total": 14
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 12, 
+    "total": 12
+   }
+  ], 
+  "point_total": 31, 
+  "rank": 136, 
+  "rookie_bonus": 5, 
+  "team_key": "frc4929"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 13, 
+    "total": 13
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 13, 
+    "total": 18
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": true, 
+    "elim_points": 0, 
+    "event_key": "2015necmp", 
+    "qual_points": 0, 
+    "total": 0
+   }
+  ], 
+  "point_total": 31, 
+  "rank": 137, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4546"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 9, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 4, 
+    "total": 13
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 12, 
+    "total": 17
+   }
+  ], 
+  "point_total": 30, 
+  "rank": 138, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4176"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 5, 
+    "total": 5
+   }, 
+   {
+    "alliance_points": 9, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 15, 
+    "total": 24
+   }
+  ], 
+  "point_total": 29, 
+  "rank": 139, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1740"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 4, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 10, 
+    "event_key": "2015manda", 
+    "qual_points": 7, 
+    "total": 21
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 6, 
+    "total": 6
+   }
+  ], 
+  "point_total": 27, 
+  "rank": 140, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1350"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 14, 
+    "total": 14
+   }, 
+   {
+    "alliance_points": 1, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 11, 
+    "total": 12
+   }
+  ], 
+  "point_total": 26, 
+  "rank": 141, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1289"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 7, 
+    "total": 12
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 9, 
+    "total": 14
+   }
+  ], 
+  "point_total": 26, 
+  "rank": 142, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4151"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 6, 
+    "total": 6
+   }, 
+   {
+    "alliance_points": 5, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 14, 
+    "total": 19
+   }
+  ], 
+  "point_total": 25, 
+  "rank": 143, 
+  "rookie_bonus": 0, 
+  "team_key": "frc509"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 13, 
+    "total": 13
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 12, 
+    "total": 12
+   }
+  ], 
+  "point_total": 25, 
+  "rank": 144, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2785"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 12, 
+    "total": 12
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 8, 
+    "total": 8
+   }
+  ], 
+  "point_total": 25, 
+  "rank": 145, 
+  "rookie_bonus": 5, 
+  "team_key": "frc4958"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 11, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 13, 
+    "total": 24
+   }
+  ], 
+  "point_total": 24, 
+  "rank": 146, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1811"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 10, 
+    "total": 10
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 14, 
+    "total": 14
+   }
+  ], 
+  "point_total": 24, 
+  "rank": 147, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4572"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 5, 
+    "total": 5
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 14, 
+    "total": 14
+   }
+  ], 
+  "point_total": 24, 
+  "rank": 148, 
+  "rookie_bonus": 5, 
+  "team_key": "frc5347"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 11, 
+    "total": 11
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 13, 
+    "total": 13
+   }
+  ], 
+  "point_total": 24, 
+  "rank": 149, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3634"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 11, 
+    "total": 16
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 8, 
+    "total": 8
+   }
+  ], 
+  "point_total": 24, 
+  "rank": 150, 
+  "rookie_bonus": 0, 
+  "team_key": "frc238"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 7, 
+    "total": 7
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 7, 
+    "total": 7
+   }
+  ], 
+  "point_total": 24, 
+  "rank": 151, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5633"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 6, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 10, 
+    "total": 16
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 7, 
+    "total": 7
+   }
+  ], 
+  "point_total": 23, 
+  "rank": 152, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4796"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 6, 
+    "total": 6
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 12, 
+    "total": 12
+   }
+  ], 
+  "point_total": 23, 
+  "rank": 153, 
+  "rookie_bonus": 5, 
+  "team_key": "frc5142"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 9, 
+    "total": 9
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 9, 
+    "total": 9
+   }
+  ], 
+  "point_total": 23, 
+  "rank": 154, 
+  "rookie_bonus": 5, 
+  "team_key": "frc5163"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 4, 
+    "total": 4
+   }, 
+   {
+    "alliance_points": 7, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 11, 
+    "total": 18
+   }
+  ], 
+  "point_total": 22, 
+  "rank": 155, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3585"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 4, 
+    "total": 9
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 13, 
+    "total": 13
+   }
+  ], 
+  "point_total": 22, 
+  "rank": 156, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4474"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 12, 
+    "total": 12
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 8, 
+    "total": 8
+   }
+  ], 
+  "point_total": 20, 
+  "rank": 157, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3182"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 8, 
+    "total": 8
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 12, 
+    "total": 12
+   }
+  ], 
+  "point_total": 20, 
+  "rank": 158, 
+  "rookie_bonus": 0, 
+  "team_key": "frc151"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 11, 
+    "total": 11
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 9, 
+    "total": 9
+   }
+  ], 
+  "point_total": 20, 
+  "rank": 159, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3654"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 7, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 6, 
+    "total": 13
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 6, 
+    "total": 6
+   }
+  ], 
+  "point_total": 19, 
+  "rank": 160, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4097"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 6, 
+    "total": 6
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 8, 
+    "total": 8
+   }
+  ], 
+  "point_total": 19, 
+  "rank": 161, 
+  "rookie_bonus": 5, 
+  "team_key": "frc4987"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 5, 
+    "total": 5
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 13, 
+    "total": 13
+   }
+  ], 
+  "point_total": 18, 
+  "rank": 162, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4473"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 8, 
+    "total": 8
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 10, 
+    "total": 10
+   }
+  ], 
+  "point_total": 18, 
+  "rank": 163, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1973"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 6, 
+    "total": 6
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 11, 
+    "total": 11
+   }
+  ], 
+  "point_total": 17, 
+  "rank": 164, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3555"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 7, 
+    "total": 7
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 10, 
+    "total": 10
+   }
+  ], 
+  "point_total": 17, 
+  "rank": 165, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3104"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 9, 
+    "total": 9
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 8, 
+    "total": 8
+   }
+  ], 
+  "point_total": 17, 
+  "rank": 166, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1277"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 12, 
+    "total": 12
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 4, 
+    "total": 4
+   }
+  ], 
+  "point_total": 16, 
+  "rank": 167, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3499"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 6, 
+    "total": 6
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 10, 
+    "total": 10
+   }
+  ], 
+  "point_total": 16, 
+  "rank": 168, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1721"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015maspr", 
+    "qual_points": 7, 
+    "total": 7
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 9, 
+    "total": 9
+   }
+  ], 
+  "point_total": 16, 
+  "rank": 169, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4034"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 5, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 10, 
+    "total": 15
+   }
+  ], 
+  "point_total": 15, 
+  "rank": 170, 
+  "rookie_bonus": 0, 
+  "team_key": "frc102"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 9, 
+    "total": 9
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 6, 
+    "total": 6
+   }
+  ], 
+  "point_total": 15, 
+  "rank": 171, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3461"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015melew", 
+    "qual_points": 4, 
+    "total": 4
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 10, 
+    "total": 10
+   }
+  ], 
+  "point_total": 14, 
+  "rank": 172, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4555"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 5, 
+    "total": 5
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015cthar", 
+    "qual_points": 9, 
+    "total": 9
+   }
+  ], 
+  "point_total": 14, 
+  "rank": 173, 
+  "rookie_bonus": 0, 
+  "team_key": "frc4628"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015marea", 
+    "qual_points": 9, 
+    "total": 9
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 5, 
+    "total": 5
+   }
+  ], 
+  "point_total": 14, 
+  "rank": 174, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1761"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015rismi", 
+    "qual_points": 8, 
+    "total": 8
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015mabos", 
+    "qual_points": 6, 
+    "total": 6
+   }
+  ], 
+  "point_total": 14, 
+  "rank": 175, 
+  "rookie_bonus": 0, 
+  "team_key": "frc2262"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015ctwat", 
+    "qual_points": 8, 
+    "total": 8
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015manda", 
+    "qual_points": 6, 
+    "total": 6
+   }
+  ], 
+  "point_total": 14, 
+  "rank": 176, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3780"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 5, 
+    "total": 5
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 7, 
+    "total": 7
+   }
+  ], 
+  "point_total": 12, 
+  "rank": 177, 
+  "rookie_bonus": 0, 
+  "team_key": "frc3323"
+ }, 
+ {
+  "event_points": [
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhnas", 
+    "qual_points": 4, 
+    "total": 4
+   }, 
+   {
+    "alliance_points": 0, 
+    "award_points": 0, 
+    "district_cmp": false, 
+    "elim_points": 0, 
+    "event_key": "2015nhdur", 
+    "qual_points": 6, 
+    "total": 6
+   }
+  ], 
+  "point_total": 10, 
+  "rank": 178, 
+  "rookie_bonus": 0, 
+  "team_key": "frc1247"
+ }, 
+ {
+  "event_points": [], 
+  "point_total": 10, 
+  "rank": 179, 
+  "rookie_bonus": 10, 
+  "team_key": "frc5766"
+ }
 ]

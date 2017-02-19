@@ -23,7 +23,7 @@ public class EventInfoSubscriberTest extends TestCase {
     @Before
     public void setUp() throws Exception{
         mSubscriber = new EventInfoSubscriber();
-        mEvent = ModelMaker.getModel(Event.class, "2015necmp");
+        mEvent = ModelMaker.getModel(Event.class, "2015cthar");
     }
 
     @Test

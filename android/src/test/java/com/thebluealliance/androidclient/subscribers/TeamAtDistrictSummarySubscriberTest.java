@@ -77,15 +77,15 @@ public class TeamAtDistrictSummarySubscriberTest {
         LabelValueDetailListItem event2 = getDetailItemAtPoistion(2, data);
         LabelValueDetailListItem cmp = getDetailItemAtPoistion(3, data);
         LabelValueListItem total = getItemAtPosition(4, data);
-        String event1Key = EventTeamHelper.generateKey("2015ctwat", "frc1124");
-        String event2Key = EventTeamHelper.generateKey("2015manda", "frc1124");
-        String cmpKey = EventTeamHelper.generateKey("2015necmp", "frc1124");
+        String event1Key = EventTeamHelper.generateKey("2015nhnas", "frc1519");
+        String event2Key = EventTeamHelper.generateKey("2015manda", "frc1519");
+        String cmpKey = EventTeamHelper.generateKey("2015necmp", "frc1519");
 
-        assertEquals(new LabelValueListItem("District Rank", "26th"), rank);
-        assertEquals(new LabelValueDetailListItem("2015ctwat", "26 Points", event1Key), event1);
-        assertEquals(new LabelValueDetailListItem("2015manda", "44 Points", event2Key), event2);
-        assertEquals(new LabelValueDetailListItem("2015necmp", "87 Points", cmpKey), cmp);
-        assertEquals(new LabelValueListItem("Total Points", "157 Points"), total);
+        assertEquals(new LabelValueListItem("District Rank", "1st"), rank);
+        assertEquals(new LabelValueDetailListItem("2015nhnas", "73 Points", event1Key), event1);
+        assertEquals(new LabelValueDetailListItem("2015manda", "73 Points", event2Key), event2);
+        assertEquals(new LabelValueDetailListItem("2015necmp", "219 Points", cmpKey), cmp);
+        assertEquals(new LabelValueListItem("Total Points", "365 Points"), total);
     }
 
     private static LabelValueListItem getItemAtPosition(int position, List<ListItem> data) {

@@ -6,14 +6,13 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DbTableTestDriver;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Award;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -26,15 +25,15 @@ import static org.mockito.Mockito.spy;
 @RunWith(DefaultTestRunner.class)
 public class AwardsTableTest {
 
-    @Mock Gson mGson;
     private AwardsTable mTable;
     private List<Award> mAwards;
+    private Gson mGson;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_AWARDS);
+        mGson = HttpModule.getGson();
         mTable = spy(new AwardsTable(db, mGson));
         mAwards = ModelMaker.getModelList(Award.class, "2015necmp_awards");
     }
@@ -84,7 +83,7 @@ public class AwardsTableTest {
         // Test for a team with awards
         List<Award> awards = mTable.getTeamAtEventAwards("125", "2015necmp");
         assertNotNull(awards);
-        assertEquals(mAwards.size(), awards.size());
+        assertEquals(2, awards.size());
 
         // Test for a team with no awards
         awards = mTable.getTeamAtEventAwards("254", "2015necmp");

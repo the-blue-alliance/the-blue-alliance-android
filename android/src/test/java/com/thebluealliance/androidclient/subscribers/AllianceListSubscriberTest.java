@@ -35,9 +35,9 @@ public class AllianceListSubscriberTest extends TestCase {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mSubscriber = new AllianceListSubscriber(mRenderer);
-        m2016nytrAlliances = ModelMaker.getModelList(EventAlliance.class, "2016nytr_alliances_apiv3.json");
-        m2014ctharAlliances = ModelMaker.getModelList(EventAlliance.class, "2014cthar_alliances_apiv3.json");
-        m2015arcAlliances = ModelMaker.getModelList(EventAlliance.class, "2015arc_alliances_apiv3.json");
+        m2016nytrAlliances = ModelMaker.getModelList(EventAlliance.class, "2016nytr_alliances_apiv3");
+        m2014ctharAlliances = ModelMaker.getModelList(EventAlliance.class, "2014cthar_alliances_apiv3");
+        m2015arcAlliances = ModelMaker.getModelList(EventAlliance.class, "2015arc_alliances_apiv3");
     }
 
     @Test

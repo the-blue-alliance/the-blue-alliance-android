@@ -26,6 +26,7 @@ import android.content.res.Resources;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -63,7 +64,7 @@ public class StatsListSubscriberTest {
     public void testSimpleBinding()  {
         StatsListSubscriber.Model model = new StatsListSubscriber.Model(mStats, mInsights);
         DatafeedTestDriver.testSimpleParsing(mSubscriber, model);
-        verify(mEventBus).post(eq(new EventStatsEvent("1. Team 3419 - <b>41.77</b>")));
+        verify(mEventBus).post(eq(new EventStatsEvent("1. Team 3419 - <b>41.77</b><br>2. Team 578 - <b>38.19</b><br>3. Team 1635 - <b>34.83</b><br>4. Team 1797 - <b>34.65</b><br>5. Team 5806 - <b>34.63</b>")));
     }
 
     @Test
@@ -76,11 +77,15 @@ public class StatsListSubscriberTest {
     public void testParsedData()  {
         StatsListSubscriber.Model model = new StatsListSubscriber.Model(mStats, mInsights);
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, model);
-        StatsListElement expected =
-          new StatsListElement("frc3419", "3419", "Team 3419", "Stats",
-                               41.76934455450079, 18.164742518609433, 23.60460203589137);
 
         assertEquals(66, data.size());
-        assertEquals(expected, data.get(0));
+        assertTrue(data.get(0) instanceof StatsListElement);
+
+        StatsListElement actual = ((StatsListElement)data.get(0));
+        assertEquals(actual.teamNumber, "3419");
+        assertEquals(actual.teamName, "Team 3419");
+        assertEquals(actual.opr, 41.76934455450079, 0);
+        assertEquals(actual.dpr, 18.164742518609433, 0);
+        assertEquals(actual.ccwm, 23.60460203589137, 0);
     }
 }

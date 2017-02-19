@@ -54,7 +54,7 @@ public class AwardTest {
         assertEquals(mIndividualAward.getName(), "Volunteer of the Year");
         assertEquals(mIndividualAward.getYear().intValue(), 2015);
 
-        List<IAwardRecipient> recipientList = mTeamAward.getRecipientList();
+        List<IAwardRecipient> recipientList = mIndividualAward.getRecipientList();
         assertNotNull(recipientList);
         assertEquals(recipientList.size(), 1);
 

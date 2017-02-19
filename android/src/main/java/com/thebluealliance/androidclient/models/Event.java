@@ -370,7 +370,7 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     }
 
     public String getDateString() {
-        if (getStartDate() == null || getStartDate() == null) {
+        if (getStartDate() == null || getEndDate() == null) {
             return "";
         }
        Date startDate = getFormattedStartDate(),

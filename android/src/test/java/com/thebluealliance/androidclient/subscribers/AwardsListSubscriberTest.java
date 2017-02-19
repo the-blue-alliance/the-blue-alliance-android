@@ -62,7 +62,7 @@ public class AwardsListSubscriberTest {
     public void testParse()  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mAwards);
 
-        assertEquals(data.size(), 4);
+        assertEquals(data.size(), 21);
         for (int i = 0; i < data.size(); i++) {
             assertTrue(data.get(i) instanceof CardedAwardListElement);
         }

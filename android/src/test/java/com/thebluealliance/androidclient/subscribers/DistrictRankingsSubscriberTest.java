@@ -60,7 +60,7 @@ public class DistrictRankingsSubscriberTest {
           new DistrictTeamListElement("frc1124", "2015ne", "Team 1124", 26, 157);
 
         assertNotNull(data);
-        assertEquals(data.size(), 1);
-        assertTrue(data.get(0).equals(element));
+        assertEquals(data.size(), 179);
+        assertTrue(data.get(25).equals(element));
     }
 }

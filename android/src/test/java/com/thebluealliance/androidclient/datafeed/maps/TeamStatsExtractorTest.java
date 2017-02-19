@@ -25,7 +25,7 @@ public class TeamStatsExtractorTest {
     @Before
     public void setUp() {
         String searchTeamKey = "frc195";
-        mAllStats = ModelMaker.getModel(JsonElement.class, "2015necmp_stats");
+        mAllStats = ModelMaker.getModel(JsonElement.class, "2015necmp_oprs");
         mExtractor = new TeamStatsExtractor(searchTeamKey);
     }
 
@@ -40,8 +40,8 @@ public class TeamStatsExtractorTest {
         assertTrue(statsObject.has("opr"));
         assertTrue(statsObject.has("dpr"));
         assertTrue(statsObject.has("ccwm"));
-        assertEquals(statsObject.get("opr").getAsDouble(), 87.957372917501459, 0);
-        assertEquals(statsObject.get("dpr").getAsDouble(), 50.887943082425011, 0);
-        assertEquals(statsObject.get("ccwm").getAsDouble(), 37.06942983507642, 0);
+        assertEquals(statsObject.get("opr").getAsDouble(), 87.957372917501459, .01);
+        assertEquals(statsObject.get("dpr").getAsDouble(), 50.887943082425011, .01);
+        assertEquals(statsObject.get("ccwm").getAsDouble(), 37.06942983507642, .01);
     }
 }

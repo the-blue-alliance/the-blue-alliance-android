@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DbTableTestDriver;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictTeamKey;
 import com.thebluealliance.androidclient.models.DistrictRanking;
@@ -13,7 +14,6 @@ import com.thebluealliance.androidclient.models.DistrictRanking;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -25,14 +25,15 @@ import static org.mockito.Mockito.spy;
 
 @RunWith(DefaultTestRunner.class)
 public class DistrictTeamsTableTest {
-    @Mock Gson mGson;
     private DistrictTeamsTable mTable;
     private List<DistrictRanking> mDistrictTeams;
+    private Gson mGson;
 
     @Before
     public void setUp() {
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_DISTRICTTEAMS);
+        mGson = HttpModule.getGson();
         mTable = spy(new DistrictTeamsTable(db, mGson));
         AddDistrictTeamKey keyAdder = new AddDistrictTeamKey("2015ne");
         mDistrictTeams = ModelMaker.getModelList(DistrictRanking.class, "2015ne_rankings");

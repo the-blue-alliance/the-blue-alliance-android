@@ -50,6 +50,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<StatsListSubscriber.M
         ((ListPair) mDataToBind).setSelectedList(ListPair.LIST0);
         mDb = db;
         mEventYear = -1;
+        mStatToSortBy = "";
     }
 
     public void setEventYear(int year) {
@@ -78,7 +79,7 @@ public class StatsListSubscriber extends BaseAPISubscriber<StatsListSubscriber.M
             String teamKey = stat.getKey();
             String teamNumber = teamKey.substring(3);
             Team team = mDb.getTeamsTable().get(teamKey);
-            String teamName = team == null ? "Team " + stat.getKey() : team.getNickname();
+            String teamName = team == null ? "Team " + teamNumber : team.getNickname();
             double opr = stat.getValue().getAsDouble();
             double dpr = dprs.has(stat.getKey()) ? dprs.get(stat.getKey()).getAsDouble() : 0;
             double ccwm = ccwms.has(stat.getKey()) ? ccwms.get(stat.getKey()).getAsDouble() : 0;

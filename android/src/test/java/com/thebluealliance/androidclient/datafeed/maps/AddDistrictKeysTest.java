@@ -26,7 +26,7 @@ public class AddDistrictKeysTest {
 
     @Before
     public void setUp() {
-        mDistrict = ModelMaker.getModel(District.class, "district_ne");
+        mDistrict = ModelMaker.getModelList(District.class, "2015_districts").get(3);
         mYear = 2015;
         mKeyAdder = new AddDistrictKeys(mYear);
     }

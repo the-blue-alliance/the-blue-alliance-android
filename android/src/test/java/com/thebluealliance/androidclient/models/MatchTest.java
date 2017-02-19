@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.api.model.IMatchAlliance;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
 import com.thebluealliance.api.model.IMatchVideo;
@@ -55,38 +54,4 @@ public class MatchTest {
         assertEquals(blueTeams.size(), 3);
         assertEquals(blueTeams.get(0), "frc469");
     }
-
-    @Test
-    public void testLazyLoadEventKey() {
-        mCleanMatch.setKey("2015cthar_qm1");
-        assertEquals(mCleanMatch.getEventKey(), "2015cthar");
-    }
-
-    @Test
-    public void testLazyLoadMatchType() {
-        mCleanMatch.setKey("2015cthar_qm2");
-        assertEquals(mCleanMatch.getCompLevel(), "qm");
-        assertEquals(mCleanMatch.getType(), MatchType.QUAL);
-
-        mCleanMatch = new Match();
-        mCleanMatch.setKey("2015cthar_ef1m2");
-        assertEquals(mCleanMatch.getCompLevel(), "ef");
-        assertEquals(mCleanMatch.getType(), MatchType.OCTO);
-
-        mCleanMatch = new Match();
-        mCleanMatch.setKey("2015cthar_qf1m2");
-        assertEquals(mCleanMatch.getCompLevel(), "qf");
-        assertEquals(mCleanMatch.getType(), MatchType.QUARTER);
-
-        mCleanMatch = new Match();
-        mCleanMatch.setKey("2015cthar_sf1m2");
-        assertEquals(mCleanMatch.getCompLevel(), "sf");
-        assertEquals(mCleanMatch.getType(), MatchType.SEMI);
-
-        mCleanMatch = new Match();
-        mCleanMatch.setKey("2015cthar_f1m2");
-        assertEquals(mCleanMatch.getCompLevel(), "f");
-        assertEquals(mCleanMatch.getType(), MatchType.FINAL);
-    }
-
 }

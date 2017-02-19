@@ -45,8 +45,8 @@ public class MatchHelperTest {
 
     @Test
     public void testGetScore() {
-        assertEquals(81, Match.getRedScore(mMatch.getAlliances()).intValue());
-        assertEquals(98, Match.getBlueScore(mMatch.getAlliances()).intValue());
+        assertEquals(43, Match.getRedScore(mMatch.getAlliances()).intValue());
+        assertEquals(0, Match.getBlueScore(mMatch.getAlliances()).intValue());
     }
 
     @Test

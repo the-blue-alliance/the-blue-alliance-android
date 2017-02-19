@@ -19,7 +19,7 @@ public class DistrictTest {
 
     @Before
     public void readJsonData() {
-        district = ModelMaker.getModel(District.class, "district_ne");
+        district = ModelMaker.getModelList(District.class, "2015_districts").get(3);
     }
 
     @Test
