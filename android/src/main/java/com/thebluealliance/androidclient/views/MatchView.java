@@ -23,6 +23,9 @@ import java.util.Date;
 
 public class MatchView extends FrameLayout {
 
+    @SuppressLint("SimpleDateFormat")
+    private static java.text.DateFormat dowFormat = new SimpleDateFormat("E ");
+
     private TextView matchTitle, red1, red2, red3, blue1, blue2, blue3, redScore, blueScore, time;
     private View matchContainer, matchTitleContainer, columnHeadersContainer, teamsHeader,
             scoreHeader, timeHeader, redAlliance, blueAlliance, videoIcon;
@@ -243,8 +246,6 @@ public class MatchView extends FrameLayout {
                 // and from yesterday's matches with delayed results.
                 Date date = new Date(time * 1000L);
                 java.text.DateFormat format = DateFormat.getTimeFormat(getContext());
-                @SuppressLint("SimpleDateFormat")
-                java.text.DateFormat dowFormat = new SimpleDateFormat("E ");
                 localTimeString = dowFormat.format(date) + format.format(date);
             }
 

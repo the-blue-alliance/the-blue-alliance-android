@@ -118,7 +118,7 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
             blueAlliance = new String[]{"", "", ""};
         }
 
-        long matchTime = match.getTime() != null ? (match.getTime() * 1000) : -1;
+        long matchTime = match.getTime() != null ? match.getTime() : -1;
 
         return new MatchListElement(youTubeVideoKey, match.getTitle(mResources, true),
           redAlliance, blueAlliance,
