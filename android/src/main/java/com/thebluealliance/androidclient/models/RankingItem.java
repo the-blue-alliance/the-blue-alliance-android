@@ -109,15 +109,11 @@ public class RankingItem implements IRankingItem {
                 || record.getTies() == null) {
                 return "";
             }
-            StringBuilder recordBuilder = new StringBuilder();
-            recordBuilder.append(record.getWins());
-            recordBuilder.append("-");
-            recordBuilder.append(record.getLosses());
-            if (record.getTies() > 0) {
-                recordBuilder.append("-");
-                recordBuilder.append(record.getTies());
-            }
-            return recordBuilder.toString();
+            return String.valueOf(record.getWins()) +
+                   "-" +
+                   record.getLosses() +
+                   "-" +
+                   record.getTies();
         }
 
         public static boolean isEmpty(ITeamRecord record) {
