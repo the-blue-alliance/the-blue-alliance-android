@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.models.MatchAlliancesContainer;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.views.breakdowns.AbstractMatchBreakdownView;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2015;

@@ -2,11 +2,9 @@ package com.thebluealliance.androidclient.fragments.event;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
-import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
-import com.thebluealliance.api.model.IEventAlliance;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

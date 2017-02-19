@@ -2,11 +2,9 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.firebase.AllianceAdvancementEvent;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 import com.thebluealliance.androidclient.types.PlayoffAdvancement;
-import com.thebluealliance.api.model.IEventAlliance;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;

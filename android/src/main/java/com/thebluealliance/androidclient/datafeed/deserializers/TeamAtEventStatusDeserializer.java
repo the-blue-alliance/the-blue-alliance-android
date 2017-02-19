@@ -79,8 +79,7 @@ public class TeamAtEventStatusDeserializer implements JsonDeserializer<TeamAtEve
             JsonObject qualJson = data.getAsJsonObject("qual");
             TeamAtEventStatus.TeamAtEventQual qual = new TeamAtEventStatus.TeamAtEventQual();
             RankingItem teamRank = context.deserialize(qualJson.get("ranking"), RankingItem.class);
-            List<IRankingSortOrder> sortOrders = context.deserialize(qualJson.get
-                    ("sort_order_info"), new TypeToken<List<IRankingSortOrder>>(){}.getType());
+            List<IRankingSortOrder> sortOrders = context.deserialize(qualJson.get("sort_order_info"), new TypeToken<List<IRankingSortOrder>>(){}.getType());
 
             qual.setRanking(teamRank);
             qual.setSortOrderInfo(sortOrders);

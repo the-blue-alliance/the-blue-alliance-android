@@ -1,14 +1,12 @@
 package com.thebluealliance.androidclient.api;
 
-import com.thebluealliance.androidclient.datafeed.APIv3RequestInterceptor;
-
 public final class ApiConstants {
     public static final String DEV_TBA_PREF_KEY = "tba_host";
     public static final String TBA_URL = "https://www.thebluealliance.com/";
     /**
      * Here's how we can force data to be loaded from either the cache or the web
      * We pass a custom header (that'll be removed in
-     * {@link APIv3RequestInterceptor}) which
+     * {@link com.thebluealliance.androidclient.datafeed.APIv3RequestInterceptor}) which
      * we use to construct the proper {@link okhttp3.CacheControl} to be used with the request
      */
     public static final String TBA_CACHE_HEADER = "X-TBA-Cache";

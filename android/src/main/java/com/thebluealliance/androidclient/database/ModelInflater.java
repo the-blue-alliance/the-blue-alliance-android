@@ -332,7 +332,7 @@ public final class ModelInflater {
 
     public static DistrictRanking inflateDistrictTeam(Cursor data, Gson gson) {
         DistrictRanking districtTeam = new DistrictRanking();
-        IDistrictEventPoints events[] = new IDistrictEventPoints[3];
+        IDistrictEventPoints[] events = new IDistrictEventPoints[3];
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
                 case DistrictTeamsTable.KEY:

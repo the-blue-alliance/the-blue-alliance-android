@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.fragments.event;
 
-import com.google.gson.JsonElement;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;

@@ -71,7 +71,7 @@ import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
 import static com.thebluealliance.androidclient.datafeed.deserializers
-        .RankingsResponseDeserializer.*;
+        .RankingsResponseDeserializer.RankingSortOrderDeserializer;
 
 /**
  * Dagger module that handles OkHttp and Gson
