@@ -77,7 +77,6 @@ public class EventAlliance implements IEventAlliance {
         JsonArray allianceArray = new JsonArray();
         for (int i = 0; i < alliances.size(); i++) {
             EventAlliance alliance = alliances.get(i);
-            alliance.setEventKey(eventKey);
             allianceArray.add(gson.toJsonTree(alliance, EventAlliance.class));
         }
 

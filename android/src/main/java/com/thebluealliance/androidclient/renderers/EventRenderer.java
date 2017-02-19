@@ -78,7 +78,8 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
             PlayoffAdvancement adv = advancement != null
                                      ? getAdvancement(advancement, teams)
                                      : PlayoffAdvancement.NONE;
-            destList.add(new AllianceListElement(alliance.getEventKey(), counter, teams, adv));
+            destList.add(new AllianceListElement(alliance.getEventKey(), alliance.getName(),
+                                                 counter, teams, adv));
             counter++;
         }
     }

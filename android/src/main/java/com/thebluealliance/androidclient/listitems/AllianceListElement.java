@@ -23,13 +23,16 @@ public class AllianceListElement extends ListElement implements RenderableModel 
     public final PlayoffAdvancement advancement;
     public final List<String> teams;
     public final String eventKey;
+    public final String allianceName;
 
-    public AllianceListElement(String eventKey, int number, List<String> teams, PlayoffAdvancement advancement) {
+    public AllianceListElement(String eventKey, String name, int number, List<String> teams,
+                               PlayoffAdvancement advancement) {
         if (teams.size() < 2) throw new IllegalArgumentException("Alliances have >= 2 members");
         this.number = number;
         this.advancement = advancement;
         this.teams = teams;
         this.eventKey = eventKey;
+        this.allianceName = name;
     }
 
     @Override
@@ -50,7 +53,9 @@ public class AllianceListElement extends ListElement implements RenderableModel 
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.allianceName.setText(String.format(c.getString(R.string.alliance_title), number));
+        holder.allianceName.setText(allianceName != null
+                                        ? allianceName
+                                        : String.format(c.getString(R.string.alliance_title), number));
 
         if (advancement != PlayoffAdvancement.NONE) {
             holder.advancement.setVisibility(View.VISIBLE);

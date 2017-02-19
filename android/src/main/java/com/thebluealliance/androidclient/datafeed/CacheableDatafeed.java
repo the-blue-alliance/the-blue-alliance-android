@@ -13,6 +13,7 @@ import com.thebluealliance.androidclient.datafeed.combiners.TeamAndEventTeamComb
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictTeamKey;
 import com.thebluealliance.androidclient.datafeed.maps.AddEventKeyToRankings;
+import com.thebluealliance.androidclient.datafeed.maps.AllianceEventKeyAdder;
 import com.thebluealliance.androidclient.datafeed.maps.DistrictTeamExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.EventAlliancesToEventDetail;
 import com.thebluealliance.androidclient.datafeed.maps.JsonToEventDetail;
@@ -189,7 +190,7 @@ public class CacheableDatafeed {
                 mWriter.getEventDetailWriter().get(),
                 Database.TABLE_EVENTDETAILS, EventDetailsTable.KEY + " = ?", new
                         String[]{EventDetail.buildKey(eventKey, EventDetailType.RANKINGS)}
-        );
+        ).map(new AllianceEventKeyAdder(eventKey));
         return mAPICache.fetchEventAlliances(eventKey).concatWith(apiData);
     }
 

@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 /**
  * TeamAtEventStatus
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T16:42:56.465-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T23:19:19.757-05:00")
 public interface ITeamAtEventStatus   {
 
 
