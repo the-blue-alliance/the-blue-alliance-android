@@ -116,6 +116,14 @@ public class GoogleAuthProvider implements AuthProvider,
 
     @WorkerThread
     public Observable<GoogleSignInUser> signInLegacyUser() {
+        if (mGoogleApiClient == null) {
+            TbaLogger.i("Lazy loading Google API Client for legacy sign in");
+            loadGoogleApiClient();
+        }
+        if (mGoogleApiClient == null) {
+            TbaLogger.i("Unable to get API Client for legacy sign in");
+            return Observable.empty();
+        }
         onStart();
         OptionalPendingResult<GoogleSignInResult> optionalResult = Auth.GoogleSignInApi
                 .silentSignIn(mGoogleApiClient);
@@ -123,6 +131,8 @@ public class GoogleAuthProvider implements AuthProvider,
         onStop();
         if (result.isSuccess()) {
             return Observable.just(new GoogleSignInUser(result.getSignInAccount()));
+        } else {
+            TbaLogger.w("Unable to complete legacy sign in: " + result.getStatus().getStatusMessage());
         }
         return Observable.empty();
     }
