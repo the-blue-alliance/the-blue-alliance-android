@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.accounts;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.auth.User;
 import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
@@ -63,7 +64,14 @@ public class AccountController {
     }
 
     public @Nullable Account getCurrentAccount() {
-        Account[] accounts = mAccountManager.getAccountsByType(mAccountType);
+        Account[] accounts;
+        try {
+            accounts = mAccountManager.getAccountsByType(mAccountType);
+        } catch (SecurityException e) {
+            // We don't have the correct permissions
+            TbaLogger.w("Can't get current local account, no permission", e);
+            return null;
+        }
         String selectedAccount = getSelectedAccount();
         for (Account account : accounts) {
             if (account.name.equals(selectedAccount)) return account;
@@ -84,7 +92,15 @@ public class AccountController {
     }
 
     private boolean registerSystemAccount(String accountName) {
-        if (mAccountManager.getAccountsByType(mAccountType).length == 0) {
+        Account[] accounts;
+        try {
+            accounts = mAccountManager.getAccountsByType(mAccountType);
+        } catch (SecurityException e) {
+            // We don't have the correct permissions
+            TbaLogger.w("Can't add local account, no permission", e);
+            return false;
+        }
+        if (accounts.length == 0) {
             Account account = new Account(accountName, mAccountType);
             return mAccountManager.addAccountExplicitly(account, null, null);
         }
