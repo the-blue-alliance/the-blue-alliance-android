@@ -16,7 +16,7 @@ import javax.inject.Inject;
 
 public class MatchBreakdownSubscriber extends BaseAPISubscriber<Match, MatchBreakdownBinder.Model> {
 
-    private static final String SHOW_2017_KEY = "show_2017_breakdowns";
+    public static final String SHOW_2017_KEY = "show_2017_breakdowns";
 
     private final Gson mGson;
     private final AppConfig mConfig;
