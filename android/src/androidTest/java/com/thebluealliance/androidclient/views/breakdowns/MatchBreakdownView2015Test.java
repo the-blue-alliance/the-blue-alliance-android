@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
-public class MatchBreakdownView2016Test  {
+public class MatchBreakdownView2015Test {
 
     private static final int WIDTH_DP = 400;
     private Gson mGson;
@@ -37,7 +37,7 @@ public class MatchBreakdownView2016Test  {
 
     @Test
     public void testRenderQualMatch() throws Exception {
-        View view = getView("2016necmp_qm1");
+        View view = getView("2014necmp_qm1");
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -48,7 +48,7 @@ public class MatchBreakdownView2016Test  {
 
     @Test
     public void testRenderPlayoffMatch() throws Exception {
-        View view = getView("2016necmp_f1m1");
+        View view = getView("2014necmp_f1m1");
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -57,22 +57,22 @@ public class MatchBreakdownView2016Test  {
                   .record();
     }
 
-    private MatchBreakdownView2016 getView(String matchJsonFile) {
+    private MatchBreakdownView2015 getView(String matchJsonFile) {
         Match match = ModelMaker.getModel(Match.class, matchJsonFile);
         LayoutInflater inflater = LayoutInflater.from(InstrumentationRegistry.getTargetContext());
         View view = inflater.inflate(R.layout.fragment_match_breakdown, null, false);
 
         FrameLayout matchView = (FrameLayout) view.findViewById(R.id.match_breakdown);
         assertEquals(1, matchView.getChildCount());
-        assertTrue(matchView.getChildAt(0) instanceof MatchBreakdownView2016);
-        MatchBreakdownView2016 view2016 = (MatchBreakdownView2016) matchView.getChildAt(0);
+        assertTrue(matchView.getChildAt(0) instanceof MatchBreakdownView2015);
+        MatchBreakdownView2015 view2015 = (MatchBreakdownView2015) matchView.getChildAt(0);
         MatchType matchType = MatchType.fromKey(match.getKey());
-        view2016.initWithData(matchType, match.getWinningAlliance(), match.getAlliances(),
+        view2015.initWithData(matchType, match.getWinningAlliance(), match.getAlliances(),
                               mGson.fromJson(match.getScoreBreakdown(),JsonObject.class));
-        view2016.setVisibility(View.VISIBLE);
+        view2015.setVisibility(View.VISIBLE);
 
         // hide progress bar
         view.findViewById(R.id.progress).setVisibility(View.GONE);
-        return view2016;
+        return view2015;
     }
 }

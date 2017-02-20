@@ -29,6 +29,7 @@ public abstract class AbstractMatchBreakdownView extends FrameLayout {
     abstract void init();
 
     public abstract boolean initWithData(MatchType matchType,
+                                         String winningAlliance,
                                          IMatchAlliancesContainer allianceData,
-                                         JsonObject scoredata);
+                                         JsonObject scoreData);
 }

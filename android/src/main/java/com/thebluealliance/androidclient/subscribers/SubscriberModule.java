@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.Gson;
 
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
@@ -173,7 +174,7 @@ public class SubscriberModule {
     }
 
     @Provides
-    public MatchBreakdownSubscriber provideMatchBreakdownSubscriber(Gson gson) {
-        return new MatchBreakdownSubscriber(gson);
+    public MatchBreakdownSubscriber provideMatchBreakdownSubscriber(Gson gson, AppConfig config) {
+        return new MatchBreakdownSubscriber(gson, config);
     }
 }
