@@ -97,6 +97,7 @@ public class MatchBreakdownView2015 extends AbstractMatchBreakdownView {
     }
 
     public boolean initWithData(MatchType matchType,
+                                String winningAlliance,
                                 IMatchAlliancesContainer allianceData,
                                 JsonObject scoreData) {
         if (scoreData == null || scoreData.entrySet().isEmpty()

@@ -2,6 +2,8 @@ package com.thebluealliance.androidclient.views.breakdowns;
 
 import com.google.gson.JsonObject;
 
+import android.view.View;
+
 public final class MatchBreakdownHelper {
 
     private MatchBreakdownHelper() {
@@ -26,6 +28,14 @@ public final class MatchBreakdownHelper {
 
     static boolean getBooleanDefault(JsonObject data, String key) {
         return data.has(key) && data.get(key).getAsBoolean();
+    }
+
+    static void setViewVisibility(View view, Boolean show) {
+        if (show) {
+            view.setVisibility(View.VISIBLE);
+        } else {
+            view.setVisibility(View.GONE);
+        }
     }
 
     static String teamNumberFromKey(String teamKey) {

@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.views.breakdowns.AbstractMatchBreakdownView;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2015;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2016;
+import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2017;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import android.support.annotation.Nullable;
@@ -42,6 +43,9 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
             case 2016:
                 breakdownView = new MatchBreakdownView2016(mActivity);
                 break;
+            case 2017:
+                breakdownView = new MatchBreakdownView2017(mActivity);
+                break;
             default:
                 breakdownView = null;
                 break;
@@ -54,6 +58,7 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
 
         breakdownContainer.addView(breakdownView);
         boolean success = breakdownView.initWithData(data.matchType,
+                                                     data.winningAlliance,
                                                      data.allianceData,
                                                      data.scoreData);
 
@@ -114,13 +119,17 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
         public final IMatchAlliancesContainer allianceData;
         public final JsonObject scoreData;
         public final MatchType matchType;
+        public final String winningAlliance;
         public final int year;
 
-        public Model(MatchType matchType, int year, IMatchAlliancesContainer allianceData, JsonObject scoreData) {
+        public Model(MatchType matchType, int year, String winningAlliance,
+                     IMatchAlliancesContainer
+                     allianceData, JsonObject scoreData) {
             this.matchType = matchType;
             this.year = year;
             this.allianceData = allianceData;
             this.scoreData = scoreData;
+            this.winningAlliance = winningAlliance;
         }
 
         @Override
@@ -129,6 +138,7 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
                     && ((Model) o).year == year
                     && ((Model) o).matchType == matchType
                     && ((Model) o).scoreData.equals(scoreData)
+                    && ((Model) o).winningAlliance.equals(winningAlliance)
                     && ((Model) o).allianceData.equals(allianceData);
         }
     }

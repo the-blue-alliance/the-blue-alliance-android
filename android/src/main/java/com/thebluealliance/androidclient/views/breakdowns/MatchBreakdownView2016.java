@@ -140,11 +140,14 @@ public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
         blueAdjust = (TextView) findViewById(R.id.breakdown_adjust_blue);
         redTotal = (TextView) findViewById(R.id.breakdown_total_red);
         blueTotal = (TextView) findViewById(R.id.breakdown_total_blue);
-        redRanking = (TextView) findViewById(R.id.breakdown2016_red_rp);
-        blueRanking = (TextView) findViewById(R.id.breakdown2016_blue_rp);
+        redRanking = (TextView) findViewById(R.id.breakdown_red_rp);
+        blueRanking = (TextView) findViewById(R.id.breakdown_blue_rp);
     }
 
-    public boolean initWithData(MatchType matchType, IMatchAlliancesContainer allianceData, JsonObject scoredata) {
+    public boolean initWithData(MatchType matchType,
+                                String winningAlliance,
+                                IMatchAlliancesContainer allianceData,
+                                JsonObject scoredata) {
         if (scoredata == null || scoredata.entrySet().isEmpty()
                 || allianceData == null || allianceData.getRed() == null || allianceData.getBlue() == null) {
             breakdownContainer.setVisibility(GONE);
@@ -296,11 +299,9 @@ public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
         redTotal.setText(MatchBreakdownHelper.getIntDefault(redData, "totalPoints"));
         blueTotal.setText(MatchBreakdownHelper.getIntDefault(blueData, "totalPoints"));
 
-        int redScore = allianceData.getRed().getScore();
-        int blueScore = allianceData.getBlue().getScore();
-        if (redScore > blueScore) {
+        if ("red".equals(winningAlliance)) {
             redRp += 2;
-        } else if (blueScore > redScore) {
+        } else if ("blue".equals(winningAlliance)) {
             blueRp += 2;
         } else {
             redRp++;
@@ -313,7 +314,7 @@ public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
         } else {
             redRanking.setVisibility(GONE);
             blueRanking.setVisibility(GONE);
-            findViewById(R.id.breakdown2016_rp_header).setVisibility(GONE);
+            findViewById(R.id.breakdown_rp_header).setVisibility(GONE);
         }
 
         breakdownContainer.setVisibility(VISIBLE);

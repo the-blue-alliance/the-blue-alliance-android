@@ -29,22 +29,33 @@ public class MatchBreakdownSubscriber extends BaseAPISubscriber<Match, MatchBrea
         switch (mAPIData.getYear()) {
             case 2015:
             case 2016:
+            case 2017:
                 scoreBreakdown = mGson.fromJson(mAPIData.getScoreBreakdown(), JsonObject.class);
                 alliances = mAPIData.getAlliances();
-                if (scoreBreakdown.entrySet().isEmpty() || alliances == null) {
+                if (scoreBreakdown == null
+                        || scoreBreakdown.entrySet().isEmpty()
+                        || alliances == null) {
                     mDataToBind = null;
                     break;
                 }
 
                 mDataToBind = new MatchBreakdownBinder.Model(mAPIData.getType(),
-                                                            mAPIData.getYear(),
-                                                            alliances,
-                                                            scoreBreakdown);
+                                                             mAPIData.getYear(),
+                                                             mAPIData.getWinningAlliance(),
+                                                             alliances,
+                                                             scoreBreakdown);
                 break;
             default:
                 mDataToBind = null;
                 break;
         }
+    }
+
+    @Override
+    public boolean isDataValid() {
+        return super.isDataValid()
+               && mAPIData.getScoreBreakdown() != null
+               && mAPIData.getAlliances() != null;
     }
 
     @SuppressWarnings("unused")

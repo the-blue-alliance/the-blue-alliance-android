@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="breakdown2017_auto_fuel">Auto Fuel</string>
+    <string name="breakdown2017_auto_pressure">Auto Pressure Points</string>
+    <string name="breakdown2017_auto_rotors">Auto Rotors</string>
+    <string name="breakdown2017_auto_rotor_points">Auto Rotor Points</string>
+    <string name="breakdown2017_auto_mobility_points">Auto Mobility</string>
+    <string name="breakdown2017_teleop_fuel">Teleop Fuel</string>
+    <string name="breakdown2017_teleop_pressure">Teleop Pressure Points</string>
+    <string name="breakdown2017_teleop_rotors">Teleop Rotors</string>
+    <string name="breakdown2017_teleop_rotor_points">Teleop Rotor Points</string>
+    <string name="breakdown2017_teleop_takeoff_points">Takeoff Points</string>
+    <string name="breakdown2017_pressure_reached">Pressure Reached</string>
+    <string name="breakdown2017_all_rotors">All Rotors Engaged</string>
+</resources>

@@ -438,17 +438,17 @@
 
     <!-- Ranking Points -->
     <TextView
-            android:id="@+id/breakdown2016_red_rp"
+            android:id="@+id/breakdown_red_rp"
             style="@style/breakdown_redTotal"
             tools:text="2"/>
 
     <TextView
             android:text="@string/breakdown_rp"
-            android:id="@+id/breakdown2016_rp_header"
+            android:id="@+id/breakdown_rp_header"
             style="@style/breakdown_categorySubtotal" />
 
     <TextView
-            android:id="@+id/breakdown2016_blue_rp"
+            android:id="@+id/breakdown_blue_rp"
             style="@style/breakdown_blueTotal"
             tools:text="2"/>
 
