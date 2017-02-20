@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
 import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
@@ -39,6 +40,7 @@ public class DevSettingsActivity extends AppCompatActivity {
 
     public static class DevSettingsFragment extends PreferenceFragment {
 
+        @Inject AppConfig mConfig;
         @Inject Cache mOkCache;
 
         @Override
@@ -61,7 +63,7 @@ public class DevSettingsActivity extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     if (mOkCache != null) {
-                        TbaLogger.i("Clearing okhttp cache");
+                        Toast.makeText(getActivity(), "Clearing okhttp cache", Toast.LENGTH_SHORT).show();
                         try {
                             mOkCache.evictAll();
                             Toast.makeText(getActivity(), "Evicted OkHttp Cache", Toast.LENGTH_SHORT).show();
@@ -69,8 +71,31 @@ public class DevSettingsActivity extends AppCompatActivity {
                             TbaLogger.e("Error clearing okcache", e);
                         }
                     }
-                    return false;
+                    return true;
                 }
+            });
+
+            Preference refreshConfig = findPreference("refresh_remote_config");
+            refreshConfig.setOnPreferenceClickListener(preference -> {
+                Toast.makeText(getActivity(), "Updating remote config...", Toast.LENGTH_SHORT).show();
+                mConfig.updateRemoteData(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(getActivity(), "Update complete", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getActivity(), "Error updating config", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                return true;
+            });
+
+            Preference configLookup = findPreference("config_lookup");
+            configLookup.setOnPreferenceChangeListener((preference, o) -> {
+                if (o instanceof String) {
+                    Toast.makeText(getActivity(), "Looking up key " + o, Toast.LENGTH_SHORT).show();
+                    String confValue = mConfig.getString((String)o);
+                    Toast.makeText(getActivity(), "Value: " + confValue, Toast.LENGTH_SHORT).show();
+                }
+                return false;
             });
 
             Preference addMyTBAItem = findPreference("add_mytba_item");

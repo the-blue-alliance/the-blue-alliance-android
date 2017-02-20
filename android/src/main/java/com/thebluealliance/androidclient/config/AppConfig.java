@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.config;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -39,18 +40,22 @@ public class AppConfig {
     }
 
     public void updateRemoteData() {
-        updateDataInternal();
+        updateDataInternal(null);
+    }
+
+    public void updateRemoteData(OnCompleteListener<Void> onCompleteListener) {
+        updateDataInternal(onCompleteListener);
     }
 
     @WorkerThread
     public void updateRemoteDataBlocking() throws ExecutionException, InterruptedException {
-        updateDataInternal();
+        updateDataInternal(null);
         if (mActiveTask != null) {
             Tasks.await(mActiveTask);
         }
     }
 
-    private void updateDataInternal() {
+    private void updateDataInternal(@Nullable OnCompleteListener<Void> onComplete) {
         if (mFirebaseRemoteConfig == null) {
             return;
         }
@@ -82,5 +87,8 @@ public class AppConfig {
                     }
                     mActiveTask = null;
                 });
+        if (onComplete != null) {
+            mActiveTask.addOnCompleteListener(onComplete);
+        }
     }
 }
