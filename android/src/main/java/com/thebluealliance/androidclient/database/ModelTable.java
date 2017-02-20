@@ -113,14 +113,15 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
             if (lastModified != null
                 && (in.getLastModified() == null || lastModified > in.getLastModified())) {
                 in.setLastModified(lastModified);
-            } else if (in.getLastModified() == null) {
+            }
+            if (in.getLastModified() == null) {
                 in.setLastModified(0L);
             }
             affectedRows = mDb.update(
                     getTableName(),
                     in.getParams(mGson),
-                    getKeyColumn() + " = ?",
-                    new String[]{in.getKey()});
+                    getKeyColumn() + " = ? AND ? >= " + getLastModifiedColumn(),
+                    new String[]{in.getKey(), in.getLastModified().toString()});
             if (affectedRows > 0) {
                 updateCallback(in);
             }
