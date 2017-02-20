@@ -201,15 +201,6 @@ task loadProperties << {
         play.serviceAccountEmail = config['play.release.serviceEmail']
         play.pk12File = file(config['play.release.keyFile'])
     }
-
-    // check to make sure that an analytics key is defined
-    def tba_config = new Properties();
-    def tba_propFile = file("src/main/assets/tba.properties")
-    tba_config.load(new FileInputStream(tba_propFile));
-    if (!tba_config.containsKey("analytics.id")) {
-        throw new InvalidUserDataException("You need to have analytics key defined in tba.properties to build a release apk");
-    }
-    System.out.println("Building with analytics key: " + tba_config["analytics.id"]);
 }
 
 task updateScreenshotDirs << {
