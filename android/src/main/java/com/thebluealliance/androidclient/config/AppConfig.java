@@ -38,6 +38,10 @@ public class AppConfig {
         return mFirebaseRemoteConfig.getString(key);
     }
 
+    public boolean getBoolean(String key) {
+        return mFirebaseRemoteConfig != null && mFirebaseRemoteConfig.getBoolean(key);
+    }
+
     public void updateRemoteData() {
         updateDataInternal();
     }
