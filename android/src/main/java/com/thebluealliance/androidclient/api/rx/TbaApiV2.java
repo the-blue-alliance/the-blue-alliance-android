@@ -20,6 +20,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Path;
 import rx.Observable;
 
+@Deprecated
 public interface TbaApiV2 {
   /**
    * API Status Request

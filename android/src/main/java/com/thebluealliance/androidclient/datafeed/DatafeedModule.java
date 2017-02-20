@@ -6,7 +6,6 @@ import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.api.ApiConstants;
-import com.thebluealliance.androidclient.api.rx.TbaApiV2;
 import com.thebluealliance.androidclient.api.rx.TbaApiV3;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -70,16 +69,6 @@ public class DatafeedModule {
                 .build();
          */
         return null;
-    }
-
-    @Provides @Singleton @Named("tba_api")
-    public com.thebluealliance.androidclient.api.rx.TbaApiV2 provideRxTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
-        return retrofit.create(TbaApiV2.class);
-    }
-
-    @Provides @Singleton
-    public com.thebluealliance.androidclient.api.call.TbaApiV2 provideCallTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
-        return retrofit.create(com.thebluealliance.androidclient.api.call.TbaApiV2.class);
     }
 
     @Provides @Singleton @Named("tba_apiv3_rx")

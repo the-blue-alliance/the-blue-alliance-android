@@ -19,6 +19,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
 
+@Deprecated
 public interface TbaApiV2 {
   /**
    * API Status Request

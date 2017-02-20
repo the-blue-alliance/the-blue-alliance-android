@@ -4,7 +4,7 @@ import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
-import com.thebluealliance.androidclient.api.rx.TbaApiV2;
+import com.thebluealliance.androidclient.api.rx.TbaApiV3;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
@@ -31,7 +31,7 @@ import rx.schedulers.Schedulers;
  */
 public class StatusRefreshService extends IntentService {
 
-    @Inject @Named("tba_api") TbaApiV2 mRetrofitAPI;
+    @Inject @Named("tba_apiv3_rx") TbaApiV3 mRetrofitAPI;
     @Inject SharedPreferences mPrefs;
     @Inject EventBus mEventBus;
     @Inject OkHttpClient mHttpClient;
