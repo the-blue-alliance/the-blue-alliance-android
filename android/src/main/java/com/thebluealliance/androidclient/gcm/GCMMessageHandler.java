@@ -193,8 +193,6 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                 case NotificationTypes.SYNC_STATUS:
                     TbaLogger.i("Updating TBA API Status via push notification");
                     mStatusController.scheduleStatusUpdate(c);
-                    TbaLogger.i("Updating FirebaseRemoteConfig via push notification");
-                    mAppConfig.updateRemoteData();
                     break;
             }
 

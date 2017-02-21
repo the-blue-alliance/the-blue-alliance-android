@@ -57,6 +57,11 @@ public class AppConfig {
         if (mActiveTask != null) {
             Tasks.await(mActiveTask);
         }
+
+        // Wait for the onCompleteHandler to finish
+        while (mActiveTask != null) {
+            Thread.sleep(100);
+        }
     }
 
     private void updateDataInternal(@Nullable OnCompleteListener<Void> onComplete) {

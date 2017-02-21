@@ -5,6 +5,7 @@ import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.api.rx.TbaApiV3;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
@@ -16,6 +17,8 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.WorkerThread;
+
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,6 +38,7 @@ public class StatusRefreshService extends IntentService {
     @Inject SharedPreferences mPrefs;
     @Inject EventBus mEventBus;
     @Inject OkHttpClient mHttpClient;
+    @Inject AppConfig mAppConfig;
 
     public StatusRefreshService() {
         super("API Status Refresh");
@@ -54,12 +58,19 @@ public class StatusRefreshService extends IntentService {
 
     @WorkerThread
     private void updateTbaStatus() {
+
+        /* Updating FirebaseRemoteConfig */
+        try {
+            mAppConfig.updateRemoteDataBlocking();
+        } catch (ExecutionException | InterruptedException e) {
+            TbaLogger.w("Error updating FirebaseRemoteConfig", e);
+        }
+
         Response<ApiStatus> response;
         try {
             response = mRetrofitAPI.fetchApiStatus().toBlocking().first();
         } catch (Exception ex) {
-            TbaLogger.w("Error updating TBA status");
-            ex.printStackTrace();
+            TbaLogger.w("Error updating TBA status", ex);
             return;
         }
         if (!response.isSuccessful()) {
@@ -78,7 +89,9 @@ public class StatusRefreshService extends IntentService {
         mEventBus.post(status);
 
         /* Update Champs pit locations if necessary */
-        if (PitLocationHelper.shouldUpdateFromRemoteUrl(getApplicationContext(), status)) {
+        if (status.getChampsPitLocationsUrl() != null
+                && status.getChampsPitLocationsUpdateTime() != null
+                && PitLocationHelper.shouldUpdateFromRemoteUrl(getApplicationContext(), status)) {
             try {
                 Request request = new Request.Builder()
                         .url(status.getChampsPitLocationsUrl())
@@ -87,13 +100,16 @@ public class StatusRefreshService extends IntentService {
 
                 okhttp3.Response champsPitLocation = mHttpClient.newCall(request).execute();
                 String responseString = champsPitLocation.body().string();
-                PitLocationHelper.updateFromRemoteUrl(getApplicationContext(), responseString, status.getChampsPitLocationsUpdateTime());
+                PitLocationHelper.updateFromRemoteUrl(getApplicationContext(),
+                                                      responseString,
+                                                      status.getChampsPitLocationsUpdateTime());
             } catch (Exception e) {
-                e.printStackTrace();
+                TbaLogger.w("Unable to update champs pit locations", e);
             }
         }
 
-        if (BuildConfig.VERSION_CODE < status.getMinAppVersion()) {
+        if (status.getMinAppVersion() != null
+                && BuildConfig.VERSION_CODE < status.getMinAppVersion()) {
             startActivity(new Intent(this, UpdateRequiredActivity.class));
         }
 
