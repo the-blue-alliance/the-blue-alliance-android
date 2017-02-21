@@ -57,6 +57,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setLocation("");
         } else {
             event.setLocation(object.get("city").getAsString() + ", " + object.get("state_prov").getAsString() + ", " + object.get("country").getAsString());
+            event.setCity(object.get("city").getAsString());
         }
 
         if (object.has("event_type")) {

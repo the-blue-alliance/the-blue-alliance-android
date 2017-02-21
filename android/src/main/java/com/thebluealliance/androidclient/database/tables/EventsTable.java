@@ -22,6 +22,7 @@ public class EventsTable extends ModelTable<Event> {
             NAME = "name",
             SHORTNAME = "shortName",
             LOCATION = "location",
+            CITY = "city",
             VENUE = "venue",
             ADDRESS = "venue_address",
             TYPE = "eventType",
