@@ -34,7 +34,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
     public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
-    static final int DATABASE_VERSION = 32;
+    static final int DATABASE_VERSION = 33;
     private static final String DATABASE_NAME = "the-blue-alliance-android-database";
     static final @Deprecated String TABLE_API = "api";
     public static final String TABLE_TEAMS = "teams",
@@ -72,6 +72,7 @@ public class Database extends SQLiteOpenHelper {
             + EventsTable.NAME + " TEXT DEFAULT '', "
             + EventsTable.SHORTNAME + " TEXT DEFAULT '', "
             + EventsTable.LOCATION + " TEXT DEFAULT '', "
+            + EventsTable.CITY + " TEXT DEFAULT '', "
             + EventsTable.VENUE + " TEXT DEFAULT '', "
             + EventsTable.ADDRESS + " TEXT DEFAULT '', "
             + EventsTable.TYPE + " INTEGER DEFAULT -1, "
@@ -473,6 +474,18 @@ public class Database extends SQLiteOpenHelper {
                     } finally {
                         db.endTransaction();
                     }
+                    break;
+                case 33:
+                    // Add Event city column
+                    db.beginTransaction();
+                    try {
+                        db.execSQL(String.format("ALTER TAbLE %1$s ADD COLUMN %2$s TEXT DEFAULT ''",
+                                                 TABLE_EVENTS, EventsTable.CITY));
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
+                    break;
             }
             upgradeTo++;
         }

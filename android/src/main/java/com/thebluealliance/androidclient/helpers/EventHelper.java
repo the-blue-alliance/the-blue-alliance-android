@@ -33,6 +33,7 @@ import javax.annotation.Nullable;
 public final class EventHelper {
 
     public static final String CHAMPIONSHIP_LABEL = "Championship Event";
+    public static final String CITY_CHAMPIONSHIP_LABEL = "%1$s Championship";
     public static final String REGIONAL_LABEL = "Week %1$d";
     public static final String FLOAT_REGIONAL_LABEL = "Week %1$.1f";
     public static final String WEEKLESS_LABEL = "Other Official Events";
@@ -112,7 +113,12 @@ public final class EventHelper {
         switch (e.getEventTypeEnum()) {
             case CMP_DIVISION:
             case CMP_FINALS:
-                return CHAMPIONSHIP_LABEL;
+                if (e.getYear() >= 2017 && e.getCity() != null) {
+                    // #2Champs
+                    return String.format(CITY_CHAMPIONSHIP_LABEL, e.getCity());
+                } else {
+                    return CHAMPIONSHIP_LABEL;
+                }
             case REGIONAL:
             case DISTRICT:
             case DISTRICT_CMP:

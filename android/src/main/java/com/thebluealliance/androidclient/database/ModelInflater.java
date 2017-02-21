@@ -105,6 +105,9 @@ public final class ModelInflater {
                 case EventsTable.LOCATION:
                     event.setLocation(data.getString(i));
                     break;
+                case EventsTable.CITY:
+                    event.setCity(data.getString(i));
+                    break;
                 case EventsTable.VENUE:
                     event.setLocationName(data.getString(i));
                     break;

@@ -53,6 +53,7 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     private @Nullable String gmapsUrl;
     private @Nullable String locationName;
     private @Nullable String location;
+    private @Nullable String city;
     private @Nullable String webcasts;
     private @Nullable String website;
     private @Nullable Date endDate;
@@ -269,6 +270,14 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         return location;
     }
 
+    @Nullable public String getCity() {
+        return city;
+    }
+
+    public void setCity(@Nullable String city) {
+        this.city = city;
+    }
+
     public void setLocation(@Nullable String location) {
         this.location = location;
     }
@@ -437,6 +446,7 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         params.put(EventsTable.NAME, getName());
         params.put(EventsTable.SHORTNAME, getShortName());
         params.put(EventsTable.LOCATION, getLocation());
+        params.put(EventsTable.CITY, getCity());
         params.put(EventsTable.VENUE, getLocationName());
         params.put(EventsTable.ADDRESS, getAddress());
         params.put(EventsTable.TYPE, getEventType());
