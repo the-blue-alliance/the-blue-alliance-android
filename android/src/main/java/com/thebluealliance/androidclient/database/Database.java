@@ -479,8 +479,12 @@ public class Database extends SQLiteOpenHelper {
                     // Add Event city column
                     db.beginTransaction();
                     try {
-                        db.execSQL(String.format("ALTER TAbLE %1$s ADD COLUMN %2$s TEXT DEFAULT ''",
-                                                 TABLE_EVENTS, EventsTable.CITY));
+                        if (!columnExists(db, TABLE_EVENTS, EventsTable.CITY)) {
+                            db.execSQL(String.format(
+                                    "ALTER TABLE %1$s ADD COLUMN %2$s TEXT DEFAULT ''",
+                                    TABLE_EVENTS,
+                                    EventsTable.CITY));
+                        }
                         db.setTransactionSuccessful();
                     } finally {
                         db.endTransaction();
