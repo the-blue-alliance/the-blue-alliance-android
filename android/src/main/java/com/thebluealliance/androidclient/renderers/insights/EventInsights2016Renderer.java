@@ -26,12 +26,12 @@ public class EventInsights2016Renderer extends EventInsightsRenderer {
         generate2016TowerInsights(qualData, elimData);
     }
 
-    private @StringRes int[] matchTitles = {R.string.breakdown2016_avg_low_goal, R.string
-            .breakdown2016_avg_high_goal, R.string.breakdown2016_avg_score, R.string
-            .breakdown2016_avg_win_score, R.string.breakdown2016_avg_win_margin, R.string
-            .breakdown2016_avg_auto_score, R.string.breakdown2016_teleop_cross, R.string
+    private @StringRes int[] matchTitles = {R.string.breakdown_avg_low_goal, R.string
+            .breakdown_avg_high_goal, R.string.breakdown_avg_score, R.string
+            .breakdown_avg_win_score, R.string.breakdown_avg_win_margin, R.string
+            .breakdown_avg_auto_score, R.string.breakdown2016_teleop_cross, R.string
             .breakdown2016_avg_boulder_score, R.string.breakdown2016_avg_tower_score, R.string
-            .breakdown2016_avg_foul_score};
+            .breakdown_avg_foul_score};
     private String[] matchKeys = {"average_low_goals", "average_high_goals", "average_score",
             "average_win_score", "average_win_margin", "average_auto_score",
             "average_crossing_score", "average_boulder_score", "average_tower_score",
@@ -44,17 +44,17 @@ public class EventInsights2016Renderer extends EventInsightsRenderer {
         String qualHighScore = null, elimHighScore = null;
         if (quals.has("high_score") && quals.get("high_score").isJsonArray()) {
             JsonArray qualHigh = quals.get("high_score").getAsJsonArray();
-            qualHighScore = mResources.getString(R.string.breakdown2016_match_stat,
+            qualHighScore = mResources.getString(R.string.breakdown_match_stat,
                                                  qualHigh.get(0).getAsInt(),
                                                  qualHigh.get(2).getAsString());
         }
         if (elims.has("high_score") && elims.get("high_score").isJsonArray()) {
             JsonArray elimHigh = elims.get("high_score").getAsJsonArray();
-            elimHighScore = mResources.getString(R.string.breakdown2016_match_stat,
+            elimHighScore = mResources.getString(R.string.breakdown_match_stat,
                                                  elimHigh.get(0).getAsInt(),
                                                  elimHigh.get(2).getAsString());
         }
-        mEventStats.add(new LabelValueListItem(mResources.getString(R.string.breakdown2016_high_score),
+        mEventStats.add(new LabelValueListItem(mResources.getString(R.string.breakdown_high_score),
                                                combineQualAndElimStat(qualHighScore,
                                                                       elimHighScore),
                                                true));
@@ -83,7 +83,7 @@ public class EventInsights2016Renderer extends EventInsightsRenderer {
 
     private void generate2016DefenseInsights(JsonObject quals, JsonObject elims) {
         mEventStats.add(new EventTypeHeader(mResources.getString(R.string.breakdown2016_defense_stats)));
-        String defenseFormat = mResources.getString(R.string.defense2016_percent_format);
+        String defenseFormat = mResources.getString(R.string.breakdown_percent_format);
         for (int i = 0; i < defenseName.length; i++) {
             String qualStat = null, elimStat = null;
             if (quals.has(defenseTitle[i]) && quals.get(defenseTitle[i]).isJsonArray()) {
@@ -108,7 +108,7 @@ public class EventInsights2016Renderer extends EventInsightsRenderer {
 
     private void generate2016TowerInsights(JsonObject quals, JsonObject elims) {
         mEventStats.add(new EventTypeHeader(mResources.getString(R.string.breakdown2016_tower_stats)));
-        String defenseFormat = mResources.getString(R.string.defense2016_percent_format);
+        String defenseFormat = mResources.getString(R.string.breakdown_percent_format);
         for (int i = 0; i < towerTitles.length; i++) {
             String qualStat = null, elimStat = null;
             if (quals.has(towerKeys[i]) && quals.get(towerKeys[i]).isJsonArray()) {

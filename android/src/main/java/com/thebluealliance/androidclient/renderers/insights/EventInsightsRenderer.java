@@ -51,11 +51,11 @@ public abstract class EventInsightsRenderer {
 
     String combineQualAndElimStat(@Nullable String qualStat, @Nullable String elimStat) {
         if (qualStat != null && elimStat != null) {
-            return mResources.getString(R.string.breakdown2016_qual_and_elim, qualStat, elimStat);
+            return mResources.getString(R.string.breakdown_qual_and_elim, qualStat, elimStat);
         } else if (qualStat != null) {
-            return mResources.getString(R.string.breakdown2016_qual, qualStat);
+            return mResources.getString(R.string.breakdown_qual, qualStat);
         } else {
-            return mResources.getString(R.string.breakdown2016_elim, elimStat);
+            return mResources.getString(R.string.breakdown_elim, elimStat);
         }
     }
 }
