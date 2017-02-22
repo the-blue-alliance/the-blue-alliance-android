@@ -59,18 +59,7 @@ public class EventInsights2016Renderer extends EventInsightsRenderer {
                                                                       elimHighScore),
                                                true));
 
-        for (int i = 0; i < matchKeys.length; i++) {
-            String qualStat = null, elimStat = null;
-            if (quals.has(matchKeys[i]) && quals.get(matchKeys[i]).isJsonPrimitive()) {
-                qualStat = df.format(quals.get(matchKeys[i]).getAsDouble());
-            }
-            if (elims.has(matchKeys[i]) && elims.get(matchKeys[i]).isJsonPrimitive()) {
-                elimStat = df.format(elims.get(matchKeys[i]).getAsDouble());
-            }
-            mEventStats.add(new LabelValueListItem(mResources.getString(matchTitles[i]),
-                                                   combineQualAndElimStat(qualStat, elimStat),
-                                                   true));
-        }
+        addQualVsElimInsights(quals, elims, matchTitles, matchKeys);
     }
 
     private String[] defenseTitle = {"LowBar", "A_ChevalDeFrise", "A_Portcullis", "B_Ramparts",
@@ -83,23 +72,7 @@ public class EventInsights2016Renderer extends EventInsightsRenderer {
 
     private void generate2016DefenseInsights(JsonObject quals, JsonObject elims) {
         mEventStats.add(new EventTypeHeader(mResources.getString(R.string.breakdown2016_defense_stats)));
-        String defenseFormat = mResources.getString(R.string.breakdown_percent_format);
-        for (int i = 0; i < defenseName.length; i++) {
-            String qualStat = null, elimStat = null;
-            if (quals.has(defenseTitle[i]) && quals.get(defenseTitle[i]).isJsonArray()) {
-                JsonArray qualData = quals.get(defenseTitle[i]).getAsJsonArray();
-                qualStat = String.format(defenseFormat, qualData.get(0).getAsInt(), qualData.get(1).getAsInt(),
-                                         qualData.get(2).getAsDouble());
-            }
-            if (elims.has(defenseTitle[i]) && elims.get(defenseTitle[i]).isJsonArray()) {
-                JsonArray elimData = elims.get(defenseTitle[i]).getAsJsonArray();
-                elimStat = String.format(defenseFormat, elimData.get(0).getAsInt(), elimData.get(1)
-                                                                                            .getAsInt(), elimData.get(2).getAsDouble());
-            }
-            mEventStats.add(new LabelValueListItem(mResources.getString(defenseName[i]),
-                                                   combineQualAndElimStat(qualStat, elimStat),
-                                                   true));
-        }
+        addQualVsElimInsightsWithPercentage(quals, elims, defenseName, defenseTitle);
     }
 
     private @StringRes int[] towerTitles = {R.string.breakdown2016_challenge, R.string
@@ -108,22 +81,6 @@ public class EventInsights2016Renderer extends EventInsightsRenderer {
 
     private void generate2016TowerInsights(JsonObject quals, JsonObject elims) {
         mEventStats.add(new EventTypeHeader(mResources.getString(R.string.breakdown2016_tower_stats)));
-        String defenseFormat = mResources.getString(R.string.breakdown_percent_format);
-        for (int i = 0; i < towerTitles.length; i++) {
-            String qualStat = null, elimStat = null;
-            if (quals.has(towerKeys[i]) && quals.get(towerKeys[i]).isJsonArray()) {
-                JsonArray qualData = quals.get(towerKeys[i]).getAsJsonArray();
-                qualStat = String.format(defenseFormat, qualData.get(0).getAsInt(), qualData.get(1)
-                                                                                            .getAsInt(), qualData.get(2).getAsDouble());
-            }
-            if (elims.has(towerKeys[i]) && elims.get(towerKeys[i]).isJsonArray()) {
-                JsonArray elimData = elims.get(towerKeys[i]).getAsJsonArray();
-                elimStat = String.format(defenseFormat, elimData.get(0).getAsInt(), elimData.get(1)
-                                                                                            .getAsInt(), elimData.get(2).getAsDouble());
-            }
-            mEventStats.add(new LabelValueListItem(mResources.getString(towerTitles[i]),
-                                                   combineQualAndElimStat(qualStat, elimStat),
-                                                   true));
-        }
+        addQualVsElimInsightsWithPercentage(quals, elims, towerTitles, towerKeys);
     }
 }
