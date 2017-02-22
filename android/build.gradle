@@ -277,11 +277,11 @@ dependencies {
     compile "com.google.firebase:firebase-auth:${playServicesVersion}"
     compile "com.google.firebase:firebase-config:${playServicesVersion}"
 
-    debugCompile "com.github.phil-lopreiato:firebasecrash-noop:v0.1"
-    debugBlueCompile "com.github.phil-lopreiato:firebasecrash-noop:v0.1"
-    debugProguardCompile "com.github.phil-lopreiato:firebasecrash-noop:v0.1"
     testCompile 'com.github.phil-lopreiato:firebasecrash-noop:v0.1'
     releaseCompile "com.google.firebase:firebase-crash:${playServicesVersion}"
+    debugCompile "com.google.firebase:firebase-crash:${playServicesVersion}"
+    debugBlueCompile "com.google.firebase:firebase-crash:${playServicesVersion}"
+    debugProguardCompile "com.google.firebase:firebase-crash:${playServicesVersion}"
 
     // Square Libraries
     compile 'com.squareup.picasso:picasso:2.5.2'
