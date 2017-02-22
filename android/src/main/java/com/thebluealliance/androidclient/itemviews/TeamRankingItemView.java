@@ -70,14 +70,16 @@ public class TeamRankingItemView extends BindableFrameLayout<TeamRankingViewMode
         teamName.setText(model.getTeamNickname());
         rankingSummary.setText(model.getRankingSummary());
         rankingBreakdown.setText(Html.fromHtml(model.getRankingBreakdown()));
-
-        breakdownContainer.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
-        expandedHeightDelta = breakdownContainer.getMeasuredHeight();
     }
 
     public void toggleRankingsExpanded() {
         if (originalHeight == 0) {
             originalHeight = getHeight();
+            breakdownContainer.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+
+            // This seems to be a magic constant. Without it, we get extra space at the bottom
+            // for some reason I can't figure out. ¯\_(ツ)_/¯
+            expandedHeightDelta = breakdownContainer.getMeasuredHeight() - 80;
         }
         ValueAnimator valueAnimator;
         if (!isViewExpanded) {
