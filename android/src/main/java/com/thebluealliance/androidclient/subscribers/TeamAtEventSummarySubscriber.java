@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
-import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.models.Award;
@@ -38,6 +37,9 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nullable;
+
+import static com.thebluealliance.androidclient.helpers.RankingFormatter.NONE;
+import static com.thebluealliance.androidclient.helpers.RankingFormatter.buildRankingString;
 
 public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventStatus, List<Object>> {
 
@@ -121,7 +123,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
         @Nullable List<IRankingSortOrder> sortOrders = qualData != null ? qualData.getSortOrderInfo() : null;
         if (rankData != null && sortOrders != null) {
             rank = rankData.getRank();
-            rankingString = EventHelper.buildRankingString(rankData, sortOrders, mResources);
+            rankingString = buildRankingString(rankData, sortOrders, mResources, NONE);
             rankBreakdownItem = new LabelValueViewModel(mResources.getString(R.string.team_at_event_rank_breakdown),
                                                         rankingString);
         }

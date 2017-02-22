@@ -7,4 +7,6 @@
     <item name="nav_item_my_tba" type="id" />
     <item name="nav_item_notifications" type="id" />
     <item name="nav_item_gameday" type="id" />
+
+    <item name="team_key" type="id" />
 </resources>
