@@ -52,14 +52,24 @@ public abstract class EventInsightsRenderer {
 
     abstract void generateYearSpecificInsights(JsonObject quals, JsonObject elims);
 
-    String combineQualAndElimStat(@Nullable String qualStat, @Nullable String elimStat) {
-        if (qualStat != null && elimStat != null) {
-            return mResources.getString(R.string.breakdown_qual_and_elim, qualStat, elimStat);
-        } else if (qualStat != null) {
-            return mResources.getString(R.string.breakdown_qual, qualStat);
-        } else {
-            return mResources.getString(R.string.breakdown_elim, elimStat);
+    void addHighScore(JsonObject quals, JsonObject elims, String jsonKey) {
+        String qualHighScore = null, elimHighScore = null;
+        if (quals.has(jsonKey) && quals.get(jsonKey).isJsonArray()) {
+            JsonArray qualHigh = quals.get(jsonKey).getAsJsonArray();
+            qualHighScore = mResources.getString(R.string.breakdown_match_stat,
+                                                 qualHigh.get(0).getAsInt(),
+                                                 qualHigh.get(2).getAsString());
         }
+        if (elims.has(jsonKey) && elims.get(jsonKey).isJsonArray()) {
+            JsonArray elimHigh = elims.get(jsonKey).getAsJsonArray();
+            elimHighScore = mResources.getString(R.string.breakdown_match_stat,
+                                                 elimHigh.get(0).getAsInt(),
+                                                 elimHigh.get(2).getAsString());
+        }
+        mEventStats.add(new LabelValueListItem(mResources.getString(R.string.breakdown_high_score),
+                                               combineQualAndElimStat(qualHighScore,
+                                                                      elimHighScore),
+                                               true));
     }
 
     void addQualVsElimInsights(JsonObject quals, JsonObject elims,
@@ -98,6 +108,16 @@ public abstract class EventInsightsRenderer {
             mEventStats.add(new LabelValueListItem(mResources.getString(titles[i]),
                                                    combineQualAndElimStat(qualStat, elimStat),
                                                    true));
+        }
+    }
+
+    private String combineQualAndElimStat(@Nullable String qualStat, @Nullable String elimStat) {
+        if (qualStat != null && elimStat != null) {
+            return mResources.getString(R.string.breakdown_qual_and_elim, qualStat, elimStat);
+        } else if (qualStat != null) {
+            return mResources.getString(R.string.breakdown_qual, qualStat);
+        } else {
+            return mResources.getString(R.string.breakdown_elim, elimStat);
         }
     }
 }

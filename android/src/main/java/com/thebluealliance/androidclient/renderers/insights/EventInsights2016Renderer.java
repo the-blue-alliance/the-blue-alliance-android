@@ -1,11 +1,9 @@
 package com.thebluealliance.androidclient.renderers.insights;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
-import com.thebluealliance.androidclient.listitems.LabelValueListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
 import android.content.res.Resources;
@@ -40,25 +38,7 @@ public class EventInsights2016Renderer extends EventInsightsRenderer {
     private void generate2016MatchInsights(JsonObject quals, JsonObject elims) {
         mEventStats.add(new EventTypeHeader(mResources.getString(R.string.breakdown_match_stats)));
 
-        // high_score
-        String qualHighScore = null, elimHighScore = null;
-        if (quals.has("high_score") && quals.get("high_score").isJsonArray()) {
-            JsonArray qualHigh = quals.get("high_score").getAsJsonArray();
-            qualHighScore = mResources.getString(R.string.breakdown_match_stat,
-                                                 qualHigh.get(0).getAsInt(),
-                                                 qualHigh.get(2).getAsString());
-        }
-        if (elims.has("high_score") && elims.get("high_score").isJsonArray()) {
-            JsonArray elimHigh = elims.get("high_score").getAsJsonArray();
-            elimHighScore = mResources.getString(R.string.breakdown_match_stat,
-                                                 elimHigh.get(0).getAsInt(),
-                                                 elimHigh.get(2).getAsString());
-        }
-        mEventStats.add(new LabelValueListItem(mResources.getString(R.string.breakdown_high_score),
-                                               combineQualAndElimStat(qualHighScore,
-                                                                      elimHighScore),
-                                               true));
-
+        addHighScore(quals, elims, "high_score");
         addQualVsElimInsights(quals, elims, matchTitles, matchKeys);
     }
 
