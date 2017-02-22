@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.helpers;
 
-import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
@@ -9,22 +8,17 @@ import com.thebluealliance.androidclient.eventbus.LiveEventUpdateEvent;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
-import com.thebluealliance.api.model.IRankingItem;
-import com.thebluealliance.api.model.IRankingSortOrder;
 
 import org.greenrobot.eventbus.EventBus;
 
 import android.content.Context;
-import android.content.res.Resources;
 
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -286,82 +280,6 @@ public final class EventHelper {
                 + ThreadSafeFormatters.renderEventDate(endDate);
     }
 
-    public static String buildRankingString(IRankingItem rankData,
-                                            List<IRankingSortOrder> sortOrders,
-                                            Resources resources) {
-        Map<String, String> rankingElements = Utilities.getMapForPlatform(String.class, String.class);
-        if (rankData.getQualAverage() != null) {
-            rankingElements.put(resources.getString(R.string.rank_qual_average),
-                                ThreadSafeFormatters.formatDoubleOnePlace(rankData.getQualAverage()));
-        }
-        for (int j = 0; j < sortOrders.size(); j++) {
-            String rankString;
-            Double rankValue = rankData.getSortOrders().get(j);
-            IRankingSortOrder sort = sortOrders.get(j);
-            switch (sort.getPrecision()) {
-                case 0:
-                    rankString = ThreadSafeFormatters.formatDoubleNoPlaces(rankValue);
-                    break;
-                case 1:
-                    rankString = ThreadSafeFormatters.formatDoubleOnePlace(rankValue);
-                    break;
-                default:
-                case 2:
-                    rankString = ThreadSafeFormatters.formatDoubleTwoPlaces(rankValue);
-                    break;
-            }
-            rankingElements.put(sort.getName(), rankString);
-        }
-
-        rankingElements.put(resources.getString(R.string.rank_played),
-                            Integer.toString(rankData.getMatchesPlayed()));
-        rankingElements.put(resources.getString(R.string.rank_dq),
-                            Integer.toString(rankData.getDq()));
-        return EventHelper.createRankingBreakdown(rankingElements);
-    }
-
-    private static String createRankingBreakdown(Map<String, String> rankingElements) {
-        String rankingString = "";
-        // Construct rankings string
-        Iterator it = rankingElements.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry) it.next();
-            String value = entry.getValue().toString();
-
-            // Capitalization hack
-            String rankingKey = entry.getKey().toString();
-            if (rankingKey.length() <= 3) {
-                rankingKey = rankingKey.toUpperCase();
-            } else {
-                rankingKey = capitalize(rankingKey);
-            }
-            rankingString += rankingKey + ": " + value;
-            if (it.hasNext()) {
-                rankingString += ", ";
-            }
-        }
-        return rankingString;
-    }
-
-
-    /**
-     * Hacky capitalize method to remove dependency on apache lib for only one method Stupid DEX
-     * limit...
-     *
-     * @param string Input string
-     * @return Input string with first letter of each word capitalized
-     */
-    private static String capitalize(String string) {
-        StringBuilder sb = new StringBuilder();
-        String[] split = string.split(" ");
-        for (String s : split) {
-            sb.append(s.substring(0, 1).toUpperCase());
-            sb.append(s.substring(1));
-            sb.append(" ");
-        }
-        sb.deleteCharAt(sb.length() - 1);
-        return sb.toString();
-    }
 
     public static String getShortCodeForEventKey(String eventKey) {
         if (validateEventKey(eventKey)) {

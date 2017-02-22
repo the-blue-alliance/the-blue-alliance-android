@@ -26,7 +26,7 @@ import rx.Observable;
  */
 public class EventRankingsFragment extends RecyclerViewFragment<RankingResponseObject, RankingsListSubscriber, RecyclerViewBinder> {
 
-    private static final String KEY = "eventKey";
+    public static final String KEY = "eventKey";
 
     private String mEventKey;
 
@@ -82,6 +82,9 @@ public class EventRankingsFragment extends RecyclerViewFragment<RankingResponseO
 
                 /* Track the call */
                 AnalyticsHelper.sendClickUpdate(getActivity(), "team@event_click", "EventRankingsFragment", mEventKey);
+            } else if (actionId == Interactions.EXPAND_TEAM_RANKING && view instanceof TeamRankingItemView) {
+                TeamRankingItemView itemView = (TeamRankingItemView) view;
+                itemView.toggleRankingsExpanded();
             }
         });
     }

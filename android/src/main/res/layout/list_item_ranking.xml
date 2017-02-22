@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
-    android:minHeight="88dp"
-    android:paddingBottom="20dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="20dp">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" xmlns:tools="http://schemas.android.com/tools"
+                android:background="?android:attr/selectableItemBackground"
+                android:minHeight="88dp"
+                android:paddingBottom="20dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="20dp">
 
     <TextView
         android:id="@+id/team_number"
         android:layout_width="72dp"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/team_name"
-        android:text="254"
+        tools:text="254"
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/team_number"
-        android:text="Rank 1"
+        tools:text="Rank 1"
         android:textSize="14sp" />
 
     <TextView
@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/team_rank"
-        android:text="(12-0-0)"
+        tools:text="(12-0-0)"
         android:textColor="@color/blue"
         android:textSize="14sp" />
 
@@ -40,21 +40,47 @@
         android:id="@id/team_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/team_number"
+        android:layout_toEndOf="@id/team_number"
         android:ellipsize="end"
         android:lines="1"
-        android:text="Teh Chezy Pofs"
+        android:drawableEnd="@drawable/ic_arrow_drop_down_black_24dp"
+        tools:text="Teh Chezy Pofs"
         android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/ranking_breakdown"
+        android:id="@+id/ranking_summary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/team_name"
+        android:layout_alignStart="@id/team_name"
         android:layout_below="@id/team_name"
-        android:text="22 QS, 930 Assist, 725 Auto, 310 Truss &amp; Catch, 518 Teleop"
+        tools:text="Qual Score: 22 (1.83 per match)"
         android:textColor="@color/secondary_text_color"
         android:textSize="14sp" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ranking_breakdown_container"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_alignStart="@+id/ranking_summary"
+        android:layout_below="@+id/ranking_summary">
+        <TextView
+                android:id="@+id/ranking_breakdown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text_color"
+                android:textSize="14sp"
+                tools:text="Assist: 930\nAuto: 725\nTruss &amp; Catch: 310\nTeleop: 518\nPlayed: 12"/>
+
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ranking_detail_button"
+                android:textColor="@color/blue"
+                android:text="more"
+                style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"/>
+    </LinearLayout>
 </RelativeLayout>
