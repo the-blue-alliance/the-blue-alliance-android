@@ -76,11 +76,12 @@
                 tools:text="Assist: 930\nAuto: 725\nTruss &amp; Catch: 310\nTeleop: 518\nPlayed: 12"/>
 
         <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="25dp"
                 android:id="@+id/ranking_detail_button"
                 android:textColor="@color/blue"
-                android:text="more"
-                style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"/>
+                style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+                android:text="@string/warning_more"
+                android:padding="5dp" />
     </LinearLayout>
 </RelativeLayout>
