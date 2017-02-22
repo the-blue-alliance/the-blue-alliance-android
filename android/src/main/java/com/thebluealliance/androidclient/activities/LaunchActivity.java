@@ -79,6 +79,7 @@ public class LaunchActivity extends AppCompatActivity {
         } else if (redownload) {
             // Start redownload activity
             startActivity(redownloadIntent);
+            finish();
         } else {
             // Go to onboarding activity
             startActivity(new Intent(this, OnboardingActivity.class));
