@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.helpers;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.api.model.IRankingItem;
 import com.thebluealliance.api.model.IRankingSortOrder;
 
@@ -11,6 +10,7 @@ import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +45,7 @@ public final class RankingFormatter {
                                             List<IRankingSortOrder> sortOrders,
                                             Resources resources,
                                             @RankingStringOptions int flags) {
-        Map<String, String> rankingElements = Utilities.getMapForPlatform(String.class, String.class);
+        Map<String, String> rankingElements = new LinkedHashMap<>();
         if (rankData.getQualAverage() != null) {
             rankingElements.put(resources.getString(R.string.rank_qual_average),
                                 ThreadSafeFormatters.formatDoubleOnePlace(rankData.getQualAverage()));
