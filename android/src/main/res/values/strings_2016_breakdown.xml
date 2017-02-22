@@ -30,27 +30,13 @@
     <string name="defense2016_unknown">Unknown</string>
     <string name="defense2016_breaches">Total Breaches</string>
 
-    <string name="defense2016_percent_format">%1$d / %2$d = %3$.2f%% </string>
-
     <string name="breakdown2016_defense_stats">Defense Stats (# damaged / # opportunities)</string>
     <string name="breakdown2016_tower_stats">Tower Stats (# successful / # opportunities)</string>
 
-    <string name="breakdown2016_avg_low_goal">Average Low Goals</string>
-    <string name="breakdown2016_avg_high_goal">Average High Goals</string>
-    <string name="breakdown2016_avg_score">Average Match Score</string>
-    <string name="breakdown2016_avg_win_score">Average Winning Score</string>
-    <string name="breakdown2016_avg_win_margin">Average Win Margin</string>
-    <string name="breakdown2016_avg_auto_score">Average Auto Score</string>
     <string name="breakdown2016_avg_cross_score">Average Teleop Crossing Score</string>
     <string name="breakdown2016_avg_boulder_score">Average Teleop Boulder Score</string>
     <string name="breakdown2016_avg_tower_score">Average Teleop Tower Score</string>
-    <string name="breakdown2016_avg_foul_score">Average Foul Score</string>
     <string name="breakdown2016_challenge">Challenges</string>
     <string name="breakdown2016_scales">Scales</string>
     <string name="breakdown2016_captures">Captures</string>
-    <string name="breakdown2016_high_score">High Score</string>
-    <string name="breakdown2016_match_stat">%1$d in %2$s</string>
-    <string name="breakdown2016_qual">Quals: %1$s</string>
-    <string name="breakdown2016_elim">Playoffs: %1$s</string>
-    <string name="breakdown2016_qual_and_elim">Quals: %1$s\nPlayoffs: %2$s</string>
 </resources>
