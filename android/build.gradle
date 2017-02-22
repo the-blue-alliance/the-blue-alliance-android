@@ -273,8 +273,15 @@ dependencies {
     compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"
     compile "com.google.android.gms:play-services-gcm:${playServicesVersion}"
     compile "com.google.android.gms:play-services-auth:${playServicesVersion}"
+    compile "com.google.firebase:firebase-core:${playServicesVersion}"
     compile "com.google.firebase:firebase-auth:${playServicesVersion}"
     compile "com.google.firebase:firebase-config:${playServicesVersion}"
+
+    debugCompile "com.github.phil-lopreiato:firebasecrash-noop:v0.1"
+    debugBlueCompile "com.github.phil-lopreiato:firebasecrash-noop:v0.1"
+    debugProguardCompile "com.github.phil-lopreiato:firebasecrash-noop:v0.1"
+    testCompile 'com.github.phil-lopreiato:firebasecrash-noop:v0.1'
+    releaseCompile "com.google.firebase:firebase-crash:${playServicesVersion}"
 
     // Square Libraries
     compile 'com.squareup.picasso:picasso:2.5.2'
