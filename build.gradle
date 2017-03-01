@@ -60,7 +60,7 @@ allprojects {
         playServicesVersion = '9.6.1'
         googleApiClientVersion = '1.21.0'
         mockitoVersion = '2.2.1'
-        retrofitVersion = '2.1.0'
+        retrofitVersion = '2.2.0'
         rxJavaVersion = '1.2.7'
         rxAndroidVersion = '1.2.1'
         gsonVersion = '2.8.0'
