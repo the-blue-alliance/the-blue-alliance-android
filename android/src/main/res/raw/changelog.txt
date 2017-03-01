@@ -1,4 +1,4 @@
-Version 4.0.1:<br>
+Version 4.0.2:<br>
     - Full support for the 2017 game: FIRST Steamworks!<br>
     - Improve data model reliability<br>
     - Support 2015 score breakdowns<br>
