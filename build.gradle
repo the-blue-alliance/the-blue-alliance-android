@@ -57,7 +57,7 @@ allprojects {
 
     ext {
         supportLibVersion = '24.2.1'
-        playServicesVersion = '9.2.0'
+        playServicesVersion = '9.6.1'
         googleApiClientVersion = '1.21.0'
         mockitoVersion = '2.2.1'
         retrofitVersion = '2.1.0'
