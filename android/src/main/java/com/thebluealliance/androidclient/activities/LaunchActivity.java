@@ -140,7 +140,7 @@ public class LaunchActivity extends AppCompatActivity {
                 intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_TEAMS, LoadTBAData.LOAD_DISTRICTS});
             }
 
-            if (lastVersion < 4000100) {
+            if (lastVersion < 4000200) {
                 // v4.0 - Redownload everything since we recreate the db
                 redownload = true;
                 intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_TEAMS, LoadTBAData.LOAD_DISTRICTS});
