@@ -25,7 +25,7 @@ public class RankingItemDeserializer implements JsonDeserializer<RankingItem>,
         JsonObject data = json.getAsJsonObject();
         RankingItem rankItem = new RankingItem();
 
-        rankItem.setDq(data.get("dq").getAsInt());
+        rankItem.setDq(!isNull(data.get("dq")) ? data.get("dq").getAsInt() : 0);
         rankItem.setMatchesPlayed(data.get("matches_played").getAsInt());
         rankItem.setRank(data.get("rank").getAsInt());
         rankItem.setTeamKey(data.get("team_key").getAsString());
