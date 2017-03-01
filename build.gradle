@@ -61,7 +61,7 @@ allprojects {
         googleApiClientVersion = '1.21.0'
         mockitoVersion = '2.2.1'
         retrofitVersion = '2.1.0'
-        rxJavaVersion = '1.2.1'
+        rxJavaVersion = '1.2.7'
         rxAndroidVersion = '1.2.1'
         gsonVersion = '2.8.0'
         daggerVersion = '2.7'
