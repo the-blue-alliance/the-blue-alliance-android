@@ -77,9 +77,7 @@ public class TeamRankingItemView extends BindableFrameLayout<TeamRankingViewMode
             originalHeight = getHeight();
             breakdownContainer.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
 
-            // This seems to be a magic constant. Without it, we get extra space at the bottom
-            // for some reason I can't figure out. ¯\_(ツ)_/¯
-            expandedHeightDelta = breakdownContainer.getMeasuredHeight() - 80;
+            expandedHeightDelta = breakdownContainer.getMeasuredHeight();
         }
         ValueAnimator valueAnimator;
         if (!isViewExpanded) {
