@@ -17,6 +17,7 @@ for dir in */ ; do
   if [[ -d "$dir" && ! -L "$dir" ]]; then
     cp ${dir}ic_launcher_blue.png $MAIN/res/${dir}ic_launcher.png
     cp ${dir}ic_notification.png $MAIN/res/${dir}ic_notification.png
+    cp ${dir}ic_tba_lamp.png $MAIN/res/${dir}ic_tba_lamp.png
     cp ${dir}ic_launcher_red.png $DEBUG/res/${dir}ic_launcher.png
   fi;
 done
