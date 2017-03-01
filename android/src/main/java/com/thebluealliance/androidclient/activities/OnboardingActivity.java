@@ -367,7 +367,9 @@ public class OnboardingActivity extends AppCompatActivity
             return;
         }
         currentLoadingMessage = message;
-        loadingMessage.setText(message);
+        if (loadingMessage != null) {
+            loadingMessage.setText(message);
+        }
     }
 
     public void onProgressUpdate(LoadTBAData.LoadProgressInfo info) {
