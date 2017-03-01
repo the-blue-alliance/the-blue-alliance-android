@@ -97,7 +97,13 @@ public class SubscriptionsTable {
     }
 
     public void recreate(String user) {
-        mDb.delete(Database.TABLE_SUBSCRIPTIONS, USER_NAME + " = ?", new String[]{user});
+        mDb.beginTransaction();
+        try {
+            mDb.delete(Database.TABLE_SUBSCRIPTIONS, USER_NAME + " = ?", new String[]{user});
+            mDb.setTransactionSuccessful();
+        } finally {
+            mDb.endTransaction();
+        }
     }
 
     public boolean hasNotificationType(String key, String notificationType) {
