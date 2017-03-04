@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="breakdown_team_stats">Team Stats</string>
+    <string name="breakdown_event_stats">Event Stats</string>
+    <string name="breakdown_match_stats">Match Stats</string>
+    <string name="breakdown_auto_total">Total Auto</string>
+    <string name="breakdown_teleop_total">Total Teleop</string>
+    <string name="breakdown_number_format">%1$d</string>
+    <string name="breakdown_addition_format">(+ %1$d)</string>
+    <string name="breakdown_rp_format">(+ %1$d RP)</string>
+    <string name="breakdown_total_rp">%1$d RP</string>
+    <string name="breakdown_foul">Fouls</string>
+    <string name="breakdown_foul_format_add">+ %1$d</string>
+    <string name="breakdown_foul_format_subtract">- %1$d</string>
+    <string name="breakdown_adjust">Adjustments</string>
+    <string name="breakdown_total">Total Score</string>
+    <string name="breakdown_rp">Ranking Points</string>
+    <string name="breakdown_teams">Teams</string>
+
+
+    <string name="breakdown_avg_low_goal">Average Low Goals</string>
+    <string name="breakdown_avg_high_goal">Average High Goals</string>
+    <string name="breakdown_avg_score">Average Match Score</string>
+    <string name="breakdown_avg_win_score">Average Winning Score</string>
+    <string name="breakdown_avg_win_margin">Average Win Margin</string>
+    <string name="breakdown_avg_auto_score">Average Auto Score</string>
+    <string name="breakdown_percent_format">%1$d / %2$d = %3$.2f%% </string>
+    <string name="breakdown_avg_foul_score">Average Foul Score</string>
+    <string name="breakdown_high_score">High Score</string>
+    <string name="breakdown_match_stat">%1$d in %2$s</string>
+    <string name="breakdown_qual">Quals: %1$s</string>
+    <string name="breakdown_elim">Playoffs: %1$s</string>
+    <string name="breakdown_qual_and_elim">Quals: %1$s\nPlayoffs: %2$s</string>
+</resources>

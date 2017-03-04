@@ -13,8 +13,14 @@
     <string name="pref_header_api">API</string>
     <string name="pref_header_analytics">Analytics</string>
 
+    <string name="pref_clear_okhttp">Clear OkHttp Cache</string>
+    <string name="pref_clear_okhttp_detail">Evict local HTTP response cache</string>
+    <string name="pref_refresh_remote_config">Update Remote Configuration</string>
+    <string name="pref_refresh_remote_config_detail">Updates data from Firebase Remote Config</string>
     <string name="pref_dry_run">Analytics Dry Run</string>
     <string name="pref_dry_run_detail">Skip sending analytics data</string>
+    <string name="pref_query_config">Lookup item in remote config</string>
+    <string name="pref_query_config_detail">Get a value from Firebase Remote Config</string>
 
     <string name="pref_analytics_key">Use Debug Analytics</string>
     <string name="pref_analytics_detail">Use analytics.id.debug Property ID for analytics</string>

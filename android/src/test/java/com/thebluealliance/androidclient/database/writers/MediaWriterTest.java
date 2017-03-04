@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
@@ -24,6 +26,7 @@ public class MediaWriterTest {
 
     @Mock Database mDb;
     @Mock MediasTable mTable;
+    @Mock Gson mGson;
 
     private Media mMedia;
     private MediaWriter mWriter;
@@ -41,6 +44,6 @@ public class MediaWriterTest {
         mWriter.write(mMedia, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
-        verify(db).insert(Database.TABLE_MEDIAS, null, mMedia.getParams());
+        verify(db).insert(Database.TABLE_MEDIAS, null, mMedia.getParams(mGson));
     }
 }

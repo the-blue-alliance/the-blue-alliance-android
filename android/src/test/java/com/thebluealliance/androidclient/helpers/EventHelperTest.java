@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.helpers;
 
+import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.types.EventType;
 
@@ -323,8 +324,10 @@ public class EventHelperTest {
         assertEquals(EventHelper.generateLabelForEvent(districtCmp), "Week 1");
 
         /* Special cases for 2016 events & Week 0.5 */
-        Event regional2016 = mockRegularEvent(EventType.REGIONAL, 2016, 1);
-        assertEquals(EventHelper.generateLabelForEvent(regional2016), "Week 0.5");
+        Event scmb = ModelMaker.getModel(Event.class, "2016scmb");
+        assertEquals(EventHelper.generateLabelForEvent(scmb), "Week 0.5");
+        Event regional2016 = mockRegularEvent(EventType.REGIONAL, 2016, 2);
+        assertEquals(EventHelper.generateLabelForEvent(regional2016), "Week 1");
 
         Event district2016 = mockRegularEvent(EventType.DISTRICT, 2016, 4);
         assertEquals(EventHelper.generateLabelForEvent(district2016), "Week 3");
@@ -364,7 +367,7 @@ public class EventHelperTest {
     private static Event mockRegularEvent(EventType type, int year, int week)  {
         Event event = mockEventType(type);
         when(event.getYear()).thenReturn(year);
-        when(event.getCompetitionWeek()).thenReturn(week);
+        when(event.getWeek()).thenReturn(week);
         return event;
     }
 }

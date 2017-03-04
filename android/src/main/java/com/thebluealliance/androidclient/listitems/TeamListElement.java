@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Locale;
+
 public class TeamListElement extends ListElement {
 
     public final int mTeamNumber;
@@ -24,7 +26,7 @@ public class TeamListElement extends ListElement {
         super(team.getKey());
         mTeamNumber = team.getTeamNumber();
         mTeamName = team.getNickname();
-        mTeamLocation = team.getLocation();
+        mTeamLocation = team.getLocationName();
         mShowLinkToTeamDetails = false;
         mShowMyTbaDetails = false;
     }
@@ -61,10 +63,10 @@ public class TeamListElement extends ListElement {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.teamNumber.setText(String.format("%1$d", mTeamNumber));
+        holder.teamNumber.setText(String.format(Locale.US, "%1$d", mTeamNumber));
 
-        if (mTeamName.isEmpty()) {
-            holder.teamName.setText(String.format("Team %1$s", mTeamNumber));
+        if (mTeamName == null || mTeamName.isEmpty()) {
+            holder.teamName.setText(String.format(Locale.US, "Team %1$s", mTeamNumber));
         } else {
             holder.teamName.setText(mTeamName);
         }

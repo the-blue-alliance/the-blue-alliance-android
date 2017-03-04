@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.renderers;
 
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.types.ModelType;
 
 import android.support.annotation.Nullable;
@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class DistrictTeamRenderer implements ModelRenderer<DistrictTeam, Void> {
+public class DistrictTeamRenderer implements ModelRenderer<DistrictRanking, Void> {
 
     @Inject
     public DistrictTeamRenderer() {
@@ -26,11 +26,11 @@ public class DistrictTeamRenderer implements ModelRenderer<DistrictTeam, Void> {
 
     @Nullable
     @Override
-    public DistrictTeamListElement renderFromModel(DistrictTeam districtTeam, Void aVoid) {
+    public DistrictTeamListElement renderFromModel(DistrictRanking districtTeam, Void aVoid) {
         return new DistrictTeamListElement(
                 districtTeam.getTeamKey(),
                 districtTeam.getDistrictKey(),
                 districtTeam.getRank(),
-                districtTeam.getTotalPoints());
+                districtTeam.getPointTotal());
     }
 }

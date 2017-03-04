@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.helpers;
 
-import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
@@ -13,18 +12,13 @@ import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
 import org.greenrobot.eventbus.EventBus;
 
 import android.content.Context;
-import android.content.res.Resources;
 
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +27,7 @@ import javax.annotation.Nullable;
 public final class EventHelper {
 
     public static final String CHAMPIONSHIP_LABEL = "Championship Event";
+    public static final String CITY_CHAMPIONSHIP_LABEL = "%1$s Championship";
     public static final String REGIONAL_LABEL = "Week %1$d";
     public static final String FLOAT_REGIONAL_LABEL = "Week %1$.1f";
     public static final String WEEKLESS_LABEL = "Other Official Events";
@@ -112,7 +107,12 @@ public final class EventHelper {
         switch (e.getEventTypeEnum()) {
             case CMP_DIVISION:
             case CMP_FINALS:
-                return CHAMPIONSHIP_LABEL;
+                if (e.getYear() >= 2017 && e.getCity() != null) {
+                    // #2Champs
+                    return String.format(CITY_CHAMPIONSHIP_LABEL, e.getCity());
+                } else {
+                    return CHAMPIONSHIP_LABEL;
+                }
             case REGIONAL:
             case DISTRICT:
             case DISTRICT_CMP:
@@ -121,15 +121,19 @@ public final class EventHelper {
                  * Week 1 is actually Week 0.5, everything else is one less
                  * See http://www.usfirst.org/roboticsprograms/frc/blog-The-Palmetto-Regional
                  */
+                @Nullable Integer week = e.getWeek();
                 if (e.getYear() == 2016) {
-                    int week = e.getCompetitionWeek();
-                    if (week == 1) {
+                    if (week == null) {
+                        return String.format(REGIONAL_LABEL, 0);
+                    } else if ("2016scmb".equals(e.getKey())) {
                         return String.format(FLOAT_REGIONAL_LABEL, 0.5);
                     } else {
                         return String.format(REGIONAL_LABEL, week - 1);
                     }
+                } else if (week != null){
+                    return String.format(REGIONAL_LABEL, week);
                 } else {
-                    return String.format(REGIONAL_LABEL, e.getCompetitionWeek());
+                    return String.format(REGIONAL_LABEL, 0);
                 }
             case OFFSEASON:
                 String month = ThreadSafeFormatters.renderEventMonth(e.getFormattedStartDate());
@@ -220,8 +224,8 @@ public final class EventHelper {
         int lastDistrict = -1, currentDistrict = -1;
         for (Event event : events) {
             currentType = event.getEventTypeEnum();
-            currentDistrict = event.getEventDistrict() != null
-                              ? event.getEventDistrict()
+            currentDistrict = event.getEventDistrictEnum() != null
+                              ? event.getEventDistrictEnum().ordinal()
                               : -1;
             if (currentType != lastType
                 || (currentType == EventType.DISTRICT && currentDistrict != lastDistrict)) {
@@ -252,7 +256,7 @@ public final class EventHelper {
         Collections.sort(events, new EventSortByDateComparator());
         String lastHeader = null, currentHeader = null;
         for (Event event : events) {
-            currentHeader = weekLabelFromNum(event.getYear(), event.getCompetitionWeek());
+            currentHeader = weekLabelFromNum(event.getYear(), event.getWeek());
             if (!currentHeader.equals(lastHeader)) {
                 output.add(new ListSectionHeaderViewModel(currentHeader + " Events"));
             }
@@ -276,101 +280,12 @@ public final class EventHelper {
                 + ThreadSafeFormatters.renderEventDate(endDate);
     }
 
-    public static String extractRankingString(CaseInsensitiveMap rankingElements) {
-        // Find if the rankings contain a record; remove it if it does
-        Iterator it = rankingElements.entrySet().iterator();
-        String record = null;
-        while (it.hasNext()) {
-            Map.Entry<String, Object> entry = (Map.Entry) it.next();
-            if (entry.getKey().toLowerCase().contains("record".toLowerCase())) {
-                record = "(" + rankingElements.get(entry.getKey()) + ")";
-                it.remove();
-                break;
-            }
-        }
-
-        if (record == null) {
-            Set<String> keys = rankingElements.keySet();
-            if (keys.contains("wins") && keys.contains("losses") && keys.contains("ties")) {
-                record = "(" + rankingElements.get("wins") + "-" + rankingElements.get("losses") + "-" + rankingElements.get("ties") + ")";
-                rankingElements.remove("wins");
-                rankingElements.remove("losses");
-                rankingElements.remove("ties");
-            }
-        }
-
-        return record;
-    }
-
-    public static String createRankingBreakdown(CaseInsensitiveMap rankingElements) {
-        String rankingString = "";
-        // Construct rankings string
-        Iterator it = rankingElements.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry) it.next();
-            String value = entry.getValue().toString();
-            // If we have a number like 235.00, remove the useless .00 so it looks cleaner
-            try {
-                value = ThreadSafeFormatters.formatDoubleTwoPlaces(Double.parseDouble(value));
-            } catch (NumberFormatException e) {
-                //Item is not a number
-            }
-
-            // Capitalization hack
-            String rankingKey = entry.getKey().toString();
-            if (rankingKey.length() <= 3) {
-                rankingKey = rankingKey.toUpperCase();
-            } else {
-                rankingKey = capitalize(rankingKey);
-            }
-            rankingString += rankingKey + ": " + value;
-            if (it.hasNext()) {
-                rankingString += ", ";
-            }
-        }
-        return rankingString;
-    }
-
-    /**
-     * Hacky capitalize method to remove dependency on apache lib for only one method Stupid DEX
-     * limit...
-     *
-     * @param string Input string
-     * @return Input string with first letter of each word capitalized
-     */
-    private static String capitalize(String string) {
-        StringBuilder sb = new StringBuilder();
-        String[] split = string.split(" ");
-        for (String s : split) {
-            sb.append(s.substring(0, 1).toUpperCase());
-            sb.append(s.substring(1));
-            sb.append(" ");
-        }
-        sb.deleteCharAt(sb.length() - 1);
-        return sb.toString();
-    }
 
     public static String getShortCodeForEventKey(String eventKey) {
         if (validateEventKey(eventKey)) {
             return eventKey.replaceAll("[0-9]+", "");
         } else {
             return eventKey;
-        }
-    }
-
-    public static class CaseInsensitiveMap<K> extends HashMap<String, K> {
-
-        @Override
-        public K put(String key, K value) {
-            return super.put(key.toLowerCase(), value);
-        }
-
-        public K get(String key) {
-            return super.get(key.toLowerCase());
-        }
-
-        public boolean contains(String key) {
-            return get(key) != null;
         }
     }
 
@@ -385,31 +300,4 @@ public final class EventHelper {
         return m.find() ? m.group().toUpperCase(Locale.US) : "";
     }
 
-    public static String generateAllianceSummary(Resources r, int allianceNumber, int alliancePick) {
-        String[] args = new String[2];
-        String summary;
-        if (allianceNumber > 0) {
-            switch (alliancePick) {
-                case 0:
-                    args[0] = r.getString(R.string.team_at_event_captain);
-                    args[1] = allianceNumber + Utilities.getOrdinalFor(allianceNumber);
-                    break;
-                case -1:
-                    args[0] = allianceNumber + Utilities.getOrdinalFor(allianceNumber);
-                    break;
-                default:
-                    args[0] = alliancePick + Utilities.getOrdinalFor(alliancePick) + " " + r.getString(R.string.team_at_event_pick);
-                    args[1] = allianceNumber + Utilities.getOrdinalFor(allianceNumber);
-                    break;
-            }
-            if (alliancePick == -1) {
-                summary = String.format(r.getString(R.string.alliance_summary_no_pick_num), args[0]);
-            } else {
-                summary = String.format(r.getString(R.string.alliance_summary), args[0], args[1]);
-            }
-        } else {
-            summary = r.getString(R.string.not_picked);
-        }
-        return summary;
-    }
 }

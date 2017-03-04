@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.Gson;
 
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
@@ -29,7 +30,7 @@ import dagger.Provides;
  * Each of these are annotated as @Singleton, so references are shared within their component
  * (e.g. unique references per activity)
  */
-@Module(includes = {TBAAndroidModule.class, RendererModule.class})
+@Module(includes = {TBAAndroidModule.class, RendererModule.class, })
 public class SubscriberModule {
 
     private Activity mActivity;
@@ -63,8 +64,11 @@ public class SubscriberModule {
         return new TeamListSubscriber(renderer);
     }
 
-    @Provides RankingsListSubscriber provideRankingsListRecyclerSubscriber(Database db, EventBus eventBus) {
-        return new RankingsListSubscriber(db, eventBus);
+    @Provides
+    public RankingsListSubscriber provideRankingsListRecyclerSubscriber(Database db,
+                                                                        EventBus eventBus,
+                                                                        Resources resources) {
+        return new RankingsListSubscriber(db, eventBus, resources);
     }
 
     @Provides
@@ -101,8 +105,9 @@ public class SubscriberModule {
     }
 
     @Provides
-    public TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(MatchRenderer renderer) {
-        return new TeamAtEventSummarySubscriber(mActivity, renderer);
+    public TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(MatchRenderer renderer,
+                                                                            Database db) {
+        return new TeamAtEventSummarySubscriber(mActivity, renderer, db.getEventsTable());
     }
 
     @Provides
@@ -169,7 +174,7 @@ public class SubscriberModule {
     }
 
     @Provides
-    public MatchBreakdownSubscriber provideMatchBreakdownSubscriber() {
-        return new MatchBreakdownSubscriber();
+    public MatchBreakdownSubscriber provideMatchBreakdownSubscriber(Gson gson, AppConfig config) {
+        return new MatchBreakdownSubscriber(gson, config);
     }
 }

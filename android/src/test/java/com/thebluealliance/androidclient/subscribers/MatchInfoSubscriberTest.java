@@ -77,11 +77,11 @@ public class MatchInfoSubscriberTest {
     public void testParsedData()  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mData);
 
-        assertEquals(2, data.size());
+        assertEquals(3, data.size());
         assertTrue(data.get(0) instanceof MatchListElement);
         assertTrue(data.get(1) instanceof ImageListElement);
 
-        Media videoItem = mGson.fromJson(mData.match.getVideosJson().get(0), Media.class);
+        Media videoItem = ((Match.MatchVideo)mData.match.getVideos().get(0)).asMedia();
         ImageListElement video = (ImageListElement) data.get(1);
 
         verify(mRenderer).renderFromModel(mData.match, MatchRenderer.RENDER_MATCH_INFO);

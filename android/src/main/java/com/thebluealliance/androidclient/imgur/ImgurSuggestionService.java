@@ -8,7 +8,7 @@ import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesMediaSuggestionMessage;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.gce.GceAuthController;
 import com.thebluealliance.androidclient.di.components.DaggerSuggestionComponent;
 import com.thebluealliance.androidclient.di.components.SuggestionComponent;
@@ -47,6 +47,7 @@ public class ImgurSuggestionService extends IntentService {
     @Inject ImgurApi mImgurApi;
     @Inject TeamMedia mTeamMediaApi;
     @Inject GceAuthController mGceAuthController;
+    @Inject AppConfig mAppConfig;
 
     /**
      * Create a new Intent pass to {@link Context#startService(Intent)} that uploads the given image
@@ -136,7 +137,7 @@ public class ImgurSuggestionService extends IntentService {
         // Catch-all error handling for now
         // TODO should we catch each exception individually and handle them better (e.g. retyr?)
         try {
-            String authToken = getAuthHeader(getApplicationContext());
+            String authToken = getAuthHeader();
             File file = new File(filepath);
             RequestBody body = RequestBody.create(MediaType.parse("multipart/form-data"), file);
             RequestBody titlePart = RequestBody.create(MediaType.parse("text/plain"), title);
@@ -202,8 +203,8 @@ public class ImgurSuggestionService extends IntentService {
                 .build();
     }
 
-    private static String getAuthHeader(Context context) {
-        String clientId = Utilities.readLocalProperty(context, "imgur.clientId");
+    private String getAuthHeader() {
+        String clientId = mAppConfig.getString("imgur_clientId");
         return String.format("Client-ID %1$s", clientId);
     }
 

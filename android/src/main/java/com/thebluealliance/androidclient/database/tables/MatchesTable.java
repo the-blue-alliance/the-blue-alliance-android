@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -16,18 +18,16 @@ public class MatchesTable extends ModelTable<Match> {
             MATCHNUM = "matchNumber",
             SETNUM = "setNumber",
             EVENT = "eventKey",
-            TIMESTRING = "timeString",
             TIME = "time",
             ALLIANCES = "alliances",
+            WINNER = "winner",
             VIDEOS = "videos",
             BREAKDOWN = "breakdown",
             LAST_MODIFIED = "last_modified";
+    @Deprecated public static final String TIMESTRING = "timeString";
 
-    private SQLiteDatabase mDb;
-
-    public MatchesTable(SQLiteDatabase db){
-        super(db);
-        this.mDb = db;
+    public MatchesTable(SQLiteDatabase db, Gson gson){
+        super(db, gson);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class MatchesTable extends ModelTable<Match> {
 
     @Override
     public Match inflate(Cursor cursor) {
-        return ModelInflater.inflateMatch(cursor);
+        return ModelInflater.inflateMatch(cursor, mGson);
     }
 
     public List<Match> getTeamAtEventMatches(String teamKey, String eventKey) {

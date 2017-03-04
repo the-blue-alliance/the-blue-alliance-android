@@ -3,13 +3,12 @@ package com.thebluealliance.androidclient.fragments.teamAtEvent;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
-import com.thebluealliance.androidclient.datafeed.combiners.TeamAtEventSummaryCombiner;
 import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
 import com.thebluealliance.androidclient.itemviews.LabelValueItemView;
 import com.thebluealliance.androidclient.itemviews.LabeledMatchItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
+import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber;
-import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber.Model;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
 
@@ -22,7 +21,7 @@ import javax.inject.Inject;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
-public class TeamAtEventSummaryFragment extends RecyclerViewFragment<Model, TeamAtEventSummarySubscriber, RecyclerViewBinder> {
+public class TeamAtEventSummaryFragment extends RecyclerViewFragment<TeamAtEventStatus, TeamAtEventSummarySubscriber, RecyclerViewBinder> {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 
@@ -50,7 +49,7 @@ public class TeamAtEventSummaryFragment extends RecyclerViewFragment<Model, Team
         mEventKey = getArguments().getString(EVENT_KEY);
         super.onCreate(savedInstanceState);
 
-        mSubscriber.setTeamKey(mTeamKey);
+        mSubscriber.setTeamAndEventKeys(mTeamKey, mEventKey);
     }
 
     @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -71,11 +70,8 @@ public class TeamAtEventSummaryFragment extends RecyclerViewFragment<Model, Team
     }
 
     @Override
-    protected Observable<Model> getObservable(String cacheHeader) {
-        return Observable.zip(
-                mDatafeed.fetchTeamAtEventRank(mTeamKey, mEventKey, cacheHeader),
-                mDatafeed.fetchEvent(mEventKey, cacheHeader),
-                new TeamAtEventSummaryCombiner());
+    protected Observable<TeamAtEventStatus> getObservable(String cacheHeader) {
+        return mDatafeed.fetchTeamAtEventStatus(mTeamKey, mEventKey, cacheHeader);
     }
 
     @Override

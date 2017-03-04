@@ -30,8 +30,6 @@ import android.view.View;
 import android.view.Window;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -44,7 +42,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -265,34 +262,6 @@ public final class Utilities {
         }
         // only got here if we didn't return false
         return true;
-    }
-
-    @Deprecated
-    public static String readLocalProperty(Context c, String property) {
-        return readLocalProperty(c, property, "");
-    }
-
-    @Deprecated
-    public static String readLocalProperty(Context c, String property, String defaultValue) {
-        Properties properties;
-        properties = new Properties();
-        if (c == null) {
-            TbaLogger.w("Null context. Can't read local properties");
-            return defaultValue;
-        }
-        try {
-            InputStream fileStream = c.getAssets().open("tba.properties");
-            properties.load(fileStream);
-            fileStream.close();
-            if (isDebuggable() && properties.containsKey(property + ".debug")) {
-                return properties.getProperty(property + ".debug");
-            }
-            return properties.getProperty(property, defaultValue);
-        } catch (IOException e) {
-            TbaLogger.e("Unable to read from tba.properties");
-            e.printStackTrace();
-        }
-        return defaultValue;
     }
 
     public static boolean isDebuggable() {

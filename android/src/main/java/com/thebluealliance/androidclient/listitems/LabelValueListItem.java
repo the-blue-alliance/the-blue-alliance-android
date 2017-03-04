@@ -106,6 +106,11 @@ public class LabelValueListItem extends ListElement {
         return convertView;
     }
 
+    @Override
+    public String toString() {
+        return label + ": " + value;
+    }
+
     private static class ViewHolder {
         TextView label;
         TextView value;

@@ -9,6 +9,7 @@ import com.google.gson.JsonSyntaxException;
 
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.lang.reflect.Type;
@@ -40,16 +41,23 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setName(object.get("name").getAsString());
         }
 
-        if (isNull(object.get("location"))) {
-            event.setLocation("");
+        if (isNull(object.get("address"))) {
+            event.setAddress("");
         } else {
-            event.setLocation(object.get("location").getAsString());
+            event.setAddress(object.get("address").getAsString());
         }
 
-        if (isNull(object.get("venue_address"))) {
-            event.setVenueAddress("");
+        if (isNull(object.get("location_name"))) {
+            event.setLocationName("");
         } else {
-            event.setVenueAddress(object.get("venue_address").getAsString());
+            event.setLocationName(object.get("location_name").getAsString());
+        }
+
+        if (isNull(object.get("city")) || isNull(object.get("state_prov")) || isNull(object.get("country"))) {
+            event.setLocation("");
+        } else {
+            event.setLocation(object.get("city").getAsString() + ", " + object.get("state_prov").getAsString() + ", " + object.get("country").getAsString());
+            event.setCity(object.get("city").getAsString());
         }
 
         if (object.has("event_type")) {
@@ -63,9 +71,7 @@ public class EventDeserializer implements JsonDeserializer<Event> {
         }
 
         if (!isNull(object.get("week"))) {
-            // TBA server returns the first competition week as Week 0
-            // We consider "Week 0" to be preseason events
-            event.setCompetitionWeek(object.get("week").getAsInt() + 1);
+            event.setWeek(object.get("week").getAsInt() + 1);
         } else {
             event.setCompetitionWeekFromStartDate();
         }
@@ -74,12 +80,6 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setEndDate("");
         } else {
             event.setEndDate(object.get("end_date").getAsString());
-        }
-
-        if (isNull(object.get("official"))) {
-            event.setOfficial(false);
-        } else {
-            event.setOfficial(object.get("official").getAsBoolean());
         }
 
         // "short_name" is not a required field in the API response.
@@ -94,30 +94,17 @@ public class EventDeserializer implements JsonDeserializer<Event> {
             event.setWebsite(object.get("website").getAsString());
         }
 
-        if (object.has("webcast")) {
-            event.setWebcasts(object.get("webcast").toString());
+        if (object.has("webcasts")) {
+            event.setWebcasts(object.get("webcasts").toString());
         }
 
-        JsonElement districtEnum = object.get("event_district");
-        if (isNull(districtEnum)) {
-            event.setEventDistrict(0);
+        JsonElement district = object.get("district");
+        if (isNull(district)) {
+            event.setDistrict(null);
         } else {
-            event.setEventDistrict(districtEnum.getAsInt());
-        }
-
-        JsonElement districtString = object.get("event_district_string");
-        if (isNull(districtString)) {
-            event.setEventDistrictString("");
-        } else {
-            String title = districtString.getAsString();
-            event.setEventDistrictString(title.equals("null") ? "" : title);
-        }
-
-        JsonElement alliances = object.get("alliances");
-        if (isNull(alliances)) {
-            event.setAlliances("");
-        } else {
-            event.setAlliancesJson(alliances.getAsJsonArray());
+            District districtModel = context.deserialize(object.get("district"), District.class);
+            event.setDistrict(districtModel);
+            event.setDistrictKey(districtModel.getKey());
         }
 
         return event;

@@ -1,20 +1,20 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public class DistrictTeamsTable extends ModelTable<DistrictTeam> {
+public class DistrictTeamsTable extends ModelTable<DistrictRanking> {
 
     public static final String KEY = "key",
             TEAM_KEY = "teamKey",
             DISTRICT_KEY = "districtKey",
-            DISTRICT_ENUM = "districtEnum",
-            YEAR = "year",
             RANK = "rank",
             EVENT1_KEY = "event1Key",
             EVENT1_POINTS = "event1Points",
@@ -24,11 +24,14 @@ public class DistrictTeamsTable extends ModelTable<DistrictTeam> {
             CMP_POINTS = "cmpPoints",
             ROOKIE_POINTS = "rookiePoints",
             TOTAL_POINTS = "totalPoints",
-            JSON = "json",
             LAST_MODIFIED = "last_modified";
+    @Deprecated public static final String
+            JSON = "json",
+            DISTRICT_ENUM = "districtEnum",
+            YEAR = "year";
 
-    public DistrictTeamsTable(SQLiteDatabase db){
-        super(db);
+    public DistrictTeamsTable(SQLiteDatabase db, Gson gson){
+        super(db, gson);
     }
 
     @Override
@@ -47,7 +50,7 @@ public class DistrictTeamsTable extends ModelTable<DistrictTeam> {
     }
 
     @Override
-    public DistrictTeam inflate(Cursor cursor) {
-        return ModelInflater.inflateDistrictTeam(cursor);
+    public DistrictRanking inflate(Cursor cursor) {
+        return ModelInflater.inflateDistrictTeam(cursor, mGson);
     }
 }

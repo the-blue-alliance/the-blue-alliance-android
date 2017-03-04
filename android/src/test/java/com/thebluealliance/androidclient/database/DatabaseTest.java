@@ -196,4 +196,22 @@ public class DatabaseTest {
             assertTrue(mDbHelper.columnExists(mDb, table, "last_modified"));
         }
     }
+
+    @Test
+    public void testUpdateTo32() {
+        for (String table : TABLES) {
+            mDb.execSQL(String.format(BASE_TABLE_CREATE, table));
+        }
+        mDbHelper.onUpgrade(mDb, 31, 32);
+
+        // Should drop some tables and recreate the whole thing. Just not erroring is good enough
+    }
+
+    @Test
+    public void testUpdateTo33() {
+        mDb.execSQL(String.format(BASE_TABLE_CREATE, TABLE_EVENTS));
+        assertFalse(mDbHelper.columnExists(mDb, TABLE_EVENTS, EventsTable.CITY));
+        mDbHelper.onUpgrade(mDb, 32, 33);
+        assertTrue(mDbHelper.columnExists(mDb, TABLE_EVENTS, EventsTable.CITY));
+    }
 }

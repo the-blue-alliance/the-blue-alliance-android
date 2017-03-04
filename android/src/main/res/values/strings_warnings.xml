@@ -16,6 +16,6 @@
 
     <string name="warning_first_down_message">FIRST\'s servers are down.</string>
     <string name="warning_first_down_explanation">We rely on FIRST to provide scores,
-        rankings, and more. Unfortunately, FIRST\'s servers are broken right now, so we can\'t get
+        ranking, and more. Unfortunately, FIRST\'s servers are broken right now, so we can\'t get
         the latest updates. The information you see here may be out of date.</string>
 </resources>

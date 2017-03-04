@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.fragments.event;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
-import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
 
@@ -11,9 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import rx.Observable;
 
-public class EventAlliancesFragment extends ListViewFragment<Event, AllianceListSubscriber> {
+public class EventAlliancesFragment extends ListViewFragment<List<EventAlliance>, AllianceListSubscriber> {
     private static final String KEY = "event_key";
 
     private String mEventKey;
@@ -55,8 +57,8 @@ public class EventAlliancesFragment extends ListViewFragment<Event, AllianceList
     }
 
     @Override
-    protected Observable<Event> getObservable(String tbaCacheHeader) {
-        return mDatafeed.fetchEvent(mEventKey, tbaCacheHeader);
+    protected Observable<List<EventAlliance>> getObservable(String tbaCacheHeader) {
+        return mDatafeed.fetchEventAlliances(mEventKey, tbaCacheHeader);
     }
 
     @Override

@@ -102,6 +102,7 @@ public class GceAuthController {
     @WorkerThread @VisibleForTesting
     String getGoogleAuthToken(String account, String scope)
     throws IOException, GoogleAuthException {
+        if (account == null || account.isEmpty()) return null;
         return GoogleAuthUtil.getToken(mContext, account, scope);
     }
 

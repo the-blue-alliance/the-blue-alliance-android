@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
@@ -25,6 +26,7 @@ import android.content.res.Resources;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,8 +39,9 @@ public class StatsListSubscriberTest {
     @Mock public Resources mResources;
     @Mock public EventBus mEventBus;
 
-    StatsListSubscriber mSubscriber;
-    JsonObject mStats;
+    private StatsListSubscriber mSubscriber;
+    private JsonObject mStats;
+    private JsonElement mInsights;
 
     @Before
     public void setUp() {
@@ -48,7 +51,8 @@ public class StatsListSubscriberTest {
           .thenReturn("Stats");
 
         mSubscriber = new StatsListSubscriber(mResources, mDb, mEventBus);
-        mStats = ModelMaker.getModel(JsonObject.class, "2015necmp_stats");
+        mStats = ModelMaker.getModel(JsonObject.class, "2016nyny_oprs_apiv3");
+        mInsights = ModelMaker.getModel(JsonObject.class, "2016nyny_insights_apiv3");
     }
 
     @Test
@@ -58,18 +62,30 @@ public class StatsListSubscriberTest {
 
     @Test
     public void testSimpleBinding()  {
-        DatafeedTestDriver.testSimpleParsing(mSubscriber, mStats);
-        verify(mEventBus).post(eq(new EventStatsEvent("1. Team 195 - <b>87.96</b>")));
+        StatsListSubscriber.Model model = new StatsListSubscriber.Model(mStats, mInsights);
+        DatafeedTestDriver.testSimpleParsing(mSubscriber, model);
+        verify(mEventBus).post(eq(new EventStatsEvent("1. Team 3419 - <b>41.77</b><br>2. Team 578 - <b>38.19</b><br>3. Team 1635 - <b>34.83</b><br>4. Team 1797 - <b>34.65</b><br>5. Team 5806 - <b>34.63</b>")));
+    }
+
+    @Test
+    public void testNoInsights() {
+        StatsListSubscriber.Model model = new StatsListSubscriber.Model(mStats, null);
+        DatafeedTestDriver.testSimpleParsing(mSubscriber, model);
     }
 
     @Test
     public void testParsedData()  {
-        List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mStats);
-        StatsListElement expected =
-          new StatsListElement("frc195", "195", "Team 195", "Stats",
-            87.957372917501459, 50.887943082425011, 37.06942983507642);
+        StatsListSubscriber.Model model = new StatsListSubscriber.Model(mStats, mInsights);
+        List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, model);
 
-        assertEquals(1, data.size());
-        assertEquals(expected, data.get(0));
+        assertEquals(66, data.size());
+        assertTrue(data.get(0) instanceof StatsListElement);
+
+        StatsListElement actual = ((StatsListElement)data.get(0));
+        assertEquals(actual.teamNumber, "3419");
+        assertEquals(actual.teamName, "Team 3419");
+        assertEquals(actual.opr, 41.76934455450079, 0);
+        assertEquals(actual.dpr, 18.164742518609433, 0);
+        assertEquals(actual.ccwm, 23.60460203589137, 0);
     }
 }

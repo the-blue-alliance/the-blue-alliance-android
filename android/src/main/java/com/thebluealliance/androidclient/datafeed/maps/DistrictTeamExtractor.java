@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import java.util.List;
 
 import rx.functions.Func1;
 
-public class DistrictTeamExtractor implements Func1<List<DistrictTeam>, DistrictTeam> {
+public class DistrictTeamExtractor implements Func1<List<DistrictRanking>, DistrictRanking> {
 
     private String mTeamKey;
 
@@ -15,9 +15,9 @@ public class DistrictTeamExtractor implements Func1<List<DistrictTeam>, District
     }
 
     @Override
-    public DistrictTeam call(List<DistrictTeam> districtTeams) {
+    public DistrictRanking call(List<DistrictRanking> districtTeams) {
         for (int i = 0; i < districtTeams.size(); i++) {
-            DistrictTeam districtTeam = districtTeams.get(i);
+            DistrictRanking districtTeam = districtTeams.get(i);
             if (districtTeam.getTeamKey().equals(mTeamKey)) {
                 return districtTeam;
             }

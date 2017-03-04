@@ -1,6 +1,8 @@
-Version 3.4.8:<br>
-    - Support 2017 Ontario district<br>
-    - Default to showing the current year<br>
+Version 4.0.2:<br>
+    - Full support for the 2017 game: FIRST Steamworks!<br>
+    - Improve data model reliability<br>
+    - Support 2015 score breakdowns<br>
+    - Many other fixes & enhancements<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>

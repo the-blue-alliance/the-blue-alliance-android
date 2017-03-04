@@ -150,7 +150,7 @@ public class MyTbaModelRendererTest {
 
     @Test
     public void testRenderDistrict() {
-        District district = ModelMaker.getModel(District.class, "district_ne");
+        District district = ModelMaker.getModelList(District.class, "2015_districts").get(3);
         district.setYear(2015);
         when(mDatafeed.fetchDistrict(DISTRICT_KEY)).thenReturn(Observable.just(district));
 

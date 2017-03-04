@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.listitems;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listeners.EventClickListener;
+import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -63,9 +63,14 @@ public class LabelValueDetailListItem extends ListElement {
             holder.container.addView(listItem.getView(c, inflater, null), 2);
         }
 
-        holder.detail.setOnClickListener(new EventClickListener(c, key));
+        holder.detail.setOnClickListener(new EventTeamClickListener(c, key));
 
         return convertView;
+    }
+
+    @Override
+    public String toString() {
+        return label + ": " + value + " (key: " + key + ")";
     }
 
     private static class ViewHolder {

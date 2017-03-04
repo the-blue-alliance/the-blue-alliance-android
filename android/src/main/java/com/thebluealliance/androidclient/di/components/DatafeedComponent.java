@@ -4,7 +4,9 @@ import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.accounts.AccountModule;
 import com.thebluealliance.androidclient.activities.HomeActivity;
 import com.thebluealliance.androidclient.activities.LaunchActivity;
+import com.thebluealliance.androidclient.activities.settings.DevSettingsActivity;
 import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
+import com.thebluealliance.androidclient.config.ConfigModule;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
@@ -15,7 +17,7 @@ import dagger.Component;
 
 @Singleton
 @Component(
-  modules = {DatafeedModule.class, AccountModule.class},
+  modules = {DatafeedModule.class, AccountModule.class, ConfigModule.class},
   dependencies = {ApplicationComponent.class})
 public interface DatafeedComponent {
 
@@ -27,4 +29,5 @@ public interface DatafeedComponent {
     void inject(HomeActivity homeActivity);
     void inject(LaunchActivity launchActivity);
     void inject(LoadTBADataTaskFragment loadTBADataTaskFragment);
+    void inject(DevSettingsActivity.DevSettingsFragment fragment);
 }

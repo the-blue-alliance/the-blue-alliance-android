@@ -1,14 +1,10 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
-import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.firebase.AllianceAdvancementEvent;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Event;
@@ -93,7 +89,6 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         for (int i = 0; i < mAPIData.size(); i++) {
             Match match = mAPIData.get(i);
             MatchType currentType = MatchType.fromShortType(match.getCompLevel());
-            JsonObject alliances = match.getAlliancesJson();
             if (lastType != currentType) {
                 switch (currentType) {
                     case QUAL:
@@ -124,20 +119,20 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
             /* Track alliance advancement, indexed by captain team key */
             if (currentType == MatchType.FINAL && match.hasBeenPlayed()) {
                 // Need to ensure we can differentiate who won the finals
-                if (Match.getRedScore(alliances) > Match.getBlueScore(alliances)) {
+                if ("red".equals(match.getWinningAlliance())) {
                     redFinalsWon++;
-                } else if (Match.getBlueScore(alliances) > Match.getRedScore(alliances)) {
+                } else if ("blue".equals(match.getWinningAlliance())) {
                     blueFinalsWon++;
                 }
             }
             if (currentType.isPlayoff()) {
                 addAllianceTeams(
                         mAdvancement,
-                        Match.getRedTeams(alliances),
+                        Match.getRedTeams(match.getAlliances()),
                         PlayoffAdvancement.fromMatchType(currentType));
                 addAllianceTeams(
                         mAdvancement,
-                        Match.getBlueTeams(alliances),
+                        Match.getBlueTeams(match.getAlliances()),
                         PlayoffAdvancement.fromMatchType(currentType));
             }
 
@@ -163,10 +158,10 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
 
         if (lastMatch != null && lastType == MatchType.FINAL) {
             if (redFinalsWon >= 2) {
-                addAllianceTeams(mAdvancement, Match.getRedTeams(lastMatch.getAlliancesJson()),
+                addAllianceTeams(mAdvancement, Match.getRedTeams(lastMatch.getAlliances()),
                                  PlayoffAdvancement.WINNER);
             } else if (blueFinalsWon >= 2) {
-                addAllianceTeams(mAdvancement, Match.getBlueTeams(lastMatch.getAlliancesJson()),
+                addAllianceTeams(mAdvancement, Match.getBlueTeams(lastMatch.getAlliances()),
                                  PlayoffAdvancement.WINNER);
             }
         }
@@ -194,16 +189,15 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
             mDataToBind.add(mFinalMatches);
         }
 
-        mEventBus.post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
         mEventBus.post(new AllianceAdvancementEvent(mAdvancement));
     }
 
     private void addAllianceTeams(
             HashMap<String, PlayoffAdvancement> advancement,
-            JsonArray teams,
+            List<String> teams,
             PlayoffAdvancement level) {
         for (int i = 0; i < teams.size(); i++) {
-            String teamKey = teams.get(i).getAsString();
+            String teamKey = teams.get(i);
             advancement.put(teamKey, level);
         }
     }

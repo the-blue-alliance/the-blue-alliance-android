@@ -79,6 +79,7 @@ public class LaunchActivity extends AppCompatActivity {
         } else if (redownload) {
             // Start redownload activity
             startActivity(redownloadIntent);
+            finish();
         } else {
             // Go to onboarding activity
             startActivity(new Intent(this, OnboardingActivity.class));
@@ -135,6 +136,12 @@ public class LaunchActivity extends AppCompatActivity {
 
             if (lastVersion < 3000000) {
                 // v3.0 - Reload everything to warm okhttp caches
+                redownload = true;
+                intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_TEAMS, LoadTBAData.LOAD_DISTRICTS});
+            }
+
+            if (lastVersion < 4000200) {
+                // v4.0 - Redownload everything since we recreate the db
                 redownload = true;
                 intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_TEAMS, LoadTBAData.LOAD_DISTRICTS});
             }

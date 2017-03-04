@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
@@ -26,6 +28,7 @@ public class DistrictListWriterTest {
 
     @Mock Database mDb;
     @Mock DistrictsTable mDistrictsTable;
+    @Mock Gson mGson;
 
     private List<District> mDistricts;
     private DistrictListWriter mWriter;
@@ -44,7 +47,7 @@ public class DistrictListWriterTest {
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         for (District district : mDistricts) {
-            verify(db).insert(Database.TABLE_DISTRICTS, null, district.getParams());
+            verify(db).insert(Database.TABLE_DISTRICTS, null, district.getParams(mGson));
         }
     }
 

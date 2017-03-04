@@ -27,7 +27,7 @@ buildscript {
         classpath 'com.palantir:gradle-gitsemver:0.6.0'
 
         // auto-push releases
-        classpath 'com.github.triplet.gradle:play-publisher:1.1.4'
+        classpath 'com.github.triplet.gradle:play-publisher:1.1.5'
 
         // Retrolambda + Lint fixes
         classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
@@ -47,6 +47,7 @@ allprojects {
     repositories {
         jcenter()
         mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
 
     tasks.withType(JavaCompile) {
@@ -56,11 +57,11 @@ allprojects {
 
     ext {
         supportLibVersion = '24.2.1'
-        playServicesVersion = '9.2.0'
+        playServicesVersion = '9.6.1'
         googleApiClientVersion = '1.21.0'
         mockitoVersion = '2.2.1'
-        retrofitVersion = '2.1.0'
-        rxJavaVersion = '1.2.1'
+        retrofitVersion = '2.2.0'
+        rxJavaVersion = '1.2.7'
         rxAndroidVersion = '1.2.1'
         gsonVersion = '2.8.0'
         daggerVersion = '2.7'

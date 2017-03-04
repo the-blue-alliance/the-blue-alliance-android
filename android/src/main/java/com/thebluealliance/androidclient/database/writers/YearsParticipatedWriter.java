@@ -27,7 +27,11 @@ public class YearsParticipatedWriter extends BaseDbWriter<YearsParticipatedInfo>
         Team team = mDb.getTeamsTable().get(yearsParticipatedInfo.teamKey);
         if (team != null && yearsParticipatedInfo.yearsParticipated != null) {
             team.setYearsParticipated(yearsParticipatedInfo.yearsParticipated);
-            mTeamWriter.write(team, lastModified);
+
+            // Since we're taking years participated on to the team model, we don't actually want
+            // to update the last-modified timestamp here and possibly prevent future writes of
+            // actual team data
+            mTeamWriter.write(team, team.getLastModified());
         }
     }
 

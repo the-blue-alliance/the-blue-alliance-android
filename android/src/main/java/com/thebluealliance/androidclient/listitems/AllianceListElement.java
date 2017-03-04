@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.listitems;
 
-import com.google.gson.JsonArray;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
@@ -17,19 +15,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class AllianceListElement extends ListElement implements RenderableModel {
 
     public final int number;
     public final PlayoffAdvancement advancement;
-    public final JsonArray teams;
+    public final List<String> teams;
     public final String eventKey;
+    public final String allianceName;
 
-    public AllianceListElement(String eventKey, int number, JsonArray teams, PlayoffAdvancement advancement) {
+    public AllianceListElement(String eventKey, String name, int number, List<String> teams,
+                               PlayoffAdvancement advancement) {
         if (teams.size() < 2) throw new IllegalArgumentException("Alliances have >= 2 members");
         this.number = number;
         this.advancement = advancement;
         this.teams = teams;
         this.eventKey = eventKey;
+        this.allianceName = name;
     }
 
     @Override
@@ -50,7 +53,9 @@ public class AllianceListElement extends ListElement implements RenderableModel 
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.allianceName.setText(String.format(c.getString(R.string.alliance_title), number));
+        holder.allianceName.setText(allianceName != null
+                                        ? allianceName
+                                        : String.format(c.getString(R.string.alliance_title), number));
 
         if (advancement != PlayoffAdvancement.NONE) {
             holder.advancement.setVisibility(View.VISIBLE);
@@ -66,7 +71,7 @@ public class AllianceListElement extends ListElement implements RenderableModel 
 
         EventTeamClickListener listener = new EventTeamClickListener(c);
 
-        String team1Key = teams.get(0).getAsString();
+        String team1Key = teams.get(0);
         SpannableString underLine = new SpannableString(team1Key.substring(3));
         underLine.setSpan(new UnderlineSpan(), 0, underLine.length(), 0);
         holder.memberOne.setText(underLine);
@@ -74,14 +79,14 @@ public class AllianceListElement extends ListElement implements RenderableModel 
         holder.memberOne.setOnClickListener(listener);
         holder.memberOne.setOnLongClickListener(listener);
 
-        String team2Key = teams.get(1).getAsString();
+        String team2Key = teams.get(1);
         holder.memberTwo.setText(team2Key.substring(3));
         holder.memberTwo.setTag(EventTeamHelper.generateKey(eventKey, team2Key));
         holder.memberTwo.setOnClickListener(listener);
         holder.memberTwo.setOnLongClickListener(listener);
 
         if (teams.size() >= 3) {
-            String team3Key = teams.get(2).getAsString();
+            String team3Key = teams.get(2);
             holder.memberThree.setText(team3Key.substring(3));
             holder.memberThree.setTag(EventTeamHelper.generateKey(eventKey, team3Key));
             holder.memberThree.setVisibility(View.VISIBLE);
@@ -90,7 +95,7 @@ public class AllianceListElement extends ListElement implements RenderableModel 
         }
 
         if (teams.size() >= 4) {
-            String team4Key = teams.get(3).getAsString();
+            String team4Key = teams.get(3);
             holder.memberFour.setText(team4Key.substring(3));
             holder.memberFour.setTag(EventTeamHelper.generateKey(eventKey, team4Key));
             holder.memberFour.setVisibility(View.VISIBLE);

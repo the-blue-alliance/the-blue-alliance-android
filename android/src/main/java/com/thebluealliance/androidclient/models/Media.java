@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
@@ -23,6 +24,7 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
     private String foreignKey = null;
     private Long lastModified = null;
     private String type = null;
+    private Boolean preferred;
 
     private JsonObject details;
     private String teamKey;
@@ -75,6 +77,14 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
         this.type = type;
     }
 
+    @Override public Boolean getPreferred() {
+        return preferred;
+    }
+
+    @Override public void setPreferred(Boolean preferred) {
+        this.preferred = preferred;
+    }
+
     public String getTeamKey() {
         return teamKey;
     }
@@ -92,7 +102,7 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
     }
 
     @Override
-    public ContentValues getParams() {
+    public ContentValues getParams(Gson gson) {
         ContentValues data = new ContentValues();
         data.put(MediasTable.TYPE, getType());
         data.put(MediasTable.FOREIGNKEY, getForeignKey());

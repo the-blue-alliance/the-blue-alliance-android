@@ -37,7 +37,7 @@
     <string name="select_multi_webcast_stream_format">Stream %1$d: %2$s</string>
     <string name="top_oprs">Top OPRs</string>
     <string name="stats_format"> OPR: %1$s, DPR: %2$s, CCWM: %3$s</string>
-    <string name="alliance_title">Alliance #%d:</string>
+    <string name="alliance_title">Alliance %d:</string>
     <string name="team_rank">Rank %d</string>
     <string name="no_location_available">No location available</string>
 
@@ -59,7 +59,7 @@
     <string name="no_alliance_data">No alliance data found</string>
     <string name="no_team_data">No team list found</string>
     <string name="no_match_data">No match results found</string>
-    <string name="no_ranking_data">No rankings found</string>
+    <string name="no_ranking_data">No ranking found</string>
     <string name="no_stats_data">No stats found</string>
     <string name="no_awards_data">No awards found</string>
     <string name="no_event_data">No events found</string>

@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
 
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
@@ -11,6 +12,7 @@ import com.thebluealliance.androidclient.models.Media;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -23,6 +25,7 @@ import static org.mockito.Mockito.spy;
 @RunWith(DefaultTestRunner.class)
 public class MediasTableTest {
 
+    @Mock Gson mGson;
     private MediasTable mTable;
     private List<Media> mMedias;
 
@@ -30,7 +33,7 @@ public class MediasTableTest {
     public void setUp() {
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_MEDIAS);
-        mTable = spy(new MediasTable(db));
+        mTable = spy(new MediasTable(db, mGson));
         mMedias = ModelMaker.getModelList(Media.class, "media_frc254_2014");
     }
 
@@ -41,7 +44,7 @@ public class MediasTableTest {
 
     @Test
     public void testAddAndGet() {
-        DbTableTestDriver.testAddAndGet(mTable, mMedias.get(0));
+        DbTableTestDriver.testAddAndGet(mTable, mMedias.get(0), mGson);
     }
 
     @Test
@@ -53,7 +56,8 @@ public class MediasTableTest {
     public void testUpdate() {
         Media result = DbTableTestDriver.testUpdate(mTable,
                                                     mMedias.get(0),
-                                                    media -> media.setDetails("meow"));
+                                                    media -> media.setDetails("meow"),
+                                                    mGson);
         assertNotNull(result);
         assertEquals("meow", result.getDetails());
     }

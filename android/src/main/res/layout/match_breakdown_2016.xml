@@ -22,7 +22,7 @@
             style="@style/breakdown_redItemSmall"
             tools:text="Red 1"/>
     <TextView
-            android:text="@string/breakdown2016_teams"
+            android:text="@string/breakdown_teams"
             style="@style/breakdown_categorySubtotal"
             app:layout_rowSpan="3" />
     <TextView
@@ -98,7 +98,7 @@
             tools:text="12"/>
 
     <TextView
-            android:text="@string/breakdown2016_auto_total"
+            android:text="@string/breakdown_auto_total"
             style="@style/breakdown_categoryTotal" />
 
     <TextView
@@ -313,7 +313,7 @@
             tools:text="12"/>
 
     <TextView
-            android:text="@string/breakdown2016_teleop_total"
+            android:text="@string/breakdown_teleop_total"
             style="@style/breakdown_categoryTotal" />
 
     <TextView
@@ -398,7 +398,7 @@
             tools:text="+ 5"/>
 
     <TextView
-            android:text="@string/breakdown2016_foul"
+            android:text="@string/breakdown_foul"
             style="@style/breakdown_category" />
 
     <TextView
@@ -413,7 +413,7 @@
             tools:text="0"/>
 
     <TextView
-            android:text="@string/breakdown2016_adjust"
+            android:text="@string/breakdown_adjust"
             style="@style/breakdown_category" />
 
     <TextView
@@ -428,7 +428,7 @@
             tools:text="100"/>
 
     <TextView
-            android:text="@string/breakdown2016_total"
+            android:text="@string/breakdown_total"
             style="@style/breakdown_categoryTotal" />
 
     <TextView
@@ -438,17 +438,17 @@
 
     <!-- Ranking Points -->
     <TextView
-            android:id="@+id/breakdown2016_red_rp"
+            android:id="@+id/breakdown_red_rp"
             style="@style/breakdown_redTotal"
             tools:text="2"/>
 
     <TextView
-            android:text="@string/breakdown2016_rp"
-            android:id="@+id/breakdown2016_rp_header"
+            android:text="@string/breakdown_rp"
+            android:id="@+id/breakdown_rp_header"
             style="@style/breakdown_categorySubtotal" />
 
     <TextView
-            android:id="@+id/breakdown2016_blue_rp"
+            android:id="@+id/breakdown_blue_rp"
             style="@style/breakdown_blueTotal"
             tools:text="2"/>
 

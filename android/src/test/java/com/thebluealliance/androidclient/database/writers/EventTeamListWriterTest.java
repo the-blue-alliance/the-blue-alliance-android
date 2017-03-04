@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
@@ -26,6 +28,7 @@ public class EventTeamListWriterTest {
 
     @Mock Database mDb;
     @Mock EventTeamsTable mTable;
+    @Mock Gson mGson;
 
     private List<EventTeam> mEventTeams;
     private EventTeamListWriter mWriter;
@@ -45,7 +48,7 @@ public class EventTeamListWriterTest {
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         for (EventTeam eventTeam : mEventTeams) {
-            verify(db).insert(Database.TABLE_EVENTTEAMS, null, eventTeam.getParams());
+            verify(db).insert(Database.TABLE_EVENTTEAMS, null, eventTeam.getParams(mGson));
         }
     }
 }

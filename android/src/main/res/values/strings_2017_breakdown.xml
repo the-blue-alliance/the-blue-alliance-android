@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="breakdown2017_auto_fuel">Auto Fuel</string>
+    <string name="breakdown2017_auto_pressure">Auto Pressure Points</string>
+    <string name="breakdown2017_auto_rotors">Auto Rotors</string>
+    <string name="breakdown2017_auto_rotor_points">Auto Rotor Points</string>
+    <string name="breakdown2017_auto_mobility_points">Auto Mobility</string>
+    <string name="breakdown2017_teleop_fuel">Teleop Fuel</string>
+    <string name="breakdown2017_teleop_pressure">Teleop Pressure Points</string>
+    <string name="breakdown2017_teleop_rotors">Teleop Rotors</string>
+    <string name="breakdown2017_teleop_rotor_points">Teleop Rotor Points</string>
+    <string name="breakdown2017_teleop_takeoff_points">Takeoff Points</string>
+    <string name="breakdown2017_pressure_reached">Pressure Reached</string>
+    <string name="breakdown2017_all_rotors">All Rotors Engaged</string>
+
+    <string name="breakdown2017_average_mobility">Average Mobility Points</string>
+    <string name="breakdown2017_average_rotor">Average Rotor Points</string>
+    <string name="breakdown2017_average_fuel">Average Fuel Points</string>
+    <string name="breakdown2017_average_takeoff">Average Takeoff (Climb) Points</string>
+    <string name="breakdown2017_bonus_stats">Bonus Stats (\# successful / \# opportunities)</string>
+
+    <string name="breakdown2017_teleop_takeoff">Teleop Takeoff (Climb)</string>
+    <string name="breakdown2017_pressure_bonus">Pressure Bonus (kPa Achieved)</string>
+    <string name="breakdown2017_rotor1_auto">Rotor 1 Engaged (Auto)</string>
+    <string name="breakdown2017_rotor2_auto">Rotor 2 Engaged (Auto)</string>
+    <string name="breakdown2017_rotor1">Rotor 1 Engaged</string>
+    <string name="breakdown2017_rotor2">Rotor 2 Engaged</string>
+    <string name="breakdown2017_rotor3">Rotor 3 Engaged</string>
+    <string name="breakdown2017_rotor4">Rotor 4 Engaged</string>
+</resources>

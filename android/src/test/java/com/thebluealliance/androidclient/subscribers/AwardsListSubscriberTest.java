@@ -62,7 +62,7 @@ public class AwardsListSubscriberTest {
     public void testParse()  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mAwards);
 
-        assertEquals(data.size(), 4);
+        assertEquals(data.size(), 21);
         for (int i = 0; i < data.size(); i++) {
             assertTrue(data.get(i) instanceof CardedAwardListElement);
         }
@@ -111,6 +111,6 @@ public class AwardsListSubscriberTest {
         assertEquals(element.mAwardName, award.getName());
         assertEquals(element.mEventKey, award.getEventKey());
         assertEquals(element.mSelectedTeamNum, "");
-        assertTrue(element.mAwardWinners.equals(award.getWinners()));
+        assertTrue(element.mAwardWinners.equals(award.getRecipientList()));
     }
 }

@@ -4,7 +4,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
 import com.thebluealliance.androidclient.fragments.ExpandableListViewFragment;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamAtDistrictBreakdownSubscriber;
 
@@ -16,13 +16,12 @@ import android.view.ViewGroup;
 import rx.Observable;
 
 public class TeamAtDistrictBreakdownFragment
-  extends ExpandableListViewFragment<DistrictTeam, TeamAtDistrictBreakdownSubscriber> {
+  extends ExpandableListViewFragment<DistrictRanking, TeamAtDistrictBreakdownSubscriber> {
 
     public static final String DISTRICT = "districtKey", TEAM = "teamKey";
 
     private String mTeamKey;
-    private String mDistrictShort;
-    private int mYear;
+    private String mDistrictKey;
 
     public static TeamAtDistrictBreakdownFragment newInstance(String teamKey, String districtKey) {
         TeamAtDistrictBreakdownFragment f = new TeamAtDistrictBreakdownFragment();
@@ -41,8 +40,7 @@ public class TeamAtDistrictBreakdownFragment
             if (!DistrictHelper.validateDistrictKey(districtKey)) {
                 throw new IllegalArgumentException("Invalid District Key " + districtKey);
             }
-            mDistrictShort = districtKey.substring(4);
-            mYear = Integer.parseInt(districtKey.substring(0, 4));
+            mDistrictKey = districtKey;
         }
         super.onCreate(savedInstanceState);
 
@@ -60,13 +58,13 @@ public class TeamAtDistrictBreakdownFragment
     }
 
     @Override
-    protected Observable<DistrictTeam> getObservable(String cacheHeader) {
-        return mDatafeed.fetchTeamAtDistrictRankings(mTeamKey, mDistrictShort, mYear, cacheHeader);
+    protected Observable<DistrictRanking> getObservable(String cacheHeader) {
+        return mDatafeed.fetchTeamAtDistrictRankings(mTeamKey, mDistrictKey, cacheHeader);
     }
 
     @Override
     protected String getRefreshTag() {
-        return String.format("teamAtDistrictBreakdown_%1$s_%2$s_%3$d", mTeamKey, mDistrictShort, mYear);
+        return String.format("teamAtDistrictBreakdown_%1$s_%2$s", mTeamKey, mDistrictKey);
     }
 
     @Override public NoDataViewParams getNoDataParams() {

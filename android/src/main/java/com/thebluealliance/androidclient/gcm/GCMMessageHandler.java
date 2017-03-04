@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
@@ -79,6 +80,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     @Inject MatchRenderer mMatchRenderer;
     @Inject Database mDb;
     @Inject AccountController mAccountController;
+    @Inject AppConfig mAppConfig;
 
     private NotificationComponent mComponenet;
 

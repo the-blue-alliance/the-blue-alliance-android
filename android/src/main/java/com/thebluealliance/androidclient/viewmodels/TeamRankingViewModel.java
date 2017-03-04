@@ -7,14 +7,17 @@ public class TeamRankingViewModel extends BaseViewModel {
     private String mTeamNumber;
     private int mRank;
     private String mRecord;
+    private String mRankingSummary;
     private String mRankingBreakdown;
 
-    public TeamRankingViewModel(String teamKey, String teamNickname, String teamNumber, int rank, String record, String rankingBreakdown) {
+    public TeamRankingViewModel(String teamKey, String teamNickname, String teamNumber, int rank,
+                                String record, String rankingSummary, String rankingBreakdown) {
         mTeamKey = teamKey;
         mTeamNickname = teamNickname;
         mTeamNumber = teamNumber;
         mRank = rank;
         mRecord = record;
+        mRankingSummary = rankingSummary;
         mRankingBreakdown = rankingBreakdown;
     }
 
@@ -22,51 +25,32 @@ public class TeamRankingViewModel extends BaseViewModel {
         return mTeamKey;
     }
 
-    public void setTeamKey(String teamKey) {
-        mTeamKey = teamKey;
-    }
-
     public String getTeamNickname() {
         return mTeamNickname;
-    }
-
-    public void setTeamNickname(String teamNickname) {
-        mTeamNickname = teamNickname;
     }
 
     public String getTeamNumber() {
         return mTeamNumber;
     }
 
-    public void setTeamNumber(String teamNumber) {
-        mTeamNumber = teamNumber;
-    }
-
     public int getRank() {
         return mRank;
-    }
-
-    public void setRank(int rank) {
-        mRank = rank;
     }
 
     public String getRecord() {
         return mRecord;
     }
 
-    public void setRecord(String record) {
-        mRecord = record;
-    }
-
     public String getRankingBreakdown() {
         return mRankingBreakdown;
     }
 
-    public void setRankingBreakdown(String rankingBreakdown) {
-        mRankingBreakdown = rankingBreakdown;
+    public String getRankingSummary() {
+        return mRankingSummary;
     }
 
-    @Override public boolean equals(Object o) {
+    @Override
+    public boolean equals(Object o) {
         if (!(o instanceof TeamRankingViewModel)) {
             return false;
         }
@@ -78,10 +62,13 @@ public class TeamRankingViewModel extends BaseViewModel {
                 && mTeamNumber.equals(model.getTeamNumber())
                 && mRank == model.getRank()
                 && mRecord.equals(model.getRecord())
+                && mRankingSummary.equals(model.getRankingSummary())
                 && mRankingBreakdown.equals(model.getRankingBreakdown());
     }
 
-    @Override public int hashCode() {
-        return hashFromValues(mTeamKey, mTeamNickname, mTeamNumber, mRank, mRecord, mRankingBreakdown);
+    @Override
+    public int hashCode() {
+        return hashFromValues(mTeamKey, mTeamNickname, mTeamNumber, mRank, mRecord,
+                              mRankingSummary, mRankingBreakdown);
     }
 }

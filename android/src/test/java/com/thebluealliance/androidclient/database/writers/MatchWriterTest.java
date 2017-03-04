@@ -1,8 +1,11 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Match;
 
@@ -27,6 +30,7 @@ public class MatchWriterTest {
 
     private Match mMatch;
     private MatchWriter mWriter;
+    private Gson mGson;
 
     @Before
     public void setUp() {
@@ -34,6 +38,7 @@ public class MatchWriterTest {
         mTable = DatabaseMocker.mockMatchesTable(mDb);
         mMatch = ModelMaker.getModel(Match.class, "2015necmp_qf1m1");
         mWriter = new MatchWriter(mDb);
+        mGson = HttpModule.getGson();
     }
 
     @Test
@@ -41,6 +46,6 @@ public class MatchWriterTest {
         mWriter.write(mMatch, 0L);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
-        verify(db).insert(Database.TABLE_MATCHES, null, mMatch.getParams());
+        verify(db).insert(Database.TABLE_MATCHES, null, mMatch.getParams(mGson));
     }
 }

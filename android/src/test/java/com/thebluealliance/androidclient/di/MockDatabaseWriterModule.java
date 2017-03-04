@@ -7,10 +7,7 @@ import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictTeamWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictWriter;
-import com.thebluealliance.androidclient.database.writers.EventDistrictPointsWriter;
 import com.thebluealliance.androidclient.database.writers.EventListWriter;
-import com.thebluealliance.androidclient.database.writers.EventRankingsWriter;
-import com.thebluealliance.androidclient.database.writers.EventStatsWriter;
 import com.thebluealliance.androidclient.database.writers.EventTeamAndTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.EventTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.EventTeamWriter;
@@ -125,20 +122,4 @@ public class MockDatabaseWriterModule {
         return Mockito.mock(EventTeamAndTeamListWriter.class);
     }
 
-    @Provides @Singleton
-    public EventRankingsWriter provideEventRankingsWriter(Database db, EventWriter eventWriter) {
-        return Mockito.mock(EventRankingsWriter.class);
-    }
-
-    @Provides @Singleton
-    public EventStatsWriter provideEventStatsWriter(Database db, EventWriter eventWriter) {
-        return Mockito.mock(EventStatsWriter.class);
-    }
-
-    @Provides @Singleton
-    public EventDistrictPointsWriter provideEventDistrictPointsWriter(
-            Database db,
-            EventWriter eventWriter) {
-        return Mockito.mock(EventDistrictPointsWriter.class);
-    }
 }

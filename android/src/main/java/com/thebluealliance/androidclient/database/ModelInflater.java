@@ -1,9 +1,13 @@
 package com.thebluealliance.androidclient.database;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
+import com.thebluealliance.androidclient.database.tables.EventDetailsTable;
 import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
@@ -14,19 +18,26 @@ import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.EventDetail;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.MatchAlliancesContainer;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.models.TeamAtEventStatus;
+import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.api.model.IDistrictEventPoints;
 
 import android.database.Cursor;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public final class ModelInflater {
 
@@ -40,7 +51,7 @@ public final class ModelInflater {
      * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
      * @return Award model containing the fields as defined in the cursor
      */
-    public static Award inflateAward(Cursor data) {
+    public static Award inflateAward(Cursor data, Gson gson) {
         Award award = new Award();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
@@ -54,7 +65,8 @@ public final class ModelInflater {
                     award.setYear(data.getInt(i));
                     break;
                 case AwardsTable.WINNERS:
-                    award.setWinners(data.getString(i));
+                    award.setRecipientList(gson.fromJson(data.getString(i), new
+                            TypeToken<List<Award.AwardRecipient>>(){}.getType()));
                     break;
                 case AwardsTable.KEY:
                     award.setKey(data.getString(i));
@@ -93,8 +105,14 @@ public final class ModelInflater {
                 case EventsTable.LOCATION:
                     event.setLocation(data.getString(i));
                     break;
+                case EventsTable.CITY:
+                    event.setCity(data.getString(i));
+                    break;
                 case EventsTable.VENUE:
-                    event.setVenueAddress(data.getString(i));
+                    event.setLocationName(data.getString(i));
+                    break;
+                case EventsTable.ADDRESS:
+                    event.setAddress(data.getString(i));
                     break;
                 case EventsTable.WEBSITE:
                     event.setWebsite(data.getString(i));
@@ -102,15 +120,8 @@ public final class ModelInflater {
                 case EventsTable.TYPE:
                     event.setEventType(data.getInt(i));
                     break;
-                case EventsTable.DISTRICT:
-                    event.setEventDistrict(data.getInt(i));
-                    break;
-                case EventsTable.DISTRICT_STRING:
-                    event.setEventDistrictString(data.getString(i));
-                    break;
-                case EventsTable.DISTRICT_POINTS:
-                    // TODO(773) Required EventDetails
-                    //event.setDistrictPoints(data.getString(i));
+                case EventsTable.DISTRICT_KEY:
+                    event.setDistrictKey(data.getString(i));
                     break;
                 case EventsTable.START:
                     event.setStartDate(data.getLong(i));
@@ -118,26 +129,8 @@ public final class ModelInflater {
                 case EventsTable.END:
                     event.setEndDate(data.getLong(i));
                     break;
-                case EventsTable.OFFICIAL:
-                    event.setOfficial(data.getInt(i) == 1);
-                    break;
                 case EventsTable.WEEK:
-                    event.setCompetitionWeek(data.getInt(i));
-                    break;
-                case EventsTable.RANKINGS:
-                    //TODO(773) Requires EventDetails
-                    //event.setRankings(data.getString(i));
-                    break;
-                case EventsTable.ALLIANCES:
-                    event.setAlliances(data.getString(i));
-                    break;
-                case EventsTable.STATS:
-                    //TODO(773) Requires EventDetails
-                    //event.setStats(data.getString(i));
-                    break;
-                case EventsTable.TEAMS:
-                    //TODO(773) Requires EventDetails
-                    ////event.setTeams(data.getString(i));
+                    event.setWeek(data.getInt(i));
                     break;
                 case EventsTable.WEBCASTS:
                     event.setWebcasts(data.getString(i));
@@ -157,24 +150,25 @@ public final class ModelInflater {
      * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
      * @return Match model containing the fields as defined in the cursor
      */
-    public static Match inflateMatch(Cursor data) {
+    public static Match inflateMatch(Cursor data, Gson gson) {
         Match match = new Match();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
                 case MatchesTable.KEY:
                     match.setKey(data.getString(i));
-                    break;
-                case MatchesTable.TIMESTRING:
-                    match.setTimeString(data.getString(i));
+                    match.setCompLevel(MatchType.fromKey(match.getKey()).getCompLevel());
                     break;
                 case MatchesTable.TIME:
                     match.setTime(data.getLong(i));
                     break;
                 case MatchesTable.ALLIANCES:
-                    match.setAlliances(data.getString(i));
+                    match.setAlliances(gson.fromJson(data.getString(i), MatchAlliancesContainer.class));
+                    break;
+                case MatchesTable.WINNER:
+                    match.setWinningAlliance(data.getString(i));
                     break;
                 case MatchesTable.VIDEOS:
-                    match.setVideos(data.getString(i));
+                    match.setVideos(gson.fromJson(data.getString(i), new TypeToken<List<Match.MatchVideo>>(){}.getType()));
                     break;
                 case MatchesTable.MATCHNUM:
                     match.setMatchNumber(data.getInt(i));
@@ -187,6 +181,9 @@ public final class ModelInflater {
                     break;
                 case MatchesTable.LAST_MODIFIED:
                     match.setLastModified(data.getLong(i));
+                    break;
+                case MatchesTable.EVENT:
+                    match.setEventKey(data.getString(i));
                     break;
                 default:
             }
@@ -250,6 +247,12 @@ public final class ModelInflater {
                 case TeamsTable.LOCATION:
                     team.setLocation(data.getString(i));
                     break;
+                case TeamsTable.ADDRESS:
+                    team.setAddress(data.getString(i));
+                    break;
+                case TeamsTable.LOCATION_NAME:
+                    team.setLocationName(data.getString(i));
+                    break;
                 case TeamsTable.WEBSITE:
                     team.setWebsite(data.getString(i));
                     break;
@@ -274,7 +277,7 @@ public final class ModelInflater {
      * @param data Cursor of data. Ensure that it's not null and is pointing to a valid row
      * @return EventTeam model containing the fields as defined in the cursor
      */
-    public static EventTeam inflateEventTeam(Cursor data) {
+    public static EventTeam inflateEventTeam(Cursor data, Gson gson) {
         EventTeam eventTeam = new EventTeam();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
@@ -287,11 +290,11 @@ public final class ModelInflater {
                 case EventTeamsTable.YEAR:
                     eventTeam.setYear(data.getInt(i));
                     break;
-                case EventTeamsTable.COMPWEEK:
-                    eventTeam.setCompWeek(data.getInt(i));
-                    break;
                 case EventTeamsTable.KEY:
                     eventTeam.setKey(data.getString(i));
+                    break;
+                case EventTeamsTable.STATUS:
+                    eventTeam.setStatus(gson.fromJson(data.getString(i), TeamAtEventStatus.class));
                     break;
                 case EventTeamsTable.LAST_MODIFIED:
                     eventTeam.setLastModified(data.getLong(i));
@@ -319,7 +322,7 @@ public final class ModelInflater {
                     district.setYear(data.getInt(i));
                     break;
                 case DistrictsTable.NAME:
-                    district.setName(data.getString(i));
+                    district.setDisplayName(data.getString(i));
                     break;
                 case DistrictsTable.LAST_MODIFIED:
                     district.setLastModified(data.getLong(i));
@@ -330,8 +333,9 @@ public final class ModelInflater {
         return district;
     }
 
-    public static DistrictTeam inflateDistrictTeam(Cursor data) {
-        DistrictTeam districtTeam = new DistrictTeam();
+    public static DistrictRanking inflateDistrictTeam(Cursor data, Gson gson) {
+        DistrictRanking districtTeam = new DistrictRanking();
+        IDistrictEventPoints[] events = new IDistrictEventPoints[3];
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
                 case DistrictTeamsTable.KEY:
@@ -343,41 +347,23 @@ public final class ModelInflater {
                 case DistrictTeamsTable.DISTRICT_KEY:
                     districtTeam.setDistrictKey(data.getString(i));
                     break;
-                case DistrictTeamsTable.DISTRICT_ENUM:
-                    districtTeam.setDistrictEnum(data.getInt(i));
-                    break;
-                case DistrictTeamsTable.YEAR:
-                    districtTeam.setYear(data.getInt(i));
-                    break;
                 case DistrictTeamsTable.RANK:
                     districtTeam.setRank(data.getInt(i));
                     break;
-                case DistrictTeamsTable.EVENT1_KEY:
-                    districtTeam.setEvent1Key(data.getString(i));
-                    break;
                 case DistrictTeamsTable.EVENT1_POINTS:
-                    districtTeam.setEvent1Points(data.getInt(i));
-                    break;
-                case DistrictTeamsTable.EVENT2_KEY:
-                    districtTeam.setEvent2Key(data.getString(i));
+                    events[0] = gson.fromJson(data.getString(i), IDistrictEventPoints.class);
                     break;
                 case DistrictTeamsTable.EVENT2_POINTS:
-                    districtTeam.setEvent2Points(data.getInt(i));
-                    break;
-                case DistrictTeamsTable.CMP_KEY:
-                    districtTeam.setCmpKey(data.getString(i));
+                    events[1] = gson.fromJson(data.getString(i), IDistrictEventPoints.class);
                     break;
                 case DistrictTeamsTable.CMP_POINTS:
-                    districtTeam.setCmpPoints(data.getInt(i));
+                    events[2] = gson.fromJson(data.getString(i), IDistrictEventPoints.class);
                     break;
                 case DistrictTeamsTable.ROOKIE_POINTS:
-                    districtTeam.setRookiePoints(data.getInt(i));
+                    districtTeam.setRookieBonus(data.getInt(i));
                     break;
                 case DistrictTeamsTable.TOTAL_POINTS:
-                    districtTeam.setTotalPoints(data.getInt(i));
-                    break;
-                case DistrictTeamsTable.JSON:
-                    districtTeam.setJson(data.getString(i));
+                    districtTeam.setPointTotal(data.getInt(i));
                     break;
                 case DistrictTeamsTable.LAST_MODIFIED:
                     districtTeam.setLastModified(data.getLong(i));
@@ -385,7 +371,30 @@ public final class ModelInflater {
                 default:
             }
         }
+        List<IDistrictEventPoints> eventPoints = new ArrayList<>();
+        for (IDistrictEventPoints event : events) {
+            if (event == null) break;
+            eventPoints.add(event);
+        }
+        districtTeam.setEventPoints(eventPoints);
         return districtTeam;
+    }
+
+    public static EventDetail inflateEventDetail(Cursor data) {
+        int eventKeyIndex = data.getColumnIndex(EventDetailsTable.EVENT_KEY);
+        int typeIndex = data.getColumnIndex(EventDetailsTable.DETAIL_TYPE);
+        EventDetail detail = new EventDetail(data.getString(eventKeyIndex), data.getInt(typeIndex));
+        for (int i = 0; i < data.getColumnCount(); i++) {
+            switch (data.getColumnName(i)) {
+                case EventDetailsTable.JSON_DATA:
+                    detail.setJsonData(data.getString(i));
+                    break;
+                case EventDetailsTable.LAST_MODIFIED:
+                    detail.setLastModified(data.getLong(i));
+                    break;
+            }
+        }
+        return detail;
     }
 
     public static Favorite inflateFavorite(Cursor data) {

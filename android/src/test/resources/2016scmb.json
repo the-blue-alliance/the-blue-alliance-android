@@ -1,0 +1,32 @@
+{
+  "address": "2101 N Oak St, Myrtle Beach, SC 29579, USA", 
+  "city": "Myrtle Beach", 
+  "country": "United States", 
+  "district": null, 
+  "end_date": "2016-02-27", 
+  "event_code": "scmb", 
+  "event_type": 0, 
+  "event_type_string": "Regional", 
+  "first_event_id": "17363", 
+  "gmaps_place_id": "ChIJlVnSF-VoAIkRbFvg2tC7PDw", 
+  "gmaps_url": "https://maps.google.com/?cid=4340550646578043756", 
+  "key": "2016scmb", 
+  "lat": 33.706580099999996, 
+  "lng": -78.874192100000002, 
+  "location_name": "Myrtle Beach Convention Center", 
+  "name": "Palmetto Regional", 
+  "postal_code": "29579", 
+  "short_name": "Palmetto", 
+  "start_date": "2016-02-24", 
+  "state_prov": "South Carolina", 
+  "timezone": "America/New_York", 
+  "webcasts": [
+    {
+      "channel": "22070859", 
+      "type": "ustream"
+    }
+  ], 
+  "website": "http://www.myrtlebeachfirstrobotics.com", 
+  "week": 0, 
+  "year": 2016
+}

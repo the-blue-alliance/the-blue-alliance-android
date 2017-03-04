@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.binders.BinderModule;
+import com.thebluealliance.androidclient.config.ConfigModule;
 import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.datafeed.gce.GceModule;
@@ -60,7 +61,8 @@ import dagger.Component;
                 DatafeedModule.class,
                 DatabaseWriterModule.class,
                 ClickListenerModule.class,
-                GceModule.class},
+                GceModule.class,
+                ConfigModule.class},
         dependencies = {ApplicationComponent.class})
 public interface FragmentComponent {
 

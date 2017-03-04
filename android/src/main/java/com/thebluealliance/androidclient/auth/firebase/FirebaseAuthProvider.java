@@ -5,6 +5,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.User;
 import com.thebluealliance.androidclient.auth.google.GoogleAuthProvider;
@@ -99,6 +100,7 @@ public class FirebaseAuthProvider implements AuthProvider {
         Observable<? extends User> googleUser = mGoogleAuthProvider.signInLegacyUser();
         return googleUser.switchMap(user -> {
             if (mFirebaseAuth == null || !(user instanceof GoogleSignInUser)) {
+                TbaLogger.w("Unable to attempt firebase login");
                 return Observable.empty();
             }
 

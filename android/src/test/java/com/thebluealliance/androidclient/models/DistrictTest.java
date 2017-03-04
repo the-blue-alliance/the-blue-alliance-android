@@ -19,13 +19,13 @@ public class DistrictTest {
 
     @Before
     public void readJsonData() {
-        district = ModelMaker.getModel(District.class, "district_ne");
+        district = ModelMaker.getModelList(District.class, "2015_districts").get(3);
     }
 
     @Test
     public void testDistrictModel()  {
         assertNotNull(district);
-        assertEquals(district.getName(), "New England");
+        assertEquals(district.getDisplayName(), "New England");
         assertEquals(district.getAbbreviation(), "ne");
         assertEquals(district.getEnum(), DistrictType.NEW_ENGLAND.ordinal());
     }

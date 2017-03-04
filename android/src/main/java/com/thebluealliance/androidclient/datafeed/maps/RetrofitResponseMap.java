@@ -125,6 +125,6 @@ public class RetrofitResponseMap {
 
     private static synchronized Long getLastModifiedTimestamp(Response response) {
         Date modifiedDate = response.headers().getDate("Last-Modified");
-        return modifiedDate != null ? modifiedDate.getTime() : -1;
+        return modifiedDate != null ? modifiedDate.getTime() : 0;
     }
 }

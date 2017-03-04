@@ -201,15 +201,6 @@ task loadProperties << {
         play.serviceAccountEmail = config['play.release.serviceEmail']
         play.pk12File = file(config['play.release.keyFile'])
     }
-
-    // check to make sure that an analytics key is defined
-    def tba_config = new Properties();
-    def tba_propFile = file("src/main/assets/tba.properties")
-    tba_config.load(new FileInputStream(tba_propFile));
-    if (!tba_config.containsKey("analytics.id")) {
-        throw new InvalidUserDataException("You need to have analytics key defined in tba.properties to build a release apk");
-    }
-    System.out.println("Building with analytics key: " + tba_config["analytics.id"]);
 }
 
 task updateScreenshotDirs << {
@@ -282,7 +273,15 @@ dependencies {
     compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"
     compile "com.google.android.gms:play-services-gcm:${playServicesVersion}"
     compile "com.google.android.gms:play-services-auth:${playServicesVersion}"
+    compile "com.google.firebase:firebase-core:${playServicesVersion}"
     compile "com.google.firebase:firebase-auth:${playServicesVersion}"
+    compile "com.google.firebase:firebase-config:${playServicesVersion}"
+
+    testCompile 'com.github.phil-lopreiato:firebasecrash-noop:v0.1'
+    releaseCompile "com.google.firebase:firebase-crash:${playServicesVersion}"
+    debugCompile "com.google.firebase:firebase-crash:${playServicesVersion}"
+    debugBlueCompile "com.google.firebase:firebase-crash:${playServicesVersion}"
+    debugProguardCompile "com.google.firebase:firebase-crash:${playServicesVersion}"
 
     // Square Libraries
     compile 'com.squareup.picasso:picasso:2.5.2'
@@ -309,7 +308,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'io.nlopez.smartadapters:library:1.3.1'
     compile 'com.wada811:android-material-design-colors:3.0.0'
-    compile 'com.thebluealliance:spectrum:0.6.0'
+    compile 'com.thebluealliance:spectrum:0.7.1'
     compile 'javax.annotation:javax.annotation-api:1.2'
     compile "com.github.hotchemi:permissionsdispatcher:${permissionDispatcherVersion}"
     apt "com.github.hotchemi:permissionsdispatcher-processor:${permissionDispatcherVersion}"

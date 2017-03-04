@@ -14,4 +14,5 @@ public final class Interactions {
 
     /** RANKINGS **/
     public static final int TEAM_RANKING_CLICKED = 3000;
+    public static final int EXPAND_TEAM_RANKING = 3010;
 }

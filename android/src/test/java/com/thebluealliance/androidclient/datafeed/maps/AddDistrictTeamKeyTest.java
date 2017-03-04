@@ -1,9 +1,8 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
-import com.thebluealliance.androidclient.models.DistrictTeam;
+import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,21 +21,19 @@ import static org.junit.Assert.assertNotNull;
 public class AddDistrictTeamKeyTest {
 
     private AddDistrictTeamKey mKeyAdder;
-    private DistrictTeam mDistrictTeam;
-    private String mDistrictShort;
-    private Integer mYear;
+    private DistrictRanking mDistrictTeam;
+    private String mDistrictKey;
 
     @Before
     public void setUp() {
-        mDistrictTeam = ModelMaker.getModel(DistrictTeam.class, "2015ne_district_team");
-        mDistrictShort = "ne";
-        mYear = 2015;
-        mKeyAdder = new AddDistrictTeamKey(mDistrictShort, mYear);
+        mDistrictTeam = ModelMaker.getModel(DistrictRanking.class, "2015ne_district_team");
+        mDistrictKey = "2015ne";
+        mKeyAdder = new AddDistrictTeamKey(mDistrictKey);
     }
 
     @Test
     public void testAddDistrictTeamKey()  {
-        List<DistrictTeam> teamList = new ArrayList<>();
+        List<DistrictRanking> teamList = new ArrayList<>();
         teamList.add(mDistrictTeam);
 
         teamList = mKeyAdder.call(teamList);
@@ -44,12 +41,8 @@ public class AddDistrictTeamKeyTest {
         assertEquals(teamList.size(), 1);
         assertEquals(teamList.get(0), mDistrictTeam);
 
-        String districtKey = DistrictHelper.generateKey(mDistrictShort, mYear);
-        String expectedKey = DistrictTeamHelper.generateKey(mDistrictTeam.getTeamKey(), districtKey);
-        Integer districtEnum = DistrictHelper.districtTypeFromKey(districtKey).ordinal();
+        String expectedKey = DistrictTeamHelper.generateKey(mDistrictTeam.getTeamKey(), mDistrictKey);
         assertEquals(mDistrictTeam.getKey(), expectedKey);
-        assertEquals(mDistrictTeam.getDistrictEnum(), districtEnum);
-        assertEquals(mDistrictTeam.getYear(), mYear);
-        assertEquals(mDistrictTeam.getDistrictKey(), districtKey);
+        assertEquals(mDistrictTeam.getDistrictKey(), mDistrictKey);
     }
 }

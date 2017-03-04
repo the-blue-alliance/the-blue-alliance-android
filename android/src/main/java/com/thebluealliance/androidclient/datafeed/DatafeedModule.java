@@ -5,8 +5,8 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
-import com.thebluealliance.androidclient.api.ApiV2Constants;
-import com.thebluealliance.androidclient.api.rx.TbaApiV2;
+import com.thebluealliance.androidclient.api.ApiConstants;
+import com.thebluealliance.androidclient.api.rx.TbaApiV3;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
@@ -16,7 +16,6 @@ import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
-import com.thebluealliance.androidclient.fragments.FirebaseTickerFragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -60,23 +59,26 @@ public class DatafeedModule {
 
     @Provides @Singleton @Named("firebase_retrofit")
     public Retrofit provideFirebaseRetrofit(Context context, Gson gson, OkHttpClient okHttpClient) {
-        String firebaseUrl = Utilities.readLocalProperty(context, "firebase.url", FirebaseTickerFragment.FIREBASE_URL_DEFAULT);
+        //FIXME Read from FirebaseRemoteConfig
+        /*String firebaseUrl = Utilities.readLocalProperty(context, "firebase.url", FirebaseTickerFragment.FIREBASE_URL_DEFAULT);
         return new Retrofit.Builder()
                 .baseUrl(firebaseUrl)
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
+         */
+        return null;
     }
 
-    @Provides @Singleton @Named("tba_api")
-    public com.thebluealliance.androidclient.api.rx.TbaApiV2 provideRxTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
-        return retrofit.create(TbaApiV2.class);
+    @Provides @Singleton @Named("tba_apiv3_rx")
+    public com.thebluealliance.androidclient.api.rx.TbaApiV3 provideRxApiv3(@Named("tba_retrofit") Retrofit retrofit) {
+        return retrofit.create(TbaApiV3.class);
     }
 
-    @Provides @Singleton
-    public com.thebluealliance.androidclient.api.call.TbaApiV2 provideCallTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
-        return retrofit.create(com.thebluealliance.androidclient.api.call.TbaApiV2.class);
+    @Provides @Singleton @Named("tba_apiv3_call")
+    public com.thebluealliance.androidclient.api.call.TbaApiV3 provideCallApiv3(@Named("tba_retrofit") Retrofit retrofit) {
+        return retrofit.create(com.thebluealliance.androidclient.api.call.TbaApiV3.class);
     }
 
     @Provides @Singleton @Named("github_api")
@@ -91,17 +93,18 @@ public class DatafeedModule {
 
 
     @Provides @Singleton
-    public APICache provideApiCache(Database db) {
-        return new APICache(db);
+    public APICache provideApiCache(Database db, Gson gson) {
+        return new APICache(db, gson);
     }
 
     @Provides @Singleton
     public CacheableDatafeed provideDatafeed(
-      @Named("tba_api") TbaApiV2 retrofit,
+      @Named("tba_apiv3_rx") TbaApiV3 retrofit,
       APICache cache,
       DatabaseWriter writer,
+      Gson gson,
       RetrofitResponseMap responseMap) {
-        return new CacheableDatafeed(retrofit, cache, writer, responseMap);
+        return new CacheableDatafeed(retrofit, cache, writer, gson, responseMap);
     }
 
     @Provides @Singleton
@@ -120,9 +123,9 @@ public class DatafeedModule {
     @VisibleForTesting
     public static Retrofit getRetrofit(Gson gson, OkHttpClient okHttpClient, SharedPreferences prefs) {
         String baseUrl = Utilities.isDebuggable()
-          ? prefs.getString(ApiV2Constants.DEV_TBA_PREF_KEY, ApiV2Constants.TBA_URL)
-          : ApiV2Constants.TBA_URL;
-        baseUrl = baseUrl.isEmpty() ? ApiV2Constants.TBA_URL : baseUrl;
+          ? prefs.getString(ApiConstants.DEV_TBA_PREF_KEY, ApiConstants.TBA_URL)
+          : ApiConstants.TBA_URL;
+        baseUrl = baseUrl.isEmpty() ? ApiConstants.TBA_URL : baseUrl;
         TbaLogger.d("Using TBA Host: " + baseUrl);
         return new Retrofit.Builder()
           .baseUrl(baseUrl)

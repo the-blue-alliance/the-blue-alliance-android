@@ -62,7 +62,8 @@ def main():
                     obj["parameters"].extend(value)
             elif key == ALL_PROPERTIES_KEY:
                 for model, obj in swagger_data["definitions"].iteritems():
-                    swagger_data["definitions"][model]["properties"].update(value)
+                  if model not in value.get("exclude", []):
+                        swagger_data["definitions"][model]["properties"].update(value["parameters"])
 
     pretty = json.dumps(swagger_data, indent=2, sort_keys=True)
     print("Writing data back to {}".format(options.out))

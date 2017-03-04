@@ -5,17 +5,17 @@ import com.thebluealliance.androidclient.R;
 import android.support.annotation.StringRes;
 
 public enum MatchType {
-    NONE(R.string.match_type_unknown, R.string.match_abbrev_unknown, 0, false),
-    QUAL(R.string.match_type_qual, R.string.match_abbrev_qual, 1, false) {
+    NONE(R.string.match_type_unknown, R.string.match_abbrev_unknown, 0, false, "m"),
+    QUAL(R.string.match_type_qual, R.string.match_abbrev_qual, 1, false, "qm") {
         @Override
         public MatchType previous() {
             return null; // see below for options for this line
         }
     },
-    OCTO(R.string.match_type_octo, R.string.match_abbrev_octo, 2, true),
-    QUARTER(R.string.match_type_quarter, R.string.match_abbrev_quarter, 3, true),
-    SEMI(R.string.match_type_semis, R.string.match_abbrev_semi, 4, true),
-    FINAL(R.string.match_type_finals, R.string.match_abbrev_final, 5, true) {
+    OCTO(R.string.match_type_octo, R.string.match_abbrev_octo, 2, true, "ef"),
+    QUARTER(R.string.match_type_quarter, R.string.match_abbrev_quarter, 3, true, "qf"),
+    SEMI(R.string.match_type_semis, R.string.match_abbrev_semi, 4, true, "sf"),
+    FINAL(R.string.match_type_finals, R.string.match_abbrev_final, 5, true, "f") {
         @Override
         public MatchType next() {
             return null; // see below for options for this line
@@ -26,12 +26,14 @@ public enum MatchType {
     private final @StringRes int typeAbbreviation;
     private final int playOrder;
     private final boolean isPlayoff;
+    private final String compLevel;
 
-    MatchType(@StringRes int typeName, @StringRes int typeAbbreviation, int playOrder, boolean playoff) {
+    MatchType(@StringRes int typeName, @StringRes int typeAbbreviation, int playOrder, boolean playoff, String compLevel) {
         this.typeName = typeName;
         this.typeAbbreviation = typeAbbreviation;
         this.playOrder = playOrder;
         this.isPlayoff = playoff;
+        this.compLevel = compLevel;
     }
 
     public MatchType next() {
@@ -64,7 +66,12 @@ public enum MatchType {
         return isPlayoff;
     }
 
+    public String getCompLevel() {
+        return compLevel;
+    }
+
     public static MatchType fromShortType(String str) {
+        if (str == null) return NONE;
         switch (str) {
             case "qm":
                 return QUAL;

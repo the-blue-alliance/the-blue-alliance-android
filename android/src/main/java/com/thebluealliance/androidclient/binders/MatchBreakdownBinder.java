@@ -5,10 +5,15 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.androidclient.views.breakdowns.AbstractMatchBreakdownView;
+import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2015;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2016;
+import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2017;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import butterknife.Bind;
@@ -16,19 +21,13 @@ import butterknife.ButterKnife;
 
 public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinder.Model> {
 
-    @Bind(R.id.match_breakdown) MatchBreakdownView2016 breakdown;
+    @Bind(R.id.match_breakdown) FrameLayout breakdownContainer;
     @Bind(R.id.progress) ProgressBar progressBar;
-
-    private MatchType mMatchType;
-
-    public void setMatchType(MatchType matchType) {
-        mMatchType = matchType;
-    }
 
     @Override
     public void updateData(@Nullable MatchBreakdownBinder.Model data) {
         if (data == null || data.allianceData == null || data.scoreData == null
-                || breakdown == null) {
+                || breakdownContainer == null) {
             if (!isDataBound()) {
                 setDataBound(false);
             }
@@ -36,7 +35,32 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
         }
         long startTime = System.currentTimeMillis();
         TbaLogger.d("BINDING DATA");
-        boolean success = breakdown.initWithData(mMatchType, data.allianceData, data.scoreData);
+        AbstractMatchBreakdownView breakdownView;
+        switch (data.year) {
+            case 2015:
+                breakdownView = new MatchBreakdownView2015(mActivity);
+                break;
+            case 2016:
+                breakdownView = new MatchBreakdownView2016(mActivity);
+                break;
+            case 2017:
+                breakdownView = new MatchBreakdownView2017(mActivity);
+                break;
+            default:
+                breakdownView = null;
+                break;
+        }
+
+        if (breakdownView == null) {
+            setDataBound(false);
+            return;
+        }
+
+        breakdownContainer.addView(breakdownView);
+        boolean success = breakdownView.initWithData(data.matchType,
+                                                     data.winningAlliance,
+                                                     data.allianceData,
+                                                     data.scoreData);
 
         if (!success) {
             setDataBound(false);
@@ -47,7 +71,7 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
             progressBar.setVisibility(View.GONE);
         }
 
-        breakdown.setVisibility(View.VISIBLE);
+        breakdownContainer.setVisibility(View.VISIBLE);
         mNoDataBinder.unbindData();
         TbaLogger.d("BINDING COMPLETE; ELAPSED TIME: " + (System.currentTimeMillis() - startTime) + "ms");
         setDataBound(true);
@@ -83,7 +107,7 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
     private void bindNoDataView() {
         // Set up views for "no data" message
         try {
-            breakdown.setVisibility(View.GONE);
+            breakdownContainer.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
             mNoDataBinder.bindData(mNoDataParams);
         } catch (Exception e) {
@@ -92,18 +116,29 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
     }
 
     public static class Model {
-        public final JsonObject allianceData;
+        public final IMatchAlliancesContainer allianceData;
         public final JsonObject scoreData;
+        public final MatchType matchType;
+        public final String winningAlliance;
+        public final int year;
 
-        public Model(JsonObject allianceData, JsonObject scoreData) {
+        public Model(MatchType matchType, int year, String winningAlliance,
+                     IMatchAlliancesContainer
+                     allianceData, JsonObject scoreData) {
+            this.matchType = matchType;
+            this.year = year;
             this.allianceData = allianceData;
             this.scoreData = scoreData;
+            this.winningAlliance = winningAlliance;
         }
 
         @Override
         public boolean equals(Object o) {
             return o != null && o instanceof Model
+                    && ((Model) o).year == year
+                    && ((Model) o).matchType == matchType
                     && ((Model) o).scoreData.equals(scoreData)
+                    && ((Model) o).winningAlliance.equals(winningAlliance)
                     && ((Model) o).allianceData.equals(allianceData);
         }
     }

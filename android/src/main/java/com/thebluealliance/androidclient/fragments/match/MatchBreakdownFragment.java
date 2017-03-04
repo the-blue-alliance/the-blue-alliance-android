@@ -7,7 +7,6 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.MatchBreakdownSubscriber;
-import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.views.NoDataView;
 
 import android.os.Bundle;
@@ -42,8 +41,6 @@ public class MatchBreakdownFragment extends DatafeedFragment<Match, MatchBreakdo
             throw new IllegalArgumentException("Invalid match key " + mMatchKey);
         }
         super.onCreate(savedInstanceState);
-
-        mBinder.setMatchType(MatchType.fromKey(mMatchKey));
     }
 
     @Nullable @Override

@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.accounts;
 
-import com.thebluealliance.androidclient.LocalProperties;
+import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.auth.User;
 import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
@@ -27,18 +28,18 @@ public class AccountController {
 
     private final SharedPreferences mPreferences;
     private final AccountManager mAccountManager;
-    private final LocalProperties mLocalProperties;
+    private final AppConfig mAppConfig;
     private final String mAccountType;
 
     @Inject
     public AccountController(
             SharedPreferences preferences,
             AccountManager accountManager,
-            LocalProperties localProperties,
+            AppConfig appConfig,
             String accountType) {
         mPreferences = preferences;
         mAccountManager = accountManager;
-        mLocalProperties = localProperties;
+        mAppConfig = appConfig;
         mAccountType = accountType;
     }
 
@@ -63,7 +64,14 @@ public class AccountController {
     }
 
     public @Nullable Account getCurrentAccount() {
-        Account[] accounts = mAccountManager.getAccountsByType(mAccountType);
+        Account[] accounts;
+        try {
+            accounts = mAccountManager.getAccountsByType(mAccountType);
+        } catch (SecurityException e) {
+            // We don't have the correct permissions
+            TbaLogger.w("Can't get current local account, no permission", e);
+            return null;
+        }
         String selectedAccount = getSelectedAccount();
         for (Account account : accounts) {
             if (account.name.equals(selectedAccount)) return account;
@@ -80,11 +88,19 @@ public class AccountController {
     }
 
     public String getWebClientId() {
-        return mLocalProperties.readLocalProperty("appspot.webClientId");
+        return mAppConfig.getString("appspot_webClientId");
     }
 
     private boolean registerSystemAccount(String accountName) {
-        if (mAccountManager.getAccountsByType(mAccountType).length == 0) {
+        Account[] accounts;
+        try {
+            accounts = mAccountManager.getAccountsByType(mAccountType);
+        } catch (SecurityException e) {
+            // We don't have the correct permissions
+            TbaLogger.w("Can't add local account, no permission", e);
+            return false;
+        }
+        if (accounts.length == 0) {
             Account account = new Account(accountName, mAccountType);
             return mAccountManager.addAccountExplicitly(account, null, null);
         }

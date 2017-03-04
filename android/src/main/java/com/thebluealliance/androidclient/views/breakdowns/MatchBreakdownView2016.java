@@ -1,21 +1,22 @@
 package com.thebluealliance.androidclient.views.breakdowns;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import android.content.Context;
 import android.support.annotation.StringRes;
 import android.support.v7.widget.GridLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MatchBreakdownView2016 extends FrameLayout {
+import java.util.List;
+
+public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
 
     private GridLayout breakdownContainer;
     private TextView
@@ -52,22 +53,20 @@ public class MatchBreakdownView2016 extends FrameLayout {
             redBreachIcon,      blueBreachIcon,
             redCaptureIcon,     blueCaptureIcon;
 
-    public MatchBreakdownView2016(Context context) {
-        super(context);
-        init();
+    public MatchBreakdownView2016(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
     }
 
     public MatchBreakdownView2016(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
     }
 
-    public MatchBreakdownView2016(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init();
+    public MatchBreakdownView2016(Context context) {
+        super(context);
     }
 
-    private void init() {
+    @Override
+    void init() {
         // Inflate the layout
         LayoutInflater.from(getContext()).inflate(R.layout.match_breakdown_2016, this, true);
 
@@ -141,42 +140,43 @@ public class MatchBreakdownView2016 extends FrameLayout {
         blueAdjust = (TextView) findViewById(R.id.breakdown_adjust_blue);
         redTotal = (TextView) findViewById(R.id.breakdown_total_red);
         blueTotal = (TextView) findViewById(R.id.breakdown_total_blue);
-        redRanking = (TextView) findViewById(R.id.breakdown2016_red_rp);
-        blueRanking = (TextView) findViewById(R.id.breakdown2016_blue_rp);
+        redRanking = (TextView) findViewById(R.id.breakdown_red_rp);
+        blueRanking = (TextView) findViewById(R.id.breakdown_blue_rp);
     }
 
-    public boolean initWithData(MatchType matchType, JsonObject allianceData, JsonObject scoredata) {
+    public boolean initWithData(MatchType matchType,
+                                String winningAlliance,
+                                IMatchAlliancesContainer allianceData,
+                                JsonObject scoredata) {
         if (scoredata == null || scoredata.entrySet().isEmpty()
-                || allianceData == null || !allianceData.has("red") || !allianceData.has("blue")) {
+                || allianceData == null || allianceData.getRed() == null || allianceData.getBlue() == null) {
             breakdownContainer.setVisibility(GONE);
             return false;
         }
 
         int redRp = 0;
         int blueRp = 0;
-        JsonObject redAlliance = allianceData.get("red").getAsJsonObject();
-        JsonArray redTeams = redAlliance.get("teams").getAsJsonArray();
-        JsonObject blueAlliance = allianceData.get("blue").getAsJsonObject();
-        JsonArray blueTeams = blueAlliance.get("teams").getAsJsonArray();
+        List<String> redTeams = allianceData.getRed().getTeamKeys();
+        List<String> blueTeams = allianceData.getBlue().getTeamKeys();
         JsonObject redData = scoredata.get("red").getAsJsonObject();
         JsonObject blueData = scoredata.get("blue").getAsJsonObject();
 
-        red1.setText(teamNumberFromKey(redTeams.get(0).getAsString()));
-        red2.setText(teamNumberFromKey(redTeams.get(1).getAsString()));
-        red3.setText(teamNumberFromKey(redTeams.get(2).getAsString()));
+        red1.setText(MatchBreakdownHelper.teamNumberFromKey(redTeams.get(0)));
+        red2.setText(MatchBreakdownHelper.teamNumberFromKey(redTeams.get(1)));
+        red3.setText(MatchBreakdownHelper.teamNumberFromKey(redTeams.get(2)));
 
-        blue1.setText(teamNumberFromKey(blueTeams.get(0).getAsString()));
-        blue2.setText(teamNumberFromKey(blueTeams.get(1).getAsString()));
-        blue3.setText(teamNumberFromKey(blueTeams.get(2).getAsString()));
+        blue1.setText(MatchBreakdownHelper.teamNumberFromKey(blueTeams.get(0)));
+        blue2.setText(MatchBreakdownHelper.teamNumberFromKey(blueTeams.get(1)));
+        blue3.setText(MatchBreakdownHelper.teamNumberFromKey(blueTeams.get(2)));
 
         redAutoBoulder.setText(getAutoBoulder(redData));
         blueAutoBoulder.setText(getAutoBoulder(blueData));
-        redAutoReach.setText(getIntDefault(redData, "autoReachPoints"));
-        blueAutoReach.setText(getIntDefault(blueData, "autoReachPoints"));
-        redAutoCross.setText(getIntDefault(redData, "autoCrossingPoints"));
-        blueAutoCross.setText(getIntDefault(blueData, "autoCrossingPoints"));
-        redAutoTotal.setText(getIntDefault(redData, "autoPoints"));
-        blueAutoTotal.setText(getIntDefault(blueData, "autoPoints"));
+        redAutoReach.setText(MatchBreakdownHelper.getIntDefault(redData, "autoReachPoints"));
+        blueAutoReach.setText(MatchBreakdownHelper.getIntDefault(blueData, "autoReachPoints"));
+        redAutoCross.setText(MatchBreakdownHelper.getIntDefault(redData, "autoCrossingPoints"));
+        blueAutoCross.setText(MatchBreakdownHelper.getIntDefault(blueData, "autoCrossingPoints"));
+        redAutoTotal.setText(MatchBreakdownHelper.getIntDefault(redData, "autoPoints"));
+        blueAutoTotal.setText(MatchBreakdownHelper.getIntDefault(blueData, "autoPoints"));
 
         redDefense1Cross.setText(getCrossValue(redData, "position1crossings"));
         blueDefense1Cross.setText(getCrossValue(blueData, "position1crossings"));
@@ -201,100 +201,107 @@ public class MatchBreakdownView2016 extends FrameLayout {
         blueDefense5Name.setText(getDefenseName(blueData, "position5"));
         blueDefense5Cross.setText(getCrossValue(blueData, "position5crossings"));
 
-        redTeleopCross.setText(getIntDefault(redData, "teleopCrossingPoints"));
-        blueTeleopCross.setText(getIntDefault(blueData, "teleopCrossingPoints"));
-        redTeleBoulderHigh.setText(getIntDefault(redData, "teleopBouldersHigh"));
-        blueTeleBoulderHigh.setText(getIntDefault(blueData, "teleopBouldersHigh"));
-        redTeleBoulderLow.setText(getIntDefault(redData, "teleopBouldersLow"));
-        blueTeleBoulderLow.setText(getIntDefault(blueData, "teleopBouldersLow"));
-        redTeleBoulder.setText(getIntDefault(redData, "teleopBoulderPoints"));
-        blueTeleBoulder.setText(getIntDefault(blueData, "teleopBoulderPoints"));
-        redTowerChallenge.setText(getIntDefault(redData, "teleopChallengePoints"));
-        blueTowerChallenge.setText(getIntDefault(blueData, "teleopChallengePoints"));
-        redTowerScale.setText(getIntDefault(redData, "teleopScalePoints"));
-        blueTowerScale.setText(getIntDefault(blueData, "teleopScalePoints"));
+        redTeleopCross.setText(MatchBreakdownHelper.getIntDefault(redData, "teleopCrossingPoints"));
+        blueTeleopCross.setText(MatchBreakdownHelper.getIntDefault(blueData, "teleopCrossingPoints"));
+        redTeleBoulderHigh.setText(MatchBreakdownHelper.getIntDefault(redData, "teleopBouldersHigh"));
+        blueTeleBoulderHigh.setText(MatchBreakdownHelper
+                                            .getIntDefault(blueData, "teleopBouldersHigh"));
+        redTeleBoulderLow.setText(MatchBreakdownHelper.getIntDefault(redData, "teleopBouldersLow"));
+        blueTeleBoulderLow.setText(MatchBreakdownHelper.getIntDefault(blueData, "teleopBouldersLow"));
+        redTeleBoulder.setText(MatchBreakdownHelper.getIntDefault(redData, "teleopBoulderPoints"));
+        blueTeleBoulder.setText(MatchBreakdownHelper.getIntDefault(blueData, "teleopBoulderPoints"));
+        redTowerChallenge.setText(MatchBreakdownHelper
+                                          .getIntDefault(redData, "teleopChallengePoints"));
+        blueTowerChallenge.setText(MatchBreakdownHelper
+                                           .getIntDefault(blueData, "teleopChallengePoints"));
+        redTowerScale.setText(MatchBreakdownHelper.getIntDefault(redData, "teleopScalePoints"));
+        blueTowerScale.setText(MatchBreakdownHelper.getIntDefault(blueData, "teleopScalePoints"));
         redTeleop.setText(getTeleopTotal(redData));
         blueTeleop.setText(getTeleopTotal(blueData));
 
-        boolean redBreachSuccess = getBooleanDefault(redData, "teleopDefensesBreached");
+        boolean redBreachSuccess = MatchBreakdownHelper
+                .getBooleanDefault(redData, "teleopDefensesBreached");
         redBreachIcon.setBackgroundResource(redBreachSuccess
             ? R.drawable.ic_done_black_24dp
             : R.drawable.ic_clear_black_24dp);
 
-        boolean blueBreachSuccess = getBooleanDefault(blueData, "teleopDefensesBreached");
+        boolean blueBreachSuccess = MatchBreakdownHelper
+                .getBooleanDefault(blueData, "teleopDefensesBreached");
         blueBreachIcon.setBackgroundResource(blueBreachSuccess
             ? R.drawable.ic_done_black_24dp
             : R.drawable.ic_clear_black_24dp);
 
-        int redBreachPoints = getIntDefaultValue(redData, "breachPoints");
+        int redBreachPoints = MatchBreakdownHelper.getIntDefaultValue(redData, "breachPoints");
         if (redBreachSuccess && matchType == MatchType.QUAL) {
             redRp++;
-            redBreach.setText(getContext().getString(R.string.breakdown2016_rp_format, 1));
+            redBreach.setText(getContext().getString(R.string.breakdown_rp_format, 1));
             redBreach.setVisibility(VISIBLE);
         } else if (redBreachPoints > 0) {
-            redBreach.setText(getContext().getString(R.string.breakdown2016_addition_format, redBreachPoints));
+            redBreach.setText(getContext().getString(R.string.breakdown_addition_format, redBreachPoints));
             redBreach.setVisibility(VISIBLE);
         } else {
             redBreach.setVisibility(GONE);
         }
 
-        int blueBreachPoints = getIntDefaultValue(blueData, "breachPoints");
+        int blueBreachPoints = MatchBreakdownHelper.getIntDefaultValue(blueData, "breachPoints");
         if (blueBreachSuccess && matchType == MatchType.QUAL) {
             blueRp++;
-            blueBreach.setText(getContext().getString(R.string.breakdown2016_rp_format, 1));
+            blueBreach.setText(getContext().getString(R.string.breakdown_rp_format, 1));
             blueBreach.setVisibility(VISIBLE);
         } else if (blueBreachPoints > 0) {
-            blueBreach.setText(getContext().getString(R.string.breakdown2016_addition_format, blueBreachPoints));
+            blueBreach.setText(getContext().getString(R.string.breakdown_addition_format, blueBreachPoints));
             blueBreach.setVisibility(VISIBLE);
         } else {
             blueBreach.setVisibility(GONE);
         }
 
-        boolean redCaptureSuccess = getBooleanDefault(redData, "teleopTowerCaptured");
+        boolean redCaptureSuccess = MatchBreakdownHelper
+                .getBooleanDefault(redData, "teleopTowerCaptured");
         redCaptureIcon.setBackgroundResource(redCaptureSuccess
             ? R.drawable.ic_done_black_24dp
             : R.drawable.ic_clear_black_24dp);
-        boolean blueCaptureSuccess = getBooleanDefault(blueData, "teleopTowerCaptured");
+        boolean blueCaptureSuccess = MatchBreakdownHelper
+                .getBooleanDefault(blueData, "teleopTowerCaptured");
         blueCaptureIcon.setBackgroundResource(blueCaptureSuccess
             ? R.drawable.ic_done_black_24dp
             : R.drawable.ic_clear_black_24dp);
 
-        int redCapturePoints = getIntDefaultValue(redData, "capturePoints");
+        int redCapturePoints = MatchBreakdownHelper.getIntDefaultValue(redData, "capturePoints");
         if (redCaptureSuccess && matchType == MatchType.QUAL) {
             redRp++;
-            redCapture.setText(getContext().getString(R.string.breakdown2016_rp_format, 1));
+            redCapture.setText(getContext().getString(R.string.breakdown_rp_format, 1));
             redCapture.setVisibility(VISIBLE);
         } else if (redCapturePoints > 0) {
-            redCapture.setText(getContext().getString(R.string.breakdown2016_addition_format, redCapturePoints));
+            redCapture.setText(getContext().getString(R.string.breakdown_addition_format, redCapturePoints));
             redCapture.setVisibility(VISIBLE);
         } else {
             redCapture.setVisibility(GONE);
         }
 
-        int blueCapturePoints = getIntDefaultValue(blueData, "capturePoints");
+        int blueCapturePoints = MatchBreakdownHelper.getIntDefaultValue(blueData, "capturePoints");
         if (blueCaptureSuccess && matchType == MatchType.QUAL) {
             blueRp++;
-            blueCapture.setText(getContext().getString(R.string.breakdown2016_rp_format, 1));
+            blueCapture.setText(getContext().getString(R.string.breakdown_rp_format, 1));
             blueCapture.setVisibility(VISIBLE);
         } else if (blueCapturePoints > 0) {
-            blueCapture.setText(getContext().getString(R.string.breakdown2016_addition_format, blueCapturePoints));
+            blueCapture.setText(getContext().getString(R.string.breakdown_addition_format, blueCapturePoints));
             blueCapture.setVisibility(VISIBLE);
         } else {
             blueCapture.setVisibility(GONE);
         }
 
-        redFoul.setText(getContext().getString(R.string.breakdown2016_foul_format, getIntDefaultValue(redData, "foulPoints")));
-        blueFoul.setText(getContext().getString(R.string.breakdown2016_foul_format, getIntDefaultValue(blueData, "foulPoints")));
-        redAdjust.setText(getIntDefault(redData, "adjustPoints"));
-        blueAdjust.setText(getIntDefault(blueData, "adjustPoints"));
-        redTotal.setText(getIntDefault(redData, "totalPoints"));
-        blueTotal.setText(getIntDefault(blueData, "totalPoints"));
+        redFoul.setText(getContext().getString(R.string.breakdown_foul_format_add, MatchBreakdownHelper
+                .getIntDefaultValue(redData, "foulPoints")));
+        blueFoul.setText(getContext().getString(R.string.breakdown_foul_format_add, MatchBreakdownHelper
+                .getIntDefaultValue(blueData, "foulPoints")));
+        redAdjust.setText(MatchBreakdownHelper.getIntDefault(redData, "adjustPoints"));
+        blueAdjust.setText(MatchBreakdownHelper.getIntDefault(blueData, "adjustPoints"));
+        redTotal.setText(MatchBreakdownHelper.getIntDefault(redData, "totalPoints"));
+        blueTotal.setText(MatchBreakdownHelper.getIntDefault(blueData, "totalPoints"));
 
-        int redScore = getIntDefaultValue(redAlliance, "score");
-        int blueScore = getIntDefaultValue(blueAlliance, "score");
-        if (redScore > blueScore) {
+        if ("red".equals(winningAlliance)) {
             redRp += 2;
-        } else if (blueScore > redScore) {
+        } else if ("blue".equals(winningAlliance)) {
             blueRp += 2;
         } else {
             redRp++;
@@ -302,51 +309,34 @@ public class MatchBreakdownView2016 extends FrameLayout {
         }
 
         if (matchType == MatchType.QUAL) {
-            redRanking.setText(getContext().getString(R.string.breakdown2016_total_rp, redRp));
-            blueRanking.setText(getContext().getString(R.string.breakdown2016_total_rp, blueRp));
+            redRanking.setText(getContext().getString(R.string.breakdown_total_rp, redRp));
+            blueRanking.setText(getContext().getString(R.string.breakdown_total_rp, blueRp));
         } else {
             redRanking.setVisibility(GONE);
             blueRanking.setVisibility(GONE);
-            findViewById(R.id.breakdown2016_rp_header).setVisibility(GONE);
+            findViewById(R.id.breakdown_rp_header).setVisibility(GONE);
         }
 
         breakdownContainer.setVisibility(VISIBLE);
         return true;
     }
 
-    private static String getIntDefault(JsonObject data, String key) {
-        if (data.has(key)) {
-            return data.get(key).getAsString();
-        } else {
-            return "0";
-        }
-    }
-
-    private static int getIntDefaultValue(JsonObject data, String key) {
-        if (data.has(key)) {
-            return data.get(key).getAsInt();
-        } else {
-            return 0;
-        }
-    }
-    private static boolean getBooleanDefault(JsonObject data, String key) {
-        return data.has(key) && data.get(key).getAsBoolean();
-    }
-
     private static String getTeleopTotal(JsonObject data) {
-        return Integer.toString(getIntDefaultValue(data, "teleopCrossingPoints")
-                + getIntDefaultValue(data, "teleopBoulderPoints")
-                + getIntDefaultValue(data, "teleopChallengePoints")
-                + getIntDefaultValue(data, "teleopScalePoints"));
+        return Integer.toString(MatchBreakdownHelper.getIntDefaultValue(data, "teleopCrossingPoints")
+                                + MatchBreakdownHelper
+                                        .getIntDefaultValue(data, "teleopBoulderPoints")
+                                + MatchBreakdownHelper
+                                        .getIntDefaultValue(data, "teleopChallengePoints")
+                                + MatchBreakdownHelper.getIntDefaultValue(data, "teleopScalePoints"));
     }
 
     private static String getAutoBoulder(JsonObject data) {
-        return Integer.toString(getIntDefaultValue(data, "autoBouldersHigh")
-                + getIntDefaultValue(data, "autoBouldersLow"));
+        return Integer.toString(MatchBreakdownHelper.getIntDefaultValue(data, "autoBouldersHigh")
+                                + MatchBreakdownHelper.getIntDefaultValue(data, "autoBouldersLow"));
     }
 
     private String getCrossValue(JsonObject data, String key) {
-        int crossCount = getIntDefaultValue(data, key);
+        int crossCount = MatchBreakdownHelper.getIntDefaultValue(data, key);
         return getContext().getString(R.string.breakdown2016_cross_format, crossCount);
     }
 
@@ -368,7 +358,4 @@ public class MatchBreakdownView2016 extends FrameLayout {
         return R.string.defense2016_unknown;
     }
 
-    private static String teamNumberFromKey(String teamKey) {
-        return teamKey.substring(3);
-    }
 }

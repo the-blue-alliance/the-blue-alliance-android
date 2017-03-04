@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import com.google.gson.Gson;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
@@ -19,14 +21,13 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
             TEAMKEY = "teamKey",
             EVENTKEY = "eventKey",
             YEAR = "year",
-            COMPWEEK = "week",
+            STATUS = "status",
             LAST_MODIFIED = "last_modified";
+    @Deprecated
+    public static final String COMPWEEK = "week";
 
-    private SQLiteDatabase mDb;
-
-    public EventTeamsTable(SQLiteDatabase db) {
-        super(db);
-        this.mDb = db;
+    public EventTeamsTable(SQLiteDatabase db, Gson gson) {
+        super(db, gson);
     }
 
     /**
@@ -82,6 +83,6 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
 
     @Override
     public EventTeam inflate(Cursor cursor) {
-        return ModelInflater.inflateEventTeam(cursor);
+        return ModelInflater.inflateEventTeam(cursor, mGson);
     }
 }

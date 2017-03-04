@@ -32,7 +32,7 @@ public class MatchViewTest {
 
     @Test
     public void testRenderUnplayed() {
-        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "?", "?", 1463883886L, null, MATCH_16);
+        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "?", "?", "blue", 1463883886L, null, MATCH_16);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -43,7 +43,7 @@ public class MatchViewTest {
 
     @Test
     public void testRenderBlueWin() {
-        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "20", "30", 1463883886L, VID, MATCH_16);
+        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "20", "30", "blue", 1463883886L, VID, MATCH_16);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -54,7 +54,7 @@ public class MatchViewTest {
 
     @Test
     public void testRenderRedWin() {
-        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "40", "30", 1463883886L, VID, MATCH_16);
+        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "40", "30", "blue", 1463883886L, VID, MATCH_16);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -65,7 +65,7 @@ public class MatchViewTest {
 
     @Test
     public void testRenderTie() {
-        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "20", "20", 1463883886L, VID, MATCH_16);
+        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "20", "20", "blue", 1463883886L, VID, MATCH_16);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -76,7 +76,7 @@ public class MatchViewTest {
 
     @Test
     public void testRender2Team() {
-        View view = createView(RED_TEAMS_2, BLUE_TEAMS_2, "20", "30", 1463883886L, VID, MATCH_16);
+        View view = createView(RED_TEAMS_2, BLUE_TEAMS_2, "20", "30", "blue", 1463883886L, VID, MATCH_16);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -87,7 +87,7 @@ public class MatchViewTest {
 
     @Test
     public void testRenderNoTime() {
-        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "20", "30", 0, VID, MATCH_16);
+        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "20", "30", "blue", 0, VID, MATCH_16);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -98,7 +98,7 @@ public class MatchViewTest {
 
     @Test
     public void testRenderNoVideo() {
-        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "20", "30", 1463883886L, null, MATCH_16);
+        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "20", "30", "blue", 1463883886L, null, MATCH_16);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -109,7 +109,7 @@ public class MatchViewTest {
 
     @Test
     public void testNoWinnersIn2015() {
-        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "20", "30", 1463883886L, VID, MATCH_15_Q);
+        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "20", "30", "", 1463883886L, VID, MATCH_15_Q);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -120,7 +120,8 @@ public class MatchViewTest {
 
     @Test
     public void testWinnersIn2015Finals() {
-        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "20", "30", 1463883886L, VID, MATCH_15_F);
+        View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "20", "30", "blue", 1463883886L, VID,
+                               MATCH_15_F);
         ViewHelpers.setupView(view)
                    .setExactWidthDp(WIDTH_DP)
                    .layout();
@@ -130,12 +131,12 @@ public class MatchViewTest {
     }
 
     private MatchView createView(String[] redTeams, String[] blueTeams, String redScore,
-                                 String blueScore, long time, String video, String matchKey) {
+                                 String blueScore, String winner, long time, String video, String matchKey) {
         LayoutInflater inflater = LayoutInflater.from(InstrumentationRegistry.getTargetContext());
         View view = inflater.inflate(R.layout.match_view, null, false);
 
         MatchView matchView = (MatchView) view.findViewById(R.id.match_view);
-        matchView.initWithParams(video, "Quals 2", redTeams, blueTeams, redScore, blueScore,
+        matchView.initWithParams(video, "Quals 2", redTeams, blueTeams, redScore, blueScore, winner,
                                  matchKey, time, "", true);
         return matchView;
     }
