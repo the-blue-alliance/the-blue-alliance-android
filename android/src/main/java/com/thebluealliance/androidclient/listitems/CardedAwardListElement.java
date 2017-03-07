@@ -98,10 +98,11 @@ public class CardedAwardListElement extends ListElement {
                     nickname = team.getNickname();
                 }
 
-                if (awardee.isEmpty() && nickname.isEmpty()) {
+                if ((awardee == null || awardee.isEmpty())
+                        && (nickname == null || nickname.isEmpty())) {
                     awardLine1 = teamNumber;
                     awardLine2 = "Team " + teamNumber;
-                } else if (awardee.isEmpty()) {
+                } else if (awardee == null || awardee.isEmpty()) {
                     awardLine1 = teamNumber;
                     awardLine2 = nickname;
                 } else {
