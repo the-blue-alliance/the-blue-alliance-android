@@ -2,6 +2,7 @@
   "match_key": "2014calb_qm17",
   "event_name": "Los Angeles Regional sponsored by The Roddenberry Foundation",
   "team_keys": ["frc971","frc148","frc254","frc1983","frc1114","frc1318"],
+  "webcast": {"channel": "nefirst_red", "type": "twitch"},
   "scheduled_time": 12345,
   "predicted_time": 123456
 }

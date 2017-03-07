@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -49,6 +50,11 @@ public class UpcomingMatchNotificationTest {
         assertEquals(mNotification.getBlueTeams().length, 3);
         assertTrue(!mNotification.getMatchTime().isJsonNull());
         assertEquals(mNotification.getMatchTime().getAsInt(), 12345);
+
+        assertFalse(mNotification.getWebcast().isJsonNull());
+        JsonObject webcastJson = mNotification.getWebcast().getAsJsonObject();
+        assertEquals(webcastJson.get("type").getAsString(), "twitch");
+        assertEquals(webcastJson.get("channel").getAsString(), "nefirst_red");
     }
 
     @Test(expected = JsonParseException.class)
@@ -78,6 +84,14 @@ public class UpcomingMatchNotificationTest {
         mNotification = new UpcomingMatchNotification(mData.toString());
         mNotification.parseMessageData();
         assertTrue(mNotification.getMatchTime().isJsonNull());
+    }
+
+    @Test
+    public void testParseNoWebcast() {
+        mData.remove("webcast");
+        mNotification = new UpcomingMatchNotification(mData.toString());
+        mNotification.parseMessageData();
+        assertTrue(mNotification.getWebcast().isJsonNull());
     }
 
     @Test

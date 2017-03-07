@@ -17,13 +17,16 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
+import com.thebluealliance.androidclient.helpers.WebcastHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.types.WebcastType;
 import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -45,6 +48,7 @@ public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNot
     private String[] redTeams, blueTeams;
     private JsonElement matchTime;
     private JsonArray teamKeys;
+    private JsonElement webcast;
 
     public UpcomingMatchNotification(String messageData) {
         super("upcoming_match", messageData);
@@ -78,6 +82,10 @@ public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNot
         return teamKeys;
     }
 
+    public JsonElement getWebcast() {
+        return webcast;
+    }
+
     @Override
     public void parseMessageData() throws JsonParseException {
         JsonObject jsonData = new JsonParser().parse(messageData).getAsJsonObject();
@@ -109,6 +117,11 @@ public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNot
             matchTime = jsonData.get("scheduled_time");
         } else {
             matchTime = JsonNull.INSTANCE;
+        }
+        if (jsonData.has("webcast")) {
+            webcast = jsonData.get("webcast").getAsJsonObject();
+        } else {
+            webcast = JsonNull.INSTANCE;
         }
     }
 
@@ -157,9 +170,33 @@ public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNot
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
 
+        PendingIntent watchIntent = null;
+        String watchTitle = null;
+        if (webcast != null && webcast.isJsonObject()) {
+            JsonObject webcastJson = webcast.getAsJsonObject();
+            WebcastType webcastType = WebcastHelper.getType(webcastJson.get("type").getAsString());
+            if (webcastType != WebcastType.NONE) {
+                watchTitle = webcastType.render(context);
+                Intent webcastIntent = WebcastHelper.getIntentForWebcast(context,
+                                                                         matchKey,
+                                                                         webcastType,
+                                                                         webcastJson,
+                                                                         0);
+                watchIntent = PendingIntent.getActivity(context,
+                                                        (int)System.currentTimeMillis(),
+                                                        webcastIntent,
+                                                        0);
+            }
+        }
+
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(notificationTitle)
                 .setContentText(contentText);
+
+        // Add Watch button
+        if (watchIntent != null) {
+            builder.addAction(R.drawable.ic_videocam_black_24dp, watchTitle, watchIntent);
+        }
 
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
         builder.setStyle(style);
