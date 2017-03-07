@@ -259,7 +259,9 @@ public class OnboardingActivity extends AppCompatActivity
                          .apply();
 
         // Return to the first page
-        viewPager.setCurrentItem(0);
+        if (viewPager != null) {
+            viewPager.setCurrentItem(0);
+        }
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
