@@ -73,6 +73,8 @@ public class GamedayFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(SELECTED_TAB, mViewPager.getCurrentItem());
+        if (mViewPager != null) {
+            outState.putInt(SELECTED_TAB, mViewPager.getCurrentItem());
+        }
     }
 }
