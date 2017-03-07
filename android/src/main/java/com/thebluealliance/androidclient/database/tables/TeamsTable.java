@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.models.Team;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.database.sqlite.SQLiteException;
 
 import java.util.List;
@@ -41,37 +42,83 @@ public class TeamsTable extends ModelTable<Team> {
     @Override
     protected void insertCallback(Team team) {
         ContentValues cv = new ContentValues();
+        mDb.beginTransaction();
         try {
             cv.put(Database.SearchTeam.KEY, team.getKey());
             cv.put(Database.SearchTeam.TITLES, Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
             cv.put(Database.SearchTeam.NUMBER, team.getTeamNumber());
             mDb.insert(Database.TABLE_SEARCH_TEAMS, null, cv);
-        } catch (SQLiteException e) {
-            TbaLogger.w("Trying to add a SearchTeam that already exists. " + team.getKey());
+            mDb.setTransactionSuccessful();
+        } catch (SQLiteException ex) {
+            if (ex instanceof SQLiteDatabaseLockedException) {
+                TbaLogger.d("Databse locked: " + ex.getMessage());
+            } else {
+                TbaLogger.w("Error in team insert callback", ex);
+            }
+        } finally {
+            mDb.endTransaction();
         }
     }
 
     @Override
     protected void updateCallback(Team team) {
-        ContentValues cv = new ContentValues();
-        cv.put(Database.SearchTeam.KEY, team.getKey());
-        cv.put(Database.SearchTeam.TITLES,
-               Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
-        cv.put(Database.SearchTeam.NUMBER, team.getTeamNumber());
-        mDb.update(Database.TABLE_SEARCH_TEAMS,
-                   cv,
-                   Database.SearchTeam.KEY + "=?",
-                   new String[]{team.getKey()});
+        mDb.beginTransaction();
+        try {
+            ContentValues cv = new ContentValues();
+            cv.put(Database.SearchTeam.KEY, team.getKey());
+            cv.put(Database.SearchTeam.TITLES,
+                   Utilities.getAsciiApproximationOfUnicode(team.getSearchTitles()));
+            cv.put(Database.SearchTeam.NUMBER, team.getTeamNumber());
+            mDb.update(Database.TABLE_SEARCH_TEAMS,
+                       cv,
+                       Database.SearchTeam.KEY + "=?",
+                       new String[]{team.getKey()});
+            mDb.setTransactionSuccessful();
+        } catch (Exception ex) {
+            if (ex instanceof SQLiteDatabaseLockedException) {
+                TbaLogger.d("Databse locked: " + ex.getMessage());
+            } else {
+                TbaLogger.w("Error in team update callback", ex);
+            }
+        } finally {
+            mDb.endTransaction();
+        }
     }
 
     @Override
     protected void deleteCallback(Team team) {
-        mDb.delete(Database.TABLE_SEARCH_TEAMS, Database.SearchTeam.KEY + " = ?", new String[]{team.getKey()});
+        mDb.beginTransaction();
+        try {
+            mDb.delete(Database.TABLE_SEARCH_TEAMS,
+                       Database.SearchTeam.KEY + " = ?",
+                       new String[]{team.getKey()});
+            mDb.setTransactionSuccessful();
+        } catch (Exception ex) {
+            if (ex instanceof SQLiteDatabaseLockedException) {
+                TbaLogger.d("Databse locked: " + ex.getMessage());
+            } else {
+                TbaLogger.w("Error in team delete callback", ex);
+            }
+        } finally {
+            mDb.endTransaction();
+        }
     }
 
     @Override
     protected void deleteAllCallback() {
-        mDb.execSQL("delete from " + Database.TABLE_SEARCH_TEAMS);
+        mDb.beginTransaction();
+        try {
+            mDb.execSQL("delete from " + Database.TABLE_SEARCH_TEAMS);
+            mDb.setTransactionSuccessful();
+        } catch (Exception ex) {
+            if (ex instanceof SQLiteDatabaseLockedException) {
+                TbaLogger.d("Databse locked: " + ex.getMessage());
+            } else {
+                TbaLogger.w("Error in team delete all callback", ex);
+            }
+        } finally {
+            mDb.endTransaction();
+        }
     }
 
     public String getTableName() {
@@ -94,7 +141,19 @@ public class TeamsTable extends ModelTable<Team> {
     }
 
     public void deleteAllSearchIndexes() {
-        mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
+        mDb.beginTransaction();
+        try {
+            mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
+            mDb.setTransactionSuccessful();
+        } catch (Exception ex) {
+            if (ex instanceof SQLiteDatabaseLockedException) {
+                TbaLogger.d("Databse locked: " + ex.getMessage());
+            } else {
+                TbaLogger.w("Error in recreate all team indexes", ex);
+            }
+        } finally {
+            mDb.endTransaction();
+        }
     }
 
     public void deleteSearchIndex(Team team) {
