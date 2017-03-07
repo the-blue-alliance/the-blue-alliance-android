@@ -130,7 +130,12 @@ public class TeamsTable extends ModelTable<Team> {
           + " FROM " + table
           + " JOIN  (SELECT " + searchTable + "." + Database.SearchTeam.KEY + " FROM " + searchTable + " WHERE " + Database.SearchTeam.TITLES + " MATCH ?)"
           + " as 'tempteams' ON tempteams." + Database.SearchEvent.KEY + " = " + table + "." + KEY + " ORDER BY " + NUMBER + " ASC";
-        Cursor cursor = mDb.rawQuery(rawQuery, new String[]{query});
+        Cursor cursor = null;
+        try {
+            cursor = mDb.rawQuery(rawQuery, new String[]{query});
+        } catch (Exception ex) {
+            TbaLogger.w("Can't fetch teams from search query", ex);
+        }
 
         if (cursor == null) {
             return null;

@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.database.tables;
 
 import com.google.gson.Gson;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
@@ -185,11 +186,16 @@ public class EventsTable extends ModelTable<Event> {
                 + table + "." + START + ","
                 + table + "." + END + ","
                 + table + "." + LOCATION + ","
-                + table + "." + VENUE + ","
+                + table + "." + VENUE
                 + " FROM " + getTableName()
                 + " JOIN (SELECT " + searchTable + "." + Database.SearchEvent.KEY + " FROM " + searchTable + " WHERE " + searchTable + "." + Database.SearchEvent.TITLES + " MATCH ?)"
                 + " as 'tempevents' ON tempevents." + Database.SearchEvent.KEY + " = " + table + "." + KEY + " ORDER BY " + table + "." + YEAR + " DESC";
-        Cursor cursor = mDb.rawQuery(rawQuery, new String[]{query});
+        Cursor cursor = null;
+        try {
+            cursor = mDb.rawQuery(rawQuery, new String[]{query});
+        } catch (Exception ex) {
+            TbaLogger.w("Can't fetch events from search query", ex);
+        }
 
         if (cursor == null) {
             return null;
