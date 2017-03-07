@@ -208,10 +208,14 @@ public class MatchBreakdownView2017 extends AbstractMatchBreakdownView {
         redRp += setRotorBonus(res, redRotorsIcon, redRotorBonus, redData);
         blueRp += setRotorBonus(res, blueRotorsIcon, blueRotorBonus, blueData);
 
+        // Get these from the score breakdown object to keep cache consistency
+        int redScore = getIntDefaultValue(redData, "totalPoints");
+        int blueScore = getIntDefaultValue(blueData, "totalPoints");
+
         /* Add in RP for victory */
-        if ("red".equals(winningAlliance)) {
+        if ("red".equals(winningAlliance) || redScore > blueScore) {
             redRp += 2;
-        } else if ("blue".equals(winningAlliance)) {
+        } else if ("blue".equals(winningAlliance) || blueScore > redScore) {
             blueRp += 2;
         } else {
             redRp++;
