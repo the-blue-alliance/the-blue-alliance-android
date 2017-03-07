@@ -130,7 +130,12 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
     @Override
     public void onSignInButtonClicked() {
         Intent signInIntent = mAuthProvider.buildSignInIntent();
-        startActivityForResult(signInIntent, SIGNIN_CODE);
+        if (signInIntent != null) {
+            startActivityForResult(signInIntent, SIGNIN_CODE);
+        } else {
+            Toast.makeText(this, R.string.mytba_no_signin_intent, Toast.LENGTH_SHORT).show();
+            TbaLogger.e("Unable to get login Intent");
+        }
     }
 
     private AuthComponent getComponent() {
