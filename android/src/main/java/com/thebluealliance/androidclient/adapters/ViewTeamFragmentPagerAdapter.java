@@ -71,6 +71,18 @@ public class ViewTeamFragmentPagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
+    public void finishUpdate(ViewGroup container) {
+        try {
+            super.finishUpdate(container);
+        } catch (NullPointerException ignored) {
+            // Work around for support library bug
+            // https://stackoverflow.com/questions/41650721/attempt-to-invoke-virtual-method-android-os-handler-android-support-v4-app-frag
+            // https://code.google.com/p/android/issues/detail?id=216157
+            // https://code.google.com/p/android/issues/detail?id=218912
+        }
+    }
+
+    @Override
     public long getItemId(int position) {
         return mYear * (position + 1);
     }
