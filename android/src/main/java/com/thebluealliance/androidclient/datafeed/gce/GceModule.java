@@ -58,6 +58,10 @@ public class GceModule {
             OkHttpClient okHttpClient,
             AppConfig appConfig) {
         String appspotId = appConfig.getString("appspot_projectId");
+        if (appspotId == null || appspotId.isEmpty()) {
+            // Fall back to prod
+            appspotId = "tbatv-prod-hrd";
+        }
         return new Retrofit.Builder()
                 .baseUrl(String.format(GCE_URL_FORMAT, appspotId))
                 .client(okHttpClient)
