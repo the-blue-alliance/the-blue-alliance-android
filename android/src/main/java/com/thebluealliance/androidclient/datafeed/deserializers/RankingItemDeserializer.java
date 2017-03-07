@@ -27,7 +27,11 @@ public class RankingItemDeserializer implements JsonDeserializer<RankingItem>,
 
         rankItem.setDq(!isNull(data.get("dq")) ? data.get("dq").getAsInt() : 0);
         rankItem.setMatchesPlayed(data.get("matches_played").getAsInt());
-        rankItem.setRank(data.get("rank").getAsInt());
+        if (!isNull(data.get("rank"))) {
+            rankItem.setRank(data.get("rank").getAsInt());
+        } else {
+            rankItem.setRank(-1);
+        }
         rankItem.setTeamKey(data.get("team_key").getAsString());
         if (!isNull(data.get("qual_average"))) {
             rankItem.setQualAverage(data.get("qual_average").getAsDouble());
