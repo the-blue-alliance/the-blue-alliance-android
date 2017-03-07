@@ -7,6 +7,8 @@ import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.deserializers.APIStatusDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AllianceDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.AllianceDeserializer
+        .AllianceBackupDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer
         .AwardRecipientDeserializer;
@@ -41,6 +43,7 @@ import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.RankingSortOrder;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
+import com.thebluealliance.api.model.IAllianceBackup;
 import com.thebluealliance.api.model.IApiStatus;
 import com.thebluealliance.api.model.IAward;
 import com.thebluealliance.api.model.IAwardRecipient;
@@ -124,6 +127,7 @@ public class HttpModule {
         RankingsResponseDeserializer rankingsResponseDeserializer = new RankingsResponseDeserializer();
         RankingSortOrderDeserializer sortOrderDeserializer = new RankingSortOrderDeserializer();
         AllianceDeserializer allianceDeserializer = new AllianceDeserializer();
+        AllianceBackupDeserializer backupDeserializer = new AllianceBackupDeserializer();
         MatchAllianceDeserializer matchAllianceDeserializer = new MatchAllianceDeserializer();
         MatchVideoDeserializer matchVideoDeserializer = new MatchVideoDeserializer();
         AwardRecipientDeserializer recipientDeserializer = new AwardRecipientDeserializer();
@@ -165,6 +169,8 @@ public class HttpModule {
 
         builder.registerTypeAdapter(IMatchAlliancesContainer.class, matchAllianceDeserializer);
         builder.registerTypeAdapter(MatchAlliancesContainer.class, matchAllianceDeserializer);
+        builder.registerTypeAdapter(IAllianceBackup.class, backupDeserializer);
+        builder.registerTypeAdapter(EventAlliance.AllianceBackup.class, backupDeserializer);
 
         builder.registerTypeAdapter(IMatchVideo.class, matchVideoDeserializer);
         builder.registerTypeAdapter(Match.MatchVideo.class, matchVideoDeserializer);
