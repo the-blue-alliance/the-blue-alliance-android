@@ -43,4 +43,9 @@ public class MediaListSubscriber extends BaseAPISubscriber<List<Media>, List<Lis
             mDataToBind.add(mVideos);
         }
     }
+
+    @Override
+    public boolean isDataValid() {
+        return super.isDataValid() && !mAPIData.isEmpty();
+    }
 }
