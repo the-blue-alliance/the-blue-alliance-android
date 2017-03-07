@@ -346,7 +346,9 @@ public class OnboardingActivity extends AppCompatActivity
 
     private void onConnectionLost() {
         // Scroll to first page
-        viewPager.setCurrentItem(0);
+        if (viewPager != null) {
+            viewPager.setCurrentItem(0);
+        }
 
         // Cancel task
         if (loadFragment != null) {
