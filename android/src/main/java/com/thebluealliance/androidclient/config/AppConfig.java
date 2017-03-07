@@ -4,6 +4,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigFetchException;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigFetchThrottledException;
 
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -95,6 +97,15 @@ public class AppConfig {
                         TbaLogger.e("Unable to update remote config", task.getException());
                     }
                     mActiveTask = null;
+                })
+                .addOnFailureListener(e -> {
+                    if (e instanceof FirebaseRemoteConfigFetchThrottledException) {
+                        TbaLogger.d("RemoteConfig fetch throttled");
+                    } else if (e instanceof FirebaseRemoteConfigFetchException) {
+                        TbaLogger.i("Error fetching RemoteConfig: " + e.getMessage());
+                    } else {
+                        TbaLogger.w("Error fetching RemoteConfig: " + e.getMessage(), e);
+                    }
                 });
         if (onComplete != null) {
             mActiveTask.addOnCompleteListener(onComplete);
