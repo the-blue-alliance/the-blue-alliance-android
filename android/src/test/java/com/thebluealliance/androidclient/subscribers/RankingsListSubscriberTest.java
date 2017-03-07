@@ -46,7 +46,9 @@ public class RankingsListSubscriberTest {
 
         mSubscriber = new RankingsListSubscriber(mDb, mEventBus, mResources);
         mRankings = ModelMaker.getModel(RankingResponseObject.class, "2015necmp_rankings_apiv3");
+        mRankings.setEventKey("2015necmp");
         mRankingsMultiTeam = ModelMaker.getModel(RankingResponseObject.class, "2015ohri_rankings_apiv3");
+        mRankingsMultiTeam.setEventKey("2015ohri");
         when(mResources.getString(anyInt())).thenReturn("Thing");
     }
 
