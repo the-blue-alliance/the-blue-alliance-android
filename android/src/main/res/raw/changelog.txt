@@ -1,8 +1,8 @@
-Version 4.0.2:<br>
-    - Full support for the 2017 game: FIRST Steamworks!<br>
-    - Improve data model reliability<br>
-    - Support 2015 score breakdowns<br>
-    - Many other fixes & enhancements<br>
+Version 4.0.3:<br>
+    - Add button to watch webcasts from Upcoming Match notification<br>
+    - Fix bugs with RP/Match in 2017<br>
+    - Fix bugs with rendering some webcast links<br>
+    - Many other bugfixes & enhancements<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>
