@@ -321,6 +321,9 @@ public class MyTbaDatafeed {
                     return ModelPrefsResult.ERROR;
                 }
                 JsonObject responseJson = JSONHelper.getasJsonObject(prefResponse.message);
+                if (responseJson == null || responseJson.isJsonNull()) {
+                    return ModelPrefsResult.ERROR;
+                }
                 JsonObject fav = responseJson.get("favorite").getAsJsonObject(),
                         sub = responseJson.get("subscription").getAsJsonObject();
                 int favCode = fav.get("code").getAsInt(),
