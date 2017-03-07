@@ -201,26 +201,12 @@ public class MatchBreakdownView2017 extends AbstractMatchBreakdownView {
         blueTeleopTotal.setText(getIntDefault(blueData, "teleopPoints"));
 
         /* Pressure Bonus */
-        redRp += setPressureBonus(res, redPressureIcon, redPressureBonus, redData);
-        blueRp += setPressureBonus(res, bluePressureIcon, bluePressureBonus, blueData);
+        setPressureBonus(res, redPressureIcon, redPressureBonus, redData);
+        setPressureBonus(res, bluePressureIcon, bluePressureBonus, blueData);
 
         /* Rotor Bonus */
-        redRp += setRotorBonus(res, redRotorsIcon, redRotorBonus, redData);
-        blueRp += setRotorBonus(res, blueRotorsIcon, blueRotorBonus, blueData);
-
-        // Get these from the score breakdown object to keep cache consistency
-        int redScore = getIntDefaultValue(redData, "totalPoints");
-        int blueScore = getIntDefaultValue(blueData, "totalPoints");
-
-        /* Add in RP for victory */
-        if ("red".equals(winningAlliance) || redScore > blueScore) {
-            redRp += 2;
-        } else if ("blue".equals(winningAlliance) || blueScore > redScore) {
-            blueRp += 2;
-        } else {
-            redRp++;
-            blueRp++;
-        }
+        setRotorBonus(res, redRotorsIcon, redRotorBonus, redData);
+        setRotorBonus(res, blueRotorsIcon, blueRotorBonus, blueData);
 
         /* Overall Stuff */
         foulsRed.setText(res.getString(R.string.breakdown_foul_format_add,
@@ -232,9 +218,13 @@ public class MatchBreakdownView2017 extends AbstractMatchBreakdownView {
         totalRed.setText(getIntDefault(redData, "totalPoints"));
         totalBlue.setText(getIntDefault(blueData, "totalPoints"));
 
-        if (matchType == MatchType.QUAL) {
-            rpRed.setText(res.getString(R.string.breakdown_total_rp, redRp));
-            rpBlue.setText(res.getString(R.string.breakdown_total_rp, blueRp));
+        /* Show RPs earned, if needed */
+        boolean showRp = !redData.get("tba_rpEarned").isJsonNull()
+                         && !blueData.get("tba_rpEarned").isJsonNull();
+
+        if (showRp) {
+            rpRed.setText(res.getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "tba_rpEarned")));
+            rpBlue.setText(res.getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "tba_rpEarned")));
         } else {
             rpRed.setVisibility(GONE);
             rpBlue.setVisibility(GONE);
@@ -245,31 +235,28 @@ public class MatchBreakdownView2017 extends AbstractMatchBreakdownView {
         return true;
     }
 
-    private static int setPressureBonus(Resources res, ImageView icon, TextView text, JsonObject data) {
-        return bonusCommon(res, icon, text, data, "kPaRankingPointAchieved", "kPaBonusPoints");
+    private static void setPressureBonus(Resources res, ImageView icon, TextView text, JsonObject data) {
+        bonusCommon(res, icon, text, data, "kPaRankingPointAchieved", "kPaBonusPoints");
     }
 
-    private static int setRotorBonus(Resources res, ImageView icon, TextView text, JsonObject data) {
-        return bonusCommon(res, icon, text, data, "rotorRankingPointAchieved", "rotorBonusPoints");
+    private static void setRotorBonus(Resources res, ImageView icon, TextView text, JsonObject data) {
+        bonusCommon(res, icon, text, data, "rotorRankingPointAchieved", "rotorBonusPoints");
     }
 
-    private static int bonusCommon(Resources res, ImageView icon, TextView text, JsonObject data,
-                                   String rpKey, String bonusKey) {
+    private static void bonusCommon(Resources res, ImageView icon, TextView text, JsonObject data,
+                                    String rpKey, String bonusKey) {
         boolean rp = getBooleanDefault(data, rpKey);
         int bonus = getIntDefaultValue(data, bonusKey);
 
         if (rp) {
             icon.setBackgroundResource(R.drawable.ic_check_black_24dp);
             text.setText(res.getString(R.string.breakdown_rp_format, 1));
-            return 1;
         } else if (bonus > 0) {
             icon.setBackgroundResource(R.drawable.ic_check_black_24dp);
             text.setText(res.getString(R.string.breakdown_addition_format, bonus));
-            return 0;
         } else {
             icon.setBackgroundResource(R.drawable.ic_clear_black_24dp);
             text.setVisibility(GONE);
-            return 0;
         }
     }
 
