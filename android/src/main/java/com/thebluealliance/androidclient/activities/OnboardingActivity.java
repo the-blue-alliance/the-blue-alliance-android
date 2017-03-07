@@ -303,6 +303,10 @@ public class OnboardingActivity extends AppCompatActivity
 
         isDataFinishedLoading = true;
 
+        if (loadingMessage == null) {
+            return;
+        }
+
         loadingMessage.setText("Loading complete");
 
         // After two seconds, fade out the message and spinner and fade in the "continue" button
