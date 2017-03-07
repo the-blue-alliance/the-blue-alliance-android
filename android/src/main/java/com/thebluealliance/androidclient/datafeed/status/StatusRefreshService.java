@@ -63,7 +63,7 @@ public class StatusRefreshService extends IntentService {
         try {
             mAppConfig.updateRemoteDataBlocking();
         } catch (ExecutionException | InterruptedException e) {
-            TbaLogger.w("Error updating FirebaseRemoteConfig", e);
+            TbaLogger.w("Error updating FirebaseRemoteConfig: " + e.getMessage());
         }
 
         Response<ApiStatus> response;
