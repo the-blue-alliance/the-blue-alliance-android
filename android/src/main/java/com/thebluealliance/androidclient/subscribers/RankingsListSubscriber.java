@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.subscribers;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
+import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.RankingItem;
 import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.Team;
@@ -48,6 +49,7 @@ public class RankingsListSubscriber extends BaseAPISubscriber<RankingResponseObj
 
         List<IRankingItem> rankings = mAPIData.getRankings();
         List<IRankingSortOrder> sortOrders = mAPIData.getSortOrderInfo();
+        int year = EventHelper.getYear(mAPIData.getEventKey());
         for (int i = 0; i < rankings.size(); i++) {
             IRankingItem row = rankings.get(i);
             /* Assume that the list of lists has rank first and team # second, always */
@@ -66,7 +68,8 @@ public class RankingsListSubscriber extends BaseAPISubscriber<RankingResponseObj
             IRankingSortOrder firstSortInfo = sortOrders.get(0);
             Double firstSort = row.getSortOrders().get(0);
             int played = row.getMatchesPlayed();
-            if (row.getQualAverage() == null) {
+            if (row.getQualAverage() == null && year != 2017) {
+                /* In 2017, Ranking Points come normalized per match from FIRST */
                 rankingSummary = mResources.getString(R.string.rank_item_with_per_match,
                                                       sortOrders.get(0).getName(),
                                                       formatSortOrder(firstSortInfo, firstSort),
