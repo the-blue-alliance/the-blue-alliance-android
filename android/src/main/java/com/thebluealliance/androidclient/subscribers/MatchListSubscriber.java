@@ -5,6 +5,7 @@ import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComp
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
+import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.firebase.AllianceAdvancementEvent;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Event;
@@ -189,6 +190,7 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
             mDataToBind.add(mFinalMatches);
         }
 
+        mEventBus.post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
         mEventBus.post(new AllianceAdvancementEvent(mAdvancement));
     }
 
