@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.api.rx.TbaApiV3;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.models.ApiStatus;
 
@@ -59,18 +60,22 @@ public class StatusRefreshService extends IntentService {
     @WorkerThread
     private void updateTbaStatus() {
 
+        if (!ConnectionDetector.isConnectedToInternet(this)) {
+            return;
+        }
+
         /* Updating FirebaseRemoteConfig */
         try {
             mAppConfig.updateRemoteDataBlocking();
         } catch (ExecutionException | InterruptedException e) {
-            TbaLogger.w("Error updating FirebaseRemoteConfig", e);
+            TbaLogger.w("Error updating FirebaseRemoteConfig: " + e.getMessage());
         }
 
         Response<ApiStatus> response;
         try {
             response = mRetrofitAPI.fetchApiStatus().toBlocking().first();
         } catch (Exception ex) {
-            TbaLogger.w("Error updating TBA status", ex);
+            TbaLogger.w("Error updating TBA status: " + ex.getMessage());
             return;
         }
         if (!response.isSuccessful()) {

@@ -298,7 +298,9 @@ public class RedownloadActivity extends AppCompatActivity
 
         AlertDialog alertDialog = alertDialogBuilder.create();
 
-        alertDialog.show();
+        if (!isFinishing()) {
+            alertDialog.show();
+        }
     }
 
     private void onLoadingMessageUpdated(String message) {

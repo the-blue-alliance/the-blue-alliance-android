@@ -35,6 +35,7 @@ import com.thebluealliance.androidclient.types.ModelType;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.Handler;
 import android.widget.Toast;
 
@@ -171,20 +172,30 @@ public class MyTbaDatafeed {
         }
 
         if (favoriteResponse != null) {
-            ModelsMobileApiMessagesFavoriteCollection favoriteCollection = favoriteResponse.body();
-            if (favoriteCollection != null && favoriteCollection.favorites != null) {
-                FavoritesTable favorites = mDb.getFavoritesTable();
-                favorites.recreate(currentUser);
-                for (int i = 0; i < favoriteCollection.favorites.size(); i++) {
-                    ModelsMobileApiMessagesFavoriteMessage f = favoriteCollection.favorites.get(i);
-                    favoriteModels.add(new Favorite(currentUser, f.model_key, f.model_type));
+            try {
+                ModelsMobileApiMessagesFavoriteCollection favoriteCollection = favoriteResponse
+                        .body();
+                if (favoriteCollection != null && favoriteCollection.favorites != null) {
+                    FavoritesTable favorites = mDb.getFavoritesTable();
+                    favorites.recreate(currentUser);
+                    for (int i = 0; i < favoriteCollection.favorites.size(); i++) {
+                        ModelsMobileApiMessagesFavoriteMessage f = favoriteCollection.favorites
+                                .get(i);
+                        favoriteModels.add(new Favorite(currentUser, f.model_key, f.model_type));
+                    }
+                    favorites.add(favoriteModels);
+                    TbaLogger.d("Added " + favoriteModels.size() + " favorites");
                 }
-                favorites.add(favoriteModels);
-                TbaLogger.d("Added " + favoriteModels.size() + " favorites");
+                mPrefs.edit().putLong(prefString, now.getTime()).apply();
+            } catch (Exception ex) {
+                if (ex instanceof SQLiteDatabaseLockedException) {
+                    TbaLogger.i("Database locked: " + ex.getMessage());
+                } else {
+                    TbaLogger.e("Unable to update mytba favorites", ex);
+                }
             }
         }
 
-        mPrefs.edit().putLong(prefString, now.getTime()).apply();
     }
 
     public void updateUserSubscriptions() {
@@ -221,20 +232,34 @@ public class MyTbaDatafeed {
 
         List<Subscription> subscriptionModels = new ArrayList<>();
         if (subscriptionResponse != null) {
-            ModelsMobileApiMessagesSubscriptionCollection subscriptionCollection = subscriptionResponse.body();
-            if (subscriptionCollection != null && subscriptionCollection.subscriptions != null) {
-                SubscriptionsTable subscriptions = mDb.getSubscriptionsTable();
-                subscriptions.recreate(currentUser);
-                for (int i = 0; i < subscriptionCollection.subscriptions.size(); i++) {
-                    ModelsMobileApiMessagesSubscriptionMessage s = subscriptionCollection.subscriptions.get(i);
-                    subscriptionModels.add(new Subscription(currentUser, s.model_key, s.notifications, s.model_type));
+            try {
+                ModelsMobileApiMessagesSubscriptionCollection subscriptionCollection = subscriptionResponse.body();
+                if (subscriptionCollection != null &&
+                    subscriptionCollection.subscriptions != null) {
+                    SubscriptionsTable subscriptions = mDb.getSubscriptionsTable();
+                    subscriptions.recreate(currentUser);
+                    for (int i = 0; i < subscriptionCollection.subscriptions.size(); i++) {
+                        ModelsMobileApiMessagesSubscriptionMessage s = subscriptionCollection
+                                .subscriptions
+                                .get(i);
+                        subscriptionModels.add(new Subscription(currentUser,
+                                                                s.model_key,
+                                                                s.notifications,
+                                                                s.model_type));
+                    }
+                    subscriptions.add(subscriptionModels);
+                    TbaLogger.d("Added " + subscriptionModels.size() + " subscriptions");
                 }
-                subscriptions.add(subscriptionModels);
-                TbaLogger.d("Added " + subscriptionModels.size() + " subscriptions");
+                mPrefs.edit().putLong(prefString, now.getTime()).apply();
+            } catch (Exception ex) {
+                if (ex instanceof SQLiteDatabaseLockedException) {
+                    TbaLogger.i("Database locked: " + ex.getMessage());
+                } else {
+                    TbaLogger.e("Unable to update mytba subscriptions", ex);
+                }
             }
         }
 
-        mPrefs.edit().putLong(prefString, now.getTime()).apply();
     }
 
     public ModelPrefsResult updateModelSettings(Context context,
@@ -296,6 +321,9 @@ public class MyTbaDatafeed {
                     return ModelPrefsResult.ERROR;
                 }
                 JsonObject responseJson = JSONHelper.getasJsonObject(prefResponse.message);
+                if (responseJson == null || responseJson.isJsonNull()) {
+                    return ModelPrefsResult.ERROR;
+                }
                 JsonObject fav = responseJson.get("favorite").getAsJsonObject(),
                         sub = responseJson.get("subscription").getAsJsonObject();
                 int favCode = fav.get("code").getAsInt(),

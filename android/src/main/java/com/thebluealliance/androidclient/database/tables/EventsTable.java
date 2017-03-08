@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.database.tables;
 
 import com.google.gson.Gson;
 
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
@@ -12,6 +13,7 @@ import com.thebluealliance.androidclient.models.Event;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabaseLockedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,36 +94,91 @@ public class EventsTable extends ModelTable<Event> {
 
     @Override
     protected void insertCallback(Event event) {
-        ContentValues cv = new ContentValues();
-        cv.put(Database.SearchEvent.KEY, event.getKey());
-        cv.put(Database.SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
-        cv.put(Database.SearchEvent.YEAR, event.getYear());
-        mDb.insert(Database.TABLE_SEARCH_EVENTS, null, cv);
+        mDb.beginTransaction();
+        try {
+            ContentValues cv = new ContentValues();
+            cv.put(Database.SearchEvent.KEY, event.getKey());
+            cv.put(Database.SearchEvent.TITLES,
+                   Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
+            cv.put(Database.SearchEvent.YEAR, event.getYear());
+            mDb.insert(Database.TABLE_SEARCH_EVENTS, null, cv);
 
-        if (event.getDistrict() != null) {
-            District district = (District)event.getDistrict();
-            mDistrictsTable.add(district, event.getLastModified());
+            if (event.getDistrict() != null) {
+                District district = (District) event.getDistrict();
+                mDistrictsTable.add(district, event.getLastModified());
+            }
+            mDb.setTransactionSuccessful();
+        } catch (Exception ex) {
+            if (ex instanceof SQLiteDatabaseLockedException) {
+                TbaLogger.d("Databse locked: " + ex.getMessage());
+            } else {
+                TbaLogger.w("Error in Event insert callback", ex);
+            }
+        } finally {
+            mDb.endTransaction();
         }
     }
 
     @Override
     protected void updateCallback(Event event) {
-        ContentValues cv = new ContentValues();
-        cv.put(Database.SearchEvent.KEY, event.getKey());
-        cv.put(Database.SearchEvent.TITLES, Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
-        cv.put(Database.SearchEvent.YEAR, event.getYear());
+        mDb.beginTransaction();
+        try {
+            ContentValues cv = new ContentValues();
+            cv.put(Database.SearchEvent.KEY, event.getKey());
+            cv.put(Database.SearchEvent.TITLES,
+                   Utilities.getAsciiApproximationOfUnicode(event.getSearchTitles()));
+            cv.put(Database.SearchEvent.YEAR, event.getYear());
 
-        mDb.update(Database.TABLE_SEARCH_EVENTS, cv, Database.SearchEvent.KEY + "=?", new String[]{event.getKey()});
+            mDb.update(Database.TABLE_SEARCH_EVENTS,
+                       cv,
+                       Database.SearchEvent.KEY + "=?",
+                       new String[]{event.getKey()});
+            mDb.setTransactionSuccessful();
+        } catch (Exception ex) {
+            if (ex instanceof SQLiteDatabaseLockedException) {
+                TbaLogger.d("Databse locked: " + ex.getMessage());
+            } else {
+                TbaLogger.w("Error in Event update callback", ex);
+            }
+        } finally {
+            mDb.endTransaction();
+        }
     }
 
     @Override
     protected void deleteCallback(Event event) {
-        mDb.delete(Database.TABLE_SEARCH_EVENTS, Database.SearchEvent.KEY + " = ?", new String[]{event.getKey()});
+        mDb.beginTransaction();
+        try {
+            mDb.delete(Database.TABLE_SEARCH_EVENTS,
+                       Database.SearchEvent.KEY + " = ?",
+                       new String[]{event.getKey()});
+            mDb.setTransactionSuccessful();
+        } catch (Exception ex) {
+            if (ex instanceof SQLiteDatabaseLockedException) {
+                TbaLogger.d("Databse locked: " + ex.getMessage());
+            } else {
+                TbaLogger.w("Error in Event delete callback", ex);
+            }
+        } finally {
+            mDb.endTransaction();
+        }
     }
 
     @Override
     protected void deleteAllCallback() {
-        mDb.execSQL("delete from " + Database.TABLE_SEARCH_EVENTS);
+        mDb.beginTransaction();
+        try {
+            mDb.execSQL("delete from " + Database.TABLE_SEARCH_EVENTS);
+            mDb.setTransactionSuccessful();
+        } catch (Exception ex) {
+            if (ex instanceof SQLiteDatabaseLockedException) {
+                TbaLogger.d("Databse locked: " + ex.getMessage());
+            } else {
+                TbaLogger.w("Error in Event delete all callback", ex);
+            }
+        } finally {
+            mDb.endTransaction();
+        }
     }
 
     @Override
@@ -150,7 +207,19 @@ public class EventsTable extends ModelTable<Event> {
     }
 
     public void deleteAllSearchIndexes() {
-        mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
+        mDb.beginTransaction();
+        try {
+            mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
+            mDb.setTransactionSuccessful();
+        } catch (Exception ex) {
+            if (ex instanceof SQLiteDatabaseLockedException) {
+                TbaLogger.d("Databse locked: " + ex.getMessage());
+            } else {
+                TbaLogger.w("Error in delete all search indexes", ex);
+            }
+        } finally {
+            mDb.endTransaction();
+        }
     }
 
     public void deleteSearchIndex(Event event) {
@@ -185,11 +254,16 @@ public class EventsTable extends ModelTable<Event> {
                 + table + "." + START + ","
                 + table + "." + END + ","
                 + table + "." + LOCATION + ","
-                + table + "." + VENUE + ","
+                + table + "." + VENUE
                 + " FROM " + getTableName()
                 + " JOIN (SELECT " + searchTable + "." + Database.SearchEvent.KEY + " FROM " + searchTable + " WHERE " + searchTable + "." + Database.SearchEvent.TITLES + " MATCH ?)"
                 + " as 'tempevents' ON tempevents." + Database.SearchEvent.KEY + " = " + table + "." + KEY + " ORDER BY " + table + "." + YEAR + " DESC";
-        Cursor cursor = mDb.rawQuery(rawQuery, new String[]{query});
+        Cursor cursor = null;
+        try {
+            cursor = mDb.rawQuery(rawQuery, new String[]{query});
+        } catch (Exception ex) {
+            TbaLogger.w("Can't fetch events from search query", ex);
+        }
 
         if (cursor == null) {
             return null;

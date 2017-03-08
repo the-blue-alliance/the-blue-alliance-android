@@ -20,6 +20,7 @@
     <string name="mytba_login_prompt">Sign in with your Google account so we can save and sync your data.</string>
     <string name="mytba_login_success">Success!</string>
     <string name="mytba_login_success_subtitle">Enjoy using myTBA.</string>
+    <string name="mytba_no_signin_intent">Unable to complete login</string>
     <string name="mytba_no_play_services">Uh oh...</string>
     <string name="mytba_no_play_services_subtitle">Your device is missing Google Play Services, so myTBA is not supported.</string>
     <string name="update_message">The app has been updated to a new version. Click \"Next\" to download some important new data.</string>

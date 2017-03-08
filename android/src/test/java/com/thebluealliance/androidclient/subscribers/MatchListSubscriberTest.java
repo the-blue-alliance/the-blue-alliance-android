@@ -5,6 +5,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
 import com.thebluealliance.androidclient.firebase.AllianceAdvancementEvent;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Event;
@@ -25,6 +26,7 @@ import android.support.annotation.StringRes;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -67,6 +69,7 @@ public class MatchListSubscriberTest {
     public void testSimpleParsing()  {
         DatafeedTestDriver.testSimpleParsing(mSubscriber, mMatches);
         verify(mEventBus).post(eq(new AllianceAdvancementEvent(mSubscriber.getAdvancement())));
+        verify(mEventBus).post(any(LiveEventMatchUpdateEvent.class));
     }
 
     @Test

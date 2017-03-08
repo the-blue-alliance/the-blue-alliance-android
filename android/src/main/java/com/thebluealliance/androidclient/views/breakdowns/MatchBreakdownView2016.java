@@ -16,6 +16,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper
+        .getIntDefaultValue;
+
 public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
 
     private GridLayout breakdownContainer;
@@ -154,8 +157,6 @@ public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
             return false;
         }
 
-        int redRp = 0;
-        int blueRp = 0;
         List<String> redTeams = allianceData.getRed().getTeamKeys();
         List<String> blueTeams = allianceData.getBlue().getTeamKeys();
         JsonObject redData = scoredata.get("red").getAsJsonObject();
@@ -233,7 +234,6 @@ public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
 
         int redBreachPoints = MatchBreakdownHelper.getIntDefaultValue(redData, "breachPoints");
         if (redBreachSuccess && matchType == MatchType.QUAL) {
-            redRp++;
             redBreach.setText(getContext().getString(R.string.breakdown_rp_format, 1));
             redBreach.setVisibility(VISIBLE);
         } else if (redBreachPoints > 0) {
@@ -245,7 +245,6 @@ public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
 
         int blueBreachPoints = MatchBreakdownHelper.getIntDefaultValue(blueData, "breachPoints");
         if (blueBreachSuccess && matchType == MatchType.QUAL) {
-            blueRp++;
             blueBreach.setText(getContext().getString(R.string.breakdown_rp_format, 1));
             blueBreach.setVisibility(VISIBLE);
         } else if (blueBreachPoints > 0) {
@@ -268,7 +267,6 @@ public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
 
         int redCapturePoints = MatchBreakdownHelper.getIntDefaultValue(redData, "capturePoints");
         if (redCaptureSuccess && matchType == MatchType.QUAL) {
-            redRp++;
             redCapture.setText(getContext().getString(R.string.breakdown_rp_format, 1));
             redCapture.setVisibility(VISIBLE);
         } else if (redCapturePoints > 0) {
@@ -280,7 +278,6 @@ public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
 
         int blueCapturePoints = MatchBreakdownHelper.getIntDefaultValue(blueData, "capturePoints");
         if (blueCaptureSuccess && matchType == MatchType.QUAL) {
-            blueRp++;
             blueCapture.setText(getContext().getString(R.string.breakdown_rp_format, 1));
             blueCapture.setVisibility(VISIBLE);
         } else if (blueCapturePoints > 0) {
@@ -299,18 +296,12 @@ public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
         redTotal.setText(MatchBreakdownHelper.getIntDefault(redData, "totalPoints"));
         blueTotal.setText(MatchBreakdownHelper.getIntDefault(blueData, "totalPoints"));
 
-        if ("red".equals(winningAlliance)) {
-            redRp += 2;
-        } else if ("blue".equals(winningAlliance)) {
-            blueRp += 2;
-        } else {
-            redRp++;
-            blueRp++;
-        }
-
-        if (matchType == MatchType.QUAL) {
-            redRanking.setText(getContext().getString(R.string.breakdown_total_rp, redRp));
-            blueRanking.setText(getContext().getString(R.string.breakdown_total_rp, blueRp));
+         /* Show RPs earned, if needed */
+        boolean showRp = !redData.get("tba_rpEarned").isJsonNull()
+                         && !blueData.get("tba_rpEarned").isJsonNull();
+        if (showRp) {
+            redRanking.setText(getContext().getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "tba_rpEarned")));
+            blueRanking.setText(getContext().getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "tba_rpEarned")));
         } else {
             redRanking.setVisibility(GONE);
             blueRanking.setVisibility(GONE);

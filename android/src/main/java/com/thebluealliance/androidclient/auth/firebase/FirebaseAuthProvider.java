@@ -60,7 +60,7 @@ public class FirebaseAuthProvider implements AuthProvider {
         return new FirebaseSignInUser(firebaseUser);
     }
 
-    @Override
+    @Nullable @Override
     public Intent buildSignInIntent() {
         return mGoogleAuthProvider.buildSignInIntent();
     }

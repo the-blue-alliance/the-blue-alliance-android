@@ -12,6 +12,7 @@ public enum WebcastType {
     IFRAME,
     HTML5,
     STEMTV,
+    DACAST,
     NONE;
 
     public String render(Context context) {
@@ -26,12 +27,11 @@ public enum WebcastType {
                 return context.getString(R.string.webcast_type_livestream);
             case IFRAME:
                 return context.getString(R.string.webcast_type_gameday); // watch on web GameDay
-            case HTML5:
-                return context.getString(R.string.webcast_type_html5);
-            case STEMTV:
-                return context.getString(R.string.webcast_type_stemtv);
             default:
-                return "";
+            case HTML5:
+            case STEMTV:
+            case DACAST:
+                return context.getString(R.string.webcast_type_html5);
         }
     }
 }

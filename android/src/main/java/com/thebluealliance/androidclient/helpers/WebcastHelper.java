@@ -31,6 +31,8 @@ public final class WebcastHelper {
                 return WebcastType.HTML5;
             case "stemtv":
                 return WebcastType.STEMTV;
+            case "dacast":
+                return WebcastType.DACAST;
             default:
                 return WebcastType.NONE;
         }

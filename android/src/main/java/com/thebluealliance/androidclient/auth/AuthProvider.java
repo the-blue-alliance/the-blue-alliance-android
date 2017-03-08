@@ -28,6 +28,7 @@ public interface AuthProvider {
      * This activity handles signing the user in and
      * either returns RESULT_OK or RESULT_CANCELLED
      */
+    @Nullable
     Intent buildSignInIntent();
 
     Observable<? extends User> userFromSignInResult(int requestCode, int resultCode, Intent data);

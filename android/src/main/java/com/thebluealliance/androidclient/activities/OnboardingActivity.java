@@ -259,7 +259,9 @@ public class OnboardingActivity extends AppCompatActivity
                          .apply();
 
         // Return to the first page
-        viewPager.setCurrentItem(0);
+        if (viewPager != null) {
+            viewPager.setCurrentItem(0);
+        }
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
@@ -303,6 +305,10 @@ public class OnboardingActivity extends AppCompatActivity
 
         isDataFinishedLoading = true;
 
+        if (loadingMessage == null) {
+            return;
+        }
+
         loadingMessage.setText("Loading complete");
 
         // After two seconds, fade out the message and spinner and fade in the "continue" button
@@ -342,7 +348,9 @@ public class OnboardingActivity extends AppCompatActivity
 
     private void onConnectionLost() {
         // Scroll to first page
-        viewPager.setCurrentItem(0);
+        if (viewPager != null) {
+            viewPager.setCurrentItem(0);
+        }
 
         // Cancel task
         if (loadFragment != null) {
@@ -359,7 +367,9 @@ public class OnboardingActivity extends AppCompatActivity
 
         AlertDialog alertDialog = alertDialogBuilder.create();
 
-        alertDialog.show();
+        if (!isFinishing()) {
+            alertDialog.show();
+        }
     }
 
     private void onLoadingMessageUpdated(String message) {
@@ -392,7 +402,12 @@ public class OnboardingActivity extends AppCompatActivity
     @Override
     public void onSignInButtonClicked() {
         Intent signInIntent = mAuthProvider.buildSignInIntent();
-        startActivityForResult(signInIntent, SIGNIN_CODE);
+        if (signInIntent != null) {
+            startActivityForResult(signInIntent, SIGNIN_CODE);
+        } else {
+            Toast.makeText(this, R.string.mytba_no_signin_intent, Toast.LENGTH_SHORT).show();
+            TbaLogger.e("Unable to get login Intent");
+        }
     }
 
     public DatafeedComponent getComponent() {

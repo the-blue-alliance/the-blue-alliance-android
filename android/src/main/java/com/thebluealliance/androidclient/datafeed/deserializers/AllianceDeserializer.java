@@ -10,6 +10,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 import com.thebluealliance.androidclient.models.EventAlliance;
+import com.thebluealliance.androidclient.models.EventAlliance.AllianceBackup;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -51,11 +52,7 @@ public class AllianceDeserializer implements JsonDeserializer<EventAlliance>,
         }
 
         if (!isNull(data.get("backup"))) {
-            JsonObject backupJson = data.get("backup").getAsJsonObject();
-            EventAlliance.AllianceBackup backup = new EventAlliance.AllianceBackup();
-            backup.setIn(backupJson.get("in").getAsString());
-            backup.setOut(backupJson.get("out").getAsString());
-            alliance.setBackup(backup);
+            alliance.setBackup(context.deserialize(data.get("backup"), AllianceBackup.class));
         }
         return alliance;
     }
@@ -97,5 +94,26 @@ public class AllianceDeserializer implements JsonDeserializer<EventAlliance>,
 
     private static boolean isNull(JsonElement element) {
         return element == null || element.isJsonNull();
+    }
+
+    public static class AllianceBackupDeserializer implements JsonDeserializer<AllianceBackup>,
+                                                              JsonSerializer<AllianceBackup> {
+
+        @Override
+        public AllianceBackup deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            JsonObject backupJson = json.getAsJsonObject();
+            AllianceBackup backup = new AllianceBackup();
+            backup.setIn(backupJson.get("in").getAsString());
+            backup.setOut(backupJson.get("out").getAsString());
+            return backup;
+        }
+
+        @Override
+        public JsonElement serialize(AllianceBackup src, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject data = new JsonObject();
+            data.addProperty("in", src.getIn());
+            data.addProperty("out", src.getOut());
+            return data;
+        }
     }
 }

@@ -95,12 +95,19 @@ public class GoogleAuthProvider implements AuthProvider,
         return mCurrentUser;
     }
 
-    @Override
+    @Nullable @Override
     public Intent buildSignInIntent() {
         if (mGoogleApiClient == null) {
+            // Lazy load the API client, if needed
             loadGoogleApiClient();
         }
-        return Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+
+        if (mGoogleApiClient != null) {
+            return Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        }
+
+        // If we still can't get the API client, just give up
+        return null;
     }
 
     @Override

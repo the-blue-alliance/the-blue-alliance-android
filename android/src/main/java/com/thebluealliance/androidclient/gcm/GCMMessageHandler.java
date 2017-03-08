@@ -1,8 +1,18 @@
 package com.thebluealliance.androidclient.gcm;
 
+import android.app.IntentService;
+import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
+
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -40,16 +50,6 @@ import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.RendererModule;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.app.IntentService;
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
 
 import javax.inject.Inject;
 
@@ -258,13 +258,17 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
         notificationManager.notify(id, built);
     }
 
+    private static Uri getSoundUri(Context c, int soundId) {
+        return Uri.parse("android.resource://" + c.getPackageName() + "/" + soundId);
+    }
+
     private static void setNotificationParams(Notification built, Context c, String messageType, SharedPreferences prefs) {
         /* Set notification parameters */
         if (prefs.getBoolean("notification_vibrate", true)) {
             built.defaults |= Notification.DEFAULT_VIBRATE;
         }
         if (prefs.getBoolean("notification_tone", true)) {
-            built.defaults |= Notification.DEFAULT_SOUND;
+            built.sound = getSoundUri(c, R.raw.something_you_dont_mess_with);
         }
         if (prefs.getBoolean("notification_led_enabled", true)) {
             built.ledARGB = prefs.getInt("notification_led_color",
