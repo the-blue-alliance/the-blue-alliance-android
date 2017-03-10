@@ -234,8 +234,8 @@ public class MyTbaDatafeed {
         if (subscriptionResponse != null) {
             try {
                 ModelsMobileApiMessagesSubscriptionCollection subscriptionCollection = subscriptionResponse.body();
-                if (subscriptionCollection != null &&
-                    subscriptionCollection.subscriptions != null) {
+                if (subscriptionCollection != null
+                    && subscriptionCollection.subscriptions != null) {
                     SubscriptionsTable subscriptions = mDb.getSubscriptionsTable();
                     subscriptions.recreate(currentUser);
                     for (int i = 0; i < subscriptionCollection.subscriptions.size(); i++) {
