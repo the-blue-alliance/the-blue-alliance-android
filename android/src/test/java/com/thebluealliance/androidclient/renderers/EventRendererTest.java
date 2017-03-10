@@ -93,7 +93,7 @@ public class EventRendererTest  {
     @Test
     public void testRenderAlliancesWithList() {
         List<ListItem> elements = new ArrayList<>();
-        mRenderer.renderAlliances(mAlliances, elements, null);
+        mRenderer.renderAlliances(mAlliances, elements);
         assertAllianceList(elements);
     }
 

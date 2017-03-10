@@ -26,6 +26,8 @@ import com.thebluealliance.androidclient.datafeed.deserializers.RankingItemDeser
         .RecordDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.RankingsResponseDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamAtEventStatusDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.TeamAtEventStatusDeserializer
+        .Playoff;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.ApiStatus;
@@ -43,6 +45,7 @@ import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.RankingSortOrder;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
+import com.thebluealliance.androidclient.models.TeamAtEventStatus.TeamAtEventPlayoff;
 import com.thebluealliance.api.model.IAllianceBackup;
 import com.thebluealliance.api.model.IApiStatus;
 import com.thebluealliance.api.model.IAward;
@@ -59,6 +62,7 @@ import com.thebluealliance.api.model.IMedia;
 import com.thebluealliance.api.model.IRankingResponseObject;
 import com.thebluealliance.api.model.IRankingSortOrder;
 import com.thebluealliance.api.model.ITeam;
+import com.thebluealliance.api.model.ITeamAtEventPlayoff;
 import com.thebluealliance.api.model.ITeamAtEventStatus;
 import com.thebluealliance.api.model.ITeamRecord;
 
@@ -135,6 +139,7 @@ public class HttpModule {
         DistrictEventPointsDeserializer eventPointsDeserializer = new DistrictEventPointsDeserializer();
         RecordDeserializer recordDeserializer = new RecordDeserializer();
         TeamAtEventStatusDeserializer teamAtEventStatusDeserializer = new TeamAtEventStatusDeserializer();
+        Playoff playoffStatusDeserializer = new Playoff();
 
         builder.registerTypeAdapter(IAward.class, awardDeserializer);
         builder.registerTypeAdapter(Award.class, awardDeserializer);
@@ -184,6 +189,8 @@ public class HttpModule {
 
         builder.registerTypeAdapter(ITeamAtEventStatus.class, teamAtEventStatusDeserializer);
         builder.registerTypeAdapter(TeamAtEventStatus.class, teamAtEventStatusDeserializer);
+        builder.registerTypeAdapter(ITeamAtEventPlayoff.class, playoffStatusDeserializer);
+        builder.registerTypeAdapter(TeamAtEventPlayoff.class, playoffStatusDeserializer);
 
         sGson = builder.create();
         return sGson;

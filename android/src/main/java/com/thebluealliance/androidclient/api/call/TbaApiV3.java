@@ -2,25 +2,28 @@ package com.thebluealliance.androidclient.api.call;
 
 
 
+import retrofit2.Call;
+import retrofit2.http.*;
+
+import okhttp3.RequestBody;
+
 import com.thebluealliance.androidclient.models.ApiStatus;
-import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictRanking;
-import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.EventAlliance;
-import com.thebluealliance.androidclient.models.Match;
-import com.thebluealliance.androidclient.models.Media;
-import com.thebluealliance.androidclient.models.RankingResponseObject;
-import com.thebluealliance.androidclient.models.Robot;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.models.EventAlliance;
+import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
+import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.Robot;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.Path;
+import java.util.Map;
 
 public interface TbaApiV3 {
   /**
@@ -28,10 +31,10 @@ public interface TbaApiV3 {
    * Get various metadata about the TBA API
    * @return Call&lt;ApiStatus&gt;
    */
-
+  
   @GET("api/v3/status")
   Call<ApiStatus> fetchApiStatus();
-
+    
 
   /**
    * District Events Request
@@ -40,7 +43,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<Event>&gt;
    */
-
+  
   @GET("api/v3/district/{district_key}/events")
   Call<List<Event>> fetchDistrictEvents(
     @Path("district_key") String districtKey, @Header("X-TBA-Cache") String xTBACache
@@ -53,7 +56,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<District>&gt;
    */
-
+  
   @GET("api/v3/districts/{year}")
   Call<List<District>> fetchDistrictList(
     @Path("year") Integer year, @Header("X-TBA-Cache") String xTBACache
@@ -66,7 +69,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<DistrictRanking>&gt;
    */
-
+  
   @GET("api/v3/district/{district_key}/rankings")
   Call<List<DistrictRanking>> fetchDistrictRankings(
     @Path("district_key") String districtKey, @Header("X-TBA-Cache") String xTBACache
@@ -79,7 +82,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<Team>&gt;
    */
-
+  
   @GET("api/v3/district/{district_key}/teams")
   Call<List<Team>> fetchDistrictTeamsInYear(
     @Path("district_key") String districtKey, @Header("X-TBA-Cache") String xTBACache
@@ -92,7 +95,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;Event&gt;
    */
-
+  
   @GET("api/v3/event/{event_key}")
   Call<Event> fetchEvent(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
@@ -105,7 +108,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<EventAlliance>&gt;
    */
-
+  
   @GET("api/v3/event/{event_key}/alliances")
   Call<List<EventAlliance>> fetchEventAlliances(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
@@ -118,7 +121,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<Award>&gt;
    */
-
+  
   @GET("api/v3/event/{event_key}/awards")
   Call<List<Award>> fetchEventAwards(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
@@ -131,7 +134,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;String&gt;
    */
-
+  
   @GET("api/v3/event/{event_key}/district_points")
   Call<String> fetchEventDistrictPoints(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
@@ -144,7 +147,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;String&gt;
    */
-
+  
   @GET("api/v3/event/{event_key}/insights")
   Call<String> fetchEventInsights(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
@@ -157,7 +160,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<Match>&gt;
    */
-
+  
   @GET("api/v3/event/{event_key}/matches")
   Call<List<Match>> fetchEventMatches(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
@@ -170,7 +173,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;String&gt;
    */
-
+  
   @GET("api/v3/event/{event_key}/oprs")
   Call<String> fetchEventOPR(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
@@ -183,7 +186,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;RankingResponseObject&gt;
    */
-
+  
   @GET("api/v3/event/{event_key}/rankings")
   Call<RankingResponseObject> fetchEventRankings(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
@@ -196,7 +199,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<Team>&gt;
    */
-
+  
   @GET("api/v3/event/{event_key}/teams")
   Call<List<Team>> fetchEventTeams(
     @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
@@ -209,7 +212,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<Event>&gt;
    */
-
+  
   @GET("api/v3/events/{year}")
   Call<List<Event>> fetchEventsInYear(
     @Path("year") Integer year, @Header("X-TBA-Cache") String xTBACache
@@ -222,7 +225,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;Match&gt;
    */
-
+  
   @GET("api/v3/match/{match_key}")
   Call<Match> fetchMatch(
     @Path("match_key") String matchKey, @Header("X-TBA-Cache") String xTBACache
@@ -235,7 +238,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;Team&gt;
    */
-
+  
   @GET("api/v3/team/{team_key}")
   Call<Team> fetchTeam(
     @Path("team_key") String teamKey, @Header("X-TBA-Cache") String xTBACache
@@ -249,7 +252,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<Award>&gt;
    */
-
+  
   @GET("api/v3/team/{team_key}/event/{event_key}/awards")
   Call<List<Award>> fetchTeamAtEventAwards(
     @Path("team_key") String teamKey, @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
@@ -263,7 +266,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<Match>&gt;
    */
-
+  
   @GET("api/v3/team/{team_key}/event/{event_key}/matches")
   Call<List<Match>> fetchTeamAtEventMatches(
     @Path("team_key") String teamKey, @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
@@ -271,13 +274,13 @@ public interface TbaApiV3 {
 
   /**
    * Team Event Status Request
-   *
+   * 
    * @param teamKey Key identifying a single team, has format frcXXXX, where XXXX is the team number (required)
    * @param eventKey Key identifying a single event, has format [year][event code] (required)
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;TeamAtEventStatus&gt;
    */
-
+  
   @GET("api/v3/team/{team_key}/event/{event_key}/status")
   Call<TeamAtEventStatus> fetchTeamAtEventStatus(
     @Path("team_key") String teamKey, @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
@@ -290,7 +293,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<String>&gt;
    */
-
+  
   @GET("api/v3/team/{team_key}/districts")
   Call<List<String>> fetchTeamDistricts(
     @Path("team_key") String teamKey, @Header("X-TBA-Cache") String xTBACache
@@ -304,7 +307,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<Event>&gt;
    */
-
+  
   @GET("api/v3/team/{team_key}/events/{year}")
   Call<List<Event>> fetchTeamEvents(
     @Path("team_key") String teamKey, @Path("year") Integer year, @Header("X-TBA-Cache") String xTBACache
@@ -318,7 +321,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<Media>&gt;
    */
-
+  
   @GET("api/v3/team/{team_key}/media/{year}")
   Call<List<Media>> fetchTeamMediaInYear(
     @Path("team_key") String teamKey, @Path("year") Integer year, @Header("X-TBA-Cache") String xTBACache
@@ -331,7 +334,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<Team>&gt;
    */
-
+  
   @GET("api/v3/teams/{page}")
   Call<List<Team>> fetchTeamPage(
     @Path("page") Integer page, @Header("X-TBA-Cache") String xTBACache
@@ -344,7 +347,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<Robot>&gt;
    */
-
+  
   @GET("api/v3/team/{team_key}/robots")
   Call<List<Robot>> fetchTeamRobots(
     @Path("team_key") String teamKey, @Header("X-TBA-Cache") String xTBACache
@@ -357,7 +360,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<Media>&gt;
    */
-
+  
   @GET("api/v3/team/{team_key}/social_media")
   Call<List<Media>> fetchTeamSocialMedia(
     @Path("team_key") String teamKey, @Header("X-TBA-Cache") String xTBACache
@@ -370,7 +373,7 @@ public interface TbaApiV3 {
    * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
    * @return Call&lt;List<Integer>&gt;
    */
-
+  
   @GET("api/v3/team/{team_key}/years_participated")
   Call<List<Integer>> fetchTeamYearsParticipated(
     @Path("team_key") String teamKey, @Header("X-TBA-Cache") String xTBACache

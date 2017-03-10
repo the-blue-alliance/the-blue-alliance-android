@@ -13,8 +13,10 @@ import com.google.gson.reflect.TypeToken;
 import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.models.RankingItem;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
+import com.thebluealliance.androidclient.models.TeamAtEventStatus.TeamAtEventPlayoff;
 import com.thebluealliance.api.model.IAllianceBackup;
 import com.thebluealliance.api.model.IRankingSortOrder;
+import com.thebluealliance.api.model.ITeamAtEventPlayoff;
 import com.thebluealliance.api.model.ITeamRecord;
 
 import java.lang.reflect.Type;
@@ -54,24 +56,7 @@ public class TeamAtEventStatusDeserializer implements JsonDeserializer<TeamAtEve
 
         if (!isNull(data.get("playoff"))) {
             JsonObject playoffJson = data.getAsJsonObject("playoff");
-            TeamAtEventStatus.TeamAtEventPlayoff playoff = new TeamAtEventStatus.TeamAtEventPlayoff();
-            if (!isNull(playoffJson.get("current_level_record"))) {
-                RankingItem.TeamRecord currentRecord = context
-                        .deserialize(playoffJson.get("current_level_record"), ITeamRecord.class);
-                playoff.setCurrentLevelRecord(currentRecord);
-            }
-            if (!isNull(playoffJson.get("record"))) {
-                RankingItem.TeamRecord record = context
-                        .deserialize(playoffJson.get("record"), ITeamRecord.class);
-                playoff.setRecord(record);
-            }
-
-            if (!isNull(playoffJson.get("playoff_average"))) {
-                playoff.setPlayoffAverage(playoffJson.get("playoff_average").getAsDouble());
-            }
-
-            playoff.setStatus(playoffJson.get("status").getAsString());
-            playoff.setLevel(playoffJson.get("level").getAsString());
+            TeamAtEventPlayoff playoff = context.deserialize(playoffJson, TeamAtEventPlayoff.class);
             status.setPlayoff(playoff);
         }
 
@@ -114,22 +99,7 @@ public class TeamAtEventStatusDeserializer implements JsonDeserializer<TeamAtEve
         }
 
         if (src.getPlayoff() != null) {
-            JsonObject playoffJson = new JsonObject();
-            if (src.getPlayoff().getCurrentLevelRecord() != null) {
-                playoffJson.add("current_level_record", context.serialize(src.getPlayoff()
-                                                                             .getCurrentLevelRecord(),
-                                                                          ITeamRecord.class));
-            }
-            if (src.getPlayoff().getRecord() != null) {
-                playoffJson.add("record", context.serialize(src.getPlayoff().getRecord(),
-                                                            ITeamRecord.class));
-            }
-            if (src.getPlayoff().getPlayoffAverage() != null) {
-                playoffJson.addProperty("playoff_average", src.getPlayoff().getPlayoffAverage());
-            }
-            playoffJson.addProperty("level", src.getPlayoff().getLevel());
-            playoffJson.addProperty("status", src.getPlayoff().getStatus());
-            status.add("playoff", playoffJson);
+            status.add("playoff", context.serialize(src.getPlayoff(), ITeamAtEventPlayoff.class));
         } else {
             status.add("playoff", JsonNull.INSTANCE);
         }
@@ -155,6 +125,54 @@ public class TeamAtEventStatusDeserializer implements JsonDeserializer<TeamAtEve
         }
 
         return status;
+    }
+
+    public static class Playoff implements JsonDeserializer<TeamAtEventPlayoff>,
+                                           JsonSerializer<TeamAtEventPlayoff> {
+
+        @Override
+        public TeamAtEventPlayoff deserialize(JsonElement json, Type typeOfT,
+                                                                JsonDeserializationContext context) throws JsonParseException {
+            JsonObject playoffJson = json.getAsJsonObject();
+            TeamAtEventPlayoff playoff = new TeamAtEventPlayoff();
+            if (!isNull(playoffJson.get("current_level_record"))) {
+                RankingItem.TeamRecord currentRecord = context
+                        .deserialize(playoffJson.get("current_level_record"), ITeamRecord.class);
+                playoff.setCurrentLevelRecord(currentRecord);
+            }
+            if (!isNull(playoffJson.get("record"))) {
+                RankingItem.TeamRecord record = context
+                        .deserialize(playoffJson.get("record"), ITeamRecord.class);
+                playoff.setRecord(record);
+            }
+
+            if (!isNull(playoffJson.get("playoff_average"))) {
+                playoff.setPlayoffAverage(playoffJson.get("playoff_average").getAsDouble());
+            }
+
+            playoff.setStatus(playoffJson.get("status").getAsString());
+            playoff.setLevel(playoffJson.get("level").getAsString());
+            return playoff;
+        }
+
+        @Override
+        public JsonElement serialize(TeamAtEventPlayoff src, Type typeOfSrc,
+                                     JsonSerializationContext context) {
+            JsonObject playoffJson = new JsonObject();
+            if (src.getCurrentLevelRecord() != null) {
+                playoffJson.add("current_level_record", context.serialize(src.getCurrentLevelRecord(),
+                                                                          ITeamRecord.class));
+            }
+            if (src.getRecord() != null) {
+                playoffJson.add("record", context.serialize(src.getRecord(), ITeamRecord.class));
+            }
+            if (src.getPlayoffAverage() != null) {
+                playoffJson.addProperty("playoff_average", src.getPlayoffAverage());
+            }
+            playoffJson.addProperty("level", src.getLevel());
+            playoffJson.addProperty("status", src.getStatus());
+            return playoffJson;
+        }
     }
 
     private static boolean isNull(JsonElement obj) {

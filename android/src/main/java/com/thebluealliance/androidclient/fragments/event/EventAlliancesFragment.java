@@ -52,11 +52,6 @@ public class EventAlliancesFragment extends ListViewFragment<List<EventAlliance>
     }
 
     @Override
-    protected boolean shouldRegisterSubscriberToEventBus() {
-        return true;
-    }
-
-    @Override
     protected Observable<List<EventAlliance>> getObservable(String tbaCacheHeader) {
         return mDatafeed.fetchEventAlliances(mEventKey, tbaCacheHeader);
     }

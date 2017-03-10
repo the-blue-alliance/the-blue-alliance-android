@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **lastModified** | **Long** | Timestamp this model was last modified |  [optional]
 **name** | **String** | Name of this alliance that can be displayed |  [optional]
 **picks** | **List&lt;String&gt;** |  | 
+**status** | [**TeamAtEventPlayoff**](TeamAtEventPlayoff.md) |  |  [optional]
 
 
 

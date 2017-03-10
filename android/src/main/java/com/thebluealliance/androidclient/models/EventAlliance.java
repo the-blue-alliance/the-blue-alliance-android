@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.types.EventDetailType;
 import com.thebluealliance.api.model.IAllianceBackup;
 import com.thebluealliance.api.model.IEventAlliance;
+import com.thebluealliance.api.model.ITeamAtEventPlayoff;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class EventAlliance implements IEventAlliance {
     private @Nullable String name;
     private @Nullable IAllianceBackup backup;
     private @Nullable Long lastModified;
+    private @Nullable ITeamAtEventPlayoff status;
 
     @Override @Nullable public String getName() {
         return name;
@@ -52,6 +54,14 @@ public class EventAlliance implements IEventAlliance {
     @Override
     public void setBackup(@Nullable IAllianceBackup backup) {
         this.backup = backup;
+    }
+
+    @Override @Nullable public ITeamAtEventPlayoff getStatus() {
+        return status;
+    }
+
+    @Override public void setStatus(@Nullable ITeamAtEventPlayoff status) {
+        this.status = status;
     }
 
     public @Nullable String getEventKey() {

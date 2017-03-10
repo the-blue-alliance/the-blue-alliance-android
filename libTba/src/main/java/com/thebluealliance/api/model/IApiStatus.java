@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 /**
  * ApiStatus
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T23:19:19.757-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-10T14:16:43.499-05:00")
 public interface IApiStatus   {
 
 

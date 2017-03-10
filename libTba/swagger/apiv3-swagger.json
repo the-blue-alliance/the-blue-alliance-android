@@ -1094,6 +1094,9 @@
         },
         "backup": {
           "$ref": "#/definitions/AllianceBackup"
+        },
+        "status": {
+          "$ref": "#/definitions/TeamAtEventPlayoff"
         }
       }
     },
@@ -1219,6 +1222,31 @@
         }
       }
     },
+    "TeamAtEventPlayoff": {
+      "type": "object",
+      "required": [
+        "level",
+        "status"
+      ],
+      "properties": {
+        "current_level_record": {
+          "$ref": "#/definitions/TeamRecord"
+        },
+        "level": {
+          "type": "string"
+        },
+        "playoff_average": {
+          "type": "number",
+          "format": "double"
+        },
+        "record": {
+            "$ref": "#/definitions/TeamRecord"
+        },
+        "status": {
+            "type": "string"
+        }
+      }
+    },
     "TeamAtEventStatus": {
       "type": "object",
       "required": [
@@ -1257,30 +1285,7 @@
           "type": "string"
         },
         "playoff": {
-          "type": "object",
-          "title": "TeamAtEventPlayoff",
-          "required": [
-            "level",
-            "status"
-          ],
-          "properties": {
-            "current_level_record": {
-              "$ref": "#/definitions/TeamRecord"
-            },
-            "level": {
-              "type": "string"
-            },
-            "playoff_average": {
-              "type": "number",
-              "format": "double"
-            },
-            "record": {
-              "$ref": "#/definitions/TeamRecord"
-            },
-            "status": {
-              "type": "string"
-            }
-          }
+          "$ref": "#/definitions/TeamAtEventPlayoff"
         },
         "qual": {
           "type": "object",

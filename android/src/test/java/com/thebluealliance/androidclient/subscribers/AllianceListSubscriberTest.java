@@ -42,33 +42,28 @@ public class AllianceListSubscriberTest extends TestCase {
 
     @Test
     public void testParseNullData()  {
-        mSubscriber.onAllianceAdvancementLoaded(null);
         DatafeedTestDriver.parseNullData(mSubscriber);
     }
 
     @Test
     public void testParse2016()  {
-        mSubscriber.onAllianceAdvancementLoaded(null);
         DatafeedTestDriver.testSimpleParsing(mSubscriber, m2016nytrAlliances);
     }
 
     @Test
     public void testParse2014() {
-        mSubscriber.onAllianceAdvancementLoaded(null);
         DatafeedTestDriver.testSimpleParsing(mSubscriber, m2014ctharAlliances);
     }
 
     @Test
     public void testParse4Team2015() {
-        mSubscriber.onAllianceAdvancementLoaded(null);
         DatafeedTestDriver.testSimpleParsing(mSubscriber, m2015arcAlliances);
     }
 
     @Test
     public void testParse()  {
-        mSubscriber.onAllianceAdvancementLoaded(null);
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, m2016nytrAlliances);
 
-        verify(mRenderer).renderAlliances(m2016nytrAlliances, data, null);
+        verify(mRenderer).renderAlliances(m2016nytrAlliances, data);
     }
 }
