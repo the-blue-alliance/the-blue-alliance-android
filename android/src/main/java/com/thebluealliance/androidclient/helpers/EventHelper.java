@@ -83,6 +83,7 @@ public final class EventHelper {
     }
 
     public static int getYear(String eventKey) {
+        if (!EventHelper.validateEventKey(eventKey)) return -1;
         return Integer.parseInt(eventKey.substring(0, 4));
     }
 
