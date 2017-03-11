@@ -18,7 +18,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -69,35 +68,14 @@ public class EventRenderer implements ModelRenderer<Event, Boolean> {
     }
 
     @WorkerThread
-    public void renderAlliances(List<EventAlliance> alliances,
-                                List<ListItem> destList,
-                                HashMap<String, PlayoffAdvancement> advancement) {
+    public void renderAlliances(List<EventAlliance> alliances, List<ListItem> destList) {
         int counter = 1;
         for (EventAlliance alliance : alliances) {
             List<String> teams = alliance.getPicks();
-            PlayoffAdvancement adv = advancement != null
-                                     ? getAdvancement(advancement, teams)
-                                     : PlayoffAdvancement.NONE;
+            PlayoffAdvancement adv = PlayoffAdvancement.fromAlliance(alliance);
             destList.add(new AllianceListElement(alliance.getEventKey(), alliance.getName(),
                                                  counter, teams, adv));
             counter++;
         }
-    }
-
-    private static PlayoffAdvancement getAdvancement(HashMap<String, PlayoffAdvancement> advancement,
-                                                     List<String> teams) {
-        PlayoffAdvancement adv = PlayoffAdvancement.NONE;
-        int level = 0;
-        for (int i = 0; i < teams.size(); i++) {
-            String teamKey = teams.get(i);
-            if (advancement.containsKey(teamKey)) {
-                PlayoffAdvancement next = advancement.get(teamKey);
-                if (next.getLevel() > level) {
-                    adv = next;
-                    level = next.getLevel();
-                }
-            }
-        }
-        return adv;
     }
 }

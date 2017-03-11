@@ -11,6 +11,7 @@ import com.google.gson.JsonSerializer;
 
 import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.models.EventAlliance.AllianceBackup;
+import com.thebluealliance.api.model.ITeamAtEventPlayoff;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -54,6 +55,10 @@ public class AllianceDeserializer implements JsonDeserializer<EventAlliance>,
         if (!isNull(data.get("backup"))) {
             alliance.setBackup(context.deserialize(data.get("backup"), AllianceBackup.class));
         }
+
+        if (!isNull(data.get("status"))) {
+            alliance.setStatus(context.deserialize(data.get("status"), ITeamAtEventPlayoff.class));
+        }
         return alliance;
     }
 
@@ -88,6 +93,10 @@ public class AllianceDeserializer implements JsonDeserializer<EventAlliance>,
             backup.addProperty("in", src.getBackup().getIn());
             backup.addProperty("out", src.getBackup().getOut());
             alliance.add("backup", backup);
+        }
+
+        if (src.getStatus() != null) {
+            alliance.add("status", context.serialize(src.getStatus(), ITeamAtEventPlayoff.class));
         }
         return alliance;
     }

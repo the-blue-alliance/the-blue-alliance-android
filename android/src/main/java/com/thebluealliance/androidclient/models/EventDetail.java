@@ -59,7 +59,9 @@ public class EventDetail implements TbaDatabaseModel {
 
     public @Nullable RankingResponseObject getDataForRankings(Gson gson) {
         if (jsonData == null || jsonData.isEmpty()) return null;
-        return gson.fromJson(jsonData, RankingResponseObject.class);
+        RankingResponseObject res = gson.fromJson(jsonData, RankingResponseObject.class);
+        if (res != null) res.setEventKey(eventKey);
+        return res;
     }
 
     public @Nullable List<EventAlliance> getDataForAlliances(Gson gson) {

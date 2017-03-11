@@ -94,21 +94,23 @@ public class AppConfig {
                         Analytics.setAnalyticsId(mFirebaseRemoteConfig.getString(Analytics.PROD_ANALYTICS_KEY));
                         APIv3RequestInterceptor.updateApiKeys(mFirebaseRemoteConfig, mPrefs);
                     } else {
-                        TbaLogger.e("Unable to update remote config", task.getException());
+                        handleUpdateException(task.getException());
                     }
                     mActiveTask = null;
                 })
-                .addOnFailureListener(e -> {
-                    if (e instanceof FirebaseRemoteConfigFetchThrottledException) {
-                        TbaLogger.d("RemoteConfig fetch throttled");
-                    } else if (e instanceof FirebaseRemoteConfigFetchException) {
-                        TbaLogger.i("Error fetching RemoteConfig: " + e.getMessage());
-                    } else {
-                        TbaLogger.w("Error fetching RemoteConfig: " + e.getMessage(), e);
-                    }
-                });
+                .addOnFailureListener(this::handleUpdateException);
         if (onComplete != null) {
             mActiveTask.addOnCompleteListener(onComplete);
+        }
+    }
+
+    private void handleUpdateException(Exception e) {
+        if (e instanceof FirebaseRemoteConfigFetchThrottledException) {
+            TbaLogger.d("RemoteConfig fetch throttled");
+        } else if (e instanceof FirebaseRemoteConfigFetchException) {
+            TbaLogger.i("Error fetching RemoteConfig: " + e.getMessage());
+        } else {
+            TbaLogger.w("Error fetching RemoteConfig: " + e.getMessage(), e);
         }
     }
 }

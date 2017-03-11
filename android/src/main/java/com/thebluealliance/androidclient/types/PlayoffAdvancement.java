@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.types;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.models.EventAlliance;
 
 import android.support.annotation.StringRes;
 
@@ -44,5 +45,23 @@ public enum PlayoffAdvancement {
             case FINAL: return FINAL;
         }
         return NONE;
+    }
+
+    public static PlayoffAdvancement fromAlliance(EventAlliance alliance) {
+        if (alliance == null
+                || alliance.getStatus() == null
+                || alliance.getStatus().getLevel() == null) {
+            return NONE;
+        }
+        switch (alliance.getStatus().getLevel()) {
+            case "ef": return OCTO;
+            case "qf": return QUARTER;
+            case "sf": return SEMI;
+            case "f":
+                if ("won".equals(alliance.getStatus().getStatus())) return WINNER;
+                else return FINAL;
+            default:
+                return NONE;
+        }
     }
 }

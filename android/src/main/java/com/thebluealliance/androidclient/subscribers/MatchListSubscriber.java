@@ -6,7 +6,6 @@ import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderCompara
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.eventbus.LiveEventMatchUpdateEvent;
-import com.thebluealliance.androidclient.firebase.AllianceAdvancementEvent;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
@@ -16,7 +15,6 @@ import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 import org.greenrobot.eventbus.EventBus;
 
 import android.content.res.Resources;
-import android.support.annotation.VisibleForTesting;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +32,6 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
     private String mEventKey;
     private Database mDb;
     private EventBus mEventBus;
-    private HashMap<String, PlayoffAdvancement> mAdvancement;
 
     public MatchListSubscriber(Resources resources, Database db, EventBus eventBus) {
         super();
@@ -44,7 +41,6 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         mQuarterMatches = new ListGroup(resources.getString(R.string.quarters_header));
         mSemiMatches = new ListGroup(resources.getString(R.string.semis_header));
         mFinalMatches = new ListGroup(resources.getString(R.string.finals_header));
-        mAdvancement = new HashMap<>();
         mDb = db;
         mEventBus = eventBus;
         mTeamKey = null;
@@ -126,16 +122,6 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
                     blueFinalsWon++;
                 }
             }
-            if (currentType.isPlayoff()) {
-                addAllianceTeams(
-                        mAdvancement,
-                        Match.getRedTeams(match.getAlliances()),
-                        PlayoffAdvancement.fromMatchType(currentType));
-                addAllianceTeams(
-                        mAdvancement,
-                        Match.getBlueTeams(match.getAlliances()),
-                        PlayoffAdvancement.fromMatchType(currentType));
-            }
 
             /**
              * the only reason this isn't moved to PopulateTeamAtEvent is that if so,
@@ -154,16 +140,6 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
             Match last = mAPIData.get(mAPIData.size() - 1);
             if (last.hasBeenPlayed()) {
                 lastMatch = last;
-            }
-        }
-
-        if (lastMatch != null && lastType == MatchType.FINAL) {
-            if (redFinalsWon >= 2) {
-                addAllianceTeams(mAdvancement, Match.getRedTeams(lastMatch.getAlliances()),
-                                 PlayoffAdvancement.WINNER);
-            } else if (blueFinalsWon >= 2) {
-                addAllianceTeams(mAdvancement, Match.getBlueTeams(lastMatch.getAlliances()),
-                                 PlayoffAdvancement.WINNER);
             }
         }
 
@@ -191,7 +167,6 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
         }
 
         mEventBus.post(new LiveEventMatchUpdateEvent(lastMatch, nextMatch));
-        mEventBus.post(new AllianceAdvancementEvent(mAdvancement));
     }
 
     private void addAllianceTeams(
@@ -206,11 +181,6 @@ public class MatchListSubscriber extends BaseAPISubscriber<List<Match>, List<Lis
 
     @Override public boolean isDataValid() {
         return super.isDataValid() && !mAPIData.isEmpty();
-    }
-
-    @VisibleForTesting
-    public HashMap<String, PlayoffAdvancement> getAdvancement() {
-        return mAdvancement;
     }
 
     @Override

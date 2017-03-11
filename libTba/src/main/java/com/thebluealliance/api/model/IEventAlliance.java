@@ -28,6 +28,7 @@ package com.thebluealliance.api.model;
 import java.util.Objects;
 import com.google.gson.annotations.SerializedName;
 import com.thebluealliance.api.model.IAllianceBackup;
+import com.thebluealliance.api.model.ITeamAtEventPlayoff;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ import javax.annotation.Nullable;
 /**
  * EventAlliance
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-02-18T23:19:19.757-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-10T14:16:43.499-05:00")
 public interface IEventAlliance   {
 
 
@@ -103,6 +104,18 @@ public interface IEventAlliance   {
   public List<String> getPicks();
 
   public void setPicks(List<String> picks);
+
+
+
+   /**
+   * Get status
+   * @return status
+  **/
+  @ApiModelProperty(example = "null", value = "")
+  @Nullable
+  public ITeamAtEventPlayoff getStatus();
+
+  public void setStatus(ITeamAtEventPlayoff status);
 
 }
 
