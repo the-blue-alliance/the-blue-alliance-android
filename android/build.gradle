@@ -34,16 +34,13 @@ tasks.withType(Test) {
 }
 
 project.afterEvaluate {
-    def generateReleasePlayResources = project.tasks.getByName("generateProdReleasePlayResources")
-    generateReleasePlayResources.dependsOn loadProperties
-
     def pullScreenshots = project.tasks.getByName("pullScreenshots")
     pullScreenshots.dependsOn updateScreenshotDirs
 }
 
 android {
     compileSdkVersion 24
-    buildToolsVersion '23.0.3'
+    buildToolsVersion '25.0.2'
 
     signingConfigs {
         release {
@@ -166,7 +163,6 @@ android {
     }
 
     dexOptions {
-        incremental true
         javaMaxHeapSize "2048M"
         preDexLibraries = preDexEnabled && !travisBuild
     }
@@ -224,12 +220,9 @@ task updateScreenshotDirs << {
 }
 
 tasks.whenTaskAdded { theTask ->
-    if (theTask.name.equals("packageDevRelease")
-            || theTask.name.equals("packageProdRelease")
-            || theTask.name.equals("publishProdRelease")
-            || theTask.name.equals("bootstrapProdReleasePlayResources")
-            || theTask.name.equals("publishListingProdRelease")
-            || theTask.name.equals("publishApkProdRelease")) {
+    if (theTask.name in ["packageDevRelease", "packageProdRelease", "publishProdRelease",
+                         "bootstrapProdReleasePlayResources", "publishListingProdRelease",
+                         "publishApkProdRelease", "generateProdReleasePlayResources"]) {
         theTask.dependsOn "loadProperties"
     }
 }
