@@ -265,7 +265,8 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     private static void setNotificationParams(Notification built, Context c, String messageType, SharedPreferences prefs) {
         /* Set notification parameters */
         if (prefs.getBoolean("notification_vibrate", true)) {
-            built.defaults |= Notification.DEFAULT_VIBRATE;
+            // Delay vibration to match the system audio delay. Pulse with the beat.
+            built.vibrate = new long[]{200, 70, 90, 70, 90, 80};
         }
         if (prefs.getBoolean("notification_tone", true)) {
             built.sound = getSoundUri(c, R.raw.something_you_dont_mess_with);
