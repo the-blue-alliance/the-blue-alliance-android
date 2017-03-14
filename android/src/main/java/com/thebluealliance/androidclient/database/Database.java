@@ -34,7 +34,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
     public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
-    static final int DATABASE_VERSION = 33;
+    static final int DATABASE_VERSION = 34;
     private static final String DATABASE_NAME = "the-blue-alliance-android-database";
     static final @Deprecated String TABLE_API = "api";
     public static final String TABLE_TEAMS = "teams",
@@ -501,6 +501,17 @@ public class Database extends SQLiteOpenHelper {
                                     TABLE_EVENTS,
                                     EventsTable.CITY));
                         }
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
+                    break;
+                case 34:
+                    // Due to a bug, we weren't storing media properly. Wipe it now and start over
+                    db.beginTransaction();
+                    try {
+                        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDIAS);
+                        db.execSQL(CREATE_MEDIAS);
                         db.setTransactionSuccessful();
                     } finally {
                         db.endTransaction();

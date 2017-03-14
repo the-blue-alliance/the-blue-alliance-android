@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.datafeed.maps.JsonToEventDetail;
 import com.thebluealliance.androidclient.datafeed.maps.RetrofitResponseMap;
 import com.thebluealliance.androidclient.datafeed.maps.TeamAtEventStatusExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.TeamAtEventStatusToEventTeam;
+import com.thebluealliance.androidclient.datafeed.maps.TeamMediaKeyAdder;
 import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.WeekEventsExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.YearsParticipatedInfoMap;
@@ -143,8 +144,9 @@ public class CacheableDatafeed {
     }
 
     public Observable<List<Media>> fetchTeamMediaInYear(String teamKey, int year, String cacheHeader) {
-        Observable<List<Media>> apiData = mResponseMap.getAndWriteResponseBody(
+        Observable<List<Media>> apiData = mResponseMap.mapAndWriteResponseBody(
           mApiv3.fetchTeamMediaInYear(teamKey, year, cacheHeader),
+          new TeamMediaKeyAdder(teamKey, year),
           mWriter.getMediaListWriter().get());
         return mAPICache.fetchTeamMediaInYear(teamKey, year).concatWith(apiData);
     }
