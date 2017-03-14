@@ -24,6 +24,10 @@ public final class NotificationTypes {
             SYNC_STATUS = "sync_status",
             EVENT_DOWN = "event_down",
 
+            MATCH_VIDEO = "match_video",  // This is what users will subscribe to
+            TEAM_MATCH_VIDEO = "team_match_video",
+            EVENT_MATCH_VIDEO = "event_match_video",
+
             UPDATE_FAVORITES = "update_favorites",
             UPDATE_SUBSCRIPTIONS = "update_subscriptions",
             SUMMARY = "summary";
@@ -51,6 +55,8 @@ public final class NotificationTypes {
                 return "Match Schedule Posted";
             case FINAL_RESULTS:
                 return "Final Results";
+            case MATCH_VIDEO:
+                return "Match Videos";
             default:
                 return "";
         }

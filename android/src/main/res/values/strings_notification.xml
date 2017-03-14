@@ -83,6 +83,18 @@
     <string name="notification_event_down_content">We\'re sorry, but %1$s is not reporting data to The Blue Alliance. You might not receive myTBA push notifications for your subscriptions at this event.</string>
 
     <!-- *********************
+       Event Match Videos Notification
+       ********************* -->
+    <string name="notification_event_match_video">%1$s Match Video</string>
+    <string name="notification_event_match_video_content">%1$s: New videos have been posted</string>
+
+    <!-- *********************
+       Team Match Videos Notification
+       ********************* -->
+    <string name="notification_team_match_video">%1$s %2$s Match Video</string>
+    <string name="notification_team_match_video_content">%1$s: %2$s are featured in a new video</string>
+
+    <!-- *********************
         Generic Notification
         ********************* -->
     <string name="notification_ping_header">Ping</string>

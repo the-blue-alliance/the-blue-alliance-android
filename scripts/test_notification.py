@@ -62,6 +62,8 @@ def get_notification_commands():
     commands.append('broadcast_command')
     commands.append('match_score_command')
     commands.append('upcoming_match_command')
+    commands.append('team_match_video_command')
+    commands.append('event_match_video_command')
 
     return commands
 
@@ -225,7 +227,29 @@ event_down_sample = {
 
 def event_down_command(data=event_down_sample):
     notify('event_down', data)
-    
+
+team_match_video_sample = {
+    "event_name": "New England FRC Region Championship",
+    "match_key": "2014necmp_f1m1",
+    "team_keys": [
+      "frc195",
+      "frc558",
+      "frc5122",
+      "frc177",
+      "frc230",
+    ],
+}
+
+def team_match_video_command(data=team_match_video_sample):
+    notify('team_match_video', data)
+
+event_match_video_sample = {
+    "event_name": "New England FRC Region Championship",
+    "event_key": "2014necmp",
+}
+
+def event_match_video_command(data=event_match_video_sample):
+    notify('event_match_video', data)
 
 def spam_command(count=10):
     commands = get_notification_commands()

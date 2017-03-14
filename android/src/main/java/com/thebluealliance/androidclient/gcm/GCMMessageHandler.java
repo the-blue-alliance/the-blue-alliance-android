@@ -1,18 +1,8 @@
 package com.thebluealliance.androidclient.gcm;
 
-import android.app.IntentService;
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
-
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonParseException;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -34,11 +24,13 @@ import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.CompLevelStartingNotification;
 import com.thebluealliance.androidclient.gcm.notifications.DistrictPointsUpdatedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.EventDownNotification;
+import com.thebluealliance.androidclient.gcm.notifications.EventMatchVideoNotification;
 import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.SummaryNotification;
+import com.thebluealliance.androidclient.gcm.notifications.TeamMatchVideoNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
@@ -50,6 +42,17 @@ import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.RendererModule;
 
 import org.greenrobot.eventbus.EventBus;
+
+import android.app.IntentService;
+import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 
 import javax.inject.Inject;
 
@@ -186,6 +189,12 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                     break;
                 case NotificationTypes.DISTRICT_POINTS_UPDATED:
                     notification = new DistrictPointsUpdatedNotification(messageData);
+                    break;
+                case NotificationTypes.TEAM_MATCH_VIDEO:
+                    notification = new TeamMatchVideoNotification(messageData);
+                    break;
+                case NotificationTypes.EVENT_MATCH_VIDEO:
+                    notification = new EventMatchVideoNotification(messageData);
                     break;
                 case NotificationTypes.EVENT_DOWN:
                     notification = new EventDownNotification(messageData);
