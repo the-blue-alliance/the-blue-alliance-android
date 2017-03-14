@@ -49,7 +49,7 @@ public class EventInsights2017Renderer extends EventInsightsRenderer {
             R.string.breakdown2017_rotor1, R.string.breakdown2017_rotor2,
             R.string.breakdown2017_rotor3, R.string.breakdown2017_rotor4};
     private static String[] bonusKeys = {"mobility_counts", "takeoff_counts", "kpa_achieved",
-            "rotor_1_engaged_auto", "rotor_1_engaged_auto", "rotor_1_engaged", "rotor_2_engaged",
+            "rotor_1_engaged_auto", "rotor_2_engaged_auto", "rotor_1_engaged", "rotor_2_engaged",
             "rotor_3_engaged", "rotor_4_engaged"};
 
     private void generate2017BonusInsights(JsonObject quals, JsonObject elims) {
