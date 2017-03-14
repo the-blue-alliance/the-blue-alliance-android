@@ -151,6 +151,14 @@ public class CacheableDatafeed {
         return mAPICache.fetchTeamMediaInYear(teamKey, year).concatWith(apiData);
     }
 
+    public Observable<List<Media>> fetchTeamSocialMedia(String teamKey, String cacheHeader) {
+        Observable<List<Media>> apiData = mResponseMap.mapAndWriteResponseBody(
+                mApiv3.fetchTeamSocialMedia(teamKey, cacheHeader),
+                new TeamMediaKeyAdder(teamKey, -1),  // Social media don't have a specific year
+                mWriter.getMediaListWriter().get());
+        return mAPICache.fetchTeamSocialMedia(teamKey).concatWith(apiData);
+    }
+
     public Observable<List<Event>> fetchEventsInYear(int year, String cacheHeader) {
         Observable<List<Event>> apiData = mResponseMap.getAndWriteResponseBody(
           mApiv3.fetchEventsInYear(year, cacheHeader),

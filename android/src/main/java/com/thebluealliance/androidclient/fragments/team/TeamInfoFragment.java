@@ -3,13 +3,13 @@ package com.thebluealliance.androidclient.fragments.team;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
+import com.thebluealliance.androidclient.datafeed.combiners.TeamMediaAndSocialMediaCombiner;
 import com.thebluealliance.androidclient.eventbus.LiveEventUpdateEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
 import com.thebluealliance.androidclient.listitems.EventListElement;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
-import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 
@@ -29,7 +29,7 @@ import dagger.Lazy;
 import rx.Observable;
 
 public class TeamInfoFragment
-        extends DatafeedFragment<Team, TeamInfoBinder.Model, TeamInfoSubscriber, TeamInfoBinder> {
+        extends DatafeedFragment<TeamInfoSubscriber.Model, TeamInfoBinder.Model, TeamInfoSubscriber, TeamInfoBinder> {
 
     private static final String TEAM_KEY = "team_key";
 
@@ -114,8 +114,11 @@ public class TeamInfoFragment
     }
 
     @Override
-    protected Observable<Team> getObservable(String tbaCacheHeader) {
-        return mDatafeed.fetchTeam(mTeamKey, tbaCacheHeader);
+    protected Observable<TeamInfoSubscriber.Model> getObservable(String tbaCacheHeader) {
+        return Observable.zip(
+                mDatafeed.fetchTeam(mTeamKey, tbaCacheHeader),
+                mDatafeed.fetchTeamSocialMedia(mTeamKey, tbaCacheHeader),
+                new TeamMediaAndSocialMediaCombiner());
     }
 
     @Override

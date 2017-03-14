@@ -4,9 +4,15 @@ public enum MediaType {
     NONE,
     YOUTUBE,
     CD_PHOTO_THREAD,
+    FACEBOOK_PROFILE,
+    TWITTER_PROFILE,
+    YOUTUBE_CHANNEL,
+    GITHUB_PROFILE,
+    INSTAGRAM_PROFILE,
     IMGUR;
 
     public static MediaType fromString(String string) {
+        if (string == null) return NONE;
         switch (string) {
             case "cdphotothread":
                 return CD_PHOTO_THREAD;
@@ -14,6 +20,16 @@ public enum MediaType {
                 return YOUTUBE;
             case "imgur":
                 return IMGUR;
+            case "facebook-profile":
+                return FACEBOOK_PROFILE;
+            case "youtube-channel":
+                return YOUTUBE_CHANNEL;
+            case "twitter-profile":
+                return TWITTER_PROFILE;
+            case "github-profile":
+                return GITHUB_PROFILE;
+            case "instagram-profile":
+                return INSTAGRAM_PROFILE;
             default:
                 return NONE;
         }

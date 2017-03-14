@@ -77,8 +77,8 @@
     <string name="current_event">Current event</string>
     <string name="team_actionbar_title">Team %1$s</string>
     <string name="view_team_website">View team\'s website</string>
-    <string name="view_team_twitter">View #%1$s on Twitter</string>
-    <string name="view_team_youtube">View %1$s on YouTube</string>
+    <string name="view_team_twitter">\@%1$s on Twitter</string>
+    <string name="view_team_youtube">%1$s on YouTube</string>
     <string name="view_team_cd">View photos on Chief Delphi</string>
     <string name="error_loading_image">Error loading image</string>
     <string name="error_taking_picture">Error taking picture</string>

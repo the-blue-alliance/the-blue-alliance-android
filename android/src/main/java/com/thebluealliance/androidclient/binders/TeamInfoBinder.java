@@ -4,6 +4,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
+import com.thebluealliance.androidclient.types.MediaType;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -16,6 +17,8 @@ import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
 import android.view.View;
 import android.widget.TextView;
+
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -106,13 +109,25 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
         }
         teamWebsiteContainer.setOnClickListener(mSocialClickListener);
 
-        teamTwitterContainer.setTag("https://twitter.com/search?q=%23" + data.teamKey);
-        teamTwitterContainer.setOnClickListener(mSocialClickListener);
-        teamTwitterTitle.setText(mActivity.getString(R.string.view_team_twitter, data.teamKey));
+        if (data.socialMedia.containsKey(MediaType.TWITTER_PROFILE)) {
+            String twitterKey = data.socialMedia.get(MediaType.TWITTER_PROFILE);
+            teamTwitterContainer.setVisibility(View.VISIBLE);
+            teamTwitterContainer.setTag("https://twitter.com/" + twitterKey);
+            teamTwitterContainer.setOnClickListener(mSocialClickListener);
+            teamTwitterTitle.setText(mActivity.getString(R.string.view_team_twitter, twitterKey));
+        } else {
+            teamTwitterContainer.setVisibility(View.GONE);
+        }
 
-        teamYoutubeContainer.setTag("https://www.youtube.com/results?search_query=" + data.teamKey);
-        teamYoutubeContainer.setOnClickListener(mSocialClickListener);
-        teamYoutubeTitle.setText(mActivity.getString(R.string.view_team_youtube, data.teamKey));
+        if (data.socialMedia.containsKey(MediaType.YOUTUBE_CHANNEL)) {
+            String youtubeKey = data.socialMedia.get(MediaType.YOUTUBE_CHANNEL);
+            teamYoutubeContainer.setVisibility(View.VISIBLE);
+            teamYoutubeContainer.setTag("https://www.youtube.com/" + youtubeKey);
+            teamYoutubeContainer.setOnClickListener(mSocialClickListener);
+            teamYoutubeTitle.setText(mActivity.getString(R.string.view_team_youtube, data.teamKey));
+        } else {
+            teamYoutubeContainer.setVisibility(View.GONE);
+        }
 
         teamCdContainer.setTag("http://www.chiefdelphi.com/media/photos/tags/" + data.teamKey);
         teamCdContainer.setOnClickListener(mSocialClickListener);
@@ -252,5 +267,6 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
         public String website;
         public String motto;
         public int teamNumber;
+        public Map<MediaType, String> socialMedia;
     }
 }

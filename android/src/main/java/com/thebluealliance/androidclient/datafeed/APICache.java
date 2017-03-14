@@ -154,6 +154,20 @@ public class APICache {
         });
     }
 
+    public Observable<List<Media>> fetchTeamSocialMedia(String teamKey) {
+        return Observable.create((observer) -> {
+            try {
+                String where = MediasTable.TEAMKEY + " = ? AND " + MediasTable.YEAR + " = -1";
+                List<Media> medias = mDb.getMediasTable()
+                                        .getForQuery(null, where, new String[]{teamKey});
+                observer.onNext(medias);
+                observer.onCompleted();
+            } catch (Exception e) {
+                observer.onError(e);
+            }
+        });
+    }
+
     public Observable<List<Event>> fetchEventsInYear(int year) {
         return Observable.create((observer) -> {
             try {

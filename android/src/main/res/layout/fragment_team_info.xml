@@ -266,8 +266,8 @@
                         <TextView
                             android:id="@+id/team_website_title"
                             style="@style/InfoItemTextStyle"
-                            android:layout_toRightOf="@id/team_website_icon"
-                            tools:text="google link goes here" />
+                            android:layout_toEndOf="@id/team_website_icon"
+                            tools:text="Team Website" />
                     </RelativeLayout>
 
                     <View style="@style/InfoItemDividerStyle" />
@@ -288,8 +288,8 @@
                         <TextView
                             android:id="@+id/team_twitter_title"
                             style="@style/InfoItemTextStyle"
-                            android:layout_toRightOf="@id/team_twitter_icon"
-                            tools:text="Twitter link goes here" />
+                            android:layout_toEndOf="@id/team_twitter_icon"
+                            tools:text="\@team254 on Twitter" />
                     </RelativeLayout>
 
                     <View style="@style/InfoItemDividerStyle" />
@@ -310,8 +310,8 @@
                         <TextView
                             android:id="@+id/team_youtube_title"
                             style="@style/InfoItemTextStyle"
-                            android:layout_toRightOf="@id/team_youtube_icon"
-                            tools:text="YouTube link goes here" />
+                            android:layout_toEndOf="@id/team_youtube_icon"
+                            tools:text="Team254 on YouTube" />
                     </RelativeLayout>
 
                     <View style="@style/InfoItemDividerStyle" />

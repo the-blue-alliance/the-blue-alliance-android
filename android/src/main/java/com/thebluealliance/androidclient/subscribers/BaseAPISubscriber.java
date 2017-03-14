@@ -201,7 +201,6 @@ public abstract class BaseAPISubscriber<APIType, BindType>
      * Subclasses can override this method to determine if {@link #mAPIData} is valid.
      * Default to simply checking if null
      */
-    @VisibleForTesting
     public boolean isDataValid() {
         return mAPIData != null;
     }
