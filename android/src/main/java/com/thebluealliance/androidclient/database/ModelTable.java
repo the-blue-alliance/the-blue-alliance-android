@@ -280,15 +280,33 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
      * (number of rows affected)
      */
     public int delete(String whereClause, String[] whereArgs) {
-        return mDb.delete(getTableName(), whereClause, whereArgs);
+        int ret = 0;
+        mDb.beginTransaction();
+        try {
+            ret = mDb.delete(getTableName(), whereClause, whereArgs);
+            mDb.setTransactionSuccessful();
+        } finally {
+            mDb.endTransaction();
+        }
+        return ret;
     }
 
     /**
      * Deletes all rows from this table.
      */
-    public void deleteAllRows() {
-        mDb.execSQL("delete from " + getTableName());
-        deleteAllCallback();
+    public int deleteAllRows() {
+        int ret = 0;
+        mDb.beginTransaction();
+        try {
+            ret = mDb.delete(getTableName(), null, null);
+            if (ret > 0) {
+                deleteAllCallback();
+            }
+            mDb.setTransactionSuccessful();
+        } finally {
+            mDb.endTransaction();
+        }
+        return ret;
     }
 
     /**

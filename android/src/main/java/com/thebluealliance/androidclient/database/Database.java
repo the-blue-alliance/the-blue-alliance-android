@@ -285,6 +285,22 @@ public class Database extends SQLiteOpenHelper {
         return mNotificationsTable;
     }
 
+    public void beginTransaction() {
+        mDb.beginTransaction();
+    }
+
+    public void setTransactionSuccessful() {
+        mDb.setTransactionSuccessful();
+    }
+
+    public void endTransaction() {
+        mDb.endTransaction();
+    }
+
+    public SQLiteDatabase getDb() {
+        return mDb;
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TEAMS);

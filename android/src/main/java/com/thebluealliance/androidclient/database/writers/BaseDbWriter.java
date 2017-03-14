@@ -63,11 +63,11 @@ public abstract class BaseDbWriter<T> implements Action5<String, String, String[
             return;
         }
         Schedulers.io().createWorker().schedule(() -> {
-            mDb.getWritableDatabase().beginTransaction();
+            mDb.beginTransaction();
             try {
                 clear(dbTable, sqlWhere, whereArgs);
                 write(newModels, lastModified);
-                mDb.getWritableDatabase().setTransactionSuccessful();
+                mDb.setTransactionSuccessful();
             } catch (Exception ex) {
                 if (ex instanceof SQLiteDatabaseLockedException) {
                     // We don't really care about these _that_  much
@@ -76,7 +76,7 @@ public abstract class BaseDbWriter<T> implements Action5<String, String, String[
                     TbaLogger.w("Error writing to db: " + ex.getMessage(), ex);
                 }
             } finally {
-                mDb.getWritableDatabase().endTransaction();
+                mDb.endTransaction();
             }
         });
     }
