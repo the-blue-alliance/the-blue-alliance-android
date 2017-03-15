@@ -1,9 +1,8 @@
-Version 4.0.4:<br>
-    - Add button to watch webcasts from Upcoming Match notification<br>
-    - Fix bugs with RP/Match in 2017<br>
-    - Fix bugs with rendering some webcast links<br>
-    - Fix bugs with displaying rankings<br>
-    - Fix bugs showing alliance playoff advancement<br>
+Version 4.1.0:<br>
+    - New notification type! We now support push notifications when videos are added to a match!<br>
+    - Finally show team social media profiles<br>
+    - Improve notification sound<br>
+    - Actually fix RP/match, auto rotor insights & other bugs<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>
