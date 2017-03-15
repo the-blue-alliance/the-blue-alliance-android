@@ -23,4 +23,19 @@ public class AddEventKeyToRankings implements Func1<RankingResponseObject, Event
         rankingResponseObject.setEventKey(mEventKey);
         return rankingResponseObject.toEventDetail(mGson);
     }
+
+    public static class ApiMap implements Func1<RankingResponseObject, RankingResponseObject> {
+
+        private final String mEventKey;
+
+        public ApiMap(String eventKey) {
+            mEventKey = eventKey;
+        }
+
+        @Override
+        public RankingResponseObject call(RankingResponseObject rankingResponseObject) {
+            if (rankingResponseObject != null) rankingResponseObject.setEventKey(mEventKey);
+            return rankingResponseObject;
+        }
+    }
 }

@@ -189,7 +189,7 @@ public class CacheableDatafeed {
                 mWriter.getEventDetailWriter().get(),
                 Database.TABLE_EVENTDETAILS, EventDetailsTable.KEY + " = ?", new
                         String[]{EventDetail.buildKey(eventKey, EventDetailType.RANKINGS)}
-        );
+        ).map(new AddEventKeyToRankings.ApiMap(eventKey));
         return mAPICache.fetchEventRankings(eventKey).concatWith(apiData);
     }
 
