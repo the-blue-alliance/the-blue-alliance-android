@@ -1,0 +1,26 @@
+[
+  {
+    "details": {}, 
+    "foreign_key": "theuberbots", 
+    "preferred": false, 
+    "type": "facebook-profile"
+  }, 
+  {
+    "details": {}, 
+    "foreign_key": "frc1124", 
+    "preferred": false, 
+    "type": "github-profile"
+  }, 
+  {
+    "details": {}, 
+    "foreign_key": "team1124", 
+    "preferred": false, 
+    "type": "twitter-profile"
+  }, 
+  {
+    "details": {}, 
+    "foreign_key": "Uberbots1124", 
+    "preferred": false, 
+    "type": "youtube-channel"
+  }
+]
