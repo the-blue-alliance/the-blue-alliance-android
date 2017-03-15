@@ -25,7 +25,7 @@ public final class NotificationTypes {
             EVENT_DOWN = "event_down",
 
             MATCH_VIDEO = "match_video",  // This is what users will subscribe to
-            TEAM_MATCH_VIDEO = "team_match_video",
+            TEAM_MATCH_VIDEO = "match_video",
             EVENT_MATCH_VIDEO = "event_match_video",
 
             UPDATE_FAVORITES = "update_favorites",
