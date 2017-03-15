@@ -80,6 +80,9 @@
     <string name="view_team_twitter">\@%1$s on Twitter</string>
     <string name="view_team_youtube">%1$s on YouTube</string>
     <string name="view_team_cd">View photos on Chief Delphi</string>
+    <string name="view_team_fb">%1$s on Facebook</string>
+    <string name="view_team_github">\@%1$s on GitHub</string>
+    <string name="view_team_instagram">%1$s on Instagram</string>
     <string name="error_loading_image">Error loading image</string>
     <string name="error_taking_picture">Error taking picture</string>
     <string name="camera_permission_title">Allow access to external storage</string>

@@ -40,9 +40,18 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     @Bind(R.id.team_website_title) TextView teamWebsiteTitle;
     @Bind(R.id.team_twitter_container) View teamTwitterContainer;
     @Bind(R.id.team_twitter_title) TextView teamTwitterTitle;
+    @Bind(R.id.twitter_divider) View twitterDivider;
     @Bind(R.id.team_youtube_container) View teamYoutubeContainer;
     @Bind(R.id.team_youtube_title) TextView teamYoutubeTitle;
-    @Bind(R.id.team_cd_container) View teamCdContainer;
+    @Bind(R.id.youtube_divider) View youtubeDivider;
+    @Bind(R.id.team_facebook_container) View teamFbContainer;
+    @Bind(R.id.team_facebook_title) TextView teamFbTitle;
+    @Bind(R.id.facebook_divider) View facebookDivider;
+    @Bind(R.id.team_github_container) View teamGitHubContainer;
+    @Bind(R.id.team_github_title) TextView teamGitHubTitle;
+    @Bind(R.id.team_instagram_container) View teamInstaContainer;
+    @Bind(R.id.team_instagram_title) TextView teamInstaTitle;
+    @Bind(R.id.instagram_divider) View instagramDivider;
     @Bind(R.id.team_full_name_container) View teamFullNameContainer;
     @Bind(R.id.team_full_name) TextView teamFullName;
     @Bind(R.id.team_next_match_label) View teamNextMatchLabel;
@@ -112,25 +121,60 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
         if (data.socialMedia.containsKey(MediaType.TWITTER_PROFILE)) {
             String twitterKey = data.socialMedia.get(MediaType.TWITTER_PROFILE);
             teamTwitterContainer.setVisibility(View.VISIBLE);
+            twitterDivider.setVisibility(View.VISIBLE);
             teamTwitterContainer.setTag("https://twitter.com/" + twitterKey);
             teamTwitterContainer.setOnClickListener(mSocialClickListener);
             teamTwitterTitle.setText(mActivity.getString(R.string.view_team_twitter, twitterKey));
         } else {
             teamTwitterContainer.setVisibility(View.GONE);
+            twitterDivider.setVisibility(View.GONE);
         }
 
         if (data.socialMedia.containsKey(MediaType.YOUTUBE_CHANNEL)) {
             String youtubeKey = data.socialMedia.get(MediaType.YOUTUBE_CHANNEL);
             teamYoutubeContainer.setVisibility(View.VISIBLE);
+            youtubeDivider.setVisibility(View.VISIBLE);
             teamYoutubeContainer.setTag("https://www.youtube.com/" + youtubeKey);
             teamYoutubeContainer.setOnClickListener(mSocialClickListener);
-            teamYoutubeTitle.setText(mActivity.getString(R.string.view_team_youtube, data.teamKey));
+            teamYoutubeTitle.setText(mActivity.getString(R.string.view_team_youtube, youtubeKey));
         } else {
             teamYoutubeContainer.setVisibility(View.GONE);
+            youtubeDivider.setVisibility(View.GONE);
         }
 
-        teamCdContainer.setTag("http://www.chiefdelphi.com/media/photos/tags/" + data.teamKey);
-        teamCdContainer.setOnClickListener(mSocialClickListener);
+        if (data.socialMedia.containsKey(MediaType.FACEBOOK_PROFILE)) {
+            String fbKey = data.socialMedia.get(MediaType.FACEBOOK_PROFILE);
+            teamFbContainer.setVisibility(View.VISIBLE);
+            facebookDivider.setVisibility(View.VISIBLE);
+            teamFbContainer.setTag("https://facebook.com/" + fbKey);
+            teamFbContainer.setOnClickListener(mSocialClickListener);
+            teamFbTitle.setText(mActivity.getString(R.string.view_team_fb, fbKey));
+        } else {
+            teamFbContainer.setVisibility(View.GONE);
+            facebookDivider.setVisibility(View.GONE);
+        }
+
+        if (data.socialMedia.containsKey(MediaType.GITHUB_PROFILE)) {
+            String githubKey = data.socialMedia.get(MediaType.GITHUB_PROFILE);
+            teamGitHubContainer.setVisibility(View.VISIBLE);
+            teamGitHubContainer.setTag("https://github.com/" + githubKey);
+            teamGitHubContainer.setOnClickListener(mSocialClickListener);
+            teamGitHubTitle.setText(mActivity.getString(R.string.view_team_github, githubKey));
+        } else {
+            teamGitHubContainer.setVisibility(View.GONE);
+        }
+
+        if (data.socialMedia.containsKey(MediaType.INSTAGRAM_PROFILE)) {
+            String instaKey = data.socialMedia.get(MediaType.INSTAGRAM_PROFILE);
+            teamInstaContainer.setVisibility(View.VISIBLE);
+            instagramDivider.setVisibility(View.VISIBLE);
+            teamInstaContainer.setTag("https://www.instagram.com/" + instaKey);
+            teamInstaContainer.setOnClickListener(mSocialClickListener);
+            teamInstaTitle.setText(mActivity.getString(R.string.view_team_instagram, instaKey));
+        } else {
+            teamInstaContainer.setVisibility(View.GONE);
+            instagramDivider.setVisibility(View.GONE);
+        }
 
         if (data.fullName.isEmpty()) {
             // No full name specified, hide the view

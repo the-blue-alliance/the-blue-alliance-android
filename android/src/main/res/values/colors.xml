@@ -29,6 +29,9 @@
     <color name="youtube_red">#cd201f</color>
     <color name="twitter_blue">#55acee</color>
     <color name="chief_delphi_orange">#ff8800</color>
+    <color name="facebook_blue">#3b5998</color>
+    <color name="github_black">#000000</color>
+    <color name="instagram_purple">#8a3ab9</color>
 
     <!-- MateriYOLO colors -->
     <color name="primary">#3f51b5</color>
