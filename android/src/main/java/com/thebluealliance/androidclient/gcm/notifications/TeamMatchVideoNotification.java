@@ -39,6 +39,7 @@ public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoN
 
     public TeamMatchVideoNotification(String messageData, MatchWriter writer) {
         super(NotificationTypes.SCHEDULE_UPDATED, messageData);
+        mWriter = writer;
     }
 
     @Override
@@ -52,10 +53,10 @@ public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoN
         mEventName = jsonData.get("event_name").getAsString();
         mMatchTeamKeys = new ArrayList<>();
 
-        Match match = gson.fromJson(jsonData.get("match"), Match.class);
-        if (match.getAlliances() != null) {
-            mMatchTeamKeys.addAll(match.getAlliances().getBlue().getTeamKeys());
-            mMatchTeamKeys.addAll(match.getAlliances().getRed().getTeamKeys());
+        mMatch = gson.fromJson(jsonData.get("match"), Match.class);
+        if (mMatch.getAlliances() != null) {
+            mMatchTeamKeys.addAll(mMatch.getAlliances().getBlue().getTeamKeys());
+            mMatchTeamKeys.addAll(mMatch.getAlliances().getRed().getTeamKeys());
         }
     }
 
