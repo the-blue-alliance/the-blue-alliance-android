@@ -68,6 +68,7 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
             NotificationTypes.ALLIANCE_SELECTION,
             NotificationTypes.AWARDS,
             NotificationTypes.SCHEDULE_UPDATED,
+            NotificationTypes.MATCH_VIDEO,
             //NotificationTypes.FINAL_RESULTS
     };
 

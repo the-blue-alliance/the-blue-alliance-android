@@ -1,14 +1,13 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
 import com.google.common.base.Predicate;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
+import com.thebluealliance.androidclient.database.writers.MatchWriter;
 import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
@@ -31,12 +30,14 @@ import java.util.List;
 
 public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoNotificationViewModel> {
 
-    private String eventName;
-    private String eventKey;
-    private String matchKey;
-    private List<String> matchTeamKeys;
+    private String mEventName;
+    private String mEventKey;
+    private String mMatchKey;
+    private List<String> mMatchTeamKeys;
+    private Match mMatch;
+    private MatchWriter mWriter;
 
-    public TeamMatchVideoNotification(String messageData) {
+    public TeamMatchVideoNotification(String messageData, MatchWriter writer) {
         super(NotificationTypes.SCHEDULE_UPDATED, messageData);
     }
 
@@ -46,22 +47,23 @@ public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoN
         if (!jsonData.has("match_key")) {
             throw new JsonParseException("TeamMatchVideoNotification has no match key");
         }
-        matchKey = jsonData.get("match_key").getAsString();
-        eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
-        eventName = jsonData.get("event_name").getAsString();
-        matchTeamKeys = new ArrayList<>();
+        mMatchKey = jsonData.get("match_key").getAsString();
+        mEventKey = MatchHelper.getEventKeyFromMatchKey(mMatchKey);
+        mEventName = jsonData.get("event_name").getAsString();
+        mMatchTeamKeys = new ArrayList<>();
 
-        JsonArray matchTeams = jsonData.get("team_keys").getAsJsonArray();
-        for (JsonElement team : matchTeams) {
-            matchTeamKeys.add(team.getAsString());
+        Match match = gson.fromJson(jsonData.get("match"), Match.class);
+        if (match.getAlliances() != null) {
+            mMatchTeamKeys.addAll(match.getAlliances().getBlue().getTeamKeys());
+            mMatchTeamKeys.addAll(match.getAlliances().getRed().getTeamKeys());
         }
     }
 
     @Nullable @Override
     public TeamMatchVideoNotificationViewModel renderToViewModel(Context context, @Nullable Void aVoid) {
         String header = getNotificationCardHeader(context,
-                                                  EventHelper.shortName(eventName),
-                                                  EventHelper.getShortCodeForEventKey(eventKey));
+                                                  EventHelper.shortName(mEventName),
+                                                  EventHelper.getShortCodeForEventKey(mEventKey));
         return new TeamMatchVideoNotificationViewModel();
     }
 
@@ -70,16 +72,16 @@ public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoN
         Resources r = context.getResources();
 
         Predicate<String> isFollowing =
-                teamNumber -> followsChecker.followsTeam(context, teamNumber, matchKey,
+                teamNumber -> followsChecker.followsTeam(context, teamNumber, mMatchKey,
                                                          NotificationTypes.MATCH_VIDEO);
-        ArrayList<String> teamNumbers = Match.teamNumbers(matchTeamKeys);
+        ArrayList<String> teamNumbers = Match.teamNumbers(mMatchTeamKeys);
         CharSequence teamNumberString = Utilities.boldNameList(teamNumbers, isFollowing);
 
-        String matchTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);
-        String eventCode = EventHelper.getEventCode(matchKey);
+        String matchTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, mMatchKey);
+        String eventCode = EventHelper.getEventCode(mMatchKey);
         String title = r.getString(R.string.notification_team_match_video, eventCode, matchTitle);
         String notificationBody = r.getString(R.string.notification_team_match_video_content,
-                                              EventHelper.shortName(eventName),
+                                              EventHelper.shortName(mEventName),
                                               teamNumberString);
 
         // We can finally build the notification!
@@ -104,16 +106,16 @@ public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoN
 
     @Override
     public void updateDataLocally() {
-        // Nothing to write here
+        mWriter.write(mMatch, new Date().getTime());
     }
 
     @Override
     public int getNotificationId() {
-        return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
+        return (new Date().getTime() + ":" + getNotificationType() + ":" + mMatchKey).hashCode();
     }
 
     @Override
     public Intent getIntent(Context c) {
-        return ViewMatchActivity.newInstance(c, matchKey);
+        return ViewMatchActivity.newInstance(c, mMatchKey);
     }
 }

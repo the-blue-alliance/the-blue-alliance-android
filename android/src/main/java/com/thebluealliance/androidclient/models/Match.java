@@ -32,7 +32,8 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
 
     public static final String[] NOTIFICATION_TYPES = {
             NotificationTypes.UPCOMING_MATCH,
-            NotificationTypes.MATCH_SCORE
+            NotificationTypes.MATCH_SCORE,
+            NotificationTypes.MATCH_VIDEO,
     };
 
     private String key;

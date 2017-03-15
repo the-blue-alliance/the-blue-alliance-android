@@ -191,7 +191,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                     notification = new DistrictPointsUpdatedNotification(messageData);
                     break;
                 case NotificationTypes.TEAM_MATCH_VIDEO:
-                    notification = new TeamMatchVideoNotification(messageData);
+                    notification = new TeamMatchVideoNotification(messageData, mWriter.getMatchWriter().get());
                     break;
                 case NotificationTypes.EVENT_MATCH_VIDEO:
                     notification = new EventMatchVideoNotification(messageData);

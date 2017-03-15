@@ -45,7 +45,7 @@ def notify(message_type, json_data):
         --es message_type %s \
         --es message_data '%s'"""
     command = template % (message_type, json_text)
-    
+
     print "\nSending " + message_type + " broadcast"
 
     subprocess.call(["adb", "shell", command])
@@ -201,7 +201,7 @@ def ping_command(data=ping_sample, url="", no_url=False):
 
     if no_url:
         del data["url"]
-        
+
     notify('ping', data)
 
 def broadcast_command(data=ping_sample, url="", no_url=False):
@@ -231,13 +231,44 @@ def event_down_command(data=event_down_sample):
 team_match_video_sample = {
     "event_name": "New England FRC Region Championship",
     "match_key": "2014necmp_f1m1",
-    "team_keys": [
-      "frc195",
-      "frc558",
-      "frc5122",
-      "frc177",
-      "frc230",
-    ],
+    "match": {
+  "actual_time": None,
+  "alliances": {
+    "blue": {
+      "score": 154,
+      "surrogate_team_keys": [],
+      "team_keys": [
+        "frc177",
+        "frc230",
+        "frc4055"
+      ]
+    },
+    "red": {
+      "score": 78,
+      "surrogate_team_keys": [],
+      "team_keys": [
+        "frc195",
+        "frc558",
+        "frc5122"
+      ]
+    }
+  },
+  "comp_level": "f",
+  "event_key": "2014necmp",
+  "key": "2014necmp_f1m1",
+  "match_number": 1,
+  "predicted_time": None,
+  "score_breakdown": None,
+  "set_number": 1,
+  "time": 1397330280,
+  "videos": [
+    {
+      "key": "ZRTRszl2iXw",
+      "type": "youtube"
+    }
+  ],
+  "winning_alliance": "blue"
+  }
 }
 
 def team_match_video_command(data=team_match_video_sample):

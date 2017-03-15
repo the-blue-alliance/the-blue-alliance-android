@@ -36,6 +36,7 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
             NotificationTypes.MATCH_SCORE,
             NotificationTypes.ALLIANCE_SELECTION,
             NotificationTypes.AWARDS,
+            NotificationTypes.MATCH_VIDEO,
             //NotificationTypes.MEDIA_POSTED
     };
 
