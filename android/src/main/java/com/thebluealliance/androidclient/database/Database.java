@@ -20,9 +20,11 @@ import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.support.annotation.VisibleForTesting;
+import android.support.annotation.WorkerThread;
 
 import javax.inject.Inject;
 
@@ -285,8 +287,24 @@ public class Database extends SQLiteOpenHelper {
         return mNotificationsTable;
     }
 
+    @WorkerThread
     public void beginTransaction() {
-        mDb.beginTransaction();
+        do {
+            try {
+                mDb.beginTransaction();
+                break;
+            } catch (SQLiteDatabaseLockedException ex) {
+                // Ignored. Retry in a bit...
+            }
+
+            TbaLogger.d("Unable to get a DB lock to write, backing off...");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                // Ignored
+            }
+        } while (true);
+
     }
 
     public void setTransactionSuccessful() {

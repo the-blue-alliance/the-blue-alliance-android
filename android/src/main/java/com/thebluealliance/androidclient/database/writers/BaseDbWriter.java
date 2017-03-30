@@ -4,7 +4,6 @@ import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelTable;
 
-import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
@@ -69,12 +68,7 @@ public abstract class BaseDbWriter<T> implements Action5<String, String, String[
                 write(newModels, lastModified);
                 mDb.setTransactionSuccessful();
             } catch (Exception ex) {
-                if (ex instanceof SQLiteDatabaseLockedException) {
-                    // We don't really care about these _that_  much
-                    TbaLogger.d("Database locked (" + this.getClass().getName() + "): " + ex.getMessage());
-                } else {
-                    TbaLogger.w("Error writing to db: " + ex.getMessage(), ex);
-                }
+                TbaLogger.w("Error writing to db: " + ex.getMessage(), ex);
             } finally {
                 mDb.endTransaction();
             }
