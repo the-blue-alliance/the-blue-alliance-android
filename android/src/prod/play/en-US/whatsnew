@@ -1,9 +1,8 @@
-Version 4.1.0:
-    - New notification type! We now support push notifications when videos are added to a match!
-    - Finally show team social media profiles
-    - Improve notification sound
-    - Actually fix RP/match, auto rotor insights & other bugs
+Version 4.2.0:
+  - Show extra rankings status unofficially calculated by TBA
+  - Other minor bug fixes
 
 View the full changelog for this and previous releases on the GitHub page:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
+
 
