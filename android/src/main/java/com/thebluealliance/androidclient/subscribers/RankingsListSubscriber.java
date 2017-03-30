@@ -49,6 +49,7 @@ public class RankingsListSubscriber extends BaseAPISubscriber<RankingResponseObj
         List<IRankingItem> rankings = mAPIData.getRankings();
         List<IRankingSortOrder> sortOrders = mAPIData.getSortOrderInfo();
         List<IRankingSortOrder> extraStats = mAPIData.getExtraStatsInfo();
+        IRankingSortOrder firstSortInfo = sortOrders.remove(0);
         for (int i = 0; i < rankings.size(); i++) {
             IRankingItem row = rankings.get(i);
             /* Assume that the list of lists has rank first and team # second, always */
@@ -64,10 +65,12 @@ public class RankingsListSubscriber extends BaseAPISubscriber<RankingResponseObj
                 record = "";
             }
 
-            IRankingSortOrder firstSortInfo = sortOrders.get(0);
+
+            // Remove the first sort item so we don't show duplicates
             Double firstSort = row.getSortOrders().remove(0);
+
             rankingSummary = mResources.getString(R.string.rank_item_summary,
-                                                  sortOrders.get(0).getName(),
+                                                  firstSortInfo.getName(),
                                                   formatSortOrder(firstSortInfo, firstSort));
 
             rankingString = buildRankingString(row,
