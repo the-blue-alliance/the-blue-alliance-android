@@ -15,8 +15,7 @@
     <string name="rank_qual_average">Qual Average</string>
     <string name="rank_played">Played</string>
     <string name="rank_dq">DQ</string>
-    <string name="rank_item_without_per_match">%1$s: %2$s</string>
-    <string name="rank_item_with_per_match">%1$s: %2$s (%3$.2f per match)</string>
+    <string name="rank_item_summary">%1$s: %2$s</string>
 
     <!-- Summary Section -->
     <string name="team_at_event_rank">Rank</string>

@@ -49,6 +49,15 @@ public class RankingItemDeserializer implements JsonDeserializer<RankingItem>,
             }
         }
         rankItem.setSortOrders(sortOrders);
+
+        List<Double> extraStats = new ArrayList<>();
+        if (!isNull(data.get("extra_stats"))) {
+            JsonArray extraStatsJson = data.get("extra_stats").getAsJsonArray();
+            for (int i = 0; i < extraStatsJson.size(); i++) {
+                extraStats.add(extraStatsJson.get(i).getAsDouble());
+            }
+        }
+        rankItem.setExtraStats(extraStats);
         return rankItem;
     }
 

@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 /**
  * RankingItem
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-10T14:16:43.499-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-30T15:18:38.021-04:00")
 public interface IRankingItem   {
 
 
@@ -51,6 +51,20 @@ public interface IRankingItem   {
   public Integer getDq();
 
   public void setDq(Integer dq);
+
+
+
+
+
+   /**
+   * Year-specific values unofficially calculated by TBA
+   * @return extraStats
+  **/
+  @ApiModelProperty(example = "null", required = true, value = "Year-specific values unofficially calculated by TBA")
+  
+  public List<Double> getExtraStats();
+
+  public void setExtraStats(List<Double> extraStats);
 
 
 

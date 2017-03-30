@@ -31,7 +31,7 @@ public class RankingsResponseDeserializer implements JsonDeserializer<RankingRes
 
         List<IRankingItem> teamRanks = new ArrayList<>();
         List<IRankingSortOrder> sortOrders;
-
+        List<IRankingSortOrder> extraStats;
 
         if (!isNull(rankingsObject.get("rankings"))) {
             JsonArray rankJson = rankingsObject.get("rankings").getAsJsonArray();
@@ -48,8 +48,17 @@ public class RankingsResponseDeserializer implements JsonDeserializer<RankingRes
             sortOrders = new ArrayList<>();
         }
 
+        if (!isNull(rankingsObject.get("extra_stats_info"))) {
+            JsonArray extraStatsJson = rankingsObject.get("extra_stats_info").getAsJsonArray();
+            extraStats = context.deserialize(extraStatsJson,
+                                             new TypeToken<List<RankingSortOrder>>(){}.getType());
+        } else {
+            extraStats = new ArrayList<>();
+        }
+
         rankingResponse.setRankings(teamRanks);
         rankingResponse.setSortOrderInfo(sortOrders);
+        rankingResponse.setExtraStatsInfo(extraStats);
         return rankingResponse;
     }
 
@@ -65,6 +74,9 @@ public class RankingsResponseDeserializer implements JsonDeserializer<RankingRes
 
         data.add("sort_order_info", context.serialize(src.getSortOrderInfo(),
                                                       new TypeToken<List<RankingSortOrder>>(){}.getType()));
+
+        data.add("extra_stats_info", context.serialize(src.getExtraStatsInfo(),
+                                                       new TypeToken<List<RankingSortOrder>>(){}.getType()));
         return data;
     }
 

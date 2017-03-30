@@ -14,6 +14,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 public final class RankingFormatter {
 
     public static final int NONE = 0;
@@ -43,6 +45,7 @@ public final class RankingFormatter {
 
     public static String buildRankingString(IRankingItem rankData,
                                             List<IRankingSortOrder> sortOrders,
+                                            @Nullable List<IRankingSortOrder> extraStats,
                                             Resources resources,
                                             @RankingStringOptions int flags) {
         Map<String, String> rankingElements = new LinkedHashMap<>();
@@ -50,10 +53,20 @@ public final class RankingFormatter {
             rankingElements.put(resources.getString(R.string.rank_qual_average),
                                 ThreadSafeFormatters.formatDoubleOnePlace(rankData.getQualAverage()));
         }
-        for (int j = 0; j < sortOrders.size(); j++) {
+        for (int j = 0; j < Math.min(sortOrders.size(), rankData.getSortOrders().size()); j++) {
             String rankString;
             Double rankValue = rankData.getSortOrders().get(j);
             IRankingSortOrder sort = sortOrders.get(j);
+            rankString = formatSortOrder(sort, rankValue);
+            rankingElements.put(sort.getName(), rankString);
+        }
+
+        for (int j = 0;
+             extraStats != null && j < Math.min(extraStats.size(), rankData.getExtraStats().size());
+             j++) {
+            String rankString;
+            Double rankValue = rankData.getExtraStats().get(j);
+            IRankingSortOrder sort = extraStats.get(j);
             rankString = formatSortOrder(sort, rankValue);
             rankingElements.put(sort.getName(), rankString);
         }

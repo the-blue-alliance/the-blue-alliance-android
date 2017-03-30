@@ -1147,6 +1147,7 @@
         "rank",
         "record",
         "sort_orders",
+        "extra_stats",
         "team_key"
       ],
       "properties": {
@@ -1173,6 +1174,14 @@
         "sort_orders": {
           "type": "array",
           "description": "Year-specific ranking values",
+          "items": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "extra_stats": {
+          "type": "array",
+          "description": "Year-specific values unofficially calculated by TBA",
           "items": {
             "type": "number",
             "format": "double"
@@ -1215,6 +1224,12 @@
           }
         },
         "sort_order_info": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RankingSortOrder"
+          }
+        },
+        "extra_stats_info": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/RankingSortOrder"

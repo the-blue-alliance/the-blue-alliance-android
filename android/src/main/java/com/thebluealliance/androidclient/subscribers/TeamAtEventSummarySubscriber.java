@@ -123,7 +123,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
         @Nullable List<IRankingSortOrder> sortOrders = qualData != null ? qualData.getSortOrderInfo() : null;
         if (rankData != null && sortOrders != null) {
             rank = rankData.getRank();
-            rankingString = buildRankingString(rankData, sortOrders, mResources, NONE);
+            rankingString = buildRankingString(rankData, sortOrders, null, mResources, NONE);
             rankBreakdownItem = new LabelValueViewModel(mResources.getString(R.string.team_at_event_rank_breakdown),
                                                         rankingString);
         }

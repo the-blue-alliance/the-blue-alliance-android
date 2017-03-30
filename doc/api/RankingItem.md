@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **dq** | **Integer** | Number of times the team was disqualified from a match | 
+**extraStats** | **List&lt;Double&gt;** | Year-specific values unofficially calculated by TBA | 
 **matchesPlayed** | **Integer** | Number of matches this team has played | 
 **qualAverage** | **Double** | For some years, average qualification score |  [optional]
 **rank** | **Integer** | Ranking of this team | 

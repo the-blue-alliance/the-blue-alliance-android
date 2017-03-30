@@ -15,6 +15,7 @@ public class RankingResponseObject implements IRankingResponseObject {
 
     private List<IRankingItem> rankings;
     private List<IRankingSortOrder> sortOrderInfo;
+    private List<IRankingSortOrder> extraStatsInfo;
     private String eventKey;
 
     private @Nullable Long lastModified;
@@ -34,6 +35,16 @@ public class RankingResponseObject implements IRankingResponseObject {
     @Override
     public void setSortOrderInfo(List<IRankingSortOrder> sortOrderInfo) {
         this.sortOrderInfo = sortOrderInfo;
+    }
+
+    @Nullable @Override
+    public List<IRankingSortOrder> getExtraStatsInfo() {
+        return extraStatsInfo;
+    }
+
+    @Override
+    public void setExtraStatsInfo(List<IRankingSortOrder> extraStatsInfo) {
+        this.extraStatsInfo = extraStatsInfo;
     }
 
     public String getEventKey() {

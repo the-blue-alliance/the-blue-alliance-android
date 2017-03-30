@@ -39,8 +39,22 @@ import javax.annotation.Nullable;
 /**
  * RankingResponseObject
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-10T14:16:43.499-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-30T15:18:38.021-04:00")
 public interface IRankingResponseObject   {
+
+
+
+
+   /**
+   * Get extraStatsInfo
+   * @return extraStatsInfo
+  **/
+  @ApiModelProperty(example = "null", value = "")
+  @Nullable
+  public List<IRankingSortOrder> getExtraStatsInfo();
+
+  public void setExtraStatsInfo(List<IRankingSortOrder> extraStatsInfo);
+
 
 
    /**

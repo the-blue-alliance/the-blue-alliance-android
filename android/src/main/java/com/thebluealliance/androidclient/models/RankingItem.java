@@ -13,6 +13,7 @@ public class RankingItem implements IRankingItem {
     private Integer dq;
     private Integer rank;
     private List<Double> sortOrders;
+    private List<Double> extraStats;
     private String teamKey;
 
     private @Nullable ITeamRecord record;
@@ -48,6 +49,14 @@ public class RankingItem implements IRankingItem {
 
     @Override public void setSortOrders(List<Double> sortOrders) {
         this.sortOrders = sortOrders;
+    }
+
+    @Override public List<Double> getExtraStats() {
+        return extraStats;
+    }
+
+    @Override public void setExtraStats(List<Double> extraStats) {
+        this.extraStats = extraStats;
     }
 
     @Override public String getTeamKey() {

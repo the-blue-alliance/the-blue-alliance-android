@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * Team
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-10T14:16:43.499-05:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-30T15:18:38.021-04:00")
 public interface ITeam   {
 
 
