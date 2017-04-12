@@ -52,15 +52,6 @@
           },
           "description": "A list of event keys that are not publishing data"
         },
-        "champsPitLocationsUrl": {
-          "type": "string",
-          "description": "Location of data file for CMP pits"
-        },
-        "champsPitLocationsUpdateTime": {
-          "type": "integer",
-          "format": "int64",
-          "description": "Last update of CMP pit location"
-        },
         "hasMessage": {
           "type": "boolean",
           "description": "Is there an admin message to show?"

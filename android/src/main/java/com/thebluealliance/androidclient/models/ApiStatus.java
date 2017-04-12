@@ -9,8 +9,6 @@ import javax.annotation.Nullable;
 
 public class ApiStatus implements IApiStatus {
 
-    private Long champsPitLocationsUpdateTime;
-    private String champsPitLocationsUrl;
     private Integer currentSeason;
     private List<String> downEvents;
     private Boolean fmsApiDown;
@@ -29,22 +27,6 @@ public class ApiStatus implements IApiStatus {
 
     public ApiStatus() {
 
-    }
-
-    @Nullable @Override public Long getChampsPitLocationsUpdateTime() {
-        return champsPitLocationsUpdateTime;
-    }
-
-    @Override public void setChampsPitLocationsUpdateTime(Long champsPitLocationsUpdateTime) {
-        this.champsPitLocationsUpdateTime = champsPitLocationsUpdateTime;
-    }
-
-    @Nullable @Override public String getChampsPitLocationsUrl() {
-        return champsPitLocationsUrl;
-    }
-
-    @Override public void setChampsPitLocationsUrl(String champsPitLocationsUrl) {
-        this.champsPitLocationsUrl = champsPitLocationsUrl;
     }
 
     @Nullable @Override public Integer getCurrentSeason() {

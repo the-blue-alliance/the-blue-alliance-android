@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.binders;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
 import com.thebluealliance.androidclient.types.MediaType;
@@ -30,6 +31,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     private static final int TEAM_FULL_NAME_COLLAPSED_MAX_LINES = 3;
 
     @Inject SocialClickListener mSocialClickListener;
+    @Inject AppConfig mAppConfig;
 
     @Bind(R.id.content) View content;
     @Bind(R.id.team_name) TextView teamName;
@@ -63,7 +65,8 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     @Bind(R.id.champs_pit_location) TextView champsPitLocation;
 
     @Inject
-    public TeamInfoBinder(SocialClickListener socialClickListener) {
+    public TeamInfoBinder(AppConfig appConfig, SocialClickListener socialClickListener) {
+        mAppConfig = appConfig;
         mSocialClickListener = socialClickListener;
     }
 
