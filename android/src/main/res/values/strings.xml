@@ -176,4 +176,17 @@
     <string name="playoff_advancement_semi">This alliance made it to the Semifinals</string>
     <string name="playoff_advancement_final">This alliance made it to the Finals</string>
     <string name="playoff_advancement_winner">This alliance won the event</string>
+
+    <!-- Event Types & Headers -->
+    <string name="event_type_regional">Regional Events</string>
+    <string name="event_type_district">District Events</string>
+    <string name="event_type_dcmp_division">District Championship Divisions</string>
+    <string name="event_type_dcmp">District Championships</string>
+    <string name="event_type_cmp_division">Championship Divisions</string>
+    <string name="event_type_cmp">Championship Finals</string>
+    <string name="event_type_offseason">Offseason Events</string>
+    <string name="event_type_preseason">Preseason Events</string>
+    <string name="event_type_other">Other Events</string>
+    <string name="week_events_header">%1$s Events</string>
+    <string name="district_events_header">%1$s District Events</string>
 </resources>

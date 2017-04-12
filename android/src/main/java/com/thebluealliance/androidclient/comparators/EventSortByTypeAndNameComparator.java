@@ -18,7 +18,9 @@ public class EventSortByTypeAndNameComparator implements Comparator<Event> {
                 return districtSort;
             }
         } else {
-            int typeCompare = event.getEventType().compareTo(event2.getEventType());
+            EventType type1 = event.getEventTypeEnum();
+            EventType type2 = event2.getEventTypeEnum();
+            int typeCompare = type1.getSortOrder() - type2.getSortOrder();
             if (typeCompare == 0 && event.getEventTypeEnum() == EventType.DISTRICT) {
                 return event.getEventDistrictEnum().compareTo(event2.getEventDistrictEnum());
             } else {

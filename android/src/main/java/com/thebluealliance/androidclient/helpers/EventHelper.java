@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.helpers;
 
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
@@ -221,8 +222,8 @@ public final class EventHelper {
             List<Object> output,
             Comparator<Event> comparator) {
         Collections.sort(events, comparator);
-        EventType lastType = null, currentType = null;
-        int lastDistrict = -1, currentDistrict = -1;
+        EventType lastType = null, currentType;
+        int lastDistrict = -1, currentDistrict;
         for (Event event : events) {
             currentType = event.getEventTypeEnum();
             currentDistrict = event.getEventDistrictEnum() != null
@@ -230,12 +231,14 @@ public final class EventHelper {
                               : -1;
             if (currentType != lastType
                 || (currentType == EventType.DISTRICT && currentDistrict != lastDistrict)) {
+                String headerTitle;
                 if (currentType == EventType.DISTRICT) {
-                    output.add(new ListSectionHeaderViewModel(event.getEventDistrictString()
-                                                              + " District Events"));
+                    headerTitle = context.getString(R.string.district_events_header,
+                                                    event.getEventDistrictString());
                 } else {
-                    output.add(new ListSectionHeaderViewModel(currentType.toString()));
+                    headerTitle = context.getString(currentType.getCategoryName());
                 }
+                output.add(new ListSectionHeaderViewModel(headerTitle));
             }
             output.add(event.renderToViewModel(context, Event.RENDER_BASIC));
 
@@ -255,11 +258,12 @@ public final class EventHelper {
             List<Event> events,
             List<Object> output) {
         Collections.sort(events, new EventSortByDateComparator());
-        String lastHeader = null, currentHeader = null;
+        String lastHeader = null, currentHeader;
         for (Event event : events) {
             currentHeader = weekLabelFromNum(event.getYear(), event.getWeek());
             if (!currentHeader.equals(lastHeader)) {
-                output.add(new ListSectionHeaderViewModel(currentHeader + " Events"));
+                String headerTitle = context.getString(R.string.week_events_header, currentHeader);
+                output.add(new ListSectionHeaderViewModel(headerTitle));
             }
             output.add(event.renderToViewModel(context, Event.RENDER_BASIC));
 
