@@ -17,7 +17,7 @@ public enum EventType {
         switch (ordinal()) {
             default:
             case 0:
-                return "";
+                return "Other Events";
             case 1:
                 return "Regional Events";
             case 2:
