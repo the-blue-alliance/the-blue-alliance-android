@@ -111,6 +111,9 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
 
     @Override
     public String getEventCode() {
+        if (eventCode == null) {
+            return EventHelper.getEventCode(key);
+        }
         return eventCode;
     }
 
@@ -413,8 +416,8 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
 
     public String getSearchTitles() {
         Integer year = getYear();
-        return String.format("%1$s,%2$s %3$s,%4$s %5$s,%6$s %7$s",
-                             getKey(), year, getName(), year, getShortName(), getEventCode(), year);
+        return String.format("%1$s,%2$s %3$s,%4$s %5$s,%6$s",
+                             getKey(), year, getName(), year, getShortName(), getEventCode());
     }
 
     @Nullable @Override
