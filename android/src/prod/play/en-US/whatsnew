@@ -1,9 +1,8 @@
-Version 4.2.1:
-  - Show extra rankings status unofficially calculated by TBA
+Version 4.2.2:
+  - Fix searching by event code
+  - Support MSC divisions
   - Other minor bug fixes
 
 View the full changelog for this and previous releases on the GitHub page:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
-
-
 
