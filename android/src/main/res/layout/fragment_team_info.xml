@@ -87,15 +87,15 @@
                                 android:id="@+id/champs_pit_location_label"
                                 style="@style/InfoItemSecondaryTextStyle"
                                 android:layout_centerVertical="false"
-                                android:layout_toRightOf="@id/champs_pit_location_icon"
-                                android:text="@string/championship_pit_location" />
+                                android:layout_toEndOf="@id/champs_pit_location_icon"
+                                android:text="@string/pit_location" />
 
                             <TextView
                                 android:id="@+id/champs_pit_location"
                                 style="@style/InfoItemTextStyle"
                                 android:layout_below="@id/champs_pit_location_label"
                                 android:layout_centerVertical="false"
-                                android:layout_toRightOf="@id/champs_pit_location_icon"
+                                android:layout_toEndOf="@id/champs_pit_location_icon"
                                 tools:text="Q16 (Tesla)" />
                         </RelativeLayout>
                     </FrameLayout>

@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.binders;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
 import com.thebluealliance.androidclient.types.MediaType;
@@ -31,7 +30,6 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     private static final int TEAM_FULL_NAME_COLLAPSED_MAX_LINES = 3;
 
     @Inject SocialClickListener mSocialClickListener;
-    @Inject AppConfig mAppConfig;
 
     @Bind(R.id.content) View content;
     @Bind(R.id.team_name) TextView teamName;
@@ -65,8 +63,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     @Bind(R.id.champs_pit_location) TextView champsPitLocation;
 
     @Inject
-    public TeamInfoBinder(AppConfig appConfig, SocialClickListener socialClickListener) {
-        mAppConfig = appConfig;
+    public TeamInfoBinder(SocialClickListener socialClickListener) {
         mSocialClickListener = socialClickListener;
     }
 
@@ -197,12 +194,9 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
         }
 
         champsPitLocationContainer.setVisibility(View.GONE);
-        if (PitLocationHelper.shouldShowPitLocation(mActivity, data.teamKey)) {
-            PitLocationHelper.TeamPitLocation loc = PitLocationHelper.getPitLocation(mActivity, data.teamKey);
-            if (loc != null){
-                champsPitLocationContainer.setVisibility(View.VISIBLE);
-                champsPitLocation.setText(loc.getAddressString());
-            }
+        if (data.showPitLocation && data.pitLocation != null) {
+            champsPitLocationContainer.setVisibility(View.VISIBLE);
+            champsPitLocation.setText(data.pitLocation.getAddressString());
         }
 
         teamNextMatchLabel.setVisibility(View.GONE);
@@ -315,5 +309,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
         public String motto;
         public int teamNumber;
         public Map<MediaType, String> socialMedia;
+        public boolean showPitLocation;
+        public @Nullable PitLocationHelper.TeamPitLocation pitLocation;
     }
 }

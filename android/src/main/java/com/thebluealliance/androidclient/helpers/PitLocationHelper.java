@@ -2,10 +2,11 @@ package com.thebluealliance.androidclient.helpers;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.models.ApiStatus;
+import com.thebluealliance.androidclient.config.AppConfig;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.JsonReader;
 
@@ -17,10 +18,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.CacheControl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 /**
  * Encapsulation of special-cased stuff for showing pit locations at 2016 Champs
@@ -34,23 +37,25 @@ public final class PitLocationHelper {
     private static final String LAST_UPDATED_PREF_KEY = "cmp_pit_locations_update_time";
     private static final String PIT_LOCATIONS_FILENAME = "2016_pit_locations.json";
 
+    private static final String SHOW_PIT_KEY = "show_pit_location_for_team";
+    private static final String SHOW_PIT_EVENTS = "show_pit_location_events";
+    private static final String PIT_URL_KEY = "champs_pit_url";
+    private static final String PIT_LAST_UPDATE_KEY = "champs_pit_last_update";
+
     private static Map<String, TeamPitLocation> sTeamLocationCache = new HashMap<>();
 
-
-    // TODO improve in the future; perhaps read dates/events from the Status API?
-    public static boolean shouldShowPitLocation(Context context, String teamKey) {
-        Date champsStart = new GregorianCalendar(2016, GregorianCalendar.APRIL, 25).getTime();
-        Date champsEnd = new GregorianCalendar(2016, GregorianCalendar.MAY, 1).getTime();
-
-        Date now = new Date();
-        boolean isChamps = (now.after(champsStart) && now.before(champsEnd));
-        if (isChamps) {
-            return (getPitLocation(context, teamKey) != null);
-        }
-        return false;
+    public static boolean shouldShowPitLocation(AppConfig config) {
+        return config.getBoolean(SHOW_PIT_KEY);
     }
 
-    public static TeamPitLocation getPitLocation(Context context, String teamKey) {
+    public static boolean shouldShowPitLocationAtEvent(AppConfig config, String eventKey) {
+        String eventKeys = config.getString(SHOW_PIT_EVENTS);
+        return shouldShowPitLocation(config)
+                && !TextUtils.isEmpty(eventKeys)
+                && eventKeys.contains(eventKey);
+    }
+
+    public static @Nullable TeamPitLocation getPitLocation(Context context, String teamKey) {
         // First, check cache
         if (sTeamLocationCache.containsKey(teamKey)) {
             return sTeamLocationCache.get(teamKey);
@@ -88,14 +93,41 @@ public final class PitLocationHelper {
         }
     }
 
-    public static boolean shouldUpdateFromRemoteUrl(Context context, ApiStatus status) {
+    public static boolean shouldUpdateFromRemoteUrl(Context context, AppConfig config) {
         long lastUpdateTime = PreferenceManager.getDefaultSharedPreferences(context).getLong(LAST_UPDATED_PREF_KEY, -1);
-        long remoteUpdateTime = status.getChampsPitLocationsUpdateTime();
+        long remoteUpdateTime = config.getLong(PIT_LAST_UPDATE_KEY, 0);
+        String url = config.getString(PIT_URL_KEY);
         // TODO better URL validation
-        boolean validUrl = !TextUtils.isEmpty(status.getChampsPitLocationsUrl())
-                && (status.getChampsPitLocationsUrl().startsWith("http://the-blue-alliance.github.io")
-                || status.getChampsPitLocationsUrl().startsWith("https://the-blue-alliance.github.io"));
-        return validUrl && (lastUpdateTime == -1 || remoteUpdateTime > lastUpdateTime);
+        boolean validUrl = !TextUtils.isEmpty(url)
+                && (url.startsWith("http://")
+                || url.startsWith("https://"));
+        return shouldShowPitLocation(config)
+                && validUrl
+                && (lastUpdateTime == -1 || remoteUpdateTime > lastUpdateTime);
+    }
+
+    public static void updateRemoteDataIfNeeded(Context context,
+                                                AppConfig appConfig,
+                                                OkHttpClient httpClient) {
+        String remoteUrl = appConfig.getString(PIT_URL_KEY);
+        long lastUpdateTime = appConfig.getLong(PIT_LAST_UPDATE_KEY, 0);
+        if (PitLocationHelper.shouldUpdateFromRemoteUrl(context.getApplicationContext(), appConfig)
+                && !TextUtils.isEmpty(remoteUrl)) {
+            try {
+                Request request = new Request.Builder()
+                        .url(remoteUrl)
+                        .cacheControl(CacheControl.FORCE_NETWORK)
+                        .build();
+
+                okhttp3.Response champsPitLocation = httpClient.newCall(request).execute();
+                String responseString = champsPitLocation.body().string();
+                PitLocationHelper.updateFromRemoteUrl(context.getApplicationContext(),
+                                                      responseString,
+                                                      lastUpdateTime);
+            } catch (Exception e) {
+                TbaLogger.w("Unable to update champs pit locations", e);
+            }
+        }
     }
 
     private static void populateLocationsFileFromPackagedResourceIfNeeded(Context context) {

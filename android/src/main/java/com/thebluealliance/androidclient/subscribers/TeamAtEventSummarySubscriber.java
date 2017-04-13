@@ -1,8 +1,10 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
@@ -47,6 +49,8 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
     private final Resources mResources;
     private final MatchRenderer mMatchRenderer;
     private final EventsTable mEventsTable;
+    private final AppConfig mAppConfig;
+    private final EventBus mEventBus;
     private String mTeamKey;
     private String mEventKey;
     private boolean mIsMatchListLoaded;
@@ -56,12 +60,18 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
     private List<Match> mMatches;
     private List<Award> mAwards;
 
-    public TeamAtEventSummarySubscriber(Context context, MatchRenderer matchRenderer, EventsTable eventsTable) {
+    public TeamAtEventSummarySubscriber(Context context,
+                                        AppConfig config,
+                                        EventBus eventBus,
+                                        MatchRenderer matchRenderer,
+                                        EventsTable eventsTable) {
         super();
         mContext = context;
         mResources = context.getResources();
         mMatchRenderer = matchRenderer;
         mEventsTable = eventsTable;
+        mAppConfig = config;
+        mEventBus = eventBus;
         mIsMatchListLoaded = false;
         mIsAwardListLoaded = false;
         mDataToBind = new ArrayList<>();
@@ -82,17 +92,19 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
         @Nullable ITeamAtEventQual qualData = mAPIData.getQual();
         @Nullable ITeamAtEventPlayoff playoffData = mAPIData.getPlayoff();
 
+        String actionBarTitle = mResources.getString(R.string.team_actionbar_title, mTeamKey.substring(3));
+        String actionBarSubtitle;
         Event event = mEventsTable.get(mEventKey);
         if (event == null) {
+            actionBarSubtitle = mResources.getString(R.string.team_at_event_actionbar_fallback, mEventKey);
+            mEventBus.post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
             return;
         }
 
         int year = event.getYear();
         boolean activeEvent = event.isHappeningNow();
-        String actionBarTitle = mResources.getString(R.string.team_actionbar_title, mTeamKey.substring(3));
-        String actionBarSubtitle = mResources.getString(R.string.team_at_event_actionbar_subtitle, year, event.getShortName());
-        EventBus.getDefault().post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
-
+        actionBarSubtitle = mResources.getString(R.string.team_at_event_actionbar_subtitle, year, event.getShortName());
+        mEventBus.post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
 
         String playoffStatusString = mAPIData.getPlayoffStatusStr();
         String allianceStatusString= mAPIData.getAllianceStatusStr();
@@ -149,13 +161,12 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
                     awardsString));
         }
 
-        if (event.isChampsEvent()
-            && event.getYear() == 2016
-            && PitLocationHelper.shouldShowPitLocation(mContext, mTeamKey)) {
+        // Pit Location Stuff
+        if (PitLocationHelper.shouldShowPitLocationAtEvent(mAppConfig, mEventKey)) {
             PitLocationHelper.TeamPitLocation location = PitLocationHelper
                     .getPitLocation(mContext, mTeamKey);
             if (location != null) {
-                mDataToBind.add(new LabelValueViewModel(mResources.getString(R.string.championship_pit_location),
+                mDataToBind.add(new LabelValueViewModel(mResources.getString(R.string.pit_location),
                                                         location.getAddressString()));
             }
         }

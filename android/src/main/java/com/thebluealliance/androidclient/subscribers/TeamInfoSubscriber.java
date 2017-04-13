@@ -2,16 +2,25 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
+import com.thebluealliance.androidclient.config.AppConfig;
+import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.MediaType;
+
+import android.content.Context;
 
 import java.util.List;
 import java.util.Map;
 
 public class TeamInfoSubscriber extends BaseAPISubscriber<TeamInfoSubscriber.Model, TeamInfoBinder.Model>{
 
-    public TeamInfoSubscriber() {
+    private final Context mContext;
+    private final AppConfig mAppConfig;
+
+    public TeamInfoSubscriber(Context context, AppConfig appConfig) {
+        mContext = context;
+        mAppConfig = appConfig;
         mDataToBind = null;
     }
 
@@ -45,6 +54,10 @@ public class TeamInfoSubscriber extends BaseAPISubscriber<TeamInfoSubscriber.Mod
             MediaType mediaType = MediaType.fromString(media.getType());
             socialMediaByType.put(mediaType, media.getForeignKey());
         }
+
+        // CMP Pit Location Stuff
+        mDataToBind.showPitLocation = PitLocationHelper.shouldShowPitLocation(mAppConfig);
+        mDataToBind.pitLocation = PitLocationHelper.getPitLocation(mContext, team.getKey());
     }
 
     @Override

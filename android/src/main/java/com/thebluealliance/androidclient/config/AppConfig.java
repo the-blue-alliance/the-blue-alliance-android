@@ -45,6 +45,11 @@ public class AppConfig {
         return mFirebaseRemoteConfig != null && mFirebaseRemoteConfig.getBoolean(key);
     }
 
+    public long getLong(String key, long defaultValue) {
+        if (mFirebaseRemoteConfig == null) return defaultValue;
+        return mFirebaseRemoteConfig.getLong(key);
+    }
+
     public void updateRemoteData() {
         updateDataInternal(null);
     }

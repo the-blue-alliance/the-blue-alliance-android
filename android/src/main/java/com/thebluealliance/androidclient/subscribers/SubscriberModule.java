@@ -40,8 +40,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public TeamInfoSubscriber provideTeamInfoSubscriber() {
-        return new TeamInfoSubscriber();
+    public TeamInfoSubscriber provideTeamInfoSubscriber(Context context, AppConfig config) {
+        return new TeamInfoSubscriber(context.getApplicationContext(), config);
     }
 
     @Provides
@@ -106,8 +106,14 @@ public class SubscriberModule {
 
     @Provides
     public TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(MatchRenderer renderer,
-                                                                            Database db) {
-        return new TeamAtEventSummarySubscriber(mActivity, renderer, db.getEventsTable());
+                                                                            Database db,
+                                                                            AppConfig config,
+                                                                            EventBus bus) {
+        return new TeamAtEventSummarySubscriber(mActivity.getApplicationContext(),
+                                                config,
+                                                bus,
+                                                renderer,
+                                                db.getEventsTable());
     }
 
     @Provides

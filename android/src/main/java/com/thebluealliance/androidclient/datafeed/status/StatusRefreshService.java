@@ -24,9 +24,7 @@ import java.util.concurrent.ExecutionException;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import okhttp3.CacheControl;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import retrofit2.Response;
 import rx.schedulers.Schedulers;
 
@@ -94,24 +92,7 @@ public class StatusRefreshService extends IntentService {
         mEventBus.post(status);
 
         /* Update Champs pit locations if necessary */
-        if (status.getChampsPitLocationsUrl() != null
-                && status.getChampsPitLocationsUpdateTime() != null
-                && PitLocationHelper.shouldUpdateFromRemoteUrl(getApplicationContext(), status)) {
-            try {
-                Request request = new Request.Builder()
-                        .url(status.getChampsPitLocationsUrl())
-                        .cacheControl(CacheControl.FORCE_NETWORK)
-                        .build();
-
-                okhttp3.Response champsPitLocation = mHttpClient.newCall(request).execute();
-                String responseString = champsPitLocation.body().string();
-                PitLocationHelper.updateFromRemoteUrl(getApplicationContext(),
-                                                      responseString,
-                                                      status.getChampsPitLocationsUpdateTime());
-            } catch (Exception e) {
-                TbaLogger.w("Unable to update champs pit locations", e);
-            }
-        }
+        PitLocationHelper.updateRemoteDataIfNeeded(getApplicationContext(), mAppConfig, mHttpClient);
 
         if (status.getMinAppVersion() != null
                 && BuildConfig.VERSION_CODE < status.getMinAppVersion()) {
