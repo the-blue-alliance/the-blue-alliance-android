@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.datafeed.retrofit;
 
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 
@@ -7,7 +9,6 @@ import com.thebluealliance.androidclient.TbaLogger;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.net.SocketTimeoutException;
 
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
@@ -33,10 +34,12 @@ public class LenientGsonResponseBodyConverter<T> implements Converter<ResponseBo
             reader.setLenient(true);
             return adapter.read(reader);
         } catch (Exception e) {
-            if (e instanceof SocketTimeoutException) {
+            if (e instanceof JsonIOException) {
                 TbaLogger.w("Timeout reading data");
+            } else if (e instanceof JsonSyntaxException) {
+                TbaLogger.w("Got invalid json: " + e.getMessage());
             } else {
-                TbaLogger.e("Got bad JSON", e);
+                TbaLogger.e("Error parsing json response", e);
             }
             return null;
         } finally {
