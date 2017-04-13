@@ -1,6 +1,8 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
+import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Media;
@@ -9,24 +11,32 @@ import com.thebluealliance.androidclient.models.Team;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+
+import android.content.Context;
 
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(RobolectricTestRunner.class)
+@RunWith(DefaultTestRunner.class)
 @Config(manifest = Config.NONE)
 public class TeamInfoSubscriberTest {
+
+    @Mock AppConfig mAppConfig;
 
     private TeamInfoSubscriber mSubscriber;
     private TeamInfoSubscriber.Model mModel;
 
     @Before
     public void setUp() {
-        mSubscriber = new TeamInfoSubscriber();
+        MockitoAnnotations.initMocks(this);
+        Context context = RuntimeEnvironment.application;
+        mSubscriber = new TeamInfoSubscriber(context, mAppConfig);
         Team team = ModelMaker.getModel(Team.class, "frc1124");
         List<Media> socialMedia = ModelMaker.getModelList(Media.class, "frc1124_social_media");
         mModel = new TeamInfoSubscriber.Model(team, socialMedia);
