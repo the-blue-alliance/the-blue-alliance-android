@@ -13,7 +13,6 @@ import com.thebluealliance.androidclient.models.Event;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabaseLockedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +93,7 @@ public class EventsTable extends ModelTable<Event> {
 
     @Override
     protected void insertCallback(Event event) {
-        mDb.beginTransaction();
+        Database.beginTransaction(mDb);
         try {
             ContentValues cv = new ContentValues();
             cv.put(Database.SearchEvent.KEY, event.getKey());
@@ -109,11 +108,7 @@ public class EventsTable extends ModelTable<Event> {
             }
             mDb.setTransactionSuccessful();
         } catch (Exception ex) {
-            if (ex instanceof SQLiteDatabaseLockedException) {
-                TbaLogger.d("Databse locked: " + ex.getMessage());
-            } else {
-                TbaLogger.w("Error in Event insert callback", ex);
-            }
+            TbaLogger.w("Error in Event insert callback", ex);
         } finally {
             mDb.endTransaction();
         }
@@ -121,7 +116,7 @@ public class EventsTable extends ModelTable<Event> {
 
     @Override
     protected void updateCallback(Event event) {
-        mDb.beginTransaction();
+        Database.beginTransaction(mDb);
         try {
             ContentValues cv = new ContentValues();
             cv.put(Database.SearchEvent.KEY, event.getKey());
@@ -135,11 +130,7 @@ public class EventsTable extends ModelTable<Event> {
                        new String[]{event.getKey()});
             mDb.setTransactionSuccessful();
         } catch (Exception ex) {
-            if (ex instanceof SQLiteDatabaseLockedException) {
-                TbaLogger.d("Databse locked: " + ex.getMessage());
-            } else {
-                TbaLogger.w("Error in Event update callback", ex);
-            }
+            TbaLogger.w("Error in Event update callback", ex);
         } finally {
             mDb.endTransaction();
         }
@@ -147,18 +138,14 @@ public class EventsTable extends ModelTable<Event> {
 
     @Override
     protected void deleteCallback(Event event) {
-        mDb.beginTransaction();
+        Database.beginTransaction(mDb);
         try {
             mDb.delete(Database.TABLE_SEARCH_EVENTS,
                        Database.SearchEvent.KEY + " = ?",
                        new String[]{event.getKey()});
             mDb.setTransactionSuccessful();
         } catch (Exception ex) {
-            if (ex instanceof SQLiteDatabaseLockedException) {
-                TbaLogger.d("Databse locked: " + ex.getMessage());
-            } else {
-                TbaLogger.w("Error in Event delete callback", ex);
-            }
+            TbaLogger.w("Error in Event delete callback", ex);
         } finally {
             mDb.endTransaction();
         }
@@ -166,16 +153,12 @@ public class EventsTable extends ModelTable<Event> {
 
     @Override
     protected void deleteAllCallback() {
-        mDb.beginTransaction();
+        Database.beginTransaction(mDb);
         try {
             mDb.execSQL("delete from " + Database.TABLE_SEARCH_EVENTS);
             mDb.setTransactionSuccessful();
         } catch (Exception ex) {
-            if (ex instanceof SQLiteDatabaseLockedException) {
-                TbaLogger.d("Databse locked: " + ex.getMessage());
-            } else {
-                TbaLogger.w("Error in Event delete all callback", ex);
-            }
+            TbaLogger.w("Error in Event delete all callback", ex);
         } finally {
             mDb.endTransaction();
         }
@@ -207,16 +190,12 @@ public class EventsTable extends ModelTable<Event> {
     }
 
     public void deleteAllSearchIndexes() {
-        mDb.beginTransaction();
+        Database.beginTransaction(mDb);
         try {
             mDb.rawQuery("DELETE FROM " + getTableName(), new String[]{});
             mDb.setTransactionSuccessful();
         } catch (Exception ex) {
-            if (ex instanceof SQLiteDatabaseLockedException) {
-                TbaLogger.d("Databse locked: " + ex.getMessage());
-            } else {
-                TbaLogger.w("Error in delete all search indexes", ex);
-            }
+            TbaLogger.w("Error in delete all search indexes", ex);
         } finally {
             mDb.endTransaction();
         }
@@ -227,7 +206,7 @@ public class EventsTable extends ModelTable<Event> {
     }
 
     public void recreateAllSearchIndexes(List<Event> events) {
-        mDb.beginTransaction();
+        Database.beginTransaction(mDb);
         try {
             for (int i = 0; i < events.size(); i++) {
                 insertCallback(events.get(i));

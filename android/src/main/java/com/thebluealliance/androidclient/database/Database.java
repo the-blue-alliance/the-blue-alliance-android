@@ -289,9 +289,14 @@ public class Database extends SQLiteOpenHelper {
 
     @WorkerThread
     public void beginTransaction() {
+        beginTransaction(mDb);
+    }
+
+    @WorkerThread
+    public static synchronized void beginTransaction(SQLiteDatabase db) {
         do {
             try {
-                mDb.beginTransaction();
+                db.beginTransaction();
                 break;
             } catch (SQLiteDatabaseLockedException ex) {
                 // Ignored. Retry in a bit...
