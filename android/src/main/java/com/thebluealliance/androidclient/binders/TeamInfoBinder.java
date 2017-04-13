@@ -194,12 +194,9 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
         }
 
         champsPitLocationContainer.setVisibility(View.GONE);
-        if (PitLocationHelper.shouldShowPitLocation(mActivity, data.teamKey)) {
-            PitLocationHelper.TeamPitLocation loc = PitLocationHelper.getPitLocation(mActivity, data.teamKey);
-            if (loc != null){
-                champsPitLocationContainer.setVisibility(View.VISIBLE);
-                champsPitLocation.setText(loc.getAddressString());
-            }
+        if (data.showPitLocation && data.pitLocation != null) {
+            champsPitLocationContainer.setVisibility(View.VISIBLE);
+            champsPitLocation.setText(data.pitLocation.getAddressString());
         }
 
         teamNextMatchLabel.setVisibility(View.GONE);
@@ -312,5 +309,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
         public String motto;
         public int teamNumber;
         public Map<MediaType, String> socialMedia;
+        public boolean showPitLocation;
+        public @Nullable PitLocationHelper.TeamPitLocation pitLocation;
     }
 }

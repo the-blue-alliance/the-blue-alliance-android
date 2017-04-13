@@ -4,8 +4,6 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**champsPitLocationsUpdateTime** | **Long** | Last update of CMP pit location |  [optional]
-**champsPitLocationsUrl** | **String** | Location of data file for CMP pits |  [optional]
 **currentSeason** | **Integer** | Current default year to show |  [optional]
 **downEvents** | **List&lt;String&gt;** | A list of event keys that are not publishing data |  [optional]
 **fmsApiDown** | **Boolean** | Is FIRST&#39;s datafeed down? |  [optional]

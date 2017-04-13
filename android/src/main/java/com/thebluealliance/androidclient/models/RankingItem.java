@@ -125,8 +125,9 @@ public class RankingItem implements IRankingItem {
                    + record.getTies();
         }
 
-        public static boolean isEmpty(ITeamRecord record) {
-            if (record.getWins() == null
+        public static boolean isEmpty(@Nullable ITeamRecord record) {
+            if (record == null
+                || record.getWins() == null
                 || record.getLosses() == null
                 || record.getTies() == null) {
                 return true;

@@ -124,20 +124,6 @@ public class APIStatusDeserializer implements JsonDeserializer<ApiStatus> {
             status.setLastOkHttpCacheClear((long) -1);
         }
 
-        JsonElement champsPitLocationsUrl = data.get(CHAMPS_PIT_LOCATIONS_URL);
-        if (champsPitLocationsUrl != null && !champsPitLocationsUrl.isJsonNull()) {
-            status.setChampsPitLocationsUrl(champsPitLocationsUrl.getAsString());
-        } else {
-            status.setChampsPitLocationsUrl(null);
-        }
-
-        JsonElement champsPitLocationsUpdateTime = data.get(CHAMPS_PIT_LOCATIONS_UPDATE_TIME);
-        if (champsPitLocationsUpdateTime != null && !champsPitLocationsUpdateTime.isJsonNull()) {
-            status.setChampsPitLocationsUpdateTime(champsPitLocationsUpdateTime.getAsLong());
-        } else {
-            status.setChampsPitLocationsUpdateTime((long)-1);
-        }
-
         status.setJsonBlob(json.toString());
         return status;
     }

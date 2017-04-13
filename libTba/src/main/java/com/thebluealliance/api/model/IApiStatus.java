@@ -37,32 +37,8 @@ import javax.annotation.Nullable;
 /**
  * ApiStatus
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-03-30T15:18:38.021-04:00")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-04-12T17:25:08.276-04:00")
 public interface IApiStatus   {
-
-
-   /**
-   * Last update of CMP pit location
-   * @return champsPitLocationsUpdateTime
-  **/
-  @ApiModelProperty(example = "null", value = "Last update of CMP pit location")
-  @Nullable
-  public Long getChampsPitLocationsUpdateTime();
-
-  public void setChampsPitLocationsUpdateTime(Long champsPitLocationsUpdateTime);
-
-
-
-   /**
-   * Location of data file for CMP pits
-   * @return champsPitLocationsUrl
-  **/
-  @ApiModelProperty(example = "null", value = "Location of data file for CMP pits")
-  @Nullable
-  public String getChampsPitLocationsUrl();
-
-  public void setChampsPitLocationsUrl(String champsPitLocationsUrl);
-
 
 
    /**
