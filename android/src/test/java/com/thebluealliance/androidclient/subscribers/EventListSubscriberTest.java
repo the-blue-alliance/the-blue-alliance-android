@@ -1,18 +1,18 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.renderers.EventRenderer;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import android.content.Context;
@@ -22,28 +22,24 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
 
 @Config(manifest = Config.NONE)
-@RunWith(RobolectricTestRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class EventListSubscriberTest {
 
     @Mock APICache mCache;
 
     private EventListSubscriber mSubscriber;
     private Context mContext;
-    private EventRenderer mRenderer;
     private List<Event> mEvents;
     private List<Object> mExpected;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        mContext = mock(Context.class, RETURNS_DEEP_STUBS);
+        mContext = RuntimeEnvironment.application;
 
         mEvents = ModelMaker.getModelList(Event.class, "2015_events");
-        mRenderer = new EventRenderer(mCache);
         mSubscriber = new EventListSubscriber(mContext);
         mExpected = new ArrayList<>();
     }
