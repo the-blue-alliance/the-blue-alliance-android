@@ -1,7 +1,8 @@
-Version 4.2.2:<br>
+Version 4.2.3:<br>
   - Fix searching by event code<br>
   - Support MSC divisions<br>
-  - Other minor bug fixes<br>
+  - Fix blank screens when opening events<br>
+  - Fix rotor/kpa bonus text alignment<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>
