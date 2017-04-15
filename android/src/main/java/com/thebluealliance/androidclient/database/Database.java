@@ -20,7 +20,6 @@ import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.support.annotation.VisibleForTesting;
@@ -198,6 +197,8 @@ public class Database extends SQLiteOpenHelper {
             + NotificationsTable.ACTIVE + " INTEGER DEFAULT 1, "
             + NotificationsTable.MSG_DATA + " TEXT DEFAULT '')";
 
+    private static Database sDbInstance = null;
+
     protected SQLiteDatabase mDb;
 
     private TeamsTable mTeamsTable;
@@ -234,9 +235,11 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public static synchronized Database getInstance(Context context) {
-        Database databaseInstance = new Database(context.getApplicationContext());
-        databaseInstance.setWriteAheadLoggingEnabled(true);
-        return databaseInstance;
+        if (sDbInstance == null) {
+            sDbInstance = new Database(context.getApplicationContext());
+            sDbInstance.setWriteAheadLoggingEnabled(true);
+        }
+        return sDbInstance;
     }
 
     public TeamsTable getTeamsTable() {
@@ -293,7 +296,8 @@ public class Database extends SQLiteOpenHelper {
     }
 
     @WorkerThread
-    public static synchronized void beginTransaction(SQLiteDatabase db) {
+    public static void beginTransaction(SQLiteDatabase db) {
+        /* DISABLED 04-05-2017, possibly causes deadlocks. -PJL
         do {
             try {
                 db.beginTransaction();
@@ -302,14 +306,14 @@ public class Database extends SQLiteOpenHelper {
                 // Ignored. Retry in a bit...
             }
 
-            TbaLogger.d("Unable to get a DB lock to write, backing off...");
+            TbaLogger.i("Unable to get a DB lock to write, backing off...");
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 // Ignored
             }
-        } while (true);
-
+        } while (true); */
+        db.beginTransaction();
     }
 
     public void setTransactionSuccessful() {
