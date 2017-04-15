@@ -337,12 +337,13 @@
                     android:id="@+id/breakdown2017_red_pressure_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/ic_clear_black_24dp"/>
+                    android:background="@drawable/ic_clear_black_24dp"
+                    tools:background="@drawable/ic_done_black_24dp"/>
             <TextView
                     android:id="@+id/breakdown2017_red_pressure_reached"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    tools:text=""/>
+                    android:layout_height="wrap_content"
+                    tools:text=" (+ 1 RP)"/>
         </LinearLayout>
         <TextView
                 android:text="@string/breakdown2017_pressure_reached"
@@ -358,8 +359,8 @@
             <TextView
                     android:id="@+id/breakdown2017_blue_pressure_reached"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    tools:text=""/>
+                    android:layout_height="wrap_content"
+                    tools:text=" (+ 0)"/>
         </LinearLayout>
 
         <!-- All Rotors Engaged -->
@@ -374,8 +375,8 @@
             <TextView
                     android:id="@+id/breakdown2017_red_all_rotors_points"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    tools:text=""/>
+                    android:layout_height="wrap_content"
+                    tools:text=" (+ 0)"/>
         </LinearLayout>
         <TextView
                 android:text="@string/breakdown2017_all_rotors"
@@ -387,12 +388,13 @@
                     android:id="@+id/breakdown2017_blue_all_rotors_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/ic_clear_black_24dp"/>
+                    android:background="@drawable/ic_clear_black_24dp"
+                    tools:background="@drawable/ic_done_black_24dp"/>
             <TextView
                     android:id="@+id/breakdown2017_blue_all_rotors_points"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    tools:text=""/>
+                    android:layout_height="wrap_content"
+                    tools:text=" (+ 100)"/>
         </LinearLayout>
 
         <!-- Fouls -->
