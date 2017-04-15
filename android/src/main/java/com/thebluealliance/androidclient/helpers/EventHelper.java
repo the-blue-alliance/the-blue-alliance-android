@@ -118,6 +118,7 @@ public final class EventHelper {
             case REGIONAL:
             case DISTRICT:
             case DISTRICT_CMP:
+            case DCMP_DIVISION:
                 /**
                  * Special cases for 2016:
                  * Week 1 is actually Week 0.5, everything else is one less
@@ -126,16 +127,16 @@ public final class EventHelper {
                 @Nullable Integer week = e.getWeek();
                 if (e.getYear() == 2016) {
                     if (week == null) {
-                        return String.format(REGIONAL_LABEL, 0);
+                        return String.format(Locale.US, REGIONAL_LABEL, 0);
                     } else if ("2016scmb".equals(e.getKey())) {
-                        return String.format(FLOAT_REGIONAL_LABEL, 0.5);
+                        return String.format(Locale.US, FLOAT_REGIONAL_LABEL, 0.5);
                     } else {
-                        return String.format(REGIONAL_LABEL, week - 1);
+                        return String.format(Locale.US, REGIONAL_LABEL, week - 1);
                     }
                 } else if (week != null){
-                    return String.format(REGIONAL_LABEL, week);
+                    return String.format(Locale.US, REGIONAL_LABEL, week);
                 } else {
-                    return String.format(REGIONAL_LABEL, 0);
+                    return String.format(Locale.US, REGIONAL_LABEL, 0);
                 }
             case OFFSEASON:
                 String month = ThreadSafeFormatters.renderEventMonth(e.getFormattedStartDate());
