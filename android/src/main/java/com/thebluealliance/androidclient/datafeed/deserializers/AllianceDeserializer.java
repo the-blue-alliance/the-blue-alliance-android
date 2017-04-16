@@ -56,7 +56,7 @@ public class AllianceDeserializer implements JsonDeserializer<EventAlliance>,
             alliance.setBackup(context.deserialize(data.get("backup"), AllianceBackup.class));
         }
 
-        if (!isNull(data.get("status"))) {
+        if (!isNull(data.get("status")) && data.get("status").isJsonObject()) {
             alliance.setStatus(context.deserialize(data.get("status"), ITeamAtEventPlayoff.class));
         }
         return alliance;
