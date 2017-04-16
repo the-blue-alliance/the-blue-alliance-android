@@ -129,6 +129,10 @@ public class RefreshController {
         if (mIsRefreshing) {
             return;
         }
+
+        if (mRefreshableStates.isEmpty()) {
+            return;
+        }
         mIsRefreshing = true;
         for (RefreshWrapper wrapper : mRefreshableStates.values()) {
             Refreshable refreshable = wrapper.getRefreshable();

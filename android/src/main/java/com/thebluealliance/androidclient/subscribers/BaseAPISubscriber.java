@@ -38,7 +38,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     DataConsumer<BindType> mConsumer;
     protected APIType mAPIData;
     protected BindType mDataToBind;
-    RefreshController mRefreshController; //TODO hook up to DI
+    @Nullable RefreshController mRefreshController; //TODO hook up to DI
     String mRefreshTag;
     Tracker mAnalyticsTracker;
     boolean hasBinderBoundViews;
@@ -67,7 +67,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         mConsumer = consumer;
     }
 
-    public void setRefreshController(RefreshController refreshController) {
+    public void setRefreshController(@Nullable RefreshController refreshController) {
         mRefreshController = refreshController;
     }
 
@@ -83,7 +83,9 @@ public abstract class BaseAPISubscriber<APIType, BindType>
      * Called when a refresh begins
      */
     public void onRefreshStart(@RefreshController.RefreshType int refreshType) {
-        mRefreshController.notifyRefreshingStateChanged(mRefreshTag, true);
+        if (mRefreshController != null) {
+            mRefreshController.notifyRefreshingStateChanged(mRefreshTag, true);
+        }
         mRefreshStart = System.nanoTime();
         if (refreshType == RefreshController.REQUESTED_BY_USER) {
             sendRefreshUpdate();
@@ -113,7 +115,9 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     public void onCompleted() {
         shouldBindOnce = false;
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
-            mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
+            if (mRefreshController != null) {
+                mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
+            }
             if (mConsumer != null) {
                 try {
                     bindViewsIfNeeded();
@@ -133,7 +137,9 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     @Override
     public void onError(Throwable throwable) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
-            mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
+            if (mRefreshController != null) {
+                mRefreshController.notifyRefreshingStateChanged(mRefreshTag, false);
+            }
             if (mConsumer != null) {
                 bindViewsIfNeeded();
                 mConsumer.onError(throwable);

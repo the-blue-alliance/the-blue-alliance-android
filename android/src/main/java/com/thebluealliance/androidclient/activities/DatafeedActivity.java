@@ -75,6 +75,10 @@ public abstract class DatafeedActivity extends BaseActivity
         mRefreshEnabled = enabled;
     }
 
+    public RefreshController getRefreshController() {
+        return mRefreshController;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();

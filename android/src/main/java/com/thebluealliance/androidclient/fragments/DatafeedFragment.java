@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.fragments;
 
 import com.google.android.gms.analytics.Tracker;
 
+import com.thebluealliance.androidclient.activities.DatafeedActivity;
 import com.thebluealliance.androidclient.api.ApiConstants;
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
@@ -18,6 +19,7 @@ import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
 import org.greenrobot.eventbus.EventBus;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
 
@@ -44,10 +46,10 @@ public abstract class DatafeedFragment
     @Inject protected EventBus mEventBus;
     @Inject protected Lazy<EventBusSubscriber> mEventBusSubscriber;
     @Inject protected NoDataBinder mNoDataBinder;
-    @Inject protected RefreshController mRefreshController;
     @Inject protected Tracker mAnalyticsTracker;
     @Inject protected CacheableDatafeed mDatafeed;
 
+    protected @Nullable RefreshController mRefreshController;
     protected Observable<? extends T> mObservable;
     protected FragmentComponent mComponent;
     protected String mRefreshTag;
@@ -60,6 +62,13 @@ public abstract class DatafeedFragment
             mComponent = ((HasFragmentComponent) getActivity()).getComponent();
         }
         inject();
+
+        if (getActivity() instanceof DatafeedActivity) {
+            mRefreshController = ((DatafeedActivity) getActivity()).getRefreshController();
+        } else {
+            mRefreshController = null;
+        }
+
         isCurrentlyVisible = false;
         mRefreshTag = getRefreshTag();
         mSubscriber.setConsumer(mBinder);
@@ -75,7 +84,9 @@ public abstract class DatafeedFragment
     public void onResume() {
         super.onResume();
         getNewObservables(RefreshController.NOT_REQUESTED_BY_USER);
-        mRefreshController.registerRefreshable(mRefreshTag, this);
+        if (mRefreshController != null) {
+            mRefreshController.registerRefreshable(mRefreshTag, this);
+        }
         if (shouldRegisterSubscriberToEventBus()) {
             mEventBus.register(mSubscriber);
         }
@@ -87,7 +98,9 @@ public abstract class DatafeedFragment
     @Override
     public void onPause() {
         super.onPause();
-        mRefreshController.unregisterRefreshable(mRefreshTag);
+        if (mRefreshController != null) {
+            mRefreshController.unregisterRefreshable(mRefreshTag);
+        }
         if (mSubscriber != null) {
             if (shouldRegisterSubscriberToEventBus()) {
                 mEventBus.unregister(mSubscriber);
