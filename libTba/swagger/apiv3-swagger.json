@@ -7,7 +7,7 @@
   },
   "host": "www.thebluealliance.com",
   "schemes": [
-    "http"
+    "https"
   ],
   "basePath": "/api/v3",
   "produces": [
