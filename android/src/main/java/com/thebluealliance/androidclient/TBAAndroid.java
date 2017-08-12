@@ -59,6 +59,9 @@ public class TBAAndroid extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (LeakCanary.isInAnalyzerProcess(this)) return;
+        else LeakCanary.install(this);
+
         TbaLogger.i("Welcome to The Blue Alliance for Android, v" + BuildConfig.VERSION_NAME);
         getDatafeedComponenet().inject(this);
         mAppConfig.updateRemoteData();
@@ -71,10 +74,6 @@ public class TBAAndroid extends MultiDexApplication {
                             .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
 
                             .build());
-        }
-
-        if (Utilities.isDebuggable()) {
-            LeakCanary.install(this);
         }
     }
 
