@@ -216,5 +216,8 @@ Severity: EASY
         <property name="checkFormat" value="$1" />
         <property name="influenceFormat" value="1" />
     </module>
+    <module name="SuppressionFilter">
+        <property name="file" value="config/suppressions.xml"/>
+    </module>
 
 </module>
