@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.config.AppConfig;
