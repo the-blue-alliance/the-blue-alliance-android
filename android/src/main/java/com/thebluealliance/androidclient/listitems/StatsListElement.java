@@ -1,12 +1,13 @@
 package com.thebluealliance.androidclient.listitems;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
-
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 
 public class StatsListElement extends ListElement {
 
@@ -42,11 +43,7 @@ public class StatsListElement extends ListElement {
 
         holder.teamNumber.setText("" + teamNumber);
 
-        if (!teamName.isEmpty()) {
-            holder.teamName.setText(teamName);
-        } else {
-            holder.teamName.setText("Team " + teamNumber);
-        }
+        holder.teamName.setText(TextUtils.isEmpty(teamName) ? "Team " + teamNumber : teamName);
 
         holder.teamStat.setText(teamStat);
 
