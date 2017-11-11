@@ -1,16 +1,18 @@
 package com.thebluealliance.androidclient.listitems;
 
+import android.content.Context;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
+import android.view.LayoutInflater;
+import android.view.View;
+
 import com.facebook.testing.screenshot.Screenshot;
 import com.facebook.testing.screenshot.ViewHelpers;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-import android.view.LayoutInflater;
-import android.view.View;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
 public class StatsListElementTest {
@@ -26,6 +28,12 @@ public class StatsListElementTest {
 
         Screenshot.snap(view)
                   .record();
+    }
+
+    @Test
+    public void testRenderNoName() {
+        View view = getView("frc9124", "9124", null, "11.24", 1.2, 3.4, 5.6);
+        assertNotNull(view);
     }
 
     private View getView(String key, String number, String name, String stat, Double opr, Double dpr, Double ccwm) {
