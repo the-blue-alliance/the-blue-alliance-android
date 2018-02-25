@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.binders.MatchBreakdownBinder;
 import com.thebluealliance.androidclient.config.AppConfig;
@@ -17,6 +16,7 @@ import javax.inject.Inject;
 public class MatchBreakdownSubscriber extends BaseAPISubscriber<Match, MatchBreakdownBinder.Model> {
 
     public static final String SHOW_2017_KEY = "show_2017_breakdowns";
+    public static final String SHOW_2018_KEY = "show_2018_breakdowns";
 
     private final Gson mGson;
     private final AppConfig mConfig;
@@ -41,6 +41,10 @@ public class MatchBreakdownSubscriber extends BaseAPISubscriber<Match, MatchBrea
             case 2017:
                 shouldShowBreakdown = mConfig.getBoolean(SHOW_2017_KEY);
                 TbaLogger.i("Showing 2017 breakdowns? " + shouldShowBreakdown);
+                break;
+            case 2018:
+                shouldShowBreakdown = mConfig.getBoolean(SHOW_2018_KEY);
+                TbaLogger.i("Showing 2018 breakdowns? " + shouldShowBreakdown);
                 break;
         }
 
