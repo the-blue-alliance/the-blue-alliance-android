@@ -152,105 +152,105 @@
 
         <!-- Teleop Force Cubes -->
         <TextView
-            android:id="@+id/breakdown2018_teleop_red_force_cubes"
+            android:id="@+id/breakdown2018_vault_red_force_cubes"
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
-            android:text="@string/breakdown2018_teleop_force_cubes"
+            android:text="@string/breakdown2018_vault_force_cubes"
             style="@style/breakdown_category" />
         <TextView
-            android:id="@+id/breakdown2018_teleop_blue_force_cubes"
+            android:id="@+id/breakdown2018_vault_blue_force_cubes"
             style="@style/breakdown_blueItem"
             tools:text="80"/>
 
         <!-- Teleop Levitate Cubes -->
         <TextView
-            android:id="@+id/breakdown2018_teleop_red_levitate_cubes"
+            android:id="@+id/breakdown2018_vault_red_levitate_cubes"
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
-            android:text="@string/breakdown2018_teleop_levitate_cubes"
+            android:text="@string/breakdown2018_vault_levitate_cubes"
             style="@style/breakdown_category" />
         <TextView
-            android:id="@+id/breakdown2018_teleop_blue_levitate_cubes"
+            android:id="@+id/breakdown2018_vault_blue_levitate_cubes"
             style="@style/breakdown_blueItem"
             tools:text="80"/>
 
         <!-- Teleop Boost Cubes -->
         <TextView
-            android:id="@+id/breakdown2018_teleop_red_boost_cubes"
+            android:id="@+id/breakdown2018_vault_red_boost_cubes"
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
-            android:text="@string/breakdown2018_teleop_boost_cubes"
+            android:text="@string/breakdown2018_vault_boost_cubes"
             style="@style/breakdown_category" />
         <TextView
-            android:id="@+id/breakdown2018_teleop_blue_boost_cubes"
+            android:id="@+id/breakdown2018_vault_blue_boost_cubes"
             style="@style/breakdown_blueItem"
             tools:text="80"/>
 
         <!-- Teleop Vault Points -->
         <TextView
-            android:id="@+id/breakdown2018_teleop_red_vault_points"
+            android:id="@+id/breakdown2018_vault_red_total"
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
-            android:text="@string/breakdown2018_teleop_vault_points"
+            android:text="@string/breakdown2018_vault_points"
             style="@style/breakdown_categorySubtotal" />
         <TextView
-            android:id="@+id/breakdown2018_teleop_blue_vault_points"
+            android:id="@+id/breakdown2018_vault_blue_total"
             style="@style/breakdown_blueItem"
             tools:text="80"/>
 
         <!-- Robot 1 Endgame -->
         <TextView
-            android:id="@+id/breakdown2018_red_endgame_robot_1"
+            android:id="@+id/breakdown2018_endgame_red_robot_1"
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
             android:text="@string/breakdown2018_teleop_robot_1_endgame"
             style="@style/breakdown_category" />
         <TextView
-            android:id="@+id/breakdown2018_blue_endgame_robot_1"
+            android:id="@+id/breakdown2018_endgame_blue_robot_1"
             style="@style/breakdown_blueItem"
             tools:text="80"/>
 
         <!-- Robot 2 Endgame  -->
         <TextView
-            android:id="@+id/breakdown2018_red_endgame_robot_2"
+            android:id="@+id/breakdown2018_endgame_red_robot_2"
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
             android:text="@string/breakdown2018_teleop_robot_2_endgame"
             style="@style/breakdown_category" />
         <TextView
-            android:id="@+id/breakdown2018_blue_endgame_robot_2"
+            android:id="@+id/breakdown2018_endgame_blue_robot_2"
             style="@style/breakdown_blueItem"
             tools:text="80"/>
 
         <!-- Robot 3 Endgame -->
         <TextView
-            android:id="@+id/breakdown2018_red_endgame_robot_3"
+            android:id="@+id/breakdown2018_endgame_red_robot_3"
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
             android:text="@string/breakdown2018_teleop_robot_3_endgame"
             style="@style/breakdown_category" />
         <TextView
-            android:id="@+id/breakdown2018_blue_endgame_robot_3"
+            android:id="@+id/breakdown2018_endgame_blue_robot_3"
             style="@style/breakdown_blueItem"
             tools:text="80"/>
 
         <!-- Park/Climb Points -->
         <TextView
-            android:id="@+id/breakdown2018_red_endgame_points"
+            android:id="@+id/breakdown2018_endgame_red_total"
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
             android:text="@string/breakdown2018_teleop_park_climb_points"
             style="@style/breakdown_categorySubtotal" />
         <TextView
-            android:id="@+id/breakdown2018_blue_endgame_points"
+            android:id="@+id/breakdown2018_endgame_blue_total"
             style="@style/breakdown_blueItem"
             tools:text="80"/>
 

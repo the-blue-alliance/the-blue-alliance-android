@@ -53,23 +53,23 @@ public class MatchBreakdownView2018 extends AbstractMatchBreakdownView {
     @Bind(R.id.breakdown2018_teleop_red_ownership_points)   TextView redTeleopOwnershipPoints;
     @Bind(R.id.breakdown2018_teleop_blue_ownership_points)  TextView blueTeleopOwnershipPoints;
 
-    @Bind(R.id.breakdown2018_teleop_red_force_cubes)        TextView redTeleopForceCubes;
-    @Bind(R.id.breakdown2018_teleop_blue_force_cubes)       TextView blueTeleopForceCubes;
-    @Bind(R.id.breakdown2018_teleop_red_levitate_cubes)     TextView redTeleopLevitateCubes;
-    @Bind(R.id.breakdown2018_teleop_blue_levitate_cubes)    TextView blueTeleopLevitateCubes;
-    @Bind(R.id.breakdown2018_teleop_red_boost_cubes)        TextView redTeleopBoostCubes;
-    @Bind(R.id.breakdown2018_teleop_blue_boost_cubes)       TextView blueTeleopBoostCubes;
-    @Bind(R.id.breakdown2018_teleop_red_vault_points)       TextView redTeleopVaultPoints;
-    @Bind(R.id.breakdown2018_teleop_blue_vault_points)      TextView blueTeleopVaultPoints;
+    @Bind(R.id.breakdown2018_vault_red_force_cubes)         TextView redVaultForceCubes;
+    @Bind(R.id.breakdown2018_vault_blue_force_cubes)        TextView blueVaultForceCubes;
+    @Bind(R.id.breakdown2018_vault_red_levitate_cubes)      TextView redVaultLevitateCubes;
+    @Bind(R.id.breakdown2018_vault_blue_levitate_cubes)     TextView blueVaultLevitateCubes;
+    @Bind(R.id.breakdown2018_vault_red_boost_cubes)         TextView redVaultBoostCubes;
+    @Bind(R.id.breakdown2018_vault_blue_boost_cubes)        TextView blueVaultBoostCubes;
+    @Bind(R.id.breakdown2018_vault_red_total)               TextView redVaultPoints;
+    @Bind(R.id.breakdown2018_vault_blue_total)              TextView blueVaultPoints;
 
-    @Bind(R.id.breakdown2018_red_endgame_robot_1)           TextView redEndgameRobot1;
-    @Bind(R.id.breakdown2018_blue_endgame_robot_1)          TextView blueEndgameRobot1;
-    @Bind(R.id.breakdown2018_red_endgame_robot_2)           TextView redEndgameRobot2;
-    @Bind(R.id.breakdown2018_blue_endgame_robot_2)          TextView blueEndgameRobot2;
-    @Bind(R.id.breakdown2018_red_endgame_robot_3)           TextView redEndgameRobot3;
-    @Bind(R.id.breakdown2018_blue_endgame_robot_3)          TextView blueEndgameRobot3;
-    @Bind(R.id.breakdown2018_red_endgame_points)            TextView redEndgamePoints;
-    @Bind(R.id.breakdown2018_blue_endgame_points)           TextView blueEndgamePoints;
+    @Bind(R.id.breakdown2018_endgame_red_robot_1)           TextView redEndgameRobot1;
+    @Bind(R.id.breakdown2018_endgame_blue_robot_1)          TextView blueEndgameRobot1;
+    @Bind(R.id.breakdown2018_endgame_red_robot_2)           TextView redEndgameRobot2;
+    @Bind(R.id.breakdown2018_endgame_blue_robot_2)          TextView blueEndgameRobot2;
+    @Bind(R.id.breakdown2018_endgame_red_robot_3)           TextView redEndgameRobot3;
+    @Bind(R.id.breakdown2018_endgame_blue_robot_3)          TextView blueEndgameRobot3;
+    @Bind(R.id.breakdown2018_endgame_red_total)             TextView redEndgamePoints;
+    @Bind(R.id.breakdown2018_endgame_blue_total)            TextView blueEndgamePoints;
 
     @Bind(R.id.breakdown_teleop_total_red)                  TextView redTeleopTotal;
     @Bind(R.id.breakdown_teleop_total_blue)                 TextView blueTeleopTotal;
@@ -167,16 +167,16 @@ public class MatchBreakdownView2018 extends AbstractMatchBreakdownView {
         blueTeleopOwnershipPoints.setText(getIntDefault(blueData, "teleopOwnershipPoints"));
 
         /* Teleop Cubes Played */
-        redTeleopForceCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultForceTotal"), getIntDefault(redData, "vaultForcePlayed")));
-        blueTeleopForceCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultForceTotal"), getIntDefault(redData, "vaultForcePlayed")));
-        redTeleopLevitateCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultLevitateTotal"), getIntDefault(redData, "vaultLevitatePlayed")));
-        blueTeleopLevitateCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultLevitateTotal"), getIntDefault(redData, "vaultLevitatePlayed")));
-        redTeleopBoostCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultBoostTotal"), getIntDefault(redData, "vaultBoostPlayed")));
-        blueTeleopBoostCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultBoostTotal"), getIntDefault(redData, "vaultBoostPlayed")));
+        redVaultForceCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultForceTotal"), getIntDefault(redData, "vaultForcePlayed")));
+        blueVaultForceCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultForceTotal"), getIntDefault(redData, "vaultForcePlayed")));
+        redVaultLevitateCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultLevitateTotal"), getIntDefault(redData, "vaultLevitatePlayed")));
+        blueVaultLevitateCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultLevitateTotal"), getIntDefault(redData, "vaultLevitatePlayed")));
+        redVaultBoostCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultBoostTotal"), getIntDefault(redData, "vaultBoostPlayed")));
+        blueVaultBoostCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultBoostTotal"), getIntDefault(redData, "vaultBoostPlayed")));
 
         /* Teleop Vault Points */
-        redTeleopVaultPoints.setText(getIntDefault(redData, "vaultPoints"));
-        blueTeleopVaultPoints.setText(getIntDefault(blueData, "vaultPoints"));
+        redVaultPoints.setText(getIntDefault(redData, "vaultPoints"));
+        blueVaultPoints.setText(getIntDefault(blueData, "vaultPoints"));
 
         /* Endgame */
         redEndgameRobot1.setText(getIntDefault(redData, "endgameRobot1"));
@@ -215,11 +215,9 @@ public class MatchBreakdownView2018 extends AbstractMatchBreakdownView {
         totalBlue.setText(getIntDefault(blueData, "totalPoints"));
 
         /* Show RPs earned, if needed */
-        boolean showRp = !redData.get("tba_rpEarned").isJsonNull() && !blueData.get("tba_rpEarned").isJsonNull();
-
-        if (showRp) {
-            rpRed.setText(res.getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "tba_rpEarned")));
-            rpBlue.setText(res.getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "tba_rpEarned")));
+        if (!matchType.isPlayoff() ) {
+            rpRed.setText(res.getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "rp")));
+            rpBlue.setText(res.getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "rp")));
         } else {
             rpRed.setVisibility(GONE);
             rpBlue.setVisibility(GONE);
@@ -235,5 +233,5 @@ public class MatchBreakdownView2018 extends AbstractMatchBreakdownView {
             return R.drawable.ic_check_black_24dp;
         else
             return R.drawable.ic_close_black_24dp;
-    } // End of method
+    }
 }
