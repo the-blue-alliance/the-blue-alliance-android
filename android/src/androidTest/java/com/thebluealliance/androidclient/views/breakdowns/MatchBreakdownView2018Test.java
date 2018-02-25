@@ -54,14 +54,14 @@ public class MatchBreakdownView2018Test {
         FrameLayout matchView = (FrameLayout) view.findViewById(R.id.match_breakdown);
         assertEquals(1, matchView.getChildCount());
         assertTrue(matchView.getChildAt(0) instanceof MatchBreakdownView2018);
-        MatchBreakdownView2018 view2017 = (MatchBreakdownView2018) matchView.getChildAt(0);
+        MatchBreakdownView2018 view2018 = (MatchBreakdownView2018) matchView.getChildAt(0);
         MatchType matchType = MatchType.fromKey(match.getKey());
-        view2017.initWithData(matchType, match.getWinningAlliance(), match.getAlliances(),
+        view2018.initWithData(matchType, match.getWinningAlliance(), match.getAlliances(),
                 mGson.fromJson(match.getScoreBreakdown(),JsonObject.class));
-        view2017.setVisibility(View.VISIBLE);
+        view2018.setVisibility(View.VISIBLE);
 
         // hide progress bar
         view.findViewById(R.id.progress).setVisibility(View.GONE);
-        return view2017;
+        return view2018;
     }
 }
