@@ -215,7 +215,7 @@ public class MatchBreakdownView2018 extends AbstractMatchBreakdownView {
         totalBlue.setText(getIntDefault(blueData, "totalPoints"));
 
         /* Show RPs earned, if needed */
-        if (!matchType.isPlayoff() ) {
+        if (!matchType.isPlayoff()) {
             rpRed.setText(res.getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "rp")));
             rpBlue.setText(res.getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "rp")));
         } else {
