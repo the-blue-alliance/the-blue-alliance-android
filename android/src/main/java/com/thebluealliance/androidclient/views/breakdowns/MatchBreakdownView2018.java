@@ -35,6 +35,12 @@ public class MatchBreakdownView2018 extends AbstractMatchBreakdownView {
     @Bind(R.id.breakdown_red3)                              TextView red3;
     @Bind(R.id.breakdown_blue3)                             TextView blue3;
 
+    @Bind(R.id.breakdown2018_red_auto_run_robot_1)          ImageView redAutoRunRobot1;
+    @Bind(R.id.breakdown2018_blue_auto_run_robot_1)         ImageView blueAutoRunRobot1;
+    @Bind(R.id.breakdown2018_red_auto_run_robot_2)          ImageView redAutoRunRobot2;
+    @Bind(R.id.breakdown2018_blue_auto_run_robot_2)         ImageView blueAutoRunRobot2;
+    @Bind(R.id.breakdown2018_red_auto_run_robot_3)          ImageView redAutoRunRobot3;
+    @Bind(R.id.breakdown2018_blue_auto_run_robot_3)         ImageView blueAutoRunRobot3;
     @Bind(R.id.breakdown2018_red_auto_run_points)           TextView redAutoRunPoints;
     @Bind(R.id.breakdown2018_blue_auto_run_points)          TextView blueAutoRunPoints;
     @Bind(R.id.breakdown2018_red_auto_scale_seconds)        TextView redAutoScaleSeconds;
@@ -134,6 +140,14 @@ public class MatchBreakdownView2018 extends AbstractMatchBreakdownView {
         blue2.setText(teamNumberFromKey(blueTeams.get(1)));
         blue3.setText(teamNumberFromKey(blueTeams.get(2)));
 
+        /* Auto Run */
+        redAutoRunRobot1.setBackgroundResource(getAutoRunResource(getIntDefault(redData, "autoRobot1")));
+        blueAutoRunRobot1.setBackgroundResource(getAutoRunResource(getIntDefault(blueData, "autoRobot1")));
+        redAutoRunRobot2.setBackgroundResource(getAutoRunResource(getIntDefault(redData, "autoRobot2")));
+        blueAutoRunRobot2.setBackgroundResource(getAutoRunResource(getIntDefault(blueData, "autoRobot2")));
+        redAutoRunRobot3.setBackgroundResource(getAutoRunResource(getIntDefault(redData, "autoRobot3")));
+        blueAutoRunRobot3.setBackgroundResource(getAutoRunResource(getIntDefault(blueData, "autoRobot3")));
+
         /* Auto Run Points */
         redAutoRunPoints.setText(getIntDefault(redData, "autoRunPoints"));
         blueAutoRunPoints.setText(getIntDefault(blueData, "autoRunPoints"));
@@ -230,6 +244,13 @@ public class MatchBreakdownView2018 extends AbstractMatchBreakdownView {
 
     private int getRankingPointResource(boolean achievedRankingPoint) {
         if (achievedRankingPoint)
+            return R.drawable.ic_check_black_24dp;
+        else
+            return R.drawable.ic_close_black_24dp;
+    }
+
+    private int getAutoRunResource(String autoRunAction) {
+        if (autoRunAction.equals("AutoRun"))
             return R.drawable.ic_check_black_24dp;
         else
             return R.drawable.ic_close_black_24dp;

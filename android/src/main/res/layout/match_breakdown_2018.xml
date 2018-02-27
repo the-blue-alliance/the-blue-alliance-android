@@ -13,7 +13,7 @@
         android:paddingBottom="8dp"
         android:background="@color/column_header_gray"
         app:columnCount="3"
-        app:rowCount="26"
+        app:rowCount="29"
         app:alignmentMode="alignBounds" >
 
         <!-- Teams -->
@@ -47,6 +47,74 @@
             tools:text="Blue 3"/>
 
         <!-- Auto Run -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_red_auto_run_robot_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_clear_black_24dp"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2018_auto_run_robot_1"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_blue_auto_run_robot_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_red_auto_run_robot_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_clear_black_24dp"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2018_auto_run_robot_2"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_blue_auto_run_robot_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_red_auto_run_robot_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_clear_black_24dp"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2018_auto_run_robot_3"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_blue_auto_run_robot_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+
+        <!-- Auto Run Points -->
         <TextView
             android:id="@+id/breakdown2018_red_auto_run_points"
             style="@style/breakdown_redItem"
@@ -208,7 +276,7 @@
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
-            android:text="@string/breakdown2018_teleop_robot_1_endgame"
+            android:text="@string/breakdown2018_endgame_robot_1"
             style="@style/breakdown_category" />
         <TextView
             android:id="@+id/breakdown2018_endgame_blue_robot_1"
@@ -221,7 +289,7 @@
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
-            android:text="@string/breakdown2018_teleop_robot_2_endgame"
+            android:text="@string/breakdown2018_endgame_robot_2"
             style="@style/breakdown_category" />
         <TextView
             android:id="@+id/breakdown2018_endgame_blue_robot_2"
@@ -234,7 +302,7 @@
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
-            android:text="@string/breakdown2018_teleop_robot_3_endgame"
+            android:text="@string/breakdown2018_endgame_robot_3"
             style="@style/breakdown_category" />
         <TextView
             android:id="@+id/breakdown2018_endgame_blue_robot_3"
@@ -247,7 +315,7 @@
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
-            android:text="@string/breakdown2018_teleop_park_climb_points"
+            android:text="@string/breakdown2018_endgame_park_climb_points"
             style="@style/breakdown_categorySubtotal" />
         <TextView
             android:id="@+id/breakdown2018_endgame_blue_total"
