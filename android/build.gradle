@@ -328,6 +328,11 @@ dependencies {
     debugProguardCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
     releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
     testCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
+
+    // Facebook SDKs
+    compile ('com.facebook.android:facebook-android-sdk:[4,5)'){
+        exclude group:"com.android.support"
+    }
 }
 
 apply plugin: 'com.google.gms.google-services'
