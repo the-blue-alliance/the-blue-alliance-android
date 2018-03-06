@@ -1,7 +1,11 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.google.gson.JsonObject;
+import android.support.annotation.Nullable;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.types.MatchType;
@@ -9,12 +13,8 @@ import com.thebluealliance.androidclient.views.breakdowns.AbstractMatchBreakdown
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2015;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2016;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2017;
+import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2018;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
-
-import android.support.annotation.Nullable;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -45,6 +45,9 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
                 break;
             case 2017:
                 breakdownView = new MatchBreakdownView2017(mActivity);
+                break;
+            case 2018:
+                breakdownView = new MatchBreakdownView2018(mActivity);
                 break;
             default:
                 breakdownView = null;

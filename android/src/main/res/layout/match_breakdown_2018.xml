@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+    <android.support.v7.widget.GridLayout
+        app:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/breakdown2018_container"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@color/column_header_gray"
+        app:columnCount="3"
+        app:rowCount="29"
+        app:alignmentMode="alignBounds" >
+
+        <!-- Teams -->
+        <TextView
+            android:id="@+id/breakdown_red1"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 1"/>
+        <TextView
+            android:text="@string/breakdown_teams"
+            style="@style/breakdown_categorySubtotal"
+            app:layout_rowSpan="3" />
+        <TextView
+            android:id="@+id/breakdown_blue1"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 1"/>
+        <TextView
+            android:id="@+id/breakdown_red2"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 2"/>
+        <TextView
+            android:id="@+id/breakdown_blue2"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 2"/>
+        <TextView
+            android:id="@+id/breakdown_red3"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 3"/>
+        <TextView
+            android:id="@+id/breakdown_blue3"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 3"/>
+
+        <!-- Auto Run -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_red_auto_run_robot_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_clear_black_24dp"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2018_auto_run_robot_1"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_blue_auto_run_robot_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_red_auto_run_robot_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_clear_black_24dp"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2018_auto_run_robot_2"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_blue_auto_run_robot_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_red_auto_run_robot_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_clear_black_24dp"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2018_auto_run_robot_3"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_blue_auto_run_robot_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+
+        <!-- Auto Run Points -->
+        <TextView
+            android:id="@+id/breakdown2018_red_auto_run_points"
+            style="@style/breakdown_redItem"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown2018_auto_run_points"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown2018_blue_auto_run_points"
+            style="@style/breakdown_blueItem"
+            tools:text="5"/>
+
+        <!-- Auto Scale -->
+        <TextView
+            android:id="@+id/breakdown2018_red_auto_scale_seconds"
+            style="@style/breakdown_redItem"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown2018_auto_scale_seconds"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2018_blue_auto_scale_seconds"
+            style="@style/breakdown_blueItem"
+            tools:text="0"/>
+
+        <!-- Auto Switch -->
+        <TextView
+            android:id="@+id/breakdown2018_red_auto_switch_seconds"
+            style="@style/breakdown_redItem"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown2018_auto_switch_seconds"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2018_blue_auto_switch_seconds"
+            style="@style/breakdown_blueItem"
+            tools:text="0"/>
+
+        <!-- Auto Ownership -->
+        <TextView
+            android:id="@+id/breakdown2018_red_auto_ownership_points"
+            style="@style/breakdown_redItem"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown2018_ownership_points"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown2018_blue_auto_ownership_points"
+            style="@style/breakdown_blueItem"
+            tools:text="0"/>
+
+        <!-- Auto Total -->
+        <TextView
+            android:id="@+id/breakdown_auto_total_red"
+            style="@style/breakdown_redTotal"
+            tools:text="60"/>
+        <TextView
+            android:text="@string/breakdown_auto_total"
+            style="@style/breakdown_categoryTotal" />
+        <TextView
+            android:id="@+id/breakdown_auto_total_blue"
+            style="@style/breakdown_blueTotal"
+            tools:text="5"/>
+
+        <!-- Teleop Scale -->
+        <TextView
+            android:id="@+id/breakdown2018_teleop_red_scale_seconds"
+            style="@style/breakdown_redItem"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown2018_teleop_scale_boost"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2018_teleop_blue_scale_seconds"
+            style="@style/breakdown_blueItem"
+            tools:text="0"/>
+
+        <!-- Teleop Switch -->
+        <TextView
+            android:id="@+id/breakdown2018_teleop_red_switch_seconds"
+            style="@style/breakdown_redItem"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown2018_teleop_switch_boost"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2018_teleop_blue_switch_seconds"
+            style="@style/breakdown_blueItem"
+            tools:text="0"/>
+
+        <!-- Teleop Ownership -->
+        <TextView
+            android:id="@+id/breakdown2018_teleop_red_ownership_points"
+            style="@style/breakdown_redItem"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown2018_ownership_points"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown2018_teleop_blue_ownership_points"
+            style="@style/breakdown_blueItem"
+            tools:text="0"/>
+
+        <!-- Teleop Force Cubes -->
+        <TextView
+            android:id="@+id/breakdown2018_vault_red_force_cubes"
+            style="@style/breakdown_redItem"
+            tools:text="40"/>
+        <TextView
+            android:text="@string/breakdown2018_vault_force_cubes"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2018_vault_blue_force_cubes"
+            style="@style/breakdown_blueItem"
+            tools:text="80"/>
+
+        <!-- Teleop Levitate Cubes -->
+        <TextView
+            android:id="@+id/breakdown2018_vault_red_levitate_cubes"
+            style="@style/breakdown_redItem"
+            tools:text="40"/>
+        <TextView
+            android:text="@string/breakdown2018_vault_levitate_cubes"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2018_vault_blue_levitate_cubes"
+            style="@style/breakdown_blueItem"
+            tools:text="80"/>
+
+        <!-- Teleop Boost Cubes -->
+        <TextView
+            android:id="@+id/breakdown2018_vault_red_boost_cubes"
+            style="@style/breakdown_redItem"
+            tools:text="40"/>
+        <TextView
+            android:text="@string/breakdown2018_vault_boost_cubes"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2018_vault_blue_boost_cubes"
+            style="@style/breakdown_blueItem"
+            tools:text="80"/>
+
+        <!-- Teleop Vault Points -->
+        <TextView
+            android:id="@+id/breakdown2018_vault_red_total"
+            style="@style/breakdown_redItem"
+            tools:text="40"/>
+        <TextView
+            android:text="@string/breakdown2018_vault_points"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown2018_vault_blue_total"
+            style="@style/breakdown_blueItem"
+            tools:text="80"/>
+
+        <!-- Robot 1 Endgame -->
+        <TextView
+            android:id="@+id/breakdown2018_endgame_red_robot_1"
+            style="@style/breakdown_redItem"
+            tools:text="40"/>
+        <TextView
+            android:text="@string/breakdown2018_endgame_robot_1"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2018_endgame_blue_robot_1"
+            style="@style/breakdown_blueItem"
+            tools:text="80"/>
+
+        <!-- Robot 2 Endgame  -->
+        <TextView
+            android:id="@+id/breakdown2018_endgame_red_robot_2"
+            style="@style/breakdown_redItem"
+            tools:text="40"/>
+        <TextView
+            android:text="@string/breakdown2018_endgame_robot_2"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2018_endgame_blue_robot_2"
+            style="@style/breakdown_blueItem"
+            tools:text="80"/>
+
+        <!-- Robot 3 Endgame -->
+        <TextView
+            android:id="@+id/breakdown2018_endgame_red_robot_3"
+            style="@style/breakdown_redItem"
+            tools:text="40"/>
+        <TextView
+            android:text="@string/breakdown2018_endgame_robot_3"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2018_endgame_blue_robot_3"
+            style="@style/breakdown_blueItem"
+            tools:text="80"/>
+
+        <!-- Park/Climb Points -->
+        <TextView
+            android:id="@+id/breakdown2018_endgame_red_total"
+            style="@style/breakdown_redItem"
+            tools:text="40"/>
+        <TextView
+            android:text="@string/breakdown2018_endgame_park_climb_points"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown2018_endgame_blue_total"
+            style="@style/breakdown_blueItem"
+            tools:text="80"/>
+
+        <!-- Teleop Total -->
+        <TextView
+            android:id="@+id/breakdown_teleop_total_red"
+            style="@style/breakdown_redTotal"
+            tools:text="40"/>
+        <TextView
+            android:text="@string/breakdown_teleop_total"
+            style="@style/breakdown_categoryTotal" />
+        <TextView
+            android:id="@+id/breakdown_teleop_total_blue"
+            style="@style/breakdown_blueTotal"
+            tools:text="80"/>
+
+        <!-- Auto Quest -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_red_auto_quest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_clear_black_24dp"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2018_auto_quest"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_blue_auto_quest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_clear_black_24dp"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+
+        <!-- Face the Boss -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_red_face_the_boss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_clear_black_24dp"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2018_face_the_boss"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2018_blue_face_the_boss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:background="@drawable/ic_done_black_24dp"/>
+        </LinearLayout>
+
+        <!-- Fouls -->
+        <TextView
+            android:id="@+id/breakdown_fouls_red"
+            style="@style/breakdown_redItem"
+            tools:text="+ 0"/>
+        <TextView
+            android:text="@string/breakdown_foul"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown_fouls_blue"
+            style="@style/breakdown_blueItem"
+            tools:text="+ 5"/>
+
+        <!-- Adjustments -->
+        <TextView
+            android:id="@+id/breakdown_adjust_red"
+            style="@style/breakdown_redItem"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown_adjust"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown_adjust_blue"
+            style="@style/breakdown_blueItem"
+            tools:text="0"/>
+
+        <!-- Total -->
+        <TextView
+            android:id="@+id/breakdown_total_red"
+            style="@style/breakdown_redTotal"
+            tools:text="100"/>
+        <TextView
+            android:text="@string/breakdown_total"
+            style="@style/breakdown_categoryTotal" />
+        <TextView
+            android:id="@+id/breakdown_total_blue"
+            style="@style/breakdown_blueTotal"
+            tools:text="90"/>
+
+        <!-- Ranking Points -->
+        <TextView
+            android:id="@+id/breakdown_red_rp"
+            style="@style/breakdown_redTotal"
+            tools:text="2"/>
+        <TextView
+            android:text="@string/breakdown_rp"
+            android:id="@+id/breakdown_rp_header"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown_blue_rp"
+            style="@style/breakdown_blueTotal"
+            tools:text="0"/>
+    </android.support.v7.widget.GridLayout>
+</ScrollView>

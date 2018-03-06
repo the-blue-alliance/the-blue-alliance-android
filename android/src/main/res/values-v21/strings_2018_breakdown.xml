@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="breakdown2018_auto_run_robot_1">Robot 1 Auto Run</string>
+    <string name="breakdown2018_auto_run_robot_2">Robot 2 Auto Run</string>
+    <string name="breakdown2018_auto_run_robot_3">Robot 3 Auto Run</string>
+    <string name="breakdown2018_auto_run_points">Auto Run Points</string>
+    <string name="breakdown2018_auto_scale_seconds">Scale Ownership (seconds)</string>
+    <string name="breakdown2018_auto_switch_seconds">Switch Ownership (seconds)</string>
+
+    <string name="breakdown2018_teleop_scale_boost">Scale Ownership + Boost (seconds)</string>
+    <string name="breakdown2018_teleop_switch_boost">Switch Ownership + Boost (seconds)</string>
+
+    <string name="breakdown2018_vault_force_cubes">Force Cubes Total (Played)</string>
+    <string name="breakdown2018_vault_levitate_cubes">Levitate Cubes Total (Played)</string>
+    <string name="breakdown2018_vault_boost_cubes">Boost Cubes Total (Played)</string>
+    <string name="breakdown2018_vault_points">Total Vault Points</string>
+
+    <string name="breakdown2018_endgame_robot_1">Robot 1 Endgame</string>
+    <string name="breakdown2018_endgame_robot_2">Robot 2 Endgame</string>
+    <string name="breakdown2018_endgame_robot_3">Robot 3 Endgame</string>
+    <string name="breakdown2018_endgame_park_climb_points">Park/Climb Points</string>
+
+    <string name="breakdown2018_ownership_points">Ownership Points</string>
+
+    <string name="breakdown2018_face_the_boss">Face The Boss</string>
+    <string name="breakdown2018_auto_quest">Auto Quest</string>
+
+    <string name="breakdown2018_scale_switch_boost_points">%1$s + %2$s</string>
+    <string name="breakdown2018_cubes_total_played"> %1$s (%2$s)</string>
+</resources>
