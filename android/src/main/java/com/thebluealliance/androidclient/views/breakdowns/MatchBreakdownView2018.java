@@ -182,11 +182,11 @@ public class MatchBreakdownView2018 extends AbstractMatchBreakdownView {
 
         /* Teleop Cubes Played */
         redVaultForceCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultForceTotal"), getIntDefault(redData, "vaultForcePlayed")));
-        blueVaultForceCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultForceTotal"), getIntDefault(redData, "vaultForcePlayed")));
+        blueVaultForceCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(blueData, "vaultForceTotal"), getIntDefault(blueData, "vaultForcePlayed")));
         redVaultLevitateCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultLevitateTotal"), getIntDefault(redData, "vaultLevitatePlayed")));
-        blueVaultLevitateCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultLevitateTotal"), getIntDefault(redData, "vaultLevitatePlayed")));
+        blueVaultLevitateCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(blueData, "vaultLevitateTotal"), getIntDefault(blueData, "vaultLevitatePlayed")));
         redVaultBoostCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultBoostTotal"), getIntDefault(redData, "vaultBoostPlayed")));
-        blueVaultBoostCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(redData, "vaultBoostTotal"), getIntDefault(redData, "vaultBoostPlayed")));
+        blueVaultBoostCubes.setText(res.getString(R.string.breakdown2018_cubes_total_played, getIntDefault(blueData, "vaultBoostTotal"), getIntDefault(blueData, "vaultBoostPlayed")));
 
         /* Teleop Vault Points */
         redVaultPoints.setText(getIntDefault(redData, "vaultPoints"));
