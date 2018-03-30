@@ -31,7 +31,7 @@ project.afterEvaluate {
 }
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 24
     buildToolsVersion '27.0.3'
 
     signingConfigs {

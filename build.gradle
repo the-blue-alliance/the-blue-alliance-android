@@ -54,7 +54,7 @@ allprojects {
 
     ext {
         supportLibVersion = '24.2.1'
-        playServicesVersion = '12.0.0'
+        playServicesVersion = '9.6.1'
         googleApiClientVersion = '1.21.0'
         mockitoVersion = '2.2.1'
         retrofitVersion = '2.2.0'
@@ -70,10 +70,6 @@ allprojects {
         // allows for -Dpre-dex=false to be set
         preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
     }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }
 
 if (System.env.TRAVIS == 'true') {
