@@ -1,8 +1,9 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.res.Resources;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.ListPair;
 import com.thebluealliance.androidclient.comparators.StatListElementComparator;
@@ -17,8 +18,6 @@ import com.thebluealliance.androidclient.renderers.insights.EventInsights2017Ren
 import com.thebluealliance.androidclient.renderers.insights.EventInsightsRenderer;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -119,16 +118,29 @@ public class StatsListSubscriber extends BaseAPISubscriber<StatsListSubscriber.M
     }
 
     private String getTopStatsString() {
-        String statsString = "";
-        for (int i = 0; i < Math.min(EventStatsEvent.SIZE, mTeamStats.size()); i++) {
-            String opr = ((StatsListElement) mTeamStats.get(i)).getFormattedOpr();
-            String teamName = ((StatsListElement) mTeamStats.get(i)).getTeamNumberString();
-            statsString += (i + 1) + ". " + teamName + " - <b>" + opr + "</b>";
-            if (i < Math.min(EventStatsEvent.SIZE, mTeamStats.size()) - 1) {
-                statsString += "<br>";
+        StringBuilder statsString = new StringBuilder(200);
+        int limit = Math.min(EventStatsEvent.SIZE, mTeamStats.size());
+
+        for (int i = 0; i < limit; i++) {
+            StatsListElement statsElement = (StatsListElement) mTeamStats.get(i);
+
+            if (statsElement.getOpr() <= 0) {
+                if (i == 0) {
+                    statsString.append(mResources.getString(R.string.no_stats_yet));
+                }
+                break;
             }
+
+            if (i > 0) {
+                statsString.append("<br>");
+            }
+            String opr = statsElement.getFormattedOpr();
+            String teamName = statsElement.getTeamNumberString();
+            statsString.append(i + 1).append(". ").append(teamName).append(": <b>")
+                    .append(opr).append("</b>");
         }
-        return statsString.trim();
+
+        return statsString.toString().trim();
     }
 
     public static class Model {
