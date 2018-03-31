@@ -11,6 +11,8 @@ apply from: "../code_coverage.gradle"
 apply plugin: 'com.github.ben-manes.versions'
 
 apply from: 'versioning.gradle'
+
+// Does `testOptions.unitTests.includeAndroidResources = true` obviate this workaround?
 apply from: 'build.workaround-missing-resource.gradle'
 
 version semverVersion()
@@ -57,6 +59,9 @@ android {
                 zipAlignEnabled true
                 proguardFiles 'proguard-rules.txt'
                 testProguardFile 'proguard-rules.txt'
+                // Alternate library build type matches for this build type. See
+                // https://developer.android.com/studio/build/gradle-plugin-3-0-0-migration.htm
+                matchingFallbacks = ['debug', 'release']
             }
 
             // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
@@ -66,6 +71,7 @@ android {
                 signingConfig signingConfigs.debug
                 applicationIdSuffix ".development"
                 manifestPlaceholders = [gcmPermissionRequired: ""]
+                matchingFallbacks = ['debug', 'release']
             }
 
             release {
@@ -108,6 +114,10 @@ android {
     testOptions {
         // Don't throw dreaded stub exceptions
         unitTests.returnDefaultValues = true
+
+        // Do resource, asset, and manifest merging before running your unit
+        // tests that require Android resources, such as Roboelectric
+        testOptions.unitTests.includeAndroidResources = true
     }
 
     android.applicationVariants.all { variant ->
@@ -195,9 +205,9 @@ task updateScreenshotDirs << {
 }
 
 tasks.whenTaskAdded { theTask ->
-    if (theTask.name in ["packageDevRelease", "packageProdRelease", "publishProdRelease",
-                         "bootstrapProdReleasePlayResources", "publishListingProdRelease",
-                         "publishApkProdRelease", "generateProdReleasePlayResources"]) {
+    if (theTask.name in ["publishApkRelease", "publishListingRelease", "publishRelease",
+                         "bootstrapReleasePlayResources",
+                         "generateReleasePlayResources"]) {
         theTask.dependsOn "loadProperties"
     }
 }
@@ -236,7 +246,7 @@ dependencies {
 
     // Play Services Libraries
     // See http://developer.android.com/google/play-services/setup.html
-    implementation 'com.google.collections:google-collections:1.0'
+    implementation 'com.google.guava:guava:22.0'
     implementation "com.google.android.gms:play-services-base:${playServicesVersion}"
     implementation "com.google.android.gms:play-services-analytics:${playServicesVersion}"
     implementation "com.google.android.gms:play-services-gcm:${playServicesVersion}"
@@ -258,7 +268,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
 
     implementation "com.google.dagger:dagger:${daggerVersion}"
-    annotationProcessor 'com.google.guava:guava:19.0'
+    annotationProcessor 'com.google.guava:guava:22.0'
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // Other third party libraries
@@ -288,8 +298,8 @@ dependencies {
     testImplementation "org.robolectric:shadows-multidex:${robolectricVersion}"
     testImplementation 'junit:junit:4.12'
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-    testAnnotationProcessor "com.google.guava:guava:19.0"
     testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+    testAnnotationProcessor 'com.jakewharton:butterknife:7.0.1'
 
     // instrumentation
     androidTestImplementation "com.android.support:support-annotations:${supportLibVersion}"
