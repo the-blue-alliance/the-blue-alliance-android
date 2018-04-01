@@ -1,11 +1,5 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.helpers.PitLocationHelper;
-import com.thebluealliance.androidclient.listeners.SocialClickListener;
-import com.thebluealliance.androidclient.types.MediaType;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -17,6 +11,12 @@ import android.text.TextUtils;
 import android.text.style.TextAppearanceSpan;
 import android.view.View;
 import android.widget.TextView;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.helpers.PitLocationHelper;
+import com.thebluealliance.androidclient.listeners.SocialClickListener;
+import com.thebluealliance.androidclient.types.MediaType;
 
 import java.util.Map;
 
@@ -100,13 +100,14 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
         }
         teamLocationContainer.setOnClickListener(mSocialClickListener);
 
-        if (data.motto.isEmpty()) {
-            // No location; hide the location view
-            teamMottoContainer.setVisibility(View.GONE);
-        } else {
-            // Show and populate the location view
-            teamMotto.setText(data.motto);
-        }
+        // if (data.motto.isEmpty()) {
+        //     // No location; hide the location view
+        //     teamMottoContainer.setVisibility(View.GONE);
+        // } else {
+        //     // Show and populate the location view
+        //     teamMotto.setText(data.motto);
+        // }
+        teamMottoContainer.setVisibility(View.GONE);  // it's out of fashion
 
         // If the team doesn't have a defined website, create a Google search for the team name
         if (data.website.isEmpty()) {
