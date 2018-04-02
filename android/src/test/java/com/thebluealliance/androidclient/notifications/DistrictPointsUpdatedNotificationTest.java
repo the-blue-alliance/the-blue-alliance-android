@@ -1,8 +1,15 @@
 package com.thebluealliance.androidclient.notifications;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
@@ -17,13 +24,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
-
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(DefaultTestRunner.class)
 public class DistrictPointsUpdatedNotificationTest {
@@ -63,7 +63,10 @@ public class DistrictPointsUpdatedNotificationTest {
     @Test
     public void testBuildNotification() {
         mNotification.parseMessageData();
-        Notification notification = mNotification.buildNotification(mContext, null);
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(mContext, "TestChannel");
+        mNotification.buildStoredNotification(mContext, builder, null);
+        Notification notification = builder.build();
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();

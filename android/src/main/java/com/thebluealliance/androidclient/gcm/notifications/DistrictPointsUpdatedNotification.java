@@ -1,8 +1,13 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
 import com.thebluealliance.androidclient.gcm.FollowsChecker;
@@ -11,13 +16,6 @@ import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
-
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -54,7 +52,8 @@ public class DistrictPointsUpdatedNotification
     }
 
     @Override
-    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
+    public void buildStoredNotification(Context context, NotificationCompat.Builder builder,
+            FollowsChecker followsChecker) {
         Resources r = context.getResources();
 
         String contentText = r.getString(R.string.notification_district_points_updated, districtName);
@@ -71,13 +70,10 @@ public class DistrictPointsUpdatedNotification
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
 
-        NotificationCompat.Builder builder = getBaseBuilder(context, instance)
+        setupBaseBuilder(context, builder, instance)
                 .setContentTitle(title)
-                .setContentText(contentText);
-
-        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
-        builder.setStyle(style);
-        return builder.build();
+                .setContentText(contentText)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
     }
 
     @Override

@@ -1,8 +1,16 @@
 package com.thebluealliance.androidclient.notifications;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
@@ -18,16 +26,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
 
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-
 import java.text.DateFormat;
 import java.util.Date;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 @RunWith(DefaultTestRunner.class)
 public class CompLevelStartingNotificationTest {
@@ -85,7 +85,10 @@ public class CompLevelStartingNotificationTest {
     @Test
     public void testBuildNotification() {
         mNotification.parseMessageData();
-        Notification notification = mNotification.buildNotification(mContext, null);
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(mContext, "TestChannel");
+        mNotification.buildStoredNotification(mContext, builder, null);
+        Notification notification = builder.build();
         assertNotNull(notification);
 
         long scheduledStartTimeUNIX = mNotification.getScheduledTime().getAsLong();
@@ -106,9 +109,12 @@ public class CompLevelStartingNotificationTest {
     @Test
     public void testBuildNotificationNoTime() {
         mData.remove("scheduled_time");
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(mContext, "TestChannel");
         mNotification = new CompLevelStartingNotification(mData.toString());
         mNotification.parseMessageData();
-        Notification notification = mNotification.buildNotification(mContext, null);
+        mNotification.buildStoredNotification(mContext, builder, null);
+        Notification notification = builder.build();
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();

@@ -1,5 +1,15 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+
 import com.google.common.base.Predicate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -8,7 +18,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
@@ -24,17 +33,6 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.types.WebcastType;
 import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
-
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -125,13 +123,9 @@ public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNot
         }
     }
 
-    /**
-     * @param context a Context object for use by the notification builder
-     * @param followsChecker for checking which teams the user follows
-     * @return A constructed notification
-     */
     @Override
-    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
+    public void buildStoredNotification(Context context, NotificationCompat.Builder builder,
+            FollowsChecker followsChecker) {
         String scheduledStartTimeString;
         if (JSONHelper.isNull(matchTime)) {
             scheduledStartTimeString = "";
@@ -189,18 +183,15 @@ public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNot
             }
         }
 
-        NotificationCompat.Builder builder = getBaseBuilder(context, instance)
+        setupBaseBuilder(context, builder, instance)
                 .setContentTitle(notificationTitle)
-                .setContentText(contentText);
+                .setContentText(contentText)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
 
         // Add Watch button
         if (watchIntent != null) {
             builder.addAction(R.drawable.ic_videocam_black_24dp, watchTitle, watchIntent);
         }
-
-        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
-        builder.setStyle(style);
-        return builder.build();
     }
 
     @Override

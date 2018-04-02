@@ -1,9 +1,14 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+
 import com.google.common.base.Predicate;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
@@ -15,13 +20,6 @@ import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.TeamMatchVideoNotificationViewModel;
-
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,7 +67,8 @@ public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoN
     }
 
     @Override
-    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
+    public void buildStoredNotification(Context context, NotificationCompat.Builder builder,
+            FollowsChecker followsChecker) {
         Resources r = context.getResources();
 
         Predicate<String> isFollowing =
@@ -85,7 +84,6 @@ public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoN
                                               EventHelper.shortName(mEventName),
                                               teamNumberString);
 
-        // We can finally build the notification!
         Intent instance = getIntent(context);
 
         stored = new StoredNotification();
@@ -96,13 +94,10 @@ public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoN
         stored.setTime(Calendar.getInstance().getTime());
         stored.setMessageData(messageData);
 
-        NotificationCompat.Builder builder = getBaseBuilder(context, instance)
+        setupBaseBuilder(context, builder, instance)
                 .setContentTitle(title)
-                .setContentText(notificationBody);
-
-        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(notificationBody);
-        builder.setStyle(style);
-        return builder.build();
+                .setContentText(notificationBody)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(notificationBody));
     }
 
     @Override

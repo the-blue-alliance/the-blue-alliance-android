@@ -1,8 +1,19 @@
 package com.thebluealliance.androidclient.notifications;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
@@ -20,17 +31,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RuntimeEnvironment;
-
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 @RunWith(DefaultTestRunner.class)
 public class AllianceSelectionNotificationTest {
@@ -76,8 +76,11 @@ public class AllianceSelectionNotificationTest {
 
     @Test
     public void testBuildNotification() {
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(mContext, "TestChannel");
         mNotification.parseMessageData();
-        Notification notification = mNotification.buildNotification(mContext, null);
+        mNotification.buildStoredNotification(mContext, builder, null);
+        Notification notification = builder.build();
         assertNotNull(notification);
 
         StoredNotification stored = mNotification.getStoredNotification();

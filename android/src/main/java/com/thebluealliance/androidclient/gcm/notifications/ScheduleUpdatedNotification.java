@@ -1,9 +1,18 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.text.format.DateFormat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
@@ -14,17 +23,6 @@ import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.ScheduleUpdatedNotificationViewModel;
-
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.text.format.DateFormat;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -66,7 +64,8 @@ public class ScheduleUpdatedNotification extends BaseNotification<ScheduleUpdate
     }
 
     @Override
-    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
+    public void buildStoredNotification(Context context, NotificationCompat.Builder builder,
+            FollowsChecker followsChecker) {
         String firstMatchTime = null;
         if (!JSONHelper.isNull(matchTime)) {
             Date date = new Date(matchTime.getAsLong() * 1000L);
@@ -94,13 +93,10 @@ public class ScheduleUpdatedNotification extends BaseNotification<ScheduleUpdate
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
 
-        NotificationCompat.Builder builder = getBaseBuilder(context, instance)
+        setupBaseBuilder(context, builder, instance)
                 .setContentTitle(title)
-                .setContentText(contentText);
-
-        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
-        builder.setStyle(style);
-        return builder.build();
+                .setContentText(contentText)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
     }
 
     @Override

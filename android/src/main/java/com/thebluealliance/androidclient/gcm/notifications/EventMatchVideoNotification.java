@@ -1,8 +1,13 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
@@ -11,13 +16,6 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.EventMatchVideoViewModel;
-
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 
 import java.util.Calendar;
 
@@ -53,14 +51,14 @@ public class EventMatchVideoNotification extends BaseNotification<EventMatchVide
     }
 
     @Override
-    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
+    public void buildStoredNotification(Context context, NotificationCompat.Builder builder,
+            FollowsChecker followsChecker) {
         Resources r = context.getResources();
         String eventCode = EventHelper.getEventCode(eventKey);
         String title = r.getString(R.string.notification_event_match_video, eventCode);
         String notificationBody = r.getString(R.string.notification_event_match_video_content,
                                               EventHelper.shortName(eventName));
 
-        // We can finally build the notification!
         Intent instance = getIntent(context);
 
         stored = new StoredNotification();
@@ -71,14 +69,11 @@ public class EventMatchVideoNotification extends BaseNotification<EventMatchVide
         stored.setTime(Calendar.getInstance().getTime());
         stored.setMessageData(messageData);
 
-        NotificationCompat.Builder builder = getBaseBuilder(context, instance)
+        setupBaseBuilder(context, builder, instance)
                 .setOnlyAlertOnce(true)
                 .setContentTitle(title)
-                .setContentText(notificationBody);
-
-        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(notificationBody);
-        builder.setStyle(style);
-        return builder.build();
+                .setContentText(notificationBody)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(notificationBody));
     }
 
     @Override
