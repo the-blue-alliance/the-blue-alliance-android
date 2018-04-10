@@ -1,6 +1,5 @@
-Version 4.3.0:<br>
-  - Add 2018 score breakdown support!<br>
-  - Other bug fixes and minor improvements<br>
+Version 4.3.1:<br>
+  - Bug fixes<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>
