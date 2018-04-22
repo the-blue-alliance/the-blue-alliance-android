@@ -124,7 +124,7 @@
                         android:gravity="center_vertical|center_horizontal"
                         tools:text="Red 3" />
 
-                    <RelativeLayout
+                    <FrameLayout
                         android:id="@+id/red_score_container"
                         android:layout_width="0dp"
                         android:layout_height="fill_parent"
@@ -132,34 +132,38 @@
                         android:background="@color/light_red"
                         android:gravity="center_vertical|center_horizontal">
 
-                        <ImageView
-                            android:id="@+id/red_dot_1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_alignParentTop="true"
-                            android:padding="1dp"
-                            android:visibility="gone"
-                            android:src="@drawable/match_rp_dot" />
+                        <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="top|left"
+                                android:layout_margin="1dp">
 
-                        <ImageView
-                            android:id="@+id/red_dot_2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_toEndOf="@id/red_dot_1"
-                            android:padding="1dp"
-                            android:visibility="gone"
-                            android:src="@drawable/match_rp_dot" />
+                            <ImageView
+                                android:id="@+id/red_dot_1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="1dp"
+                                android:visibility="gone"
+                                android:src="@drawable/match_rp_dot" />
+
+                            <ImageView
+                                android:id="@+id/red_dot_2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="1dp"
+                                android:visibility="gone"
+                                android:src="@drawable/match_rp_dot" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/red_score"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
+                            android:layout_gravity="center"
                             android:gravity="center_vertical|center_horizontal"
                             tools:text="Red Score" />
-                    </RelativeLayout>
+                    </FrameLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -196,42 +200,45 @@
                         android:gravity="center_vertical|center_horizontal"
                         tools:text="Blue 3" />
 
-                    <RelativeLayout
+                    <FrameLayout
                         android:id="@+id/blue_score_container"
                         android:layout_width="0dp"
-                        android:layout_height="fill_parent"
+                        android:layout_height="match_parent"
                         android:layout_weight="1.5"
                         android:background="@color/light_blue"
                         android:gravity="center_vertical|center_horizontal">
 
-                        <ImageView
-                            android:id="@+id/blue_dot_1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_alignParentTop="true"
-                            android:padding="1dp"
-                            android:visibility="gone"
-                            android:src="@drawable/match_rp_dot" />
+                        <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="top|left"
+                                android:layout_margin="1dp">
+                            <ImageView
+                                android:id="@+id/blue_dot_1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="1dp"
+                                android:visibility="gone"
+                                android:src="@drawable/match_rp_dot" />
 
-                        <ImageView
-                            android:id="@+id/blue_dot_2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_toEndOf="@id/blue_dot_1"
-                            android:padding="1dp"
-                            android:visibility="gone"
-                            android:src="@drawable/match_rp_dot" />
+                            <ImageView
+                                android:id="@+id/blue_dot_2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="1dp"
+                                android:visibility="gone"
+                                android:src="@drawable/match_rp_dot" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/blue_score"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
                             android:gravity="center_vertical|center_horizontal"
                             android:textStyle="bold"
                             tools:text="Blue Score" />
-                    </RelativeLayout>
+                    </FrameLayout>
                 </LinearLayout>
             </LinearLayout>
 
