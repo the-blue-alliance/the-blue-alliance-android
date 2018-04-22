@@ -1,6 +1,9 @@
 package com.thebluealliance.androidclient.renderers;
 
+import com.google.gson.JsonObject;
+
 import com.thebluealliance.androidclient.datafeed.APICache;
+import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.types.ModelType;
@@ -120,11 +123,58 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
 
         long matchTime = match.getTime() != null ? match.getTime() : -1;
 
+        int redExtraRp = 0;
+        int blueExtraRp = 0;
+
+        if(match.getYear() >= 2016) {
+            JsonObject scoreBreakdown = JSONHelper.getasJsonObject(match.getScoreBreakdown());
+            JsonObject redScoreBreakdown = scoreBreakdown.get("red").getAsJsonObject();
+            JsonObject blueScoreBreakdown = scoreBreakdown.get("blue").getAsJsonObject();
+            String rpName1 = null;
+            String rpName2 = null;
+            switch(match.getYear()) {
+                case 2016:
+                    rpName1 = "teleopDefensesBreached";
+                    rpName2 = "teleopTowerCaptured";
+                    break;
+                case 2017:
+                    if(match.equals("qm")) {
+                        rpName1 = "kPaRankingPointAchieved";
+                        rpName2 = "rotorRankingPointAchieved";
+                    } else {
+                        rpName1 = "kPaBonusPoints";
+                        rpName2 = "rotorBonusPoints";
+                    }
+                    break;
+                case 2018:
+                    rpName1 = "autoQuestRankingPoint";
+                    rpName2 = "faceTheBossRankingPoint";
+                    break;
+            }
+            if (rpName1 != null) {
+                if (redScoreBreakdown.get(rpName1).getAsBoolean()) {
+                    redExtraRp++;
+                }
+                if (blueScoreBreakdown.get(rpName1).getAsBoolean()) {
+                    blueExtraRp++;
+                }
+            }
+            if (rpName2 != null) {
+                if (redScoreBreakdown.get(rpName2).getAsBoolean()) {
+                    redExtraRp++;
+                }
+                if (blueScoreBreakdown.get(rpName2).getAsBoolean()) {
+                    blueExtraRp++;
+                }
+            }
+        }
+
         return new MatchListElement(youTubeVideoKey, match.getTitle(mResources, true),
           redAlliance, blueAlliance,
           redScore, blueScore, match.getWinningAlliance(),
           key, matchTime, match.getSelectedTeam(),
-          args.showVideo, args.showHeaders, args.showMatchTitle, args.clickable);
+          args.showVideo, args.showHeaders, args.showMatchTitle, args.clickable, redExtraRp,
+                blueExtraRp);
     }
 
     @VisibleForTesting
