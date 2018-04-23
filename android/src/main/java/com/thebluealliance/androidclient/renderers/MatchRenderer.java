@@ -138,13 +138,8 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
                     rpName2 = "teleopTowerCaptured";
                     break;
                 case 2017:
-                    if(match.equals("qm")) {
-                        rpName1 = "kPaRankingPointAchieved";
-                        rpName2 = "rotorRankingPointAchieved";
-                    } else {
-                        rpName1 = "kPaBonusPoints";
-                        rpName2 = "rotorBonusPoints";
-                    }
+                    rpName1 = "kPaRankingPointAchieved";
+                    rpName2 = "rotorRankingPointAchieved";
                     break;
                 case 2018:
                     rpName1 = "autoQuestRankingPoint";
