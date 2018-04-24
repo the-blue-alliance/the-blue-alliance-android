@@ -128,8 +128,14 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
 
         if(match.getYear() >= 2016) {
             JsonObject scoreBreakdown = JSONHelper.getasJsonObject(match.getScoreBreakdown());
-            JsonObject redScoreBreakdown = scoreBreakdown.get("red").getAsJsonObject();
-            JsonObject blueScoreBreakdown = scoreBreakdown.get("blue").getAsJsonObject();
+            JsonObject redScoreBreakdown = null;
+            if (scoreBreakdown.has("red")) {
+                redScoreBreakdown = scoreBreakdown.get("red").getAsJsonObject();
+            }
+            JsonObject blueScoreBreakdown = null;
+            if (scoreBreakdown.has("blue")) {
+                blueScoreBreakdown = scoreBreakdown.get("blue").getAsJsonObject();
+            }
             String rpName1 = null;
             String rpName2 = null;
             switch(match.getYear()) {
@@ -147,18 +153,18 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
                     break;
             }
             if (rpName1 != null) {
-                if (redScoreBreakdown.get(rpName1).getAsBoolean()) {
+                if (redScoreBreakdown != null && redScoreBreakdown.get(rpName1).getAsBoolean()) {
                     redExtraRp++;
                 }
-                if (blueScoreBreakdown.get(rpName1).getAsBoolean()) {
+                if (blueScoreBreakdown != null && blueScoreBreakdown.get(rpName1).getAsBoolean()) {
                     blueExtraRp++;
                 }
             }
             if (rpName2 != null) {
-                if (redScoreBreakdown.get(rpName2).getAsBoolean()) {
+                if (redScoreBreakdown != null && redScoreBreakdown.get(rpName2).getAsBoolean()) {
                     redExtraRp++;
                 }
-                if (blueScoreBreakdown.get(rpName2).getAsBoolean()) {
+                if (blueScoreBreakdown != null && blueScoreBreakdown.get(rpName2).getAsBoolean()) {
                     blueExtraRp++;
                 }
             }
