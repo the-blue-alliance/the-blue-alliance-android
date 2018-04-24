@@ -26,7 +26,7 @@ public class MatchListElement extends ListElement implements Serializable {
             long time,
             String selectedTeamKey) {
         this("", "", redTeams, blueTeams, "?", "?", "", matchKey, time, selectedTeamKey,
-             false, false, false, false,0,0);
+             false, false, false, false, 0, 0);
     }
 
     public MatchListElement(

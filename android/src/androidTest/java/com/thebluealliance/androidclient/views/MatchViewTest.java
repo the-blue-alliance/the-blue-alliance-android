@@ -137,7 +137,7 @@ public class MatchViewTest {
 
         MatchView matchView = (MatchView) view.findViewById(R.id.match_view);
         matchView.initWithParams(video, "Quals 2", redTeams, blueTeams, redScore, blueScore, winner,
-                                 matchKey, time, "", true,0,0);
+                                 matchKey, time, "", true, 0, 0);
         return matchView;
     }
 }

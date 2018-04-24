@@ -238,23 +238,23 @@ public class MatchView extends FrameLayout {
             this.redScore.setText(redScore);
             this.blueScore.setText(blueScore);
 
-            if(redExtraRp > 0) {
+            if (redExtraRp > 0) {
                 this.redDot1.setVisibility(View.VISIBLE);
             } else {
                 this.redDot1.setVisibility(View.GONE);
             }
-            if(redExtraRp > 1) {
+            if (redExtraRp > 1) {
                 this.redDot2.setVisibility(View.VISIBLE);
             } else {
                 this.redDot2.setVisibility(View.GONE);
             }
 
-            if(blueExtraRp > 0) {
+            if (blueExtraRp > 0) {
                 this.blueDot1.setVisibility(View.VISIBLE);
             } else {
                 this.blueDot1.setVisibility(View.GONE);
             }
-            if(blueExtraRp > 1) {
+            if (blueExtraRp > 1) {
                 this.blueDot2.setVisibility(View.VISIBLE);
             } else {
                 this.blueDot2.setVisibility(View.GONE);
