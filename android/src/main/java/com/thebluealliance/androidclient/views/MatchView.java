@@ -28,7 +28,7 @@ public class MatchView extends FrameLayout {
     private TextView matchTitle, red1, red2, red3, blue1, blue2, blue3, redScore, blueScore, time;
     private View matchContainer, matchTitleContainer, columnHeadersContainer, teamsHeader,
             scoreHeader, timeHeader, redAlliance, blueAlliance, videoIcon, redDot1, redDot2,
-            blueDot1, blueDot2;
+            blueDot1, blueDot2, blueScoreContainer, redScoreContainer;
 
     private boolean showColumnHeaders, showScores, showTime;
 
@@ -76,6 +76,9 @@ public class MatchView extends FrameLayout {
         blueAlliance = findViewById(R.id.blue_alliance);
 
         videoIcon = findViewById(R.id.match_video);
+
+        blueScoreContainer = findViewById(R.id.blue_score_container);
+        redScoreContainer = findViewById(R.id.red_score_container);
 
         redDot1 = findViewById(R.id.red_dot_1);
         redDot2 = findViewById(R.id.red_dot_2);
@@ -323,11 +326,15 @@ public class MatchView extends FrameLayout {
         if (showScores) {
             redScore.setVisibility(VISIBLE);
             blueScore.setVisibility(VISIBLE);
+            redScoreContainer.setVisibility(VISIBLE);
+            blueScoreContainer.setVisibility(VISIBLE);
             scoreHeader.setVisibility(showColumnHeaders ? VISIBLE : GONE);
 
         } else {
             redScore.setVisibility(GONE);
             blueScore.setVisibility(GONE);
+            redScoreContainer.setVisibility(GONE);
+            blueScoreContainer.setVisibility(GONE);
             scoreHeader.setVisibility(GONE);
         }
     }
