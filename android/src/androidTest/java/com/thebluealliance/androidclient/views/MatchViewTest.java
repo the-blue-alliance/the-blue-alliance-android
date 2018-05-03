@@ -151,7 +151,7 @@ public class MatchViewTest {
     }
 
     @Test
-    public void test2RpDot () {
+    public void test2RpDot() {
         View view = createView(RED_TEAMS_3, BLUE_TEAMS_3, "20", "30", "blue", 1463883886L, VID,
                 MATCH_15_F, 2, 2);
         ViewHelpers.setupView(view)
