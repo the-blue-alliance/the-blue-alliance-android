@@ -12,7 +12,8 @@ public enum DistrictType {
     NORTH_CAROLINA,
     GEORGIA,
     ONTARIO,
-    ISRAEL;
+    ISRAEL,
+    TEXAS;
 
     public static DistrictType fromEnum(int districtEnum) {
         switch (districtEnum) {
@@ -28,6 +29,7 @@ public enum DistrictType {
             case 8: return GEORGIA;
             case 9: return ONTARIO;
             case 10: return ISRAEL;
+            case 11: return TEXAS;
         }
     }
 
@@ -43,6 +45,7 @@ public enum DistrictType {
             case "pch": return GEORGIA;
             case "ont": return ONTARIO;
             case "isr": return ISRAEL;
+            case "tx":  return TEXAS;
             default:
                 return NO_DISTRICT;
         }
@@ -73,6 +76,8 @@ public enum DistrictType {
                 return "Ontario";
             case ISRAEL:
                 return "Israel";
+            case TEXAS:
+                return "Texas";
         }
     }
 
@@ -101,6 +106,8 @@ public enum DistrictType {
                 return "ont";
             case ISRAEL:
                 return "isr";
+            case TEXAS:
+                return "tx";
         }
     }
 
