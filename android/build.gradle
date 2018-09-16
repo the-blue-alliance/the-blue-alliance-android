@@ -1,6 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'gitsemver'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'com.facebook.testing.screenshot'
@@ -14,12 +12,6 @@ apply plugin: 'com.github.ben-manes.versions'
 
 apply from: 'versioning.gradle'
 apply from: 'build.workaround-missing-resource.gradle'
-
-// Fix for https://github.com/evant/gradle-retrolambda/issues/105
-// Without this, the build fails on CI for some reason
-retrolambda {
-    jvmArgs '-noverify'
-}
 
 version semverVersion()
 def (major, minor, patch, versionNum, gitTag, gitHash, commitsFromTag, repoDirty) =
@@ -40,7 +32,7 @@ project.afterEvaluate {
 
 android {
     compileSdkVersion 24
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '27.0.3'
 
     signingConfigs {
         release {
@@ -48,23 +40,6 @@ android {
             storePassword "notRealPassword"
             keyAlias "notRealAlias"
             keyPassword "notRealPassword"
-        }
-
-        productFlavors {
-            dev {
-                // dev utilizes minSDKVersion = 21 to allow the Android gradle plugin
-                // to pre-dex each module and produce an APK that can be tested on
-                // Android Lollipop without time consuming dex merging processes
-                minSdkVersion 21
-                multiDexEnabled true
-
-            }
-            prod {
-                // to install a debug app with minSdkVersion = 16, run ./gradlew installProdDebug
-                // see http://developer.android.com/tools/building/multidex.html#dev-build
-                minSdkVersion 16
-                multiDexEnabled true
-            }
         }
 
         buildTypes {
@@ -140,7 +115,7 @@ android {
             def apkName = "tba-android-";
             apkName += "v" + version.tagName;
             apkName += "-" + variant.buildType.name + ".apk";
-            output.outputFile = file("$project.buildDir/apk/" + apkName)
+            output.outputFileName = apkName
         }
     }
 
@@ -283,8 +258,8 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
 
     compile "com.google.dagger:dagger:${daggerVersion}"
-    apt 'com.google.guava:guava:19.0'
-    apt "com.google.dagger:dagger-compiler:${daggerVersion}"
+    annotationProcessor 'com.google.guava:guava:19.0'
+    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // Other third party libraries
     compile "com.google.code.gson:gson:${gsonVersion}"
@@ -304,7 +279,7 @@ dependencies {
     compile 'com.thebluealliance:spectrum:0.7.1'
     compile 'javax.annotation:javax.annotation-api:1.2'
     compile "com.github.hotchemi:permissionsdispatcher:${permissionDispatcherVersion}"
-    apt "com.github.hotchemi:permissionsdispatcher-processor:${permissionDispatcherVersion}"
+    annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:${permissionDispatcherVersion}"
 
     // testing
     testCompile "org.robolectric:robolectric:${robolectricVersion}"
@@ -312,8 +287,8 @@ dependencies {
     testCompile "org.robolectric:shadows-multidex:${robolectricVersion}"
     testCompile 'junit:junit:4.12'
     testCompile "org.mockito:mockito-core:${mockitoVersion}"
-    testApt "com.google.guava:guava:19.0"
-    testApt "com.google.dagger:dagger-compiler:${daggerVersion}"
+    testAnnotationProcessor "com.google.guava:guava:19.0"
+    testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // instrumentation
     androidTestCompile "com.android.support:support-annotations:${supportLibVersion}"
