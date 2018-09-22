@@ -9,13 +9,16 @@ android:
   components:
     - platform-tools
     - tools
-    - build-tools-25.0.2
+    - build-tools-27.0.3
+    # The SDK version used to compile the project
     - android-24
     - android-23
     - extra-android-m2repository
     - extra-google-m2repository
     - extra-google-google_play_services
     - sys-img-armeabi-v7a-google_apis-23
+  licenses:
+    - 'android-sdk-license-.+'
 env:
   matrix:
   - JOB=UNIT
@@ -32,11 +35,13 @@ script:
   - ./scripts/travis/travis-worker.sh $JOB
 
 before_cache:
-- rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-  - "$HOME/.gradle/caches/"
-  - "$HOME/.gradle/wrapper/"
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
 notifications:
   slack: the-blue-alliance:m2F6L0FT1ORBmSzKdLvAEmm1
   email: false
