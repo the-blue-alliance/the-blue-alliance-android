@@ -243,7 +243,7 @@ dependencies {
 
     // Play Services Libraries
     // See http://developer.android.com/google/play-services/setup.html
-    implementation 'com.google.collections:google-collections:1.0'
+    implementation "com.google.guava:guava:22.0"
     implementation "com.google.android.gms:play-services-base:${playServicesVersion}"
     implementation "com.google.android.gms:play-services-analytics:${playServicesVersion}"
     implementation "com.google.android.gms:play-services-gcm:${playServicesVersion}"
@@ -265,7 +265,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
 
     implementation "com.google.dagger:dagger:${daggerVersion}"
-    annotationProcessor 'com.google.guava:guava:19.0'
+    annotationProcessor 'com.google.guava:guava:22.0'
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // Other third party libraries
@@ -295,7 +295,7 @@ dependencies {
     testImplementation "org.robolectric:shadows-multidex:${robolectricVersion}"
     testImplementation 'junit:junit:4.12'
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-    testAnnotationProcessor "com.google.guava:guava:19.0"
+    testAnnotationProcessor "com.google.guava:guava:22.0"
     testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
     testAnnotationProcessor 'com.jakewharton:butterknife:7.0.1'
 
