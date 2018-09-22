@@ -161,41 +161,44 @@ screenshots {
 
 println "Version: " + android.defaultConfig.versionName + "/" + android.defaultConfig.versionCode
 
-task loadProperties << {
-    // add in signing keys from local.properties
-    def config = new Properties()
-    def propFile = file("../local.properties")
-    System.out.println("Loading property file: " + propFile.absolutePath)
-    if (propFile.canRead()) {
-        config.load(new FileInputStream(propFile))
-        android.signingConfigs.release.storeFile = file(config["release.key"])
-        android.signingConfigs.release.storePassword = config["release.key.password"]
-        android.signingConfigs.release.keyAlias = config["release.key.alias"]
-        android.signingConfigs.release.keyPassword = config["release.key.aliasPass"]
+task loadProperties {
+    doLast {
+        // add in signing keys from local.properties
+        def config = new Properties()
+        def propFile = file("../local.properties")
+        System.out.println("Loading property file: " + propFile.absolutePath)
+        if (propFile.canRead()) {
+            config.load(new FileInputStream(propFile))
+            android.signingConfigs.release.storeFile = file(config["release.key"])
+            android.signingConfigs.release.storePassword = config["release.key.password"]
+            android.signingConfigs.release.keyAlias = config["release.key.alias"]
+            android.signingConfigs.release.keyPassword = config["release.key.aliasPass"]
 
-        play.serviceAccountEmail = config['play.release.serviceEmail']
-        play.pk12File = file(config['play.release.keyFile'])
+            play.serviceAccountEmail = config['play.release.serviceEmail']
+            play.pk12File = file(config['play.release.keyFile'])
+        }
     }
 }
 
-task updateScreenshotDirs << {
-    def codeNameOut = new ByteArrayOutputStream()
-    exec {
-        commandLine 'adb', 'shell', 'getprop', 'ro.product.name'
-        standardOutput codeNameOut
-    }
+task updateScreenshotDirs {
+    doLast {
+        def codeNameOut = new ByteArrayOutputStream()
+        exec {
+            commandLine 'adb', 'shell', 'getprop', 'ro.product.name'
+            standardOutput codeNameOut
+        }
 
-    def sdkOut = new ByteArrayOutputStream()
-    exec {
-        commandLine 'adb', 'shell', 'getprop', 'ro.build.version.sdk'
-        standardOutput sdkOut
+        def sdkOut = new ByteArrayOutputStream()
+        exec {
+            commandLine 'adb', 'shell', 'getprop', 'ro.build.version.sdk'
+            standardOutput sdkOut
+        }
+        def deviceName = codeNameOut.toString().trim()
+        def deviceSdk = sdkOut.toString().trim()
+        def outputDir = project.screenshots.recordDir + "/" + deviceName + "_api" + deviceSdk
+        project.screenshots.recordDir = outputDir
+        System.out.println("New screenshot output dierctory: " + outputDir)
     }
-    def deviceName = codeNameOut.toString().trim()
-    def deviceSdk = sdkOut.toString().trim()
-    def outputDir = project.screenshots.recordDir + "/" + deviceName + "_api" + deviceSdk
-    project.screenshots.recordDir = outputDir
-    System.out.println("New screenshot output dierctory: " + outputDir)
-
 }
 
 tasks.whenTaskAdded { theTask ->
