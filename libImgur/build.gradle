@@ -4,6 +4,6 @@ sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
 dependencies {
-    compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
-    compile "io.reactivex:rxjava:${rxJavaVersion}"
+    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    implementation "io.reactivex:rxjava:${rxJavaVersion}"
 }
