@@ -11,7 +11,7 @@ apply from: "../code_coverage.gradle"
 apply plugin: 'com.github.ben-manes.versions'
 
 apply from: 'versioning.gradle'
-apply from: 'build.workaround-missing-resource.gradle'
+// apply from: 'build.workaround-missing-resource.gradle'
 
 version semverVersion()
 def (major, minor, patch, versionNum, gitTag, gitHash, commitsFromTag, repoDirty) =
@@ -295,6 +295,7 @@ dependencies {
 
     // testing
     testImplementation "org.robolectric:robolectric:${robolectricVersion}"
+    testImplementation "org.robolectric:shadows-multidex:${robolectricVersion}"
     testImplementation 'junit:junit:4.12'
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testAnnotationProcessor "com.google.guava:guava:22.0"
