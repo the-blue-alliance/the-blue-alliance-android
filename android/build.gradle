@@ -32,7 +32,7 @@ project.afterEvaluate {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.2'
 
     signingConfigs {
         release {
@@ -112,6 +112,10 @@ android {
     testOptions {
         // Don't throw dreaded stub exceptions
         unitTests.returnDefaultValues = true
+
+        unitTests {
+            includeAndroidResources = true
+        }
     }
 
     android.applicationVariants.all { variant ->
@@ -291,8 +295,6 @@ dependencies {
 
     // testing
     testImplementation "org.robolectric:robolectric:${robolectricVersion}"
-    testImplementation "org.robolectric:shadows-support-v4:${robolectricVersion}"
-    testImplementation "org.robolectric:shadows-multidex:${robolectricVersion}"
     testImplementation 'junit:junit:4.12'
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testAnnotationProcessor "com.google.guava:guava:22.0"

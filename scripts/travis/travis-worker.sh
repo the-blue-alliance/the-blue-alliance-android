@@ -44,7 +44,7 @@ case "$1" in
         mv tba.properties.ci ../android/src/main/assets/tba.properties
         mv google-services.json.ci ../android/src/prod/google-services.json
         cd ..
-        ./gradlew assembleProdRelease
+        ./gradlew assembleRelease
         ;;
 
     "SCREENSHOT")

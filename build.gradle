@@ -13,7 +13,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.android.tools.build:gradle:3.3.0-alpha11'
         classpath 'com.google.gms:google-services:3.0.0'
 
         // dependency analysis
@@ -63,7 +63,7 @@ allprojects {
         gsonVersion = '2.8.0'
         daggerVersion = '2.7'
         leakCanaryVersion = '1.5'
-        robolectricVersion = '3.1.4'
+        robolectricVersion = '3.8'
         permissionDispatcherVersion = '2.2.0'
 
         travisBuild = System.getenv("TRAVIS") == "true"
