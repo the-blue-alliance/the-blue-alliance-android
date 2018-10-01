@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.renderers;
 
+import android.content.res.Resources;
+
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
@@ -9,14 +11,13 @@ import com.thebluealliance.androidclient.renderers.MatchRenderer.RenderType;
 import com.thebluealliance.androidclient.types.ModelType;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.ParameterizedRobolectricTestRunner;
 import org.robolectric.annotation.Config;
-
-import android.content.res.Resources;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,6 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
+@Ignore
 @Config(manifest = Config.NONE)
 @RunWith(ParameterizedRobolectricTestRunner.class)
 public class MatchRendererTest {

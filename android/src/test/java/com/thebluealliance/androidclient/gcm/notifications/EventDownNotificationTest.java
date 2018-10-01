@@ -1,20 +1,21 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
-import com.google.gson.JsonObject;
+import android.content.Context;
 
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
 
-import android.content.Context;
-
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 @RunWith(DefaultTestRunner.class)
 public class EventDownNotificationTest {
 

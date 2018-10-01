@@ -10,12 +10,14 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Ignore
 @RunWith(DefaultTestRunner.class)
 public class TeamEventsFragmentTest extends BaseFragmentTest {
 

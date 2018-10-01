@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.fragments;
 
 import com.google.android.gms.analytics.Tracker;
-
 import com.thebluealliance.androidclient.BaseTestActivity;
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
@@ -16,6 +15,7 @@ import com.thebluealliance.androidclient.fragments.framework.SimpleSubscriber;
 
 import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,6 +27,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
+@Ignore
 @RunWith(DefaultTestRunner.class)
 public class TestDatafeedFragment extends BaseFragmentTest {
 

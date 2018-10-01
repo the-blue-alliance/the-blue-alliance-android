@@ -1,8 +1,9 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import android.database.sqlite.SQLiteDatabase;
+
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
-
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DbTableTestDriver;
@@ -12,10 +13,9 @@ import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,7 @@ import java.util.List;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.spy;
 
+@Ignore
 @RunWith(DefaultTestRunner.class)
 public class EventTeamsTableTest {
     private TeamAtEventStatus mStatus;

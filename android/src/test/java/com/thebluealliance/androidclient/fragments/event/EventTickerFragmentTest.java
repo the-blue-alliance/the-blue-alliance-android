@@ -9,6 +9,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+@Ignore
 @RunWith(DefaultTestRunner.class)
 public class EventTickerFragmentTest extends BaseFragmentTest {
 
