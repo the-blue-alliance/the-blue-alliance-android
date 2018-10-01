@@ -54,10 +54,10 @@ def gen_to_test(changed):
 
 
 def run_tests(classes):
-    p = subprocess.Popen(["./gradlew", "assembleDevDebugUnitTest"], shell=False)
+    p = subprocess.Popen(["./gradlew", "assembleAndroidTest"], shell=False)
     p.communicate()
     for cls in classes:
-        proc = subprocess.Popen(["./gradlew", "testDevDebugUnitTest", "-a", "--quiet", "--tests={}".format(cls)], shell=False)
+        proc = subprocess.Popen(["./gradlew", "testDebugUnitTest", "-a", "--quiet", "--tests={}".format(cls)], shell=False)
         proc.communicate()
 
 
