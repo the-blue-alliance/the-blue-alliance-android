@@ -6,9 +6,11 @@ import com.thebluealliance.androidclient.fragments.framework.BaseFragmentTest;
 import com.thebluealliance.androidclient.fragments.framework.FragmentTestDriver;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+@Ignore
 @RunWith(DefaultTestRunner.class)
 public class EventAwardsFragmentTest extends BaseFragmentTest {
 

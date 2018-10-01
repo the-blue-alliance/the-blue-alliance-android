@@ -6,6 +6,7 @@ import com.thebluealliance.api.model.IMatchAlliancesContainer;
 import com.thebluealliance.api.model.IMatchVideo;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -16,6 +17,7 @@ import java.util.List;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
+@Ignore
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class MatchTest {

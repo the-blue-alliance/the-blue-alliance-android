@@ -1,7 +1,8 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.google.gson.Gson;
+import android.content.res.Resources;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
@@ -19,14 +20,13 @@ import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber.Model;
 
 import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-
-import android.content.res.Resources;
 
 import java.util.List;
 
@@ -36,6 +36,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
+@Ignore
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
 public class MatchInfoSubscriberTest {

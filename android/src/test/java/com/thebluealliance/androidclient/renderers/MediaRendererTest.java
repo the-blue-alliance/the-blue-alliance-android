@@ -6,6 +6,7 @@ import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.types.MediaType;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
@@ -18,6 +19,7 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@Ignore
 @Config(manifest = Config.NONE)
 @RunWith(ParameterizedRobolectricTestRunner.class)
 public class MediaRendererTest {

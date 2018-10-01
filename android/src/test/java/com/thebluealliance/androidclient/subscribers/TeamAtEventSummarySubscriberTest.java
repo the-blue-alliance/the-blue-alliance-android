@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.Context;
+
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
@@ -12,6 +14,7 @@ import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -19,13 +22,12 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import android.content.Context;
-
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@Ignore
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class TeamAtEventSummarySubscriberTest {

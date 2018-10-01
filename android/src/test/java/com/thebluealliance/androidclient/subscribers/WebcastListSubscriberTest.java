@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class WebcastListSubscriberTest {

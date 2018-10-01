@@ -1,7 +1,8 @@
 package com.thebluealliance.androidclient.database.writers;
 
-import com.google.gson.Gson;
+import android.database.sqlite.SQLiteDatabase;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
@@ -9,17 +10,17 @@ import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Event;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import android.database.sqlite.SQLiteDatabase;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+@Ignore
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
 public class EventWriterTest {

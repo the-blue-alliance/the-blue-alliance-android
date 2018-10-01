@@ -1,8 +1,11 @@
 package com.thebluealliance.androidclient.notifications;
 
+import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
@@ -16,14 +19,11 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RuntimeEnvironment;
-
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -32,6 +32,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+@Ignore
 @RunWith(DefaultTestRunner.class)
 public class AllianceSelectionNotificationTest {
 

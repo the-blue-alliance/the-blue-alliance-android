@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.models;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
@@ -10,6 +9,7 @@ import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.types.EventType;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -23,6 +23,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
+@Ignore
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class EventTest {

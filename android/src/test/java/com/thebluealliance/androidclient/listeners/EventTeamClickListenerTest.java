@@ -1,17 +1,19 @@
 package com.thebluealliance.androidclient.listeners;
 
+import android.content.Context;
+
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import android.content.Context;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 
+@Ignore
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class EventTeamClickListenerTest {

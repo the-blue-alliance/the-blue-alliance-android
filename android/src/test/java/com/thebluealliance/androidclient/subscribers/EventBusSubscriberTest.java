@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.subscribers;
 
 import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -11,6 +12,7 @@ import org.robolectric.annotation.Config;
 
 import static org.mockito.Mockito.verify;
 
+@Ignore
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
 public class EventBusSubscriberTest {

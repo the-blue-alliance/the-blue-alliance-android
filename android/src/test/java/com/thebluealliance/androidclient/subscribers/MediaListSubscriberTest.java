@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.res.Resources;
+import android.support.annotation.StringRes;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
@@ -7,6 +10,7 @@ import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Media;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -14,14 +18,12 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import android.content.res.Resources;
-import android.support.annotation.StringRes;
-
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
+@Ignore
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
 public class MediaListSubscriberTest {

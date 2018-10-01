@@ -1,8 +1,11 @@
 package com.thebluealliance.androidclient.notifications;
 
+import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
@@ -14,13 +17,10 @@ import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
-
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -28,6 +28,7 @@ import java.util.Date;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@Ignore
 @RunWith(DefaultTestRunner.class)
 public class ScheduleUpdatedNotificationTest {
     private Context mContext;

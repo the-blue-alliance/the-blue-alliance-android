@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.database;
 
+import android.database.sqlite.SQLiteDatabase;
+
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
@@ -9,11 +11,10 @@ import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
-
-import android.database.sqlite.SQLiteDatabase;
 
 import static com.thebluealliance.androidclient.database.Database.TABLE_API;
 import static com.thebluealliance.androidclient.database.Database.TABLE_AWARDS;
@@ -30,6 +31,7 @@ import static com.thebluealliance.androidclient.database.Database.TABLE_TEAMS;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 @RunWith(DefaultTestRunner.class)
 public class DatabaseTest {
 

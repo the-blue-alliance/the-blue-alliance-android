@@ -6,6 +6,7 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -14,6 +15,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@Ignore
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
 public class MatchInfoCombinerTest {

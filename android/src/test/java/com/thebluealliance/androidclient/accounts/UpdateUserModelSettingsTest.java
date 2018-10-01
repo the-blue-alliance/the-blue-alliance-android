@@ -1,24 +1,26 @@
 package com.thebluealliance.androidclient.accounts;
 
+import android.content.Context;
+
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 import com.thebluealliance.androidclient.mytba.ModelPrefsResult;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
-import android.content.Context;
-
 import java.util.concurrent.ExecutionException;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@Ignore
 @RunWith(RobolectricTestRunner.class)
 public class UpdateUserModelSettingsTest {
 

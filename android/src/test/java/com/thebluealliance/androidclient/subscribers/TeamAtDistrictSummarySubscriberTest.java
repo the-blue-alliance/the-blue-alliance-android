@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.res.Resources;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
@@ -14,14 +16,13 @@ import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-
-import android.content.res.Resources;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@Ignore
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class TeamAtDistrictSummarySubscriberTest {
