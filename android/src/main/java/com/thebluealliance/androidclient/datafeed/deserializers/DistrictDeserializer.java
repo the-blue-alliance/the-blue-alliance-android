@@ -9,7 +9,6 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.types.DistrictType;
 
 import java.lang.reflect.Type;
 
@@ -23,7 +22,6 @@ public class DistrictDeserializer implements JsonDeserializer<District>, JsonSer
         district.setDisplayName(data.get("display_name").getAsString());
         district.setAbbreviation(data.get("abbreviation").getAsString());
         district.setYear(data.get("year").getAsInt());
-        district.setEnum(DistrictType.fromAbbreviation(district.getAbbreviation()).ordinal());
         return district;
     }
 

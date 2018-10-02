@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.helpers;
 
-import com.thebluealliance.androidclient.types.DistrictType;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -49,12 +47,5 @@ public class DistrictHelperTest {
         int year = 2015;
         String key = DistrictHelper.generateKey(abbrev, year);
         assertEquals(key, "2015ne");
-    }
-
-    @Test
-    public void testDistrictTypeFromKey() {
-        String key = "2015ne";
-        DistrictType type = DistrictHelper.districtTypeFromKey(key);
-        assertEquals(type, DistrictType.NEW_ENGLAND);
     }
 }

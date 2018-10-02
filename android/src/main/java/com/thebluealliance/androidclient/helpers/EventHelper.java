@@ -224,14 +224,14 @@ public final class EventHelper {
             Comparator<Event> comparator) {
         Collections.sort(events, comparator);
         EventType lastType = null, currentType;
-        int lastDistrict = -1, currentDistrict;
+        String lastDistrict = "", currentDistrict;
         for (Event event : events) {
             currentType = event.getEventTypeEnum();
-            currentDistrict = event.getEventDistrictEnum() != null
-                              ? event.getEventDistrictEnum().ordinal()
-                              : -1;
+            currentDistrict = event.getDistrictKey() != null
+                              ? event.getDistrictKey()
+                              : "";
             if (currentType != lastType
-                || (currentType == EventType.DISTRICT && currentDistrict != lastDistrict)) {
+                || (currentType == EventType.DISTRICT && !currentDistrict.equals(lastDistrict))) {
                 String headerTitle;
                 if (currentType == EventType.DISTRICT) {
                     headerTitle = context.getString(R.string.district_events_header,

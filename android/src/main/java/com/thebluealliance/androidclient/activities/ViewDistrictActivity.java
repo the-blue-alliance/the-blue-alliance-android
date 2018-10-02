@@ -13,7 +13,6 @@ import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
-import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
@@ -108,14 +107,9 @@ public class ViewDistrictActivity extends MyTBASettingsActivity
 
     private void setupActionBar() {
         ActionBar bar = getSupportActionBar();
-        DistrictType type = DistrictHelper.districtTypeFromKey(mDistrictKey);
         if (bar != null) {
             bar.setDisplayHomeAsUpEnabled(true);
-            if (type != DistrictType.NO_DISTRICT) {
-                setActionBarTitle(String.format(getString(R.string.district_title_format),
-                                                mYear,
-                                                type.getName()));
-            }
+            setActionBarTitle("");
         }
     }
 

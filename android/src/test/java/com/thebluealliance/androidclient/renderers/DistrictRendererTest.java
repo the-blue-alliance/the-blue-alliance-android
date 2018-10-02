@@ -4,7 +4,6 @@ import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.DistrictListElement;
 import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.types.ModelType;
 
 import org.junit.Before;
@@ -76,7 +75,6 @@ public class DistrictRendererTest {
         assertNotNull(element);
         assertEquals(element.key, DISTRICT_KEY);
         assertEquals(element.numEvents, numEvents);
-        assertEquals(element.name, DistrictType.NEW_ENGLAND.getName());
         assertEquals(element.showMyTba, showMyTba);
         assertEquals(element.year, year);
     }

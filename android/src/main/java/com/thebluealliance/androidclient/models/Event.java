@@ -8,7 +8,6 @@ import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
-import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
 import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
@@ -402,16 +401,11 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
                : EventType.NONE;
     }
 
-    public DistrictType getEventDistrictEnum() {
+    public String getEventDistrictString() {
         @Nullable IDistrict district = getDistrict();
         return district != null
-               ? DistrictType.fromAbbreviation(district.getAbbreviation())
-               : DistrictType.NO_DISTRICT;
-    }
-
-    public String getEventDistrictString() {
-        DistrictType districtType = getEventDistrictEnum();
-        return districtType.getName();
+                ? district.getDisplayName()
+                : "";
     }
 
     public String getSearchTitles() {

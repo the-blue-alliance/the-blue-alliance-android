@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.listitems;
 import com.facebook.testing.screenshot.Screenshot;
 import com.facebook.testing.screenshot.ViewHelpers;
 import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.types.DistrictType;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +21,6 @@ public class DistrictListElementTest {
     private static final District DISTRICT = new District();
     static {
         DISTRICT.setAbbreviation("ne");
-        DISTRICT.setEnum(DistrictType.NEW_ENGLAND.ordinal());
         DISTRICT.setDisplayName("New England");
         DISTRICT.setYear(2016);
         DISTRICT.setKey("2016ne");
