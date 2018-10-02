@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.types.DistrictType;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +26,5 @@ public class DistrictTest {
         assertNotNull(district);
         assertEquals(district.getDisplayName(), "New England");
         assertEquals(district.getAbbreviation(), "ne");
-        assertEquals(district.getEnum(), DistrictType.NEW_ENGLAND.ordinal());
     }
 }

@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
-import com.thebluealliance.androidclient.types.DistrictType;
 import com.thebluealliance.androidclient.types.EventType;
 
 import org.junit.Before;
@@ -46,8 +45,6 @@ public class EventTest {
         assertEquals(mEvent.getWeek().intValue(), 5);
         assertEquals(mEvent.getName(), "NE District - Hartford Event");
         assertEquals(mEvent.getShortName(), "Hartford");
-        assertEquals(mEvent.getEventDistrictEnum(),
-                     DistrictType.NEW_ENGLAND);
         assertEquals(mEvent.getAddress(), "55 Forest St, Hartford, CT 06105, USA");
         assertEquals(mEvent.getLocationName(), "Hartford Public High School");
         assertEquals(mEvent.getYearAgnosticEventKey(), "cthar");
@@ -85,8 +82,6 @@ public class EventTest {
         assertEquals(mOffseasonEvent.getWeek().intValue(), 31);
         assertEquals(mOffseasonEvent.getName(), "Chezy Champs");
         assertEquals(mOffseasonEvent.getShortName(), "Chezy Champs");
-        assertEquals(mOffseasonEvent.getEventDistrictEnum(),
-                     DistrictType.NO_DISTRICT);
         assertEquals(mOffseasonEvent.getAddress(), "960 W Hedding St, San Jose, CA 95126, USA");
         assertEquals(mOffseasonEvent.getLocationName(), "Bellarmine College Preparatory");
         assertEquals(mOffseasonEvent.getYearAgnosticEventKey(), "cc");
@@ -181,12 +176,6 @@ public class EventTest {
         mCleanEvent.setEventType(999);
         assertEquals(mCleanEvent.getEventTypeEnum(), EventType.NONE);
         assertFalse(mCleanEvent.isChampsEvent());
-    }
-
-    @Test
-    public void testDefaultDistrictEnum() {
-        DistrictType districtType = mCleanEvent.getEventDistrictEnum();
-        assertEquals(districtType, DistrictType.NO_DISTRICT);
     }
 
     @Test

@@ -1,8 +1,6 @@
 package com.thebluealliance.androidclient.helpers;
 
 
-import com.thebluealliance.androidclient.types.DistrictType;
-
 public final class DistrictHelper {
 
     private DistrictHelper() {
@@ -10,16 +8,8 @@ public final class DistrictHelper {
     }
 
     public static boolean validateDistrictKey(String key) {
-        if (key == null || key.length() <= 4) {
-            return false;
-        }
-        try {
-            Integer.parseInt(key.substring(0, 4));
-            String districtAbbrev = key.substring(4);
-            return DistrictType.fromAbbreviation(districtAbbrev) != DistrictType.NO_DISTRICT;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        if (key == null || key.isEmpty()) return false;
+        return key.matches("^[1-9]\\d{3}[a-z,0-9]+$");
     }
 
     public static int extractYearFromKey(String key) {
@@ -32,10 +22,5 @@ public final class DistrictHelper {
 
     public static String generateKey(String districtAbbrev, int year) {
         return year + districtAbbrev;
-    }
-
-    public static DistrictType districtTypeFromKey(String districtKey) {
-        String districtAbbrev = extractAbbrevFromKey(districtKey);
-        return DistrictType.fromAbbreviation(districtAbbrev);
     }
 }

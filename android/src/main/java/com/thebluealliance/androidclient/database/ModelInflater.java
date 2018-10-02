@@ -315,9 +315,6 @@ public final class ModelInflater {
                 case DistrictsTable.ABBREV:
                     district.setAbbreviation(data.getString(i));
                     break;
-                case DistrictsTable.ENUM:
-                    district.setEnum(data.getInt(i));
-                    break;
                 case DistrictsTable.YEAR:
                     district.setYear(data.getInt(i));
                     break;

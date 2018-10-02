@@ -14,7 +14,6 @@ public class DistrictsTable extends ModelTable<District> {
 
     public static final String KEY = "key",
             ABBREV = "abbrev",
-            ENUM = "enum",
             YEAR = "year",
             NAME = "name",
             LAST_MODIFIED = "last_modified";

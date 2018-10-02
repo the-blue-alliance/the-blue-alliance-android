@@ -128,7 +128,6 @@ public class Database extends SQLiteOpenHelper {
             + DistrictsTable.KEY + " TEXT PRIMARY KEY NOT NULL, "
             + DistrictsTable.ABBREV + " TEXT NOT NULL, "
             + DistrictsTable.YEAR + " INTEGER NOT NULL, "
-            + DistrictsTable.ENUM + " INTEGER NOT NULL,"
             + DistrictsTable.NAME + " TEXT DEFAULT '', "
             + DistrictsTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
