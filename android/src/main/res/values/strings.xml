@@ -189,4 +189,8 @@
     <string name="event_type_other">Other Events</string>
     <string name="week_events_header">%1$s Events</string>
     <string name="district_events_header">%1$s District Events</string>
+
+    <!-- Facebook SDK Things -->
+    <string name="facebook_app_id">117484816504</string>
+    <string name="fb_login_protocol_scheme">fb117484816504</string>
 </resources>

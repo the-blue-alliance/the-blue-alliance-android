@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient;
 
 import com.facebook.stetho.Stetho;
+import com.facebook.FacebookSdk;
 import com.squareup.leakcanary.LeakCanary;
 import com.thebluealliance.androidclient.accounts.AccountModule;
 import com.thebluealliance.androidclient.auth.AuthModule;
