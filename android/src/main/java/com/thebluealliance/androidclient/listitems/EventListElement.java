@@ -22,7 +22,7 @@ public class EventListElement extends ListElement implements Serializable {
     public final String eventKey;
     public final int eventYear;
     public final boolean showMyTba;
-    
+
     public EventListElement(String key, int year, String name, String dates, String location, boolean showMyTba) {
         super(key);
         eventKey = key;
