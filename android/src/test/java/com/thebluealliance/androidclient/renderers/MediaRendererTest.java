@@ -63,7 +63,7 @@ public class MediaRendererTest {
                     listItem.imageUrl,
                     String.format(mMediaType.getImageUrlPattern(), mMedia.getForeignKey()));
         } else {
-            assertEquals(listItem.imageUrl, "http://www.chiefdelphi"
+            assertEquals(listItem.imageUrl, "https://www.chiefdelphi"
                      + ".com/media/img/fe3/fe38d320428adf4f51ac969efb3db32c_m.jpg");
         }
     }
