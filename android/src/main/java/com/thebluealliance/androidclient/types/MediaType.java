@@ -52,11 +52,11 @@ public enum MediaType {
     public String getImageUrlPattern() {
         switch (this) {
             case CD_PHOTO_THREAD:
-                return "http://www.chiefdelphi.com/media/img/%s";
+                return "https://www.chiefdelphi.com/media/img/%s";
             case YOUTUBE:
-                return "http://img.youtube.com/vi/%s/hqdefault.jpg";
+                return "https://img.youtube.com/vi/%s/hqdefault.jpg";
             case IMGUR:
-                return "http://i.imgur.com/%sl.jpg";
+                return "https://i.imgur.com/%sl.jpg";
             default:
                 return "";
         }
@@ -65,11 +65,11 @@ public enum MediaType {
     public String getLinkUrlPattern() {
         switch (this) {
             case CD_PHOTO_THREAD:
-                return "http://www.chiefdelphi.com/media/photos/%s";
+                return "https://www.chiefdelphi.com/media/photos/%s";
             case YOUTUBE:
                 return "https://www.youtube.com/watch?v=%s";
             case IMGUR:
-                return "http://imgur.com/%s";
+                return "https://imgur.com/%s";
             default:
                 return "";
         }
