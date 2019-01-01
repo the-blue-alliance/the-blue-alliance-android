@@ -44,13 +44,7 @@ public class GceAuthController {
     @WorkerThread
     public @Nullable String getAuthHeader() {
         try {
-            Task<GetTokenResult> tokenTask = mFirebaseAuth.getUserToken(false);
-            if (tokenTask == null) {
-                TbaLogger.i("No firebase user found, can't fetch auth token");
-                return null;
-            }
-            GetTokenResult tokenResult = Tasks.await(tokenTask);
-            String token = tokenResult.getToken();
+            String token = getGoogleAuthToken();
             if (token == null) {
                 return null;
             }
@@ -59,6 +53,17 @@ public class GceAuthController {
             TbaLogger.w("Auth exception while fetching google token", e);
             return null;
         }
+    }
+
+    @WorkerThread @VisibleForTesting @Nullable
+    String getGoogleAuthToken() throws ExecutionException, InterruptedException {
+        Task<GetTokenResult> tokenTask = mFirebaseAuth.getUserToken(false);
+        if (tokenTask == null) {
+            TbaLogger.i("No firebase user found, can't fetch auth token");
+            return null;
+        }
+        GetTokenResult tokenResult = Tasks.await(tokenTask);
+        return tokenResult.getToken();
     }
 
 }
