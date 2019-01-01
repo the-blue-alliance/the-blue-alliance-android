@@ -17,7 +17,7 @@ case "$1" in
 
     "UNIT")
         echo "Running project unit tests"
-        ./gradlew testDebugUnitTest --stacktrace
+        ./gradlew testDebugProguardUnitTest --stacktrace
         filter_code $?
         ;;
 
