@@ -1,5 +1,13 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
@@ -21,14 +29,6 @@ import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 
 public class ViewEventActivity extends MyTBASettingsActivity
         implements ViewPager.OnPageChangeListener, HasFragmentComponent {

@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.background;
 
+import android.app.IntentService;
+import android.content.Context;
+import android.content.Intent;
+
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
-
-import android.app.IntentService;
-import android.content.Context;
-import android.content.Intent;
 
 import java.util.List;
 

@@ -1,9 +1,9 @@
 package com.thebluealliance.androidclient.types;
 
+import android.support.annotation.StringRes;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.models.EventAlliance;
-
-import android.support.annotation.StringRes;
 
 public enum PlayoffAdvancement {
     NONE(R.string.match_abbrev_unknown, R.string.playoff_advancement_none, 0),

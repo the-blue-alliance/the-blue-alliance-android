@@ -1,8 +1,10 @@
 package com.thebluealliance.androidclient.notifications;
 
+import android.content.Context;
+import android.content.Intent;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.database.writers.MatchWriter;
@@ -15,11 +17,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
-import android.content.Context;
-import android.content.Intent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

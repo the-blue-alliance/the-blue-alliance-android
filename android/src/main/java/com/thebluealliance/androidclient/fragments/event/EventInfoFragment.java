@@ -1,5 +1,10 @@
 package com.thebluealliance.androidclient.fragments.event;
 
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
@@ -10,11 +15,6 @@ import com.thebluealliance.androidclient.subscribers.EventInfoSubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import javax.inject.Inject;
 

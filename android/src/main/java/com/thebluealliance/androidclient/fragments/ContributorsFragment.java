@@ -1,18 +1,17 @@
 package com.thebluealliance.androidclient.fragments;
 
-import com.google.gson.JsonElement;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
-import com.thebluealliance.androidclient.listeners.ContributorClickListener;
-import com.thebluealliance.androidclient.models.NoDataViewParams;
-import com.thebluealliance.androidclient.subscribers.ContributorListSubscriber;
-
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.gson.JsonElement;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
+import com.thebluealliance.androidclient.listeners.ContributorClickListener;
+import com.thebluealliance.androidclient.models.NoDataViewParams;
+import com.thebluealliance.androidclient.subscribers.ContributorListSubscriber;
 
 import javax.inject.Inject;
 import javax.inject.Named;

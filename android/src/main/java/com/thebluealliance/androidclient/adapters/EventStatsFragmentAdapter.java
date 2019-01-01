@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.adapters;
 
+import android.content.Context;
+
 import com.thebluealliance.androidclient.binders.ListPair;
 import com.thebluealliance.androidclient.comparators.StatListElementComparator;
 import com.thebluealliance.androidclient.listitems.ListItem;
-
-import android.content.Context;
 
 import java.util.Collections;
 

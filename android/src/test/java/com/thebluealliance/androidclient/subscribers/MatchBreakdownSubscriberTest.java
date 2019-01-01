@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.binders.MatchBreakdownBinder;
 import com.thebluealliance.androidclient.config.AppConfig;
@@ -16,8 +15,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

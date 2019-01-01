@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.database;
 
-import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+
+import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;

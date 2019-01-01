@@ -1,10 +1,9 @@
 package com.thebluealliance.androidclient.auth.google;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-
-import com.thebluealliance.androidclient.auth.User;
-
 import android.net.Uri;
+
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.thebluealliance.androidclient.auth.User;
 
 public final class GoogleSignInUser implements User {
 

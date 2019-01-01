@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-
 import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.models.EventAlliance.AllianceBackup;
 import com.thebluealliance.api.model.ITeamAtEventPlayoff;

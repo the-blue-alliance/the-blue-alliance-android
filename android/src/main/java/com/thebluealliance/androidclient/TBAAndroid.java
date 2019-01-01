@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient;
 
+import android.support.multidex.MultiDexApplication;
+
 import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
 import com.thebluealliance.androidclient.accounts.AccountModule;
@@ -20,8 +22,6 @@ import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DbComponent;
 import com.thebluealliance.androidclient.gcm.GcmModule;
 import com.thebluealliance.androidclient.imgur.ImgurModule;
-
-import android.support.multidex.MultiDexApplication;
 
 import javax.inject.Inject;
 

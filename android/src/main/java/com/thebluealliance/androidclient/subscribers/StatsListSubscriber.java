@@ -1,8 +1,9 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.res.Resources;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.ListPair;
 import com.thebluealliance.androidclient.comparators.StatListElementComparator;
@@ -17,8 +18,6 @@ import com.thebluealliance.androidclient.renderers.insights.EventInsights2017Ren
 import com.thebluealliance.androidclient.renderers.insights.EventInsightsRenderer;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.Collections;

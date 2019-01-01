@@ -1,5 +1,10 @@
 package com.thebluealliance.androidclient.adapters;
 
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+
 import com.thebluealliance.androidclient.fragments.event.EventAlliancesFragment;
 import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventDistrictPointsFragment;
@@ -8,11 +13,6 @@ import com.thebluealliance.androidclient.fragments.event.EventMatchesFragment;
 import com.thebluealliance.androidclient.fragments.event.EventRankingsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventStatsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventTeamsFragment;
-
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

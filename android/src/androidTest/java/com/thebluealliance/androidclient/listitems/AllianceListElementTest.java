@@ -1,17 +1,17 @@
 package com.thebluealliance.androidclient.listitems;
 
+import android.content.Context;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
+import android.view.LayoutInflater;
+import android.view.View;
+
 import com.facebook.testing.screenshot.Screenshot;
 import com.facebook.testing.screenshot.ViewHelpers;
 import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-import android.view.LayoutInflater;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;

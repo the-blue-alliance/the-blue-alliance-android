@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.fragments.match;
 
+import android.os.Bundle;
+
 import com.thebluealliance.androidclient.datafeed.combiners.MatchInfoCombiner;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber.Model;
-
-import android.os.Bundle;
 
 import rx.Observable;
 

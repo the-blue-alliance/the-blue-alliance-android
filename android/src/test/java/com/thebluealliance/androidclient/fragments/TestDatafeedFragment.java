@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.fragments;
 
 import com.google.android.gms.analytics.Tracker;
-
 import com.thebluealliance.androidclient.BaseTestActivity;
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.binders.NoDataBinder;

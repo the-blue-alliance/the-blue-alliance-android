@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.fragments.framework;
 
-import com.thebluealliance.androidclient.binders.AbstractDataBinder;
-
 import android.support.annotation.Nullable;
+
+import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 
 public class SimpleBinder extends AbstractDataBinder<String> {
 

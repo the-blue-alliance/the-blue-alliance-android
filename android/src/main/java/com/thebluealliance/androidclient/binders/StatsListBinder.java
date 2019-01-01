@@ -1,10 +1,5 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.listitems.ListItem;
-
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.view.Menu;
@@ -12,6 +7,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.listitems.ListItem;
 
 import java.util.List;
 

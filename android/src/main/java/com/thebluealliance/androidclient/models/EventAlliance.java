@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.models;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-
 import com.thebluealliance.androidclient.types.EventDetailType;
 import com.thebluealliance.api.model.IAllianceBackup;
 import com.thebluealliance.api.model.IEventAlliance;

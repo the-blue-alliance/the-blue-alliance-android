@@ -1,9 +1,5 @@
 package com.thebluealliance.androidclient.listitems;
 
-import com.squareup.picasso.Picasso;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,6 +8,10 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import com.squareup.picasso.Picasso;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 
 public class ImageListElement extends ListElement {
 

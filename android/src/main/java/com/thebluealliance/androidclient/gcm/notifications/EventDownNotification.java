@@ -1,17 +1,16 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import android.app.Notification;
+import android.content.Context;
+import android.support.annotation.Nullable;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
-
-import android.app.Notification;
-import android.content.Context;
-import android.support.annotation.Nullable;
 
 public class EventDownNotification extends GenericNotification {
 

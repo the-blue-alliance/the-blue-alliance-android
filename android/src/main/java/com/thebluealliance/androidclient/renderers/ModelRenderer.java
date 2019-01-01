@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.renderers;
 
-import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.types.ModelType;
-
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
+
+import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.types.ModelType;
 
 public interface ModelRenderer<MODEL, ARGS> {
 

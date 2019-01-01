@@ -1,16 +1,5 @@
 package com.thebluealliance.androidclient.datafeed.status;
 
-import com.google.gson.Gson;
-
-import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountController;
-import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
-import com.thebluealliance.androidclient.background.AnalyticsActions;
-import com.thebluealliance.androidclient.models.ApiStatus;
-
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -20,6 +9,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+
+import com.google.gson.Gson;
+import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
+import com.thebluealliance.androidclient.background.AnalyticsActions;
+import com.thebluealliance.androidclient.models.ApiStatus;
 
 import java.io.IOException;
 import java.util.Calendar;

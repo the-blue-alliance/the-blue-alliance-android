@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.res.Resources;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
@@ -9,8 +11,6 @@ import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRendere
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.api.model.IDistrictEventPoints;
-
-import android.content.res.Resources;
 
 public class DistrictPointBreakdown implements RenderableModel, IDistrictEventPoints {
 

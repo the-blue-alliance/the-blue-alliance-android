@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.listitems;
 
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 
 public abstract class ListHeader implements ListItem {
     private final String name;

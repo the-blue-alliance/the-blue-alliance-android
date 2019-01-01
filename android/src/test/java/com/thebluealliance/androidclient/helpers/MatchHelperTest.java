@@ -1,8 +1,9 @@
 package com.thebluealliance.androidclient.helpers;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Match;
@@ -10,10 +11,6 @@ import com.thebluealliance.androidclient.models.Match;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
-import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;

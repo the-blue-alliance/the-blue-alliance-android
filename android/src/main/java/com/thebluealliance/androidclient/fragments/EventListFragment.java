@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.fragments;
 
+import android.os.Bundle;
+
 import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
@@ -12,8 +14,6 @@ import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.EventListSubscriber;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
 import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
-
-import android.os.Bundle;
 
 import java.util.List;
 

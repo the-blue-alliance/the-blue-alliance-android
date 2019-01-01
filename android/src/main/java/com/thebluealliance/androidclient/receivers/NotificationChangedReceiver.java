@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.receivers;
 
-import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.database.tables.NotificationsTable;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 
 import javax.inject.Inject;
 

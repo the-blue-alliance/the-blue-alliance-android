@@ -1,5 +1,10 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.Menu;
+import android.view.MenuItem;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
@@ -16,11 +21,6 @@ import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import javax.inject.Inject;
 

@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.subscribers;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.comparators.PointBreakdownComparater;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.listitems.ListItem;

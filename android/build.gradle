@@ -109,6 +109,11 @@ android {
         // Don't throw dreaded stub exceptions
         unitTests.returnDefaultValues = true
         unitTests.includeAndroidResources = true
+        unitTests.all {
+            // This is needed for robolectric - see
+            // https://github.com/robolectric/robolectric-gradle-plugin/issues/144
+            jvmArgs '-noverify'
+        }
     }
 
     android.applicationVariants.all { variant ->

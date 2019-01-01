@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.gcm;
 
+import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
+
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.config.AppConfig;
 
@@ -8,10 +11,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
-
-import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;

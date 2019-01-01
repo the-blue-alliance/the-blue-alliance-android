@@ -1,5 +1,16 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.nfc.NdefMessage;
+import android.nfc.NfcAdapter;
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.preference.PreferenceManager;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.AppCompatActivity;
+
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
@@ -12,17 +23,6 @@ import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
-
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.nfc.NdefMessage;
-import android.nfc.NfcAdapter;
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.preference.PreferenceManager;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.AppCompatActivity;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

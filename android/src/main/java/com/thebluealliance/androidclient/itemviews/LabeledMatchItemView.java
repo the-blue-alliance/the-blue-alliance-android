@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.itemviews;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

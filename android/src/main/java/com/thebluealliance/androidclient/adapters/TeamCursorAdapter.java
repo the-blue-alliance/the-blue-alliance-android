@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.adapters;
 
-import com.thebluealliance.androidclient.R;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
@@ -9,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
+
+import com.thebluealliance.androidclient.R;
 
 /**
  * A class that adapts a cursor retrieved from

@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
+
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelTable;
-
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
 
 import rx.functions.Action5;
 import rx.schedulers.Schedulers;

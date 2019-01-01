@@ -1,8 +1,9 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
@@ -12,8 +13,6 @@ import com.thebluealliance.androidclient.renderers.MediaRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.api.model.IMedia;
-
-import android.content.ContentValues;
 
 import javax.annotation.Nullable;
 

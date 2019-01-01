@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.itemviews;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
-
 import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

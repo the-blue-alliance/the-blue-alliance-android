@@ -1,12 +1,11 @@
 package com.thebluealliance.androidclient.config;
 
+import android.content.SharedPreferences;
+
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
-
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.TbaLogger;
-
-import android.content.SharedPreferences;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;

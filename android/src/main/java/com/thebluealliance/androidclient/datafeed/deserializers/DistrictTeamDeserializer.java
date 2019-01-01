@@ -8,7 +8,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
-
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.DistrictRanking;
 

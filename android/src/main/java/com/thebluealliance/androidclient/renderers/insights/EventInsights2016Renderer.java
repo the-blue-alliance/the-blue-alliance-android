@@ -1,13 +1,12 @@
 package com.thebluealliance.androidclient.renderers.insights;
 
-import com.google.gson.JsonObject;
+import android.content.res.Resources;
+import android.support.annotation.StringRes;
 
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
-
-import android.content.res.Resources;
-import android.support.annotation.StringRes;
 
 import java.util.List;
 

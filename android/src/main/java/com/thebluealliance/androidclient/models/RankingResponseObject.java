@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
 import com.google.gson.Gson;
-
 import com.thebluealliance.androidclient.types.EventDetailType;
 import com.thebluealliance.api.model.IRankingItem;
 import com.thebluealliance.api.model.IRankingResponseObject;

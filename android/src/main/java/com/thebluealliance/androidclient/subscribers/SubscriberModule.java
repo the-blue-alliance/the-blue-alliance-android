@@ -1,7 +1,10 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.google.gson.Gson;
+import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -17,10 +20,6 @@ import com.thebluealliance.androidclient.renderers.RendererModule;
 import com.thebluealliance.androidclient.renderers.TeamRenderer;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
 
 import dagger.Module;
 import dagger.Provides;

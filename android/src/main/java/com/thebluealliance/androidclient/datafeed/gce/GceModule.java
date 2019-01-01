@@ -1,12 +1,14 @@
 package com.thebluealliance.androidclient.datafeed.gce;
 
-import com.google.gson.Gson;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.appspot.tbatv_prod_hrd.Favorites;
 import com.appspot.tbatv_prod_hrd.Model;
 import com.appspot.tbatv_prod_hrd.Subscriptions;
 import com.appspot.tbatv_prod_hrd.Tbamobile;
 import com.appspot.tbatv_prod_hrd.TeamMedia;
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.accounts.AccountModule;
 import com.thebluealliance.androidclient.config.AppConfig;
@@ -16,9 +18,6 @@ import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.androidclient.gcm.GcmController;
 import com.thebluealliance.androidclient.gcm.GcmModule;
-
-import android.content.Context;
-import android.content.SharedPreferences;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

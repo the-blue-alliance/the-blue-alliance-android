@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.database;
 
-import com.google.gson.Gson;
-
 import android.content.ContentValues;
+
+import com.google.gson.Gson;
 
 public interface TbaDatabaseModel {
 

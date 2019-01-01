@@ -1,7 +1,8 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.google.gson.Gson;
+import android.content.res.Resources;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
@@ -15,10 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
-import android.content.res.Resources;
 
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.when;

@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+import android.support.annotation.Nullable;
+
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
@@ -14,9 +17,6 @@ import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotifi
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
-
-import android.content.ContentValues;
-import android.support.annotation.Nullable;
 
 import java.util.Date;
 

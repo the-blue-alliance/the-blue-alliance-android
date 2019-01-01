@@ -1,5 +1,9 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.text.Html;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
@@ -28,10 +32,6 @@ import com.thebluealliance.api.model.ITeamRecord;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import android.content.Context;
-import android.content.res.Resources;
-import android.text.Html;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,8 +1,9 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
@@ -12,8 +13,6 @@ import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.api.model.IAward;
 import com.thebluealliance.api.model.IAwardRecipient;
-
-import android.content.ContentValues;
 
 import java.util.List;
 

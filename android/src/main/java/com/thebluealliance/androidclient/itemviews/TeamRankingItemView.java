@@ -1,9 +1,5 @@
 package com.thebluealliance.androidclient.itemviews;
 
-import com.thebluealliance.androidclient.Interactions;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
-
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.text.Html;
@@ -15,6 +11,10 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.thebluealliance.androidclient.Interactions;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

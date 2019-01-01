@@ -1,5 +1,10 @@
 package com.thebluealliance.androidclient.fragments.team;
 
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
@@ -15,11 +20,6 @@ import com.thebluealliance.androidclient.views.NoDataView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.List;
 

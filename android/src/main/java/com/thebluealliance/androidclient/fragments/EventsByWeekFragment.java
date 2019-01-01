@@ -1,7 +1,14 @@
 package com.thebluealliance.androidclient.fragments;
 
-import com.google.common.base.Preconditions;
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
+import com.google.common.base.Preconditions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
@@ -13,14 +20,6 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventWeekTab;
 import com.thebluealliance.androidclient.subscribers.EventTabSubscriber;
 import com.thebluealliance.androidclient.views.SlidingTabs;
-
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.List;
 

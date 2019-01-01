@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.helpers;
 
+import android.content.Context;
+import android.content.Intent;
+
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.TeamAtDistrictActivity;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
@@ -13,9 +16,6 @@ import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.ModelType;
-
-import android.content.Context;
-import android.content.Intent;
 
 public final class ModelHelper {
 

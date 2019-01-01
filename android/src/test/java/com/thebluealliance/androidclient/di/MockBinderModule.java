@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.di;
 
+import android.content.Context;
+
 import com.thebluealliance.androidclient.binders.DistrictEventsBinder;
 import com.thebluealliance.androidclient.binders.DistrictPointsListBinder;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
@@ -22,8 +24,6 @@ import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 
 import org.greenrobot.eventbus.EventBus;
 import org.mockito.Mockito;
-
-import android.content.Context;
 
 import javax.inject.Singleton;
 

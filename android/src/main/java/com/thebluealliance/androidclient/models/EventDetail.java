@@ -1,14 +1,13 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
-
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.EventDetailsTable;
 import com.thebluealliance.androidclient.types.EventDetailType;
-
-import android.content.ContentValues;
 
 import java.util.List;
 

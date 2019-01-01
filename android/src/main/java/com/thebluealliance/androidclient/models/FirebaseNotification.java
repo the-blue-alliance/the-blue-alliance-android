@@ -1,9 +1,8 @@
 package com.thebluealliance.androidclient.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;

@@ -14,7 +14,7 @@ def coverageSourceDirs = [
         "$projectDir/src/main/java",
 ]
 
-task jacocoTestReport(type: JacocoReport, dependsOn: 'testDevDebugUnitTest') {
+task jacocoTestReport(type: JacocoReport, dependsOn: 'testDebugUnitTest') {
     group = "Reporting"
     description = "Generate Jacoco coverage reports after running tests."
     reports {
@@ -37,7 +37,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: 'testDevDebugUnitTest') {
             ]
     )
     sourceDirectories = files(coverageSourceDirs)
-    executionData = files("$buildDir/jacoco/testDevDebugUnitTest.exec")
+    executionData = files("$buildDir/jacoco/testDebugUnitTest.exec")
     // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
     // We iterate through the compiled .class tree and rename $$ to $.
     doFirst {

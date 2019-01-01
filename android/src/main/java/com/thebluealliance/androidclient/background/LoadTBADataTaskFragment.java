@@ -1,5 +1,9 @@
 package com.thebluealliance.androidclient.background;
 
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+
 import com.thebluealliance.androidclient.api.call.TbaApiV3;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.config.AppConfig;
@@ -9,10 +13,6 @@ import com.thebluealliance.androidclient.database.writers.EventListWriter;
 import com.thebluealliance.androidclient.database.writers.TeamListWriter;
 import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
-
-import android.app.Activity;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
 import javax.inject.Inject;
 import javax.inject.Named;

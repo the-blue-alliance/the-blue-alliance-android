@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.adapters;
 
-import com.thebluealliance.androidclient.fragments.team.TeamEventsFragment;
-import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
-import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
-import com.thebluealliance.androidclient.interfaces.HasYearParam;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
+
+import com.thebluealliance.androidclient.fragments.team.TeamEventsFragment;
+import com.thebluealliance.androidclient.fragments.team.TeamInfoFragment;
+import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
+import com.thebluealliance.androidclient.interfaces.HasYearParam;
 
 public class ViewTeamFragmentPagerAdapter extends FragmentPagerAdapter {
 

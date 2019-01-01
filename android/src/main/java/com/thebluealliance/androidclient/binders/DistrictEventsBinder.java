@@ -1,13 +1,13 @@
 package com.thebluealliance.androidclient.binders;
 
+import android.content.res.Resources;
+import android.support.annotation.Nullable;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.content.res.Resources;
-import android.support.annotation.Nullable;
 
 import java.util.List;
 

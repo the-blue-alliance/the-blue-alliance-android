@@ -1,5 +1,19 @@
 package com.thebluealliance.androidclient.fragments.event;
 
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v7.app.AlertDialog;
+import android.util.SparseArray;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RadioGroup;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
@@ -15,20 +29,6 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
-
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v7.app.AlertDialog;
-import android.util.SparseArray;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RadioGroup;
 
 import java.util.Arrays;
 import java.util.List;

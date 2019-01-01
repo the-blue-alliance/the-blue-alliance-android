@@ -1,17 +1,16 @@
 package com.thebluealliance.androidclient.listitems;
 
-import com.google.gson.JsonObject;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.helpers.WebcastHelper;
-import com.thebluealliance.androidclient.listeners.WebcastClickListener;
-import com.thebluealliance.androidclient.types.WebcastType;
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+
+import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.helpers.WebcastHelper;
+import com.thebluealliance.androidclient.listeners.WebcastClickListener;
+import com.thebluealliance.androidclient.types.WebcastType;
 
 public class WebcastListElement extends ListElement {
 

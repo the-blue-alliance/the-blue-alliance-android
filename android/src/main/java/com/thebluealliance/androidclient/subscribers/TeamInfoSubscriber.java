@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.Context;
+
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
 import com.thebluealliance.androidclient.config.AppConfig;
@@ -7,8 +9,6 @@ import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.MediaType;
-
-import android.content.Context;
 
 import java.util.List;
 import java.util.Map;

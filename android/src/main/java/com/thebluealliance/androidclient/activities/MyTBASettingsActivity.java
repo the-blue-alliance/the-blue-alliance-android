@@ -1,16 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountController;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
-import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
-import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
-import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
-import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
-import com.thebluealliance.androidclient.types.ModelType;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -37,6 +26,17 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
+import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
+import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
+import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
+import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
+import com.thebluealliance.androidclient.types.ModelType;
 
 import javax.inject.Inject;
 

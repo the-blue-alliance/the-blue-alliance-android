@@ -1,5 +1,14 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
+import android.widget.FrameLayout;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
@@ -9,15 +18,6 @@ import com.thebluealliance.androidclient.di.components.MyTbaComponent;
 import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
-import android.widget.FrameLayout;
 
 /**
  * Activity that provides a navigation drawer.

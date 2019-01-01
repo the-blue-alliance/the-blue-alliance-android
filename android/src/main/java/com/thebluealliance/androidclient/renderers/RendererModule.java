@@ -1,9 +1,9 @@
 package com.thebluealliance.androidclient.renderers;
 
+import android.content.res.Resources;
+
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
-
-import android.content.res.Resources;
 
 import javax.inject.Singleton;
 

@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.helpers;
 
+import android.content.Context;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
@@ -11,8 +13,6 @@ import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.content.Context;
 
 import java.util.Calendar;
 import java.util.Collections;

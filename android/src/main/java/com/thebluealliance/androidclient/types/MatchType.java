@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.types;
 
-import com.thebluealliance.androidclient.R;
-
 import android.support.annotation.StringRes;
+
+import com.thebluealliance.androidclient.R;
 
 public enum MatchType {
     NONE(R.string.match_type_unknown, R.string.match_abbrev_unknown, 0, false, "m"),

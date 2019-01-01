@@ -1,5 +1,16 @@
 package com.thebluealliance.androidclient.fragments;
 
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.RecentNotificationsListBinder;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
@@ -22,17 +33,6 @@ import com.thebluealliance.androidclient.viewmodels.ScheduleUpdatedNotificationV
 import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
 import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.NoDataView;
-
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import java.util.List;
 

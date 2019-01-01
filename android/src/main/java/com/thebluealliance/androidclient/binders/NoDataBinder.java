@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.binders;
 
+import android.support.annotation.Nullable;
+import android.view.View;
+
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.views.NoDataView;
-
-import android.support.annotation.Nullable;
-import android.view.View;
 
 /**
  * Display a "No Data Available" notice.

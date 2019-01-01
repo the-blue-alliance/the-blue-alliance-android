@@ -1,16 +1,15 @@
 package com.thebluealliance.androidclient.mytba;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
+import android.app.IntentService;
+import android.content.Intent;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.di.components.MyTbaComponent;
 import com.thebluealliance.androidclient.gcm.GcmController;
-
-import android.app.IntentService;
-import android.content.Intent;
 
 import java.io.IOException;
 

@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.listeners;
 
-import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
+
+import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 
 public class GamedayTickerClickListener implements View.OnClickListener {
 

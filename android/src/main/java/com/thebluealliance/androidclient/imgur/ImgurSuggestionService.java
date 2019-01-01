@@ -1,11 +1,15 @@
 package com.thebluealliance.androidclient.imgur;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import android.app.IntentService;
+import android.content.Context;
+import android.content.Intent;
+import android.os.PowerManager;
 
 import com.appspot.tbatv_prod_hrd.TeamMedia;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesMediaSuggestionMessage;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.config.AppConfig;
@@ -15,11 +19,6 @@ import com.thebluealliance.androidclient.di.components.SuggestionComponent;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.imgur.ImgurApi;
 import com.thebluealliance.imgur.responses.UploadResponse;
-
-import android.app.IntentService;
-import android.content.Context;
-import android.content.Intent;
-import android.os.PowerManager;
 
 import java.io.File;
 

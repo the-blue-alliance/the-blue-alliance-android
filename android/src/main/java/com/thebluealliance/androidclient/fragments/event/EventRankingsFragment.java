@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.fragments.event;
 
+import android.os.Bundle;
+
 import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
@@ -11,8 +13,6 @@ import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
 import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
-
-import android.os.Bundle;
 
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;

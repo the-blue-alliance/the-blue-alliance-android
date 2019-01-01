@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.imgur;
 
-import com.thebluealliance.androidclient.R;
-
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
+
+import com.thebluealliance.androidclient.R;
 
 public class ImgurUploadNotification {
     private int mNotificationId;

@@ -1,14 +1,5 @@
 package com.thebluealliance.androidclient.fragments.mytba;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountController;
-import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
-import com.thebluealliance.androidclient.adapters.MyTBAFragmentPagerAdapter;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
-import com.thebluealliance.androidclient.views.SlidingTabs;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,6 +10,15 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
+import com.thebluealliance.androidclient.adapters.MyTBAFragmentPagerAdapter;
+import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import javax.inject.Inject;
 

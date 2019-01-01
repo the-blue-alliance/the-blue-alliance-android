@@ -1,13 +1,12 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.res.Resources;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
-
-import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.List;

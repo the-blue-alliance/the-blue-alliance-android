@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
 import com.google.gson.Gson;
-
 import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.models.EventDetail;
 

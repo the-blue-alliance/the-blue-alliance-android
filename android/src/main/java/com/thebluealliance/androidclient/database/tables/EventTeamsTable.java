@@ -1,16 +1,15 @@
 package com.thebluealliance.androidclient.database.tables;
 
-import com.google.gson.Gson;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Team;
-
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;

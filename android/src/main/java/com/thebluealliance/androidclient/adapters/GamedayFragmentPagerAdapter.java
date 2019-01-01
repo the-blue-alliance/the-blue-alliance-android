@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.adapters;
 
-import com.thebluealliance.androidclient.fragments.gameday.GamedayWebcastsFragment;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import com.thebluealliance.androidclient.fragments.gameday.GamedayWebcastsFragment;
 
 public class GamedayFragmentPagerAdapter extends FragmentPagerAdapter {
 

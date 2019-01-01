@@ -1,5 +1,18 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.app.SearchManager;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -18,19 +31,6 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 import com.thebluealliance.androidclient.renderers.TeamRenderer;
-
-import android.app.SearchManager;
-import android.content.Intent;
-import android.database.Cursor;
-import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 

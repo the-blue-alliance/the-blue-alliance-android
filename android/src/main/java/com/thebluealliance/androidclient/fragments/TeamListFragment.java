@@ -1,5 +1,10 @@
 package com.thebluealliance.androidclient.fragments;
 
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
@@ -8,11 +13,6 @@ import com.thebluealliance.androidclient.itemviews.TeamItemView;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.subscribers.TeamListRecyclerSubscriber;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
-
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.List;
 

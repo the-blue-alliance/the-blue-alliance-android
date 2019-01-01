@@ -1,5 +1,10 @@
 package com.thebluealliance.androidclient.datafeed.status;
 
+import android.app.IntentService;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.support.annotation.WorkerThread;
+
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -13,11 +18,6 @@ import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.models.ApiStatus;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.app.IntentService;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.annotation.WorkerThread;
 
 import java.util.concurrent.ExecutionException;
 

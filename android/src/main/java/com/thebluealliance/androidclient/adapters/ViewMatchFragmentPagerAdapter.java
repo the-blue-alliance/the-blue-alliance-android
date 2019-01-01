@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.adapters;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.fragments.match.MatchBreakdownFragment;
-import com.thebluealliance.androidclient.fragments.match.MatchInfoFragment;
-
 import android.content.res.Resources;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.fragments.match.MatchBreakdownFragment;
+import com.thebluealliance.androidclient.fragments.match.MatchInfoFragment;
 
 public class ViewMatchFragmentPagerAdapter extends FragmentPagerAdapter {
 

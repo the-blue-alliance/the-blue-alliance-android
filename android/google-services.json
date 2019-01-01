@@ -18,8 +18,31 @@
         }
       ],
       "services": {
+      	"analytics_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013331073999:android:eb597291c17462e6",
+        "android_client_info": {
+          "package_name": "com.thebluealliance.androidclient"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "abc123"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        }
       }
     }
+ 
   ],
   "configuration_version": "1"
 }

@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.models;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
@@ -12,8 +11,6 @@ import com.thebluealliance.androidclient.types.EventType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.text.ParseException;
 import java.util.Date;

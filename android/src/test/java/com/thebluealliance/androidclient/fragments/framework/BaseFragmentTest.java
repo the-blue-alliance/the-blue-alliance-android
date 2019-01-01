@@ -1,9 +1,9 @@
 package com.thebluealliance.androidclient.fragments.framework;
 
+import android.view.View;
+
 import org.junit.After;
 import org.robolectric.util.ReflectionHelpers;
-
-import android.view.View;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

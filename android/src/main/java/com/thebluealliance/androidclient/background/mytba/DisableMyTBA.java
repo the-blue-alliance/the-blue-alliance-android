@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.background.mytba;
 
-import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
-
 import android.os.AsyncTask;
+
+import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 
 public class DisableMyTBA extends AsyncTask<Void, Void, Void> {
 

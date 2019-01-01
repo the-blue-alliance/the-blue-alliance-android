@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.di;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-
 import com.thebluealliance.androidclient.gcm.GcmController;
 
 import org.mockito.Mockito;

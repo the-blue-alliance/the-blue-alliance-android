@@ -1,5 +1,11 @@
 package com.thebluealliance.androidclient.fragments.team;
 
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
@@ -16,12 +22,6 @@ import com.thebluealliance.androidclient.subscribers.TeamInfoSubscriber;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import javax.inject.Inject;
 

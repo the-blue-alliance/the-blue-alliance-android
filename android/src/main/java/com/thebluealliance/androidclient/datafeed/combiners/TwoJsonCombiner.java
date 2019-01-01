@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.datafeed.combiners;
 
 import com.google.gson.JsonElement;
-
 import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
 
 import rx.functions.Func2;

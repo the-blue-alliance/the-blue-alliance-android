@@ -1,7 +1,11 @@
 package com.thebluealliance.androidclient.fragments;
 
-import com.google.android.gms.analytics.Tracker;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.v4.app.Fragment;
 
+import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.activities.DatafeedActivity;
 import com.thebluealliance.androidclient.api.ApiConstants;
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
@@ -17,11 +21,6 @@ import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
-import android.support.v4.app.Fragment;
 
 import javax.inject.Inject;
 

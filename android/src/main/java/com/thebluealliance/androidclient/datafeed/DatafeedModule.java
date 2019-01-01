@@ -1,7 +1,10 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import com.google.gson.Gson;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.annotation.VisibleForTesting;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
@@ -16,10 +19,6 @@ import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.support.annotation.VisibleForTesting;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

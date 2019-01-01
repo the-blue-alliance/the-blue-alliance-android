@@ -1,13 +1,13 @@
 package com.thebluealliance.androidclient.accounts;
 
+import android.content.Context;
+import android.os.AsyncTask;
+import android.widget.Toast;
+
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 import com.thebluealliance.androidclient.mytba.ModelPrefsResult;
-
-import android.content.Context;
-import android.os.AsyncTask;
-import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 

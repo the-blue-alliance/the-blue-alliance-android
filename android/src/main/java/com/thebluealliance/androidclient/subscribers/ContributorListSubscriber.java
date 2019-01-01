@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.subscribers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.listitems.ContributorListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 

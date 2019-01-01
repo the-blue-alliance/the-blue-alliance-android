@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.binders;
 
+import android.content.res.Resources;
+
 import com.thebluealliance.androidclient.helpers.FragmentBinder;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listeners.EventInfoContainerClickListener;
@@ -9,8 +11,6 @@ import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.renderers.RendererModule;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.content.res.Resources;
 
 import dagger.Module;
 import dagger.Provides;

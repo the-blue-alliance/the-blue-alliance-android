@@ -1,7 +1,13 @@
 package com.thebluealliance.androidclient.di;
 
-import com.google.android.gms.analytics.Tracker;
+import android.accounts.AccountManager;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.preference.PreferenceManager;
 
+import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.config.LocalProperties;
@@ -28,13 +34,6 @@ import com.thebluealliance.androidclient.database.writers.TeamWriter;
 import com.thebluealliance.androidclient.database.writers.YearsParticipatedWriter;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.accounts.AccountManager;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.preference.PreferenceManager;
 
 import javax.inject.Singleton;
 

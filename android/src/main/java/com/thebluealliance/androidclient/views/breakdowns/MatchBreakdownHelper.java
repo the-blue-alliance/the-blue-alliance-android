@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.views.breakdowns;
 
-import com.google.gson.JsonObject;
-
 import android.view.View;
+
+import com.google.gson.JsonObject;
 
 public final class MatchBreakdownHelper {
 

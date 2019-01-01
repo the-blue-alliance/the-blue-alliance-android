@@ -1,7 +1,8 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.google.gson.JsonObject;
+import android.content.Context;
 
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.database.Database;
@@ -25,10 +26,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
-import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.accounts;
 
+import android.content.Context;
+
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
@@ -11,9 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
-
-import android.content.Context;
 
 import java.util.concurrent.ExecutionException;
 

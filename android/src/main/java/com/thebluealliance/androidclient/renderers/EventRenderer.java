@@ -1,8 +1,10 @@
 package com.thebluealliance.androidclient.renderers;
 
+import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listitems.AllianceListElement;
@@ -13,9 +15,6 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.types.PlayoffAdvancement;
-
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
 
 import java.util.ArrayList;
 import java.util.List;

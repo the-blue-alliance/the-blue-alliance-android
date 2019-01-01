@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.datafeed;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;

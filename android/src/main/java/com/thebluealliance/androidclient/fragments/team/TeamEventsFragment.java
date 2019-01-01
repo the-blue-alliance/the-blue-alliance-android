@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.fragments.team;
 
+import android.os.Bundle;
+
 import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
@@ -19,8 +21,6 @@ import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import android.os.Bundle;
 
 import java.util.List;
 

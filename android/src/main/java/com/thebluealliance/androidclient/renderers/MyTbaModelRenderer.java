@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.renderers;
 
+import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
+
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.listitems.DistrictListElement;
@@ -9,9 +12,6 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.ModelType;
-
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

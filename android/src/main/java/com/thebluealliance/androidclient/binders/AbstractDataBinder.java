@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.binders;
 
+import android.app.Activity;
+import android.view.View;
+
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.views.NoDataView;
-
-import android.app.Activity;
-import android.view.View;
 
 /**
  * A class that takes in input data model and updates views accordingly

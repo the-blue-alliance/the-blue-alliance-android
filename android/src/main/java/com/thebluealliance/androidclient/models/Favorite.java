@@ -1,9 +1,9 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.types.ModelType;
-
-import android.content.ContentValues;
 
 public class Favorite {
 

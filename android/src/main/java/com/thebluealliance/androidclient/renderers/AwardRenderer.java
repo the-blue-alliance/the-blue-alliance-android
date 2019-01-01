@@ -1,13 +1,13 @@
 package com.thebluealliance.androidclient.renderers;
 
+import android.support.annotation.IntDef;
+
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.ModelType;
-
-import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

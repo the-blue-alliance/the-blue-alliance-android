@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.datafeed.combiners;
 
 import com.google.gson.JsonElement;
-
 import com.thebluealliance.androidclient.datafeed.KeyAndJson;
 
 import rx.functions.Func1;

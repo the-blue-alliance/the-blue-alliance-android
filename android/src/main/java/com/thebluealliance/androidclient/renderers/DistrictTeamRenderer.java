@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.renderers;
 
+import android.support.annotation.Nullable;
+
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.types.ModelType;
-
-import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

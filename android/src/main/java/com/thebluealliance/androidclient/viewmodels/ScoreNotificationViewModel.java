@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.viewmodels;
 
-import com.thebluealliance.androidclient.models.Match;
-
 import android.content.Intent;
+
+import com.thebluealliance.androidclient.models.Match;
 
 public class ScoreNotificationViewModel extends BaseViewModel {
 
