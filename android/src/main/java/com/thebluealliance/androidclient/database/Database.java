@@ -34,7 +34,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
     public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
-    static final int DATABASE_VERSION = 34;
+    static final int DATABASE_VERSION = 35;
     private static final String DATABASE_NAME = "the-blue-alliance-android-database";
     static final @Deprecated String TABLE_API = "api";
     public static final String TABLE_TEAMS = "teams",
@@ -537,6 +537,17 @@ public class Database extends SQLiteOpenHelper {
                     try {
                         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDIAS);
                         db.execSQL(CREATE_MEDIAS);
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
+                    break;
+                case 35:
+                    // Recreate the districts table to drop the enum column
+                    db.beginTransaction();
+                    try {
+                        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DISTRICTS);
+                        db.execSQL(CREATE_DISTRICTS);
                         db.setTransactionSuccessful();
                     } finally {
                         db.endTransaction();
