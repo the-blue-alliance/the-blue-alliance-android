@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.datafeed.combiners;
 
 import com.google.common.collect.ImmutableList;
-
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Team;
@@ -9,8 +8,6 @@ import com.thebluealliance.androidclient.models.Team;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.util.List;
 

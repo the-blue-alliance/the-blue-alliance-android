@@ -1,10 +1,15 @@
 package com.thebluealliance.androidclient.views.breakdowns;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import com.facebook.testing.screenshot.Screenshot;
 import com.facebook.testing.screenshot.ViewHelpers;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.models.Match;
@@ -14,12 +19,6 @@ import com.thebluealliance.androidclient.types.MatchType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.FrameLayout;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

@@ -1,10 +1,13 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+import android.content.res.Resources;
+import android.support.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
-
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
@@ -17,10 +20,6 @@ import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.api.model.IMatch;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
 import com.thebluealliance.api.model.IMatchVideo;
-
-import android.content.ContentValues;
-import android.content.res.Resources;
-import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;

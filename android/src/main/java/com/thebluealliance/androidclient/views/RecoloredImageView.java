@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.views;
 
-import com.thebluealliance.androidclient.R;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+
+import com.thebluealliance.androidclient.R;
 
 public class RecoloredImageView extends ImageView {
 

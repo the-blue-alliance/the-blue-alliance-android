@@ -1,5 +1,11 @@
 package com.thebluealliance.androidclient.binders;
 
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
@@ -7,12 +13,6 @@ import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 

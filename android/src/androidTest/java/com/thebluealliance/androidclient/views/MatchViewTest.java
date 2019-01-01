@@ -1,16 +1,16 @@
 package com.thebluealliance.androidclient.views;
 
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
+import android.view.LayoutInflater;
+import android.view.View;
+
 import com.facebook.testing.screenshot.Screenshot;
 import com.facebook.testing.screenshot.ViewHelpers;
 import com.thebluealliance.androidclient.R;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-import android.view.LayoutInflater;
-import android.view.View;
 
 @RunWith(AndroidJUnit4.class)
 public class MatchViewTest {

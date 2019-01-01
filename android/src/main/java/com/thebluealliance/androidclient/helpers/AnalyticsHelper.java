@@ -1,12 +1,11 @@
 package com.thebluealliance.androidclient.helpers;
 
+import android.content.Context;
+
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.TbaLogger;
-
-import android.content.Context;
 
 import java.util.Map;
 

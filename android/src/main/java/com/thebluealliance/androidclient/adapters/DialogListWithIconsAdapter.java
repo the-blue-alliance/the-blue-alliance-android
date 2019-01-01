@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.adapters;
 
-import com.thebluealliance.androidclient.R;
-
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+
+import com.thebluealliance.androidclient.R;
 
 import java.util.Arrays;
 import java.util.List;

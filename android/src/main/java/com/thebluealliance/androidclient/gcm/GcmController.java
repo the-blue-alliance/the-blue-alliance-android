@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.gcm;
 
-import com.thebluealliance.androidclient.config.AppConfig;
-
 import android.content.SharedPreferences;
+
+import com.thebluealliance.androidclient.config.AppConfig;
 
 import javax.inject.Singleton;
 

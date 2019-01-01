@@ -1,5 +1,14 @@
 package com.thebluealliance.androidclient.activities.settings;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceFragment;
+import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
@@ -11,15 +20,6 @@ import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
 import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
 import java.io.IOException;
 

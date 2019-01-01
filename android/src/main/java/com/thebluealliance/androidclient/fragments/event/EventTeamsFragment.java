@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.fragments.event;
 
+import android.content.Intent;
+import android.os.Bundle;
+
 import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
@@ -12,9 +15,6 @@ import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.subscribers.TeamListRecyclerSubscriber;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
-
-import android.content.Intent;
-import android.os.Bundle;
 
 import java.util.List;
 

@@ -1,7 +1,10 @@
 package com.thebluealliance.androidclient.models;
 
-import com.google.gson.Gson;
+import android.content.ContentValues;
+import android.content.Context;
+import android.support.annotation.IntDef;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
@@ -13,10 +16,6 @@ import com.thebluealliance.androidclient.viewmodels.EventViewModel;
 import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
 import com.thebluealliance.api.model.IDistrict;
 import com.thebluealliance.api.model.IEvent;
-
-import android.content.ContentValues;
-import android.content.Context;
-import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

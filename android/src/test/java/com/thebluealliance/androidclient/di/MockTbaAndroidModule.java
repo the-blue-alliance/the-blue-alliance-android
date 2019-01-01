@@ -1,8 +1,11 @@
 package com.thebluealliance.androidclient.di;
 
+import android.accounts.AccountManager;
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.writers.AwardListWriter;
@@ -27,10 +30,6 @@ import com.thebluealliance.androidclient.database.writers.YearsParticipatedWrite
 
 import org.greenrobot.eventbus.EventBus;
 import org.mockito.Mockito;
-
-import android.accounts.AccountManager;
-import android.content.Context;
-import android.content.SharedPreferences;
 
 import javax.inject.Singleton;
 

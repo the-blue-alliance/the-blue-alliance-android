@@ -1,16 +1,16 @@
 package com.thebluealliance.androidclient.listitems;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listeners.DistrictClickListener;
-import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
-import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.types.ModelType;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.DistrictClickListener;
+import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
+import com.thebluealliance.androidclient.models.District;
+import com.thebluealliance.androidclient.types.ModelType;
 
 public class DistrictListElement extends ListElement {
 

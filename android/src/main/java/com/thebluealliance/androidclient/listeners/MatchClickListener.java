@@ -1,13 +1,13 @@
 package com.thebluealliance.androidclient.listeners;
 
+import android.content.Context;
+import android.content.Intent;
+import android.view.View;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-
-import android.content.Context;
-import android.content.Intent;
-import android.view.View;
 
 public class MatchClickListener implements View.OnClickListener {
 

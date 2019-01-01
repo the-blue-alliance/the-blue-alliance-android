@@ -1,12 +1,11 @@
 package com.thebluealliance.androidclient.fragments.framework;
 
-import com.google.android.gms.analytics.Tracker;
+import android.support.annotation.VisibleForTesting;
 
+import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.binders.NoDataBinder;
 import com.thebluealliance.androidclient.di.MockFragmentComponent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
-
-import android.support.annotation.VisibleForTesting;
 
 import rx.Observable;
 

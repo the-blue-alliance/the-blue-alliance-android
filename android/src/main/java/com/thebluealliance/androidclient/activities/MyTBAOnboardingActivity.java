@@ -1,5 +1,13 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -8,14 +16,6 @@ import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.di.components.AuthComponent;
 import com.thebluealliance.androidclient.di.components.DaggerAuthComponent;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import javax.inject.Inject;
 import javax.inject.Named;

@@ -1,5 +1,9 @@
 package com.thebluealliance.androidclient;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 
 import org.junit.Before;
@@ -7,10 +11,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RuntimeEnvironment;
-
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

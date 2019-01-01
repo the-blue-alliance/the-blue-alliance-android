@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.di;
 
 import com.google.firebase.auth.FirebaseAuth;
-
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.google.GoogleAuthProvider;
 

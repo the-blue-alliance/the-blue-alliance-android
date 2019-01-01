@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.listitems;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.views.MatchView;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.views.MatchView;
 
 import java.io.Serializable;
 import java.util.Arrays;

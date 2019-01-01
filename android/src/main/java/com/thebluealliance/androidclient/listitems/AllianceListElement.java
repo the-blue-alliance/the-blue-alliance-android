@@ -1,5 +1,12 @@
 package com.thebluealliance.androidclient.listitems;
 
+import android.content.Context;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.interfaces.RenderableModel;
@@ -7,13 +14,6 @@ import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
 import com.thebluealliance.androidclient.listeners.PlayoffAdvancementClickListener;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.types.PlayoffAdvancement;
-
-import android.content.Context;
-import android.text.SpannableString;
-import android.text.style.UnderlineSpan;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 
 import java.util.List;
 

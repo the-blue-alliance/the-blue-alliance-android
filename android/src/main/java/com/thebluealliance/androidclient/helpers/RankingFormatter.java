@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.helpers;
 
+import android.content.res.Resources;
+import android.support.annotation.IntDef;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.api.model.IRankingItem;
 import com.thebluealliance.api.model.IRankingSortOrder;
-
-import android.content.res.Resources;
-import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

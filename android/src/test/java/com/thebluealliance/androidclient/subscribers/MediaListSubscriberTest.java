@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.res.Resources;
+import android.support.annotation.StringRes;
+
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
@@ -12,11 +15,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-
-import android.content.res.Resources;
-import android.support.annotation.StringRes;
 
 import java.util.List;
 

@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.datafeed;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-
 import com.thebluealliance.androidclient.api.rx.TbaApiV3;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;

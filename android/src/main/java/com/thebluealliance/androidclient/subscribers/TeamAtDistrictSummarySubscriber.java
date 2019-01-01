@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.res.Resources;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
@@ -14,8 +16,6 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.api.model.IDistrictEventPoints;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.List;

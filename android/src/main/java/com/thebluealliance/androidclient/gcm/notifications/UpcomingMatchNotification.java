@@ -1,5 +1,16 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+
 import com.google.common.base.Predicate;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -8,7 +19,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
@@ -24,17 +34,6 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.types.WebcastType;
 import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
-
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;

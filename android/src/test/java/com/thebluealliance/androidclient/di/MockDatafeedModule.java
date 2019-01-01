@@ -1,7 +1,9 @@
 package com.thebluealliance.androidclient.di;
 
-import com.google.gson.Gson;
+import android.content.Context;
+import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.api.ApiConstants;
 import com.thebluealliance.androidclient.api.rx.TbaApiV2;
 import com.thebluealliance.androidclient.api.rx.TbaApiV3;
@@ -17,9 +19,6 @@ import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.fragments.FirebaseTickerFragment;
 
 import org.mockito.Mockito;
-
-import android.content.Context;
-import android.content.SharedPreferences;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

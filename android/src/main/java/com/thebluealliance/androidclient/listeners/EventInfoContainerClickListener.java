@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.listeners;
 
+import android.content.Context;
+import android.view.View;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
-
-import android.content.Context;
-import android.view.View;
 
 import javax.inject.Inject;
 

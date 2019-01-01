@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.types;
 
-import com.thebluealliance.androidclient.R;
-
 import android.support.annotation.StringRes;
+
+import com.thebluealliance.androidclient.R;
 
 /** Do not insert any new entries above the existing enums!!!
  * Things depend on their ordinal values, so you can only to the bottom of the list

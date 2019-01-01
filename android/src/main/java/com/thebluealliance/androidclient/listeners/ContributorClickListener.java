@@ -1,13 +1,13 @@
 package com.thebluealliance.androidclient.listeners;
 
-import com.thebluealliance.androidclient.adapters.ListViewAdapter;
-import com.thebluealliance.androidclient.listitems.ListElement;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.widget.AdapterView;
+
+import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.listitems.ListElement;
 
 import javax.inject.Inject;
 

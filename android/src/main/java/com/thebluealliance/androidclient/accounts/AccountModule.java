@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.accounts;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.config.AppConfig;
-import com.thebluealliance.androidclient.di.TBAAndroidModule;
-
 import android.accounts.AccountManager;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.config.AppConfig;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import javax.inject.Singleton;
 

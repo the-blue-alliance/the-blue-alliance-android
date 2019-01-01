@@ -1,13 +1,12 @@
 package com.thebluealliance.androidclient.helpers;
 
-import com.google.gson.JsonObject;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.types.WebcastType;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+
+import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.types.WebcastType;
 
 public final class WebcastHelper {
 

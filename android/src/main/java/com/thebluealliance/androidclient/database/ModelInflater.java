@@ -1,8 +1,9 @@
 package com.thebluealliance.androidclient.database;
 
+import android.database.Cursor;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
@@ -32,8 +33,6 @@ import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.api.model.IDistrictEventPoints;
-
-import android.database.Cursor;
 
 import java.util.ArrayList;
 import java.util.Date;

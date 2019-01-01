@@ -1,17 +1,16 @@
 package com.thebluealliance.androidclient.views.breakdowns;
 
-import com.google.gson.JsonObject;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.types.MatchType;
-import com.thebluealliance.api.model.IMatchAlliancesContainer;
-
 import android.content.Context;
 import android.support.v7.widget.GridLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import java.util.List;
 

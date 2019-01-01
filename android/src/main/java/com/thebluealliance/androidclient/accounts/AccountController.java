@@ -1,17 +1,17 @@
 package com.thebluealliance.androidclient.accounts;
 
-import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.config.AppConfig;
-import com.thebluealliance.androidclient.auth.User;
-import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
-import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
+
+import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.auth.User;
+import com.thebluealliance.androidclient.config.AppConfig;
+import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

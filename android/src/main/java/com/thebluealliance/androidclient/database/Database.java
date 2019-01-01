@@ -1,7 +1,14 @@
 package com.thebluealliance.androidclient.database;
 
-import com.google.gson.Gson;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
+import android.support.annotation.VisibleForTesting;
+import android.support.annotation.WorkerThread;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
@@ -16,14 +23,6 @@ import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
-
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
-import android.support.annotation.VisibleForTesting;
-import android.support.annotation.WorkerThread;
 
 import javax.inject.Inject;
 

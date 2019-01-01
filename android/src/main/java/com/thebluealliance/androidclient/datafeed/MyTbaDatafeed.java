@@ -1,6 +1,11 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import com.google.gson.JsonObject;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabaseLockedException;
+import android.os.Handler;
+import android.widget.Toast;
 
 import com.appspot.tbatv_prod_hrd.Favorites;
 import com.appspot.tbatv_prod_hrd.Model;
@@ -13,6 +18,7 @@ import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesModelPreferenceMe
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesRegistrationRequest;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesSubscriptionCollection;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesSubscriptionMessage;
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -31,13 +37,6 @@ import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Subscription;
 import com.thebluealliance.androidclient.mytba.ModelPrefsResult;
 import com.thebluealliance.androidclient.types.ModelType;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.database.sqlite.SQLiteDatabaseLockedException;
-import android.os.Handler;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;

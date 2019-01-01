@@ -1,12 +1,11 @@
 package com.thebluealliance.androidclient.models;
 
-import com.google.gson.Gson;
+import android.content.ContentValues;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
 import com.thebluealliance.api.model.IDistrict;
-
-import android.content.ContentValues;
 
 import javax.annotation.Nullable;
 

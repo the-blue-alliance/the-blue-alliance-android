@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.listitems;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.EventTeamClickListener;
 
 public class LabelValueDetailListItem extends ListElement {
 

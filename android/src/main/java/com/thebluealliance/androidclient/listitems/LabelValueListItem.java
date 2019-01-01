@@ -1,13 +1,13 @@
 package com.thebluealliance.androidclient.listitems;
 
-import com.thebluealliance.androidclient.R;
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.thebluealliance.androidclient.R;
 
 public class LabelValueListItem extends ListElement {
 

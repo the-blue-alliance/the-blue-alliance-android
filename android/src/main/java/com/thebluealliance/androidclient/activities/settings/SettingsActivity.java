@@ -1,16 +1,5 @@
 package com.thebluealliance.androidclient.activities.settings;
 
-import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.accounts.AccountController;
-import com.thebluealliance.androidclient.activities.ContributorsActivity;
-import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
-import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -21,6 +10,17 @@ import android.preference.SwitchPreference;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.activities.ContributorsActivity;
+import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
+import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
+import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 
 import javax.inject.Inject;
 

@@ -1,5 +1,11 @@
 package com.thebluealliance.androidclient.fragments.framework;
 
+import android.app.Activity;
+import android.content.ComponentName;
+import android.support.annotation.IdRes;
+import android.support.v4.app.Fragment;
+import android.widget.ListView;
+
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 import com.thebluealliance.androidclient.binders.ListViewBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
@@ -10,12 +16,6 @@ import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 import org.robolectric.Shadows;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowListView;
-
-import android.app.Activity;
-import android.content.ComponentName;
-import android.support.annotation.IdRes;
-import android.support.v4.app.Fragment;
-import android.widget.ListView;
 
 import java.util.List;
 

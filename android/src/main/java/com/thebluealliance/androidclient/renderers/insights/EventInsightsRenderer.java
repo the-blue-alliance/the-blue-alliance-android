@@ -1,16 +1,15 @@
 package com.thebluealliance.androidclient.renderers.insights;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listitems.LabelValueListItem;
-import com.thebluealliance.androidclient.listitems.ListItem;
-
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listitems.LabelValueListItem;
+import com.thebluealliance.androidclient.listitems.ListItem;
 
 import java.text.DecimalFormat;
 import java.util.List;

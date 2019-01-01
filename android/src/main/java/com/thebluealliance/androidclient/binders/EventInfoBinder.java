@@ -1,8 +1,21 @@
 package com.thebluealliance.androidclient.binders;
 
+import android.app.Dialog;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
+import android.text.Html;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
@@ -19,20 +32,6 @@ import com.thebluealliance.androidclient.types.WebcastType;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import android.app.Dialog;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
-import android.net.Uri;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.CardView;
-import android.text.Html;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;

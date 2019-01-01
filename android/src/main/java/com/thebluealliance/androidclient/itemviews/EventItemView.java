@@ -1,16 +1,16 @@
 package com.thebluealliance.androidclient.itemviews;
 
-import com.thebluealliance.androidclient.Interactions;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
-import com.thebluealliance.androidclient.types.ModelType;
-import com.thebluealliance.androidclient.viewmodels.EventViewModel;
-
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.thebluealliance.androidclient.Interactions;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
+import com.thebluealliance.androidclient.types.ModelType;
+import com.thebluealliance.androidclient.viewmodels.EventViewModel;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

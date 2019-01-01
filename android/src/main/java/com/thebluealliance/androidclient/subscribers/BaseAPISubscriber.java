@@ -1,7 +1,11 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.google.android.gms.analytics.Tracker;
+import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
+import android.support.annotation.VisibleForTesting;
+import android.support.annotation.WorkerThread;
 
+import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.APISubscriber;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
@@ -9,11 +13,6 @@ import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
-import android.support.annotation.VisibleForTesting;
-import android.support.annotation.WorkerThread;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;

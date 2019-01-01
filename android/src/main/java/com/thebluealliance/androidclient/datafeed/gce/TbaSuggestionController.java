@@ -1,13 +1,12 @@
 package com.thebluealliance.androidclient.datafeed.gce;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import android.support.annotation.WorkerThread;
 
 import com.appspot.tbatv_prod_hrd.TeamMedia;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesMediaSuggestionMessage;
-
-import android.support.annotation.WorkerThread;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import javax.inject.Inject;
 

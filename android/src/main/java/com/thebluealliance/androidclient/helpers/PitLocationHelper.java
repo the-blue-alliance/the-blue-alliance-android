@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.helpers;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.config.AppConfig;
-
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.JsonReader;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.config.AppConfig;
 
 import java.io.BufferedWriter;
 import java.io.File;

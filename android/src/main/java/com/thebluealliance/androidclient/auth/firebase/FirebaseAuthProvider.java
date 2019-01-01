@@ -1,17 +1,16 @@
 package com.thebluealliance.androidclient.auth.firebase;
 
+import android.content.Intent;
+
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.User;
 import com.thebluealliance.androidclient.auth.google.GoogleAuthProvider;
 import com.thebluealliance.androidclient.auth.google.GoogleSignInUser;
-
-import android.content.Intent;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;

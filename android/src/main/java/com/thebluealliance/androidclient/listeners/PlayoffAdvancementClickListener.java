@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.listeners;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.types.PlayoffAdvancement;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.view.View;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
 /**
  * A class to open a dialog describing an Alliance's Playoff Advancement

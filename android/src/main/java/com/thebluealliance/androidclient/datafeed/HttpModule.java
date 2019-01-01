@@ -1,33 +1,31 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.annotation.VisibleForTesting;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.datafeed.deserializers.APIStatusDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AllianceDeserializer;
-import com.thebluealliance.androidclient.datafeed.deserializers.AllianceDeserializer
-        .AllianceBackupDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.AllianceDeserializer.AllianceBackupDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
-import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer
-        .AwardRecipientDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer.AwardRecipientDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
-import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer
-        .DistrictEventPointsDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer.DistrictEventPointsDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.EventDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchAllianceDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchVideoDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MediaDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.RankingItemDeserializer;
-import com.thebluealliance.androidclient.datafeed.deserializers.RankingItemDeserializer
-        .RecordDeserializer;
+import com.thebluealliance.androidclient.datafeed.deserializers.RankingItemDeserializer.RecordDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.RankingsResponseDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamAtEventStatusDeserializer;
-import com.thebluealliance.androidclient.datafeed.deserializers.TeamAtEventStatusDeserializer
-        .Playoff;
+import com.thebluealliance.androidclient.datafeed.deserializers.TeamAtEventStatusDeserializer.Playoff;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.ApiStatus;
@@ -66,10 +64,6 @@ import com.thebluealliance.api.model.ITeamAtEventPlayoff;
 import com.thebluealliance.api.model.ITeamAtEventStatus;
 import com.thebluealliance.api.model.ITeamRecord;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.support.annotation.VisibleForTesting;
-
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -77,8 +71,7 @@ import dagger.Provides;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
-import static com.thebluealliance.androidclient.datafeed.deserializers
-        .RankingsResponseDeserializer.RankingSortOrderDeserializer;
+import static com.thebluealliance.androidclient.datafeed.deserializers.RankingsResponseDeserializer.RankingSortOrderDeserializer;
 
 /**
  * Dagger module that handles OkHttp and Gson

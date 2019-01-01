@@ -1,15 +1,14 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.google.gson.Gson;
+import android.content.res.Resources;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.api.model.IDistrictEventPoints;
-
-import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.List;

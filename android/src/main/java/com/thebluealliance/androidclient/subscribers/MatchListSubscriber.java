@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.res.Resources;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.comparators.MatchSortByDisplayOrderComparator;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
@@ -13,8 +15,6 @@ import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.types.PlayoffAdvancement;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.Collections;

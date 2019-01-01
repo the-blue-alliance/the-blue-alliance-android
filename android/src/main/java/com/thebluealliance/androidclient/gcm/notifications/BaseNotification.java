@@ -1,18 +1,5 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datafeed.HttpModule;
-import com.thebluealliance.androidclient.gcm.FollowsChecker;
-import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
-import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.models.StoredNotification;
-import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
-import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
-
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -23,6 +10,18 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
+import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
+import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
+import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
 
 import java.text.DateFormat;
 import java.util.Calendar;

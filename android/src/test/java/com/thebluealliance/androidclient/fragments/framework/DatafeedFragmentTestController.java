@@ -1,16 +1,15 @@
 package com.thebluealliance.androidclient.fragments.framework;
 
-import com.google.common.base.Preconditions;
+import android.support.annotation.IntDef;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 
+import com.google.common.base.Preconditions;
 import com.thebluealliance.androidclient.BaseTestActivity;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 
 import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
-
-import android.support.annotation.IntDef;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

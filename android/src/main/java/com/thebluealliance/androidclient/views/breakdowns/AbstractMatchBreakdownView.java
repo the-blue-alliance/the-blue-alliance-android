@@ -1,13 +1,12 @@
 package com.thebluealliance.androidclient.views.breakdowns;
 
-import com.google.gson.JsonObject;
-
-import com.thebluealliance.androidclient.types.MatchType;
-import com.thebluealliance.api.model.IMatchAlliancesContainer;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
+
+import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.types.MatchType;
+import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 public abstract class AbstractMatchBreakdownView extends FrameLayout {
 

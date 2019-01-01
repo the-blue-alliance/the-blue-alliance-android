@@ -1,8 +1,11 @@
 package com.thebluealliance.androidclient.models;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.support.annotation.IntDef;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
@@ -10,10 +13,6 @@ import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
 import com.thebluealliance.api.model.ITeam;
-
-import android.content.ContentValues;
-import android.content.Context;
-import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -1,5 +1,9 @@
 package com.thebluealliance.androidclient.fragments.teamAtEvent;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.View;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
@@ -11,10 +15,6 @@ import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
-
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.View;
 
 import javax.inject.Inject;
 

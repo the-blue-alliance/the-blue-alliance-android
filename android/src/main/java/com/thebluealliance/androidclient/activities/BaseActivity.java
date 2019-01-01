@@ -1,8 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.types.ModelType;
-
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.nfc.NdefMessage;
@@ -17,6 +14,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.types.ModelType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

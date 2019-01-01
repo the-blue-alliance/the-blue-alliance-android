@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.datafeed.framework;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
-
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 

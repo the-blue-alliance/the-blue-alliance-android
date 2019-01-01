@@ -1,10 +1,5 @@
 package com.thebluealliance.androidclient.fragments;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.adapters.GamedayFragmentPagerAdapter;
-import com.thebluealliance.androidclient.views.SlidingTabs;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
@@ -12,6 +7,11 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.adapters.GamedayFragmentPagerAdapter;
+import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

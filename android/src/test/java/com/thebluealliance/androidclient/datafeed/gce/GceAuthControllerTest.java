@@ -1,7 +1,8 @@
 package com.thebluealliance.androidclient.datafeed.gce;
 
-import com.google.android.gms.auth.GoogleAuthException;
+import android.content.Context;
 
+import com.google.android.gms.auth.GoogleAuthException;
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.accounts.AccountController;
 
@@ -10,9 +11,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
-
-import android.content.Context;
 
 import java.io.IOException;
 

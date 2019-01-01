@@ -1,9 +1,9 @@
 package com.thebluealliance.androidclient.config;
 
+import android.content.Context;
+
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.TbaLogger;
-
-import android.content.Context;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,9 +1,9 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.Context;
+
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.Event;
-
-import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.List;

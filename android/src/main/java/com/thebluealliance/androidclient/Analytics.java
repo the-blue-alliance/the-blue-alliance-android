@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Tracker;
-
 import android.content.Context;
 import android.preference.PreferenceManager;
+
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 
 import java.util.HashMap;
 

@@ -1,13 +1,13 @@
 package com.thebluealliance.androidclient.itemviews;
 
+import android.content.Context;
+import android.view.View;
+import android.widget.TextView;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationViewModel;
-
-import android.content.Context;
-import android.view.View;
-import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

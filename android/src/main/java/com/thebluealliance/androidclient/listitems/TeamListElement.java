@@ -1,16 +1,15 @@
 package com.thebluealliance.androidclient.listitems;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
-import com.thebluealliance.androidclient.listeners.TeamClickListener;
-import com.thebluealliance.androidclient.models.Team;
-import com.thebluealliance.androidclient.types.ModelType;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
+import com.thebluealliance.androidclient.listeners.TeamClickListener;
+import com.thebluealliance.androidclient.types.ModelType;
 
 import java.util.Locale;
 

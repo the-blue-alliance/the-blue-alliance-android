@@ -1,7 +1,11 @@
 package com.thebluealliance.androidclient.renderers;
 
-import com.google.gson.JsonObject;
+import android.content.res.Resources;
+import android.support.annotation.IntDef;
+import android.support.annotation.VisibleForTesting;
+import android.support.annotation.WorkerThread;
 
+import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.helpers.JSONHelper;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
@@ -9,11 +13,6 @@ import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
 import com.thebluealliance.api.model.IMatchVideo;
-
-import android.content.res.Resources;
-import android.support.annotation.IntDef;
-import android.support.annotation.VisibleForTesting;
-import android.support.annotation.WorkerThread;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

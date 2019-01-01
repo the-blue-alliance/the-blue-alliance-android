@@ -1,12 +1,11 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import android.content.SharedPreferences;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.api.ApiConstants;
-
-import android.content.SharedPreferences;
 
 import java.io.IOException;
 

@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import android.content.res.Resources;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.types.MediaType;
-
-import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.List;

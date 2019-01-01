@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.listeners;
 
-import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,6 +7,8 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.view.View;
 import android.widget.Toast;
+
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 
 import java.util.List;
 

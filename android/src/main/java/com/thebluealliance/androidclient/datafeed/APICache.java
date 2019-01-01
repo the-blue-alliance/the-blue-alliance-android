@@ -1,8 +1,9 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import android.database.Cursor;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
@@ -24,8 +25,6 @@ import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.types.EventDetailType;
-
-import android.database.Cursor;
 
 import java.util.ArrayList;
 import java.util.Calendar;

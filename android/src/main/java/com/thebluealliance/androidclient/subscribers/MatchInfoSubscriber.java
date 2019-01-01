@@ -1,7 +1,8 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.google.gson.Gson;
+import android.content.res.Resources;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
@@ -13,8 +14,6 @@ import com.thebluealliance.androidclient.types.MediaType;
 import com.thebluealliance.api.model.IMatchVideo;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.content.res.Resources;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.imgur;
 
 import com.google.gson.Gson;
-
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.imgur.ImgurApi;

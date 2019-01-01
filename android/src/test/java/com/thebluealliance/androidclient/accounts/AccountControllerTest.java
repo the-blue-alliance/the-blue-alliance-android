@@ -1,22 +1,21 @@
 package com.thebluealliance.androidclient.accounts;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
-import com.thebluealliance.androidclient.config.AppConfig;
-import com.thebluealliance.androidclient.auth.User;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
+import com.thebluealliance.androidclient.DefaultTestRunner;
+import com.thebluealliance.androidclient.auth.User;
+import com.thebluealliance.androidclient.config.AppConfig;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

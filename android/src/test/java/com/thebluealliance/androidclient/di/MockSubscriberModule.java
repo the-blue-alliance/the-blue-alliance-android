@@ -1,7 +1,8 @@
 package com.thebluealliance.androidclient.di;
 
-import com.google.gson.Gson;
+import android.content.Context;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.fragments.framework.SimpleSubscriber;
@@ -41,8 +42,6 @@ import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
 
 import org.greenrobot.eventbus.EventBus;
 import org.mockito.Mockito;
-
-import android.content.Context;
 
 import javax.inject.Singleton;
 

@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.binders;
 
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaLogger;
-
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
+
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.ArrayList;
 import java.util.List;

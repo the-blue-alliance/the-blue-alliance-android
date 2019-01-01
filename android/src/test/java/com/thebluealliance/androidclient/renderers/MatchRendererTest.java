@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.renderers;
 
+import android.content.res.Resources;
+
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.TestTbaAndroid;
 import com.thebluealliance.androidclient.datafeed.APICache;
@@ -17,8 +19,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.ParameterizedRobolectricTestRunner;
 import org.robolectric.annotation.Config;
-
-import android.content.res.Resources;
 
 import java.util.Arrays;
 import java.util.Collection;

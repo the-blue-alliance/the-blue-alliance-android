@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.helpers;
 
+import android.content.Context;
+import android.support.annotation.Nullable;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.types.MatchType;
-
-import android.content.Context;
-import android.support.annotation.Nullable;
 
 import java.util.List;
 import java.util.regex.Matcher;

@@ -1,20 +1,5 @@
 package com.thebluealliance.androidclient.fragments;
 
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.accounts.AccountController;
-import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
-import com.thebluealliance.androidclient.auth.AuthProvider;
-import com.thebluealliance.androidclient.auth.User;
-import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
-import com.thebluealliance.androidclient.di.components.HasMyTbaComponent;
-import com.thebluealliance.androidclient.listitems.DividerListItem;
-import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.listitems.NavDrawerItem;
-import com.thebluealliance.androidclient.listitems.SpacerListItem;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +32,21 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
+import com.thebluealliance.androidclient.auth.AuthProvider;
+import com.thebluealliance.androidclient.auth.User;
+import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
+import com.thebluealliance.androidclient.di.components.HasMyTbaComponent;
+import com.thebluealliance.androidclient.listitems.DividerListItem;
+import com.thebluealliance.androidclient.listitems.ListItem;
+import com.thebluealliance.androidclient.listitems.NavDrawerItem;
+import com.thebluealliance.androidclient.listitems.SpacerListItem;
 
 import java.util.ArrayList;
 import java.util.List;

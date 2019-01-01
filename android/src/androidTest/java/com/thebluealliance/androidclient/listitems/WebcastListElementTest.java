@@ -1,18 +1,17 @@
 package com.thebluealliance.androidclient.listitems;
 
-import com.google.gson.JsonObject;
-
-import com.facebook.testing.screenshot.Screenshot;
-import com.facebook.testing.screenshot.ViewHelpers;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import com.facebook.testing.screenshot.Screenshot;
+import com.facebook.testing.screenshot.ViewHelpers;
+import com.google.gson.JsonObject;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 public class WebcastListElementTest {

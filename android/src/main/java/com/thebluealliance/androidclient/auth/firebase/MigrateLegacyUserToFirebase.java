@@ -1,14 +1,14 @@
 package com.thebluealliance.androidclient.auth.firebase;
 
+import android.app.IntentService;
+import android.content.Intent;
+
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.User;
 import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.di.components.MyTbaComponent;
-
-import android.app.IntentService;
-import android.content.Intent;
 
 import javax.inject.Inject;
 import javax.inject.Named;

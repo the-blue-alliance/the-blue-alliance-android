@@ -1,19 +1,5 @@
 package com.thebluealliance.androidclient.activities;
 
-import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
-import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
-import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
-import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
-import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
-import com.thebluealliance.androidclient.di.components.DatafeedComponent;
-import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
-import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -31,6 +17,20 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
+import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
+import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
+import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
+import com.thebluealliance.androidclient.di.components.DatafeedComponent;
+import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
+import com.thebluealliance.androidclient.helpers.ConnectionDetector;
+import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.helpers;
 
-import com.thebluealliance.androidclient.interfaces.BindableAdapter;
-
 import android.support.v4.view.ViewPager;
+
+import com.thebluealliance.androidclient.interfaces.BindableAdapter;
 
 import javax.inject.Inject;
 

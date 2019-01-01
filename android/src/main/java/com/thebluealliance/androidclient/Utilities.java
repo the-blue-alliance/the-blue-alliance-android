@@ -1,15 +1,5 @@
 package com.thebluealliance.androidclient;
 
-import com.google.common.base.Predicate;
-
-import com.thebluealliance.androidclient.activities.HomeActivity;
-import com.thebluealliance.androidclient.activities.ViewEventActivity;
-import com.thebluealliance.androidclient.activities.ViewMatchActivity;
-import com.thebluealliance.androidclient.activities.ViewTeamActivity;
-import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.helpers.MatchHelper;
-import com.thebluealliance.androidclient.helpers.TeamHelper;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -28,6 +18,15 @@ import android.util.ArrayMap;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
+
+import com.google.common.base.Predicate;
+import com.thebluealliance.androidclient.activities.HomeActivity;
+import com.thebluealliance.androidclient.activities.ViewEventActivity;
+import com.thebluealliance.androidclient.activities.ViewMatchActivity;
+import com.thebluealliance.androidclient.activities.ViewTeamActivity;
+import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.helpers.MatchHelper;
+import com.thebluealliance.androidclient.helpers.TeamHelper;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -159,7 +158,7 @@ public final class Utilities {
                     if (indexExists(urlParts, 1) && TeamHelper.validateTeamKey("frc" + urlParts.get(1))) {
                         // Some sources (such as ChiefDelphi) will include leading 0s in the team #
                         // The API doesn't accept those and we shouldn't display those, so strip them
-                        String teamNumber = urlParts.get(1).replaceFirst ("^0+", "");
+                        String teamNumber = urlParts.get(1).replaceFirst("^0+", "");
                         if (indexExists(urlParts, 2) && urlParts.get(2).matches("\\d\\d\\d\\d")) {
                             intent = ViewTeamActivity.newInstance(c, "frc" + teamNumber, Integer.parseInt(urlParts.get(2)));
                         } else {

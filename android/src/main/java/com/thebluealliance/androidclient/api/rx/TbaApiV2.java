@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.api.rx;
 
 import com.google.gson.JsonElement;
-
 import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;

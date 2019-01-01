@@ -1,10 +1,9 @@
 package com.thebluealliance.androidclient.auth.firebase;
 
-import com.google.firebase.auth.FirebaseUser;
-
-import com.thebluealliance.androidclient.auth.User;
-
 import android.net.Uri;
+
+import com.google.firebase.auth.FirebaseUser;
+import com.thebluealliance.androidclient.auth.User;
 
 public class FirebaseSignInUser implements User {
 
