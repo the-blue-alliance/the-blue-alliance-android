@@ -45,8 +45,8 @@ public class EventCursorAdapter extends CursorAdapter {
         TextView dates = (TextView) view.findViewById(R.id.event_dates);
         Date startDate = null, endDate = null;
         try {
-            startDate = new Date(cursor.getLong(6));
-            endDate = new Date(cursor.getLong(7));
+            startDate = new Date(cursor.getLong(5));
+            endDate = new Date(cursor.getLong(6));
         } catch (Exception e) {
             // Oops.
         }
