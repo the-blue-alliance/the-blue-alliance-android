@@ -23,16 +23,6 @@ public class EventListElement extends ListElement implements Serializable {
     public final int eventYear;
     public final boolean showMyTba;
 
-    public EventListElement(Event event) {
-        super(event.getKey());
-        eventKey = "";
-        eventName = event.getName();
-        eventDates = event.getDateString();
-        eventLocation = event.getLocation();
-        eventYear = event.getYear();
-        this.showMyTba = false;
-    }
-
     public EventListElement(String key, int year, String name, String dates, String location, boolean showMyTba) {
         super(key);
         eventKey = key;

@@ -16,6 +16,8 @@ import com.thebluealliance.androidclient.listitems.SearchResultsHeaderListElemen
 import com.thebluealliance.androidclient.listitems.TeamListElement;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.renderers.EventRenderer;
+import com.thebluealliance.androidclient.renderers.TeamRenderer;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -144,6 +146,8 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 teamsHeader.showMoreButton(false);
             }
             listItems.add(teamsHeader);
+            TeamRenderer teamRenderer = new TeamRenderer(null);
+
             while (teamQueryResults.moveToNext()) {
                 // Limit ourselves to a certain number of teams
                 if (teamQueryResults.getPosition() >= MAX_RESULTS_PER_CATEGORY) {
@@ -158,9 +162,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     mDb.getTeamsTable().deleteSearchIndex(team);
                     continue;
                 }
-                TeamListElement element;
-                element = new TeamListElement(team);
-                listItems.add(element);
+                listItems.add(teamRenderer.renderFromModel(team, TeamRenderer.RENDER_BASIC));
                 TbaLogger.d("titles: " + teamQueryResults.getString(teamQueryResults.getColumnIndex(Database.SearchTeam.TITLES)));
             }
             teamQueryResults.close();
@@ -185,6 +187,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                 eventsHeader.showMoreButton(false);
             }
             listItems.add(eventsHeader);
+            EventRenderer eventRenderer = new EventRenderer(null);
 
             while (eventQueryResults.moveToNext()) {
                 // Limit ourselves to a certain number of events
@@ -200,9 +203,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
                     mDb.getEventsTable().deleteSearchIndex(event);
                     continue;
                 }
-                EventListElement element;
-                element = new EventListElement(event);
-                listItems.add(element);
+                listItems.add(eventRenderer.renderFromModel(event, false));
             }
             eventQueryResults.close();
         } else {

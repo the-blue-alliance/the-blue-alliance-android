@@ -22,15 +22,6 @@ public class TeamListElement extends ListElement {
     public final boolean mShowLinkToTeamDetails;
     public final boolean mShowMyTbaDetails;
 
-    public TeamListElement(Team team) {
-        super(team.getKey());
-        mTeamNumber = team.getTeamNumber();
-        mTeamName = team.getNickname();
-        mTeamLocation = team.getLocationName();
-        mShowLinkToTeamDetails = false;
-        mShowMyTbaDetails = false;
-    }
-
     public TeamListElement(
       String key,
       int number,
