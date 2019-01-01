@@ -2,10 +2,12 @@ package com.thebluealliance.androidclient.auth.firebase;
 
 import android.content.Intent;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.User;
@@ -57,6 +59,19 @@ public class FirebaseAuthProvider implements AuthProvider {
         }
 
         return new FirebaseSignInUser(firebaseUser);
+    }
+
+    @Nullable
+    public Task<GetTokenResult> getUserToken(boolean forceRefresh) {
+        if (mFirebaseAuth == null) {
+            return null;
+        }
+        FirebaseUser firebaseUser = mFirebaseAuth.getCurrentUser();
+        if (firebaseUser == null) {
+            return null;
+        }
+
+        return firebaseUser.getIdToken(forceRefresh);
     }
 
     @Nullable @Override

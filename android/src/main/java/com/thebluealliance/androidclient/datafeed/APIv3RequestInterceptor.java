@@ -41,6 +41,7 @@ public class APIv3RequestInterceptor implements Interceptor {
         Request originalRequest = chain.request();
         String url = originalRequest.url().toString();
         if (!url.contains("thebluealliance.com/api/v3")) {
+            TbaLogger.d("FETCHING " + url);
             return chain.proceed(originalRequest);
         }
 

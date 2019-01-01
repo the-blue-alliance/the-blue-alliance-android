@@ -309,13 +309,18 @@ public class MyTbaDatafeed {
                 Response<ModelsMobileApiMessagesBaseResponse> response = mModelApi
                         .setPreferences(authHeader, request)
                         .execute();
-                if (response == null || !response.isSuccessful()) {
+                if (response == null) {
+                    TbaLogger.w("Null response for mytba update");
+                    return ModelPrefsResult.ERROR;
+                }
+                if (!response.isSuccessful()) {
+                    TbaLogger.w("mytba update error " + response.code() + ": " + response.message());
                     return ModelPrefsResult.ERROR;
                 }
 
                 ModelsMobileApiMessagesBaseResponse prefResponse = response.body();
-                TbaLogger.d("Result: " + prefResponse.code + "/" + prefResponse.message);
-                if (response.code() == 401) {
+                TbaLogger.d("Mytba result: " + prefResponse.code + "/" + prefResponse.message);
+                if (response.code() == 401 || prefResponse.code == 401) {
                     TbaLogger.e(prefResponse.message);
                     return ModelPrefsResult.ERROR;
                 }
