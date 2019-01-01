@@ -40,7 +40,9 @@ case "$1" in
 
         # Move local.properties and tba.properties to proper location
         mv config/local.properties.ci local.properties
-	ls -la /home/travis/.android
+
+	# Generate a key (with the default debug creds) to use for this test build
+	keytool -genkey -v -keystore /home/travis/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US"
         ./gradlew assembleRelease
         ;;
 
