@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.datafeed.gce;
 
-import android.content.Context;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
@@ -10,13 +8,10 @@ import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GetTokenResult;
 import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.auth.firebase.FirebaseAuthProvider;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;

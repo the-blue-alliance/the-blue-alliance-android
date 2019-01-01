@@ -1,10 +1,6 @@
 package com.thebluealliance.androidclient.datafeed.gce;
 
-import android.content.Context;
-
-import com.google.android.gms.auth.GoogleAuthException;
 import com.thebluealliance.androidclient.DefaultTestRunner;
-import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.auth.firebase.FirebaseAuthProvider;
 
 import org.junit.Before;
@@ -13,14 +9,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 @RunWith(DefaultTestRunner.class)
 public class GceAuthControllerTest {
