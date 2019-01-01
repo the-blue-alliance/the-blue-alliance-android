@@ -1,8 +1,15 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import android.content.res.Resources;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
@@ -21,15 +28,7 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import android.content.res.Resources;
-
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)
@@ -64,7 +63,7 @@ public class StatsListSubscriberTest {
     public void testSimpleBinding()  {
         StatsListSubscriber.Model model = new StatsListSubscriber.Model(mStats, mInsights);
         DatafeedTestDriver.testSimpleParsing(mSubscriber, model);
-        verify(mEventBus).post(eq(new EventStatsEvent("1. Team 3419 - <b>41.77</b><br>2. Team 578 - <b>38.19</b><br>3. Team 1635 - <b>34.83</b><br>4. Team 1797 - <b>34.65</b><br>5. Team 5806 - <b>34.63</b>")));
+        verify(mEventBus).post(eq(new EventStatsEvent("1. Team 3419: <b>41.77</b><br>2. Team 578: <b>38.19</b><br>3. Team 1635: <b>34.83</b><br>4. Team 1797: <b>34.65</b><br>5. Team 5806: <b>34.63</b>")));
     }
 
     @Test

@@ -1,28 +1,24 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
-
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datafeed.HttpModule;
-import com.thebluealliance.androidclient.gcm.FollowsChecker;
-import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
-import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.listitems.ListElement;
-import com.thebluealliance.androidclient.models.StoredNotification;
-import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
-import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
-
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.datafeed.HttpModule;
+import com.thebluealliance.androidclient.gcm.FollowsChecker;
+import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.listitems.ListElement;
+import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
+import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -63,7 +59,14 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
         return true;
     }
 
-    public abstract Notification buildNotification(Context context, FollowsChecker followsChecker);
+    /**
+     * Builds a stored notification and sets up a notification-shade Builder.
+     * @param context a Context object for use by the notification builder
+     * @param builder a NotificationCompat.Builder to set properties on
+     * @param followsChecker for checking which teams the user follows
+     **/
+    public abstract void buildStoredNotification(Context context,
+            NotificationCompat.Builder builder, FollowsChecker followsChecker);
 
     public String getNotificationType() {
         return messageType;
@@ -113,9 +116,11 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
     }
 
     /**
-     * Creates a builder with the important defaults set.
+     * Sets up a builder with the important defaults: Delete Intent, WearableExtender, color,
+     * group, auto-cancel.
      */
-    public NotificationCompat.Builder getBaseBuilder(Context context) {
+    public NotificationCompat.Builder setupBaseBuilder(Context context,
+            NotificationCompat.Builder builder) {
         Intent dismissIntent = NotificationChangedReceiver.newIntent(context);
         dismissIntent.setAction(NotificationChangedReceiver.ACTION_NOTIFICATION_DELETED);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, dismissIntent, 0);
@@ -123,24 +128,22 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
         NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
         wearableExtender.setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background));
 
-        return new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setColor(ContextCompat.getColor(context, R.color.primary))
-                .setGroup(GCMMessageHandler.GROUP_KEY)
-                .setDeleteIntent(onDismiss)
-                .setAutoCancel(true)
+        builder.setDeleteIntent(onDismiss)
                 .extend(wearableExtender);
+        return builder;
     }
 
     /**
-     * Creates a builder with the important defaults and an Activity content intent.
+     * Sets up a builder with an Activity Content Intent and the important defaults: Delete Intent,
+     * WearableExtender, color, group, auto-cancel.
      * <p>
      * <p/>SIDE EFFECTS: Adds a Category to activityIntent so the launched Activity can tell it was
      * triggered by a notification. (Note: Just adding an Extra won't work because Android will
      * retrieve the existing intent, ignoring the new Extra.)
      */
-    public NotificationCompat.Builder getBaseBuilder(Context context, Intent activityIntent) {
-        NotificationCompat.Builder builder = getBaseBuilder(context);
+    protected NotificationCompat.Builder setupBaseBuilder(Context context,
+            NotificationCompat.Builder builder, Intent activityIntent) {
+        setupBaseBuilder(context, builder);
         PendingIntent onTap = makeNotificationIntent(context, activityIntent);
 
         builder.setContentIntent(onTap);

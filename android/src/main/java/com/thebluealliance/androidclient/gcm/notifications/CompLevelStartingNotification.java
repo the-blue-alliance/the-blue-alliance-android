@@ -1,9 +1,18 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
@@ -14,17 +23,6 @@ import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
-
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -75,7 +73,8 @@ public class CompLevelStartingNotification extends BaseNotification<CompLevelSta
     }
 
     @Override
-    public Notification buildNotification(Context context, FollowsChecker followsChecker) {
+    public void buildStoredNotification(Context context,
+            NotificationCompat.Builder builder, FollowsChecker followsChecker) {
         Resources r = context.getResources();
         String compLevel = getCompLevelNameFromAbbreviation(context, compLevelAbbrev);
         String scheduledStartTimeString = "";
@@ -107,13 +106,10 @@ public class CompLevelStartingNotification extends BaseNotification<CompLevelSta
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
 
-        NotificationCompat.Builder builder = getBaseBuilder(context, instance)
+        setupBaseBuilder(context, builder, instance)
                 .setContentTitle(title)
-                .setContentText(contentText);
-
-        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle().bigText(contentText);
-        builder.setStyle(style);
-        return builder.build();
+                .setContentText(contentText)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
     }
 
     private String getCompLevelNameFromAbbreviation(Context c, String abbreviation) {

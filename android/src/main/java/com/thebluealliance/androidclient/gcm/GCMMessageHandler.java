@@ -1,8 +1,20 @@
 package com.thebluealliance.androidclient.gcm;
 
+import android.app.IntentService;
+import android.app.Notification;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
+
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.JsonParseException;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TBAAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -42,17 +54,6 @@ import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.RendererModule;
 
 import org.greenrobot.eventbus.EventBus;
-
-import android.app.IntentService;
-import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
 
 import javax.inject.Inject;
 
@@ -133,14 +134,12 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
         Bundle extras = intent.getExtras();
-
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
 
         String messageType = gcm.getMessageType(intent);
         TbaLogger.d("GCM Message type: " + messageType);
-        TbaLogger.d("Intent extras: " + extras.toString());
+        TbaLogger.d("Intent extras: " + extras);
 
         // We got a standard message. Parse it and handle it.
         String type = extras.getString("message_type", "");
@@ -217,10 +216,8 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
 
             boolean enabled = mPrefs.getBoolean("enable_notifications", true);
             if (enabled) {
-                Notification built;
-
-                built = notification.buildNotification(c, this);
-                if (built == null) return;
+                NotificationCompat.Builder builder = newBuilder(c);
+                notification.buildStoredNotification(c, builder, this);
 
                 /* Update the data coming from this notification in the local db */
                 notification.updateDataLocally();
@@ -243,14 +240,16 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                         // the new one XOR a summary, all with the same ID to replace any
                         // predecessor notification.
                         if (STACK_NOTIFICATIONS) {
-                            notify(c, notification, built);
+                            builder.setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY);
+                            notify(c, notification, builder);
                         }
 
                         notification = new SummaryNotification(mDb);
-                        built = notification.buildNotification(c, this);
+                        builder = newBuilder(c);
+                        notification.buildStoredNotification(c, builder, this);
                     }
 
-                    notify(c, notification, built);
+                    notify(c, notification, builder);
                 }
             }
         } catch (Exception e) {
@@ -259,61 +258,72 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
         }
     }
 
-    private void notify(Context c, BaseNotification notification, Notification built) {
+    @NonNull
+    private NotificationCompat.Builder newBuilder(Context c) {
+        // TODO: When running on API 26+, create a notification channel, and since System Settings
+        // control notification sounds and priorities there, hide the app-custom preferences there.
+        // Use the previously-stored app-custom preferences to create the channel. That only matters
+        // the first time.
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(c, null);
+
+        builder.setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(c, R.color.primary))
+                .setGroup(GROUP_KEY)
+                .setAutoCancel(true);
+
+        return builder;
+    }
+
+    private void notify(Context c, BaseNotification notification,
+            NotificationCompat.Builder builder) {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(c);
         int id = STACK_NOTIFICATIONS ? notification.getNotificationId() : SINGULAR_NOTIFICATION_ID;
 
-        setNotificationParams(built, c, notification.getNotificationType(), mPrefs);
-        notificationManager.notify(id, built);
+        setNotificationParams(builder, c, notification.getNotificationType(), mPrefs);
+        notificationManager.notify(id, builder.build());
     }
 
     private static Uri getSoundUri(Context c, int soundId) {
         return Uri.parse("android.resource://" + c.getPackageName() + "/" + soundId);
     }
 
-    private static void setNotificationParams(Notification built, Context c, String messageType, SharedPreferences prefs) {
+    private static void setNotificationParams(NotificationCompat.Builder builder, Context c,
+            String messageType, SharedPreferences prefs) {
         /* Set notification parameters */
         if (prefs.getBoolean("notification_vibrate", true)) {
             // Delay vibration to match the system audio delay. Pulse with the beat.
-            built.vibrate = new long[]{200, 70, 90, 70, 90, 80};
+            builder.setVibrate(new long[]{100, 75, 140, 75, 138, 75, 139, 75});
         }
         if (prefs.getBoolean("notification_tone", true)) {
-            built.sound = getSoundUri(c, R.raw.something_you_dont_mess_with);
+            builder.setSound(getSoundUri(c, R.raw.arcade_drops));
         }
         if (prefs.getBoolean("notification_led_enabled", true)) {
-            built.ledARGB = prefs.getInt("notification_led_color",
+            int ledColor = prefs.getInt("notification_led_color",
                     ContextCompat.getColor(c, R.color.primary));
-            built.ledOnMS = 1000;
-            built.ledOffMS = 1000;
-            built.flags |= Notification.FLAG_SHOW_LIGHTS;
+            builder.setLights(ledColor, 1000, 1000);
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            int priority = Notification.PRIORITY_HIGH;
-            switch (messageType) {
-                case NotificationTypes.PING:
-                    priority = Notification.PRIORITY_LOW;
-                    break;
-                case NotificationTypes.SUMMARY:
-                    // If Android will really display a component notification then a group summary,
-                    // don't let the summary heads-up atop the component.
-                    if (SUMMARY_NOTIFICATION_IS_A_HEADER) {
-                        priority = Notification.PRIORITY_DEFAULT;
-                    }
-                    break;
-            }
-
-            boolean headsUpPref = prefs.getBoolean("notification_headsup", true);
-            if (headsUpPref) {
-                built.priority = priority;
-            } else {
-                built.priority = Notification.PRIORITY_DEFAULT;
-            }
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                built.visibility = Notification.VISIBILITY_PUBLIC;
-                built.category = Notification.CATEGORY_SOCIAL;
-            }
+        int priority = Notification.PRIORITY_HIGH;
+        switch (messageType) {
+            case NotificationTypes.PING:
+                priority = Notification.PRIORITY_LOW;
+                break;
+            case NotificationTypes.SUMMARY:
+                // If Android will really display a component notification then a group summary,
+                // don't let the summary heads-up atop the component.
+                if (SUMMARY_NOTIFICATION_IS_A_HEADER) {
+                    priority = Notification.PRIORITY_DEFAULT;
+                }
+                break;
         }
+
+        boolean headsUpPref = prefs.getBoolean("notification_headsup", true);
+        if (!headsUpPref) {
+            priority = Notification.PRIORITY_DEFAULT;
+        }
+        builder.setPriority(priority);
+
+        builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+        builder.setCategory(Notification.CATEGORY_SOCIAL);
     }
 }
