@@ -19,7 +19,7 @@ Travis support requires the official client: https://github.com/travis-ci/travis
 """
 
 PACKAGE = 'com.thebluealliance.androidclient'
-CHANGELOG_PATH = 'android/src/prod/play/en-US/whatsnew'
+CHANGELOG_PATH = 'android/src/release/play/en-US/whatsnew'
 INAPP_CHANGELOG = 'android/src/main/res/raw/changelog.txt'
 APK_PATH_FORMAT = 'android/build/apk/tba-android-v{}-release.apk'
 SHORTLOG_PATH = 'RELEASE_SHORTLOG'
@@ -31,6 +31,8 @@ parser.add_argument("--message", "-m", help="Tag message. Defaults to 'Version v
 parser.add_argument("--base-tag", "-b", help="Initial tag to compare against", default=None)
 parser.add_argument("--skip-tag", action="store_true", default=False,
                     help="Do not make a new git tag. Instead, push existing release identified by <tag>")
+parser.add_argument("--skip-changelog", action="store_true", default=False,
+                    help="Do not prompt for an updated changelog")
 parser.add_argument("--dirty-repo", action="store_true", default=False,
                     help="Allow untracked changes in the repo")
 parser.add_argument("--skip-validate", action="store_true", default=False,
@@ -247,9 +249,10 @@ if __name__ == "__main__":
         check_clean_repo()
     if not args.skip_local_tests:
         check_unittest_local(args)
-    if not args.skip_tag:
+    if not args.skip_changelog:
         update_whatsnew(args)
         commit_whatsnew(args.dry_run)
+    if not args.skip_tag:
         create_tag(args)
     if not args.skip_validate:
         validate_build(args.dry_run)
