@@ -16,6 +16,7 @@ public class MatchListElement extends ListElement implements Serializable {
     public final String[] redTeams, blueTeams;
     public final long time;
     public final boolean showVideoIcon, showColumnHeaders, showMatchTitle, clickable;
+    public final int redExtraRp, blueExtraRp;
 
     // utility constructor for rendering UpcomingMatchNotification
     public MatchListElement(
@@ -25,7 +26,7 @@ public class MatchListElement extends ListElement implements Serializable {
             long time,
             String selectedTeamKey) {
         this("", "", redTeams, blueTeams, "?", "?", "", matchKey, time, selectedTeamKey,
-             false, false, false, false);
+             false, false, false, false, 0, 0);
     }
 
     public MatchListElement(
@@ -42,7 +43,9 @@ public class MatchListElement extends ListElement implements Serializable {
             boolean showVideoIcon,
             boolean showColumnHeaders,
             boolean showMatchTitle,
-            boolean clickable) {
+            boolean clickable,
+            int redExtraRp,
+            int blueExtraRp) {
         super(matchKey);
         this.videoKey = youTubeVideoKey;
         this.matchTitle = matchTitle;
@@ -58,6 +61,8 @@ public class MatchListElement extends ListElement implements Serializable {
         this.showColumnHeaders = showColumnHeaders;
         this.showMatchTitle = showMatchTitle;
         this.clickable = clickable;
+        this.redExtraRp = redExtraRp;
+        this.blueExtraRp = blueExtraRp;
     }
 
     @Override
@@ -72,7 +77,8 @@ public class MatchListElement extends ListElement implements Serializable {
         }
 
         match.initWithParams(videoKey, matchTitle, redTeams, blueTeams, redScore, blueScore,
-                             winner, matchKey, time, selectedTeamKey, showVideoIcon);
+                             winner, matchKey, time, selectedTeamKey, showVideoIcon, redExtraRp,
+                blueExtraRp);
         match.showColumnHeaders(showColumnHeaders);
         if (played) {
             match.showTime(false);

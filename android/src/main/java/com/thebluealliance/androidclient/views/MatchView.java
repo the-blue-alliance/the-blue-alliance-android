@@ -27,7 +27,8 @@ public class MatchView extends FrameLayout {
 
     private TextView matchTitle, red1, red2, red3, blue1, blue2, blue3, redScore, blueScore, time;
     private View matchContainer, matchTitleContainer, columnHeadersContainer, teamsHeader,
-            scoreHeader, timeHeader, redAlliance, blueAlliance, videoIcon;
+            scoreHeader, timeHeader, redAlliance, blueAlliance, videoIcon, redDot1, redDot2,
+            blueDot1, blueDot2, blueScoreContainer, redScoreContainer;
 
     private boolean showColumnHeaders, showScores, showTime;
 
@@ -76,12 +77,21 @@ public class MatchView extends FrameLayout {
 
         videoIcon = findViewById(R.id.match_video);
 
+        blueScoreContainer = findViewById(R.id.blue_score_container);
+        redScoreContainer = findViewById(R.id.red_score_container);
+
+        redDot1 = findViewById(R.id.red_dot_1);
+        redDot2 = findViewById(R.id.red_dot_2);
+        blueDot1 = findViewById(R.id.blue_dot_1);
+        blueDot2 = findViewById(R.id.blue_dot_2);
+
         time = (TextView) findViewById(R.id.match_time);
     }
 
     public void initWithParams(String videoKey, String title, String[] redTeams, String[] blueTeams,
                                String redScore, String blueScore, String winner, String matchKey,
-                               long time, String selectedTeamKey, boolean showVideoIcon) {
+                               long time, String selectedTeamKey, boolean showVideoIcon,
+                               int redExtraRp, int blueExtraRp) {
 
         // Parse selected team key for a number
         String selectedTeamNumber;
@@ -231,6 +241,28 @@ public class MatchView extends FrameLayout {
             this.redScore.setText(redScore);
             this.blueScore.setText(blueScore);
 
+            if (redExtraRp > 0) {
+                this.redDot1.setVisibility(View.VISIBLE);
+            } else {
+                this.redDot1.setVisibility(View.GONE);
+            }
+            if (redExtraRp > 1) {
+                this.redDot2.setVisibility(View.VISIBLE);
+            } else {
+                this.redDot2.setVisibility(View.GONE);
+            }
+
+            if (blueExtraRp > 0) {
+                this.blueDot1.setVisibility(View.VISIBLE);
+            } else {
+                this.blueDot1.setVisibility(View.GONE);
+            }
+            if (blueExtraRp > 1) {
+                this.blueDot2.setVisibility(View.VISIBLE);
+            } else {
+                this.blueDot2.setVisibility(View.GONE);
+            }
+
             String localTimeString;
             if (time <= 0) {
                 // Match has no time
@@ -294,11 +326,15 @@ public class MatchView extends FrameLayout {
         if (showScores) {
             redScore.setVisibility(VISIBLE);
             blueScore.setVisibility(VISIBLE);
+            redScoreContainer.setVisibility(VISIBLE);
+            blueScoreContainer.setVisibility(VISIBLE);
             scoreHeader.setVisibility(showColumnHeaders ? VISIBLE : GONE);
 
         } else {
             redScore.setVisibility(GONE);
             blueScore.setVisibility(GONE);
+            redScoreContainer.setVisibility(GONE);
+            blueScoreContainer.setVisibility(GONE);
             scoreHeader.setVisibility(GONE);
         }
     }
