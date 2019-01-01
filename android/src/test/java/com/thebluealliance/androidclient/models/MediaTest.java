@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import com.google.gson.JsonObject;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.types.MediaType;
 
@@ -16,8 +17,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(DefaultTestRunner.class)
 public class MediaTest {
     private Media cdMedia;
     private Media ytMedia;

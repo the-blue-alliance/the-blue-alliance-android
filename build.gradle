@@ -10,12 +10,11 @@ buildscript {
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
-        classpath 'me.tatarka:gradle-retrolambda:3.2.2'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-        classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.google.gms:google-services:4.2.0'
 
         // dependency analysis
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
@@ -47,6 +46,7 @@ allprojects {
     repositories {
         jcenter()
         mavenCentral()
+        google()
         maven { url 'https://jitpack.io' }
     }
 
@@ -56,8 +56,10 @@ allprojects {
     }
 
     ext {
-        supportLibVersion = '24.2.1'
-        playServicesVersion = '9.6.1'
+        supportLibVersion = '28.0.0'
+        playServicesVersion = '16.0.1'
+        firebaseVersion = '16.0.6'
+        firebaseCrashVersion = '16.2.1'
         googleApiClientVersion = '1.21.0'
         mockitoVersion = '2.2.1'
         retrofitVersion = '2.2.0'
@@ -66,7 +68,7 @@ allprojects {
         gsonVersion = '2.8.0'
         daggerVersion = '2.7'
         leakCanaryVersion = '1.5'
-        robolectricVersion = '3.1.4'
+        robolectricVersion = '4.1'
         permissionDispatcherVersion = '2.2.0'
 
         travisBuild = System.getenv("TRAVIS") == "true"

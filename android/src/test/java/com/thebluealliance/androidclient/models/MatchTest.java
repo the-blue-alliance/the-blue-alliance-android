@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.api.model.IMatchAlliance;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
@@ -16,8 +17,7 @@ import java.util.List;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(DefaultTestRunner.class)
 public class MatchTest {
 
     private Match mMatch;

@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.notifications;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
@@ -23,8 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(DefaultTestRunner.class)
 public class UpcomingMatchNotificationTest {
     private Context mContext;
     private UpcomingMatchNotification mNotification;

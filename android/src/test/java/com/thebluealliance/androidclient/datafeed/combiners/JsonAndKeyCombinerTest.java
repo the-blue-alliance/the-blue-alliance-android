@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.datafeed.combiners;
 
 import com.google.gson.JsonObject;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.KeyAndJson;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 
@@ -15,8 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-@Config(manifest = Config.NONE)
-@RunWith(RobolectricTestRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class JsonAndKeyCombinerTest {
 
     private JsonObject mStats;

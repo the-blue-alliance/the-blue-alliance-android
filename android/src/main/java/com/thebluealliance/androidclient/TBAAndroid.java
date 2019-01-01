@@ -38,6 +38,7 @@ public class TBAAndroid extends MultiDexApplication {
     private DatabaseWriterModule mDatabaseWriterModule;
     private AuthModule mAuthModule;
     private boolean mShouldBindStetho;
+    private boolean mShouldInstallLeakCanary;
 
     private HttpModule mHttpModule;
     private GceModule mGceModule;
@@ -48,6 +49,7 @@ public class TBAAndroid extends MultiDexApplication {
     public TBAAndroid() {
         super();
         mShouldBindStetho = true;
+        mShouldInstallLeakCanary = true;
     }
 
     /**
@@ -64,7 +66,10 @@ public class TBAAndroid extends MultiDexApplication {
             // You should not init your app in this process.
             return;
         }
-        LeakCanary.install(this);
+
+        if (mShouldInstallLeakCanary) {
+            LeakCanary.install(this);
+        }
 
         TbaLogger.i("Welcome to The Blue Alliance for Android, v" + BuildConfig.VERSION_NAME);
         getDatafeedComponenet().inject(this);
@@ -81,8 +86,12 @@ public class TBAAndroid extends MultiDexApplication {
         }
     }
 
-    void setShouldBindStetho(boolean shouldBindStetho) {
-        mShouldBindStetho = shouldBindStetho;
+    void disableStetho() {
+        mShouldBindStetho = false;
+    }
+
+    void disableLeakCanary() {
+        mShouldInstallLeakCanary = false;
     }
 
     public TBAAndroidModule getModule() {

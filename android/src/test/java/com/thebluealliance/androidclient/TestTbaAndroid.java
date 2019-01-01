@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient;
 
+import com.google.firebase.FirebaseApp;
 import com.thebluealliance.androidclient.di.DaggerMockApplicationComponent;
 import com.thebluealliance.androidclient.di.DaggerMockDatafeedComponent;
 import com.thebluealliance.androidclient.di.MockAccountModule;
@@ -27,7 +28,9 @@ public class TestTbaAndroid extends TBAAndroid {
 
     @Override
     public void onCreate() {
-        setShouldBindStetho(false);
+        disableStetho();
+        disableLeakCanary();
+        FirebaseApp.initializeApp(this);
         super.onCreate();
     }
 

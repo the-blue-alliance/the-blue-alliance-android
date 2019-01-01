@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.renderers;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
+import com.thebluealliance.androidclient.TestTbaAndroid;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
@@ -31,7 +33,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
-@Config(manifest = Config.NONE)
+@Config(manifest = Config.NONE, application = TestTbaAndroid.class, sdk = DefaultTestRunner.SDK_EMULATE_LEVEL)
 @RunWith(ParameterizedRobolectricTestRunner.class)
 public class MatchRendererTest {
 

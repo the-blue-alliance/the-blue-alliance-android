@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.auth.firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.auth.User;
 import com.thebluealliance.androidclient.auth.google.GoogleAuthProvider;
 
@@ -21,7 +22,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricTestRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class FirebaseAuthProviderTest {
 
     @Mock GoogleAuthProvider mGoogleAuthProvider;

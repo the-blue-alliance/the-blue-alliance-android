@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.api.model.IAwardRecipient;
 
@@ -15,8 +16,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(DefaultTestRunner.class)
 public class AwardTest {
     private Award mTeamAward;
     private Award mIndividualAward;

@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.subscribers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
@@ -24,8 +25,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(DefaultTestRunner.class)
 public class TeamStatsSubscriberTest {
 
     @Mock Resources mResources;

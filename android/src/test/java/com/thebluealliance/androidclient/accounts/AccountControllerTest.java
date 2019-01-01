@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.accounts;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.auth.User;
 
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricTestRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class AccountControllerTest {
 
     private static final String TEST_ACCOUNT_TYPE = "test";

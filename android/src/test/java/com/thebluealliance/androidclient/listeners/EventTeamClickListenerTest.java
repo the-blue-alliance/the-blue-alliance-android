@@ -8,12 +8,13 @@ import org.robolectric.annotation.Config;
 
 import android.content.Context;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(DefaultTestRunner.class)
 public class EventTeamClickListenerTest {
 
     private Context mContext;

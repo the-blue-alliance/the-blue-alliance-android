@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.database.writers;
 
 import com.google.gson.Gson;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
@@ -23,8 +24,7 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-@Config(manifest = Config.NONE)
-@RunWith(RobolectricTestRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class AwardListWriterTest {
 
     @Mock Database mDb;

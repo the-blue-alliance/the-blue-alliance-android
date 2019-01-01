@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.renderers;
 
 import com.google.gson.JsonArray;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
@@ -17,8 +18,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@Config(manifest = Config.NONE)
-@RunWith(RobolectricTestRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class DistrictPointBreakdownRendererTest {
 
     private DistrictPointBreakdown mBreakdown;
