@@ -40,6 +40,7 @@ case "$1" in
 
         # Move local.properties and tba.properties to proper location
         mv config/local.properties.ci local.properties
+	ls -la /home/travis/.android
         ./gradlew assembleRelease
         ;;
 
