@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.datafeed.gce;
 
 import com.google.android.gms.auth.GoogleAuthException;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.accounts.AccountController;
 
 import org.junit.Before;
@@ -21,7 +22,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricTestRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class GceAuthControllerTest {
 
     private static final String AUTH_TOKEN = "abc123";

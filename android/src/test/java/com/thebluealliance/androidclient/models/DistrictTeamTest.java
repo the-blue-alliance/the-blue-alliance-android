@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.models;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 
 import org.junit.Before;
@@ -11,8 +12,7 @@ import org.robolectric.annotation.Config;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(DefaultTestRunner.class)
 public class DistrictTeamTest {
     private DistrictRanking mDistrictTeam;
 

@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.renderers;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
+import com.thebluealliance.androidclient.TestTbaAndroid;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.models.Media;
@@ -18,7 +20,7 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@Config(manifest = Config.NONE)
+@Config(manifest = Config.NONE, application = TestTbaAndroid.class, sdk = DefaultTestRunner.SDK_EMULATE_LEVEL)
 @RunWith(ParameterizedRobolectricTestRunner.class)
 public class MediaRendererTest {
 

@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.helpers;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.types.MatchType;
 
 import org.junit.Test;
@@ -9,8 +10,7 @@ import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(RobolectricTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(DefaultTestRunner.class)
 public class MatchTypeTest {
 
     @Test

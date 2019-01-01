@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.DistrictRanking;
 
@@ -15,8 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-@Config(manifest = Config.NONE)
-@RunWith(RobolectricTestRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class DistrictTeamExtractorTest {
 
     private List<DistrictRanking> mDistrictTeams;

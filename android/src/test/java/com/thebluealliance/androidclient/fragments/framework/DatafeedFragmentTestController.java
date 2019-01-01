@@ -6,7 +6,7 @@ import com.thebluealliance.androidclient.BaseTestActivity;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 
 import org.robolectric.Robolectric;
-import org.robolectric.util.ActivityController;
+import org.robolectric.android.controller.ActivityController;
 
 import android.support.annotation.IntDef;
 import android.support.v4.app.Fragment;

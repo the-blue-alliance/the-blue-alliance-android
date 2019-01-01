@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.gcm;
 
+import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.config.AppConfig;
 
 import org.junit.Before;
@@ -17,7 +18,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricTestRunner.class)
+@RunWith(DefaultTestRunner.class)
 public class GcmControllerTest {
 
     private static final String TEST_ID = "meow";

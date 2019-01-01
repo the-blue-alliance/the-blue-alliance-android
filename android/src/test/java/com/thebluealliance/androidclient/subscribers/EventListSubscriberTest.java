@@ -23,7 +23,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Config(manifest = Config.NONE)
 @RunWith(DefaultTestRunner.class)
 public class EventListSubscriberTest {
 
