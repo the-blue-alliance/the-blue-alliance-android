@@ -1,6 +1,11 @@
-Version 4.3.2:<br>
-  - Fix crashes with new districts<br>
+Version 5.0.0:<br>
+  - Fix crashes when modifying mytba data<br>
+  - Show team media in team@event view<br>
+  - Show team locations in search results<br>
+  - Support https deep links<br>
+  - Fix opening team urls with leading zeros<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>
+<br>
 <br>
