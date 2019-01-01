@@ -14,7 +14,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
-        classpath 'com.google.gms:google-services:3.0.0'
+        classpath 'com.google.gms:google-services:4.2.0'
 
         // dependency analysis
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
@@ -56,8 +56,10 @@ allprojects {
     }
 
     ext {
-        supportLibVersion = '24.2.1'
-        playServicesVersion = '9.6.1'
+        supportLibVersion = '28.0.0'
+        playServicesVersion = '16.0.1'
+        firebaseVersion = '16.0.6'
+        firebaseCrashVersion = '16.2.1'
         googleApiClientVersion = '1.21.0'
         mockitoVersion = '2.2.1'
         retrofitVersion = '2.2.0'

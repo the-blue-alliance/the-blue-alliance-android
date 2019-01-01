@@ -42,25 +42,6 @@ android {
             keyPassword "notRealPassword"
         }
 
-        flavorDimensions "releaseType"
-        productFlavors {
-            dev {
-                // dev utilizes minSDKVersion = 21 to allow the Android gradle plugin
-                // to pre-dex each module and produce an APK that can be tested on
-                // Android Lollipop without time consuming dex merging processes
-                minSdkVersion 21
-                multiDexEnabled true
-                dimension "releaseType"
-            }
-            prod {
-                // to install a debug app with minSdkVersion = 16, run ./gradlew installProdDebug
-                // see http://developer.android.com/tools/building/multidex.html#dev-build
-                minSdkVersion 16
-                multiDexEnabled true
-                dimension "releaseType"
-            }
-        }
-
         buildTypes {
             debug {
                 applicationIdSuffix ".development"
@@ -171,8 +152,8 @@ play {
 }
 
 screenshots {
-    testApkTarget = 'packageDevDebugAndroidTest'
-    connectedAndroidTestTarget = 'connectedDevDebugAndroidTest'
+    testApkTarget = 'packageDebugAndroidTest'
+    connectedAndroidTestTarget = 'connectedDebugAndroidTest'
 }
 
 println "Version: " + android.defaultConfig.versionName + "/" + android.defaultConfig.versionCode
@@ -215,9 +196,9 @@ task updateScreenshotDirs << {
 }
 
 tasks.whenTaskAdded { theTask ->
-    if (theTask.name in ["packageDevRelease", "packageProdRelease", "publishProdRelease",
-                         "bootstrapProdReleasePlayResources", "publishListingProdRelease",
-                         "publishApkProdRelease", "generateProdReleasePlayResources"]) {
+    if (theTask.name in ["packageRelease", "publiselease",
+                         "bootstrapeleasePlayResources", "publishListingRelease",
+                         "publishApkRelease", "generateReleasePlayResources"]) {
         theTask.dependsOn "loadProperties"
     }
 }
@@ -251,31 +232,33 @@ dependencies {
     implementation "com.android.support:support-v4:${supportLibVersion}"
     implementation "com.android.support:appcompat-v7:${supportLibVersion}"
     implementation "com.android.support:gridlayout-v7:${supportLibVersion}"
-    implementation 'com.android.support:multidex:1.0.1'
+    implementation 'com.android.support:multidex:1.0.3'
     implementation "com.android.support:design:${supportLibVersion}"
 
     // Play Services Libraries
     // See http://developer.android.com/google/play-services/setup.html
     implementation 'com.google.guava:guava:24.1-jre'
-    implementation "com.google.android.gms:play-services-base:${playServicesVersion}"
-    implementation "com.google.android.gms:play-services-analytics:${playServicesVersion}"
-    implementation "com.google.android.gms:play-services-gcm:${playServicesVersion}"
-    implementation "com.google.android.gms:play-services-auth:${playServicesVersion}"
-    implementation "com.google.firebase:firebase-core:${playServicesVersion}"
-    implementation "com.google.firebase:firebase-auth:${playServicesVersion}"
-    implementation "com.google.firebase:firebase-config:${playServicesVersion}"
+    implementation "com.google.android.gms:play-services-base:16.0.1"
+    implementation "com.google.android.gms:play-services-analytics:16.0.6"
+    implementation "com.google.android.gms:play-services-gcm:16.0.0"
+    implementation "com.google.android.gms:play-services-auth:16.0.1"
+    implementation "com.google.android.gms:play-services-flags:16.0.1"
+    implementation "com.google.android.gms:play-services-stats:16.0.1"
+    implementation "com.google.firebase:firebase-core:16.0.6"
+    implementation "com.google.firebase:firebase-auth:16.1.0"
+    implementation "com.google.firebase:firebase-config:16.1.2"
 
     testImplementation 'com.github.phil-lopreiato:firebasecrash-noop:v0.1'
-    releaseImplementation "com.google.firebase:firebase-crash:${playServicesVersion}"
-    debugImplementation "com.google.firebase:firebase-crash:${playServicesVersion}"
-    debugBlueImplementation "com.google.firebase:firebase-crash:${playServicesVersion}"
-    debugProguardImplementation "com.google.firebase:firebase-crash:${playServicesVersion}"
+    releaseImplementation "com.google.firebase:firebase-crash:${firebaseCrashVersion}"
+    debugImplementation "com.google.firebase:firebase-crash:${firebaseCrashVersion}"
+    debugBlueImplementation "com.google.firebase:firebase-crash:${firebaseCrashVersion}"
+    debugProguardImplementation "com.google.firebase:firebase-crash:${firebaseCrashVersion}"
 
     // Square Libraries
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     implementation "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
-    implementation 'com.squareup.okhttp3:okhttp:3.4.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 
     implementation "com.google.dagger:dagger:${daggerVersion}"
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
@@ -311,9 +294,9 @@ dependencies {
 
     // instrumentation
     androidTestImplementation "com.android.support:support-annotations:${supportLibVersion}"
-    androidTestImplementation 'com.android.support.test:runner:0.5'
-    androidTestImplementation 'com.android.support.test:rules:0.5'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.1'
 
     // Leak Canary

@@ -87,7 +87,7 @@ def check_unittest_local(args):
     print "Running project unit tests..."
     time.sleep(2)
     try:
-        script_args = ["./gradlew", "testProdReleaseUnitTest"]
+        script_args = ["./gradlew", "testReleaseUnitTest"]
         if args.dry_run:
             script_args.append("-m")
         subprocess.check_call(script_args)
@@ -180,7 +180,7 @@ def validate_build(dry_run):
     except SyntaxError:
         pass
     time.sleep(5)
-    script_args = ["./gradlew", "installProdRelease"]
+    script_args = ["./gradlew", "installRelease"]
     if dry_run:
         script_args.append("-m")
     subprocess.check_call(script_args)
@@ -207,12 +207,12 @@ def build_apk(args):
     time.sleep(2)
 
     # Don't rebuild the app, because we've built it already
-    script_args = ["./gradlew", "publishApkProdRelease"]
+    script_args = ["./gradlew", "publishApkRelease"]
     if args.dry_run:
         script_args.append("-m")
     if not args.skip_validate:
         script_args.append("-x")
-        script_args.append("assembleProdRelease")
+        script_args.append("assembleRelease")
     subprocess.call(script_args)
     print "Returning to {}".format(old_branch)
     if not args.dry_run:
