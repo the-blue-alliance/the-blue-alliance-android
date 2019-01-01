@@ -1,6 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'gitsemver'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'com.facebook.testing.screenshot'
@@ -14,12 +12,6 @@ apply plugin: 'com.github.ben-manes.versions'
 
 apply from: 'versioning.gradle'
 apply from: 'build.workaround-missing-resource.gradle'
-
-// Fix for https://github.com/evant/gradle-retrolambda/issues/105
-// Without this, the build fails on CI for some reason
-retrolambda {
-    jvmArgs '-noverify'
-}
 
 version semverVersion()
 def (major, minor, patch, versionNum, gitTag, gitHash, commitsFromTag, repoDirty) =
@@ -39,8 +31,8 @@ project.afterEvaluate {
 }
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     signingConfigs {
         release {
@@ -50,6 +42,7 @@ android {
             keyPassword "notRealPassword"
         }
 
+        flavorDimensions "releaseType"
         productFlavors {
             dev {
                 // dev utilizes minSDKVersion = 21 to allow the Android gradle plugin
@@ -57,13 +50,14 @@ android {
                 // Android Lollipop without time consuming dex merging processes
                 minSdkVersion 21
                 multiDexEnabled true
-
+                dimension "releaseType"
             }
             prod {
                 // to install a debug app with minSdkVersion = 16, run ./gradlew installProdDebug
                 // see http://developer.android.com/tools/building/multidex.html#dev-build
                 minSdkVersion 16
                 multiDexEnabled true
+                dimension "releaseType"
             }
         }
 
@@ -106,7 +100,7 @@ android {
     defaultConfig {
         applicationId "com.thebluealliance.androidclient"
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 28
         versionCode versionNum
         versionName version.toString()
         multiDexEnabled true
@@ -140,7 +134,7 @@ android {
             def apkName = "tba-android-";
             apkName += "v" + version.tagName;
             apkName += "-" + variant.buildType.name + ".apk";
-            output.outputFile = file("$project.buildDir/apk/" + apkName)
+            output.outputFileName = apkName
         }
     }
 
@@ -247,87 +241,89 @@ check {
 }
 
 dependencies {
-    compile project(':libTba')
-    compile project(':libImgur')
+    implementation project(':libTba')
+    implementation project(':libImgur')
 
     // Android support libraries
-    compile "com.android.support:support-v13:${supportLibVersion}"
-    compile "com.android.support:cardview-v7:${supportLibVersion}"
-    compile "com.android.support:support-v4:${supportLibVersion}"
-    compile "com.android.support:appcompat-v7:${supportLibVersion}"
-    compile "com.android.support:gridlayout-v7:${supportLibVersion}"
-    compile 'com.android.support:multidex:1.0.1'
-    compile "com.android.support:design:${supportLibVersion}"
+    implementation "com.android.support:support-v13:${supportLibVersion}"
+    implementation "com.android.support:cardview-v7:${supportLibVersion}"
+    implementation "com.android.support:support-v4:${supportLibVersion}"
+    implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+    implementation "com.android.support:gridlayout-v7:${supportLibVersion}"
+    implementation 'com.android.support:multidex:1.0.1'
+    implementation "com.android.support:design:${supportLibVersion}"
 
     // Play Services Libraries
     // See http://developer.android.com/google/play-services/setup.html
-    compile 'com.google.collections:google-collections:1.0'
-    compile "com.google.android.gms:play-services-base:${playServicesVersion}"
-    compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"
-    compile "com.google.android.gms:play-services-gcm:${playServicesVersion}"
-    compile "com.google.android.gms:play-services-auth:${playServicesVersion}"
-    compile "com.google.firebase:firebase-core:${playServicesVersion}"
-    compile "com.google.firebase:firebase-auth:${playServicesVersion}"
-    compile "com.google.firebase:firebase-config:${playServicesVersion}"
+    implementation 'com.google.collections:google-collections:1.0'
+    implementation "com.google.android.gms:play-services-base:${playServicesVersion}"
+    implementation "com.google.android.gms:play-services-analytics:${playServicesVersion}"
+    implementation "com.google.android.gms:play-services-gcm:${playServicesVersion}"
+    implementation "com.google.android.gms:play-services-auth:${playServicesVersion}"
+    implementation "com.google.firebase:firebase-core:${playServicesVersion}"
+    implementation "com.google.firebase:firebase-auth:${playServicesVersion}"
+    implementation "com.google.firebase:firebase-config:${playServicesVersion}"
 
-    testCompile 'com.github.phil-lopreiato:firebasecrash-noop:v0.1'
-    releaseCompile "com.google.firebase:firebase-crash:${playServicesVersion}"
-    debugCompile "com.google.firebase:firebase-crash:${playServicesVersion}"
-    debugBlueCompile "com.google.firebase:firebase-crash:${playServicesVersion}"
-    debugProguardCompile "com.google.firebase:firebase-crash:${playServicesVersion}"
+    testImplementation 'com.github.phil-lopreiato:firebasecrash-noop:v0.1'
+    releaseImplementation "com.google.firebase:firebase-crash:${playServicesVersion}"
+    debugImplementation "com.google.firebase:firebase-crash:${playServicesVersion}"
+    debugBlueImplementation "com.google.firebase:firebase-crash:${playServicesVersion}"
+    debugProguardImplementation "com.google.firebase:firebase-crash:${playServicesVersion}"
 
     // Square Libraries
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
-    compile "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    implementation "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
+    implementation 'com.squareup.okhttp3:okhttp:3.4.1'
 
-    compile "com.google.dagger:dagger:${daggerVersion}"
-    apt 'com.google.guava:guava:19.0'
-    apt "com.google.dagger:dagger-compiler:${daggerVersion}"
+    implementation "com.google.dagger:dagger:${daggerVersion}"
+    annotationProcessor 'com.google.guava:guava:19.0'
+    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // Other third party libraries
-    compile "com.google.code.gson:gson:${gsonVersion}"
-    compile 'me.xuender:unidecode:0.0.7'
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'de.hdodenhof:circleimageview:2.1.0'
-    compile 'com.facebook.stetho:stetho:1.4.1'
-    compile 'com.facebook.stetho:stetho-okhttp3:1.4.1'
-    compile 'com.firebase:firebase-client-android:2.5.2'
-    compile "io.reactivex:rxandroid:${rxAndroidVersion}"
-    compile "io.reactivex:rxjava:${rxJavaVersion}"
-    compile 'io.reactivex:rxjava-math:1.0.0'
-    compile 'me.relex:circleindicator:1.2.1@aar'
-    compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'io.nlopez.smartadapters:library:1.3.1'
-    compile 'com.wada811:android-material-design-colors:3.0.0'
-    compile 'com.thebluealliance:spectrum:0.7.1'
-    compile 'javax.annotation:javax.annotation-api:1.2'
-    compile "com.github.hotchemi:permissionsdispatcher:${permissionDispatcherVersion}"
-    apt "com.github.hotchemi:permissionsdispatcher-processor:${permissionDispatcherVersion}"
+    implementation "com.google.code.gson:gson:${gsonVersion}"
+    implementation 'me.xuender:unidecode:0.0.7'
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
+    implementation 'com.facebook.stetho:stetho:1.4.1'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.4.1'
+    implementation 'com.firebase:firebase-client-android:2.5.2'
+    implementation "io.reactivex:rxandroid:${rxAndroidVersion}"
+    implementation "io.reactivex:rxjava:${rxJavaVersion}"
+    implementation 'io.reactivex:rxjava-math:1.0.0'
+    implementation 'me.relex:circleindicator:1.2.1@aar'
+    implementation 'com.jakewharton:butterknife:7.0.1'
+    annotationProcessor 'com.jakewharton:butterknife:7.0.1'
+    implementation 'io.nlopez.smartadapters:library:1.3.1'
+    implementation 'com.wada811:android-material-design-colors:3.0.0'
+    implementation 'com.thebluealliance:spectrum:0.7.1'
+    implementation 'javax.annotation:javax.annotation-api:1.2'
+    implementation "com.github.hotchemi:permissionsdispatcher:${permissionDispatcherVersion}"
+    annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:${permissionDispatcherVersion}"
 
     // testing
-    testCompile "org.robolectric:robolectric:${robolectricVersion}"
-    testCompile "org.robolectric:shadows-support-v4:${robolectricVersion}"
-    testCompile "org.robolectric:shadows-multidex:${robolectricVersion}"
-    testCompile 'junit:junit:4.12'
-    testCompile "org.mockito:mockito-core:${mockitoVersion}"
-    testApt "com.google.guava:guava:19.0"
-    testApt "com.google.dagger:dagger-compiler:${daggerVersion}"
+    testImplementation "org.robolectric:robolectric:${robolectricVersion}"
+    testImplementation "org.robolectric:shadows-support-v4:${robolectricVersion}"
+    testImplementation "org.robolectric:shadows-multidex:${robolectricVersion}"
+    testImplementation 'junit:junit:4.12'
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    annotationProcessor "com.google.guava:guava:19.0"
+    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+    testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // instrumentation
-    androidTestCompile "com.android.support:support-annotations:${supportLibVersion}"
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    androidTestCompile 'com.google.code.findbugs:jsr305:3.0.1'
+    androidTestImplementation "com.android.support:support-annotations:${supportLibVersion}"
+    androidTestImplementation 'com.android.support.test:runner:0.5'
+    androidTestImplementation 'com.android.support.test:rules:0.5'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.1'
 
     // Leak Canary
-    debugCompile "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
-    debugBlueCompile "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
-    debugProguardCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
-    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
-    testCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
+    debugBlueImplementation "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
+    debugProguardImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
+    testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
 }
 
 apply plugin: 'com.google.gms.google-services'

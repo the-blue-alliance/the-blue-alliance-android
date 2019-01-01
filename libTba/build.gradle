@@ -22,8 +22,8 @@ repositories {
 }
 
 dependencies {
-    compile "io.reactivex:rxjava:${rxJavaVersion}"
-    compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
-    compile "com.google.code.gson:gson:${gsonVersion}"
-    compile "com.google.code.findbugs:jsr305:3.0.1"
+    implementation "io.reactivex:rxjava:${rxJavaVersion}"
+    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    implementation "com.google.code.gson:gson:${gsonVersion}"
+    implementation "com.google.code.findbugs:jsr305:3.0.1"
 }
