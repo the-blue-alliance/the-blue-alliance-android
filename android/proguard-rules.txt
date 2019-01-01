@@ -48,6 +48,12 @@ public static *** v(...);
     @butterknife.* <methods>;
 }
 
+-dontnote com.google.**
+-dontwarn afu.org.checkerframework.**
+-dontwarn org.checkerframework.**
+-dontwarn com.google.errorprone.annotations.*
+-dontwarn com.google.common.util.**
+
 -dontwarn com.google.api.client.extensions.android.**
 -dontwarn com.google.api.client.googleapis.extensions.android.**
 -dontwarn com.google.android.gms.**
