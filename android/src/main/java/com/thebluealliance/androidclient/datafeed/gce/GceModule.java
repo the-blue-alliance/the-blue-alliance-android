@@ -11,6 +11,9 @@ import com.appspot.tbatv_prod_hrd.TeamMedia;
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.accounts.AccountModule;
+import com.thebluealliance.androidclient.auth.AuthModule;
+import com.thebluealliance.androidclient.auth.AuthProvider;
+import com.thebluealliance.androidclient.auth.firebase.FirebaseAuthProvider;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
@@ -30,7 +33,7 @@ import retrofit2.Retrofit;
 /**
  * Dagger Module for Google Cloud Endpoints and their related things
  */
-@Module(includes = {HttpModule.class, AccountModule.class, GcmModule.class})
+@Module(includes = {HttpModule.class, AccountModule.class, GcmModule.class, AuthModule.class})
 public class GceModule {
 
     // Format with app engine project ID
@@ -46,9 +49,8 @@ public class GceModule {
     }
 
     @Provides GceAuthController provideGceAuthController(
-            Context context,
-            AccountController accountController) {
-        return new GceAuthController(context, accountController);
+            @Named("firebase_auth") AuthProvider firebaseAuthProvider) {
+        return new GceAuthController((FirebaseAuthProvider)firebaseAuthProvider);
     }
 
     @Provides @Singleton @Named("gce_retrofit")

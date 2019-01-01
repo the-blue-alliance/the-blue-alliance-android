@@ -524,6 +524,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
                     .binderModule(application.getBinderModule())
                     .databaseWriterModule(application.getDatabaseWriterModule())
                     .gceModule(application.getGceModule())
+                    .authModule(application.getAuthModule())
                     .subscriberModule(new SubscriberModule(this))
                     .clickListenerModule(new ClickListenerModule(this))
                     .build();

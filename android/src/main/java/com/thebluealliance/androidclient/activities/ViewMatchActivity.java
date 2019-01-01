@@ -190,6 +190,7 @@ public class ViewMatchActivity extends MyTBASettingsActivity
               .datafeedModule(application.getDatafeedModule())
               .binderModule(application.getBinderModule())
               .databaseWriterModule(application.getDatabaseWriterModule())
+              .authModule(application.getAuthModule())
               .subscriberModule(new SubscriberModule(this))
               .clickListenerModule(new ClickListenerModule(this))
               .build();
