@@ -157,10 +157,13 @@ public final class Utilities {
                     break;
                 case "team":
                     if (indexExists(urlParts, 1) && TeamHelper.validateTeamKey("frc" + urlParts.get(1))) {
+                        // Some sources (such as ChiefDelphi) will include leading 0s in the team #
+                        // The API doesn't accept those and we shouldn't display those, so strip them
+                        String teamNumber = urlParts.get(1).replaceFirst ("^0+", "");
                         if (indexExists(urlParts, 2) && urlParts.get(2).matches("\\d\\d\\d\\d")) {
-                            intent = ViewTeamActivity.newInstance(c, "frc" + urlParts.get(1), Integer.parseInt(urlParts.get(2)));
+                            intent = ViewTeamActivity.newInstance(c, "frc" + teamNumber, Integer.parseInt(urlParts.get(2)));
                         } else {
-                            intent = ViewTeamActivity.newInstance(c, "frc" + urlParts.get(1));
+                            intent = ViewTeamActivity.newInstance(c, "frc" + teamNumber);
                         }
                     }
                     break;
