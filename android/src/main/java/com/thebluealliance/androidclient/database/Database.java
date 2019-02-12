@@ -2,11 +2,13 @@ package com.thebluealliance.androidclient.database;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
+import android.view.SearchEvent;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.TBAAndroid;
@@ -34,7 +36,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
     public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
-    static final int DATABASE_VERSION = 35;
+    static final int DATABASE_VERSION = 36;
     private static final String DATABASE_NAME = "the-blue-alliance-android-database";
     static final @Deprecated String TABLE_API = "api";
     public static final String TABLE_TEAMS = "teams",
@@ -111,6 +113,8 @@ public class Database extends SQLiteOpenHelper {
             + MediasTable.TEAMKEY + " TEXT DEFAULT '', "
             + MediasTable.DETAILS + " TEXT DEFAULT '', "
             + MediasTable.YEAR + " INTEGER  DEFAULT -1, "
+            + MediasTable.VIEW_URL + " TEXT DEFAULT '', "
+            + MediasTable.DIRECT_URL + " TEXT DEFAULT '', "
             + MediasTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
     public static final String CREATE_EVENTTEAMS = "CREATE TABLE IF NOT EXISTS "
@@ -553,6 +557,20 @@ public class Database extends SQLiteOpenHelper {
                         db.endTransaction();
                     }
                     break;
+                case 36:
+                    db.beginTransaction();
+                    try {
+                        if (!columnExists(db, TABLE_MEDIAS, MediasTable.DIRECT_URL)) {
+                            db.execSQL("ALTER TABLE " + TABLE_MEDIAS + " ADD COLUMN " + MediasTable.DIRECT_URL + " TEXT DEFAULT '' ");
+                        }
+                        if (!columnExists(db, TABLE_MEDIAS, MediasTable.VIEW_URL)) {
+                            db.execSQL("ALTER TABLE " + TABLE_MEDIAS + " ADD COLUMN " + MediasTable.VIEW_URL + " TEXT DEFAULT '' ");
+                        }
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
+                    break;
             }
             upgradeTo++;
         }
@@ -582,14 +600,16 @@ public class Database extends SQLiteOpenHelper {
 
     public Cursor getMatchesForTeamQuery(String query) {
         String selection = SearchTeam.TITLES + " MATCH ?";
-        String[] selectionArgs = new String[]{query};
+        String escapedQuery = "\""
+                + DatabaseUtils.sqlEscapeString(query)
+                + "\"";
+        String[] selectionArgs = new String[]{escapedQuery};
 
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(TABLE_SEARCH_TEAMS);
         builder.setDistinct(true);
 
-        Cursor cursor = builder.query(mDb,
-                new String[]{SearchTeam.KEY + " as _id", SearchTeam.TITLES, SearchTeam.NUMBER}, selection, selectionArgs, null, null, SearchTeam.NUMBER + " ASC");
+        Cursor cursor = mDb.query(TABLE_SEARCH_TEAMS, new String[]{SearchTeam.KEY + " as _id", SearchTeam.TITLES, SearchTeam.NUMBER}, selection, selectionArgs, null, null, SearchTeam.NUMBER + " ASC");
 
         if (cursor == null) {
             return null;
@@ -602,15 +622,20 @@ public class Database extends SQLiteOpenHelper {
 
     public Cursor getMatchesForEventQuery(String query) {
         String selection = SearchEvent.TITLES + " MATCH ?";
+//        String escapedQuery = "\""
+//                + DatabaseUtils.sqlEscapeString(query)
+//                + "\"";
         String[] selectionArgs = new String[]{query};
 
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(TABLE_SEARCH_EVENTS);
         builder.setDistinct(true);
 
-        Cursor cursor = builder.query(mDb,
-                new String[]{SearchEvent.KEY + " as _id", SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC");
+//        mDb.query(TABLE_SEARCH_EVENTS,  new String[]{SearchEvent.KEY + " as _id", SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC")
+//        Cursor cursor = builder.query(mDb,
+//                new String[]{SearchEvent.KEY + " as _id", SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC");
 
+        Cursor cursor = mDb.query(TABLE_SEARCH_EVENTS,  new String[]{SearchEvent.KEY + " as _id", SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC");
         if (cursor == null) {
             return null;
         } else if (!cursor.moveToFirst()) {

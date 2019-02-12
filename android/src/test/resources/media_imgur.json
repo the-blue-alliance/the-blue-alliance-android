@@ -1,5 +1,7 @@
 {
   "details": {},
   "foreign_key": "aF8T5ZE",
-  "type": "imgur"
+  "type": "imgur",
+  "view_url": "http://imgur.com/img123",
+  "direct_url": "http://imgur.com/img123.jpg"
 }

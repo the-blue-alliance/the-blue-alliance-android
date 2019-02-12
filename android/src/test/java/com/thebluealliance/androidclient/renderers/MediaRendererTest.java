@@ -55,17 +55,8 @@ public class MediaRendererTest {
         ImageListElement listItem = mRenderer.renderFromModel(mMedia, null);
         assertNotNull(listItem);
         assertEquals(listItem.isVideo, mMediaType.isVideo());
-        assertEquals(
-                listItem.linkUrl,
-                String.format(mMediaType.getLinkUrlPattern(), mMedia.getForeignKey()));
-        if (mMediaType != MediaType.CD_PHOTO_THREAD) {
-            assertEquals(
-                    listItem.imageUrl,
-                    String.format(mMediaType.getImageUrlPattern(), mMedia.getForeignKey()));
-        } else {
-            assertEquals(listItem.imageUrl, "https://www.chiefdelphi"
-                     + ".com/media/img/fe3/fe38d320428adf4f51ac969efb3db32c_m.jpg");
-        }
+        assertEquals(listItem.linkUrl, mMedia.getViewUrl());
+        assertEquals(listItem.imageUrl, mMedia.getDirectUrl());
     }
 
 }

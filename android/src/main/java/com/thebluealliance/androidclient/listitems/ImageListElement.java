@@ -50,8 +50,11 @@ public class ImageListElement extends ListElement {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Picasso picasso = Picasso.with(c);
-        picasso.load(imageUrl).into(holder.image);
+        if (imageUrl != null) {
+            Picasso picasso = Picasso.with(c);
+            picasso.load(imageUrl).into(holder.image);
+        }
+
         if (isVideo) {
             holder.youtubePlayIcon.setVisibility(View.VISIBLE);
         } else {
