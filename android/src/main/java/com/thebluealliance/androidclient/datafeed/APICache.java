@@ -203,6 +203,7 @@ public class APICache {
         return Observable.create((observer) -> {
             try {
                 Calendar cal = Calendar.getInstance();
+                cal.clear();
                 cal.set(year, month, 1);
                 String start = Long.toString(cal.getTimeInMillis());
                 cal.add(Calendar.MONTH, 1);
@@ -210,9 +211,9 @@ public class APICache {
                 String end = Long.toString(cal.getTimeInMillis());
 
                 String where = String.format(
-                  "%1$s >= ? AND %2$s < ?",
+                  "%1$s >= ? AND %2$s <= ?",
                   EventsTable.START,
-                  EventsTable.END);
+                  EventsTable.START);
                 List<Event> events = mDb.getEventsTable()
                   .getForQuery(null, where, new String[]{start, end});
                 observer.onNext(events);
