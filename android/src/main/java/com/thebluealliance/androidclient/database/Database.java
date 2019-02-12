@@ -2,13 +2,11 @@ package com.thebluealliance.androidclient.database;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
-import android.view.SearchEvent;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.TBAAndroid;
@@ -600,16 +598,14 @@ public class Database extends SQLiteOpenHelper {
 
     public Cursor getMatchesForTeamQuery(String query) {
         String selection = SearchTeam.TITLES + " MATCH ?";
-        String escapedQuery = "\""
-                + DatabaseUtils.sqlEscapeString(query)
-                + "\"";
-        String[] selectionArgs = new String[]{escapedQuery};
+        String[] selectionArgs = new String[]{query};
 
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(TABLE_SEARCH_TEAMS);
         builder.setDistinct(true);
 
-        Cursor cursor = mDb.query(TABLE_SEARCH_TEAMS, new String[]{SearchTeam.KEY + " as _id", SearchTeam.TITLES, SearchTeam.NUMBER}, selection, selectionArgs, null, null, SearchTeam.NUMBER + " ASC");
+        Cursor cursor = builder.query(mDb,
+                new String[]{SearchTeam.KEY + " as _id", SearchTeam.TITLES, SearchTeam.NUMBER}, selection, selectionArgs, null, null, SearchTeam.NUMBER + " ASC");
 
         if (cursor == null) {
             return null;
@@ -622,20 +618,15 @@ public class Database extends SQLiteOpenHelper {
 
     public Cursor getMatchesForEventQuery(String query) {
         String selection = SearchEvent.TITLES + " MATCH ?";
-//        String escapedQuery = "\""
-//                + DatabaseUtils.sqlEscapeString(query)
-//                + "\"";
         String[] selectionArgs = new String[]{query};
 
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(TABLE_SEARCH_EVENTS);
         builder.setDistinct(true);
 
-//        mDb.query(TABLE_SEARCH_EVENTS,  new String[]{SearchEvent.KEY + " as _id", SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC")
-//        Cursor cursor = builder.query(mDb,
-//                new String[]{SearchEvent.KEY + " as _id", SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC");
+        Cursor cursor = builder.query(mDb,
+                new String[]{SearchEvent.KEY + " as _id", SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC");
 
-        Cursor cursor = mDb.query(TABLE_SEARCH_EVENTS,  new String[]{SearchEvent.KEY + " as _id", SearchEvent.TITLES, SearchEvent.YEAR}, selection, selectionArgs, null, null, SearchEvent.YEAR + " DESC");
         if (cursor == null) {
             return null;
         } else if (!cursor.moveToFirst()) {
