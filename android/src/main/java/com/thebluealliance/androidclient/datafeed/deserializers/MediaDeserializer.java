@@ -31,11 +31,11 @@ public class MediaDeserializer implements JsonDeserializer<Media> {
         }
 
         if (object.has("direct_url")) {
-            media.setDirectUrl(object.get("direct_url").toString());
+            media.setDirectUrl(object.get("direct_url").getAsString());
         }
 
         if (object.has("view_url")) {
-            media.setViewUrl(object.get("view_url").toString());
+            media.setViewUrl(object.get("view_url").getAsString());
         }
 
         return media;
