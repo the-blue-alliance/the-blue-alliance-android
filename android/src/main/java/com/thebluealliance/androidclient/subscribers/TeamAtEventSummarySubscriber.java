@@ -8,7 +8,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.config.AppConfig;
-import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
@@ -35,6 +34,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -42,12 +42,21 @@ import javax.annotation.Nullable;
 import static com.thebluealliance.androidclient.helpers.RankingFormatter.NONE;
 import static com.thebluealliance.androidclient.helpers.RankingFormatter.buildRankingString;
 
-public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventStatus, List<Object>> {
+public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventSummarySubscriber.Model, List<Object>> {
+
+    public static class Model {
+        public final @Nullable TeamAtEventStatus status;
+        public final Event event;
+
+        public Model(@Nullable TeamAtEventStatus status, Event event) {
+            this.status = status;
+            this.event = event;
+        }
+    }
 
     private final Context mContext;
     private final Resources mResources;
     private final MatchRenderer mMatchRenderer;
-    private final EventsTable mEventsTable;
     private final AppConfig mAppConfig;
     private final EventBus mEventBus;
     private String mTeamKey;
@@ -62,13 +71,11 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
     public TeamAtEventSummarySubscriber(Context context,
                                         AppConfig config,
                                         EventBus eventBus,
-                                        MatchRenderer matchRenderer,
-                                        EventsTable eventsTable) {
+                                        MatchRenderer matchRenderer) {
         super();
         mContext = context;
         mResources = context.getResources();
         mMatchRenderer = matchRenderer;
-        mEventsTable = eventsTable;
         mAppConfig = config;
         mEventBus = eventBus;
         mIsMatchListLoaded = false;
@@ -85,15 +92,16 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
     public synchronized void parseData()  {
         mDataToBind.clear();
         Match nextMatch = null, lastMatch = null;
-        Collections.sort(mMatches, new MatchSortByPlayOrderComparator());
 
-        @Nullable ITeamAtEventAlliance allianceData = mAPIData.getAlliance();
-        @Nullable ITeamAtEventQual qualData = mAPIData.getQual();
-        @Nullable ITeamAtEventPlayoff playoffData = mAPIData.getPlayoff();
+        @Nullable TeamAtEventStatus status = mAPIData.status;
+        @Nullable ITeamAtEventAlliance allianceData = status != null ? status.getAlliance() : null;
+        @Nullable ITeamAtEventQual qualData = status != null ? status.getQual() : null;
+        @Nullable ITeamAtEventPlayoff playoffData = status != null ? status.getPlayoff() : null;
 
         String actionBarTitle = mResources.getString(R.string.team_actionbar_title, mTeamKey.substring(3));
         String actionBarSubtitle;
-        Event event = mEventsTable.get(mEventKey);
+        Event event = mAPIData.event;
+        Date now = new Date();
         if (event == null) {
             actionBarSubtitle = mResources.getString(R.string.team_at_event_actionbar_fallback, mEventKey);
             mEventBus.post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
@@ -105,9 +113,16 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
         actionBarSubtitle = mResources.getString(R.string.team_at_event_actionbar_subtitle, year, event.getShortName());
         mEventBus.post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
 
-        String playoffStatusString = mAPIData.getPlayoffStatusStr();
-        String allianceStatusString= mAPIData.getAllianceStatusStr();
-        String overallStatusString = mAPIData.getOverallStatusStr();
+        String playoffStatusString = status != null ? status.getPlayoffStatusStr() : "";
+        String allianceStatusString = status != null ? status.getAllianceStatusStr() : "";
+        String overallStatusString;
+        if (status != null) {
+            overallStatusString = status.getOverallStatusStr();
+        } else if (now.before(event.getStartDate())) {
+            overallStatusString = mResources.getString(R.string.team_at_event_future_event);
+        } else {
+            overallStatusString = "";
+        }
 
         String qualRecordString;
         @Nullable ITeamRecord qualRecord = null;
@@ -122,7 +137,8 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
             qualRecordString = "";
         }
 
-        if (activeEvent) {
+        if (activeEvent && mIsMatchListLoaded) {
+            Collections.sort(mMatches, new MatchSortByPlayOrderComparator());
             nextMatch = MatchHelper.getNextMatchPlayed(mMatches);
             lastMatch = MatchHelper.getLastMatchPlayed(mMatches);
         }
@@ -148,7 +164,7 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
 
 
         // Number of awards, only if nonzero
-        if (mAwards.size() > 0) {
+        if (mIsAwardListLoaded && mAwards.size() > 0) {
             String awardsString;
             if (mAwards.size() == 1) {
                 awardsString = mResources.getString(R.string.team_at_event_awards_format_one);
@@ -205,11 +221,6 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
                     mResources.getString(R.string.title_next_match),
                     mMatchRenderer.renderFromModel(nextMatch, MatchRenderer.RENDER_DEFAULT)));
         }
-    }
-
-    @Override
-    public boolean isDataValid() {
-        return super.isDataValid() && mIsMatchListLoaded && mIsAwardListLoaded;
     }
 
     /**
