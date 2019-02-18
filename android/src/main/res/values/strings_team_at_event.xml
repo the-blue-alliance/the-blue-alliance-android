@@ -24,6 +24,7 @@
     <string name="team_at_event_qual_record">Qual Record</string>
     <string name="team_at_event_alliance">Alliance</string>
     <string name="team_at_event_status">Team Status</string>
+    <string name="team_at_event_future_event">Event not yet started</string>
 
     <!-- possible statuses -->
     <string name="playing_in_quals">Playing in the qualification matches</string>

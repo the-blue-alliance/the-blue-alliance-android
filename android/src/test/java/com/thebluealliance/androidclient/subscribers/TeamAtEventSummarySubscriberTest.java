@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.config.AppConfig;
-import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
@@ -32,12 +31,11 @@ public class TeamAtEventSummarySubscriberTest {
     @Mock EventMatchesEvent mMatchesEvent;
     @Mock EventAwardsEvent mAwardsEvent;
     @Mock MatchRenderer mMatchRenderer;
-    @Mock EventsTable mEventsTable;
     @Mock AppConfig mAppConfig;
     @Mock EventBus mEventBus;
 
     TeamAtEventSummarySubscriber mSubscriber;
-    TeamAtEventStatus mData;
+    TeamAtEventStatus mStatus;
 
     @Before
     public void setUp() {
@@ -45,9 +43,10 @@ public class TeamAtEventSummarySubscriberTest {
         mContext = mock(Context.class, RETURNS_DEEP_STUBS);
         when(mContext.getResources().getString(anyInt())).thenReturn("");
         mSubscriber = new TeamAtEventSummarySubscriber(mContext, mAppConfig, mEventBus,
-                                                       mMatchRenderer, mEventsTable);
+                                                       mMatchRenderer);
         mSubscriber.setTeamAndEventKeys("frc1519", "2015necmp");
-        mData = ModelMaker.getModel(TeamAtEventStatus.class, "frc1519_2015necmp_status");
+        mEvent = ModelMaker.getModel(Event.class, "2015necmp");
+        mStatus = ModelMaker.getModel(TeamAtEventStatus.class, "frc1519_2015necmp_status");
     }
 
     @Test
@@ -59,6 +58,11 @@ public class TeamAtEventSummarySubscriberTest {
     public void testSimpleParsing()  {
         mSubscriber.onEventMatchesLoaded(mMatchesEvent);
         mSubscriber.onEventAwardsLoaded(mAwardsEvent);
-        DatafeedTestDriver.testSimpleParsing(mSubscriber, mData);
+        DatafeedTestDriver.testSimpleParsing(mSubscriber,  new TeamAtEventSummarySubscriber.Model(mStatus, mEvent));
+    }
+
+    @Test
+    public void testUnplayedEvent() {
+        DatafeedTestDriver.testSimpleParsing(mSubscriber,  new TeamAtEventSummarySubscriber.Model(null, mEvent));
     }
 }

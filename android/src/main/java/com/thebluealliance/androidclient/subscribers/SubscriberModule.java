@@ -105,14 +105,12 @@ public class SubscriberModule {
 
     @Provides
     public TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(MatchRenderer renderer,
-                                                                            Database db,
                                                                             AppConfig config,
                                                                             EventBus bus) {
         return new TeamAtEventSummarySubscriber(mActivity.getApplicationContext(),
                                                 config,
                                                 bus,
-                                                renderer,
-                                                db.getEventsTable());
+                                                renderer);
     }
 
     @Provides
