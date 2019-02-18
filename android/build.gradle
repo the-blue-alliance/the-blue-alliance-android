@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
+apply plugin: 'checkstyle'
 apply plugin: 'gitsemver'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'com.facebook.testing.screenshot'
-apply plugin: 'com.noveogroup.android.check'
 
 apply from: "../code_coverage.gradle"
 
@@ -220,11 +220,13 @@ repositories {
     }
 }
 
-check {
-    abortOnError true
-    checkstyle {
-        config project.file('../config/checkstyle.xml')
-    }
+task checkstyle(type: Checkstyle) {
+    source 'src'
+    include '**/*.java'
+    exclude '**/gen/**'
+
+    // empty classpath
+    classpath = files()
 }
 
 dependencies {

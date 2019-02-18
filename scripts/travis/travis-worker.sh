@@ -29,7 +29,7 @@ case "$1" in
 
     "CHECKSTYLE")
         echo "Running project checkstyle"
-        ./gradlew androidCheckstyle
+        ./gradlew checkstyle
         CODE=$?
         html2text android/build/outputs/checkstyle/checkstyle.html
         filter_code $CODE
