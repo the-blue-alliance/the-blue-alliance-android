@@ -1,5 +1,7 @@
 language: android
-jdk: oraclejdk8
+jdk: 
+ - oraclejdk8
+ - openjdk11
 sudo: false
 addons:
   apt:
