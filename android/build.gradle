@@ -30,16 +30,25 @@ project.afterEvaluate {
     pullScreenshots.dependsOn updateScreenshotDirs
 }
 
+def localProps = new Properties()
+def localPropFile = file("../local.properties")
+if (localPropFile.exists()) {
+    System.out.println("Loading property file: " + localPropFile.absolutePath)
+    localProps.load(new FileInputStream(localPropFile))
+} else {
+    System.out.println("Falling back to default stub properties")
+}
+
 android {
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
 
     signingConfigs {
         release {
-            storeFile file("somefile.jks")
-            storePassword "notRealPassword"
-            keyAlias "notRealAlias"
-            keyPassword "notRealPassword"
+            storeFile file(localProps.getProperty("release.key", "somefile.jks"))
+            storePassword localProps.getProperty("release.key.password", "notRealPassword")
+            keyAlias localProps.getProperty("release.key.alias", "notRealAlias")
+            keyPassword localProps.getProperty("release.key.aliasPass", "notRealPassword")
         }
 
         buildTypes {
@@ -151,8 +160,8 @@ android {
 }
 
 play {
-    serviceAccountEmail = 'some-email-address'
-    pk12File = file("somefile.p12")
+    serviceAccountEmail = localProps.getProperty('play.release.serviceEmail', 'some-email-address')
+    pk12File = file(localProps.getProperty('play.release.keyFile', 'somefile.p12'))
     track = 'beta'
 }
 
@@ -162,23 +171,6 @@ screenshots {
 }
 
 println "Version: " + android.defaultConfig.versionName + "/" + android.defaultConfig.versionCode
-
-task loadProperties << {
-    // add in signing keys from local.properties
-    def config = new Properties()
-    def propFile = file("../local.properties")
-    System.out.println("Loading property file: " + propFile.absolutePath)
-    if (propFile.canRead()) {
-        config.load(new FileInputStream(propFile))
-        android.signingConfigs.release.storeFile = file(config["release.key"])
-        android.signingConfigs.release.storePassword = config["release.key.password"]
-        android.signingConfigs.release.keyAlias = config["release.key.alias"]
-        android.signingConfigs.release.keyPassword = config["release.key.aliasPass"]
-
-        play.serviceAccountEmail = config['play.release.serviceEmail']
-        play.pk12File = file(config['play.release.keyFile'])
-    }
-}
 
 task updateScreenshotDirs << {
     def codeNameOut = new ByteArrayOutputStream()
@@ -198,14 +190,6 @@ task updateScreenshotDirs << {
     project.screenshots.recordDir = outputDir
     System.out.println("New screenshot output dierctory: " + outputDir)
 
-}
-
-tasks.whenTaskAdded { theTask ->
-    if (theTask.name in ["packageRelease", "publiselease",
-                         "bootstrapeleasePlayResources", "publishListingRelease",
-                         "publishApkRelease", "generateReleasePlayResources"]) {
-        theTask.dependsOn "loadProperties"
-    }
 }
 
 repositories {
