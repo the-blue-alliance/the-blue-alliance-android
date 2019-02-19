@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="breakdown2019_sandstorm_bonus_robot_1">Robot 1 Sandstorm</string>
+    <string name="breakdown2019_sandstorm_bonus_robot_2">Robot 2 Sandstorm</string>
+    <string name="breakdown2019_sandstorm_bonus_robot_3">Robot 3 Sandstorm</string>
+    <string name="breakdown2019_sandstorm_bonus_points">Sandstorm Bonus Points</string>
+    <string name="breakdown2019_cargo_ship">Cargo Ship </string>
+    <string name="breakdown2019_rocket_1">Rocket 1</string>
+    <string name="breakdown2019_rocket_2">Rocket 2</string>
+    <string name="breakdown2019_total_hatch_panel_points">Total Hatch Panels</string>
+    <string name="breakdown2019_total_cargo_points">Total Cargo</string>
+    <string name="breakdown2019_hab_robot_1">Robot 1 HAB Climb</string>
+    <string name="breakdown2019_hab_robot_2">Robot 2 HAB Climb</string>
+    <string name="breakdown2019_hab_robot_3">Robot 3 HAB Climb</string>
+    <string name="breakdown2019_hab_climb_points">HAB Climb Points</string>
+    <string name="breakdown2019_complete_rocket">Completed Rocket</string>
+    <string name="breakdown2019_hab_docking">HAB Docking</string>
+</resources>

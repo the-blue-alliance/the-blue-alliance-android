@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+    <android.support.v7.widget.GridLayout
+        app:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/breakdown2019_container"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@color/column_header_gray"
+        app:columnCount="3"
+        app:rowCount="29"
+        app:alignmentMode="alignBounds" >
+
+        <!-- Teams -->
+        <TextView
+            android:id="@+id/breakdown_red1"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 1"/>
+        <TextView
+            android:text="@string/breakdown_teams"
+            style="@style/breakdown_categorySubtotal"
+            app:layout_rowSpan="3" />
+        <TextView
+            android:id="@+id/breakdown_blue1"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 1"/>
+        <TextView
+            android:id="@+id/breakdown_red2"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 2"/>
+        <TextView
+            android:id="@+id/breakdown_blue2"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 2"/>
+        <TextView
+            android:id="@+id/breakdown_red3"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 3"/>
+        <TextView
+            android:id="@+id/breakdown_blue3"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 3"/>
+
+        <!-- Sandstorm Bonus -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_red_sandstorm_bonus_robot_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text=""
+                tools:drawableLeft="@drawable/ic_close_black_24dp"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2019_sandstorm_bonus_robot_1"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_blue_sandstorm_bonus_robot_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:drawableLeft="@drawable/baseline_looks_one_black_24"
+                tools:text="(+ 3)"/>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_red_sandstorm_bonus_robot_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:drawableLeft="@drawable/baseline_looks_two_black_24"
+                tools:text="(+ 6)"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2019_sandstorm_bonus_robot_2"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_blue_sandstorm_bonus_robot_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:drawableLeft="@drawable/baseline_looks_two_black_24"
+                tools:text="(+ 6)"/>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_red_sandstorm_bonus_robot_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:drawableLeft="@drawable/baseline_looks_two_black_24"
+                tools:text="(+ 6)"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2019_sandstorm_bonus_robot_3"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_blue_sandstorm_bonus_robot_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:drawableLeft="@drawable/baseline_looks_one_black_24"
+                tools:text="(+ 3)"/>
+        </LinearLayout>
+
+        <!-- Sandstorm Bonus Points -->
+        <TextView
+            android:id="@+id/breakdown2019_sandstorm_total_red"
+            style="@style/breakdown_redTotal"
+            tools:text="60"/>
+        <TextView
+            android:text="@string/breakdown2019_sandstorm_bonus_points"
+            style="@style/breakdown_categoryTotal" />
+        <TextView
+            android:id="@+id/breakdown2019_sandstorm_total_blue"
+            style="@style/breakdown_blueTotal"
+            tools:text="5"/>
+
+        <!-- Cargo Ship -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_red_cargo_ship_null_panels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_null_hatch_panel"
+                tools:text="2"/>
+            <TextView
+                android:id="@+id/breakdown2019_red_cargo_ship_panels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_hatch_panel"
+                tools:text="2"/>
+            <TextView
+                android:id="@+id/breakdown2019_red_cargo_ship_cargo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_cargo"
+                tools:text="2"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2019_cargo_ship"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_blue_cargo_ship_null_panels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_null_hatch_panel"
+                tools:text="2"/>
+            <TextView
+                android:id="@+id/breakdown2019_blue_cargo_ship_panels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_hatch_panel"
+                tools:text="3"/>
+            <TextView
+                android:id="@+id/breakdown2019_blue_cargo_ship_cargo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_cargo"
+                tools:text="1"/>
+        </LinearLayout>
+
+        <!-- Rocket 1 -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_red_rocket_1_panels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_hatch_panel"
+                tools:text="0"/>
+            <TextView
+                android:id="@+id/breakdown2019_red_rocket_1_cargo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_cargo"
+                tools:text="0"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2019_rocket_1"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_blue_rocket_1_panels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_hatch_panel"
+                tools:text="2"/>
+            <TextView
+                android:id="@+id/breakdown2019_blue_rocket_1_cargo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_cargo"
+                tools:text="1"/>
+        </LinearLayout>
+
+        <!-- Rocket 2 -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_red_rocket_2_panels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_hatch_panel"
+                tools:text="1"/>
+            <TextView
+                android:id="@+id/breakdown2019_red_rocket_2_cargo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_cargo"
+                tools:text="1"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2019_rocket_2"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_blue_rocket_2_panels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_hatch_panel"
+                tools:text="4"/>
+            <TextView
+                android:id="@+id/breakdown2019_blue_rocket_2_cargo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_cargo"
+                tools:text="3"/>
+        </LinearLayout>
+
+        <!-- Total Hatch -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/breakdown2019_red_hatch_panel_points"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_hatch_panel"
+                tools:text="3 (+ 6)"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2019_total_hatch_panel_points"
+            style="@style/breakdown_categorySubtotal" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/breakdown2019_blue_hatch_panel_points"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_hatch_panel"
+                tools:text="9 (+ 18)"/>
+        </LinearLayout>
+
+        <!-- Total Cargo -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/breakdown2019_red_cargo_points"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_cargo"
+                tools:text="2 (+ 6)"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2019_total_cargo_points"
+            style="@style/breakdown_categorySubtotal" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/breakdown2019_blue_cargo_points"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2019_cargo"
+                tools:text="5 (+ 20)"/>
+        </LinearLayout>
+
+        <!-- HAB Climb -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_red_hab_robot_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text=""/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2019_hab_robot_1"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_blue_hab_robot_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text=""/>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_red_hab_robot_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:drawableLeft="@drawable/baseline_looks_3_black_24"
+                tools:text="(+ 12)"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2019_hab_robot_2"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_blue_hab_robot_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:drawableLeft="@drawable/baseline_looks_two_black_24"
+                tools:text="(+ 6)"/>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_red_hab_robot_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:drawableLeft="@drawable/baseline_looks_one_black_24"
+                tools:text="(+ 3)"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2019_hab_robot_3"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2019_blue_hab_robot_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:drawableLeft="@drawable/baseline_looks_two_black_24"
+                tools:text="(+ 6)"/>
+        </LinearLayout>
+
+        <!-- HAB Climb Points -->
+        <TextView
+            android:id="@+id/breakdown2019_hab_total_red"
+            style="@style/breakdown_redTotal"
+            tools:text="60"/>
+        <TextView
+            android:text="@string/breakdown2019_hab_climb_points"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown2019_hab_total_blue"
+            style="@style/breakdown_blueTotal"
+            tools:text="5"/>
+
+        <!-- Teleop Total -->
+        <TextView
+            android:id="@+id/breakdown_teleop_total_red"
+            style="@style/breakdown_redTotal"
+            tools:text="40"/>
+        <TextView
+            android:text="@string/breakdown_teleop_total"
+            style="@style/breakdown_categoryTotal" />
+        <TextView
+            android:id="@+id/breakdown_teleop_total_blue"
+            style="@style/breakdown_blueTotal"
+            tools:text="80"/>
+
+        <!-- Complete Rocket -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/breakdown2019_red_complete_rocket"
+                tools:drawableLeft="@drawable/ic_clear_black_24dp"
+                tools:text=""/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2019_complete_rocket"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/breakdown2019_blue_complete_rocket"
+                tools:drawableLeft="@drawable/baseline_done_all_black_24"
+                tools:text="(+ 1 RP)"/>
+        </LinearLayout>
+
+        <!-- HAB Docking -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/breakdown2019_red_hab_docking"
+                tools:drawableLeft="@drawable/ic_done_black_24dp"
+                tools:text="(+ 1 RP)"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2019_hab_docking"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/breakdown2019_blue_hab_docking"
+                tools:drawableLeft="@drawable/ic_done_black_24dp"
+                tools:text="(+ 1 RP)"/>
+        </LinearLayout>
+
+        <!-- Fouls -->
+        <TextView
+            android:id="@+id/breakdown_fouls_red"
+            style="@style/breakdown_redItem"
+            tools:text="+ 0"/>
+        <TextView
+            android:text="@string/breakdown_foul"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown_fouls_blue"
+            style="@style/breakdown_blueItem"
+            tools:text="+ 5"/>
+
+        <!-- Adjustments -->
+        <TextView
+            android:id="@+id/breakdown_adjust_red"
+            style="@style/breakdown_redItem"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown_adjust"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown_adjust_blue"
+            style="@style/breakdown_blueItem"
+            tools:text="0"/>
+
+        <!-- Total -->
+        <TextView
+            android:id="@+id/breakdown_total_red"
+            style="@style/breakdown_redTotal"
+            tools:text="100"/>
+        <TextView
+            android:text="@string/breakdown_total"
+            style="@style/breakdown_categoryTotal" />
+        <TextView
+            android:id="@+id/breakdown_total_blue"
+            style="@style/breakdown_blueTotal"
+            tools:text="90"/>
+
+        <!-- Ranking Points -->
+        <TextView
+            android:id="@+id/breakdown_red_rp"
+            style="@style/breakdown_redTotal"
+            tools:text="1"/>
+        <TextView
+            android:text="@string/breakdown_rp"
+            android:id="@+id/breakdown_rp_header"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown_blue_rp"
+            style="@style/breakdown_blueTotal"
+            tools:text="2"/>
+    </android.support.v7.widget.GridLayout>
+</ScrollView>

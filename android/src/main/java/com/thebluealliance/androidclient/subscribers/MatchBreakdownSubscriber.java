@@ -15,8 +15,9 @@ import javax.inject.Inject;
 
 public class MatchBreakdownSubscriber extends BaseAPISubscriber<Match, MatchBreakdownBinder.Model> {
 
-    public static final String SHOW_2017_KEY = "show_2017_breakdowns";
-    public static final String SHOW_2018_KEY = "show_2018_breakdowns";
+    static final String SHOW_2017_KEY = "show_2017_breakdowns";
+    static final String SHOW_2018_KEY = "show_2018_breakdowns";
+    static final String SHOW_2019_KEY = "show_2019_breakdowns";
 
     private final Gson mGson;
     private final AppConfig mConfig;
@@ -45,6 +46,10 @@ public class MatchBreakdownSubscriber extends BaseAPISubscriber<Match, MatchBrea
             case 2018:
                 shouldShowBreakdown = mConfig.getBoolean(SHOW_2018_KEY);
                 TbaLogger.i("Showing 2018 breakdowns? " + shouldShowBreakdown);
+                break;
+            case 2019:
+                shouldShowBreakdown = mConfig.getBoolean(SHOW_2019_KEY);
+                TbaLogger.i("Showing 2019 breakdowns? " + shouldShowBreakdown);
                 break;
         }
 
