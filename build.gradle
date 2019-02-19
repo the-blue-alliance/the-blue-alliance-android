@@ -13,7 +13,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.3.1'
         classpath 'com.google.gms:google-services:4.2.0'
 
         // dependency analysis
@@ -33,9 +33,6 @@ buildscript {
 
         // Automated Screenshot Testing
         classpath 'com.facebook.testing.screenshot:plugin:0.4.2'
-
-        // Static code check things
-        classpath 'com.noveogroup.android:check:1.2.4'
     }
 
     // Exclude the linter version that the android plugin depends on.
@@ -66,7 +63,7 @@ allprojects {
         rxJavaVersion = '1.2.7'
         rxAndroidVersion = '1.2.1'
         gsonVersion = '2.8.0'
-        daggerVersion = '2.7'
+        daggerVersion = '2.21'
         leakCanaryVersion = '1.5'
         robolectricVersion = '4.1'
         permissionDispatcherVersion = '2.2.0'

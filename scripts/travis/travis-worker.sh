@@ -29,7 +29,7 @@ case "$1" in
 
     "CHECKSTYLE")
         echo "Running project checkstyle"
-        ./gradlew androidCheckstyle
+        ./gradlew checkstyle
         CODE=$?
         html2text android/build/outputs/checkstyle/checkstyle.html
         filter_code $CODE
@@ -41,9 +41,9 @@ case "$1" in
         # Move local.properties and tba.properties to proper location
         mv config/local.properties.ci local.properties
 
-	# Generate a key (with the default debug creds) to use for this test build
-	keytool -genkey -v -keystore /home/travis/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US"
-        ./gradlew assembleRelease
+    	# Generate a key (with the default debug creds) to use for this test build
+	    keytool -genkey -v -keystore /home/travis/.android/debug.keystore -keyalg RSA -keysize 2048 -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US"
+        ./gradlew assembleRelease --stacktrace
         ;;
 
     "SCREENSHOT")
