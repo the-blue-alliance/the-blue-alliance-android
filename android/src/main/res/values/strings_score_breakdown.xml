@@ -8,6 +8,7 @@
     <string name="breakdown_teleop_total">Total Teleop</string>
     <string name="breakdown_number_format">%1$d</string>
     <string name="breakdown_addition_format">(+ %1$d)</string>
+    <string name="breakdown_number_with_addition_format">%1$d (+ %2$d)</string>
     <string name="breakdown_rp_format">(+ %1$d RP)</string>
     <string name="breakdown_total_rp">%1$d RP</string>
     <string name="breakdown_foul">Fouls</string>

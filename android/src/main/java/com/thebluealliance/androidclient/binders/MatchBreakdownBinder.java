@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2015
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2016;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2017;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2018;
+import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2019;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import butterknife.Bind;
@@ -34,7 +35,6 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
             return;
         }
         long startTime = System.currentTimeMillis();
-        TbaLogger.d("BINDING DATA");
         AbstractMatchBreakdownView breakdownView;
         switch (data.year) {
             case 2015:
@@ -48,6 +48,9 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
                 break;
             case 2018:
                 breakdownView = new MatchBreakdownView2018(mActivity);
+                break;
+            case 2019:
+                breakdownView = new MatchBreakdownView2019(mActivity);
                 break;
             default:
                 breakdownView = null;

@@ -150,6 +150,10 @@ public class MatchRenderer implements ModelRenderer<Match, Integer> {
                     rpName1 = "autoQuestRankingPoint";
                     rpName2 = "faceTheBossRankingPoint";
                     break;
+                case 2019:
+                    rpName1 = "habDockingRankingPoint";
+                    rpName2 = "completeRocketRankingPoint";
+                    break;
             }
             if (rpName1 != null) {
                 if (redScoreBreakdown != null && redScoreBreakdown.get(rpName1).getAsBoolean()) {
