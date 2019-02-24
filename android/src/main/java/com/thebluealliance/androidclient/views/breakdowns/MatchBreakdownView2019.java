@@ -156,7 +156,7 @@ public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
 
         setCargoShipScoring(blueData, blueCargoShipNullPanels, blueCargoShipPanels, blueCargoShipCargo);
         setRocketScoring(blueData, "Near", blueRocket1Panels, blueRocket1Cargo);
-        setRocketScoring(blueData, "Far", blueRocket2Panels, blueRocket2Cargo);;
+        setRocketScoring(blueData, "Far", blueRocket2Panels, blueRocket2Cargo);
 
         setTotalPanels(redData, redHatchPanelPoints);
         setTotalCargo(redData, redCargoPoints);
@@ -228,11 +228,10 @@ public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
                     bonusPoints = 6;
                     bonusResource = R.drawable.baseline_looks_two_black_24;
                     break;
-                default: {
+                default:
                     bonusPoints = 0;
                     bonusResource = R.drawable.ic_close_black_24dp;
                     break;
-                }
             }
         }
 
