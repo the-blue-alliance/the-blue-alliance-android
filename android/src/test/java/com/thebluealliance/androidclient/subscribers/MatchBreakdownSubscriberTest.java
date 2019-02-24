@@ -96,7 +96,7 @@ public class MatchBreakdownSubscriberTest {
     public void testParsedData2018() {
         when(mConfig.getBoolean(MatchBreakdownSubscriber.SHOW_2018_KEY)).thenReturn(true);
         MatchBreakdownBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mMatch2018);
-        assertEquals(getExpected(mMatch2017), data);
+        assertEquals(getExpected(mMatch2018), data);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class MatchBreakdownSubscriberTest {
     public void testParsedData2019() {
         when(mConfig.getBoolean(MatchBreakdownSubscriber.SHOW_2019_KEY)).thenReturn(true);
         MatchBreakdownBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mMatch2019);
-        assertEquals(getExpected(mMatch2017), data);
+        assertEquals(getExpected(mMatch2019), data);
     }
 
     @Test
