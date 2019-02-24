@@ -7,7 +7,6 @@ import android.support.v7.widget.GridLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
@@ -93,6 +92,8 @@ public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
     @Bind(R.id.breakdown_blue_rp)                           TextView rpBlue;
     @Bind(R.id.breakdown_rp_header)                         TextView rpHeader;
 
+    private Resources mResources;
+
     public MatchBreakdownView2019(Context context) {
         super(context);
     }
@@ -120,7 +121,7 @@ public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
         }
 
         /* Resources */
-        Resources res = getResources();
+        mResources = getResources();
 
         /* Alliance data */
         List<String> redTeams = allianceData.getRed().getTeamKeys();
@@ -184,8 +185,8 @@ public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
         setHabRankingPoint(blueData, blueHabDocking);
 
         /* Fouls */
-        foulsRed.setText(res.getString(R.string.breakdown_foul_format_add, getIntDefaultValue(redData, "foulPoints")));
-        foulsBlue.setText(res.getString(R.string.breakdown_foul_format_add, getIntDefaultValue(blueData, "foulPoints")));
+        foulsRed.setText(mResources.getString(R.string.breakdown_foul_format_add, getIntDefaultValue(redData, "foulPoints")));
+        foulsBlue.setText(mResources.getString(R.string.breakdown_foul_format_add, getIntDefaultValue(blueData, "foulPoints")));
 
         /* Adjustment points */
         adjustRed.setText(getIntDefault(redData, "adjustPoints"));
@@ -197,8 +198,8 @@ public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
 
         /* Show RPs earned, if needed */
         if (!matchType.isPlayoff()) {
-            rpRed.setText(res.getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "rp")));
-            rpBlue.setText(res.getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "rp")));
+            rpRed.setText(mResources.getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "rp")));
+            rpBlue.setText(mResources.getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "rp")));
         } else {
             rpRed.setVisibility(GONE);
             rpBlue.setVisibility(GONE);
@@ -235,7 +236,7 @@ public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
             }
         }
 
-        String bonusText = (bonusPoints != 0) ? getContext().getString(R.string.breakdown_addition_format, bonusPoints) : "";
+        String bonusText = (bonusPoints != 0) ? mResources.getString(R.string.breakdown_addition_format, bonusPoints) : "";
         view.setText(bonusText);
         view.setCompoundDrawablesWithIntrinsicBounds(bonusResource, 0, 0, 0);
     }
@@ -285,9 +286,9 @@ public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
         int panelCount = panelScore / 2;
 
         if (panelScore == 0) {
-            view.setText(getContext().getString(R.string.breakdown_number_format, panelScore));
+            view.setText(mResources.getString(R.string.breakdown_number_format, panelScore));
         } else {
-            view.setText(getContext().getString(R.string.breakdown_number_with_addition_format, panelCount, panelScore));
+            view.setText(mResources.getString(R.string.breakdown_number_with_addition_format, panelCount, panelScore));
         }
     }
 
@@ -296,9 +297,9 @@ public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
         int panelCount = panelScore / 3;
 
         if (panelScore == 0) {
-            view.setText(getContext().getString(R.string.breakdown_number_format, panelScore));
+            view.setText(mResources.getString(R.string.breakdown_number_format, panelScore));
         } else {
-            view.setText(getContext().getString(R.string.breakdown_number_with_addition_format, panelCount, panelScore));
+            view.setText(mResources.getString(R.string.breakdown_number_with_addition_format, panelCount, panelScore));
         }
     }
 
@@ -325,7 +326,7 @@ public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
                 break;
         }
 
-        String bonusText = (bonusPoints != 0) ? getContext().getString(R.string.breakdown_addition_format, bonusPoints) : "";
+        String bonusText = (bonusPoints != 0) ? mResources.getString(R.string.breakdown_addition_format, bonusPoints) : "";
         view.setText(bonusText);
         view.setCompoundDrawablesWithIntrinsicBounds(bonusResource, 0, 0, 0);
     }
@@ -343,7 +344,7 @@ public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
 
 
         if (getBooleanDefault(allianceData, "completeRocketRankingPoint")) {
-            additionText = getContext().getString(R.string.breakdown_rp_format, 1);
+            additionText = mResources.getString(R.string.breakdown_rp_format, 1);
         } else {
             additionText = "";
         }
@@ -363,7 +364,7 @@ public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
         }
 
         if (getBooleanDefault(allianceData, "habDockingRankingPoint")) {
-            additionText = getContext().getString(R.string.breakdown_rp_format, 1);
+            additionText = mResources.getString(R.string.breakdown_rp_format, 1);
         } else {
             additionText = "";
         }

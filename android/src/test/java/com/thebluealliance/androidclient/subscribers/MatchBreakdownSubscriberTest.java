@@ -31,6 +31,8 @@ public class MatchBreakdownSubscriberTest {
     private Match mMatch2015;
     private Match mMatch2016;
     private Match mMatch2017;
+    private Match mMatch2018;
+    private Match mMatch2019;
 
     @Before
     public void setUp() {
@@ -41,6 +43,8 @@ public class MatchBreakdownSubscriberTest {
         mMatch2015 = ModelMaker.getModel(Match.class, "2015necmp_qm1");
         mMatch2016 = ModelMaker.getModel(Match.class, "2016ctwat_qm6");
         mMatch2017 = ModelMaker.getModel(Match.class, "2017week0_qm7");
+        mMatch2018 = ModelMaker.getModel(Match.class, "2018week0_qm1");
+        mMatch2019 = ModelMaker.getModel(Match.class, "2019week0_qm6");
     }
 
     @Test
@@ -84,6 +88,36 @@ public class MatchBreakdownSubscriberTest {
     public void testParsedData2017KillSwitch() {
         when(mConfig.getBoolean(MatchBreakdownSubscriber.SHOW_2017_KEY)).thenReturn(false);
         MatchBreakdownBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mMatch2017);
+        assertNull(data);
+    }
+
+
+    @Test
+    public void testParsedData2018() {
+        when(mConfig.getBoolean(MatchBreakdownSubscriber.SHOW_2018_KEY)).thenReturn(true);
+        MatchBreakdownBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mMatch2018);
+        assertEquals(getExpected(mMatch2017), data);
+    }
+
+    @Test
+    public void testParsedData2018KillSwitch() {
+        when(mConfig.getBoolean(MatchBreakdownSubscriber.SHOW_2018_KEY)).thenReturn(false);
+        MatchBreakdownBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mMatch2018);
+        assertNull(data);
+    }
+
+
+    @Test
+    public void testParsedData2019() {
+        when(mConfig.getBoolean(MatchBreakdownSubscriber.SHOW_2019_KEY)).thenReturn(true);
+        MatchBreakdownBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mMatch2019);
+        assertEquals(getExpected(mMatch2017), data);
+    }
+
+    @Test
+    public void testParsedData2019KillSwitch() {
+        when(mConfig.getBoolean(MatchBreakdownSubscriber.SHOW_2019_KEY)).thenReturn(false);
+        MatchBreakdownBinder.Model data = DatafeedTestDriver.getParsedData(mSubscriber, mMatch2019);
         assertNull(data);
     }
 
