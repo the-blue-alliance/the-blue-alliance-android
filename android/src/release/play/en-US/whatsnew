@@ -1,11 +1,9 @@
-Version 5.0.0:
-  - Fix crashes when modifying mytba data
-  - Show team media in team@event view
-  - Show team locations in search results
-  - Support https deep links
-  - Fix opening team urls with leading zeros
+Version 5.1.0:
+ - 2019 scoring support
+ - fix offseason events now appearing across month boundaries
+ - improve team@event summary before events start
+ - fix crash in contributors view
 
 View the full changelog for this and previous releases on the GitHub page:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
-
 
