@@ -199,6 +199,7 @@ public class ImgurSuggestionService extends IntentService {
                 .httpModule(application.getHttpModule())
                 .imgurModule(application.getImgurModule())
                 .tBAAndroidModule(application.getModule())
+                .authModule(application.getAuthModule())
                 .build();
     }
 
