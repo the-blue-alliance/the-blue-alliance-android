@@ -29,6 +29,8 @@ import java.util.Date;
 
 public abstract class BaseNotification<VIEWMODEL> extends ListElement implements ViewModelRenderer<VIEWMODEL, Void> {
 
+    public static String NOTIFICATION_CHANNEL = "mytba_notification";
+
     String messageData;
     String messageType;
     Gson gson;
@@ -128,7 +130,8 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
                 .setGroup(GCMMessageHandler.GROUP_KEY)
                 .setDeleteIntent(onDismiss)
                 .setAutoCancel(true)
-                .extend(wearableExtender);
+                .extend(wearableExtender)
+                .setChannelId(NOTIFICATION_CHANNEL);
     }
 
     /**
