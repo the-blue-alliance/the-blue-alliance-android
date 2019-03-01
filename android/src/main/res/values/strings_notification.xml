@@ -3,6 +3,8 @@
 
     <!-- General strings -->
     <string name="notifications">Notifications</string>
+    <string name="notification_channel_name">myTBA</string>
+    <string name="notification_channel_description">Notifications triggered by your myTBA subscriptions</string>
     <string name="and">and</string>
     <!-- Used to show when new notifications appeared offscreen. Example: "5 new" -->
     <string name="new_notifications">"%1$s new"</string>
