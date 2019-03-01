@@ -1,8 +1,6 @@
-Version 5.1.0:
- - 2019 scoring support
- - fix offseason events now appearing across month boundaries
- - improve team@event summary before events start
- - fix crash in contributors view
+Version 5.1.1
+ - Android O notification support
+ - fix crashes when receiving notifications
 
 View the full changelog for this and previous releases on the GitHub page:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
