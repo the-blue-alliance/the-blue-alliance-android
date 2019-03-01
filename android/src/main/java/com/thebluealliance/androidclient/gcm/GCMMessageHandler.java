@@ -97,17 +97,18 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     @Override
     public void onCreate() {
         super.onCreate();
-        getComponenet();
+        getComponent();
         mComponenet.inject(this);
     }
 
-    private void getComponenet() {
+    private void getComponent() {
         if (mComponenet == null) {
             TBAAndroid application = ((TBAAndroid) getApplication());
             mComponenet = DaggerNotificationComponent.builder()
                     .applicationComponent(application.getComponent())
                     .datafeedModule(application.getDatafeedModule())
                     .rendererModule(new RendererModule())
+                    .authModule(application.getAuthModule())
                     .build();
         }
     }
