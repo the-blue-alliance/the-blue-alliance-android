@@ -11,10 +11,10 @@
   "x32": "http://www.google.com/images/icons/product/search-32.gif"
  },
  "protocol": "rest",
- "baseUrl": "https://tbatv-prod-hrd.appspot.com/_ah/api/tbaMobile/v9/",
- "basePath": "/_ah/api/tbaMobile/v9/",
- "rootUrl": "https://tbatv-prod-hrd.appspot.com/_ah/api/",
- "servicePath": "tbaMobile/v9/",
+ "baseUrl": "https://tbatv-prod-hrd.appspot.com/clientapi/tbaClient/v9/",
+ "basePath": "/clientapi/tbaClient/v9/",
+ "rootUrl": "https://tbatv-prod-hrd.appspot.com/clientapi/",
+ "servicePath": "tbaClient/v9/",
  "batchPath": "batch",
  "parameters": {
   "alt": {

@@ -14,8 +14,8 @@ import retrofit2.http.Query;
 import rx.Observable;
 
 public interface Favorites {
-  @POST("/_ah/api/tbaMobile/v9/favorites/list")
+  @POST("/clientapi/tbaClient/v9/favorites/list")
   Call<ModelsMobileApiMessagesFavoriteCollection> list(@Header("Authorization") String authToken);
-  @POST("/_ah/api/tbaMobile/v9/favorites/list")
+  @POST("/clientapi/tbaClient/v9/favorites/list")
   Call<Observable<ModelsMobileApiMessagesFavoriteCollection>> listRx(@Header("Authorization") String authToken);
 }

@@ -14,8 +14,8 @@ import retrofit2.http.Query;
 import rx.Observable;
 
 public interface Model {
-  @POST("/_ah/api/tbaMobile/v9/model/setPreferences")
+  @POST("/clientapi/tbaClient/v9/model/setPreferences")
   Call<ModelsMobileApiMessagesBaseResponse> setPreferences(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesModelPreferenceMessage resource);
-  @POST("/_ah/api/tbaMobile/v9/model/setPreferences")
+  @POST("/clientapi/tbaClient/v9/model/setPreferences")
   Call<Observable<ModelsMobileApiMessagesBaseResponse>> setPreferencesRx(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesModelPreferenceMessage resource);
 }
