@@ -12,7 +12,7 @@
 
     <TextView
         android:id="@+id/team_number"
-        android:layout_width="72dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:padding="16dp"
