@@ -46,7 +46,7 @@ parser.add_argument("--dry-run", action="store_true", default=False,
                     help="Don't run any permanent commands, just print what's happening")
 parser.add_argument("--skip-local-tests", action="store_true", default=False,
                     help="Don't run the test suite on the local machine")
-parser.add_argument("--skip-travis", action="store_true", default=False,
+parser.add_argument("--skip-travis", action="store_true", default=True,
                     help="Don't wait for travis build to complete")
 parser.add_argument("--skip-slack-update", action="store_true", default=False,
                     help="Don't post an update to the TBA slack")
@@ -71,7 +71,7 @@ def check_travis_tests(args):
             info = subprocess.check_output(["travis", "show", tag_name]).decode("utf-8")
         except CalledProcessError:
             try:
-                eval("Error getting travis status. Press Enter to continue...")
+                input("Error getting travis status. Press Enter to continue...")
             except SyntaxError:
                 pass
         regex = re.search(".*State:[ \t]+((\w)*)\n", info)
@@ -183,7 +183,7 @@ def validate_build(dry_run):
     print("Installing build, ensure a device is plugged in with USB Debugging enabled")
     subprocess.call(["adb", "devices"])
     try:
-        eval("Press Enter to continue...")
+        input("Press Enter to continue...")
     except SyntaxError:
         pass
     time.sleep(5)
@@ -197,7 +197,7 @@ def validate_build(dry_run):
     else:
         print("Would start launch activity")
     try:
-        eval("Press Enter to continue the release, or ^C to quit")
+        input("Press Enter to continue the release, or ^C to quit")
     except SyntaxError:
         pass
 
@@ -305,5 +305,5 @@ if __name__ == "__main__":
         check_travis_tests(args)
     build_apk(args)
     create_release(args)
-    if not args.skip_slack_updates:
+    if not args.skip_slack_update:
         post_to_slack(args)
