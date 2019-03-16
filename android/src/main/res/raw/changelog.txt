@@ -1,8 +1,9 @@
-Version 5.1.2<br>
+Version 5.1.3:<br>
  - fix bug with not correctly showing completed rocket check marks<br>
  - fix some team numbers being truncated when showing in lists<br>
  - some under-the-hood improvements<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>
+<br>
 <br>
