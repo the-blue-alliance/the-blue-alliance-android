@@ -333,16 +333,20 @@ public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
     private void setRocketRankingPoint(JsonObject allianceData, TextView view) {
         @DrawableRes int resource;
         String additionText;
-        if (getBooleanDefault(allianceData, "completedRocketFar") && getBooleanDefault(allianceData, "completedRocketNear")) {
+
+        boolean nearRocket = getBooleanDefault(allianceData, "completedRocketNear");
+        boolean farRocket = getBooleanDefault(allianceData, "completedRocketFar");
+        boolean rankingPoint = getBooleanDefault(allianceData, "completeRocketRankingPoint");
+        if (nearRocket && farRocket) {
             resource = R.drawable.baseline_done_all_black_24;
-        } else if (getBooleanDefault(allianceData, "completedRocketFar") || getBooleanDefault(allianceData, "completedRocketNear")) {
-            resource = R.drawable.ic_clear_black_24dp;
+        } else if (nearRocket || farRocket) {
+            resource = R.drawable.ic_check_black_24dp;
         } else {
             resource = R.drawable.ic_close_black_24dp;
         }
 
 
-        if (getBooleanDefault(allianceData, "completeRocketRankingPoint")) {
+        if (rankingPoint) {
             additionText = mResources.getString(R.string.breakdown_rp_format, 1);
         } else {
             additionText = "";
