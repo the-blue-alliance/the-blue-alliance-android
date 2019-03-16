@@ -14,8 +14,8 @@ import retrofit2.http.Query;
 import rx.Observable;
 
 public interface TeamMedia {
-  @POST("/_ah/api/tbaMobile/v9/team/media/suggest")
+  @POST("/clientapi/tbaClient/v9/team/media/suggest")
   Call<ModelsMobileApiMessagesBaseResponse> suggestion(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesMediaSuggestionMessage resource);
-  @POST("/_ah/api/tbaMobile/v9/team/media/suggest")
+  @POST("/clientapi/tbaClient/v9/team/media/suggest")
   Call<Observable<ModelsMobileApiMessagesBaseResponse>> suggestionRx(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesMediaSuggestionMessage resource);
 }

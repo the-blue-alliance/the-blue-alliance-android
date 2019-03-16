@@ -14,12 +14,12 @@ import retrofit2.http.Query;
 import rx.Observable;
 
 public interface Tbamobile {
-  @POST("/_ah/api/tbaMobile/v9/register")
+  @POST("/clientapi/tbaClient/v9/register")
   Call<ModelsMobileApiMessagesBaseResponse> register(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesRegistrationRequest resource);
-  @POST("/_ah/api/tbaMobile/v9/register")
+  @POST("/clientapi/tbaClient/v9/register")
   Call<Observable<ModelsMobileApiMessagesBaseResponse>> registerRx(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesRegistrationRequest resource);
-  @POST("/_ah/api/tbaMobile/v9/unregister")
+  @POST("/clientapi/tbaClient/v9/unregister")
   Call<ModelsMobileApiMessagesBaseResponse> unregister(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesRegistrationRequest resource);
-  @POST("/_ah/api/tbaMobile/v9/unregister")
+  @POST("/clientapi/tbaClient/v9/unregister")
   Call<Observable<ModelsMobileApiMessagesBaseResponse>> unregisterRx(@Header("Authorization") String authToken, @Body ModelsMobileApiMessagesRegistrationRequest resource);
 }
