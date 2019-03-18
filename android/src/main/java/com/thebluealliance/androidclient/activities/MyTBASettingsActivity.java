@@ -76,7 +76,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     private AnimatorSet mRunningPanelAnimation;
 
     // In milliseconds
-    private static final int ANIMATION_DURATION = 500;
+    private static final int ANIMATION_DURATION = 350;
     private static final int FAB_ANIMATION_DURATION = 250;
     private static final int FAB_COLOR_ANIMATION_DURATION = 250;
 
