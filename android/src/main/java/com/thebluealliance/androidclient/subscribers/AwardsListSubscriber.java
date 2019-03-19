@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.comparators.AwardSortComparator;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -13,10 +14,13 @@ import com.thebluealliance.api.model.IAwardRecipient;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<ListItem>> {
+
+    private static final AwardSortComparator AWARD_COMPARATOR = new AwardSortComparator();
 
     private String mTeamKey;
     private Database mDb;
@@ -37,8 +41,10 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
     public void parseData()  {
         mDataToBind.clear();
         Map<String, Team> teams = Utilities.getMapForPlatform(String.class, Team.class);
-        for (int i = 0; i < mAPIData.size(); i++) {
-            Award award = mAPIData.get(i);
+        ArrayList<Award> sortedAwards = new ArrayList<>(mAPIData);
+        Collections.sort(sortedAwards, AWARD_COMPARATOR);
+        for (int i = 0; i < sortedAwards.size(); i++) {
+            Award award = sortedAwards.get(i);
             if (award.getRecipientList() == null) continue;
             for (IAwardRecipient winner : award.getRecipientList()) {
                 if (winner != null && winner.getTeamKey() != null){
