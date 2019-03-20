@@ -16,7 +16,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -24,6 +23,7 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -69,13 +69,7 @@ public class AwardsListSubscriberTest {
         assertTrue(mSubscriber.shouldPostToEventBus());
         EventBus eventBus = mock(EventBus.class);
         mSubscriber.postToEventBus(eventBus);
-
-        ArgumentCaptor<EventAwardsEvent> awardsArg = ArgumentCaptor.forClass(EventAwardsEvent.class);
-        verify(eventBus).post(awardsArg.capture());
-        List<Award> awards = awardsArg.getValue().getAwards();
-
-        assertEquals(0, (int) awards.get(0).getAwardType()); // First award should be chairman's
-        assertEquals(9, (int) awards.get(0).getAwardType()); // Second award should be EI
+        verify(eventBus).post(any(EventAwardsEvent.class));
     }
 
     @Test
@@ -89,28 +83,28 @@ public class AwardsListSubscriberTest {
 
     @Test
     public void testParseMultiTeamWinner()  {
-        assertItemsEqual(0);
+        assertItemsEqual(0, 0);
     }
 
     @Test
     public void testParseSinglePersonWinner()  {
-        assertItemsEqual(1);
+        assertItemsEqual(16, 3);
     }
 
     @Test
     public void testParseMultiPersonWinner()  {
-        assertItemsEqual(2);
+        assertItemsEqual(18, 5);
     }
 
     @Test
     public void testParseSingleTeamWinner()  {
-        assertItemsEqual(3);
+        assertItemsEqual(2, 2);
     }
 
-    private void assertItemsEqual(int index)  {
+    private void assertItemsEqual(int rawIndex, int sortedIndex)  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mAwards);
-        CardedAwardListElement element = (CardedAwardListElement) data.get(index);
-        Award award = mAwards.get(index);
+        CardedAwardListElement element = (CardedAwardListElement) data.get(sortedIndex);
+        Award award = mAwards.get(rawIndex);
 
         assertEquals(element.mAwardName, award.getName());
         assertEquals(element.mEventKey, award.getEventKey());

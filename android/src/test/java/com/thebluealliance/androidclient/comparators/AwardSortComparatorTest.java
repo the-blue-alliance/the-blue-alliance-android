@@ -57,13 +57,14 @@ public class AwardSortComparatorTest {
         Collections.sort(awards, new AwardSortComparator());
 
         assertEquals("Middle", awards.get(0).getName());
-        assertEquals("Apple", awards.get(0).getName());
-        assertEquals("Zebra", awards.get(0).getName());
+        assertEquals("Apple", awards.get(1).getName());
+        assertEquals("Zebra", awards.get(2).getName());
     }
 
     private Award mockAward(int awardType, String name) {
         Award award = Mockito.mock(Award.class);
-        award.setAwardType(awardType);
+        Mockito.when(award.getAwardType()).thenReturn(awardType);
+        Mockito.when(award.getName()).thenReturn(name);
         return award;
     }
 
