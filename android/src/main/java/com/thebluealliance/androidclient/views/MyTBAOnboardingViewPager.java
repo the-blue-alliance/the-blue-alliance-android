@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.common.SignInButton;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.MyTBAOnboardingPagerAdapter;
 
@@ -17,7 +18,7 @@ import me.relex.circleindicator.CircleIndicator;
 public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnClickListener {
 
     private final ViewPager mViewPager;
-    private final View mSignInButton;
+    private final SignInButton mSignInButton;
     private final TextView myTBATitle;
     private final TextView myTBASubtitle;
 
@@ -39,6 +40,7 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
         indicator.setViewPager(mViewPager);
 
         mSignInButton = findViewById(R.id.google_sign_in_button);
+        mSignInButton.setSize(SignInButton.SIZE_WIDE);
         mSignInButton.setOnClickListener(this);
     }
 
