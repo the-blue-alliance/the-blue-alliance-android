@@ -14,6 +14,8 @@
     <color name="black">#000000</color>
     <color name="nav_text_color">#000000</color>
 
+    <color name="launcher_background">#485BB5</color>
+
     <!-- navigation drawer colors -->
     <color name="nav_drawer_background">#f7f7f7</color>
     <color name="nav_drawer_item_divider">#e5e5e5</color>

@@ -2,6 +2,8 @@
 <resources>
     <color name="action_bar_background">#b71d24</color>
 
+    <color name="launcher_background">#F1453D</color>
+
     <!-- MateriYOLO colors -->
     <color name="primary">#e51c23</color>
     <color name="primary_dark">#d01716</color>
