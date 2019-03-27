@@ -52,11 +52,6 @@
     <color name="gameday_ticker_time_footer">#ECECEC</color>
     <color name="notification_generic_header">#9E9E9E</color>
 
-    <!-- Google sign in button colors -->
-    <color name="google_sign_in_button">#ffffff</color>
-    <color name="google_sign_in_button_pressed">#eeeeee</color>
-    <color name="google_sign_in_button_text">#555555</color>
-
     <array name="led_colors">
         <item>@color/md_red_500</item>
         <item>@color/md_pink_500</item>

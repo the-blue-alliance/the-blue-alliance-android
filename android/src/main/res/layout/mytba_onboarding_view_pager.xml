@@ -158,35 +158,15 @@
                     android:textSize="24sp" />
             </LinearLayout>
 
-            <RelativeLayout
+
+            <com.google.android.gms.common.SignInButton
                 android:id="@+id/google_sign_in_button"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_margin="16dp"
-                android:background="@drawable/google_sign_in_button_background"
-                android:clickable="true"
-                android:focusable="true">
+                android:layout_centerHorizontal="true"
+                android:layout_margin="16dp" />
 
-                <ImageView
-                    android:id="@+id/google_logo"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="4dp"
-                    android:src="@drawable/google_logo_red" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@id/google_logo"
-                    android:gravity="center_horizontal"
-                    android:text="@string/sign_in_with_google"
-                    android:textColor="@color/google_sign_in_button_text"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-            </RelativeLayout>
         </RelativeLayout>
     </android.support.v4.view.ViewPager>
 
