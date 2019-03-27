@@ -83,28 +83,28 @@ public class AwardsListSubscriberTest {
 
     @Test
     public void testParseMultiTeamWinner()  {
-        assertItemsEqual(0);
+        assertItemsEqual(0, 0);
     }
 
     @Test
     public void testParseSinglePersonWinner()  {
-        assertItemsEqual(1);
+        assertItemsEqual(16, 3);
     }
 
     @Test
     public void testParseMultiPersonWinner()  {
-        assertItemsEqual(2);
+        assertItemsEqual(18, 5);
     }
 
     @Test
     public void testParseSingleTeamWinner()  {
-        assertItemsEqual(3);
+        assertItemsEqual(2, 2);
     }
 
-    private void assertItemsEqual(int index)  {
+    private void assertItemsEqual(int rawIndex, int sortedIndex)  {
         List<ListItem> data = DatafeedTestDriver.getParsedData(mSubscriber, mAwards);
-        CardedAwardListElement element = (CardedAwardListElement) data.get(index);
-        Award award = mAwards.get(index);
+        CardedAwardListElement element = (CardedAwardListElement) data.get(sortedIndex);
+        Award award = mAwards.get(rawIndex);
 
         assertEquals(element.mAwardName, award.getName());
         assertEquals(element.mEventKey, award.getEventKey());
