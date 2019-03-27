@@ -17,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
@@ -98,7 +100,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     private int mCurrentSelectedYearPosition = -1,
             mSelectedTab = -1;
 
-    private String mCurrentPhotoUri;
+    private Uri mCurrentPhotoUri;
 
     private int[] mYearsParticipated;
 
@@ -152,7 +154,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
                 mYear = savedInstanceState.getInt(SELECTED_YEAR);
             }
             if (savedInstanceState.containsKey(CURRENT_PHOTO_URI)) {
-                mCurrentPhotoUri = savedInstanceState.getString(CURRENT_PHOTO_URI);
+                mCurrentPhotoUri = savedInstanceState.getParcelable(CURRENT_PHOTO_URI);
             }
         } else {
             int maxYear = mStatusController.getMaxCompYear();
@@ -215,7 +217,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         outState.putInt(SELECTED_YEAR, mYear);
         outState.putInt(SELECTED_TAB, mSelectedTab);
         if (mCurrentPhotoUri != null) {
-            outState.putString(CURRENT_PHOTO_URI, mCurrentPhotoUri);
+            outState.putParcelable(CURRENT_PHOTO_URI, mCurrentPhotoUri);
         }
     }
 
@@ -441,7 +443,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mCurrentPhotoUri);
                 startActivityForResult(takePictureIntent, TAKE_PICTURE_REQUEST);
             } else {
                 TbaLogger.w("Unable to open file for photo");
@@ -475,10 +477,10 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
             }
         } else if (requestCode == TAKE_PICTURE_REQUEST && resultCode == RESULT_OK) {
             // Tell Media Scanner about the new photo
-            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(mCurrentPhotoUri)));
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, mCurrentPhotoUri));
 
             // Off to ConfirmImageSuggestionActivity!
-            startActivity(ConfirmImageSuggestionActivity.newIntent(this, Uri.parse(mCurrentPhotoUri), mTeamKey, mYear));
+            startActivity(ConfirmImageSuggestionActivity.newIntent(this, mCurrentPhotoUri, mTeamKey, mYear));
         }
     }
 
@@ -487,7 +489,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File storageDir = Environment.getExternalStorageDirectory();
         storageDir = new File(storageDir, "The Blue Alliance");
         storageDir.mkdirs();
         File image = File.createTempFile(
@@ -496,7 +498,8 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
                 storageDir      /* directory */
         );
 
-        mCurrentPhotoUri = "file:" + image.getAbsolutePath();
+        mCurrentPhotoUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".fileprovider", image);
+
         return image;
     }
 
