@@ -1,9 +1,9 @@
-Version 5.1.3:<br>
- - fix bug with not correctly showing completed rocket check marks<br>
- - fix some team numbers being truncated when showing in lists<br>
- - some under-the-hood improvements<br>
+Version 5.1.4:<br>
+ - fix issues uploading team media photos<br>
+ - sort awards in the same order as web<br>
+ - add adaptive icon<br>
+ - other visual improvements<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>
-<br>
 <br>
