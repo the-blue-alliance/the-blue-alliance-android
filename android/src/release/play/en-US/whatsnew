@@ -1,8 +1,5 @@
-Version 5.1.4:
- - fix issues uploading team media photos
- - sort awards in the same order as web
- - add adaptive icon
- - other visual improvements
+Version 5.1.5:
+ - fix mytba notifications
 
 View the full changelog for this and previous releases on the GitHub page:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
