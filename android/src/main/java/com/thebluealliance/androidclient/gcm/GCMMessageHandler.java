@@ -143,7 +143,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
         TbaLogger.d("Intent extras: " + extras.toString());
 
         // We got a standard message. Parse it and handle it.
-        String type = extras.getString("message_type", "");
+        String type = extras.getString("notification_type", "");
         String data = extras.getString("message_data", "");
         handleMessage(getApplicationContext(), type, data);
 

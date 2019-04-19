@@ -42,7 +42,7 @@ def notify(message_type, json_data):
 
     template = """am broadcast -a com.google.android.c2dm.intent.RECEIVE \
         -c com.thebluealliance.androidclient \
-        --es message_type %s \
+        --es notification_type %s \
         --es message_data '%s'"""
     command = template % (message_type, json_text)
 
