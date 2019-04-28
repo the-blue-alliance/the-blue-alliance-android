@@ -1,5 +1,6 @@
-Version 5.1.5:<br>
- - fix mytba notifications<br>
+Version 5.1.6:<br>
+ - fix bug with displaying HAB RP in score breakdowns<br>
+ - add event insights for 2018 and 2019<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>
