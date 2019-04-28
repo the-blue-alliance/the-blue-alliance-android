@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.renderers.insights.EventInsights2016Renderer;
 import com.thebluealliance.androidclient.renderers.insights.EventInsights2017Renderer;
 import com.thebluealliance.androidclient.renderers.insights.EventInsights2018Renderer;
+import com.thebluealliance.androidclient.renderers.insights.EventInsights2019Renderer;
 import com.thebluealliance.androidclient.renderers.insights.EventInsightsRenderer;
 
 import org.greenrobot.eventbus.EventBus;
@@ -106,6 +107,9 @@ public class StatsListSubscriber extends BaseAPISubscriber<StatsListSubscriber.M
                 break;
             case 2018:
                 insightsRenderer = new EventInsights2018Renderer(mEventStats, mResources);
+                break;
+            case 2019:
+                insightsRenderer = new EventInsights2019Renderer(mEventStats, mResources);
                 break;
         }
 

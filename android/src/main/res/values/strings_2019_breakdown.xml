@@ -15,4 +15,17 @@
     <string name="breakdown2019_hab_climb_points">HAB Climb Points</string>
     <string name="breakdown2019_complete_rocket">Completed Rocket</string>
     <string name="breakdown2019_hab_docking">HAB Docking</string>
+
+    <string name="breakdown2019_avg_sandstorm">Average Sandstorm Bonus Points</string>
+    <string name="breakdown2019_hatch_panel">Average Hatch Panel Points</string>
+    <string name="breakdown2019_cargo">Average Cargo Points</string>
+    <string name="breakdown2019_hab_climb">Average HAB Climb Points</string>
+
+    <string name="breakdown2019_cross_hab_line">Cross HAB Line</string>
+    <string name="breakdown2019_cross_hab_line_sandstorm">Cross HAB Line in Sandstorm</string>
+    <string name="breakdown2019_complete_two_rockets">Complete 2 Rockets</string>
+    <string name="breakdown2019_complete_rocket_rp">Complete Rocket RP</string>
+    <string name="breakdown2019_level_1_climb">Level 1 HAB Climb</string>
+    <string name="breakdown2019_level_2_climb">Level 2 HAB Climb</string>
+    <string name="breakdown2019_level_3_climb">Level 3 HAB Climb</string>
 </resources>
