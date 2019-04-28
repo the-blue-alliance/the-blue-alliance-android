@@ -27,4 +27,24 @@
 
     <string name="breakdown2018_scale_switch_boost_points">%1$s + %2$s</string>
     <string name="breakdown2018_cubes_total_played"> %1$s (%2$s)</string>
+
+    <string name="breakdown2018_average_auto_run">Average Auto Run Points</string>
+    <string name="breakdown2018_average_scale">Average Scale Ownership Points</string>
+    <string name="breakdown2018_average_switch">Average Switch Ownership Points</string>
+    <string name="breakdown2018_scale_neutral_pct">Scale Neutral %</string>
+    <string name="breakdown2018_winner_scale_ownership">Winner Scale Ownership %</string>
+    <string name="breakdown2018_winner_switch_ownersihp">Winner Switch Ownership % 	</string>
+    <string name="breakdown2018_winner_switch_denial">Winner Opponent Switch Denial %</string>
+    <string name="breakdown2018_avg_force">Average # Force Played</string>
+    <string name="breakdown2018_avg_boost">Average # Boost Played</string>
+    <string name="breakdown2018_avg_vault">Average Vault Points</string>
+    <string name="breakdown2018_avg_endgame">Average Endgame Points</string>
+
+    <string name="breakdown2018_auto_run">Auto Run</string>
+    <string name="breakdown2018_auto_switch_owned">Auto Switch Owned</string>
+    <string name="breakdown2018_force_played">Force Played</string>
+    <string name="breakdown2018_levitate_played">Levitate Played</string>
+    <string name="breakdown2018_boot_played">Boost Played</string>
+    <string name="breakdown2018_climbs">Climbs (not including levitate)</string>
+    <string name="breakdown2018_unicorn_matches">Unicorn Matches</string>
 </resources>
