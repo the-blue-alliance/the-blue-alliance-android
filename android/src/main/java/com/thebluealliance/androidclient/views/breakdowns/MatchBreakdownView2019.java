@@ -360,13 +360,14 @@ public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
         @DrawableRes int resource;
         String additionText;
         int habPoints = getIntDefaultValue(allianceData, "habClimbPoints");
-        if (habPoints > 15) {
+        boolean habRp = getBooleanDefault(allianceData, "habDockingRankingPoint");
+        if (habPoints >= 15 || habRp) {
             resource = R.drawable.ic_check_black_24dp;
         } else {
             resource = R.drawable.ic_close_black_24dp;
         }
 
-        if (getBooleanDefault(allianceData, "habDockingRankingPoint")) {
+        if (habRp) {
             additionText = mResources.getString(R.string.breakdown_rp_format, 1);
         } else {
             additionText = "";
