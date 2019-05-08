@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/dark_theme_background">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         style="@style/DefaultToolbarStyle" />
 
@@ -53,7 +53,7 @@
             android:layout_alignParentBottom="true"
             android:background="@color/translucent_black">
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/confirm_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
                 app:backgroundTint="@color/accent"
                 app:fabSize="normal" />
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/cancel_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

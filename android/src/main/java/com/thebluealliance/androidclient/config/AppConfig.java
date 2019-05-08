@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.config;
 
 import android.content.SharedPreferences;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;

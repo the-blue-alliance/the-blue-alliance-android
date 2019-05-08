@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.binders;
 
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;

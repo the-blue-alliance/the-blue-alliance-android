@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.datafeed.status;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.TBAAndroid;

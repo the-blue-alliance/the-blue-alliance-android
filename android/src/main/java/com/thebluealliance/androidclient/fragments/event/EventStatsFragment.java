@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.fragments.event;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;

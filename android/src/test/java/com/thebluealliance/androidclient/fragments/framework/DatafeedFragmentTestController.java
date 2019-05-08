@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.fragments.framework;
 
-import android.support.annotation.IntDef;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import androidx.annotation.IntDef;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.common.base.Preconditions;
 import com.thebluealliance.androidclient.BaseTestActivity;

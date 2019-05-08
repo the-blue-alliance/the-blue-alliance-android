@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 
 /**
  * An interface implemented by a fragment to provide the right callbacks

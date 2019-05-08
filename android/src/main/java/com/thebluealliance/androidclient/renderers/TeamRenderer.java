@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.renderers;
 
-import android.support.annotation.IntDef;
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.listitems.TeamListElement;

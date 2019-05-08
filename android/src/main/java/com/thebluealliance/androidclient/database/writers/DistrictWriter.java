@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.database.writers;
 
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.District;

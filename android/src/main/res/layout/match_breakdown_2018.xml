@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
-    <android.support.v7.widget.GridLayout
+    <androidx.gridlayout.widget.GridLayout
         app:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -436,5 +436,5 @@
             android:id="@+id/breakdown_blue_rp"
             style="@style/breakdown_blueTotal"
             tools:text="0"/>
-    </android.support.v7.widget.GridLayout>
+    </androidx.gridlayout.widget.GridLayout>
 </ScrollView>

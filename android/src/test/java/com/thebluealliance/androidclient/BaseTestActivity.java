@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient;
 
 
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.VisibleForTesting;
 
 import com.thebluealliance.androidclient.activities.DatafeedActivity;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;

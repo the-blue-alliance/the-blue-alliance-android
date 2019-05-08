@@ -219,13 +219,13 @@ dependencies {
     implementation project(':spectrum')
 
     // Android support libraries
-    implementation "com.android.support:support-v13:${supportLibVersion}"
-    implementation "com.android.support:cardview-v7:${supportLibVersion}"
-    implementation "com.android.support:support-v4:${supportLibVersion}"
-    implementation "com.android.support:appcompat-v7:${supportLibVersion}"
-    implementation "com.android.support:gridlayout-v7:${supportLibVersion}"
-    implementation 'com.android.support:multidex:1.0.3'
-    implementation "com.android.support:design:${supportLibVersion}"
+    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
 
     // Play Services Libraries
     // See http://developer.android.com/google/play-services/setup.html
@@ -284,10 +284,10 @@ dependencies {
     testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // instrumentation
-    androidTestImplementation "com.android.support:support-annotations:${supportLibVersion}"
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.annotation:annotation:1.0.0'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:rules:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
     androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.1'
 
     // Leak Canary

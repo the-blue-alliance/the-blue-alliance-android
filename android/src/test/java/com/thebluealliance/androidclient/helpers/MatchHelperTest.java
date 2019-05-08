@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.helpers;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

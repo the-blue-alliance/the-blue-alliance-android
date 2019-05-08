@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
-import android.support.multidex.MultiDexApplication;
+import androidx.multidex.MultiDexApplication;
 
 import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;

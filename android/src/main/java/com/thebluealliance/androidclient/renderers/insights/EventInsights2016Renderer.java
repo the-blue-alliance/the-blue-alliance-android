@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.renderers.insights;
 
 import android.content.res.Resources;
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;

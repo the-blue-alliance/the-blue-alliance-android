@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.views;
 
 import android.content.Context;
-import android.support.annotation.StringRes;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.StringRes;
+import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;

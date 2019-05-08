@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.datafeed.gce;
 
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 
 import com.appspot.tbatv_prod_hrd.TeamMedia;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesBaseResponse;

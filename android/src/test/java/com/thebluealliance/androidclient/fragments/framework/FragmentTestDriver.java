@@ -2,8 +2,8 @@ package com.thebluealliance.androidclient.fragments.framework;
 
 import android.app.Activity;
 import android.content.ComponentName;
-import android.support.annotation.IdRes;
-import android.support.v4.app.Fragment;
+import androidx.annotation.IdRes;
+import androidx.fragment.app.Fragment;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;

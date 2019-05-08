@@ -9,7 +9,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.annotation.ColorInt;
+import androidx.annotation.ColorInt;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;

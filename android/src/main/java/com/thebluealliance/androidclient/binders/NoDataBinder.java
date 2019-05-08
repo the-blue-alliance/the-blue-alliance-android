@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.binders;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.View;
 
 import com.thebluealliance.androidclient.TbaLogger;

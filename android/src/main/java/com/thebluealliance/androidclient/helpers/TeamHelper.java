@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.helpers;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * Helper class used to verify team keys.

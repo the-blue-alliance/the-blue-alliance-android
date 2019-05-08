@@ -18,7 +18,7 @@
             android:orientation="vertical">
 
             <!-- Event info card -->
-            <android.support.v7.widget.CardView style="@style/InfoItemCardStyle">
+            <androidx.cardview.widget.CardView style="@style/InfoItemCardStyle">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -115,10 +115,10 @@
                             tools:text="View Broadcast on Twitch" />
                     </FrameLayout>
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
             <!-- Last match card -->
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/last_match_container"
                 style="@style/InfoItemCardStyle"
                 android:visibility="gone"
@@ -145,10 +145,10 @@
                         android:layout_height="wrap_content" />
 
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
             <!-- Next match card -->
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/next_match_container"
                 style="@style/InfoItemCardStyle"
                 android:visibility="gone"
@@ -175,10 +175,10 @@
                         android:layout_height="wrap_content" />
 
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
             <!-- Top teams card -->
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/top_teams_container"
                 style="@style/InfoItemCardStyle"
                 android:visibility="gone">
@@ -208,10 +208,10 @@
 
                     <View style="@style/InfoItemFullWidthDividerStyle" />
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
             <!-- Top OPRs card -->
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/top_oprs_container"
                 style="@style/InfoItemCardStyle"
                 android:visibility="gone">
@@ -241,10 +241,10 @@
 
                     <View style="@style/InfoItemFullWidthDividerStyle" />
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
             <!-- Social media card -->
-            <android.support.v7.widget.CardView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/event_social_container"
                 style="@style/InfoItemCardStyle">
 
@@ -346,7 +346,7 @@
                             android:text="@string/view_team_cd" />
                     </RelativeLayout>
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
             <!-- Provides padding after the last list item -->
             <Space

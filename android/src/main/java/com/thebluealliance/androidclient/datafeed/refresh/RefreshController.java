@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.datafeed.refresh;
 
-import android.support.annotation.IntDef;
-import android.support.annotation.UiThread;
-import android.support.v4.util.ArrayMap;
+import androidx.annotation.IntDef;
+import androidx.annotation.UiThread;
+import androidx.collection.ArrayMap;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.R;

@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
-import android.support.annotation.DrawableRes;
-import android.support.annotation.StringRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.StringRes;
 
 /**
  * Everything you need to display a pretty no data screen
