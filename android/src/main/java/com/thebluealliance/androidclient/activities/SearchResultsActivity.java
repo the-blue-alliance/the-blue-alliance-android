@@ -76,7 +76,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         searchView.setQueryHint(getString(R.string.search_hint));
 
         // Hide the magnifying glass icon
-        searchView.findViewById(androidx.appcompat.appcompat.R.id.search_mag_icon).setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+        searchView.findViewById(androidx.appcompat.R.id.search_mag_icon).setLayoutParams(new LinearLayout.LayoutParams(0, 0));
 
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
