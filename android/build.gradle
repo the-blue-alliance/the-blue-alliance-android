@@ -2,16 +2,16 @@ apply plugin: 'com.android.application'
 apply plugin: 'checkstyle'
 apply plugin: 'gitsemver'
 apply plugin: 'com.github.triplet.play'
-apply plugin: 'com.facebook.testing.screenshot'
-
-apply from: "../code_coverage.gradle"
+//apply plugin: 'com.facebook.testing.screenshot'
+//
+//apply from: "../code_coverage.gradle"
 
 // dependency checker plugin
 // run ./gradlew dependencyUpdates to generate report
 apply plugin: 'com.github.ben-manes.versions'
 
 apply from: 'versioning.gradle'
-apply from: 'build.workaround-missing-resource.gradle'
+//apply from: 'build.workaround-missing-resource.gradle'
 
 version semverVersion()
 def (major, minor, patch, versionNum, gitTag, gitHash, commitsFromTag, repoDirty) =
@@ -25,10 +25,10 @@ tasks.withType(Test) {
     }
 }
 
-project.afterEvaluate {
-    def pullScreenshots = project.tasks.getByName("pullScreenshots")
-    pullScreenshots.dependsOn updateScreenshotDirs
-}
+//project.afterEvaluate {
+//    def pullScreenshots = project.tasks.getByName("pullScreenshots")
+//    pullScreenshots.dependsOn updateScreenshotDirs
+//}
 
 def localProps = new Properties()
 def localPropFile = file("../local.properties")
@@ -54,13 +54,13 @@ android {
         buildTypes {
             debug {
                 applicationIdSuffix ".development"
-                testCoverageEnabled true
+//                testCoverageEnabled true
                 manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
             }
 
             debugProguard {
                 applicationIdSuffix ".development"
-                testCoverageEnabled true
+//                testCoverageEnabled true
                 manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
                 minifyEnabled true
                 zipAlignEnabled true
@@ -165,32 +165,32 @@ play {
     track = 'beta'
 }
 
-screenshots {
-    testApkTarget = 'packageDebugAndroidTest'
-    connectedAndroidTestTarget = 'connectedDebugAndroidTest'
-}
+//screenshots {
+//    testApkTarget = 'packageDebugAndroidTest'
+//    connectedAndroidTestTarget = 'connectedDebugAndroidTest'
+//}
 
 println "Version: " + android.defaultConfig.versionName + "/" + android.defaultConfig.versionCode
 
-task updateScreenshotDirs << {
-    def codeNameOut = new ByteArrayOutputStream()
-    exec {
-        commandLine 'adb', 'shell', 'getprop', 'ro.product.name'
-        standardOutput codeNameOut
-    }
-
-    def sdkOut = new ByteArrayOutputStream()
-    exec {
-        commandLine 'adb', 'shell', 'getprop', 'ro.build.version.sdk'
-        standardOutput sdkOut
-    }
-    def deviceName = codeNameOut.toString().trim()
-    def deviceSdk = sdkOut.toString().trim()
-    def outputDir = project.screenshots.recordDir + "/" + deviceName + "_api" + deviceSdk
-    project.screenshots.recordDir = outputDir
-    System.out.println("New screenshot output dierctory: " + outputDir)
-
-}
+//task updateScreenshotDirs << {
+//    def codeNameOut = new ByteArrayOutputStream()
+//    exec {
+//        commandLine 'adb', 'shell', 'getprop', 'ro.product.name'
+//        standardOutput codeNameOut
+//    }
+//
+//    def sdkOut = new ByteArrayOutputStream()
+//    exec {
+//        commandLine 'adb', 'shell', 'getprop', 'ro.build.version.sdk'
+//        standardOutput sdkOut
+//    }
+//    def deviceName = codeNameOut.toString().trim()
+//    def deviceSdk = sdkOut.toString().trim()
+//    def outputDir = project.screenshots.recordDir + "/" + deviceName + "_api" + deviceSdk
+//    project.screenshots.recordDir = outputDir
+//    System.out.println("New screenshot output dierctory: " + outputDir)
+//
+//}
 
 repositories {
     flatDir {
@@ -277,7 +277,6 @@ dependencies {
 
     // testing
     testImplementation "org.robolectric:robolectric:${robolectricVersion}"
-    testImplementation "org.robolectric:shadows-support-v4:3.3.2"
     testImplementation "org.robolectric:shadows-multidex:${robolectricVersion}"
     testImplementation 'junit:junit:4.12'
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
