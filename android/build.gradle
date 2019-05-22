@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'checkstyle'
 apply plugin: 'gitsemver'
 apply plugin: 'com.github.triplet.play'
-//apply plugin: 'com.facebook.testing.screenshot'
+apply plugin: 'com.facebook.testing.screenshot'
 
 apply from: '../code_coverage.gradle'
 
@@ -24,10 +24,10 @@ tasks.withType(Test) {
     }
 }
 
-//project.afterEvaluate {
-//    def pullScreenshots = project.tasks.getByName("pullScreenshots")
-//    pullScreenshots.dependsOn updateScreenshotDirs
-//}
+project.afterEvaluate {
+    def pullScreenshots = project.tasks.getByName("pullScreenshots")
+    pullScreenshots.dependsOn updateScreenshotDirs
+}
 
 def localProps = new Properties()
 def localPropFile = file("../local.properties")
@@ -164,32 +164,33 @@ play {
     track = 'beta'
 }
 
-//screenshots {
-//    testApkTarget = 'packageDebugAndroidTest'
-//    connectedAndroidTestTarget = 'connectedDebugAndroidTest'
-//}
+screenshots {
+    testApkTarget = 'packageDebugAndroidTest'
+    connectedAndroidTestTarget = 'connectedDebugAndroidTest'
+}
 
 println "Version: " + android.defaultConfig.versionName + "/" + android.defaultConfig.versionCode
 
-//task updateScreenshotDirs << {
-//    def codeNameOut = new ByteArrayOutputStream()
-//    exec {
-//        commandLine 'adb', 'shell', 'getprop', 'ro.product.name'
-//        standardOutput codeNameOut
-//    }
-//
-//    def sdkOut = new ByteArrayOutputStream()
-//    exec {
-//        commandLine 'adb', 'shell', 'getprop', 'ro.build.version.sdk'
-//        standardOutput sdkOut
-//    }
-//    def deviceName = codeNameOut.toString().trim()
-//    def deviceSdk = sdkOut.toString().trim()
-//    def outputDir = project.screenshots.recordDir + "/" + deviceName + "_api" + deviceSdk
-//    project.screenshots.recordDir = outputDir
-//    System.out.println("New screenshot output dierctory: " + outputDir)
-//
-//}
+task updateScreenshotDirs {
+    doLast {
+        def codeNameOut = new ByteArrayOutputStream()
+        exec {
+            commandLine 'adb', 'shell', 'getprop', 'ro.product.name'
+            standardOutput codeNameOut
+        }
+
+        def sdkOut = new ByteArrayOutputStream()
+        exec {
+            commandLine 'adb', 'shell', 'getprop', 'ro.build.version.sdk'
+            standardOutput sdkOut
+        }
+        def deviceName = codeNameOut.toString().trim()
+        def deviceSdk = sdkOut.toString().trim()
+        def outputDir = project.screenshots.recordDir + "/" + deviceName + "_api" + deviceSdk
+        project.screenshots.recordDir = outputDir
+        System.out.println("New screenshot output dierctory: " + outputDir)
+    }
+}
 
 repositories {
     flatDir {
