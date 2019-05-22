@@ -9,7 +9,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
 
 import com.google.gson.Gson;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
@@ -216,7 +216,7 @@ public class Database extends SQLiteOpenHelper {
 
     private Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        ((TBAAndroid)context.getApplicationContext()).getDbComponent().inject(this);
+        ((TbaAndroid)context.getApplicationContext()).getDbComponent().inject(this);
         mDb = getWritableDatabase();
         mTeamsTable = new TeamsTable(mDb, mGson);
         mAwardsTable = new AwardsTable(mDb, mGson);

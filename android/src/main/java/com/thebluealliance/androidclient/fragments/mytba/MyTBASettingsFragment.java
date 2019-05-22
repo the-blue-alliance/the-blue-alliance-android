@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPanel;
@@ -68,7 +68,7 @@ public class MyTBASettingsFragment extends PreferenceFragment {
         if (getArguments() == null || !getArguments().containsKey(MODEL_KEY)) {
             throw new IllegalArgumentException("MyTBASettingsFragment must be constructed with a model key");
         }
-        TBAAndroid application = (TBAAndroid) getActivity().getApplication();
+        TbaAndroid application = (TbaAndroid) getActivity().getApplication();
         DaggerMyTbaComponent.builder()
                 .tBAAndroidModule(application.getModule())
                 .accountModule(application.getAccountModule())

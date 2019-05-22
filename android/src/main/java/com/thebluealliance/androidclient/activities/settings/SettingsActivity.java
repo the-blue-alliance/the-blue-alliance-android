@@ -13,7 +13,7 @@ import android.view.View;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
@@ -42,7 +42,7 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            TBAAndroid application = (TBAAndroid) getActivity().getApplication();
+            TbaAndroid application = (TbaAndroid) getActivity().getApplication();
             DaggerMyTbaComponent.builder()
                                 .tBAAndroidModule(application.getModule())
                                 .accountModule(application.getAccountModule())

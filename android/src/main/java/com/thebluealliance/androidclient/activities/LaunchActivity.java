@@ -15,7 +15,7 @@ import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.background.RecreateSearchIndexes;
@@ -229,7 +229,7 @@ public class LaunchActivity extends AppCompatActivity {
     }
 
     private DatafeedComponent getComponenet() {
-        TBAAndroid application = ((TBAAndroid) getApplication());
+        TbaAndroid application = ((TbaAndroid) getApplication());
         return DaggerDatafeedComponent.builder()
           .applicationComponent(application.getComponent())
           .datafeedModule(application.getDatafeedModule())

@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.WorkerThread;
 
 import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.api.rx.TbaApiV3;
@@ -102,7 +102,7 @@ public class StatusRefreshService extends IntentService {
     }
 
     private DatafeedComponent getComponenet() {
-        TBAAndroid application = ((TBAAndroid) getApplication());
+        TbaAndroid application = ((TbaAndroid) getApplication());
         return DaggerDatafeedComponent.builder()
                 .applicationComponent(application.getComponent())
                 .datafeedModule(application.getDatafeedModule())

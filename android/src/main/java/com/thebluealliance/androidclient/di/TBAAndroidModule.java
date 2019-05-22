@@ -9,7 +9,7 @@ import android.preference.PreferenceManager;
 
 import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.Analytics;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.config.LocalProperties;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -46,12 +46,12 @@ import dagger.Provides;
  */
 @Module
 public class TBAAndroidModule {
-    static TBAAndroid mApp;
+    static TbaAndroid mApp;
 
     public TBAAndroidModule() {
     }
 
-    public TBAAndroidModule(TBAAndroid app) {
+    public TBAAndroidModule(TbaAndroid app) {
         mApp = app;
     }
 

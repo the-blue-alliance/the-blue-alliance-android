@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient.auth.firebase;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.User;
@@ -43,7 +43,7 @@ public class MigrateLegacyUserToFirebase extends IntentService {
     }
 
     private MyTbaComponent getComponenet() {
-        TBAAndroid application = ((TBAAndroid) getApplication());
+        TbaAndroid application = ((TbaAndroid) getApplication());
         return DaggerMyTbaComponent.builder()
                                    .applicationComponent(application.getComponent())
                                    .gceModule(application.getGceModule())

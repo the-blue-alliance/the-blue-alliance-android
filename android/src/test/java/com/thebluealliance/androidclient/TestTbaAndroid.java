@@ -14,7 +14,7 @@ import com.thebluealliance.androidclient.di.MockGceModule;
 import com.thebluealliance.androidclient.di.MockGcmModule;
 import com.thebluealliance.androidclient.di.MockTbaAndroidModule;
 
-public class TestTbaAndroid extends TBAAndroid {
+public class TestTbaAndroid extends TbaAndroid {
 
     private MockApplicationComponent mComponent;
     private MockTbaAndroidModule mModule;
