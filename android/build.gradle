@@ -3,8 +3,8 @@ apply plugin: 'checkstyle'
 apply plugin: 'gitsemver'
 apply plugin: 'com.github.triplet.play'
 //apply plugin: 'com.facebook.testing.screenshot'
-//
-//apply from: "../code_coverage.gradle"
+
+apply from: '../code_coverage.gradle'
 
 // dependency checker plugin
 // run ./gradlew dependencyUpdates to generate report
@@ -54,13 +54,13 @@ android {
         buildTypes {
             debug {
                 applicationIdSuffix ".development"
-//                testCoverageEnabled true
+                testCoverageEnabled true
                 manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
             }
 
             debugProguard {
                 applicationIdSuffix ".development"
-//                testCoverageEnabled true
+                testCoverageEnabled true
                 manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
                 minifyEnabled true
                 zipAlignEnabled true
