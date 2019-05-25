@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -30,7 +30,7 @@
             android:clickable="true"
             android:visibility="invisible">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/settings_toolbar"
                 style="@style/DefaultLightToolbarStyleWithContentInset"
                 android:background="@color/accent" />
@@ -44,7 +44,7 @@
 
         </RelativeLayout>
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/toggle_settings_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,5 +54,5 @@
             android:visibility="gone"
             app:fabSize="normal" />
 
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </RelativeLayout>

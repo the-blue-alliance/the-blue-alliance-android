@@ -4,17 +4,17 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+import androidx.core.view.ViewCompat;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -54,7 +54,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
-        ((TBAAndroid)getApplication()).getDbComponent().inject(this);
+        ((TbaAndroid)getApplication()).getDbComponent().inject(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
@@ -76,7 +76,7 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
         searchView.setQueryHint(getString(R.string.search_hint));
 
         // Hide the magnifying glass icon
-        searchView.findViewById(android.support.v7.appcompat.R.id.search_mag_icon).setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+        searchView.findViewById(androidx.appcompat.R.id.search_mag_icon).setLayoutParams(new LinearLayout.LayoutParams(0, 0));
 
         ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
         getSupportActionBar().setDisplayShowCustomEnabled(true);

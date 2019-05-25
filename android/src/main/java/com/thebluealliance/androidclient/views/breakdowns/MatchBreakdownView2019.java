@@ -2,8 +2,8 @@ package com.thebluealliance.androidclient.views.breakdowns;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.annotation.DrawableRes;
-import android.support.v7.widget.GridLayout;
+import androidx.annotation.DrawableRes;
+import androidx.gridlayout.widget.GridLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;

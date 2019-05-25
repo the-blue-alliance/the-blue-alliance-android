@@ -3,7 +3,7 @@ package com.thebluealliance.androidclient;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
-import android.support.multidex.MultiDexApplication;
+import androidx.multidex.MultiDexApplication;
 
 import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
@@ -30,7 +30,7 @@ import javax.inject.Inject;
 
 import static com.thebluealliance.androidclient.gcm.notifications.BaseNotification.NOTIFICATION_CHANNEL;
 
-public class TBAAndroid extends MultiDexApplication {
+public class TbaAndroid extends MultiDexApplication {
 
     @Inject TBAStatusController mStatusController;
     @Inject AppConfig mAppConfig;
@@ -51,7 +51,7 @@ public class TBAAndroid extends MultiDexApplication {
     private AccountModule mAccountModule;
     private GcmModule mGcmModule;
 
-    public TBAAndroid() {
+    public TbaAndroid() {
         super();
         mShouldBindStetho = true;
         mShouldInstallLeakCanary = true;

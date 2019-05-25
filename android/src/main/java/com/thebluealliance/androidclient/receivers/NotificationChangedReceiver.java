@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
@@ -37,7 +37,7 @@ public class NotificationChangedReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        ((TBAAndroid)context.getApplicationContext()).getDbComponent().inject(this);
+        ((TbaAndroid)context.getApplicationContext()).getDbComponent().inject(this);
         if (intent.getAction().equals(ACTION_NOTIFICATION_CLICKED)) {
             // Check for an intent to launch
             Bundle extras = intent.getExtras();

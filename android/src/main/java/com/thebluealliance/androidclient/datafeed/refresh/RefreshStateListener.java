@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.datafeed.refresh;
 
-import android.support.annotation.UiThread;
+import androidx.annotation.UiThread;
 
 /**
  * Used to listen for refreshing state changes.

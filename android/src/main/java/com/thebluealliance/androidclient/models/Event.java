@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.Utilities;

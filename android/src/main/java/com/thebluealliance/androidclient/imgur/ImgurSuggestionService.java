@@ -10,7 +10,7 @@ import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesMediaSuggestionMessage;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.gce.GceAuthController;
@@ -192,7 +192,7 @@ public class ImgurSuggestionService extends IntentService {
     }
 
     private SuggestionComponent getComponent() {
-        TBAAndroid application = (TBAAndroid) getApplication();
+        TbaAndroid application = (TbaAndroid) getApplication();
         return DaggerSuggestionComponent.builder()
                 .applicationComponent(application.getComponent())
                 .gceModule(application.getGceModule())

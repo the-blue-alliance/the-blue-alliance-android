@@ -2,14 +2,14 @@ package com.thebluealliance.androidclient.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.auth.AuthProvider;
@@ -139,7 +139,7 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
     }
 
     private AuthComponent getComponent() {
-        TBAAndroid application = (TBAAndroid) getApplication();
+        TbaAndroid application = (TbaAndroid) getApplication();
         return DaggerAuthComponent.builder()
                                   .authModule(application.getAuthModule())
                                   .accountModule(application.getAccountModule())

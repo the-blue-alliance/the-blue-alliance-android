@@ -1,9 +1,9 @@
 package com.thebluealliance.androidclient.renderers;
 
 import android.content.res.Resources;
-import android.support.annotation.IntDef;
-import android.support.annotation.VisibleForTesting;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.IntDef;
+import androidx.annotation.VisibleForTesting;
+import androidx.annotation.WorkerThread;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.APICache;

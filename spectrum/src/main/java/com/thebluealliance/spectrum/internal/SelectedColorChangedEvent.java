@@ -1,6 +1,6 @@
 package com.thebluealliance.spectrum.internal;
 
-import android.support.annotation.ColorInt;
+import androidx.annotation.ColorInt;
 
 /**
  * Represents a newly-selected color; used with {@link org.greenrobot.eventbus.EventBus} for

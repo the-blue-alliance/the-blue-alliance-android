@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.binders;
 
 import android.content.res.Resources;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;

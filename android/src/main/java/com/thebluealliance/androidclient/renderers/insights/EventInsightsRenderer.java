@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.renderers.insights;
 
 import android.content.res.Resources;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

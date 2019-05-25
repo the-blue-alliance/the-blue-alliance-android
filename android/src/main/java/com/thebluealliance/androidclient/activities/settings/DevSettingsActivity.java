@@ -4,14 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
@@ -46,7 +46,7 @@ public class DevSettingsActivity extends AppCompatActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            ((TBAAndroid)(getActivity().getApplication())).getDatafeedComponenet().inject(this);
+            ((TbaAndroid)(getActivity().getApplication())).getDatafeedComponenet().inject(this);
             addPreferencesFromResource(R.xml.dev_preferences);
 
             Preference analyticsDryRun = findPreference("analytics_dry_run");

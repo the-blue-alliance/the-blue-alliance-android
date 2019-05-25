@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.helpers;
 
 import android.content.res.Resources;
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.api.model.IRankingItem;

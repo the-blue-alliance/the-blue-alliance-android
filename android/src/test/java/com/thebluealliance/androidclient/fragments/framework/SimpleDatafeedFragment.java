@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.fragments.framework;
 
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.VisibleForTesting;
 
 import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.binders.NoDataBinder;

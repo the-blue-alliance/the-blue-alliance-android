@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.renderers;
 
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;

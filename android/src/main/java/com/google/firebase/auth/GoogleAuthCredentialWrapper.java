@@ -1,6 +1,6 @@
 package com.google.firebase.auth;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * A wrapper for {@link GoogleAuthCredential}, because the original class doesn't have a

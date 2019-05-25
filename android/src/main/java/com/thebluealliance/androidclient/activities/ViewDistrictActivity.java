@@ -3,16 +3,16 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
+import androidx.core.view.ViewCompat;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewDistrictFragmentPagerAdapter;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
@@ -177,7 +177,7 @@ public class ViewDistrictActivity extends MyTBASettingsActivity
     @Override
     public FragmentComponent getComponent() {
         if (mComponent == null) {
-            TBAAndroid application = ((TBAAndroid) getApplication());
+            TbaAndroid application = ((TbaAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
               .applicationComponent(application.getComponent())
               .datafeedModule(application.getDatafeedModule())

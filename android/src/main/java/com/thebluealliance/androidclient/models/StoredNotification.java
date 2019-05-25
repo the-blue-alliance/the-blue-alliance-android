@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;

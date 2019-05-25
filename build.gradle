@@ -17,10 +17,10 @@ buildscript {
         classpath 'com.google.gms:google-services:4.2.0'
 
         // dependency analysis
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.19.0'
 
         // code coverage testing
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.6.3'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
 
         // versioning
         classpath 'com.palantir:gradle-gitsemver:0.6.0'
@@ -32,7 +32,7 @@ buildscript {
         classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
 
         // Automated Screenshot Testing
-        classpath 'com.facebook.testing.screenshot:plugin:0.4.2'
+        classpath 'com.facebook.testing.screenshot:plugin:0.5.0'
     }
 
     // Exclude the linter version that the android plugin depends on.
@@ -65,7 +65,7 @@ allprojects {
         gsonVersion = '2.8.0'
         daggerVersion = '2.21'
         leakCanaryVersion = '1.5'
-        robolectricVersion = '4.1'
+        robolectricVersion = '4.2.1'
         permissionDispatcherVersion = '2.2.0'
 
         travisBuild = System.getenv("TRAVIS") == "true"

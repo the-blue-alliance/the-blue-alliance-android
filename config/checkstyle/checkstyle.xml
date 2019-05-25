@@ -41,8 +41,6 @@ Severity: EASY
     </module>
 
     <module name="TreeWalker">
-
-        <module name="FileContentsHolder"/>
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sourceforge.net/config_javadoc.html -->
         <module name="JavadocMethod">
@@ -203,19 +201,20 @@ Severity: EASY
         </module>
         <module name="UpperEll" />
 
+        <!-- Enable suppression comments -->
+        <module name="SuppressionCommentFilter">
+            <property name="offCommentFormat" value="CHECKSTYLE IGNORE\s+(\S+)" />
+            <property name="onCommentFormat" value="CHECKSTYLE END IGNORE\s+(\S+)" />
+            <property name="checkFormat" value="$1" />
+        </module>
+        <module name="SuppressWithNearbyCommentFilter">
+            <property name="commentFormat" value="SUPPRESS CHECKSTYLE (\w+)" />
+            <property name="checkFormat" value="$1" />
+            <property name="influenceFormat" value="1" />
+        </module>
+
     </module>
 
-    <!-- Enable suppression comments -->
-    <module name="SuppressionCommentFilter">
-        <property name="offCommentFormat" value="CHECKSTYLE IGNORE\s+(\S+)" />
-        <property name="onCommentFormat" value="CHECKSTYLE END IGNORE\s+(\S+)" />
-        <property name="checkFormat" value="$1" />
-    </module>
-    <module name="SuppressWithNearbyCommentFilter">
-        <property name="commentFormat" value="SUPPRESS CHECKSTYLE (\w+)" />
-        <property name="checkFormat" value="$1" />
-        <property name="influenceFormat" value="1" />
-    </module>
     <module name="SuppressionFilter">
         <property name="file" value="${config_loc}/suppressions.xml"/>
     </module>

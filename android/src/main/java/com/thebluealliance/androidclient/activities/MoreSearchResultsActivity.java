@@ -4,17 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.core.view.ViewCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventCursorAdapter;
 import com.thebluealliance.androidclient.adapters.SimpleCursorLoader;
@@ -54,7 +54,7 @@ public class MoreSearchResultsActivity extends AppCompatActivity implements Load
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
 
-        ((TBAAndroid)getApplication()).getDbComponent().inject(this);
+        ((TbaAndroid)getApplication()).getDbComponent().inject(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));

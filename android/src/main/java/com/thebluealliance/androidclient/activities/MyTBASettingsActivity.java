@@ -8,15 +8,16 @@ import android.animation.ValueAnimator;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.ColorRes;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.StringRes;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.StringRes;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.fragment.app.FragmentManager;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.Fragment;
+import androidx.core.view.ViewCompat;
+import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -28,7 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
@@ -90,7 +91,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TBAAndroid application = (TBAAndroid) getApplication();
+        TbaAndroid application = (TbaAndroid) getApplication();
         DaggerMyTbaComponent.builder()
                 .tBAAndroidModule(application.getModule())
                 .accountModule(application.getAccountModule())
@@ -199,7 +200,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
                                                .commit();
                     mSaveInProgress = true;
 
-                    final android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+                    final FragmentManager fm = getSupportFragmentManager();
                     final Fragment settingsFragment = fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
                     mFabHandler.postDelayed(() -> {
                         if (settingsFragment != null) {
@@ -640,7 +641,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     @SuppressWarnings("WrongConstant")
     protected void showSnackbar(CharSequence message) {
         Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message, 2000);
-        TextView text = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+        TextView text = (TextView) snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text);
         if (text != null) {
             text.setTextColor(getResources().getColor(R.color.white));
         }
@@ -649,7 +650,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
 
     protected Snackbar createSnackbar(CharSequence message, @Snackbar.Duration int duration) {
         Snackbar snackbar = Snackbar.make(mCoordinatorLayout, message == null ? "" : message, duration);
-        TextView text = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+        TextView text = (TextView) snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text);
         if (text != null) {
             text.setTextColor(getResources().getColor(R.color.white));
         }

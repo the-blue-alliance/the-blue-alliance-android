@@ -3,14 +3,14 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
+import androidx.core.app.TaskStackBuilder;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Gravity;
 import android.widget.FrameLayout;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
 import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.di.components.HasMyTbaComponent;
@@ -284,7 +284,7 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
 
     @Override
     public MyTbaComponent getMyTbaComponent() {
-        TBAAndroid application = (TBAAndroid) getApplication();
+        TbaAndroid application = (TbaAndroid) getApplication();
         return DaggerMyTbaComponent.builder()
                 .tBAAndroidModule(application.getModule())
                 .accountModule(application.getAccountModule())

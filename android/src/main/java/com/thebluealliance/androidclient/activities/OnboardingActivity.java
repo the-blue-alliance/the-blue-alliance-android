@@ -8,9 +8,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
@@ -82,7 +82,7 @@ public class OnboardingActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TBAAndroid application = (TBAAndroid) getApplication();
+        TbaAndroid application = (TbaAndroid) getApplication();
         DaggerAuthComponent.builder()
                 .accountModule(application.getAccountModule())
                 .authModule(application.getAuthModule())
@@ -412,7 +412,7 @@ public class OnboardingActivity extends AppCompatActivity
 
     public DatafeedComponent getComponent() {
         if (mComponent == null) {
-            TBAAndroid application = ((TBAAndroid) getApplication());
+            TbaAndroid application = ((TbaAndroid) getApplication());
             mComponent = DaggerDatafeedComponent.builder()
               .applicationComponent(application.getComponent())
               .datafeedModule(application.getDatafeedModule())

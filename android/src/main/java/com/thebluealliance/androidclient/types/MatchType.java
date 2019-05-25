@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.types;
 
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 
 import com.thebluealliance.androidclient.R;
 

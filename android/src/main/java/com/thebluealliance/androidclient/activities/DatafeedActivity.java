@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
@@ -143,7 +143,7 @@ public abstract class DatafeedActivity extends BaseActivity
     @Override
     public FragmentComponent getComponent() {
         if (mComponent == null) {
-            TBAAndroid application = ((TBAAndroid) getApplication());
+            TbaAndroid application = ((TbaAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
                     .applicationComponent(application.getComponent())
                     .datafeedModule(application.getDatafeedModule())

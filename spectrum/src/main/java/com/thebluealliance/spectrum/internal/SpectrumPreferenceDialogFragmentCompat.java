@@ -6,9 +6,9 @@ import com.thebluealliance.spectrum.SpectrumPreferenceCompat;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.preference.PreferenceDialogFragmentCompat;
+import androidx.annotation.ColorInt;
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceDialogFragmentCompat;
 import android.view.View;
 
 public class SpectrumPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat {

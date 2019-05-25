@@ -13,16 +13,16 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresPermission;
-import android.support.annotation.StringRes;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.FileProvider;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresPermission;
+import androidx.annotation.StringRes;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.content.FileProvider;
+import androidx.core.view.ViewCompat;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +33,7 @@ import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
@@ -520,7 +520,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
 
     public FragmentComponent getComponent() {
         if (mComponent == null) {
-            TBAAndroid application = ((TBAAndroid) getApplication());
+            TbaAndroid application = ((TbaAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
                     .applicationComponent(application.getComponent())
                     .datafeedModule(application.getDatafeedModule())

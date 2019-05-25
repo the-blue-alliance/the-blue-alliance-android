@@ -2,10 +2,10 @@ package com.thebluealliance.androidclient.fragments.tasks;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.accounts.UpdateUserModelSettings;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
@@ -33,7 +33,7 @@ public class UpdateUserModelSettingsTaskFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TBAAndroid application = (TBAAndroid) getActivity().getApplication();
+        TbaAndroid application = (TbaAndroid) getActivity().getApplication();
         DaggerMyTbaComponent.builder()
                             .tBAAndroidModule(application.getModule())
                             .accountModule(application.getAccountModule())

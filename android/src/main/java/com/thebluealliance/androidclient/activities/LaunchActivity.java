@@ -8,14 +8,14 @@ import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.AppCompatActivity;
+import androidx.core.app.TaskStackBuilder;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.background.RecreateSearchIndexes;
@@ -229,7 +229,7 @@ public class LaunchActivity extends AppCompatActivity {
     }
 
     private DatafeedComponent getComponenet() {
-        TBAAndroid application = ((TBAAndroid) getApplication());
+        TbaAndroid application = ((TbaAndroid) getApplication());
         return DaggerDatafeedComponent.builder()
           .applicationComponent(application.getComponent())
           .datafeedModule(application.getDatafeedModule())

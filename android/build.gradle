@@ -4,14 +4,13 @@ apply plugin: 'gitsemver'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'com.facebook.testing.screenshot'
 
-apply from: "../code_coverage.gradle"
+apply from: '../code_coverage.gradle'
 
 // dependency checker plugin
 // run ./gradlew dependencyUpdates to generate report
 apply plugin: 'com.github.ben-manes.versions'
 
 apply from: 'versioning.gradle'
-apply from: 'build.workaround-missing-resource.gradle'
 
 version semverVersion()
 def (major, minor, patch, versionNum, gitTag, gitHash, commitsFromTag, repoDirty) =
@@ -172,24 +171,25 @@ screenshots {
 
 println "Version: " + android.defaultConfig.versionName + "/" + android.defaultConfig.versionCode
 
-task updateScreenshotDirs << {
-    def codeNameOut = new ByteArrayOutputStream()
-    exec {
-        commandLine 'adb', 'shell', 'getprop', 'ro.product.name'
-        standardOutput codeNameOut
-    }
+task updateScreenshotDirs {
+    doLast {
+        def codeNameOut = new ByteArrayOutputStream()
+        exec {
+            commandLine 'adb', 'shell', 'getprop', 'ro.product.name'
+            standardOutput codeNameOut
+        }
 
-    def sdkOut = new ByteArrayOutputStream()
-    exec {
-        commandLine 'adb', 'shell', 'getprop', 'ro.build.version.sdk'
-        standardOutput sdkOut
+        def sdkOut = new ByteArrayOutputStream()
+        exec {
+            commandLine 'adb', 'shell', 'getprop', 'ro.build.version.sdk'
+            standardOutput sdkOut
+        }
+        def deviceName = codeNameOut.toString().trim()
+        def deviceSdk = sdkOut.toString().trim()
+        def outputDir = project.screenshots.recordDir + "/" + deviceName + "_api" + deviceSdk
+        project.screenshots.recordDir = outputDir
+        System.out.println("New screenshot output dierctory: " + outputDir)
     }
-    def deviceName = codeNameOut.toString().trim()
-    def deviceSdk = sdkOut.toString().trim()
-    def outputDir = project.screenshots.recordDir + "/" + deviceName + "_api" + deviceSdk
-    project.screenshots.recordDir = outputDir
-    System.out.println("New screenshot output dierctory: " + outputDir)
-
 }
 
 repositories {
@@ -219,13 +219,13 @@ dependencies {
     implementation project(':spectrum')
 
     // Android support libraries
-    implementation "com.android.support:support-v13:${supportLibVersion}"
-    implementation "com.android.support:cardview-v7:${supportLibVersion}"
-    implementation "com.android.support:support-v4:${supportLibVersion}"
-    implementation "com.android.support:appcompat-v7:${supportLibVersion}"
-    implementation "com.android.support:gridlayout-v7:${supportLibVersion}"
-    implementation 'com.android.support:multidex:1.0.3'
-    implementation "com.android.support:design:${supportLibVersion}"
+    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
 
     // Play Services Libraries
     // See http://developer.android.com/google/play-services/setup.html
@@ -277,17 +277,16 @@ dependencies {
 
     // testing
     testImplementation "org.robolectric:robolectric:${robolectricVersion}"
-    testImplementation "org.robolectric:shadows-support-v4:3.3.2"
     testImplementation "org.robolectric:shadows-multidex:${robolectricVersion}"
     testImplementation 'junit:junit:4.12'
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // instrumentation
-    androidTestImplementation "com.android.support:support-annotations:${supportLibVersion}"
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.annotation:annotation:1.0.0'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:rules:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
     androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.1'
 
     // Leak Canary

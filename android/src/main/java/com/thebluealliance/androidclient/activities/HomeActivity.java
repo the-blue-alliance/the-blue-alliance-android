@@ -6,13 +6,13 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.StringRes;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.StringRes;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.view.ViewCompat;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TBAAndroid;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
@@ -415,7 +415,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
     public FragmentComponent getComponent() {
         if (mComponent == null) {
-            TBAAndroid application = ((TBAAndroid) getApplication());
+            TbaAndroid application = ((TbaAndroid) getApplication());
             mComponent = DaggerFragmentComponent.builder()
                     .applicationComponent(application.getComponent())
                     .datafeedModule(application.getDatafeedModule())

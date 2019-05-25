@@ -1,9 +1,9 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
-import android.support.annotation.VisibleForTesting;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.annotation.VisibleForTesting;
+import androidx.annotation.WorkerThread;
 
 import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.TbaLogger;

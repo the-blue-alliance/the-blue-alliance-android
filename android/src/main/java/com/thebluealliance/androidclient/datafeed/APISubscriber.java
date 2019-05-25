@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 /**
  * An interface that a {@link rx.Subscriber} in the package

@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.fragments.framework;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 

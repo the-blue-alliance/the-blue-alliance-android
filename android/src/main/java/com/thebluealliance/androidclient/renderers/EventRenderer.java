@@ -1,7 +1,7 @@
 package com.thebluealliance.androidclient.renderers;
 
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

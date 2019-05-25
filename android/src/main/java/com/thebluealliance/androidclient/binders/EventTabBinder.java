@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.binders;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;

@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
