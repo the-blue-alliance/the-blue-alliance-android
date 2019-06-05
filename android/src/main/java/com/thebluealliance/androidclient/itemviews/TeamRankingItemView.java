@@ -16,20 +16,20 @@ import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class TeamRankingItemView extends BindableFrameLayout<TeamRankingViewModel> {
 
-    @Bind(R.id.team_number) TextView teamNumber;
-    @Bind(R.id.team_rank) TextView teamRank;
-    @Bind(R.id.team_record) TextView teamRecord;
-    @Bind(R.id.team_name) TextView teamName;
-    @Bind(R.id.ranking_breakdown_container) LinearLayout breakdownContainer;
-    @Bind(R.id.ranking_breakdown) TextView rankingBreakdown;
-    @Bind(R.id.ranking_summary) TextView rankingSummary;
-    @Bind(R.id.ranking_detail_button) Button rankingDetail;
+    @BindView(R.id.team_number) TextView teamNumber;
+    @BindView(R.id.team_rank) TextView teamRank;
+    @BindView(R.id.team_record) TextView teamRecord;
+    @BindView(R.id.team_name) TextView teamName;
+    @BindView(R.id.ranking_breakdown_container) LinearLayout breakdownContainer;
+    @BindView(R.id.ranking_breakdown) TextView rankingBreakdown;
+    @BindView(R.id.ranking_summary) TextView rankingSummary;
+    @BindView(R.id.ranking_detail_button) Button rankingDetail;
 
     private int originalHeight;
     private int expandedHeightDelta;

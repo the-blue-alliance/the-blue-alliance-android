@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import butterknife.Unbinder;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
@@ -16,7 +17,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>> {
@@ -27,9 +28,10 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
             MODE_EXPAND_ONLY = 2,
             MODE_EXPAND_ALL = 3;
 
-    @Bind(R.id.expandable_list) ExpandableListView expandableListView;
-    @Bind(R.id.progress) ProgressBar progressBar;
+    @BindView(R.id.expandable_list) ExpandableListView expandableListView;
+    @BindView(R.id.progress) ProgressBar progressBar;
 
+    private Unbinder unbinder;
     private short mExpandMode;
     protected ModelRendererSupplier mRendererSupplier;
 
@@ -46,7 +48,7 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
 
     @Override
     public void bindViews() {
-        ButterKnife.bind(this, mRootView);
+        unbinder = ButterKnife.bind(this, mRootView);
     }
 
     @Override
@@ -157,8 +159,8 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
-        if (unbindViews) {
-            ButterKnife.unbind(this);
+        if (unbindViews && unbinder != null) {
+            unbinder.unbind();
         }
         if (expandableListView != null) {
             expandableListView.setVisibility(View.GONE);

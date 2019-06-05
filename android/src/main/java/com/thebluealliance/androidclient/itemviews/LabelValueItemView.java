@@ -7,14 +7,14 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class LabelValueItemView extends BindableFrameLayout<LabelValueViewModel> {
 
-    @Bind(R.id.label) TextView label;
-    @Bind(R.id.value) TextView value;
+    @BindView(R.id.label) TextView label;
+    @BindView(R.id.value) TextView value;
 
     public LabelValueItemView(Context context) {
         super(context);

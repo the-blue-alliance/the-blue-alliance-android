@@ -8,14 +8,14 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class LabeledMatchItemView extends BindableFrameLayout<LabeledMatchViewModel> {
 
-    @Bind(R.id.label) TextView label;
-    @Bind(R.id.match_container) FrameLayout matchContainer;
+    @BindView(R.id.label) TextView label;
+    @BindView(R.id.match_container) FrameLayout matchContainer;
 
     public LabeledMatchItemView(Context context) {
         super(context);

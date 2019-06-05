@@ -13,15 +13,15 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.GamedayFragmentPagerAdapter;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class GamedayFragment extends Fragment {
 
     public static final String SELECTED_TAB = "selected_tab";
 
-    @Bind(R.id.pager) ViewPager mViewPager;
-    @Bind(R.id.tabs) SlidingTabs mTabs;
+    @BindView(R.id.pager) ViewPager mViewPager;
+    @BindView(R.id.tabs) SlidingTabs mTabs;
 
     private int mInitialTab;
 

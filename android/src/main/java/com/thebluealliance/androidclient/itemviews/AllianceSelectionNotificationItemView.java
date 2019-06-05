@@ -8,15 +8,15 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class AllianceSelectionNotificationItemView extends BindableFrameLayout<AllianceSelectionNotificationViewModel> {
-    @Bind(R.id.card_header) TextView header;
-    @Bind(R.id.details) TextView details;
-    @Bind(R.id.notification_time) TextView time;
-    @Bind(R.id.summary_container) View summaryContainer;
+    @BindView(R.id.card_header) TextView header;
+    @BindView(R.id.details) TextView details;
+    @BindView(R.id.notification_time) TextView time;
+    @BindView(R.id.summary_container) View summaryContainer;
 
     public AllianceSelectionNotificationItemView(Context context) {
         super(context);

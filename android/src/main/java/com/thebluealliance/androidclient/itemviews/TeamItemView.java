@@ -13,17 +13,17 @@ import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class TeamItemView extends BindableFrameLayout<TeamViewModel> {
 
-    @Bind(R.id.team_number) TextView teamNumber;
-    @Bind(R.id.team_name) TextView teamName;
-    @Bind(R.id.team_location) TextView teamLocation;
-    @Bind(R.id.team_info) ImageView teamInfo;
-    @Bind(R.id.model_settings) ImageView modelSettings;
+    @BindView(R.id.team_number) TextView teamNumber;
+    @BindView(R.id.team_name) TextView teamName;
+    @BindView(R.id.team_location) TextView teamLocation;
+    @BindView(R.id.team_info) ImageView teamInfo;
+    @BindView(R.id.model_settings) ImageView modelSettings;
 
     public TeamItemView(Context context) {
         super(context);

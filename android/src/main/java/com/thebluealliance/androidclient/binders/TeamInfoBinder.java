@@ -12,6 +12,7 @@ import android.text.style.TextAppearanceSpan;
 import android.view.View;
 import android.widget.TextView;
 
+import butterknife.Unbinder;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
@@ -22,7 +23,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
@@ -31,36 +32,38 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
 
     @Inject SocialClickListener mSocialClickListener;
 
-    @Bind(R.id.content) View content;
-    @Bind(R.id.team_name) TextView teamName;
-    @Bind(R.id.team_location_container) View teamLocationContainer;
-    @Bind(R.id.team_location) TextView teamLocation;
+    @BindView(R.id.content) View content;
+    @BindView(R.id.team_name) TextView teamName;
+    @BindView(R.id.team_location_container) View teamLocationContainer;
+    @BindView(R.id.team_location) TextView teamLocation;
 
-    @Bind(R.id.team_website_container) View teamWebsiteContainer;
-    @Bind(R.id.team_website_title) TextView teamWebsiteTitle;
-    @Bind(R.id.team_twitter_container) View teamTwitterContainer;
-    @Bind(R.id.team_twitter_title) TextView teamTwitterTitle;
-    @Bind(R.id.twitter_divider) View twitterDivider;
-    @Bind(R.id.team_youtube_container) View teamYoutubeContainer;
-    @Bind(R.id.team_youtube_title) TextView teamYoutubeTitle;
-    @Bind(R.id.youtube_divider) View youtubeDivider;
-    @Bind(R.id.team_facebook_container) View teamFbContainer;
-    @Bind(R.id.team_facebook_title) TextView teamFbTitle;
-    @Bind(R.id.facebook_divider) View facebookDivider;
-    @Bind(R.id.team_github_container) View teamGitHubContainer;
-    @Bind(R.id.team_github_title) TextView teamGitHubTitle;
-    @Bind(R.id.team_instagram_container) View teamInstaContainer;
-    @Bind(R.id.team_instagram_title) TextView teamInstaTitle;
-    @Bind(R.id.instagram_divider) View instagramDivider;
-    @Bind(R.id.team_full_name_container) View teamFullNameContainer;
-    @Bind(R.id.team_full_name) TextView teamFullName;
-    @Bind(R.id.team_next_match_label) View teamNextMatchLabel;
-    @Bind(R.id.team_next_match_details) View teamNextMatchDetails;
-    @Bind(R.id.progress) View progress;
-    @Bind(R.id.team_motto_container) View teamMottoContainer;
-    @Bind(R.id.team_motto) TextView teamMotto;
-    @Bind(R.id.champs_pit_location_container) View champsPitLocationContainer;
-    @Bind(R.id.champs_pit_location) TextView champsPitLocation;
+    @BindView(R.id.team_website_container) View teamWebsiteContainer;
+    @BindView(R.id.team_website_title) TextView teamWebsiteTitle;
+    @BindView(R.id.team_twitter_container) View teamTwitterContainer;
+    @BindView(R.id.team_twitter_title) TextView teamTwitterTitle;
+    @BindView(R.id.twitter_divider) View twitterDivider;
+    @BindView(R.id.team_youtube_container) View teamYoutubeContainer;
+    @BindView(R.id.team_youtube_title) TextView teamYoutubeTitle;
+    @BindView(R.id.youtube_divider) View youtubeDivider;
+    @BindView(R.id.team_facebook_container) View teamFbContainer;
+    @BindView(R.id.team_facebook_title) TextView teamFbTitle;
+    @BindView(R.id.facebook_divider) View facebookDivider;
+    @BindView(R.id.team_github_container) View teamGitHubContainer;
+    @BindView(R.id.team_github_title) TextView teamGitHubTitle;
+    @BindView(R.id.team_instagram_container) View teamInstaContainer;
+    @BindView(R.id.team_instagram_title) TextView teamInstaTitle;
+    @BindView(R.id.instagram_divider) View instagramDivider;
+    @BindView(R.id.team_full_name_container) View teamFullNameContainer;
+    @BindView(R.id.team_full_name) TextView teamFullName;
+    @BindView(R.id.team_next_match_label) View teamNextMatchLabel;
+    @BindView(R.id.team_next_match_details) View teamNextMatchDetails;
+    @BindView(R.id.progress) View progress;
+    @BindView(R.id.team_motto_container) View teamMottoContainer;
+    @BindView(R.id.team_motto) TextView teamMotto;
+    @BindView(R.id.champs_pit_location_container) View champsPitLocationContainer;
+    @BindView(R.id.champs_pit_location) TextView champsPitLocation;
+
+    private Unbinder unbinder;
 
     @Inject
     public TeamInfoBinder(SocialClickListener socialClickListener) {
@@ -69,7 +72,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
 
     @Override
     public void bindViews() {
-        ButterKnife.bind(this, mRootView);
+        unbinder = ButterKnife.bind(this, mRootView);
     }
 
     @Override
@@ -296,8 +299,8 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
-        if (unbindViews) {
-            ButterKnife.unbind(this);
+        if (unbindViews && unbinder != null) {
+            unbinder.unbind();
         }
     }
 

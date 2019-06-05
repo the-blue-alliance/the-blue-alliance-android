@@ -17,13 +17,13 @@ import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2018
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2019;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinder.Model> {
 
-    @Bind(R.id.match_breakdown) FrameLayout breakdownContainer;
-    @Bind(R.id.progress) ProgressBar progressBar;
+    @BindView(R.id.match_breakdown) FrameLayout breakdownContainer;
+    @BindView(R.id.progress) ProgressBar progressBar;
 
     @Override
     public void updateData(@Nullable MatchBreakdownBinder.Model data) {

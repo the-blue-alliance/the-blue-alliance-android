@@ -29,7 +29,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -43,12 +43,12 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
 
     private static final String SAVED_TEMP_FILE_PATH = "saved_file_url";
 
-    @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.header) TextView mHeader;
-    @Bind(R.id.image) ImageView mImageView;
-    @Bind(R.id.progress) ProgressBar mProgressBar;
-    @Bind(R.id.confirm_fab) FloatingActionButton mConfirmFab;
-    @Bind(R.id.cancel_fab) FloatingActionButton mCancelFab;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.header) TextView mHeader;
+    @BindView(R.id.image) ImageView mImageView;
+    @BindView(R.id.progress) ProgressBar mProgressBar;
+    @BindView(R.id.confirm_fab) FloatingActionButton mConfirmFab;
+    @BindView(R.id.cancel_fab) FloatingActionButton mCancelFab;
 
     private Uri mUri;
     private String mTeamKey;

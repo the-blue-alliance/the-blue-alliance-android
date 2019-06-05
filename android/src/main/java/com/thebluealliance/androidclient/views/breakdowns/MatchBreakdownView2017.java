@@ -15,7 +15,7 @@ import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getBooleanDefault;
@@ -26,74 +26,74 @@ import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownH
 
 public class MatchBreakdownView2017 extends AbstractMatchBreakdownView {
 
-    @Bind(R.id.breakdown2017_container)                  GridLayout breakdownContainer;
+    @BindView(R.id.breakdown2017_container)                  GridLayout breakdownContainer;
 
-    @Bind(R.id.breakdown_red1)                           TextView red1;
-    @Bind(R.id.breakdown_blue1)                          TextView blue1;
-    @Bind(R.id.breakdown_red2)                           TextView red2;
-    @Bind(R.id.breakdown_blue2)                          TextView blue2;
-    @Bind(R.id.breakdown_red3)                           TextView red3;
-    @Bind(R.id.breakdown_blue3)                          TextView blue3;
+    @BindView(R.id.breakdown_red1)                           TextView red1;
+    @BindView(R.id.breakdown_blue1)                          TextView blue1;
+    @BindView(R.id.breakdown_red2)                           TextView red2;
+    @BindView(R.id.breakdown_blue2)                          TextView blue2;
+    @BindView(R.id.breakdown_red3)                           TextView red3;
+    @BindView(R.id.breakdown_blue3)                          TextView blue3;
 
-    @Bind(R.id.breakdown2017_red_auto_mobility)          TextView redMobility;
-    @Bind(R.id.breakdown2017_blue_auto_mobility)         TextView blueMobility;
-    @Bind(R.id.breakdown2017_red_auto_fuel_high)         TextView redAutoFuelHigh;
-    @Bind(R.id.breakdown2017_red_auto_fuel_low)          TextView redAutoFuelLow;
-    @Bind(R.id.breakdown2017_blue_auto_fuel_high)        TextView blueAutoFuelHigh;
-    @Bind(R.id.breakdown2017_blue_auto_fuel_low)         TextView blueAutoFuelLow;
-    @Bind(R.id.breakdown2017_red_auto_pressure)          TextView redAutoPressure;
-    @Bind(R.id.breakdown2017_blue_auto_pressure)         TextView blueAutoPressure;
-    @Bind(R.id.breakdown2017_auto_rotor1_red)            ImageView redAutoRotor1;
-    @Bind(R.id.breakdown2017_auto_rotor2_red)            ImageView redAutoRotor2;
-    @Bind(R.id.breakdown2017_auto_rotor1_blue)           ImageView blueAutoRotor1;
-    @Bind(R.id.breakdown2017_auto_rotor2_blue)           ImageView blueAutoRotor2;
-    @Bind(R.id.breakdown2017_red_auto_rotor)             TextView redAutoRotorPoints;
-    @Bind(R.id.breakdown2017_blue_auto_rotor)            TextView blueAutoRotorPoints;
-    @Bind(R.id.breakdown_auto_total_red)                 TextView redAutoTotal;
-    @Bind(R.id.breakdown_auto_total_blue)                TextView blueAutoTotal;
+    @BindView(R.id.breakdown2017_red_auto_mobility)          TextView redMobility;
+    @BindView(R.id.breakdown2017_blue_auto_mobility)         TextView blueMobility;
+    @BindView(R.id.breakdown2017_red_auto_fuel_high)         TextView redAutoFuelHigh;
+    @BindView(R.id.breakdown2017_red_auto_fuel_low)          TextView redAutoFuelLow;
+    @BindView(R.id.breakdown2017_blue_auto_fuel_high)        TextView blueAutoFuelHigh;
+    @BindView(R.id.breakdown2017_blue_auto_fuel_low)         TextView blueAutoFuelLow;
+    @BindView(R.id.breakdown2017_red_auto_pressure)          TextView redAutoPressure;
+    @BindView(R.id.breakdown2017_blue_auto_pressure)         TextView blueAutoPressure;
+    @BindView(R.id.breakdown2017_auto_rotor1_red)            ImageView redAutoRotor1;
+    @BindView(R.id.breakdown2017_auto_rotor2_red)            ImageView redAutoRotor2;
+    @BindView(R.id.breakdown2017_auto_rotor1_blue)           ImageView blueAutoRotor1;
+    @BindView(R.id.breakdown2017_auto_rotor2_blue)           ImageView blueAutoRotor2;
+    @BindView(R.id.breakdown2017_red_auto_rotor)             TextView redAutoRotorPoints;
+    @BindView(R.id.breakdown2017_blue_auto_rotor)            TextView blueAutoRotorPoints;
+    @BindView(R.id.breakdown_auto_total_red)                 TextView redAutoTotal;
+    @BindView(R.id.breakdown_auto_total_blue)                TextView blueAutoTotal;
 
-    @Bind(R.id.breakdown2017_red_teleop_fuel_high)       TextView redTeleopFuelHigh;
-    @Bind(R.id.breakdown2017_red_teleop_fuel_low)        TextView redTeleopFuelLow;
-    @Bind(R.id.breakdown2017_blue_teleop_fuel_high)      TextView blueTeleopFuelHigh;
-    @Bind(R.id.breakdown2017_blue_teleop_fuel_low)       TextView blueTeleopFuelLow;
-    @Bind(R.id.breakdown2017_red_teleop_pressure)        TextView redTeleopPressure;
-    @Bind(R.id.breakdown2017_blue_teleop_pressure)       TextView blueTeleopPressure;
+    @BindView(R.id.breakdown2017_red_teleop_fuel_high)       TextView redTeleopFuelHigh;
+    @BindView(R.id.breakdown2017_red_teleop_fuel_low)        TextView redTeleopFuelLow;
+    @BindView(R.id.breakdown2017_blue_teleop_fuel_high)      TextView blueTeleopFuelHigh;
+    @BindView(R.id.breakdown2017_blue_teleop_fuel_low)       TextView blueTeleopFuelLow;
+    @BindView(R.id.breakdown2017_red_teleop_pressure)        TextView redTeleopPressure;
+    @BindView(R.id.breakdown2017_blue_teleop_pressure)       TextView blueTeleopPressure;
 
-    @Bind(R.id.breakdown2017_teleop_rotor1_red)          ImageView redTeleopRotor1;
-    @Bind(R.id.breakdown2017_teleop_rotor2_red)          ImageView redTeleopRotor2;
-    @Bind(R.id.breakdown2017_teleop_rotor3_red)          ImageView redTeleopRotor3;
-    @Bind(R.id.breakdown2017_teleop_rotor4_red)          ImageView redTeleopRotor4;
-    @Bind(R.id.breakdown2017_teleop_rotor1_blue)         ImageView blueTeleopRotor1;
-    @Bind(R.id.breakdown2017_teleop_rotor2_blue)         ImageView blueTeleopRotor2;
-    @Bind(R.id.breakdown2017_teleop_rotor3_blue)         ImageView blueTeleopRotor3;
-    @Bind(R.id.breakdown2017_teleop_rotor4_blue)         ImageView blueTeleopRotor4;
-    @Bind(R.id.breakdown2017_red_teleop_rotor)           TextView redTeleopRotor;
-    @Bind(R.id.breakdown2017_blue_teleop_rotor)          TextView blueTeleopRotor;
+    @BindView(R.id.breakdown2017_teleop_rotor1_red)          ImageView redTeleopRotor1;
+    @BindView(R.id.breakdown2017_teleop_rotor2_red)          ImageView redTeleopRotor2;
+    @BindView(R.id.breakdown2017_teleop_rotor3_red)          ImageView redTeleopRotor3;
+    @BindView(R.id.breakdown2017_teleop_rotor4_red)          ImageView redTeleopRotor4;
+    @BindView(R.id.breakdown2017_teleop_rotor1_blue)         ImageView blueTeleopRotor1;
+    @BindView(R.id.breakdown2017_teleop_rotor2_blue)         ImageView blueTeleopRotor2;
+    @BindView(R.id.breakdown2017_teleop_rotor3_blue)         ImageView blueTeleopRotor3;
+    @BindView(R.id.breakdown2017_teleop_rotor4_blue)         ImageView blueTeleopRotor4;
+    @BindView(R.id.breakdown2017_red_teleop_rotor)           TextView redTeleopRotor;
+    @BindView(R.id.breakdown2017_blue_teleop_rotor)          TextView blueTeleopRotor;
 
-    @Bind(R.id.breakdown2017_red_teleop_takeoff)         TextView redTeleopTakeoff;
-    @Bind(R.id.breakdown2017_blue_teleop_takeoff)        TextView blueTeleopTakeoff;
-    @Bind(R.id.breakdown_teleop_total_red)               TextView redTeleopTotal;
-    @Bind(R.id.breakdown_teleop_total_blue)              TextView blueTeleopTotal;
+    @BindView(R.id.breakdown2017_red_teleop_takeoff)         TextView redTeleopTakeoff;
+    @BindView(R.id.breakdown2017_blue_teleop_takeoff)        TextView blueTeleopTakeoff;
+    @BindView(R.id.breakdown_teleop_total_red)               TextView redTeleopTotal;
+    @BindView(R.id.breakdown_teleop_total_blue)              TextView blueTeleopTotal;
 
-    @Bind(R.id.breakdown2017_red_pressure_icon)          ImageView redPressureIcon;
-    @Bind(R.id.breakdown2017_blue_pressure_icon)         ImageView bluePressureIcon;
-    @Bind(R.id.breakdown2017_red_pressure_reached)       TextView redPressureBonus;
-    @Bind(R.id.breakdown2017_blue_pressure_reached)      TextView bluePressureBonus;
+    @BindView(R.id.breakdown2017_red_pressure_icon)          ImageView redPressureIcon;
+    @BindView(R.id.breakdown2017_blue_pressure_icon)         ImageView bluePressureIcon;
+    @BindView(R.id.breakdown2017_red_pressure_reached)       TextView redPressureBonus;
+    @BindView(R.id.breakdown2017_blue_pressure_reached)      TextView bluePressureBonus;
 
-    @Bind(R.id.breakdown2017_red_all_rotors_icon)        ImageView redRotorsIcon;
-    @Bind(R.id.breakdown2017_blue_all_rotors_icon)       ImageView blueRotorsIcon;
-    @Bind(R.id.breakdown2017_red_all_rotors_points)      TextView redRotorBonus;
-    @Bind(R.id.breakdown2017_blue_all_rotors_points)     TextView blueRotorBonus;
+    @BindView(R.id.breakdown2017_red_all_rotors_icon)        ImageView redRotorsIcon;
+    @BindView(R.id.breakdown2017_blue_all_rotors_icon)       ImageView blueRotorsIcon;
+    @BindView(R.id.breakdown2017_red_all_rotors_points)      TextView redRotorBonus;
+    @BindView(R.id.breakdown2017_blue_all_rotors_points)     TextView blueRotorBonus;
 
-    @Bind(R.id.breakdown_fouls_red)                      TextView foulsRed;
-    @Bind(R.id.breakdown_fouls_blue)                     TextView foulsBlue;
-    @Bind(R.id.breakdown_adjust_red)                     TextView adjustRed;
-    @Bind(R.id.breakdown_adjust_blue)                    TextView adjustBlue;
-    @Bind(R.id.breakdown_total_red)                      TextView totalRed;
-    @Bind(R.id.breakdown_total_blue)                     TextView totalBlue;
-    @Bind(R.id.breakdown_red_rp)                         TextView rpRed;
-    @Bind(R.id.breakdown_blue_rp)                        TextView rpBlue;
-    @Bind(R.id.breakdown_rp_header)                      TextView rpHeader;
+    @BindView(R.id.breakdown_fouls_red)                      TextView foulsRed;
+    @BindView(R.id.breakdown_fouls_blue)                     TextView foulsBlue;
+    @BindView(R.id.breakdown_adjust_red)                     TextView adjustRed;
+    @BindView(R.id.breakdown_adjust_blue)                    TextView adjustBlue;
+    @BindView(R.id.breakdown_total_red)                      TextView totalRed;
+    @BindView(R.id.breakdown_total_blue)                     TextView totalBlue;
+    @BindView(R.id.breakdown_red_rp)                         TextView rpRed;
+    @BindView(R.id.breakdown_blue_rp)                        TextView rpBlue;
+    @BindView(R.id.breakdown_rp_header)                      TextView rpHeader;
 
     private static final String AUTO_ROTOR_FORMAT = "rotor%1$dAuto";
     private static final String TELEOP_ROTOR_FORMAT = "rotor%1$dEngaged";

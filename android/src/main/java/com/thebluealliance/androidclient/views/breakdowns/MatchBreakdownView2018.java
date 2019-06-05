@@ -17,7 +17,7 @@ import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getBooleanDefault;
@@ -26,74 +26,74 @@ import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownH
 import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.teamNumberFromKey;
 
 public class MatchBreakdownView2018 extends AbstractMatchBreakdownView {
-    @Bind(R.id.breakdown2018_container)                     GridLayout breakdownContainer;
+    @BindView(R.id.breakdown2018_container)                     GridLayout breakdownContainer;
 
-    @Bind(R.id.breakdown_red1)                              TextView red1;
-    @Bind(R.id.breakdown_blue1)                             TextView blue1;
-    @Bind(R.id.breakdown_red2)                              TextView red2;
-    @Bind(R.id.breakdown_blue2)                             TextView blue2;
-    @Bind(R.id.breakdown_red3)                              TextView red3;
-    @Bind(R.id.breakdown_blue3)                             TextView blue3;
+    @BindView(R.id.breakdown_red1)                              TextView red1;
+    @BindView(R.id.breakdown_blue1)                             TextView blue1;
+    @BindView(R.id.breakdown_red2)                              TextView red2;
+    @BindView(R.id.breakdown_blue2)                             TextView blue2;
+    @BindView(R.id.breakdown_red3)                              TextView red3;
+    @BindView(R.id.breakdown_blue3)                             TextView blue3;
 
-    @Bind(R.id.breakdown2018_red_auto_run_robot_1)          ImageView redAutoRunRobot1;
-    @Bind(R.id.breakdown2018_blue_auto_run_robot_1)         ImageView blueAutoRunRobot1;
-    @Bind(R.id.breakdown2018_red_auto_run_robot_2)          ImageView redAutoRunRobot2;
-    @Bind(R.id.breakdown2018_blue_auto_run_robot_2)         ImageView blueAutoRunRobot2;
-    @Bind(R.id.breakdown2018_red_auto_run_robot_3)          ImageView redAutoRunRobot3;
-    @Bind(R.id.breakdown2018_blue_auto_run_robot_3)         ImageView blueAutoRunRobot3;
-    @Bind(R.id.breakdown2018_red_auto_run_points)           TextView redAutoRunPoints;
-    @Bind(R.id.breakdown2018_blue_auto_run_points)          TextView blueAutoRunPoints;
-    @Bind(R.id.breakdown2018_red_auto_scale_seconds)        TextView redAutoScaleSeconds;
-    @Bind(R.id.breakdown2018_blue_auto_scale_seconds)       TextView blueAutoScaleSeconds;
-    @Bind(R.id.breakdown2018_red_auto_switch_seconds)       TextView redAutoSwitchSeconds;
-    @Bind(R.id.breakdown2018_blue_auto_switch_seconds)      TextView blueAutoSwitchSeconds;
-    @Bind(R.id.breakdown2018_red_auto_ownership_points)     TextView redAutoOwnershipPoints;
-    @Bind(R.id.breakdown2018_blue_auto_ownership_points)    TextView blueAutoOwnershipPoints;
-    @Bind(R.id.breakdown_auto_total_red)                    TextView redAutoTotal;
-    @Bind(R.id.breakdown_auto_total_blue)                   TextView blueAutoTotal;
+    @BindView(R.id.breakdown2018_red_auto_run_robot_1)          ImageView redAutoRunRobot1;
+    @BindView(R.id.breakdown2018_blue_auto_run_robot_1)         ImageView blueAutoRunRobot1;
+    @BindView(R.id.breakdown2018_red_auto_run_robot_2)          ImageView redAutoRunRobot2;
+    @BindView(R.id.breakdown2018_blue_auto_run_robot_2)         ImageView blueAutoRunRobot2;
+    @BindView(R.id.breakdown2018_red_auto_run_robot_3)          ImageView redAutoRunRobot3;
+    @BindView(R.id.breakdown2018_blue_auto_run_robot_3)         ImageView blueAutoRunRobot3;
+    @BindView(R.id.breakdown2018_red_auto_run_points)           TextView redAutoRunPoints;
+    @BindView(R.id.breakdown2018_blue_auto_run_points)          TextView blueAutoRunPoints;
+    @BindView(R.id.breakdown2018_red_auto_scale_seconds)        TextView redAutoScaleSeconds;
+    @BindView(R.id.breakdown2018_blue_auto_scale_seconds)       TextView blueAutoScaleSeconds;
+    @BindView(R.id.breakdown2018_red_auto_switch_seconds)       TextView redAutoSwitchSeconds;
+    @BindView(R.id.breakdown2018_blue_auto_switch_seconds)      TextView blueAutoSwitchSeconds;
+    @BindView(R.id.breakdown2018_red_auto_ownership_points)     TextView redAutoOwnershipPoints;
+    @BindView(R.id.breakdown2018_blue_auto_ownership_points)    TextView blueAutoOwnershipPoints;
+    @BindView(R.id.breakdown_auto_total_red)                    TextView redAutoTotal;
+    @BindView(R.id.breakdown_auto_total_blue)                   TextView blueAutoTotal;
 
-    @Bind(R.id.breakdown2018_teleop_red_scale_seconds)      TextView redTeleopScaleSeconds;
-    @Bind(R.id.breakdown2018_teleop_blue_scale_seconds)     TextView blueTeleopScaleSeconds;
-    @Bind(R.id.breakdown2018_teleop_red_switch_seconds)     TextView redTeleopSwitchSeconds;
-    @Bind(R.id.breakdown2018_teleop_blue_switch_seconds)    TextView blueTeleopSwitchSeconds;
-    @Bind(R.id.breakdown2018_teleop_red_ownership_points)   TextView redTeleopOwnershipPoints;
-    @Bind(R.id.breakdown2018_teleop_blue_ownership_points)  TextView blueTeleopOwnershipPoints;
+    @BindView(R.id.breakdown2018_teleop_red_scale_seconds)      TextView redTeleopScaleSeconds;
+    @BindView(R.id.breakdown2018_teleop_blue_scale_seconds)     TextView blueTeleopScaleSeconds;
+    @BindView(R.id.breakdown2018_teleop_red_switch_seconds)     TextView redTeleopSwitchSeconds;
+    @BindView(R.id.breakdown2018_teleop_blue_switch_seconds)    TextView blueTeleopSwitchSeconds;
+    @BindView(R.id.breakdown2018_teleop_red_ownership_points)   TextView redTeleopOwnershipPoints;
+    @BindView(R.id.breakdown2018_teleop_blue_ownership_points)  TextView blueTeleopOwnershipPoints;
 
-    @Bind(R.id.breakdown2018_vault_red_force_cubes)         TextView redVaultForceCubes;
-    @Bind(R.id.breakdown2018_vault_blue_force_cubes)        TextView blueVaultForceCubes;
-    @Bind(R.id.breakdown2018_vault_red_levitate_cubes)      TextView redVaultLevitateCubes;
-    @Bind(R.id.breakdown2018_vault_blue_levitate_cubes)     TextView blueVaultLevitateCubes;
-    @Bind(R.id.breakdown2018_vault_red_boost_cubes)         TextView redVaultBoostCubes;
-    @Bind(R.id.breakdown2018_vault_blue_boost_cubes)        TextView blueVaultBoostCubes;
-    @Bind(R.id.breakdown2018_vault_red_total)               TextView redVaultPoints;
-    @Bind(R.id.breakdown2018_vault_blue_total)              TextView blueVaultPoints;
+    @BindView(R.id.breakdown2018_vault_red_force_cubes)         TextView redVaultForceCubes;
+    @BindView(R.id.breakdown2018_vault_blue_force_cubes)        TextView blueVaultForceCubes;
+    @BindView(R.id.breakdown2018_vault_red_levitate_cubes)      TextView redVaultLevitateCubes;
+    @BindView(R.id.breakdown2018_vault_blue_levitate_cubes)     TextView blueVaultLevitateCubes;
+    @BindView(R.id.breakdown2018_vault_red_boost_cubes)         TextView redVaultBoostCubes;
+    @BindView(R.id.breakdown2018_vault_blue_boost_cubes)        TextView blueVaultBoostCubes;
+    @BindView(R.id.breakdown2018_vault_red_total)               TextView redVaultPoints;
+    @BindView(R.id.breakdown2018_vault_blue_total)              TextView blueVaultPoints;
 
-    @Bind(R.id.breakdown2018_endgame_red_robot_1)           TextView redEndgameRobot1;
-    @Bind(R.id.breakdown2018_endgame_blue_robot_1)          TextView blueEndgameRobot1;
-    @Bind(R.id.breakdown2018_endgame_red_robot_2)           TextView redEndgameRobot2;
-    @Bind(R.id.breakdown2018_endgame_blue_robot_2)          TextView blueEndgameRobot2;
-    @Bind(R.id.breakdown2018_endgame_red_robot_3)           TextView redEndgameRobot3;
-    @Bind(R.id.breakdown2018_endgame_blue_robot_3)          TextView blueEndgameRobot3;
-    @Bind(R.id.breakdown2018_endgame_red_total)             TextView redEndgamePoints;
-    @Bind(R.id.breakdown2018_endgame_blue_total)            TextView blueEndgamePoints;
+    @BindView(R.id.breakdown2018_endgame_red_robot_1)           TextView redEndgameRobot1;
+    @BindView(R.id.breakdown2018_endgame_blue_robot_1)          TextView blueEndgameRobot1;
+    @BindView(R.id.breakdown2018_endgame_red_robot_2)           TextView redEndgameRobot2;
+    @BindView(R.id.breakdown2018_endgame_blue_robot_2)          TextView blueEndgameRobot2;
+    @BindView(R.id.breakdown2018_endgame_red_robot_3)           TextView redEndgameRobot3;
+    @BindView(R.id.breakdown2018_endgame_blue_robot_3)          TextView blueEndgameRobot3;
+    @BindView(R.id.breakdown2018_endgame_red_total)             TextView redEndgamePoints;
+    @BindView(R.id.breakdown2018_endgame_blue_total)            TextView blueEndgamePoints;
 
-    @Bind(R.id.breakdown_teleop_total_red)                  TextView redTeleopTotal;
-    @Bind(R.id.breakdown_teleop_total_blue)                 TextView blueTeleopTotal;
+    @BindView(R.id.breakdown_teleop_total_red)                  TextView redTeleopTotal;
+    @BindView(R.id.breakdown_teleop_total_blue)                 TextView blueTeleopTotal;
 
-    @Bind(R.id.breakdown2018_red_face_the_boss)             ImageView redFaceTheBoss;
-    @Bind(R.id.breakdown2018_blue_face_the_boss)            ImageView blueFaceTheBoss;
-    @Bind(R.id.breakdown2018_red_auto_quest)                ImageView redAutoQuest;
-    @Bind(R.id.breakdown2018_blue_auto_quest)               ImageView blueAutoQuest;
+    @BindView(R.id.breakdown2018_red_face_the_boss)             ImageView redFaceTheBoss;
+    @BindView(R.id.breakdown2018_blue_face_the_boss)            ImageView blueFaceTheBoss;
+    @BindView(R.id.breakdown2018_red_auto_quest)                ImageView redAutoQuest;
+    @BindView(R.id.breakdown2018_blue_auto_quest)               ImageView blueAutoQuest;
 
-    @Bind(R.id.breakdown_fouls_red)                         TextView foulsRed;
-    @Bind(R.id.breakdown_fouls_blue)                        TextView foulsBlue;
-    @Bind(R.id.breakdown_adjust_red)                        TextView adjustRed;
-    @Bind(R.id.breakdown_adjust_blue)                       TextView adjustBlue;
-    @Bind(R.id.breakdown_total_red)                         TextView totalRed;
-    @Bind(R.id.breakdown_total_blue)                        TextView totalBlue;
-    @Bind(R.id.breakdown_red_rp)                            TextView rpRed;
-    @Bind(R.id.breakdown_blue_rp)                           TextView rpBlue;
-    @Bind(R.id.breakdown_rp_header)                         TextView rpHeader;
+    @BindView(R.id.breakdown_fouls_red)                         TextView foulsRed;
+    @BindView(R.id.breakdown_fouls_blue)                        TextView foulsBlue;
+    @BindView(R.id.breakdown_adjust_red)                        TextView adjustRed;
+    @BindView(R.id.breakdown_adjust_blue)                       TextView adjustBlue;
+    @BindView(R.id.breakdown_total_red)                         TextView totalRed;
+    @BindView(R.id.breakdown_total_blue)                        TextView totalBlue;
+    @BindView(R.id.breakdown_red_rp)                            TextView rpRed;
+    @BindView(R.id.breakdown_blue_rp)                           TextView rpBlue;
+    @BindView(R.id.breakdown_rp_header)                         TextView rpHeader;
 
     public MatchBreakdownView2018(Context context) {
         super(context);

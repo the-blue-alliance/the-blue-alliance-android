@@ -12,16 +12,16 @@ import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class EventItemView extends BindableFrameLayout<EventViewModel> {
 
-    @Bind(R.id.event_name) TextView eventName;
-    @Bind(R.id.event_dates) TextView eventDates;
-    @Bind(R.id.event_location) TextView eventLocation;
-    @Bind(R.id.model_settings) ImageView modelSettings;
+    @BindView(R.id.event_name) TextView eventName;
+    @BindView(R.id.event_dates) TextView eventDates;
+    @BindView(R.id.event_location) TextView eventLocation;
+    @BindView(R.id.model_settings) ImageView modelSettings;
 
     public EventItemView(Context context) {
         super(context);

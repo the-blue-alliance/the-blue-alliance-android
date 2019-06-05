@@ -11,16 +11,16 @@ import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class UpcomingMatchNotificationItemView extends BindableFrameLayout<UpcomingMatchNotificationViewModel> {
-    @Bind(R.id.card_header) TextView header;
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.match_details) MatchView matchView;
-    @Bind(R.id.notification_time) TextView time;
-    @Bind(R.id.summary_container) View summaryContainer;
+    @BindView(R.id.card_header) TextView header;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.match_details) MatchView matchView;
+    @BindView(R.id.notification_time) TextView time;
+    @BindView(R.id.summary_container) View summaryContainer;
 
     public UpcomingMatchNotificationItemView(Context context) {
         super(context);

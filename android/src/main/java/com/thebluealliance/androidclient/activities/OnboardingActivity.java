@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import butterknife.Unbinder;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -38,7 +39,7 @@ import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -54,20 +55,22 @@ public class OnboardingActivity extends AppCompatActivity
 
     private DatafeedComponent mComponent;
 
-    @Bind(R.id.view_pager)
+    @BindView(R.id.view_pager)
     DisableSwipeViewPager viewPager;
 
-    @Bind(R.id.mytba_view_pager)
+    @BindView(R.id.mytba_view_pager)
     MyTBAOnboardingViewPager mMyTBAOnboardingViewPager;
 
-    @Bind(R.id.loading_message)
+    @BindView(R.id.loading_message)
     TextView loadingMessage;
 
-    @Bind(R.id.loading_progress_bar)
+    @BindView(R.id.loading_progress_bar)
     ProgressBar loadingProgressBar;
 
-    @Bind(R.id.continue_to_end)
+    @BindView(R.id.continue_to_end)
     View continueToEndButton;
+
+    private Unbinder unbinder;
 
     private String currentLoadingMessage = "";
 
@@ -89,7 +92,7 @@ public class OnboardingActivity extends AppCompatActivity
                 .build()
                 .inject(this);
         setContentView(R.layout.activity_onboarding);
-        ButterKnife.bind(this);
+        unbinder = ButterKnife.bind(this);
 
         viewPager.setSwipeEnabled(false);
         viewPager.setOffscreenPageLimit(10);
@@ -151,7 +154,9 @@ public class OnboardingActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ButterKnife.unbind(this);
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
     }
 
     @Override

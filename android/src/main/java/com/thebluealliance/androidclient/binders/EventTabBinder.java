@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.binders;
 
 import androidx.annotation.Nullable;
 
+import butterknife.Unbinder;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.models.EventWeekTab;
@@ -14,6 +15,7 @@ public class EventTabBinder extends AbstractDataBinder<List<EventWeekTab>> {
 
     private EventsByWeekFragment mFragment;
     private List<EventWeekTab> mTabs;
+    private Unbinder unbinder;
 
     public void setFragment(EventsByWeekFragment fragment) {
         mFragment = fragment;
@@ -34,14 +36,14 @@ public class EventTabBinder extends AbstractDataBinder<List<EventWeekTab>> {
 
     @Override
     public void bindViews() {
-        ButterKnife.bind(this, mRootView);
+        unbinder = ButterKnife.bind(this, mRootView);
     }
 
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
-        if (unbindViews) {
-            ButterKnife.unbind(this);
+        if (unbindViews && unbinder != null) {
+            unbinder.unbind();
         }
     }
 
