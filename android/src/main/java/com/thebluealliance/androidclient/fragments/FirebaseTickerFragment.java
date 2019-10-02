@@ -61,7 +61,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.nlopez.smartadapters.utils.Mapper;
 import rx.Observable;
@@ -86,15 +86,15 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     @Inject DatabaseWriter mWriter;
     @Inject @Named("firebase_api") FirebaseAPI mFirebaseApi;
 
-    @Bind(R.id.list) RecyclerView mNotificationsRecyclerView;
-    @Bind(R.id.filter_list) ListView mFilterListView;
-    @Bind(R.id.filter_list_container) View mFilterListContainer;
-    @Bind(R.id.no_data) NoDataView mNoDataView;
-    @Bind(R.id.progress) ProgressBar mProgressBar;
-    @Bind(R.id.left_button) TextView mLeftButton;
-    @Bind(R.id.right_button) TextView mRightButton;
-    @Bind(R.id.filter_shadow) View mShadow;
-    @Bind(R.id.foreground_dim) View mForegroundDim;
+    @BindView(R.id.list) RecyclerView mNotificationsRecyclerView;
+    @BindView(R.id.filter_list) ListView mFilterListView;
+    @BindView(R.id.filter_list_container) View mFilterListContainer;
+    @BindView(R.id.no_data) NoDataView mNoDataView;
+    @BindView(R.id.progress) ProgressBar mProgressBar;
+    @BindView(R.id.left_button) TextView mLeftButton;
+    @BindView(R.id.right_button) TextView mRightButton;
+    @BindView(R.id.filter_shadow) View mShadow;
+    @BindView(R.id.foreground_dim) View mForegroundDim;
 
     private AnimatedRecyclerMultiAdapter mNotificationsAdapter;
     private ListViewAdapter mNotificationFilterAdapter;

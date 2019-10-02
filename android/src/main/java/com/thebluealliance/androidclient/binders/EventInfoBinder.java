@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import butterknife.Unbinder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
@@ -36,7 +37,7 @@ import org.greenrobot.eventbus.Subscribe;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -52,30 +53,32 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @Inject SocialClickListener mSocialClickListener;
     @Inject EventInfoContainerClickListener mInfoClickListener;
 
-    @Bind(R.id.content) View content;
-    @Bind(R.id.event_name) TextView eventName;
-    @Bind(R.id.event_date) TextView eventDate;
-    @Bind(R.id.event_venue) TextView eventVenue;
-    @Bind(R.id.top_teams) TextView topTeams;
-    @Bind(R.id.top_oprs) TextView topOprs;
-    @Bind(R.id.top_teams_container) View topTeamsContainer;
-    @Bind(R.id.top_oprs_container) View topOprsContainer;
-    @Bind(R.id.progress) ProgressBar progressBar;
-    @Bind(R.id.event_date_container) View eventDateContainer;
-    @Bind(R.id.event_venue_container) View eventVenueContainer;
-    @Bind(R.id.event_website_container) View eventWebsiteContainer;
-    @Bind(R.id.event_website_title) TextView eventWebsiteTitle;
-    @Bind(R.id.event_twitter_container) View eventTwitterContainer;
-    @Bind(R.id.event_twitter_title) TextView eventTwitterTitle;
-    @Bind(R.id.event_youtube_container) View eventYoutubeContainer;
-    @Bind(R.id.event_youtube_title) TextView eventYoutubeTitle;
-    @Bind(R.id.event_cd_container) View eventCdContainer;
-    @Bind(R.id.last_match_view) FrameLayout lastMatchView;
-    @Bind(R.id.next_match_container) CardView nextMatchContainer;
-    @Bind(R.id.next_match_view) FrameLayout nextMatchView;
-    @Bind(R.id.last_match_container) CardView lastMatchContainer;
-    @Bind(R.id.event_webcast_container) FrameLayout webcastContainer;
-    @Bind((R.id.event_webcast_button)) Button webcastButton;
+    @BindView(R.id.content) View content;
+    @BindView(R.id.event_name) TextView eventName;
+    @BindView(R.id.event_date) TextView eventDate;
+    @BindView(R.id.event_venue) TextView eventVenue;
+    @BindView(R.id.top_teams) TextView topTeams;
+    @BindView(R.id.top_oprs) TextView topOprs;
+    @BindView(R.id.top_teams_container) View topTeamsContainer;
+    @BindView(R.id.top_oprs_container) View topOprsContainer;
+    @BindView(R.id.progress) ProgressBar progressBar;
+    @BindView(R.id.event_date_container) View eventDateContainer;
+    @BindView(R.id.event_venue_container) View eventVenueContainer;
+    @BindView(R.id.event_website_container) View eventWebsiteContainer;
+    @BindView(R.id.event_website_title) TextView eventWebsiteTitle;
+    @BindView(R.id.event_twitter_container) View eventTwitterContainer;
+    @BindView(R.id.event_twitter_title) TextView eventTwitterTitle;
+    @BindView(R.id.event_youtube_container) View eventYoutubeContainer;
+    @BindView(R.id.event_youtube_title) TextView eventYoutubeTitle;
+    @BindView(R.id.event_cd_container) View eventCdContainer;
+    @BindView(R.id.last_match_view) FrameLayout lastMatchView;
+    @BindView(R.id.next_match_container) CardView nextMatchContainer;
+    @BindView(R.id.next_match_view) FrameLayout nextMatchView;
+    @BindView(R.id.last_match_container) CardView lastMatchContainer;
+    @BindView(R.id.event_webcast_container) FrameLayout webcastContainer;
+    @BindView((R.id.event_webcast_button)) Button webcastButton;
+
+    private Unbinder unbinder;
 
     @Inject
     public EventInfoBinder(MatchRenderer renderer,
@@ -95,7 +98,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @Override
     public void bindViews() {
         if (!mAreViewsBound) {
-            ButterKnife.bind(this, mRootView);
+            unbinder = ButterKnife.bind(this, mRootView);
             mAreViewsBound = true;
         }
     }
@@ -226,8 +229,8 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
-        if (unbindViews) {
-            ButterKnife.unbind(this);
+        if (unbindViews && unbinder != null) {
+            unbinder.unbind();
             mAreViewsBound = false;
         }
     }

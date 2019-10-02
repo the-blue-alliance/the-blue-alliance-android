@@ -7,13 +7,13 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class ListSectionHeaderItemView extends BindableFrameLayout<ListSectionHeaderViewModel> {
 
-    @Bind(R.id.event_type) TextView eventType;
+    @BindView(R.id.event_type) TextView eventType;
 
     public ListSectionHeaderItemView(Context context) {
         super(context);

@@ -16,7 +16,7 @@ import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getBooleanDefault;
@@ -25,72 +25,72 @@ import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownH
 import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.teamNumberFromKey;
 
 public class MatchBreakdownView2019 extends AbstractMatchBreakdownView {
-    @Bind(R.id.breakdown2019_container)                     GridLayout breakdownContainer;
+    @BindView(R.id.breakdown2019_container)                     GridLayout breakdownContainer;
 
-    @Bind(R.id.breakdown_red1)                              TextView red1;
-    @Bind(R.id.breakdown_blue1)                             TextView blue1;
-    @Bind(R.id.breakdown_red2)                              TextView red2;
-    @Bind(R.id.breakdown_blue2)                             TextView blue2;
-    @Bind(R.id.breakdown_red3)                              TextView red3;
-    @Bind(R.id.breakdown_blue3)                             TextView blue3;
+    @BindView(R.id.breakdown_red1)                              TextView red1;
+    @BindView(R.id.breakdown_blue1)                             TextView blue1;
+    @BindView(R.id.breakdown_red2)                              TextView red2;
+    @BindView(R.id.breakdown_blue2)                             TextView blue2;
+    @BindView(R.id.breakdown_red3)                              TextView red3;
+    @BindView(R.id.breakdown_blue3)                             TextView blue3;
 
-    @Bind(R.id.breakdown2019_red_sandstorm_bonus_robot_1)   TextView redSandstormBonusRobot1;
-    @Bind(R.id.breakdown2019_blue_sandstorm_bonus_robot_1)  TextView blueSandstormBonusRobot1;
-    @Bind(R.id.breakdown2019_red_sandstorm_bonus_robot_2)   TextView redSandstormBonusRobot2;
-    @Bind(R.id.breakdown2019_blue_sandstorm_bonus_robot_2)  TextView blueSandstormBonusRobot2;
-    @Bind(R.id.breakdown2019_red_sandstorm_bonus_robot_3)   TextView redSandstormBonusRobot3;
-    @Bind(R.id.breakdown2019_blue_sandstorm_bonus_robot_3)  TextView blueSandstormBonusRobot3;
-    @Bind(R.id.breakdown2019_sandstorm_total_red)           TextView redSandstormTotal;
-    @Bind(R.id.breakdown2019_sandstorm_total_blue)          TextView blueSandstormTotal;
+    @BindView(R.id.breakdown2019_red_sandstorm_bonus_robot_1)   TextView redSandstormBonusRobot1;
+    @BindView(R.id.breakdown2019_blue_sandstorm_bonus_robot_1)  TextView blueSandstormBonusRobot1;
+    @BindView(R.id.breakdown2019_red_sandstorm_bonus_robot_2)   TextView redSandstormBonusRobot2;
+    @BindView(R.id.breakdown2019_blue_sandstorm_bonus_robot_2)  TextView blueSandstormBonusRobot2;
+    @BindView(R.id.breakdown2019_red_sandstorm_bonus_robot_3)   TextView redSandstormBonusRobot3;
+    @BindView(R.id.breakdown2019_blue_sandstorm_bonus_robot_3)  TextView blueSandstormBonusRobot3;
+    @BindView(R.id.breakdown2019_sandstorm_total_red)           TextView redSandstormTotal;
+    @BindView(R.id.breakdown2019_sandstorm_total_blue)          TextView blueSandstormTotal;
 
 
-    @Bind(R.id.breakdown2019_red_cargo_ship_panels)         TextView redCargoShipPanels;
-    @Bind(R.id.breakdown2019_red_cargo_ship_null_panels)    TextView redCargoShipNullPanels;
-    @Bind(R.id.breakdown2019_red_cargo_ship_cargo)          TextView redCargoShipCargo;
-    @Bind(R.id.breakdown2019_red_rocket_1_panels)           TextView redRocket1Panels;
-    @Bind(R.id.breakdown2019_red_rocket_1_cargo)            TextView redRocket1Cargo;
-    @Bind(R.id.breakdown2019_red_rocket_2_panels)           TextView redRocket2Panels;
-    @Bind(R.id.breakdown2019_red_rocket_2_cargo)            TextView redRocket2Cargo;
+    @BindView(R.id.breakdown2019_red_cargo_ship_panels)         TextView redCargoShipPanels;
+    @BindView(R.id.breakdown2019_red_cargo_ship_null_panels)    TextView redCargoShipNullPanels;
+    @BindView(R.id.breakdown2019_red_cargo_ship_cargo)          TextView redCargoShipCargo;
+    @BindView(R.id.breakdown2019_red_rocket_1_panels)           TextView redRocket1Panels;
+    @BindView(R.id.breakdown2019_red_rocket_1_cargo)            TextView redRocket1Cargo;
+    @BindView(R.id.breakdown2019_red_rocket_2_panels)           TextView redRocket2Panels;
+    @BindView(R.id.breakdown2019_red_rocket_2_cargo)            TextView redRocket2Cargo;
 
-    @Bind(R.id.breakdown2019_blue_cargo_ship_panels)        TextView blueCargoShipPanels;
-    @Bind(R.id.breakdown2019_blue_cargo_ship_null_panels)   TextView blueCargoShipNullPanels;
-    @Bind(R.id.breakdown2019_blue_cargo_ship_cargo)         TextView blueCargoShipCargo;
-    @Bind(R.id.breakdown2019_blue_rocket_1_panels)          TextView blueRocket1Panels;
-    @Bind(R.id.breakdown2019_blue_rocket_1_cargo)           TextView blueRocket1Cargo;
-    @Bind(R.id.breakdown2019_blue_rocket_2_panels)          TextView blueRocket2Panels;
-    @Bind(R.id.breakdown2019_blue_rocket_2_cargo)           TextView blueRocket2Cargo;
+    @BindView(R.id.breakdown2019_blue_cargo_ship_panels)        TextView blueCargoShipPanels;
+    @BindView(R.id.breakdown2019_blue_cargo_ship_null_panels)   TextView blueCargoShipNullPanels;
+    @BindView(R.id.breakdown2019_blue_cargo_ship_cargo)         TextView blueCargoShipCargo;
+    @BindView(R.id.breakdown2019_blue_rocket_1_panels)          TextView blueRocket1Panels;
+    @BindView(R.id.breakdown2019_blue_rocket_1_cargo)           TextView blueRocket1Cargo;
+    @BindView(R.id.breakdown2019_blue_rocket_2_panels)          TextView blueRocket2Panels;
+    @BindView(R.id.breakdown2019_blue_rocket_2_cargo)           TextView blueRocket2Cargo;
 
-    @Bind(R.id.breakdown2019_red_hatch_panel_points)        TextView redHatchPanelPoints;
-    @Bind(R.id.breakdown2019_blue_hatch_panel_points)       TextView blueHatchPanelPoints;
-    @Bind(R.id.breakdown2019_red_cargo_points)              TextView redCargoPoints;
-    @Bind(R.id.breakdown2019_blue_cargo_points)             TextView blueCargoPoints;
+    @BindView(R.id.breakdown2019_red_hatch_panel_points)        TextView redHatchPanelPoints;
+    @BindView(R.id.breakdown2019_blue_hatch_panel_points)       TextView blueHatchPanelPoints;
+    @BindView(R.id.breakdown2019_red_cargo_points)              TextView redCargoPoints;
+    @BindView(R.id.breakdown2019_blue_cargo_points)             TextView blueCargoPoints;
 
-    @Bind(R.id.breakdown2019_red_hab_robot_1)               TextView redHabRobot1;
-    @Bind(R.id.breakdown2019_blue_hab_robot_1)              TextView blueHabRobot1;
-    @Bind(R.id.breakdown2019_red_hab_robot_2)               TextView redHabRobot2;
-    @Bind(R.id.breakdown2019_blue_hab_robot_2)              TextView blueHabRobot2;
-    @Bind(R.id.breakdown2019_red_hab_robot_3)               TextView redHabRobot3;
-    @Bind(R.id.breakdown2019_blue_hab_robot_3)              TextView blueHabRobot3;
-    @Bind(R.id.breakdown2019_hab_total_red)                 TextView redHabTotal;
-    @Bind(R.id.breakdown2019_hab_total_blue)                TextView blueHabTotal;
+    @BindView(R.id.breakdown2019_red_hab_robot_1)               TextView redHabRobot1;
+    @BindView(R.id.breakdown2019_blue_hab_robot_1)              TextView blueHabRobot1;
+    @BindView(R.id.breakdown2019_red_hab_robot_2)               TextView redHabRobot2;
+    @BindView(R.id.breakdown2019_blue_hab_robot_2)              TextView blueHabRobot2;
+    @BindView(R.id.breakdown2019_red_hab_robot_3)               TextView redHabRobot3;
+    @BindView(R.id.breakdown2019_blue_hab_robot_3)              TextView blueHabRobot3;
+    @BindView(R.id.breakdown2019_hab_total_red)                 TextView redHabTotal;
+    @BindView(R.id.breakdown2019_hab_total_blue)                TextView blueHabTotal;
 
-    @Bind(R.id.breakdown_teleop_total_red)                  TextView redTeleopTotal;
-    @Bind(R.id.breakdown_teleop_total_blue)                 TextView blueTeleopTotal;
+    @BindView(R.id.breakdown_teleop_total_red)                  TextView redTeleopTotal;
+    @BindView(R.id.breakdown_teleop_total_blue)                 TextView blueTeleopTotal;
 
-    @Bind(R.id.breakdown2019_red_complete_rocket)           TextView redCompleteRocket;
-    @Bind(R.id.breakdown2019_blue_complete_rocket)          TextView blueCompleteRocket;
-    @Bind(R.id.breakdown2019_red_hab_docking)               TextView redHabDocking;
-    @Bind(R.id.breakdown2019_blue_hab_docking)              TextView blueHabDocking;
+    @BindView(R.id.breakdown2019_red_complete_rocket)           TextView redCompleteRocket;
+    @BindView(R.id.breakdown2019_blue_complete_rocket)          TextView blueCompleteRocket;
+    @BindView(R.id.breakdown2019_red_hab_docking)               TextView redHabDocking;
+    @BindView(R.id.breakdown2019_blue_hab_docking)              TextView blueHabDocking;
 
-    @Bind(R.id.breakdown_fouls_red)                         TextView foulsRed;
-    @Bind(R.id.breakdown_fouls_blue)                        TextView foulsBlue;
-    @Bind(R.id.breakdown_adjust_red)                        TextView adjustRed;
-    @Bind(R.id.breakdown_adjust_blue)                       TextView adjustBlue;
-    @Bind(R.id.breakdown_total_red)                         TextView totalRed;
-    @Bind(R.id.breakdown_total_blue)                        TextView totalBlue;
-    @Bind(R.id.breakdown_red_rp)                            TextView rpRed;
-    @Bind(R.id.breakdown_blue_rp)                           TextView rpBlue;
-    @Bind(R.id.breakdown_rp_header)                         TextView rpHeader;
+    @BindView(R.id.breakdown_fouls_red)                         TextView foulsRed;
+    @BindView(R.id.breakdown_fouls_blue)                        TextView foulsBlue;
+    @BindView(R.id.breakdown_adjust_red)                        TextView adjustRed;
+    @BindView(R.id.breakdown_adjust_blue)                       TextView adjustBlue;
+    @BindView(R.id.breakdown_total_red)                         TextView totalRed;
+    @BindView(R.id.breakdown_total_blue)                        TextView totalBlue;
+    @BindView(R.id.breakdown_red_rp)                            TextView rpRed;
+    @BindView(R.id.breakdown_blue_rp)                           TextView rpBlue;
+    @BindView(R.id.breakdown_rp_header)                         TextView rpHeader;
 
     private Resources mResources;
 

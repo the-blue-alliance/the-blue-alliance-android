@@ -12,16 +12,16 @@ import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.viewmodels.ScoreNotificationViewModel;
 import com.thebluealliance.androidclient.views.MatchView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class ScoreNotificationItemView extends BindableFrameLayout<ScoreNotificationViewModel> {
-    @Bind(R.id.card_header) TextView header;
-    @Bind(R.id.title) TextView title;
-    @Bind(R.id.match_details) MatchView matchView;
-    @Bind(R.id.notification_time) TextView time;
-    @Bind(R.id.summary_container) ViewGroup summaryContainer;
+    @BindView(R.id.card_header) TextView header;
+    @BindView(R.id.title) TextView title;
+    @BindView(R.id.match_details) MatchView matchView;
+    @BindView(R.id.notification_time) TextView time;
+    @BindView(R.id.summary_container) ViewGroup summaryContainer;
 
     MatchRenderer mRenderer;
 

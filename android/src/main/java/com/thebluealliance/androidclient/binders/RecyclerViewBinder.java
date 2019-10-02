@@ -5,26 +5,29 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import butterknife.Unbinder;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.nlopez.smartadapters.SmartAdapter;
 import io.nlopez.smartadapters.adapters.RecyclerMultiAdapter;
 
 public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
 
-    @Bind(R.id.list) RecyclerView mRecyclerView;
-    @Bind(R.id.progress) ProgressBar mProgressBar;
+    @BindView(R.id.list) RecyclerView mRecyclerView;
+    @BindView(R.id.progress) ProgressBar mProgressBar;
 
     protected RecyclerViewAdapterCreatorInitializer mMapper;
     protected RecyclerMultiAdapter mAdapter;
 
     protected List<Object> mList;
+
+    private Unbinder unbinder;
 
     public void setRecyclerViewBinderMapper(RecyclerViewAdapterCreatorInitializer mapper) {
         mMapper = mapper;
@@ -32,7 +35,7 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
 
     @Override
     public void bindViews() {
-        ButterKnife.bind(this, mRootView);
+        unbinder = ButterKnife.bind(this, mRootView);
     }
 
     @Override
@@ -102,8 +105,8 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
-        if (unbindViews) {
-            ButterKnife.unbind(this);
+        if (unbindViews && unbinder != null) {
+            unbinder.unbind();
         }
         if (mRecyclerView != null) {
             mRecyclerView.setVisibility(View.GONE);

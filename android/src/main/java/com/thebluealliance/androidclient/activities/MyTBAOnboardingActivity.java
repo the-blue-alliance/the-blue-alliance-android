@@ -20,7 +20,7 @@ import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -31,10 +31,10 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
     private static final String MYTBA_LOGIN_COMPLETE = "mytba_login_complete";
     private static final int SIGNIN_CODE = 254;
 
-    @Bind(R.id.mytba_view_pager)
+    @BindView(R.id.mytba_view_pager)
     MyTBAOnboardingViewPager mMyTBAOnboardingViewPager;
 
-    @Bind(R.id.continue_button_label)
+    @BindView(R.id.continue_button_label)
     TextView mContinueButtonText;
 
     private boolean isMyTBALoginComplete = false;

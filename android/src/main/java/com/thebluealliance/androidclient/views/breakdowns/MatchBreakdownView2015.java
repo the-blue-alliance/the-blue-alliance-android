@@ -14,7 +14,7 @@ import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getIntDefault;
@@ -23,50 +23,50 @@ import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownH
 
 public class MatchBreakdownView2015 extends AbstractMatchBreakdownView {
 
-    @Bind(R.id.breakdown2015_container)                  GridLayout breakdownContainer;
+    @BindView(R.id.breakdown2015_container)                  GridLayout breakdownContainer;
 
-    @Bind(R.id.breakdown_red1)                           TextView red1;
-    @Bind(R.id.breakdown_blue1)                          TextView blue1;
-    @Bind(R.id.breakdown_red2)                           TextView red2;
-    @Bind(R.id.breakdown_blue2)                          TextView blue2;
-    @Bind(R.id.breakdown_red3)                           TextView red3;
-    @Bind(R.id.breakdown_blue3)                          TextView blue3;
+    @BindView(R.id.breakdown_red1)                           TextView red1;
+    @BindView(R.id.breakdown_blue1)                          TextView blue1;
+    @BindView(R.id.breakdown_red2)                           TextView red2;
+    @BindView(R.id.breakdown_blue2)                          TextView blue2;
+    @BindView(R.id.breakdown_red3)                           TextView red3;
+    @BindView(R.id.breakdown_blue3)                          TextView blue3;
 
-    @Bind(R.id.breakdown2015_auto_tote_points_red)       TextView autoTotePointsRed;
-    @Bind(R.id.breakdown2015_auto_tote_points_blue)      TextView autoTotePointsBlue;
-    @Bind(R.id.breakdown2015_auto_container_points_red)  TextView autoContainerPointsRed;
-    @Bind(R.id.breakdown2015_auto_container_points_blue) TextView autoContainerPointsBlue;
-    @Bind(R.id.breakdown2015_auto_robot_points_red)      TextView autoRobotPointsRed;
-    @Bind(R.id.breakdown2015_auto_robot_points_blue)     TextView autoRobotPointsBlue;
-    @Bind(R.id.breakdown_auto_total_red)                 TextView autoTotalRed;
-    @Bind(R.id.breakdown_auto_total_blue)                TextView autoTotalBlue;
+    @BindView(R.id.breakdown2015_auto_tote_points_red)       TextView autoTotePointsRed;
+    @BindView(R.id.breakdown2015_auto_tote_points_blue)      TextView autoTotePointsBlue;
+    @BindView(R.id.breakdown2015_auto_container_points_red)  TextView autoContainerPointsRed;
+    @BindView(R.id.breakdown2015_auto_container_points_blue) TextView autoContainerPointsBlue;
+    @BindView(R.id.breakdown2015_auto_robot_points_red)      TextView autoRobotPointsRed;
+    @BindView(R.id.breakdown2015_auto_robot_points_blue)     TextView autoRobotPointsBlue;
+    @BindView(R.id.breakdown_auto_total_red)                 TextView autoTotalRed;
+    @BindView(R.id.breakdown_auto_total_blue)                TextView autoTotalBlue;
 
-    @Bind(R.id.breakdown2015_tote_points_red)            TextView totePointsRed;
-    @Bind(R.id.breakdown2015_tote_points_blue)           TextView totePointsBlue;
-    @Bind(R.id.breakdown2015_container_points_red)       TextView containerPointsRed;
-    @Bind(R.id.breakdown2015_container_points_blue)      TextView containerPointsBlue;
-    @Bind(R.id.breakdown2015_litter_points_red)          TextView litterPointsRed;
-    @Bind(R.id.breakdown2015_litter_points_blue)         TextView litterPointsBlue;
-    @Bind(R.id.breakdown_teleop_total_red)               TextView teleopTotalRed;
-    @Bind(R.id.breakdown_teleop_total_blue)              TextView teleopTotalBlue;
+    @BindView(R.id.breakdown2015_tote_points_red)            TextView totePointsRed;
+    @BindView(R.id.breakdown2015_tote_points_blue)           TextView totePointsBlue;
+    @BindView(R.id.breakdown2015_container_points_red)       TextView containerPointsRed;
+    @BindView(R.id.breakdown2015_container_points_blue)      TextView containerPointsBlue;
+    @BindView(R.id.breakdown2015_litter_points_red)          TextView litterPointsRed;
+    @BindView(R.id.breakdown2015_litter_points_blue)         TextView litterPointsBlue;
+    @BindView(R.id.breakdown_teleop_total_red)               TextView teleopTotalRed;
+    @BindView(R.id.breakdown_teleop_total_blue)              TextView teleopTotalBlue;
 
-    @Bind(R.id.breakdown2015_coop_points_red)            TextView coopPointsRed;
-    @Bind(R.id.breakdown2015_coop_points_blue)           TextView coopPointsBlue;
-    @Bind(R.id.breakdown_fouls_red)                      TextView foulsRed;
-    @Bind(R.id.breakdown_fouls_blue)                     TextView foulsBlue;
-    @Bind(R.id.breakdown_adjust_red)                     TextView adjustRed;
-    @Bind(R.id.breakdown_adjust_blue)                    TextView adjustBlue;
-    @Bind(R.id.breakdown_total_red)                      TextView totalRed;
-    @Bind(R.id.breakdown_total_blue)                     TextView totalBlue;
+    @BindView(R.id.breakdown2015_coop_points_red)            TextView coopPointsRed;
+    @BindView(R.id.breakdown2015_coop_points_blue)           TextView coopPointsBlue;
+    @BindView(R.id.breakdown_fouls_red)                      TextView foulsRed;
+    @BindView(R.id.breakdown_fouls_blue)                     TextView foulsBlue;
+    @BindView(R.id.breakdown_adjust_red)                     TextView adjustRed;
+    @BindView(R.id.breakdown_adjust_blue)                    TextView adjustBlue;
+    @BindView(R.id.breakdown_total_red)                      TextView totalRed;
+    @BindView(R.id.breakdown_total_blue)                     TextView totalBlue;
 
-    @Bind(R.id.breakdown2015_auto_totes_icon_red)        ImageView autoTotesIconRed;
-    @Bind(R.id.breakdown2015_auto_totes_icon_blue)       ImageView autoTotesIconBlue;
-    @Bind(R.id.breakdown2015_auto_containers_icon_red)   ImageView autoContainersIconRed;
-    @Bind(R.id.breakdown2015_auto_containers_icon_blue)  ImageView autoContainersIconBlue;
-    @Bind(R.id.breakdown2015_auto_robots_icon_red)       ImageView autoRobotsIconRed;
-    @Bind(R.id.breakdown2015_auto_robots_icon_blue)      ImageView autoRobotsIconBlue;
-    @Bind(R.id.breakdown2015_coop_icon_red)              ImageView coopIconRed;
-    @Bind(R.id.breakdown2015_coop_icon_blue)             ImageView coopIconBlue;
+    @BindView(R.id.breakdown2015_auto_totes_icon_red)        ImageView autoTotesIconRed;
+    @BindView(R.id.breakdown2015_auto_totes_icon_blue)       ImageView autoTotesIconBlue;
+    @BindView(R.id.breakdown2015_auto_containers_icon_red)   ImageView autoContainersIconRed;
+    @BindView(R.id.breakdown2015_auto_containers_icon_blue)  ImageView autoContainersIconBlue;
+    @BindView(R.id.breakdown2015_auto_robots_icon_red)       ImageView autoRobotsIconRed;
+    @BindView(R.id.breakdown2015_auto_robots_icon_blue)      ImageView autoRobotsIconBlue;
+    @BindView(R.id.breakdown2015_coop_icon_red)              ImageView coopIconRed;
+    @BindView(R.id.breakdown2015_coop_icon_blue)             ImageView coopIconBlue;
 
     private static final int ROBOT_SET_POINTS = 4;
     private static final int TOTE_SET_POINTS = 6;

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import butterknife.Unbinder;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
@@ -14,19 +15,21 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
-    @Bind(R.id.list) ListView listView;
-    @Bind(R.id.progress) ProgressBar progressBar;
+    @BindView(R.id.list) ListView listView;
+    @BindView(R.id.progress) ProgressBar progressBar;
 
     ListViewAdapter mAdapter;
 
+    private Unbinder unbinder;
+
     @Override
     public void bindViews() {
-        ButterKnife.bind(this, mRootView);
+        unbinder = ButterKnife.bind(this, mRootView);
     }
 
     @Override
@@ -109,8 +112,8 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
-        if (unbindViews) {
-            ButterKnife.unbind(this);
+        if (unbindViews && unbinder != null) {
+            unbinder.unbind();
         }
         if (listView != null) {
             listView.setVisibility(View.GONE);

@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
+import butterknife.Unbinder;
 import com.thebluealliance.androidclient.adapters.TeamListFragmentPagerAdapter;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
@@ -18,7 +19,7 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
     public FragmentManager fragmentManager;
 
     private Integer oldData;
-
+    private Unbinder unbinder;
     private int mInitialTab;
 
     @Inject
@@ -58,14 +59,14 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
 
     @Override
     public void bindViews() {
-        ButterKnife.bind(this, mRootView);
+        unbinder = ButterKnife.bind(this, mRootView);
     }
 
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
-        if (unbindViews) {
-            ButterKnife.unbind(this);
+        if (unbindViews && unbinder != null) {
+            unbinder.unbind();
         }
     }
 
