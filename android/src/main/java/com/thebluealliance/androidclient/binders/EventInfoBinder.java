@@ -172,7 +172,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         eventYoutubeTitle.setText(mActivity.getString(R.string.view_event_youtube, data.eventKey));
         eventYoutubeContainer.setOnClickListener(mSocialClickListener);
 
-        eventCdContainer.setTag("http://www.chiefdelphi.com/media/photos/tags/" + data.eventKey);
+        eventCdContainer.setTag("https://www.chiefdelphi.com/search?q=category%3A11%20tags%3A" + data.eventKey);
         eventCdContainer.setOnClickListener(mSocialClickListener);
 
         if (data.isLive && data.webcasts != null && data.webcasts.size() > 0) {
