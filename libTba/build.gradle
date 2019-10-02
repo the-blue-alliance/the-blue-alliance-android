@@ -28,5 +28,5 @@ dependencies {
     implementation "io.reactivex:rxjava:${rxJavaVersion}"
     implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     implementation "com.google.code.gson:gson:${gsonVersion}"
-    implementation "com.google.code.findbugs:jsr305:3.0.1"
+    implementation "com.google.code.findbugs:jsr305:3.0.2"
 }
