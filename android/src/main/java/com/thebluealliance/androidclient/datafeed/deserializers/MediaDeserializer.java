@@ -30,6 +30,14 @@ public class MediaDeserializer implements JsonDeserializer<Media> {
             media.setDetails(object.get("details").toString());
         }
 
+        if (object.has("direct_url")) {
+            media.setDirectUrl(object.get("direct_url").getAsString());
+        }
+
+        if (object.has("view_url")) {
+            media.setViewUrl(object.get("view_url").getAsString());
+        }
+
         return media;
     }
 }

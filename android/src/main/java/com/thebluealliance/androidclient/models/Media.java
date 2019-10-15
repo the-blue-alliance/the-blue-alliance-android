@@ -28,6 +28,8 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
     private JsonObject details;
     private String teamKey;
     private int year;
+    private String directUrl;
+    private String viewUrl;
 
     public Media() {
     }
@@ -100,6 +102,22 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
         this.year = year;
     }
 
+    public String getDirectUrl() {
+        return directUrl;
+    }
+
+    public void setDirectUrl(String directUrl) {
+        this.directUrl = directUrl;
+    }
+
+    public String getViewUrl() {
+        return viewUrl;
+    }
+
+    public void setViewUrl(String viewUrl) {
+        this.viewUrl = viewUrl;
+    }
+
     @Override
     public ContentValues getParams(Gson gson) {
         ContentValues data = new ContentValues();
@@ -108,6 +126,8 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
         data.put(MediasTable.TEAMKEY, getTeamKey());
         data.put(MediasTable.DETAILS, getDetails());
         data.put(MediasTable.YEAR, getYear());
+        data.put(MediasTable.DIRECT_URL, getDirectUrl());
+        data.put(MediasTable.VIEW_URL, getViewUrl());
         data.put(MediasTable.LAST_MODIFIED, getLastModified());
         return data;
     }

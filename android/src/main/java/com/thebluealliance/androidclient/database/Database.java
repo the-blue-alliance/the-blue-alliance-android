@@ -34,7 +34,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
     public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
-    static final int DATABASE_VERSION = 35;
+    static final int DATABASE_VERSION = 36;
     private static final String DATABASE_NAME = "the-blue-alliance-android-database";
     static final @Deprecated String TABLE_API = "api";
     public static final String TABLE_TEAMS = "teams",
@@ -111,6 +111,8 @@ public class Database extends SQLiteOpenHelper {
             + MediasTable.TEAMKEY + " TEXT DEFAULT '', "
             + MediasTable.DETAILS + " TEXT DEFAULT '', "
             + MediasTable.YEAR + " INTEGER  DEFAULT -1, "
+            + MediasTable.VIEW_URL + " TEXT DEFAULT '', "
+            + MediasTable.DIRECT_URL + " TEXT DEFAULT '', "
             + MediasTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
     public static final String CREATE_EVENTTEAMS = "CREATE TABLE IF NOT EXISTS "
@@ -548,6 +550,20 @@ public class Database extends SQLiteOpenHelper {
                     try {
                         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DISTRICTS);
                         db.execSQL(CREATE_DISTRICTS);
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
+                    break;
+                case 36:
+                    db.beginTransaction();
+                    try {
+                        if (!columnExists(db, TABLE_MEDIAS, MediasTable.DIRECT_URL)) {
+                            db.execSQL("ALTER TABLE " + TABLE_MEDIAS + " ADD COLUMN " + MediasTable.DIRECT_URL + " TEXT DEFAULT '' ");
+                        }
+                        if (!columnExists(db, TABLE_MEDIAS, MediasTable.VIEW_URL)) {
+                            db.execSQL("ALTER TABLE " + TABLE_MEDIAS + " ADD COLUMN " + MediasTable.VIEW_URL + " TEXT DEFAULT '' ");
+                        }
                         db.setTransactionSuccessful();
                     } finally {
                         db.endTransaction();

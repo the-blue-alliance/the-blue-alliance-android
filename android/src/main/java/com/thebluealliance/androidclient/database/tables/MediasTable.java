@@ -15,6 +15,8 @@ public class MediasTable extends ModelTable<Media> {
             TEAMKEY = "teamKey",
             DETAILS = "details",
             YEAR = "year",
+            DIRECT_URL = "directUrl",
+            VIEW_URL = "viewUrl",
             LAST_MODIFIED = "last_modified";
 
     public MediasTable(SQLiteDatabase db, Gson gson){

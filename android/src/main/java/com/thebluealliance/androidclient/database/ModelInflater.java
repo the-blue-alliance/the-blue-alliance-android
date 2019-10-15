@@ -212,6 +212,12 @@ public final class ModelInflater {
                 case MediasTable.DETAILS:
                     media.setDetails(data.getString(i));
                     break;
+                case MediasTable.DIRECT_URL:
+                    media.setDirectUrl(data.getString(i));
+                    break;
+                case MediasTable.VIEW_URL:
+                    media.setViewUrl(data.getString(i));
+                    break;
                 case MediasTable.LAST_MODIFIED:
                     media.setLastModified(data.getLong(i));
                     break;
