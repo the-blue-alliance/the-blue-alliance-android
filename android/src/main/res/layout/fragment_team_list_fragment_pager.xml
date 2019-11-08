@@ -5,13 +5,14 @@
     android:orientation="vertical"
     tools:context="com.thebluealliance.androidclient.fragments.EventsByWeekFragment">
 
-    <com.thebluealliance.androidclient.views.SlidingTabs
+    <com.google.android.material.tabs.TabLayout
         android:id="@+id/team_pager_tabs"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/primary" />
+        android:background="@color/primary"
+        style="@style/TabBar"/>
 
-    <androidx.viewpager.widget.ViewPager
+    <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/team_pager"
         android:layout_width="match_parent"
         android:layout_height="fill_parent" />

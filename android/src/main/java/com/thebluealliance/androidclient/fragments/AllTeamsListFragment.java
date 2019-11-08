@@ -2,25 +2,26 @@ package com.thebluealliance.androidclient.fragments;
 
 
 import android.os.Bundle;
-import androidx.core.view.ViewCompat;
-import androidx.viewpager.widget.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.tabs.TabLayout;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.TeamTabBinder;
 import com.thebluealliance.androidclient.subscribers.TeamTabSubscriber;
-import com.thebluealliance.androidclient.views.SlidingTabs;
 
+import androidx.core.view.ViewCompat;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
 import rx.Observable;
 
 public class AllTeamsListFragment extends DatafeedFragment<Integer, Integer, TeamTabSubscriber, TeamTabBinder> {
 
     public static final String SELECTED_TAB = "selected_tab";
 
-    private ViewPager mViewPager;
+    private ViewPager2 mViewPager;
     private int mInitialTab;
 
     public static AllTeamsListFragment newInstance(int tab) {
@@ -47,18 +48,21 @@ public class AllTeamsListFragment extends DatafeedFragment<Integer, Integer, Tea
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_team_list_fragment_pager, container, false);
-        mViewPager = (ViewPager) v.findViewById(R.id.team_pager);
+        mViewPager = v.findViewById(R.id.team_pager);
         // Make this ridiculously big
         mViewPager.setOffscreenPageLimit(50);
-        mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
+        int pageMargin = Utilities.getPixelsFromDp(requireActivity(), 16);
+        mViewPager.setPageTransformer(new MarginPageTransformer(pageMargin));
         mBinder.setInitialTab(mInitialTab);
 
-        SlidingTabs tabs = (SlidingTabs) v.findViewById(R.id.team_pager_tabs);
+        TabLayout tabs = v.findViewById(R.id.team_pager_tabs);
         ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
 
+
         mBinder.viewPager = mViewPager;
-        mBinder.fragmentManager = getChildFragmentManager();
+        mBinder.fragmentActivity = requireActivity();
         mBinder.tabs = tabs;
+        mBinder.setupAdapter();
 
         return v;
     }

@@ -1,43 +1,38 @@
 package com.thebluealliance.androidclient.adapters;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.fragments.TeamListFragment;
 
-public class TeamListFragmentPagerAdapter extends FragmentPagerAdapter {
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+public class TeamListFragmentPagerAdapter extends FragmentStateAdapter {
 
     private static final int TEAMS_PER_TAB = 1000;
 
-    private int mCount;
+    private int pageCount;
 
-    public TeamListFragmentPagerAdapter(FragmentManager fm, int largestTeamNumber) {
-        super(fm);
-        mCount = (largestTeamNumber / TEAMS_PER_TAB) + 1;
-        TbaLogger.d("LARGEST TEAM: " + largestTeamNumber);
-        TbaLogger.d("USING " + mCount + " PAGES");
+    public TeamListFragmentPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+        super(fragmentActivity);
     }
 
-    @Override
-    public CharSequence getPageTitle(int position) {
-        switch (position) {
-            case 0:
-                return "1-999";
-            default:
-                return (position * 1000) + "-" + ((position * 1000) + 999);
-        }
-
+    public void setMaxTeamNumber(int maxTeamNumber) {
+        pageCount = (maxTeamNumber / TEAMS_PER_TAB) + 1;
+        TbaLogger.d("LARGEST TEAM: " + maxTeamNumber);
+        TbaLogger.d("USING " + pageCount + " PAGES");
+        notifyDataSetChanged();
     }
 
+    @NonNull
     @Override
-    public int getCount() {
-        return mCount;
-    }
-
-    @Override
-    public Fragment getItem(int position) {
+    public Fragment createFragment(int position) {
         return TeamListFragment.newInstance(position * 1000);
+    }
+
+    @Override
+    public int getItemCount() {
+        return pageCount;
     }
 }
