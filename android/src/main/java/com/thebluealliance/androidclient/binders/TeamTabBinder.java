@@ -20,18 +20,18 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
 
     private Integer oldData;
     private Unbinder unbinder;
-    private int mInitialTab;
+    private int initialTab;
     private TeamListFragmentPagerAdapter adapter;
     private TabLayoutMediator tabLayoutMediator;
 
     @Inject
     public TeamTabBinder() {
         super();
-        mInitialTab = 0;
+        initialTab = 0;
     }
 
     public void setInitialTab(int initialTab) {
-        mInitialTab = initialTab;
+        this.initialTab = initialTab;
     }
 
     public void setupAdapter() {
@@ -62,7 +62,7 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
          */
         viewPager.post(() -> {
             adapter.setMaxTeamNumber(data == null ? 0 : data);
-            viewPager.setCurrentItem(mInitialTab);
+            viewPager.setCurrentItem(initialTab);
         });
 
         oldData = data;
