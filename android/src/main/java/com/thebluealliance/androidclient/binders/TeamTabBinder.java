@@ -22,6 +22,7 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
     private Unbinder unbinder;
     private int mInitialTab;
     private TeamListFragmentPagerAdapter adapter;
+    private TabLayoutMediator tabLayoutMediator;
 
     @Inject
     public TeamTabBinder() {
@@ -36,7 +37,7 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
     public void setupAdapter() {
         adapter = new TeamListFragmentPagerAdapter(fragmentActivity);
         viewPager.setAdapter(adapter);
-        new TabLayoutMediator(tabs, viewPager, (tab, position) -> {
+        tabLayoutMediator = new TabLayoutMediator(tabs, viewPager, (tab, position) -> {
             switch (position) {
                 case 0:
                     tab.setText("1-999");
@@ -44,7 +45,8 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
                     String title = (position * 1000) + "-" + ((position * 1000) + 999);
                     tab.setText(title);
                 }
-        }}).attach();
+        }});
+        tabLayoutMediator.attach();
     }
 
     @Override
@@ -79,6 +81,7 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
+        tabLayoutMediator.detach();
         if (unbindViews && unbinder != null) {
             unbinder.unbind();
         }
