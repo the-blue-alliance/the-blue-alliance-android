@@ -12,6 +12,8 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.TeamTabBinder;
 import com.thebluealliance.androidclient.subscribers.TeamTabSubscriber;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
@@ -60,7 +62,7 @@ public class AllTeamsListFragment extends DatafeedFragment<Integer, Integer, Tea
 
 
         mBinder.viewPager = mViewPager;
-        mBinder.fragmentActivity = requireActivity();
+        mBinder.parentFragment = this;
         mBinder.tabs = tabs;
         mBinder.setupAdapter();
 

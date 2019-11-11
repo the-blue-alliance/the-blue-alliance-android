@@ -14,8 +14,8 @@ public class TeamListFragmentPagerAdapter extends FragmentStateAdapter {
 
     private int pageCount;
 
-    public TeamListFragmentPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
-        super(fragmentActivity);
+    public TeamListFragmentPagerAdapter(@NonNull Fragment parentFragment) {
+        super(parentFragment);
     }
 
     public void setMaxTeamNumber(int maxTeamNumber) {

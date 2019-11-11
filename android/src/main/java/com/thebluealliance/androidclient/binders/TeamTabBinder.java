@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.binders;
 
+import android.util.Log;
+
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.thebluealliance.androidclient.adapters.TeamListFragmentPagerAdapter;
@@ -7,6 +9,7 @@ import com.thebluealliance.androidclient.adapters.TeamListFragmentPagerAdapter;
 import javax.inject.Inject;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
 import butterknife.ButterKnife;
@@ -16,7 +19,7 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
 
     public ViewPager2 viewPager;
     public TabLayout tabs;
-    public FragmentActivity fragmentActivity;
+    public Fragment parentFragment;
 
     private Integer oldData;
     private Unbinder unbinder;
@@ -35,8 +38,9 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
     }
 
     public void setupAdapter() {
-        adapter = new TeamListFragmentPagerAdapter(fragmentActivity);
+        adapter = new TeamListFragmentPagerAdapter(parentFragment);
         viewPager.setAdapter(adapter);
+
         tabLayoutMediator = new TabLayoutMediator(tabs, viewPager, (tab, position) -> {
             switch (position) {
                 case 0:
