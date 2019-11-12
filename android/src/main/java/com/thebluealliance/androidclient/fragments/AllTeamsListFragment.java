@@ -6,17 +6,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.core.view.ViewCompat;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
+
 import com.google.android.material.tabs.TabLayout;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.TeamTabBinder;
 import com.thebluealliance.androidclient.subscribers.TeamTabSubscriber;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
-import androidx.viewpager2.widget.MarginPageTransformer;
-import androidx.viewpager2.widget.ViewPager2;
 import rx.Observable;
 
 public class AllTeamsListFragment extends DatafeedFragment<Integer, Integer, TeamTabSubscriber, TeamTabBinder> {
@@ -59,7 +58,6 @@ public class AllTeamsListFragment extends DatafeedFragment<Integer, Integer, Tea
 
         TabLayout tabs = v.findViewById(R.id.team_pager_tabs);
         ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
-
 
         mBinder.viewPager = mViewPager;
         mBinder.parentFragment = this;

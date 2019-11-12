@@ -1,6 +1,8 @@
 package com.thebluealliance.androidclient.binders;
 
-import android.util.Log;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -8,10 +10,6 @@ import com.thebluealliance.androidclient.adapters.TeamListFragmentPagerAdapter;
 
 import javax.inject.Inject;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager2.widget.ViewPager2;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
