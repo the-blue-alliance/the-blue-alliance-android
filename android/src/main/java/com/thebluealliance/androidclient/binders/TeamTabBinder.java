@@ -83,8 +83,8 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
-        tabLayoutMediator.detach();
         if (unbindViews && unbinder != null) {
+            tabLayoutMediator.detach();
             unbinder.unbind();
         }
     }
