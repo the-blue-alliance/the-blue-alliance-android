@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+    <androidx.gridlayout.widget.GridLayout
+        app:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/breakdown2020_container"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@color/column_header_gray"
+        app:columnCount="3"
+        app:rowCount="29"
+        app:alignmentMode="alignBounds" >
+
+        <!-- Teams -->
+        <TextView
+            android:id="@+id/breakdown_red1"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 1"/>
+        <TextView
+            android:text="@string/breakdown_teams"
+            style="@style/breakdown_categorySubtotal"
+            app:layout_rowSpan="3" />
+        <TextView
+            android:id="@+id/breakdown_blue1"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 1"/>
+        <TextView
+            android:id="@+id/breakdown_red2"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 2"/>
+        <TextView
+            android:id="@+id/breakdown_blue2"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 2"/>
+        <TextView
+            android:id="@+id/breakdown_red3"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 3"/>
+        <TextView
+            android:id="@+id/breakdown_blue3"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 3"/>
+
+        <!-- Auto Initiation Line -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2020_red_init_line_robot1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_close_black_24dp"/>
+            <ImageView
+                android:id="@+id/breakdown2020_red_init_line_robot2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_check_black_24dp"/>
+            <ImageView
+                android:id="@+id/breakdown2020_red_init_line_robot3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_close_black_24dp"/>
+            <TextView
+                android:id="@+id/breakdown2020_red_init_line_bonus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="(+10)"/>
+        </LinearLayout>
+        <TextView
+            android:text="Initiation Line Exited"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2020_blue_init_line_robot1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_close_black_24dp"/>
+            <ImageView
+                android:id="@+id/breakdown2020_blue_init_line_robot2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_check_black_24dp"/>
+            <ImageView
+                android:id="@+id/breakdown2020_blue_init_line_robot3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_check_black_24dp"/>
+            <TextView
+                android:id="@+id/breakdown2020_blue_init_line_bonus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="(+20)"/>
+        </LinearLayout>
+        <!-- Auto Power Cell -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2020_red_auto_low_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2020_low_goal"
+                tools:text="2"/>
+            <TextView
+                android:id="@+id/breakdown2020_red_auto_outer_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2020_outer_goal"
+                tools:text="2"/>
+            <TextView
+                android:id="@+id/breakdown2020_red_auto_inner_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2020_inner_goal"
+                tools:text="2"/>
+        </LinearLayout>
+        <TextView
+            android:text="Auto Power Cells"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2020_blue_auto_low_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2020_low_goal"
+                tools:text="2"/>
+            <TextView
+                android:id="@+id/breakdown2020_blue_auto_outer_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2020_outer_goal"
+                tools:text="3"/>
+            <TextView
+                android:id="@+id/breakdown2020_blue_auto_inner_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2020_inner_goal"
+                tools:text="1"/>
+        </LinearLayout>
+        <!-- Auto Power Cell Points -->
+        <TextView
+            android:id="@+id/breakdown2020_red_auto_power_cell"
+            style="@style/breakdown_redItem"
+            tools:text="10"/>
+        <TextView
+            android:text="Auto Power Cell Points"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2020_blue_auto_power_cell"
+            style="@style/breakdown_blueItem"
+            tools:text="25"/>
+
+
+        <!-- Auto Points -->
+        <TextView
+            android:id="@+id/breakdown_auto_total_red"
+            style="@style/breakdown_redTotal"
+            tools:text="60"/>
+        <TextView
+            android:text="@string/breakdown_auto_total"
+            style="@style/breakdown_categoryTotal" />
+        <TextView
+            android:id="@+id/breakdown_auto_total_blue"
+            style="@style/breakdown_blueTotal"
+            tools:text="5"/>
+
+        <!-- Teleop Power Cells -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2020_red_teleop_low_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2020_low_goal"
+                tools:text="21"/>
+            <TextView
+                android:id="@+id/breakdown2020_red_teleop_outer_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2020_outer_goal"
+                tools:text="29"/>
+            <TextView
+                android:id="@+id/breakdown2020_red_teleop_inner_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2020_inner_goal"
+                tools:text="24"/>
+        </LinearLayout>
+        <TextView
+            android:text="Teleop Power Cells"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2020_blue_teleop_low_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2020_low_goal"
+                tools:text="50"/>
+            <TextView
+                android:id="@+id/breakdown2020_blue_teleop_outer_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2020_outer_goal"
+                tools:text="30"/>
+            <TextView
+                android:id="@+id/breakdown2020_blue_teleop_inner_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                android:drawableLeft="@drawable/breakdown2020_inner_goal"
+                tools:text="10"/>
+        </LinearLayout>
+        <!-- Teleop Power Cell Points -->
+        <TextView
+            android:id="@+id/breakdown2020_red_teleop_power_cell"
+            style="@style/breakdown_redItem"
+            tools:text="10"/>
+        <TextView
+            android:text="Teleop Power Cell Points"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2020_blue_teleop_power_cell"
+            style="@style/breakdown_blueItem"
+            tools:text="25"/>
+
+
+        <!-- Control Panel Points -->
+        <TextView
+            android:id="@+id/breakdown2020_red_control_panel"
+            style="@style/breakdown_redItem"
+            tools:text="0"/>
+        <TextView
+            android:text="Control Panel Points"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2020_blue_control_panel"
+            style="@style/breakdown_blueItem"
+            tools:text="5"/>
+
+
+        <!-- Endgame Climb -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2020_red_endgame_robot1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="Park (+5)"/>
+        </LinearLayout>
+        <TextView
+            android:text="Robot 1 Endgame"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2020_blue_endgame_robot1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="Hang (+25)"/>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2020_red_endgame_robot2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="Park (+5)"/>
+        </LinearLayout>
+        <TextView
+            android:text="Robot 2 Endgame"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2020_blue_endgame_robot2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="Hang (+25)"/>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2020_red_endgame_robot3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="Hang (+25)"/>
+        </LinearLayout>
+        <TextView
+            android:text="Robot 3 Endgame"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2020_blue_endgame_robot3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="Hang (+25)"/>
+        </LinearLayout>
+
+        <!-- Shield Generator Status -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2020_red_shield_generator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_check_black_24dp"
+                tools:text="(+15)"/>
+        </LinearLayout>
+        <TextView
+            android:text="Shield Generator Level"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2020_blue_shield_generator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_check_black_24dp"
+                tools:text="(+15)"/>
+        </LinearLayout>
+
+        <!-- Endgame Points -->
+        <TextView
+            android:id="@+id/breakdown_endgame_total_red"
+            style="@style/breakdown_redTotal"
+            tools:text="30"/>
+        <TextView
+            android:text="Endgame Points"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown_endgame_total_blue"
+            style="@style/breakdown_blueTotal"
+            tools:text="75"/>
+
+        <!-- Teleop Total -->
+        <TextView
+            android:id="@+id/breakdown_teleop_total_red"
+            style="@style/breakdown_redTotal"
+            tools:text="40"/>
+        <TextView
+            android:text="@string/breakdown_teleop_total"
+            style="@style/breakdown_categoryTotal" />
+        <TextView
+            android:id="@+id/breakdown_teleop_total_blue"
+            style="@style/breakdown_blueTotal"
+            tools:text="80"/>
+
+        <!-- Stage Activation -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2020_red_stage1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/baseline_looks_one_black_24"/>
+            <ImageView
+                android:id="@+id/breakdown2020_red_stage2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/baseline_looks_two_black_24"/>
+            <ImageView
+                android:id="@+id/breakdown2020_red_stage3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/baseline_looks_3_black_24"/>
+            <TextView
+                android:id="@+id/breakdown2020_red_stage3_rp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="(+1 RP)" />
+        </LinearLayout>
+        <TextView
+            android:text="Stage Activations"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2020_blue_stage_none"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_close_black_24dp"/>
+            <ImageView
+                android:id="@+id/breakdown2020_blue_stage1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/baseline_looks_one_black_24"
+                tools:visibility="gone"/>
+            <ImageView
+                android:id="@+id/breakdown2020_blue_stage2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/baseline_looks_two_black_24"
+                tools:visibility="gone"/>
+            <ImageView
+                android:id="@+id/breakdown2020_blue_stage3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/baseline_looks_3_black_24"
+                tools:visibility="gone"/>
+            <TextView
+                android:id="@+id/breakdown2020_blue_stage3_rp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="" />
+        </LinearLayout>
+
+        <!-- Endgame RP -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2020_red_shield_generator_rp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_close_black_24dp"
+                android:text=""/>
+        </LinearLayout>
+        <TextView
+            android:text="Shield Generator Operational"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2020_blue_shield_generator_rp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_check_black_24dp"
+                android:text="(+1 RP)"/>
+        </LinearLayout>
+
+        <!-- Fouls -->
+        <TextView
+            android:id="@+id/breakdown_fouls_red"
+            style="@style/breakdown_redItem"
+            tools:text="+ 0 / + 0"/>
+        <TextView
+            android:text="Fouls / Tech Fouls"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown_fouls_blue"
+            style="@style/breakdown_blueItem"
+            tools:text="+ 5 / + 15 / + 1 RP"/>
+
+        <!-- Adjustments -->
+        <TextView
+            android:id="@+id/breakdown_adjust_red"
+            style="@style/breakdown_redItem"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown_adjust"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown_adjust_blue"
+            style="@style/breakdown_blueItem"
+            tools:text="0"/>
+
+        <!-- Total -->
+        <TextView
+            android:id="@+id/breakdown_total_red"
+            style="@style/breakdown_redTotal"
+            tools:text="100"/>
+        <TextView
+            android:text="@string/breakdown_total"
+            style="@style/breakdown_categoryTotal" />
+        <TextView
+            android:id="@+id/breakdown_total_blue"
+            style="@style/breakdown_blueTotal"
+            tools:text="90"/>
+
+        <!-- Ranking Points -->
+        <TextView
+            android:id="@+id/breakdown_red_rp"
+            style="@style/breakdown_redTotal"
+            tools:text="1 RP"/>
+        <TextView
+            android:text="@string/breakdown_rp"
+            android:id="@+id/breakdown_rp_header"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown_blue_rp"
+            style="@style/breakdown_blueTotal"
+            tools:text="2 RP"/>
+    </androidx.gridlayout.widget.GridLayout>
+</ScrollView>
