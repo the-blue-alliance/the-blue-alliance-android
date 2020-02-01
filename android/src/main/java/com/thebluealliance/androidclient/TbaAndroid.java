@@ -6,7 +6,6 @@ import android.os.Build;
 import androidx.multidex.MultiDexApplication;
 
 import com.facebook.stetho.Stetho;
-import com.squareup.leakcanary.LeakCanary;
 import com.thebluealliance.androidclient.accounts.AccountModule;
 import com.thebluealliance.androidclient.auth.AuthModule;
 import com.thebluealliance.androidclient.binders.BinderModule;
@@ -43,7 +42,6 @@ public class TbaAndroid extends MultiDexApplication {
     private DatabaseWriterModule mDatabaseWriterModule;
     private AuthModule mAuthModule;
     private boolean mShouldBindStetho;
-    private boolean mShouldInstallLeakCanary;
 
     private HttpModule mHttpModule;
     private GceModule mGceModule;
@@ -54,7 +52,6 @@ public class TbaAndroid extends MultiDexApplication {
     public TbaAndroid() {
         super();
         mShouldBindStetho = true;
-        mShouldInstallLeakCanary = true;
     }
 
     /**
@@ -66,16 +63,6 @@ public class TbaAndroid extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-
-        if (mShouldInstallLeakCanary) {
-            LeakCanary.install(this);
-        }
-
         TbaLogger.i("Welcome to The Blue Alliance for Android, v" + BuildConfig.VERSION_NAME);
         getDatafeedComponenet().inject(this);
         mAppConfig.updateRemoteData();
@@ -108,10 +95,6 @@ public class TbaAndroid extends MultiDexApplication {
 
     void disableStetho() {
         mShouldBindStetho = false;
-    }
-
-    void disableLeakCanary() {
-        mShouldInstallLeakCanary = false;
     }
 
     public TBAAndroidModule getModule() {
