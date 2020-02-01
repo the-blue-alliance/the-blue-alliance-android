@@ -93,7 +93,7 @@ android {
     defaultConfig {
         applicationId "com.thebluealliance.androidclient"
         minSdkVersion 16
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode versionNum
         versionName version.toString()
         multiDexEnabled true
@@ -294,11 +294,7 @@ dependencies {
     androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     // Leak Canary
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:2.1"
-    debugBlueImplementation "com.squareup.leakcanary:leakcanary-android:2.1"
-    debugProguardImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.6.3"
-    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.6.3"
-    testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:1.6.3"
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

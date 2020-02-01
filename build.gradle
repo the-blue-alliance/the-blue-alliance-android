@@ -57,7 +57,7 @@ allprojects {
         rxAndroidVersion = '1.2.1'
         gsonVersion = '2.8.5'
         daggerVersion = '2.22.1'
-        robolectricVersion = '4.2.1'
+        robolectricVersion = '4.3.1'
         permissionDispatcherVersion = '2.2.0'
 
         travisBuild = System.getenv("TRAVIS") == "true"
