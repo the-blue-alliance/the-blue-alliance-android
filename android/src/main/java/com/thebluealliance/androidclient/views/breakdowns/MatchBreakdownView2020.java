@@ -234,9 +234,9 @@ public class MatchBreakdownView2020 extends AbstractMatchBreakdownView {
             String initLineAction = getIntDefault(allianceData, "initLineRobot" + robotNumber);
             ImageView teamIcon = robotStatus[robotNumber - 1];
             if ("Exited".equals(initLineAction)) {
-                teamIcon.setBackgroundResource(R.drawable.ic_check_black_24dp);
+                teamIcon.setImageResource(R.drawable.ic_check_black_24dp);
             } else {
-                teamIcon.setBackgroundResource(R.drawable.ic_close_black_24dp);
+                teamIcon.setImageResource(R.drawable.ic_close_black_24dp);
             }
         }
 
@@ -313,7 +313,7 @@ public class MatchBreakdownView2020 extends AbstractMatchBreakdownView {
             ImageView stageView = stages[stage - 1];
             if (activated) {
                 stageView.setVisibility(VISIBLE);
-                stageView.setBackgroundResource(STAGE_DRAWABLES[stage - 1]);
+                stageView.setImageResource(STAGE_DRAWABLES[stage - 1]);
             } else {
                 stageView.setVisibility(GONE);
             }
@@ -322,7 +322,7 @@ public class MatchBreakdownView2020 extends AbstractMatchBreakdownView {
         if (!anyStageActivated) {
             ImageView stage1View = stages[0];
             stage1View.setVisibility(VISIBLE);
-            stage1View.setBackgroundResource(R.drawable.ic_close_black_24dp);
+            stage1View.setImageResource(R.drawable.ic_close_black_24dp);
         }
 
         if (allStagesActivated) {
@@ -335,10 +335,10 @@ public class MatchBreakdownView2020 extends AbstractMatchBreakdownView {
     private void setGeneratorOperational(JsonObject allianceData, TextView view) {
         boolean isOperational = getBooleanDefault(allianceData, "shieldOperationalRankingPoint");
         if (isOperational) {
-            view.setBackgroundResource(R.drawable.ic_check_black_24dp);
+            view.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_black_24dp, 0, 0, 0);
             view.setText(mResources.getString(R.string.breakdown_rp_format, 1));
         } else {
-            view.setBackgroundResource(R.drawable.ic_close_black_24dp);
+            view.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_close_black_24dp, 0, 0, 0);
             view.setText("");
         }
     }

@@ -141,12 +141,12 @@ public class MatchBreakdownView2018 extends AbstractMatchBreakdownView {
         blue3.setText(teamNumberFromKey(blueTeams.get(2)));
 
         /* Auto Run */
-        redAutoRunRobot1.setBackgroundResource(getAutoRunResource(getIntDefault(redData, "autoRobot1")));
-        blueAutoRunRobot1.setBackgroundResource(getAutoRunResource(getIntDefault(blueData, "autoRobot1")));
-        redAutoRunRobot2.setBackgroundResource(getAutoRunResource(getIntDefault(redData, "autoRobot2")));
-        blueAutoRunRobot2.setBackgroundResource(getAutoRunResource(getIntDefault(blueData, "autoRobot2")));
-        redAutoRunRobot3.setBackgroundResource(getAutoRunResource(getIntDefault(redData, "autoRobot3")));
-        blueAutoRunRobot3.setBackgroundResource(getAutoRunResource(getIntDefault(blueData, "autoRobot3")));
+        redAutoRunRobot1.setImageResource(getAutoRunResource(getIntDefault(redData, "autoRobot1")));
+        blueAutoRunRobot1.setImageResource(getAutoRunResource(getIntDefault(blueData, "autoRobot1")));
+        redAutoRunRobot2.setImageResource(getAutoRunResource(getIntDefault(redData, "autoRobot2")));
+        blueAutoRunRobot2.setImageResource(getAutoRunResource(getIntDefault(blueData, "autoRobot2")));
+        redAutoRunRobot3.setImageResource(getAutoRunResource(getIntDefault(redData, "autoRobot3")));
+        blueAutoRunRobot3.setImageResource(getAutoRunResource(getIntDefault(blueData, "autoRobot3")));
 
         /* Auto Run Points */
         redAutoRunPoints.setText(getIntDefault(redData, "autoRunPoints"));
@@ -209,12 +209,12 @@ public class MatchBreakdownView2018 extends AbstractMatchBreakdownView {
         blueTeleopTotal.setText(getIntDefault(blueData, "teleopPoints"));
 
         /* Auto Quest */
-        redAutoQuest.setBackgroundResource(getRankingPointResource(getBooleanDefault(redData, "autoQuestRankingPoint")));
-        blueAutoQuest.setBackgroundResource(getRankingPointResource(getBooleanDefault(blueData, "autoQuestRankingPoint")));
+        redAutoQuest.setImageResource(getRankingPointResource(getBooleanDefault(redData, "autoQuestRankingPoint")));
+        blueAutoQuest.setImageResource(getRankingPointResource(getBooleanDefault(blueData, "autoQuestRankingPoint")));
 
         /* Face the Boss */
-        redFaceTheBoss.setBackgroundResource(getRankingPointResource(getBooleanDefault(redData, "faceTheBossRankingPoint")));
-        blueFaceTheBoss.setBackgroundResource(getRankingPointResource(getBooleanDefault(blueData, "faceTheBossRankingPoint")));
+        redFaceTheBoss.setImageResource(getRankingPointResource(getBooleanDefault(redData, "faceTheBossRankingPoint")));
+        blueFaceTheBoss.setImageResource(getRankingPointResource(getBooleanDefault(blueData, "faceTheBossRankingPoint")));
 
         /* Fouls */
         foulsRed.setText(res.getString(R.string.breakdown_foul_format_add, getIntDefaultValue(redData, "foulPoints")));

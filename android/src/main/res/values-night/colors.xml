@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- text colors -->
+    <color name="primary_text_color">@color/md_white</color>
+    <color name="secondary_text_color">@color/md_grey_600</color>
+
+    <!-- navigation drawer colors -->
+    <color name="nav_drawer_background">@color/md_grey_100</color>
+    <color name="nav_drawer_item_divider">@color/md_grey_400</color>
+
+    <color name="column_header_gray">@color/md_grey_900</color>
+    <color name="column_header_total_gray">@color/md_grey_800</color>
+
+    <!-- Match View Colors -->
+    <color name="match_view_red_team">#660000</color>
+    <color name="match_view_red_score">#770000</color>
+    <color name="match_view_blue_team">#000066</color>
+    <color name="match_view_blue_score">#000088</color>
+</resources>

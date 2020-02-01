@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/team_rank"
         tools:text="(12-0-0)"
-        android:textColor="@color/blue"
+        android:textColor="@color/primary"
         android:textSize="14sp" />
 
     <TextView
@@ -44,6 +44,7 @@
         android:ellipsize="end"
         android:lines="1"
         android:drawableEnd="@drawable/ic_arrow_drop_down_black_24dp"
+        android:drawableTint="@color/primary_text_color"
         tools:text="Teh Chezy Pofs"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -75,12 +76,11 @@
                 android:textSize="14sp"
                 tools:text="Assist: 930\nAuto: 725\nTruss &amp; Catch: 310\nTeleop: 518\nPlayed: 12"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/ranking_detail_button"
-                android:textColor="@color/blue"
-                style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_gravity="center"
                 android:text="@string/warning_more"/>
     </LinearLayout>

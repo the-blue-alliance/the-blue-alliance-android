@@ -25,8 +25,8 @@ public class NoDataView extends RelativeLayout {
 
     private void init() {
         inflate(getContext(), R.layout.no_data_view, this);
-        mImageView = (ImageView) findViewById(R.id.no_data_image);
-        mTextView = (TextView) findViewById(R.id.no_data_text);
+        mImageView = findViewById(R.id.no_data_image);
+        mTextView = findViewById(R.id.no_data_text);
     }
 
     public void setText(String text) {
@@ -39,14 +39,14 @@ public class NoDataView extends RelativeLayout {
 
     public void setImage(Drawable drawable) {
         drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, getContext().getResources().getColor(R.color.black));
+        DrawableCompat.setTint(drawable, getContext().getResources().getColor(R.color.primary_text_color));
         mImageView.setImageDrawable(drawable);
     }
 
     public void setImage(@DrawableRes int resId) {
         Drawable drawable = getContext().getResources().getDrawable(resId);
         drawable = DrawableCompat.wrap(drawable);
-        DrawableCompat.setTint(drawable, getContext().getResources().getColor(R.color.black));
+        DrawableCompat.setTint(drawable, getContext().getResources().getColor(R.color.primary_text_color));
         mImageView.setImageDrawable(drawable);
     }
 

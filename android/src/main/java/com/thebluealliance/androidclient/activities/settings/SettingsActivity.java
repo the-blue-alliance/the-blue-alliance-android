@@ -24,6 +24,8 @@ import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 
 import javax.inject.Inject;
 
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
+
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
@@ -33,6 +35,7 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
 
+        getDelegate().setDefaultNightMode(MODE_NIGHT_YES);
     }
 
     public static class SettingsFragment extends PreferenceFragment {

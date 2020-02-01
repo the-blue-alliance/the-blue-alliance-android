@@ -35,7 +35,8 @@
             android:layout_centerHorizontal="true"
             android:clickable="false"
             android:focusable="false"
-            android:src="@drawable/ic_action_play_over_video" />
+            android:src="@drawable/ic_action_play_over_video"
+            android:tint="@color/primary_text_color"/>
     </RelativeLayout>
 
     <TableLayout
@@ -129,7 +130,7 @@
                         android:layout_width="0dp"
                         android:layout_height="fill_parent"
                         android:layout_weight="1.5"
-                        android:background="@color/light_red"
+                        android:background="@color/match_view_red_score"
                         android:gravity="center_vertical|center_horizontal">
 
                         <LinearLayout
@@ -144,7 +145,8 @@
                                 android:layout_height="wrap_content"
                                 android:padding="1dp"
                                 android:visibility="gone"
-                                android:src="@drawable/match_rp_dot" />
+                                android:src="@drawable/match_rp_dot"
+                                android:tint="@color/primary_text_color"/>
 
                             <ImageView
                                 android:id="@+id/red_dot_2"
@@ -152,7 +154,8 @@
                                 android:layout_height="wrap_content"
                                 android:padding="1dp"
                                 android:visibility="gone"
-                                android:src="@drawable/match_rp_dot" />
+                                android:src="@drawable/match_rp_dot"
+                                android:tint="@color/primary_text_color"/>
                         </LinearLayout>
 
                         <TextView
@@ -205,7 +208,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1.5"
-                        android:background="@color/light_blue"
+                        android:background="@color/match_view_blue_score"
                         android:gravity="center_vertical|center_horizontal">
 
                         <LinearLayout
@@ -219,7 +222,8 @@
                                 android:layout_height="wrap_content"
                                 android:padding="1dp"
                                 android:visibility="gone"
-                                android:src="@drawable/match_rp_dot" />
+                                android:src="@drawable/match_rp_dot"
+                                android:tint="@color/primary_text_color"/>
 
                             <ImageView
                                 android:id="@+id/blue_dot_2"
@@ -227,7 +231,8 @@
                                 android:layout_height="wrap_content"
                                 android:padding="1dp"
                                 android:visibility="gone"
-                                android:src="@drawable/match_rp_dot" />
+                                android:src="@drawable/match_rp_dot"
+                                android:tint="@color/primary_text_color"/>
                         </LinearLayout>
 
                         <TextView

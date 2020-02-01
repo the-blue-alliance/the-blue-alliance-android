@@ -244,13 +244,13 @@ public class MatchBreakdownView2017 extends AbstractMatchBreakdownView {
         int bonus = getIntDefaultValue(data, bonusKey);
 
         if (rp) {
-            icon.setBackgroundResource(R.drawable.ic_check_black_24dp);
+            icon.setImageResource(R.drawable.ic_check_black_24dp);
             text.setText(res.getString(R.string.breakdown_rp_format, 1));
         } else if (bonus > 0) {
-            icon.setBackgroundResource(R.drawable.ic_check_black_24dp);
+            icon.setImageResource(R.drawable.ic_check_black_24dp);
             text.setText(res.getString(R.string.breakdown_addition_format, bonus));
         } else {
-            icon.setBackgroundResource(R.drawable.ic_clear_black_24dp);
+            icon.setImageResource(R.drawable.ic_clear_black_24dp);
             text.setVisibility(GONE);
         }
     }
@@ -262,9 +262,9 @@ public class MatchBreakdownView2017 extends AbstractMatchBreakdownView {
         }
 
         if (autoEngaged) {
-            view.setBackgroundResource(R.drawable.ic_check_circle_black_24dp);
+            view.setImageResource(R.drawable.ic_check_circle_black_24dp);
         } else if (getBooleanDefault(data, String.format(TELEOP_ROTOR_FORMAT, rotorNum))) {
-            view.setBackgroundResource(R.drawable.ic_check_black_24dp);
+            view.setImageResource(R.drawable.ic_check_black_24dp);
         } else {
             view.setVisibility(GONE);
         }

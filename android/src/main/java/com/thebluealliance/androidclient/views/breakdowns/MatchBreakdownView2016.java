@@ -220,13 +220,13 @@ public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
 
         boolean redBreachSuccess = MatchBreakdownHelper
                 .getBooleanDefault(redData, "teleopDefensesBreached");
-        redBreachIcon.setBackgroundResource(redBreachSuccess
+        redBreachIcon.setImageResource(redBreachSuccess
             ? R.drawable.ic_done_black_24dp
             : R.drawable.ic_clear_black_24dp);
 
         boolean blueBreachSuccess = MatchBreakdownHelper
                 .getBooleanDefault(blueData, "teleopDefensesBreached");
-        blueBreachIcon.setBackgroundResource(blueBreachSuccess
+        blueBreachIcon.setImageResource(blueBreachSuccess
             ? R.drawable.ic_done_black_24dp
             : R.drawable.ic_clear_black_24dp);
 
@@ -254,12 +254,12 @@ public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
 
         boolean redCaptureSuccess = MatchBreakdownHelper
                 .getBooleanDefault(redData, "teleopTowerCaptured");
-        redCaptureIcon.setBackgroundResource(redCaptureSuccess
+        redCaptureIcon.setImageResource(redCaptureSuccess
             ? R.drawable.ic_done_black_24dp
             : R.drawable.ic_clear_black_24dp);
         boolean blueCaptureSuccess = MatchBreakdownHelper
                 .getBooleanDefault(blueData, "teleopTowerCaptured");
-        blueCaptureIcon.setBackgroundResource(blueCaptureSuccess
+        blueCaptureIcon.setImageResource(blueCaptureSuccess
             ? R.drawable.ic_done_black_24dp
             : R.drawable.ic_clear_black_24dp);
 

@@ -54,6 +54,7 @@
                 android:id="@+id/breakdown2019_red_sandstorm_bonus_robot_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawableTint="@color/primary_text_color"
                 tools:text=""
                 tools:drawableLeft="@drawable/ic_close_black_24dp"/>
         </LinearLayout>
@@ -68,6 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:drawableLeft="@drawable/baseline_looks_one_black_24"
+                android:drawableTint="@color/primary_text_color"
                 tools:text="(+ 3)"/>
         </LinearLayout>
         <LinearLayout
@@ -78,6 +80,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:drawableLeft="@drawable/baseline_looks_two_black_24"
+                android:drawableTint="@color/primary_text_color"
                 tools:text="(+ 6)"/>
         </LinearLayout>
         <TextView
@@ -91,6 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:drawableLeft="@drawable/baseline_looks_two_black_24"
+                android:drawableTint="@color/primary_text_color"
                 tools:text="(+ 6)"/>
         </LinearLayout>
         <LinearLayout
@@ -101,6 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:drawableLeft="@drawable/baseline_looks_two_black_24"
+                android:drawableTint="@color/primary_text_color"
                 tools:text="(+ 6)"/>
         </LinearLayout>
         <TextView
@@ -114,6 +119,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:drawableLeft="@drawable/baseline_looks_one_black_24"
+                android:drawableTint="@color/primary_text_color"
                 tools:text="(+ 3)"/>
         </LinearLayout>
 
@@ -338,6 +344,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:drawableLeft="@drawable/ic_close_black_24dp"
+                android:drawableTint="@color/primary_text_color"
                 tools:text=""/>
         </LinearLayout>
         <TextView
@@ -351,6 +358,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:drawableLeft="@drawable/ic_close_black_24dp"
+                android:drawableTint="@color/primary_text_color"
                 tools:text=""/>
         </LinearLayout>
         <LinearLayout
@@ -361,6 +369,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:drawableLeft="@drawable/baseline_looks_3_black_24"
+                android:drawableTint="@color/primary_text_color"
                 tools:text="(+ 12)"/>
         </LinearLayout>
         <TextView
@@ -374,6 +383,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:drawableLeft="@drawable/baseline_looks_two_black_24"
+                android:drawableTint="@color/primary_text_color"
                 tools:text="(+ 6)"/>
         </LinearLayout>
         <LinearLayout
@@ -384,6 +394,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:drawableLeft="@drawable/baseline_looks_one_black_24"
+                android:drawableTint="@color/primary_text_color"
                 tools:text="(+ 3)"/>
         </LinearLayout>
         <TextView
@@ -397,6 +408,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:drawableLeft="@drawable/baseline_looks_two_black_24"
+                android:drawableTint="@color/primary_text_color"
                 tools:text="(+ 6)"/>
         </LinearLayout>
 
@@ -435,6 +447,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/breakdown2019_red_complete_rocket"
                 tools:drawableLeft="@drawable/ic_clear_black_24dp"
+                android:drawableTint="@color/primary_text_color"
                 tools:text=""/>
         </LinearLayout>
         <TextView
@@ -448,6 +461,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/breakdown2019_blue_complete_rocket"
                 tools:drawableLeft="@drawable/baseline_done_all_black_24"
+                android:drawableTint="@color/primary_text_color"
                 tools:text="(+ 1 RP)"/>
         </LinearLayout>
 
@@ -460,6 +474,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/breakdown2019_red_hab_docking"
                 tools:drawableLeft="@drawable/ic_done_black_24dp"
+                android:drawableTint="@color/primary_text_color"
                 tools:text="(+ 1 RP)"/>
         </LinearLayout>
         <TextView
@@ -473,6 +488,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/breakdown2019_blue_hab_docking"
                 tools:drawableLeft="@drawable/ic_done_black_24dp"
+                android:drawableTint="@color/primary_text_color"
                 tools:text="(+ 1 RP)"/>
         </LinearLayout>
 

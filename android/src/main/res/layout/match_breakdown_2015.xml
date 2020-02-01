@@ -54,7 +54,8 @@
                 android:id="@+id/breakdown2015_auto_totes_icon_red"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:background="@drawable/ic_menu_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_menu_black_24dp"/>
         <TextView
                 android:id="@+id/breakdown2015_auto_tote_points_red"
                 android:layout_width="wrap_content"
@@ -71,7 +72,8 @@
                 android:id="@+id/breakdown2015_auto_totes_icon_blue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:background="@drawable/ic_more_horiz_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_more_horiz_black_24dp"/>
         <TextView
                 android:id="@+id/breakdown2015_auto_tote_points_blue"
                 android:layout_width="wrap_content"
@@ -87,7 +89,8 @@
                 android:id="@+id/breakdown2015_auto_containers_icon_red"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:background="@drawable/ic_clear_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_clear_black_24dp"/>
         <TextView
                 android:id="@+id/breakdown2015_auto_container_points_red"
                 android:layout_width="wrap_content"
@@ -104,7 +107,8 @@
                 android:id="@+id/breakdown2015_auto_containers_icon_blue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:background="@drawable/ic_check_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_check_black_24dp"/>
         <TextView
                 android:id="@+id/breakdown2015_auto_container_points_blue"
                 android:layout_width="wrap_content"
@@ -120,7 +124,8 @@
                 android:id="@+id/breakdown2015_auto_robots_icon_red"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:background="@drawable/ic_check_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_check_black_24dp"/>
         <TextView
                 android:id="@+id/breakdown2015_auto_robot_points_red"
                 android:layout_width="wrap_content"
@@ -137,7 +142,8 @@
                 android:id="@+id/breakdown2015_auto_robots_icon_blue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:background="@drawable/ic_clear_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_clear_black_24dp"/>
         <TextView
                 android:id="@+id/breakdown2015_auto_robot_points_blue"
                 android:layout_width="wrap_content"
@@ -228,7 +234,8 @@
                 android:id="@+id/breakdown2015_coop_icon_red"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:background="@drawable/ic_more_horiz_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_more_horiz_black_24dp"/>
         <TextView
                 android:id="@+id/breakdown2015_coop_points_red"
                 android:layout_width="wrap_content"
@@ -245,7 +252,8 @@
                 android:id="@+id/breakdown2015_coop_icon_blue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:background="@drawable/ic_more_horiz_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_more_horiz_black_24dp"/>
         <TextView
                 android:id="@+id/breakdown2015_coop_points_blue"
                 android:layout_width="wrap_content"
