@@ -26,7 +26,6 @@ import butterknife.ButterKnife;
 import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getBooleanDefault;
 import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getIntDefault;
 import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getIntDefaultValue;
-import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.setViewVisibility;
 import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.teamNumberFromKey;
 
 public class MatchBreakdownView2020 extends AbstractMatchBreakdownView {
@@ -270,7 +269,7 @@ public class MatchBreakdownView2020 extends AbstractMatchBreakdownView {
         for (int robotNumber = 1; robotNumber <= 3; robotNumber++) {
             String endgameStatus = getIntDefault(allianceData, "endgameRobot" + robotNumber);
             Integer endgamePoints =  ENDGAME_POINTS.containsKey(endgameStatus) ? ENDGAME_POINTS.get(endgameStatus) : 0;
-            TextView teamView = robotStatus[robotNumber = 1];
+            TextView teamView = robotStatus[robotNumber - 1];
             if (endgamePoints != null && endgamePoints > 0) {
                 teamView.setVisibility(VISIBLE);
                 teamView.setText(mResources.getString(R.string.breakdown_string_with_addition_format, endgameStatus, endgamePoints));
