@@ -5,7 +5,6 @@ import com.thebluealliance.androidclient.fragments.TeamListFragment;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 public class TeamListFragmentPagerAdapter extends FragmentStateAdapter {

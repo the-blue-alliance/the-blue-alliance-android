@@ -43,10 +43,11 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
             switch (position) {
                 case 0:
                     tab.setText("1-999");
-                default: {
+                    break;
+                default:
                     String title = (position * 1000) + "-" + ((position * 1000) + 999);
                     tab.setText(title);
-                }
+                break;
         }});
         tabLayoutMediator.attach();
     }
