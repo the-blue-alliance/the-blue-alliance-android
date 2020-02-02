@@ -54,17 +54,20 @@
                 android:id="@+id/breakdown2020_red_init_line_robot1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_close_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                android:src="@drawable/ic_close_black_24dp" />
             <ImageView
                 android:id="@+id/breakdown2020_red_init_line_robot2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_check_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                android:src="@drawable/ic_check_black_24dp"/>
             <ImageView
                 android:id="@+id/breakdown2020_red_init_line_robot3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_close_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                android:src="@drawable/ic_close_black_24dp"/>
             <TextView
                 android:id="@+id/breakdown2020_red_init_line_bonus"
                 android:layout_width="wrap_content"
@@ -81,17 +84,20 @@
                 android:id="@+id/breakdown2020_blue_init_line_robot1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_close_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                android:src="@drawable/ic_close_black_24dp"/>
             <ImageView
                 android:id="@+id/breakdown2020_blue_init_line_robot2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_check_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                android:src="@drawable/ic_check_black_24dp"/>
             <ImageView
                 android:id="@+id/breakdown2020_blue_init_line_robot3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_check_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                android:src="@drawable/ic_check_black_24dp"/>
             <TextView
                 android:id="@+id/breakdown2020_blue_init_line_bonus"
                 android:layout_width="wrap_content"
@@ -348,6 +354,7 @@
                 android:id="@+id/breakdown2020_red_shield_generator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawableTint="@color/primary_text_color"
                 android:drawableLeft="@drawable/ic_check_black_24dp"
                 tools:text="(+15)"/>
         </LinearLayout>
@@ -362,6 +369,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_check_black_24dp"
+                android:drawableTint="@color/primary_text_color"
                 tools:text="(+15)"/>
         </LinearLayout>
 
@@ -399,17 +407,20 @@
                 android:id="@+id/breakdown2020_red_stage1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/baseline_looks_one_black_24"/>
+                android:tint="@color/primary_text_color"
+                android:src="@drawable/baseline_looks_one_black_24"/>
             <ImageView
                 android:id="@+id/breakdown2020_red_stage2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/baseline_looks_two_black_24"/>
+                android:tint="@color/primary_text_color"
+                android:src="@drawable/baseline_looks_two_black_24"/>
             <ImageView
                 android:id="@+id/breakdown2020_red_stage3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/baseline_looks_3_black_24"/>
+                android:tint="@color/primary_text_color"
+                android:src="@drawable/baseline_looks_3_black_24"/>
             <TextView
                 android:id="@+id/breakdown2020_red_stage3_rp"
                 android:layout_width="wrap_content"
@@ -426,24 +437,28 @@
                 android:id="@+id/breakdown2020_blue_stage_none"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_close_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                android:src="@drawable/ic_close_black_24dp"/>
             <ImageView
                 android:id="@+id/breakdown2020_blue_stage1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/baseline_looks_one_black_24"
+                android:tint="@color/primary_text_color"
+                android:src="@drawable/baseline_looks_one_black_24"
                 tools:visibility="gone"/>
             <ImageView
                 android:id="@+id/breakdown2020_blue_stage2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/baseline_looks_two_black_24"
+                android:tint="@color/primary_text_color"
+                android:src="@drawable/baseline_looks_two_black_24"
                 tools:visibility="gone"/>
             <ImageView
                 android:id="@+id/breakdown2020_blue_stage3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/baseline_looks_3_black_24"
+                android:tint="@color/primary_text_color"
+                android:src="@drawable/baseline_looks_3_black_24"
                 tools:visibility="gone"/>
             <TextView
                 android:id="@+id/breakdown2020_blue_stage3_rp"
@@ -460,6 +475,7 @@
                 android:id="@+id/breakdown2020_red_shield_generator_rp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawableTint="@color/primary_text_color"
                 android:drawableLeft="@drawable/ic_close_black_24dp"
                 android:text=""/>
         </LinearLayout>
@@ -473,6 +489,7 @@
                 android:id="@+id/breakdown2020_blue_shield_generator_rp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawableTint="@color/primary_text_color"
                 android:drawableLeft="@drawable/ic_check_black_24dp"
                 android:text="(+1 RP)"/>
         </LinearLayout>

@@ -25,6 +25,7 @@
         style="@style/ListItemButtonStyle"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:tint="@color/primary_text_color"
         android:src="@drawable/ic_settings_black_24dp" />
 
 </RelativeLayout>

@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaAndroid;
@@ -347,7 +348,7 @@ public class HomeActivity extends DatafeedActivity implements HasFragmentCompone
 
     private Dialog makeDialogForYearSelection(@StringRes int titleResId, String[] dropdownItems) {
         Resources res = getResources();
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this, R.style.AlertDialogTheme);
         builder.setTitle(res.getString(titleResId));
         builder.setItems(dropdownItems, (dialog, which) -> {
             onYearSelected(which);

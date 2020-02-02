@@ -13,11 +13,11 @@
     </style>
 
     <style name="breakdown_redItem" parent="breakdown_base">
-        <item name="android:background">@color/lighter_red</item>
+        <item name="android:background">@color/match_view_red_team</item>
     </style>
 
     <style name="breakdown_blueItem" parent="breakdown_base">
-        <item name="android:background">@color/lighter_blue</item>
+        <item name="android:background">@color/match_view_blue_team</item>
     </style>
 
     <style name="breakdown_redItemSmall" parent="breakdown_redItem">
@@ -34,11 +34,11 @@
     </style>
 
     <style name="breakdown_redTotal" parent="breakdown_base">
-        <item name="android:background">@color/light_red</item>
+        <item name="android:background">@color/match_view_red_score</item>
     </style>
 
     <style name="breakdown_blueTotal" parent="breakdown_base">
-        <item name="android:background">@color/light_blue</item>
+        <item name="android:background">@color/match_view_blue_score</item>
     </style>
 
     <style name="breakdown_categoryTotal" parent="breakdown_category">

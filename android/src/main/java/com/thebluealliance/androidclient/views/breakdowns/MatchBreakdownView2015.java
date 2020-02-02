@@ -121,55 +121,55 @@ public class MatchBreakdownView2015 extends AbstractMatchBreakdownView {
         /* Auto Totes */
         if (redData.get("tote_set").getAsBoolean()) {
             autoTotePointsRed.setText(getContext().getString(R.string.breakdown_addition_format, TOTE_SET_POINTS));
-            autoTotesIconRed.setBackgroundResource(R.drawable.ic_more_horiz_black_24dp);
+            autoTotesIconRed.setImageResource(R.drawable.ic_more_horiz_black_24dp);
         } else if (redData.get("tote_stack").getAsBoolean()) {
             autoTotePointsRed.setText(getContext().getString(R.string.breakdown_addition_format, TOTE_STACK_POINTS));
-            autoTotesIconRed.setBackgroundResource(R.drawable.ic_menu_black_24dp);
+            autoTotesIconRed.setImageResource(R.drawable.ic_menu_black_24dp);
         } else {
             autoTotePointsRed.setVisibility(GONE);
-            autoTotesIconRed.setBackgroundResource(R.drawable.ic_clear_black_24dp);
+            autoTotesIconRed.setImageResource(R.drawable.ic_clear_black_24dp);
         }
         if (blueData.get("tote_set").getAsBoolean()) {
             autoTotePointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, TOTE_SET_POINTS));
-            autoTotesIconBlue.setBackgroundResource(R.drawable.ic_more_horiz_black_24dp);
+            autoTotesIconBlue.setImageResource(R.drawable.ic_more_horiz_black_24dp);
         } else if (blueData.get("tote_stack").getAsBoolean()) {
             autoTotePointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, TOTE_STACK_POINTS));
-            autoTotesIconBlue.setBackgroundResource(R.drawable.ic_menu_black_24dp);
+            autoTotesIconBlue.setImageResource(R.drawable.ic_menu_black_24dp);
         } else {
             autoTotePointsBlue.setVisibility(GONE);
-            autoTotesIconBlue.setBackgroundResource(R.drawable.ic_clear_black_24dp);
+            autoTotesIconBlue.setImageResource(R.drawable.ic_clear_black_24dp);
         }
 
         /* Auto Containers */
         if (redData.get("container_set").getAsBoolean()) {
             autoContainerPointsRed.setText(getContext().getString(R.string.breakdown_addition_format, CONTAINER_SET_POINTS));
-            autoContainersIconRed.setBackgroundResource(R.drawable.ic_more_horiz_black_24dp);
+            autoContainersIconRed.setImageResource(R.drawable.ic_more_horiz_black_24dp);
         } else {
             autoContainerPointsRed.setVisibility(GONE);
-            autoContainersIconRed.setBackgroundResource(R.drawable.ic_clear_black_24dp);
+            autoContainersIconRed.setImageResource(R.drawable.ic_clear_black_24dp);
         }
         if (blueData.get("container_set").getAsBoolean()) {
             autoContainerPointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, CONTAINER_SET_POINTS));
-            autoContainersIconBlue.setBackgroundResource(R.drawable.ic_more_horiz_black_24dp);
+            autoContainersIconBlue.setImageResource(R.drawable.ic_more_horiz_black_24dp);
         } else {
             autoContainerPointsBlue.setVisibility(GONE);
-            autoContainersIconBlue.setBackgroundResource(R.drawable.ic_clear_black_24dp);
+            autoContainersIconBlue.setImageResource(R.drawable.ic_clear_black_24dp);
         }
 
         /* Auto Robots */
         if (redData.get("robot_set").getAsBoolean()) {
             autoRobotPointsRed.setText(getContext().getString(R.string.breakdown_addition_format,  ROBOT_SET_POINTS));
-            autoRobotsIconRed.setBackgroundResource(R.drawable.ic_more_horiz_black_24dp);
+            autoRobotsIconRed.setImageResource(R.drawable.ic_more_horiz_black_24dp);
         } else {
             autoRobotPointsRed.setVisibility(GONE);
-            autoRobotsIconRed.setBackgroundResource(R.drawable.ic_clear_black_24dp);
+            autoRobotsIconRed.setImageResource(R.drawable.ic_clear_black_24dp);
         }
         if (blueData.get("robot_set").getAsBoolean()) {
             autoRobotPointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, ROBOT_SET_POINTS));
-            autoRobotsIconBlue.setBackgroundResource(R.drawable.ic_more_horiz_black_24dp);
+            autoRobotsIconBlue.setImageResource(R.drawable.ic_more_horiz_black_24dp);
         } else {
             autoRobotPointsBlue.setVisibility(GONE);
-            autoRobotsIconBlue.setBackgroundResource(R.drawable.ic_clear_black_24dp);
+            autoRobotsIconBlue.setImageResource(R.drawable.ic_clear_black_24dp);
         }
 
         /* Auto Points */
@@ -204,18 +204,18 @@ public class MatchBreakdownView2015 extends AbstractMatchBreakdownView {
             coopPointsRed.setText("0");
             coopPointsBlue.setText("0");
         } else if (scoreData.get("coopertition").getAsString().equals("Stack")){
-            coopIconRed.setBackgroundResource(R.drawable.ic_menu_black_24dp);
-            coopIconBlue.setBackgroundResource(R.drawable.ic_menu_black_24dp);
+            coopIconRed.setImageResource(R.drawable.ic_menu_black_24dp);
+            coopIconBlue.setImageResource(R.drawable.ic_menu_black_24dp);
             coopPointsRed.setText(getContext().getString(R.string.breakdown_addition_format, COOP_STACK_POINTS));
             coopPointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, COOP_STACK_POINTS));
         } else if (scoreData.get("coopertition").getAsString().equals("Set")) {
-            coopIconRed.setBackgroundResource(R.drawable.ic_more_horiz_black_24dp);
-            coopIconBlue.setBackgroundResource(R.drawable.ic_more_horiz_black_24dp);
+            coopIconRed.setImageResource(R.drawable.ic_more_horiz_black_24dp);
+            coopIconBlue.setImageResource(R.drawable.ic_more_horiz_black_24dp);
             coopPointsRed.setText(getContext().getString(R.string.breakdown_addition_format, COOP_SET_POINTS));
             coopPointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, COOP_SET_POINTS));
         } else {
-            coopIconRed.setBackgroundResource(R.drawable.ic_clear_black_24dp);
-            coopIconBlue.setBackgroundResource(R.drawable.ic_clear_black_24dp);
+            coopIconRed.setImageResource(R.drawable.ic_clear_black_24dp);
+            coopIconBlue.setImageResource(R.drawable.ic_clear_black_24dp);
         }
 
         /* Other Values */

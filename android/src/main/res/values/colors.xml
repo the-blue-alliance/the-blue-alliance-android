@@ -8,8 +8,8 @@
     <color name="red">#F00</color>
     <color name="green">#4CAF50</color>
 
-    <color name="column_header_gray">#ddd</color>
-    <color name="column_header_total_gray">#ccc</color>
+    <color name="column_header_gray">@color/md_grey_300</color>
+    <color name="column_header_total_gray">@color/md_grey_500</color>
     <color name="white">#FFF</color>
     <color name="black">#000000</color>
     <color name="nav_text_color">#000000</color>
@@ -17,15 +17,15 @@
     <color name="launcher_background">#485BB5</color>
 
     <!-- navigation drawer colors -->
-    <color name="nav_drawer_background">#f7f7f7</color>
-    <color name="nav_drawer_item_divider">#e5e5e5</color>
+    <color name="nav_drawer_background">@color/md_grey_100</color>
+    <color name="nav_drawer_item_divider">@color/md_grey_400</color>
 
     <!-- search results colors -->
     <color name="search_hint">#bbb</color>
 
     <!-- text colors -->
-    <color name="primary_text_color">#000000</color>
-    <color name="secondary_text_color">#89000000</color>
+    <color name="primary_text_color">@color/md_black</color>
+    <color name="secondary_text_color">@color/md_grey_600</color>
 
     <!-- branding colors -->
     <color name="youtube_red">#cd201f</color>
@@ -53,6 +53,12 @@
     <color name="gameday_ticker_awards_header">#4caf50</color>
     <color name="gameday_ticker_time_footer">#ECECEC</color>
     <color name="notification_generic_header">#9E9E9E</color>
+
+    <!-- Match View Colors -->
+    <color name="match_view_red_team">@color/lighter_red</color>
+    <color name="match_view_red_score">@color/light_red</color>
+    <color name="match_view_blue_team">@color/lighter_blue</color>
+    <color name="match_view_blue_score">@color/light_blue</color>
 
     <array name="led_colors">
         <item>@color/md_red_500</item>

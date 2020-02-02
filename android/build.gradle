@@ -244,6 +244,7 @@ dependencies {
     implementation "com.google.firebase:firebase-core:17.2.2"
     implementation "com.google.firebase:firebase-auth:19.2.0"
     implementation "com.google.firebase:firebase-config:19.1.1"
+    implementation "com.google.android.material:material:1.2.0-alpha04"
 
     testImplementation 'com.github.phil-lopreiato:firebasecrash-noop:v0.1'
     releaseImplementation "com.google.firebase:firebase-crash:${firebaseCrashVersion}"

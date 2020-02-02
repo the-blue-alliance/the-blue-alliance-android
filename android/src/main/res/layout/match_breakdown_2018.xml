@@ -54,8 +54,8 @@
                 android:id="@+id/breakdown2018_red_auto_run_robot_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_clear_black_24dp"
-                tools:background="@drawable/ic_done_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_done_black_24dp"/>
         </LinearLayout>
         <TextView
             android:text="@string/breakdown2018_auto_run_robot_1"
@@ -67,7 +67,8 @@
                 android:id="@+id/breakdown2018_blue_auto_run_robot_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:background="@drawable/ic_done_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_done_black_24dp"/>
         </LinearLayout>
         <LinearLayout
             style="@style/breakdown_redItem"
@@ -76,8 +77,8 @@
                 android:id="@+id/breakdown2018_red_auto_run_robot_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_clear_black_24dp"
-                tools:background="@drawable/ic_done_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_done_black_24dp"/>
         </LinearLayout>
         <TextView
             android:text="@string/breakdown2018_auto_run_robot_2"
@@ -89,7 +90,8 @@
                 android:id="@+id/breakdown2018_blue_auto_run_robot_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:background="@drawable/ic_done_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_done_black_24dp"/>
         </LinearLayout>
         <LinearLayout
             style="@style/breakdown_redItem"
@@ -98,8 +100,8 @@
                 android:id="@+id/breakdown2018_red_auto_run_robot_3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_clear_black_24dp"
-                tools:background="@drawable/ic_done_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_done_black_24dp"/>
         </LinearLayout>
         <TextView
             android:text="@string/breakdown2018_auto_run_robot_3"
@@ -111,7 +113,8 @@
                 android:id="@+id/breakdown2018_blue_auto_run_robot_3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:background="@drawable/ic_done_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_done_black_24dp"/>
         </LinearLayout>
 
         <!-- Auto Run Points -->
@@ -343,8 +346,8 @@
                 android:id="@+id/breakdown2018_red_auto_quest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_clear_black_24dp"
-                tools:background="@drawable/ic_done_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_done_black_24dp"/>
         </LinearLayout>
         <TextView
             android:text="@string/breakdown2018_auto_quest"
@@ -356,8 +359,8 @@
                 android:id="@+id/breakdown2018_blue_auto_quest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_clear_black_24dp"
-                tools:background="@drawable/ic_done_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_done_black_24dp"/>
         </LinearLayout>
 
         <!-- Face the Boss -->
@@ -368,8 +371,8 @@
                 android:id="@+id/breakdown2018_red_face_the_boss"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_clear_black_24dp"
-                tools:background="@drawable/ic_done_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_done_black_24dp"/>
         </LinearLayout>
         <TextView
             android:text="@string/breakdown2018_face_the_boss"
@@ -381,7 +384,8 @@
                 android:id="@+id/breakdown2018_blue_face_the_boss"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:background="@drawable/ic_done_black_24dp"/>
+                android:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_done_black_24dp"/>
         </LinearLayout>
 
         <!-- Fouls -->
