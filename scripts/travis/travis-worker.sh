@@ -42,7 +42,7 @@ case "$1" in
         ./scripts/update_datafeed.sh -l v2.2.1-FORKED2
 
         # Fail if there are an uncommitted changes
-        git diff-files --quiet --ignore-submodules
+        git diff --exit-code --ignore-submodules
         ;;
 
     "PROD-BUILD")
