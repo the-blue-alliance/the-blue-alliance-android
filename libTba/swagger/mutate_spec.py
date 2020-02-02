@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 import collections
 import sys
@@ -13,7 +13,7 @@ ALL_PROPERTIES_KEY = "allProperties"
 
 
 def update(d, u):
-    for k, v in u.iteritems():
+    for k, v in u.items():
         if isinstance(v, collections.Mapping):
             r = update(d.get(k, {}), v)
             d[k] = r
@@ -32,7 +32,7 @@ def main():
     options, _ = parser.parse_args()
 
     swagger_data = None
-    print("Using base file {}".format(options.file))
+    print(("Using base file {}".format(options.file)))
     with open(options.file, 'r') as datafile:
         swagger_data = json.loads(datafile.read())
 
@@ -42,7 +42,7 @@ def main():
 
     for f in sorted(glob("{}/*.json".format(options.json))):
         data = None
-        print("Reading from {}".format(f))
+        print(("Reading from {}".format(f)))
         with open(f, 'r') as datafile:
             data = json.loads(datafile.read())
 
@@ -50,23 +50,23 @@ def main():
             print("Data file is invalid")
             sys.exit(-1)
 
-        for key, value in data.iteritems():
+        for key, value in data.items():
             if key in MERGE_KEYS:
                 if key not in swagger_data:
                     swagger_data[key] = {}
                 update(swagger_data[key], value)
             elif key == HEADER_KEY:
-                for path, obj in swagger_data["paths"].iteritems():
+                for path, obj in swagger_data["paths"].items():
                     if not isinstance(obj.get("parameters", None), list):
                         obj["parameters"] = []
                     obj["parameters"].extend(value)
             elif key == ALL_PROPERTIES_KEY:
-                for model, obj in swagger_data["definitions"].iteritems():
-                  if model not in value.get("exclude", []):
+                for model, obj in swagger_data["definitions"].items():
+                  if model not in value.get("exclude", []) and "parameters" in value:
                         swagger_data["definitions"][model]["properties"].update(value["parameters"])
 
     pretty = json.dumps(swagger_data, indent=2, sort_keys=True)
-    print("Writing data back to {}".format(options.out))
+    print(("Writing data back to {}".format(options.out)))
     with open(options.out, 'w') as datafile:
         datafile.write(pretty)
 
