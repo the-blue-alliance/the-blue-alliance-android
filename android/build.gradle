@@ -125,6 +125,7 @@ android {
             // This is needed for robolectric - see
             // https://github.com/robolectric/robolectric-gradle-plugin/issues/144
             jvmArgs '-noverify'
+            systemProperty 'robolectric.dependency.repo.url', 'https://repo1.maven.org/maven2'
         }
     }
 
