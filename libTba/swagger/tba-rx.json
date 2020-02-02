@@ -6,5 +6,6 @@
   "modelPackage": "com.thebluealliance.api.model",
   "apiPackage": "com.thebluealliance.api.rx",
   "useRxJava": "true",
+  "hideGenerationTimestamp": "true",
   "dateLibrary": "legacy"
 }

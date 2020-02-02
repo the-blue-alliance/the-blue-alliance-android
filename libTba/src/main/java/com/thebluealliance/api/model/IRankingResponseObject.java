@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
 /**
  * RankingResponseObject
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaClientCodegen", date = "2017-04-12T17:25:08.276-04:00")
+
 public interface IRankingResponseObject   {
 
 

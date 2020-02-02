@@ -1,26 +1,30 @@
 package com.thebluealliance.androidclient.api.rx;
 
 import com.google.gson.JsonElement;
+import rx.Observable;
+import retrofit2.Response;
+
+import retrofit2.http.*;
+
+import okhttp3.RequestBody;
+
 import com.thebluealliance.androidclient.models.ApiStatus;
-import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictRanking;
-import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.EventAlliance;
-import com.thebluealliance.androidclient.models.Match;
-import com.thebluealliance.androidclient.models.Media;
-import com.thebluealliance.androidclient.models.RankingResponseObject;
-import com.thebluealliance.androidclient.models.Robot;
 import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.models.EventAlliance;
+import com.thebluealliance.androidclient.models.Award;
+import com.thebluealliance.androidclient.models.Match;
+import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
+import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.Robot;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import retrofit2.Response;
-import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.Path;
-import rx.Observable;
+import java.util.Map;
 
 public interface TbaApiV3 {
   /**

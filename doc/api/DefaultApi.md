@@ -1,6 +1,6 @@
 # DefaultApi
 
-All URIs are relative to *http://www.thebluealliance.com/api/v3*
+All URIs are relative to *https://www.thebluealliance.com/api/v3*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
