@@ -35,6 +35,16 @@ case "$1" in
         filter_code $CODE
         ;;
 
+    "DATAFEED_CODEGEN")
+        echo "Running datafeed codegen"
+        set -e
+        # Run the regeneration ourselves
+        ./scripts/update_datafeed.sh
+
+        # Fail if there are an uncommitted changes
+        git diff-files --quiet --ignore-submodules
+        ;;
+
     "PROD-BUILD")
         echo "Making sure we can build a prod apk (although with different keys)"
 

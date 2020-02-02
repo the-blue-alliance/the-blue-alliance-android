@@ -22,6 +22,7 @@ env:
   - JOB=UNIT
   - JOB=COVERAGE
   - JOB=CHECKSTYLE
+  - JOB=DATAFEED_CODEGEN
   - JOB=PROD-BUILD
   global:
   - GRADLE_OPTS="-Xmx2g -Xms128m -Xss1m"

@@ -35,6 +35,11 @@ case "$1" in
         common
         ;;
 
+    "DATAFEED_CODEGEN")
+        echo "Setting up environment for datafeed codegen"
+        common
+        ;;
+
     "PROD-BUILD")
         echo "Setting up environment for test production build"
         common
