@@ -167,6 +167,23 @@
         <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
 
+    <style name="TabBar" parent="@style/Widget.MaterialComponents.TabLayout.Colored">
+        <item name="tabMode">scrollable</item>
+        <item name="tabIndicatorColor">@color/white</item>
+        <item name="tabTextAppearance">@style/TextAppearance.TabTitle</item>
+        <item name="tabTextColor">@color/tab_indicator_text_color</item>
+    </style>
+
+    <style name="TextAppearance" parent="TextAppearance.AppCompat" />
+
+    <style name="TextAppearance.TabTitle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/tab_indicator_text_color</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
     <!-- Used for the checkboxes in the gameday ticker filterer -->
 
     <style name="GamedayTickerCheckboxUpcomingMatch" parent="Theme.AppCompat.Light">

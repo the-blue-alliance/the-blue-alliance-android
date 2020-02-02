@@ -1,35 +1,54 @@
 package com.thebluealliance.androidclient.binders;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
-import butterknife.Unbinder;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.thebluealliance.androidclient.adapters.TeamListFragmentPagerAdapter;
-import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class TeamTabBinder extends AbstractDataBinder<Integer> {
 
-    public ViewPager viewPager;
-    public SlidingTabs tabs;
-    public FragmentManager fragmentManager;
+    public ViewPager2 viewPager;
+    public TabLayout tabs;
+    public Fragment parentFragment;
 
     private Integer oldData;
     private Unbinder unbinder;
-    private int mInitialTab;
+    private int initialTab;
+    private TeamListFragmentPagerAdapter adapter;
+    private TabLayoutMediator tabLayoutMediator;
 
     @Inject
     public TeamTabBinder() {
         super();
-        mInitialTab = 0;
+        initialTab = 0;
     }
 
     public void setInitialTab(int initialTab) {
-        mInitialTab = initialTab;
+        this.initialTab = initialTab;
+    }
+
+    public void setupAdapter() {
+        adapter = new TeamListFragmentPagerAdapter(parentFragment);
+        viewPager.setAdapter(adapter);
+
+        tabLayoutMediator = new TabLayoutMediator(tabs, viewPager, (tab, position) -> {
+            switch (position) {
+                case 0:
+                    tab.setText("1-999");
+                default: {
+                    String title = (position * 1000) + "-" + ((position * 1000) + 999);
+                    tab.setText(title);
+                }
+        }});
+        tabLayoutMediator.attach();
     }
 
     @Override
@@ -44,9 +63,8 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
          * So set the view pager's adapter in another thread to avoid a race condition, or something.
          */
         viewPager.post(() -> {
-            viewPager.setAdapter(new TeamListFragmentPagerAdapter(fragmentManager, data == null ? 0 : data));
-            tabs.setViewPager(viewPager);
-            viewPager.setCurrentItem(mInitialTab);
+            adapter.setMaxTeamNumber(data == null ? 0 : data);
+            viewPager.setCurrentItem(initialTab);
         });
 
         oldData = data;
@@ -66,6 +84,7 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
         if (unbindViews && unbinder != null) {
+            tabLayoutMediator.detach();
             unbinder.unbind();
         }
     }
