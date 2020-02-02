@@ -72,12 +72,20 @@ NEW_NAME=TbaApiV$TBA_VERSION
 
 mv android/$APP_PKG/call/DefaultApi.java android/$APP_PKG/call/TbaApiV$TBA_VERSION.java
 mv android/$APP_PKG/rx/DefaultApi.java android/$APP_PKG/rx/TbaApiV$TBA_VERSION.java
-perl -pi -e "s/$OLD_NAME/$NEW_NAME/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
-perl -pi -e "s/$OLD_NAME/$NEW_NAME/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
-perl -pi -e "s/thebluealliance/thebluealliance\.androidclient/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
-perl -pi -e "s/api\.model/models/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
-perl -pi -e "s/Response<String>/Response<JsonElement>/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
-perl -pi -e "s/import rx\.Observable;/import com\.google\.gson\.JsonElement;\nimport rx\.Observable;/g" android/$APP_PKG/{call,rx}/TbaApiV$TBA_VERSION.java
+perl -pi -e "s/$OLD_NAME/$NEW_NAME/g" android/$APP_PKG/call/TbaApiV$TBA_VERSION.java
+perl -pi -e "s/$OLD_NAME/$NEW_NAME/g" android/$APP_PKG/rx/TbaApiV$TBA_VERSION.java
+
+perl -pi -e "s/thebluealliance/thebluealliance\.androidclient/g" android/$APP_PKG/call/TbaApiV$TBA_VERSION.java
+perl -pi -e "s/thebluealliance/thebluealliance\.androidclient/g" android/$APP_PKG/rx/TbaApiV$TBA_VERSION.java
+
+perl -pi -e "s/api\.model/models/g" android/$APP_PKG/call/TbaApiV$TBA_VERSION.java
+perl -pi -e "s/api\.model/models/g" android/$APP_PKG/rx/TbaApiV$TBA_VERSION.java
+
+perl -pi -e "s/Response<String>/Response<JsonElement>/g" android/$APP_PKG/call/TbaApiV$TBA_VERSION.java
+perl -pi -e "s/Response<String>/Response<JsonElement>/g" android/$APP_PKG/rx/TbaApiV$TBA_VERSION.java
+
+perl -pi -e "s/import rx\.Observable;/import com\.google\.gson\.JsonElement;\nimport rx\.Observable;/g" android/$APP_PKG/call/TbaApiV$TBA_VERSION.java
+perl -pi -e "s/import rx\.Observable;/import com\.google\.gson\.JsonElement;\nimport rx\.Observable;/g" android/$APP_PKG/rx/TbaApiV$TBA_VERSION.java
 
 # Rename models to start with I<name>.java
 CUR=$(pwd)
