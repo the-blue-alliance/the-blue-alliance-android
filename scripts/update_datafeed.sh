@@ -3,7 +3,7 @@
 # Script to generate Retrofit datafeed from swagger spec
 # Usage ./scripts/update_datafeed.sh [-l <lib version>] [-a <tba-api version>]
 
-TBA_VERSION=2
+TBA_VERSION=3
 while getopts ":l:v:" opt; do
   case $opt in
     l) LIB_VERSION="$OPTARG" && echo "Setting GCE Library Version to $LIB_VERSION" ;;
