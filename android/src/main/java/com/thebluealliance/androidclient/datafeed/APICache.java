@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import android.database.Cursor;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -216,6 +217,28 @@ public class APICache {
                   EventsTable.START);
                 List<Event> events = mDb.getEventsTable()
                   .getForQuery(null, where, new String[]{start, end});
+                observer.onNext(events);
+                observer.onCompleted();
+            } catch (Exception e) {
+                observer.onError(e);
+            }
+        });
+    }
+
+    public Observable<List<Event>> fetchEvents(List<String> eventKeys) {
+        return Observable.create((observer) -> {
+            try {
+                List<String> placeholders = new ArrayList<>();
+                for (String event : eventKeys) {
+                    placeholders.add("?");
+                }
+                String keyPlaceholder = TextUtils.join(",", placeholders);
+                String where = String.format("%1$s IN (%2$s)", EventsTable.KEY, keyPlaceholder);
+
+                List<Event> events = mDb.getEventsTable().getForQuery(
+                        null,
+                        where,
+                        eventKeys.toArray(new String[]{}));
                 observer.onNext(events);
                 observer.onCompleted();
             } catch (Exception e) {

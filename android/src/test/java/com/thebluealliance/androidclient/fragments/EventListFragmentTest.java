@@ -24,7 +24,9 @@ public class EventListFragmentTest extends BaseFragmentTest {
 
     @Before
     public void setUp() {
-        mFragment = EventListFragment.newInstance(2015, 1, -1, "Week 1");
+        ArrayList<String> eventKeys = new ArrayList<>();
+        eventKeys.add("2015cthar");
+        mFragment = EventListFragment.newInstance(2015, eventKeys, true);
         Event event = ModelMaker.getModel(Event.class, "2015cthar");
         EventRenderer renderer = new EventRenderer(null);
         mEvents = new ArrayList<>();
