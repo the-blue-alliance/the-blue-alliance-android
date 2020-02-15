@@ -347,7 +347,7 @@ public class MatchBreakdownView2020 extends AbstractMatchBreakdownView {
     private void setFouls(JsonObject allianceData, JsonObject otherAllianceData, TextView view) {
         int foulPoints = getIntDefaultValue(otherAllianceData, "foulCount") * 3;
         int techFoulPoints = getIntDefaultValue(otherAllianceData, "techFoulCount") * 15;
-        boolean foulRpAwarded = getBooleanDefault(allianceData, "tba_foulRp");
+        boolean foulRpAwarded = getBooleanDefault(allianceData, "tba_shieldEnergizedRankingPointFromFoul");
         if (foulRpAwarded) {
             view.setText(mResources.getString(R.string.breakdown_foul_tech_rp_format, foulPoints, techFoulPoints, 1));
         } else {
