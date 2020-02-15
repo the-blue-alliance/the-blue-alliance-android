@@ -654,6 +654,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         if (text != null) {
             text.setTextColor(getResources().getColor(R.color.white));
         }
+        snackbar.setBackgroundTint(R.color.accent);
         return snackbar;
     }
 
