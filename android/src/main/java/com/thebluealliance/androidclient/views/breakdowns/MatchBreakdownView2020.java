@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +19,7 @@ import java.util.Map;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.gridlayout.widget.GridLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -187,7 +187,7 @@ public class MatchBreakdownView2020 extends AbstractMatchBreakdownView {
 
         /* Teleop Total */
         redTeleopTotal.setText(getIntDefault(redData, "teleopPoints"));
-        blueTeleopInnerGoal.setText(getIntDefault(blueData, "teleopPoints"));
+        blueTeleopTotal.setText(getIntDefault(blueData, "teleopPoints"));
 
         /* Stage Activations */
         setStageActivations(redData, redStage3Rp, redStage1, redStage2, redStage3);
@@ -258,7 +258,7 @@ public class MatchBreakdownView2020 extends AbstractMatchBreakdownView {
         lowGoal.setText(getIntDefault(allianceData, prefix + "CellsBottom"));
         outerGoal.setText(getIntDefault(allianceData, prefix + "CellsOuter"));
         innerGoal.setText(getIntDefault(allianceData, prefix + "CellsInner"));
-        totalPoints.setText(getIntDefault(allianceData, prefix + "ellPoints"));
+        totalPoints.setText(getIntDefault(allianceData, prefix + "CellPoints"));
     }
 
     private void setEndgame(JsonObject allianceData, TextView endgameTotal, TextView rungLevel, TextView... robotStatus) {
@@ -274,7 +274,8 @@ public class MatchBreakdownView2020 extends AbstractMatchBreakdownView {
                 teamView.setVisibility(VISIBLE);
                 teamView.setText(mResources.getString(R.string.breakdown_string_with_addition_format, endgameStatus, endgamePoints));
             } else {
-                teamView.setVisibility(GONE);
+                teamView.setVisibility(VISIBLE);
+                teamView.setText(endgameStatus);
             }
             if ("Hang".equals(endgameStatus)) {
                 numRobotsHanging++;

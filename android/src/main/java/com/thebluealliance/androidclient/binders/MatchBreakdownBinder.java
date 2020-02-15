@@ -55,6 +55,7 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
                 break;
             case 2020:
                 breakdownView = new MatchBreakdownView2020(mActivity);
+                break;
             default:
                 breakdownView = null;
                 break;
