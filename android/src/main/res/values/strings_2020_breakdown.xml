@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="breakdown2020_init_line_exited">Initiation Line Exited</string>
+    <string name="breakdown2020_auto_power_cells">Auto Power Cells</string>
+    <string name="breakdown2020_auto_power_cell_points">Auto Power Cell Points</string>
+    <string name="breakdown2020_teleop_power_cells">Teleop Power Cells</string>
+    <string name="breakdown2020_teleop_power_cell_points">Teleop Power Cell Points</string>
+    <string name="breakdown2020_control_panel_points">Control Panel Points</string>
+    <string name="breakdown2020_shield_generator_level">Shield Generator Level</string>
+    <string name="breakdown2020_endgame_points">Endgame Points</string>
+    <string name="breakdown2020_stage_activations">Stage Activations</string>
+    <string name="breakdown2020_shield_generator_operational">Shield Generator Operational</string>
+</resources>

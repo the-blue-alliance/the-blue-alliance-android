@@ -279,7 +279,7 @@
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
-            android:text="@string/breakdown2018_endgame_robot_1"
+            android:text="@string/breakdown_endgame_robot_1"
             style="@style/breakdown_category" />
         <TextView
             android:id="@+id/breakdown2018_endgame_blue_robot_1"
@@ -292,7 +292,7 @@
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
-            android:text="@string/breakdown2018_endgame_robot_2"
+            android:text="@string/breakdown_endgame_robot_2"
             style="@style/breakdown_category" />
         <TextView
             android:id="@+id/breakdown2018_endgame_blue_robot_2"
@@ -305,7 +305,7 @@
             style="@style/breakdown_redItem"
             tools:text="40"/>
         <TextView
-            android:text="@string/breakdown2018_endgame_robot_3"
+            android:text="@string/breakdown_endgame_robot_3"
             style="@style/breakdown_category" />
         <TextView
             android:id="@+id/breakdown2018_endgame_blue_robot_3"

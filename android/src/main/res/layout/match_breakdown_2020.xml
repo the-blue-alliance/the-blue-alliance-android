@@ -75,7 +75,7 @@
                 tools:text="(+10)"/>
         </LinearLayout>
         <TextView
-            android:text="Initiation Line Exited"
+            android:text="@string/breakdown2020_init_line_exited"
             style="@style/breakdown_category" />
         <LinearLayout
             style="@style/breakdown_blueItem"
@@ -133,7 +133,7 @@
                 tools:text="2"/>
         </LinearLayout>
         <TextView
-            android:text="Auto Power Cells"
+            android:text="@string/breakdown2020_auto_power_cells"
             style="@style/breakdown_category" />
         <LinearLayout
             style="@style/breakdown_blueItem"
@@ -168,7 +168,7 @@
             style="@style/breakdown_redItem"
             tools:text="10"/>
         <TextView
-            android:text="Auto Power Cell Points"
+            android:text="@string/breakdown2020_auto_power_cell_points"
             style="@style/breakdown_category" />
         <TextView
             android:id="@+id/breakdown2020_blue_auto_power_cell"
@@ -218,7 +218,7 @@
                 tools:text="24"/>
         </LinearLayout>
         <TextView
-            android:text="Teleop Power Cells"
+            android:text="@string/breakdown2020_teleop_power_cells"
             style="@style/breakdown_category" />
         <LinearLayout
             style="@style/breakdown_blueItem"
@@ -253,7 +253,7 @@
             style="@style/breakdown_redItem"
             tools:text="10"/>
         <TextView
-            android:text="Teleop Power Cell Points"
+            android:text="@string/breakdown2020_teleop_power_cell_points"
             style="@style/breakdown_category" />
         <TextView
             android:id="@+id/breakdown2020_blue_teleop_power_cell"
@@ -267,7 +267,7 @@
             style="@style/breakdown_redItem"
             tools:text="0"/>
         <TextView
-            android:text="Control Panel Points"
+            android:text="@string/breakdown2020_control_panel_points"
             style="@style/breakdown_category" />
         <TextView
             android:id="@+id/breakdown2020_blue_control_panel"
@@ -287,7 +287,7 @@
                 tools:text="Park (+5)"/>
         </LinearLayout>
         <TextView
-            android:text="Robot 1 Endgame"
+            android:text="@string/breakdown_endgame_robot_1"
             style="@style/breakdown_category" />
         <LinearLayout
             style="@style/breakdown_blueItem"
@@ -310,7 +310,7 @@
                 tools:text="Park (+5)"/>
         </LinearLayout>
         <TextView
-            android:text="Robot 2 Endgame"
+            android:text="@string/breakdown_endgame_robot_2"
             style="@style/breakdown_category" />
         <LinearLayout
             style="@style/breakdown_blueItem"
@@ -333,7 +333,7 @@
                 tools:text="Hang (+25)"/>
         </LinearLayout>
         <TextView
-            android:text="Robot 3 Endgame"
+            android:text="@string/breakdown_endgame_robot_3"
             style="@style/breakdown_category" />
         <LinearLayout
             style="@style/breakdown_blueItem"
@@ -359,7 +359,7 @@
                 tools:text="(+15)"/>
         </LinearLayout>
         <TextView
-            android:text="Shield Generator Level"
+            android:text="@string/breakdown2020_shield_generator_level"
             style="@style/breakdown_category" />
         <LinearLayout
             style="@style/breakdown_blueItem"
@@ -379,7 +379,7 @@
             style="@style/breakdown_redTotal"
             tools:text="30"/>
         <TextView
-            android:text="Endgame Points"
+            android:text="@string/breakdown2020_endgame_points"
             style="@style/breakdown_categorySubtotal" />
         <TextView
             android:id="@+id/breakdown_endgame_total_blue"
@@ -428,7 +428,7 @@
                 tools:text="(+1 RP)" />
         </LinearLayout>
         <TextView
-            android:text="Stage Activations"
+            android:text="@string/breakdown2020_stage_activations"
             style="@style/breakdown_category" />
         <LinearLayout
             style="@style/breakdown_blueItem"
@@ -474,7 +474,7 @@
                 android:text=""/>
         </LinearLayout>
         <TextView
-            android:text="Shield Generator Operational"
+            android:text="@string/breakdown2020_shield_generator_operational"
             style="@style/breakdown_category" />
         <LinearLayout
             style="@style/breakdown_blueItem"
@@ -494,7 +494,7 @@
             style="@style/breakdown_redItem"
             tools:text="+ 0 / + 0"/>
         <TextView
-            android:text="Fouls / Tech Fouls"
+            android:text="@string/breakdown_foul_tech_foul"
             style="@style/breakdown_category" />
         <TextView
             android:id="@+id/breakdown_fouls_blue"
