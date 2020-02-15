@@ -46,13 +46,15 @@ public final class Constants {
     public static final int[] FIRST_COMP_WEEK =
             {6, 8, 8, 7, 12, 9, 9, 8,               // 1992 - 1999
                     10, 8, 9, 9, 9, 9, 8, 8, 8, 8,  // 2000 - 2009
-                    9, 9, 8, 8, 8, 8, 8, 8};        // 2010 -
+                    9, 9, 8, 8, 8, 8, 8, 8, 8, 8,   // 2010 - 2019
+                    9};                             // 2020 -
 
     //the competition week of CMP that year, starting with 1992
     public static final int[] CMP_WEEK =
-            {1, 1, 1, 6, 4, 6, 5, 9,               // 1992 - 1999
-                    5, 6, 8, 6, 7, 8, 7, 7, 8, 8,  // 2000 - 2009
-                    7, 9, 9, 9, 9, 9, 10, 10};     // 2010 -
+            {1, 1, 1, 6, 4, 6, 5, 9,                  // 1992 - 1999
+                    5, 6, 8, 6, 7, 8, 7, 7, 8, 8,     // 2000 - 2009
+                    7, 9, 9, 9, 9, 9, 10, 10, 10, 10, // 2010 - 2019
+                    10};                              // 2020
 
 
     public static final int FIRST_COMP_YEAR = 1992;
