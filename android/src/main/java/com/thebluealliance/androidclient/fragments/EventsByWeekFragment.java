@@ -86,10 +86,10 @@ public class EventsByWeekFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_event_list_fragment_pager, container, false);
-        mViewPager = (ViewPager) view.findViewById(R.id.event_pager);
+        mViewPager =view.findViewById(R.id.event_pager);
         // Make this ridiculously big
         mViewPager.setOffscreenPageLimit(50);
-        mTabs = (SlidingTabs) view.findViewById(R.id.event_pager_tabs);
+        mTabs = view.findViewById(R.id.event_pager_tabs);
         ViewCompat.setElevation(mTabs, getResources().getDimension(R.dimen.toolbar_elevation));
         mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
         mViewPager.addOnPageChangeListener(mFragmentBinder);

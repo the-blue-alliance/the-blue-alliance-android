@@ -39,7 +39,7 @@ public class EventTabSubscriberTest {
     @Test
     public void testParsedData()  {
         int[] weeks = {0, 1, 2, 3, 4, 5, 6, 7, 9, 11, 15, 21, 25, 28, 32, 37};
-        int[] months = {-1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 5, 6, 7, 8, 9, 10};
+        int[] sizes = {2, 16, 13, 18, 20, 21, 18, 3, 9, 7, 10, 4, 2, 8, 13, 5};
         String[] labels = {"Preseason Events", "Week 1", "Week 2", "Week 3", "Week 4", "Week 5",
           "Week 6", "Week 7", "Championship Event", "May Offseason Events", "Jun Offseason Events",
           "Jul Offseason Events", "Aug Offseason Events", "Sep Offseason Events",
@@ -50,7 +50,7 @@ public class EventTabSubscriberTest {
         for (int i = 0; i < tabs.size(); i++) {
             EventWeekTab tab = tabs.get(i);
             assertEquals(String.format("Tab %1$d week fail", i), weeks[i], tab.getWeek());
-            assertEquals(String.format("Tab %1$d month fail", i), months[i], tab.getMonth());
+            assertEquals(String.format("Tab %1$d count fail", i), sizes[i], tab.getEventKeys().size());
             assertEquals(String.format("Tab %1$d label fail", i), labels[i], tab.getLabel());
         }
     }

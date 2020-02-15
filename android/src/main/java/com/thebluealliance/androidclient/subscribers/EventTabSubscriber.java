@@ -4,13 +4,13 @@ import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventWeekTab;
-import com.thebluealliance.androidclient.types.EventType;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EventTabSubscriber extends BaseAPISubscriber<List<Event>, List<EventWeekTab>> {
 
@@ -27,28 +27,25 @@ public class EventTabSubscriber extends BaseAPISubscriber<List<Event>, List<Even
         mDataToBind.clear();
         Collections.sort(mAPIData, mEventComparator);
 
-        Calendar cal = Calendar.getInstance();
-        int lastEventWeek = -1;
-        int lastEventMonth = -1;
-        for (int i = 0; i < mAPIData.size(); i++) {
-            Event event = mAPIData.get(i);
-            cal.setTime(event.getFormattedStartDate());
-            int competitionWeek = event.getWeek() != null
+        LinkedHashMap<String, EventWeekTab> eventTabs = new LinkedHashMap<>();
+        for (Event event : mAPIData) {
+            int eventWeek = event.getWeek() != null
                     ? event.getWeek()
-                    : 0;
-            int month = cal.get(Calendar.MONTH);
-
-            boolean isOffseason = event.getEventTypeEnum() == EventType.OFFSEASON;
-
-            if (isOffseason ? lastEventMonth != month : lastEventWeek != competitionWeek) {
-                mDataToBind.add(new EventWeekTab(
-                  competitionWeek,
-                  isOffseason ? month : -1,
-                  EventHelper.generateLabelForEvent(event)));
-
-                lastEventMonth = month;
-                lastEventWeek = competitionWeek;
+                    : -1;
+            String label = EventHelper.generateLabelForEvent(event);
+            if (!eventTabs.containsKey(label)) {
+                eventTabs.put(label, new EventWeekTab(label, eventWeek));
             }
+
+            EventWeekTab tab = eventTabs.get(label);
+            if (tab == null) {
+                throw new RuntimeException("Expected to find event tab, but can't!");
+            }
+            tab.addEventKey(event.getKey());
+        }
+
+        for (Map.Entry<String, EventWeekTab> tab : eventTabs.entrySet()) {
+            mDataToBind.add(tab.getValue());
         }
     }
 

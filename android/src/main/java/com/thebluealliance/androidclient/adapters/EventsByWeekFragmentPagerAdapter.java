@@ -40,7 +40,7 @@ public class EventsByWeekFragmentPagerAdapter extends BindableFragmentPagerAdapt
     @Override
     public Fragment getItem(int position) {
         EventWeekTab tab = mThisYearsWeekTabs.get(position);
-        return EventListFragment.newInstance(mYear, tab.getWeek(), tab.getMonth(), getPageTitle(position).toString(), false);
+        return EventListFragment.newInstance(mYear, tab.getEventKeys(), false);
     }
 
     public List<String> getLabels() {
