@@ -10,4 +10,21 @@
     <string name="breakdown2020_endgame_points">Endgame Points</string>
     <string name="breakdown2020_stage_activations">Stage Activations</string>
     <string name="breakdown2020_shield_generator_operational">Shield Generator Operational</string>
+
+    <string name="breakdown2020_avg_init_line_auto">Average Auto Initiation Line Points</string>
+    <string name="breakdown2020_avg_cell_points_auto">Average Auto Cell Points</string>
+    <string name="breakdown2020_avg_cell_points_teleop">Average Teleop Cell Points</string>
+    <string name="breakdown2020_avg_controL_panel_points">Average Control Panel Points</string>
+    <string name="breakdown2020_avg_num_hang">Average Number of Robots Hanging</string>
+    <string name="breakdown2020_avg_endgame_score">Average Endgame Score</string>
+
+    <string name="breakdown2020_exit_init_line">Initiation Line Exited</string>
+    <string name="breakdown2020_stage1_achieved">Stage 1 Achieved</string>
+    <string name="breakdown2020_stage2_achieved">Stage 2 Achieved</string>
+    <string name="breakdown2020_stage3_achieved">Stage 3 Achieved</string>
+    <string name="breakdown2020_robots_parking">Robots Parking</string>
+    <string name="breakdown2020_robots_hanging">Robots Hanging</string>
+    <string name="breakdown2020_generator_level">Generator Level + Hang</string>
+    <string name="breakdown2020_operational_rp">Generator Operational RP Achieved</string>
+    <string name="breakdown2020_energized_rp">Generator Energized RP Achieved</string>
 </resources>
