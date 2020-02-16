@@ -30,6 +30,10 @@ public class MediaDeserializer implements JsonDeserializer<Media> {
             media.setDetails(object.get("details").toString());
         }
 
+        if (object.has("base64Image")) {
+            media.setBase64Image(object.get("base64Image").toString());
+        }
+
         return media;
     }
 }
