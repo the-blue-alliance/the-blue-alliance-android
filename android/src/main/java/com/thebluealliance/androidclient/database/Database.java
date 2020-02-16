@@ -34,7 +34,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String ALL_EVENTS_LOADED_TO_DATABASE_FOR_YEAR = "all_events_loaded_for_year_";
     public static final String ALL_DISTRICTS_LOADED_TO_DATABASE_FOR_YEAR = "all_districts_loaded_for_year_";
 
-    static final int DATABASE_VERSION = 35;
+    static final int DATABASE_VERSION = 36;
     private static final String DATABASE_NAME = "the-blue-alliance-android-database";
     static final @Deprecated String TABLE_API = "api";
     public static final String TABLE_TEAMS = "teams",
@@ -110,6 +110,7 @@ public class Database extends SQLiteOpenHelper {
             + MediasTable.FOREIGNKEY + " TEXT DEFAULT '', "
             + MediasTable.TEAMKEY + " TEXT DEFAULT '', "
             + MediasTable.DETAILS + " TEXT DEFAULT '', "
+            + MediasTable.B64_IMAGE + " TEXT DEFAULT '', "
             + MediasTable.YEAR + " INTEGER  DEFAULT -1, "
             + MediasTable.LAST_MODIFIED + " TIMESTAMP"
             + ")";
@@ -548,6 +549,21 @@ public class Database extends SQLiteOpenHelper {
                     try {
                         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DISTRICTS);
                         db.execSQL(CREATE_DISTRICTS);
+                        db.setTransactionSuccessful();
+                    } finally {
+                        db.endTransaction();
+                    }
+                    break;
+                case 36:
+                    // Add the b64_image column to Media table
+                    db.beginTransaction();
+                    try {
+                        if (!columnExists(db, TABLE_MEDIAS, MediasTable.B64_IMAGE)) {
+                            db.execSQL(String.format(
+                                    "ALTER TABLE %1$s ADD COLUMN %2$s TEXT DEFAULT ''",
+                                    TABLE_MEDIAS,
+                                    MediasTable.B64_IMAGE));
+                        }
                         db.setTransactionSuccessful();
                     } finally {
                         db.endTransaction();

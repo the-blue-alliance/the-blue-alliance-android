@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.database.tables.DistrictsTable;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
+import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
 
@@ -213,5 +214,13 @@ public class DatabaseTest {
         assertFalse(mDbHelper.columnExists(mDb, TABLE_EVENTS, EventsTable.CITY));
         mDbHelper.onUpgrade(mDb, 32, 33);
         assertTrue(mDbHelper.columnExists(mDb, TABLE_EVENTS, EventsTable.CITY));
+    }
+
+    @Test
+    public void testUpdateTo36() {
+        mDb.execSQL(String.format(BASE_TABLE_CREATE, TABLE_MEDIAS));
+        assertFalse(mDbHelper.columnExists(mDb, TABLE_MEDIAS, MediasTable.B64_IMAGE));
+        mDbHelper.onUpgrade(mDb,35, 36);
+        assertTrue(mDbHelper.columnExists(mDb, TABLE_MEDIAS, MediasTable.B64_IMAGE));
     }
 }
