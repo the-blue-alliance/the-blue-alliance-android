@@ -40,6 +40,18 @@ public interface IMedia   {
 
 
    /**
+   * For avatars, an encoded image
+   * @return base64Image
+  **/
+  @ApiModelProperty(example = "null", value = "For avatars, an encoded image")
+  @Nullable
+  public String getBase64Image();
+
+  public void setBase64Image(String base64Image);
+
+
+
+   /**
    * If the media requires it, a json dict of additional information
    * @return details
   **/

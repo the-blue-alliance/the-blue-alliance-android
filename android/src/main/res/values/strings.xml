@@ -12,6 +12,7 @@
     <string name="year_selector_title_events">%1$s Events</string>
     <string name="year_selector_title_districts">%1$s Districts</string>
     <string name="select_year">Select Year</string>
+    <string name="select_event">Select Event</string>
     <plurals name="contribution_count">
         <item quantity="one">%d contribution</item>
         <item quantity="other">%d contributions</item>
@@ -189,4 +190,8 @@
     <string name="event_type_other">Other Events</string>
     <string name="week_events_header">%1$s Events</string>
     <string name="district_events_header">%1$s District Events</string>
+
+    <string name="team_info_header">Team Info</string>
+    <string name="event_info_header">Event Info</string>
+    <string name="team_at_event_info">Team @ Event Info</string>
 </resources>

@@ -49,8 +49,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public MediaListSubscriber provideMediaListSubscriber() {
-        return new MediaListSubscriber(mActivity.getResources());
+    public MediaListSubscriber provideMediaListSubscriber(EventBus eventBus) {
+        return new MediaListSubscriber(mActivity.getResources(), eventBus);
     }
 
     @Provides

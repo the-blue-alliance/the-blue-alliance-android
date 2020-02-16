@@ -24,6 +24,7 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
     private Long lastModified = null;
     private String type = null;
     private Boolean preferred;
+    private String base64Image = null;
 
     private JsonObject details;
     private String teamKey;
@@ -84,6 +85,17 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
         this.preferred = preferred;
     }
 
+    @Nullable
+    @Override
+    public String getBase64Image() {
+        return base64Image;
+    }
+
+    @Override
+    public void setBase64Image(String base64Image) {
+        this.base64Image = base64Image;
+    }
+
     public String getTeamKey() {
         return teamKey;
     }
@@ -107,6 +119,7 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
         data.put(MediasTable.FOREIGNKEY, getForeignKey());
         data.put(MediasTable.TEAMKEY, getTeamKey());
         data.put(MediasTable.DETAILS, getDetails());
+        data.put(MediasTable.B64_IMAGE, getBase64Image());
         data.put(MediasTable.YEAR, getYear());
         data.put(MediasTable.LAST_MODIFIED, getLastModified());
         return data;

@@ -14,6 +14,7 @@ public class MediasTable extends ModelTable<Media> {
             FOREIGNKEY = "foreignKey",
             TEAMKEY = "teamKey",
             DETAILS = "details",
+            B64_IMAGE = "b64_image",
             YEAR = "year",
             LAST_MODIFIED = "last_modified";
 

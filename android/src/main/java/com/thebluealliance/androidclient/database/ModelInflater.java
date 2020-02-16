@@ -212,6 +212,9 @@ public final class ModelInflater {
                 case MediasTable.DETAILS:
                     media.setDetails(data.getString(i));
                     break;
+                case MediasTable.B64_IMAGE:
+                    media.setBase64Image(data.getString(i));
+                    break;
                 case MediasTable.LAST_MODIFIED:
                     media.setLastModified(data.getLong(i));
                     break;

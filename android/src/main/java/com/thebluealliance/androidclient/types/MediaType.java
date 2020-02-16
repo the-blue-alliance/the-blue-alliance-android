@@ -9,7 +9,8 @@ public enum MediaType {
     YOUTUBE_CHANNEL,
     GITHUB_PROFILE,
     INSTAGRAM_PROFILE,
-    IMGUR;
+    IMGUR,
+    AVATAR;
 
     public static MediaType fromString(String string) {
         if (string == null) return NONE;
@@ -30,6 +31,8 @@ public enum MediaType {
                 return GITHUB_PROFILE;
             case "instagram-profile":
                 return INSTAGRAM_PROFILE;
+            case "avatar":
+                return AVATAR;
             default:
                 return NONE;
         }
@@ -76,10 +79,14 @@ public enum MediaType {
     }
 
     public boolean isImage() {
-        return this != NONE && this != YOUTUBE;
+        return this != NONE && this != YOUTUBE && this != AVATAR;
     }
 
     public boolean isVideo() {
         return this != NONE && this == YOUTUBE;
+    }
+
+    public boolean isAvatar() {
+        return this == AVATAR;
     }
 }

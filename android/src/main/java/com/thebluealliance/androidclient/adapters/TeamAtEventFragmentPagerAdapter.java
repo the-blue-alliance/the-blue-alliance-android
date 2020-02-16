@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.adapters;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventMatchesFragment;
@@ -10,6 +11,9 @@ import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventStatsFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.interfaces.HasEventParam;
+
+import java.util.List;
 
 public class TeamAtEventFragmentPagerAdapter extends FragmentPagerAdapter {
 
@@ -21,10 +25,27 @@ public class TeamAtEventFragmentPagerAdapter extends FragmentPagerAdapter {
             TAB_AWARDS = 4;
 
     private String mTeamKey, mEventKey;
+    private FragmentManager mFragmentManager;
 
     public TeamAtEventFragmentPagerAdapter(FragmentManager fm, String teamKey, String eventKey) {
         super(fm);
         mTeamKey = teamKey;
+        mEventKey = eventKey;
+        mFragmentManager = fm;
+    }
+
+    public void updateEvent(String eventKey) {
+        if (!mEventKey.equals(eventKey)) {
+            List<Fragment> fragments = mFragmentManager.getFragments();
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+            for (Fragment f : fragments) {
+                //You can perform additional check to remove some (not all) fragments:
+                if (getItemPosition(f) == POSITION_NONE) {
+                    ft.remove(f);
+                }
+            }
+            ft.commitAllowingStateLoss();
+        }
         mEventKey = eventKey;
     }
 
@@ -56,4 +77,22 @@ public class TeamAtEventFragmentPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
+    @Override
+    public int getItemPosition(Object object) {
+        if (object instanceof HasEventParam) {
+            HasEventParam fragment = (HasEventParam) object;
+            String eventKey = fragment.getEventKey();
+            if (eventKey.isEmpty()) {
+                return POSITION_UNCHANGED;
+            } else if (!eventKey.equals(mEventKey)) {
+                return POSITION_NONE;
+            }
+        }
+        return super.getItemPosition(object);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return (mEventKey + "_" + position).hashCode();
+    }
 }

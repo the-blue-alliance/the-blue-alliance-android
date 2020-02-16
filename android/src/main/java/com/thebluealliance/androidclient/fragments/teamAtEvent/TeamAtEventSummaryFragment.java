@@ -9,19 +9,22 @@ import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamAtEventSummaryCombiner;
 import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
+import com.thebluealliance.androidclient.interfaces.HasEventParam;
 import com.thebluealliance.androidclient.itemviews.LabelValueItemView;
 import com.thebluealliance.androidclient.itemviews.LabeledMatchItemView;
+import com.thebluealliance.androidclient.itemviews.SimpleTeamInfoView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
+import com.thebluealliance.androidclient.viewmodels.SimpleTeamViewModel;
 
 import javax.inject.Inject;
 
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
-public class TeamAtEventSummaryFragment extends RecyclerViewFragment<TeamAtEventSummarySubscriber.Model, TeamAtEventSummarySubscriber, RecyclerViewBinder> {
+public class TeamAtEventSummaryFragment extends RecyclerViewFragment<TeamAtEventSummarySubscriber.Model, TeamAtEventSummarySubscriber, RecyclerViewBinder> implements HasEventParam {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 
@@ -70,10 +73,16 @@ public class TeamAtEventSummaryFragment extends RecyclerViewFragment<TeamAtEvent
     }
 
     @Override
+    public String getEventKey() {
+        return mEventKey;
+    }
+
+    @Override
     protected Observable<TeamAtEventSummarySubscriber.Model> getObservable(String cacheHeader) {
         return Observable.zip(
                 mDatafeed.fetchTeamAtEventStatus(mTeamKey, mEventKey, cacheHeader),
                 mDatafeed.fetchEvent(mEventKey, cacheHeader),
+                mDatafeed.fetchTeam(mTeamKey, cacheHeader),
                 new TeamAtEventSummaryCombiner());
     }
 
@@ -94,5 +103,6 @@ public class TeamAtEventSummaryFragment extends RecyclerViewFragment<TeamAtEvent
     @Override public void initializeAdapterCreator(SmartAdapter.MultiAdaptersCreator creator) {
         creator.map(LabelValueViewModel.class, LabelValueItemView.class);
         creator.map(LabeledMatchViewModel.class, LabeledMatchItemView.class);
+        creator.map(SimpleTeamViewModel.class, SimpleTeamInfoView.class);
     }
 }

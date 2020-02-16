@@ -939,6 +939,10 @@
         "preferred": {
           "type": "boolean",
           "description": "Is this a high quality robot picture"
+        },
+        "base64Image": {
+          "type": "string",
+          "description": "For avatars, an encoded image"
         }
       }
     },

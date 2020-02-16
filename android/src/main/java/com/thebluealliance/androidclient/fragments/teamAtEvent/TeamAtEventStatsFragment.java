@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
+import com.thebluealliance.androidclient.interfaces.HasEventParam;
 import com.thebluealliance.androidclient.itemviews.LabelValueItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamStatsSubscriber;
@@ -14,7 +15,7 @@ import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
-public class TeamAtEventStatsFragment extends RecyclerViewFragment<JsonElement, TeamStatsSubscriber, RecyclerViewBinder> {
+public class TeamAtEventStatsFragment extends RecyclerViewFragment<JsonElement, TeamStatsSubscriber, RecyclerViewBinder> implements HasEventParam {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 
@@ -43,6 +44,11 @@ public class TeamAtEventStatsFragment extends RecyclerViewFragment<JsonElement, 
     @Override
     protected void inject() {
         mComponent.inject(this);
+    }
+
+    @Override
+    public String getEventKey() {
+        return mEventKey;
     }
 
     @Override
