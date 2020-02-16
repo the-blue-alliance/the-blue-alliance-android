@@ -8,7 +8,6 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.MatchSortByPlayOrderComparator;
 import com.thebluealliance.androidclient.config.AppConfig;
-import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
@@ -17,10 +16,12 @@ import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.RankingItem;
+import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
+import com.thebluealliance.androidclient.viewmodels.SimpleTeamViewModel;
 import com.thebluealliance.api.model.IRankingItem;
 import com.thebluealliance.api.model.IRankingSortOrder;
 import com.thebluealliance.api.model.ITeamAtEventAlliance;
@@ -47,10 +48,12 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
     public static class Model {
         public final @Nullable TeamAtEventStatus status;
         public final Event event;
+        public final Team team;
 
-        public Model(@Nullable TeamAtEventStatus status, Event event) {
+        public Model(@Nullable TeamAtEventStatus status, Event event, Team team) {
             this.status = status;
             this.event = event;
+            this.team = team;
         }
     }
 
@@ -104,6 +107,11 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
             return;
         }
 
+        Team team = mAPIData.team;
+        if (team == null) {
+            return;
+        }
+
         int year = event.getYear();
         boolean activeEvent = event.isHappeningNow();
 
@@ -148,6 +156,9 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
             rankBreakdownItem = new LabelValueViewModel(mResources.getString(R.string.team_at_event_rank_breakdown),
                                                         rankingString);
         }
+
+        // Basic information about the team
+        mDataToBind.add(new SimpleTeamViewModel(team.getKey(), team.getNickname(), team.getLocation(), year));
 
         // Rank
         if (rank > 0) {

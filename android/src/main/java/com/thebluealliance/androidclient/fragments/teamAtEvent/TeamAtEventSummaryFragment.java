@@ -12,10 +12,12 @@ import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
 import com.thebluealliance.androidclient.interfaces.HasEventParam;
 import com.thebluealliance.androidclient.itemviews.LabelValueItemView;
 import com.thebluealliance.androidclient.itemviews.LabeledMatchItemView;
+import com.thebluealliance.androidclient.itemviews.SimpleTeamInfoView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamAtEventSummarySubscriber;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
+import com.thebluealliance.androidclient.viewmodels.SimpleTeamViewModel;
 
 import javax.inject.Inject;
 
@@ -80,6 +82,7 @@ public class TeamAtEventSummaryFragment extends RecyclerViewFragment<TeamAtEvent
         return Observable.zip(
                 mDatafeed.fetchTeamAtEventStatus(mTeamKey, mEventKey, cacheHeader),
                 mDatafeed.fetchEvent(mEventKey, cacheHeader),
+                mDatafeed.fetchTeam(mTeamKey, cacheHeader),
                 new TeamAtEventSummaryCombiner());
     }
 
@@ -100,5 +103,6 @@ public class TeamAtEventSummaryFragment extends RecyclerViewFragment<TeamAtEvent
     @Override public void initializeAdapterCreator(SmartAdapter.MultiAdaptersCreator creator) {
         creator.map(LabelValueViewModel.class, LabelValueItemView.class);
         creator.map(LabeledMatchViewModel.class, LabeledMatchItemView.class);
+        creator.map(SimpleTeamViewModel.class, SimpleTeamInfoView.class);
     }
 }

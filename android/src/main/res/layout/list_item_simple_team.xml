@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/InfoItemCardStyle">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/team_name_container"
+            style="@style/InfoItemStyle"
+            android:clickable="true"
+            android:focusable="true">
+
+            <com.thebluealliance.androidclient.views.RecoloredImageView
+                android:id="@+id/team_name_icon"
+                style="@style/InfoItemImageStyle"
+                android:src="@drawable/ic_group_black_24dp"
+                app:tintColor="@color/primary" />
+
+            <TextView
+                android:id="@+id/team_name"
+                style="@style/InfoItemTextStyle"
+                android:layout_toRightOf="@id/team_name_icon"
+                tools:text="Team Name Goes Here" />
+        </RelativeLayout>
+
+        <View style="@style/InfoItemDividerStyle" />
+
+        <RelativeLayout
+            android:id="@+id/team_location_container"
+            style="@style/InfoItemStyle"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <com.thebluealliance.androidclient.views.RecoloredImageView
+                android:id="@+id/team_location_icon"
+                style="@style/InfoItemImageStyle"
+                android:src="@drawable/ic_location_on_black_24dp"
+                app:tintColor="@color/primary" />
+
+            <TextView
+                android:id="@+id/team_location"
+                style="@style/InfoItemTextStyle"
+                tools:text="Event Location Goes Here" />
+
+        </RelativeLayout>
+
+        <!-- This is wrapped in a FrameLayout so that the divider will
+        hide when the container is hidden -->
+        <FrameLayout
+            android:id="@+id/champs_pit_location_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <View style="@style/InfoItemDividerStyle" />
+
+            <RelativeLayout style="@style/InfoItemStyle">
+
+                <com.thebluealliance.androidclient.views.RecoloredImageView
+                    android:id="@+id/champs_pit_location_icon"
+                    style="@style/InfoItemImageStyle"
+                    android:src="@drawable/ic_beenhere_black_24dp"
+                    app:tintColor="@color/primary" />
+
+                <TextView
+                    android:id="@+id/champs_pit_location_label"
+                    style="@style/InfoItemSecondaryTextStyle"
+                    android:layout_centerVertical="false"
+                    android:layout_toEndOf="@id/champs_pit_location_icon"
+                    android:text="@string/pit_location" />
+
+                <TextView
+                    android:id="@+id/champs_pit_location"
+                    style="@style/InfoItemTextStyle"
+                    android:layout_below="@id/champs_pit_location_label"
+                    android:layout_centerVertical="false"
+                    android:layout_toEndOf="@id/champs_pit_location_icon"
+                    tools:text="Q16 (Tesla)" />
+            </RelativeLayout>
+        </FrameLayout>
+
+
+        <!-- This is wrapped in a FrameLayout so that the divider will
+        hide when the container is hidden -->
+        <FrameLayout
+            android:id="@+id/team_full_name_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground">
+
+            <View style="@style/InfoItemDividerStyle" />
+
+            <RelativeLayout style="@style/InfoItemStyle">
+
+                <com.thebluealliance.androidclient.views.RecoloredImageView
+                    android:id="@+id/team_full_name_icon"
+                    style="@style/InfoItemImageStyle"
+                    android:src="@drawable/ic_info_outline_black_24dp"
+                    app:tintColor="@color/primary" />
+
+                <TextView
+                    android:id="@+id/team_full_name"
+                    style="@style/InfoItemTextStyle"
+                    android:layout_toRightOf="@id/team_full_name_icon"
+                    tools:text="Event Full Name Goes Here" />
+            </RelativeLayout>
+        </FrameLayout>
+
+        <!-- This is wrapped in a FrameLayout so that the divider will
+        hide when the container is hidden -->
+        <FrameLayout
+            android:id="@+id/team_motto_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View style="@style/InfoItemDividerStyle" />
+
+            <RelativeLayout
+                style="@style/InfoItemStyle"
+                android:clickable="true">
+
+                <!-- We scale the X axis by -1 to flip this horizontally -->
+                <com.thebluealliance.androidclient.views.RecoloredImageView
+                    android:id="@+id/team_motto_icon"
+                    style="@style/InfoItemImageStyle"
+                    android:scaleX="-1"
+                    android:src="@drawable/ic_format_quote_black_24dp"
+                    app:tintColor="@color/primary" />
+
+                <TextView
+                    android:id="@+id/team_motto"
+                    style="@style/InfoItemTextStyle"
+                    tools:text="Team motto Goes Here" />
+            </RelativeLayout>
+        </FrameLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
