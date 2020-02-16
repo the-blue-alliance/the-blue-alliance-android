@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.adapters;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.thebluealliance.androidclient.fragments.event.EventAwardsFragment;
 import com.thebluealliance.androidclient.fragments.event.EventMatchesFragment;
@@ -11,9 +12,8 @@ import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventStatsF
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.interfaces.HasEventParam;
-import com.thebluealliance.androidclient.interfaces.HasYearParam;
 
-import java.util.Objects;
+import java.util.List;
 
 public class TeamAtEventFragmentPagerAdapter extends FragmentPagerAdapter {
 
@@ -25,14 +25,27 @@ public class TeamAtEventFragmentPagerAdapter extends FragmentPagerAdapter {
             TAB_AWARDS = 4;
 
     private String mTeamKey, mEventKey;
+    private FragmentManager mFragmentManager;
 
     public TeamAtEventFragmentPagerAdapter(FragmentManager fm, String teamKey, String eventKey) {
         super(fm);
         mTeamKey = teamKey;
         mEventKey = eventKey;
+        mFragmentManager = fm;
     }
 
     public void updateEvent(String eventKey) {
+        if (!mEventKey.equals(eventKey)) {
+            List<Fragment> fragments = mFragmentManager.getFragments();
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+            for (Fragment f : fragments) {
+                //You can perform additional check to remove some (not all) fragments:
+                if (getItemPosition(f) == POSITION_NONE) {
+                    ft.remove(f);
+                }
+            }
+            ft.commitAllowingStateLoss();
+        }
         mEventKey = eventKey;
     }
 

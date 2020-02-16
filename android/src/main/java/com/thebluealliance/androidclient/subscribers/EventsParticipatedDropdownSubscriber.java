@@ -5,7 +5,6 @@ import com.thebluealliance.androidclient.comparators.EventSortByDateComparator;
 import com.thebluealliance.androidclient.interfaces.EventsParticipatedUpdate;
 import com.thebluealliance.androidclient.models.Event;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

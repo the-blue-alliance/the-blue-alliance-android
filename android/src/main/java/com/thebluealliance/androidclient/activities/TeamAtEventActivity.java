@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.activities;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -63,7 +62,8 @@ import javax.inject.Inject;
 public class TeamAtEventActivity extends MyTBASettingsActivity
   implements ViewPager.OnPageChangeListener, HasFragmentComponent, EventsParticipatedUpdate {
 
-    public static final String EVENT = "eventKey", TEAM = "teamKey";
+    public static final String EVENT = "eventKey";
+    public static final String TEAM = "teamKey";
 
     private String mEventKey, mTeamKey;
     private TeamAtEventFragmentPagerAdapter mAdapter;
@@ -101,6 +101,12 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
             mEventKey = extras.getString(EVENT);
         } else {
             throw new IllegalArgumentException("TeamAtEventActivity must be constructed with event and team parameters");
+        }
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(EVENT)) {
+                mEventKey = savedInstanceState.getString(EVENT);
+            }
         }
 
         String eventTeamKey = EventTeamHelper.generateKey(mEventKey, mTeamKey);
@@ -155,6 +161,12 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
         mOptionsMenu = menu;
         mOptionsMenu.findItem(R.id.stats_help).setVisible(false);
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(EVENT, mEventKey);
     }
 
     @Override
@@ -262,6 +274,8 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
         mAdapter.updateEvent(mEventKey);
         mAdapter.notifyDataSetChanged();
 
+        String eventTeamKey = EventTeamHelper.generateKey(mEventKey, mTeamKey);
+        setModelKey(eventTeamKey, ModelType.EVENTTEAM);
         setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, mEventKey, mTeamKey));
         setShareUri(String.format(
                 ShareUris.URI_TEAM_AT_EVENT,
