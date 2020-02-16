@@ -10,6 +10,10 @@ import com.thebluealliance.androidclient.fragments.team.TeamMediaFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventStatsFragment;
 import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummaryFragment;
 import com.thebluealliance.androidclient.helpers.EventHelper;
+import com.thebluealliance.androidclient.interfaces.HasEventParam;
+import com.thebluealliance.androidclient.interfaces.HasYearParam;
+
+import java.util.Objects;
 
 public class TeamAtEventFragmentPagerAdapter extends FragmentPagerAdapter {
 
@@ -25,6 +29,10 @@ public class TeamAtEventFragmentPagerAdapter extends FragmentPagerAdapter {
     public TeamAtEventFragmentPagerAdapter(FragmentManager fm, String teamKey, String eventKey) {
         super(fm);
         mTeamKey = teamKey;
+        mEventKey = eventKey;
+    }
+
+    public void updateEvent(String eventKey) {
         mEventKey = eventKey;
     }
 
@@ -56,4 +64,22 @@ public class TeamAtEventFragmentPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
+    @Override
+    public int getItemPosition(Object object) {
+        if (object instanceof HasEventParam) {
+            HasEventParam fragment = (HasEventParam) object;
+            String eventKey = fragment.getEventKey();
+            if (eventKey.isEmpty()) {
+                return POSITION_UNCHANGED;
+            } else if (!eventKey.equals(mEventKey)) {
+                return POSITION_NONE;
+            }
+        }
+        return super.getItemPosition(object);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return (mEventKey + "_" + position).hashCode();
+    }
 }

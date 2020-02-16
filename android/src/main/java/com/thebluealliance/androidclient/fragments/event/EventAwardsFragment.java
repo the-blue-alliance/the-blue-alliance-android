@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
+import com.thebluealliance.androidclient.interfaces.HasEventParam;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.AwardsListSubscriber;
@@ -15,7 +16,7 @@ import java.util.List;
 
 import rx.Observable;
 
-public class EventAwardsFragment extends ListViewFragment<List<Award>, AwardsListSubscriber> {
+public class EventAwardsFragment extends ListViewFragment<List<Award>, AwardsListSubscriber> implements HasEventParam {
     private static final String EVENT_KEY = "eventKey", TEAM_KEY = "teamKey";
 
     private String mEventKey, mTeamKey;
@@ -64,6 +65,11 @@ public class EventAwardsFragment extends ListViewFragment<List<Award>, AwardsLis
     @Override
     protected void inject() {
         mComponent.inject(this);
+    }
+
+    @Override
+    public String getEventKey() {
+        return mEventKey;
     }
 
     @Override

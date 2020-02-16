@@ -1,16 +1,32 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NavUtils;
 import androidx.core.app.TaskStackBuilder;
 import androidx.core.view.ViewCompat;
 import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.widget.Toolbar;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import rx.schedulers.Schedulers;
+
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
@@ -18,16 +34,20 @@ import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
-import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
+import com.thebluealliance.androidclient.eventbus.TeamAvatarUpdateEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
+import com.thebluealliance.androidclient.interfaces.EventsParticipatedUpdate;
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.models.ApiStatus;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.subscribers.EventsParticipatedDropdownSubscriber;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
@@ -36,15 +56,29 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Arrays;
+import java.util.List;
+
+import javax.inject.Inject;
 
 public class TeamAtEventActivity extends MyTBASettingsActivity
-  implements ViewPager.OnPageChangeListener, HasFragmentComponent {
+  implements ViewPager.OnPageChangeListener, HasFragmentComponent, EventsParticipatedUpdate {
 
     public static final String EVENT = "eventKey", TEAM = "teamKey";
 
     private String mEventKey, mTeamKey;
     private TeamAtEventFragmentPagerAdapter mAdapter;
     private FragmentComponent mComponent;
+
+    private int mCurrentSelectedEventPosition = -1;
+    private ImmutableList<Event> mEventsParticipated;
+
+    @BindView(R.id.team_avatar) ImageView mAvatar;
+    @BindView(R.id.event_selector_container) View mEventSelectorContainer;
+    @BindView(R.id.event_selector_subtitle_container) View mEventSelectorSubtitleContainer;
+    @BindView(R.id.event_selector_title)  TextView mEventSelectorTitle;
+    @BindView(R.id.event_selector_subtitle) TextView mEventSelectorSubtitle;
+
+    @Inject CacheableDatafeed mDatafeed;
 
     public static Intent newInstance(Context c, String eventTeamKey) {
         return newInstance(c, EventTeamHelper.getEventKey(eventTeamKey), EventTeamHelper.getTeamKey(eventTeamKey));
@@ -74,6 +108,8 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
         setShareEnabled(true);
         setContentView(R.layout.activity_team_at_event);
 
+        ButterKnife.bind(this);
+
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
         mAdapter = new TeamAtEventFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, mEventKey);
         pager.setAdapter(mAdapter);
@@ -87,8 +123,14 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
         tabs.setViewPager(pager);
         ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         setupActionBar();
+
+        int year = EventHelper.getYear(mEventKey);
+        mDatafeed.fetchTeamEvents(mTeamKey, year, null)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation())
+                .subscribe(new EventsParticipatedDropdownSubscriber(this));
 
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(BaseActivity.WARNING_OFFLINE);
@@ -148,13 +190,109 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
     }
 
     private void setupActionBar() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setActionBarTitle("");
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
+            bar.setDisplayHomeAsUpEnabled(true);
+            bar.setDisplayShowTitleEnabled(false);
+
+            String teamNumber = mTeamKey.replace("frc", "");
+            mEventSelectorTitle.setText(getString(R.string.team_actionbar_title, teamNumber));
+
+            if (mEventsParticipated != null && mEventsParticipated.size() > 0) {
+                mEventSelectorSubtitleContainer.setVisibility(View.VISIBLE);
+                final Dialog dialog = makeDialogForEventSelection(R.string.select_event, mEventsParticipated);
+                mEventSelectorContainer.setOnClickListener(v -> dialog.show());
+            } else {
+                mEventSelectorSubtitleContainer.setVisibility(View.GONE);
+                mEventSelectorContainer.setOnClickListener(null);
+            }
+        }
+    }
+
+    private Dialog makeDialogForEventSelection(@StringRes int titleResId, ImmutableList<Event> eventsParticipated) {
+        String[] events = new String[eventsParticipated.size()];
+        for (int i = 0; i < eventsParticipated.size(); i++) {
+            Event event = eventsParticipated.get(i);
+            events[i] = event.getYear() + " " + event.getShortName();
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(titleResId));
+        builder.setItems(events, (dialog, which) -> onEventSelected(which));
+        return builder.create();
     }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+    }
+
+    @Override
+    public void updateEventsParticipated(List<Event> events) {
+        mEventsParticipated = ImmutableList.copyOf(events);
+
+        int requestedEventIndex = 0;
+        for (int i = 0; i < mEventsParticipated.size(); i++) {
+            if (mEventsParticipated.get(i).getKey().equals(mEventKey)) {
+                requestedEventIndex = i;
+            }
+        }
+
+        setupActionBar();
+        onEventSelected(requestedEventIndex);
+    }
+
+    private void onEventSelected(int position) {
+        if (position == mCurrentSelectedEventPosition) {
+            return;
+        }
+
+        if (position < 0 || position >= mEventsParticipated.size()) {
+            return;
+        }
+
+        mCurrentSelectedEventPosition = position;
+        updateEventSelector(mCurrentSelectedEventPosition);
+        Event newEvent = mEventsParticipated.get(mCurrentSelectedEventPosition);
+        if (mEventKey.equals(newEvent.getKey())) {
+            return;
+        }
+
+        mEventKey = newEvent.getKey();
+        mAdapter.updateEvent(mEventKey);
+        mAdapter.notifyDataSetChanged();
+
+        setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, mEventKey, mTeamKey));
+        setShareUri(String.format(
+                ShareUris.URI_TEAM_AT_EVENT,
+                TeamHelper.getTeamNumber(mTeamKey),
+                EventHelper.getYear(mEventKey),
+                mEventKey));
+    }
+
+    private void updateEventSelector(int selectedPosition) {
+        if (selectedPosition < 0 || selectedPosition >= mEventsParticipated.size()) {
+            return;
+        }
+
+        Event selectedEvent = mEventsParticipated.get(selectedPosition);
+        mEventSelectorSubtitle.setText(getString(R.string.team_at_event_actionbar_subtitle,
+                selectedEvent.getYear(), selectedEvent.getShortName()));
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateTeamAvatar(TeamAvatarUpdateEvent avatarUpdateEvent) {
+        if (avatarUpdateEvent == null
+                || avatarUpdateEvent.getB64Image() == null
+                || avatarUpdateEvent.getB64Image().isEmpty()) {
+            mAvatar.setVisibility(View.GONE);
+        } else {
+            byte[] bytes = Base64.decode(avatarUpdateEvent.getB64Image(), Base64.DEFAULT);
+            Bitmap avatar = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            mAvatar.setImageBitmap(Bitmap.createScaledBitmap(avatar, 80, 80, false));
+            mAvatar.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -186,13 +324,6 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
         } else {
             syncFabVisibilityWithMyTbaEnabled(true);
         }
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onActionBarTitleUpdated(ActionBarTitleEvent event) {
-        setActionBarTitle(event.getTitle());
-        setActionBarSubtitle(event.getSubtitle());
     }
 
     @Override

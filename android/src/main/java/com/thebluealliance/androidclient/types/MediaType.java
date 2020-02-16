@@ -79,7 +79,7 @@ public enum MediaType {
     }
 
     public boolean isImage() {
-        return this != NONE && this != YOUTUBE;
+        return this != NONE && this != YOUTUBE && this != AVATAR;
     }
 
     public boolean isVideo() {

@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,8 +26,10 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import android.text.Html;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -44,6 +48,7 @@ import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
 import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
+import com.thebluealliance.androidclient.eventbus.TeamAvatarUpdateEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.YearsParticipatedUpdate;
@@ -52,6 +57,9 @@ import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.subscribers.YearsParticipatedDropdownSubscriber;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,6 +96,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     private static final int CHOOSE_IMAGE_REQUEST = 42;
     private static final int TAKE_PICTURE_REQUEST = 43;
 
+    @BindView(R.id.team_avatar) ImageView mAvatar;
     @BindView(R.id.year_selector_container) View mYearSelectorContainer;
     @BindView(R.id.year_selector_subtitle_container) View mYearSelectorSubtitleContainer;
     @BindView(R.id.year_selector_title) TextView mYearSelectorTitle;
@@ -298,6 +307,21 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         setupActionBar();
 
         onYearSelected(requestedYearIndex);
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateTeamAvatar(TeamAvatarUpdateEvent avatarUpdateEvent) {
+        if (avatarUpdateEvent == null
+                || avatarUpdateEvent.getB64Image() == null
+                || avatarUpdateEvent.getB64Image().isEmpty()) {
+            mAvatar.setVisibility(View.GONE);
+        } else {
+            byte[] bytes = Base64.decode(avatarUpdateEvent.getB64Image(), Base64.DEFAULT);
+            Bitmap avatar = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            mAvatar.setImageBitmap(Bitmap.createScaledBitmap(avatar, 80, 80, false));
+            mAvatar.setVisibility(View.VISIBLE);
+        }
     }
 
     private void onYearSelected(int position) {

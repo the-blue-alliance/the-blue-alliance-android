@@ -98,20 +98,14 @@ public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventS
         @Nullable ITeamAtEventQual qualData = status != null ? status.getQual() : null;
         @Nullable ITeamAtEventPlayoff playoffData = status != null ? status.getPlayoff() : null;
 
-        String actionBarTitle = mResources.getString(R.string.team_actionbar_title, mTeamKey.substring(3));
-        String actionBarSubtitle;
         Event event = mAPIData.event;
         Date now = new Date();
         if (event == null) {
-            actionBarSubtitle = mResources.getString(R.string.team_at_event_actionbar_fallback, mEventKey);
-            mEventBus.post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
             return;
         }
 
         int year = event.getYear();
         boolean activeEvent = event.isHappeningNow();
-        actionBarSubtitle = mResources.getString(R.string.team_at_event_actionbar_subtitle, year, event.getShortName());
-        mEventBus.post(new ActionBarTitleEvent(actionBarTitle, actionBarSubtitle));
 
         String playoffStatusString = status != null ? status.getPlayoffStatusStr() : "";
         String allianceStatusString = status != null ? status.getAllianceStatusStr() : "";

@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamAtEventSummaryCombiner;
 import com.thebluealliance.androidclient.fragments.RecyclerViewFragment;
+import com.thebluealliance.androidclient.interfaces.HasEventParam;
 import com.thebluealliance.androidclient.itemviews.LabelValueItemView;
 import com.thebluealliance.androidclient.itemviews.LabeledMatchItemView;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
@@ -21,7 +22,7 @@ import javax.inject.Inject;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
-public class TeamAtEventSummaryFragment extends RecyclerViewFragment<TeamAtEventSummarySubscriber.Model, TeamAtEventSummarySubscriber, RecyclerViewBinder> {
+public class TeamAtEventSummaryFragment extends RecyclerViewFragment<TeamAtEventSummarySubscriber.Model, TeamAtEventSummarySubscriber, RecyclerViewBinder> implements HasEventParam {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
 
@@ -67,6 +68,11 @@ public class TeamAtEventSummaryFragment extends RecyclerViewFragment<TeamAtEvent
     @Override
     protected void inject() {
         mComponent.inject(this);
+    }
+
+    @Override
+    public String getEventKey() {
+        return mEventKey;
     }
 
     @Override

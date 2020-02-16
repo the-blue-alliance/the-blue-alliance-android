@@ -12,6 +12,7 @@ import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
 import com.thebluealliance.androidclient.binders.MatchListBinder;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
+import com.thebluealliance.androidclient.interfaces.HasEventParam;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
@@ -24,7 +25,7 @@ import java.util.List;
 import rx.Observable;
 
 public class EventMatchesFragment
-  extends DatafeedFragment<List<Match>, List<ListGroup>, MatchListSubscriber, MatchListBinder> {
+  extends DatafeedFragment<List<Match>, List<ListGroup>, MatchListSubscriber, MatchListBinder> implements HasEventParam {
 
     private static final String KEY = "eventKey", TEAM = "teamKey";
 
@@ -91,6 +92,11 @@ public class EventMatchesFragment
     @Override
     protected void inject() {
         mComponent.inject(this);
+    }
+
+    @Override
+    public String getEventKey() {
+        return mEventKey;
     }
 
     @Override
