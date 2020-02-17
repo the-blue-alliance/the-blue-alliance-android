@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
 import com.thebluealliance.androidclient.eventbus.EventMatchesEvent;
 import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
@@ -33,6 +34,7 @@ public class TeamAtEventSummarySubscriberTest {
     @Mock MatchRenderer mMatchRenderer;
     @Mock AppConfig mAppConfig;
     @Mock EventBus mEventBus;
+    @Mock Team mTeam;
 
     TeamAtEventSummarySubscriber mSubscriber;
     TeamAtEventStatus mStatus;
@@ -58,11 +60,11 @@ public class TeamAtEventSummarySubscriberTest {
     public void testSimpleParsing()  {
         mSubscriber.onEventMatchesLoaded(mMatchesEvent);
         mSubscriber.onEventAwardsLoaded(mAwardsEvent);
-        DatafeedTestDriver.testSimpleParsing(mSubscriber,  new TeamAtEventSummarySubscriber.Model(mStatus, mEvent));
+        DatafeedTestDriver.testSimpleParsing(mSubscriber,  new TeamAtEventSummarySubscriber.Model(mStatus, mEvent, mTeam));
     }
 
     @Test
     public void testUnplayedEvent() {
-        DatafeedTestDriver.testSimpleParsing(mSubscriber,  new TeamAtEventSummarySubscriber.Model(null, mEvent));
+        DatafeedTestDriver.testSimpleParsing(mSubscriber,  new TeamAtEventSummarySubscriber.Model(null, mEvent, mTeam));
     }
 }

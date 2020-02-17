@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.models.Media;
 
+import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.when;
 public class MediaListSubscriberTest {
 
     @Mock public Resources mResources;
+    @Mock public EventBus mEventBus;
 
     MediaListSubscriber mSubscriber;
     List<Media> mMedias;
@@ -35,7 +37,7 @@ public class MediaListSubscriberTest {
         when(mResources.getString(R.string.media_images_header)).thenReturn("Chief Delphi Photos");
         when(mResources.getString(R.string.media_videos_header)).thenReturn("YouTube Videos");
 
-        mSubscriber = new MediaListSubscriber(mResources);
+        mSubscriber = new MediaListSubscriber(mResources, mEventBus);
         mMedias = ModelMaker.getModelList(Media.class, "media_frc254_2014");
     }
 
