@@ -254,8 +254,9 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             /* Some sort of network error */
             e.printStackTrace();
             onConnectionError();
-        } catch (ExecutionException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_ERROR, Utilities.exceptionStacktraceToString(e)));
         }
         return null;
     }
