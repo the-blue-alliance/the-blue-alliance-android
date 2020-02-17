@@ -3,6 +3,7 @@
     <string name="title_activity_dev_settings">Debug Settings</string>
     <string name="pref_header_appinfo">Info</string>
     <string name="pref_header_notifications">Notifications</string>
+    <string name="pref_header_general">General</string>
     <string name="pref_header_privacy">Privacy</string>
     <string name="pref_header_account">Account</string>
 
@@ -63,4 +64,12 @@
     <string name="select_led_color">Select LED Color</string>
 
     <string name="pref_notification_headsup">Heads Up Notifications</string>
+
+    <!-- Dark Mode Settings -->
+    <string name="pref_dark_mode">App Theme</string>
+    <string name="pref_dark_mode_summary">Set dark or light theme</string>
+    <string name="pref_dark_mode_light">Light</string>
+    <string name="pref_dark_mode_dark">Dark</string>
+    <string name="pref_dark_mode_default">System Default</string>
+    <string name="pref_dark_mode_battery_saver">Set By Battery Saver</string>
 </resources>

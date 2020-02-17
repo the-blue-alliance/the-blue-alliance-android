@@ -3,6 +3,9 @@ package com.thebluealliance.androidclient;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
+import android.preference.PreferenceManager;
+
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 
 import com.facebook.stetho.Stetho;
@@ -90,6 +93,11 @@ public class TbaAndroid extends MultiDexApplication {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+
+        // Set up global dark mode flags
+        String darkModePref = PreferenceManager.getDefaultSharedPreferences(this).getString("dark_mode", "");
+        TbaLogger.d("Setting theme to " + darkModePref + " at startup");
+        AppCompatDelegate.setDefaultNightMode(Utilities.getCurrentDarkModePreference(darkModePref));
 
     }
 

@@ -45,7 +45,14 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import me.xuender.unidecode.Unidecode;
+
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY;
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO;
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_UNSPECIFIED;
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
 
 public final class Utilities {
 
@@ -458,5 +465,21 @@ public final class Utilities {
             vis &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
         }
         window.getDecorView().setSystemUiVisibility(vis);
+    }
+
+    public static int getCurrentDarkModePreference(String prefValue) {
+        int newValue = AppCompatDelegate.MODE_NIGHT_UNSPECIFIED;
+        switch (prefValue) {
+            case "dark":
+                return MODE_NIGHT_YES;
+            case "light":
+                return MODE_NIGHT_NO;
+            case "system":
+                return MODE_NIGHT_FOLLOW_SYSTEM;
+            case "battery":
+                return MODE_NIGHT_AUTO_BATTERY;
+            default:
+                return MODE_NIGHT_UNSPECIFIED;
+        }
     }
 }

@@ -18,6 +18,13 @@
             android:title="@string/notification_settings" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_header_general">
+        <ListPreference
+            android:key="dark_mode"
+            android:title="@string/pref_dark_mode"
+            android:summary="@string/pref_dark_mode_summary"/>
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_header_appinfo">
         <Preference
             android:key="tba_link"

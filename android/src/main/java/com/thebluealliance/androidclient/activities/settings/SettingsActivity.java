@@ -3,14 +3,20 @@ package com.thebluealliance.androidclient.activities.settings;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.common.collect.ImmutableMap;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaAndroid;
@@ -24,8 +30,6 @@ import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 
 import javax.inject.Inject;
 
-import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
-
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
@@ -34,8 +38,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
-
-        getDelegate().setDefaultNightMode(MODE_NIGHT_YES);
     }
 
     public static class SettingsFragment extends PreferenceFragment {
@@ -113,6 +115,16 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
 
+            ImmutableMap<String, String> darkModePrefsForAppVersion = getDarkModeOptions();
+            ListPreference darkModePref = (ListPreference) findPreference("dark_mode");
+            darkModePref.setEntries(darkModePrefsForAppVersion.keySet().toArray(new String[]{}));
+            darkModePref.setEntryValues(darkModePrefsForAppVersion.values().toArray(new String[]{}));
+            darkModePref.setOnPreferenceChangeListener((preference, newPref) -> {
+                int newValue = Utilities.getCurrentDarkModePreference((String)newPref);
+                TbaLogger.d("Setting dark mode preference to " + newValue);
+                AppCompatDelegate.setDefaultNightMode(newValue);
+                return true;
+            });
 
             if (Utilities.isDebuggable()) {
                 addPreferencesFromResource(R.xml.dev_preference_link);
@@ -140,6 +152,19 @@ public class SettingsActivity extends AppCompatActivity {
             // Enable might have failed; update the state of the switch when we resume
             SwitchPreference mytbaEnabled = (SwitchPreference) findPreference("mytba_enabled");
             mytbaEnabled.setChecked(mAccountController.isMyTbaEnabled());
+        }
+
+
+        private ImmutableMap<String, String> getDarkModeOptions() {
+            ImmutableMap.Builder<String, String> baseBuilder = new ImmutableMap.Builder<>();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                baseBuilder.put(getString(R.string.pref_dark_mode_default), "system");
+            } else {
+                baseBuilder.put(getString(R.string.pref_dark_mode_battery_saver), "battery");
+            }
+            return baseBuilder .put(getString(R.string.pref_dark_mode_light), "light")
+                    .put(getString(R.string.pref_dark_mode_dark), "dark")
+                    .build();
         }
     }
 
