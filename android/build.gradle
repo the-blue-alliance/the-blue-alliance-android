@@ -15,6 +15,7 @@ apply from: '../code_coverage.gradle'
 apply plugin: 'com.github.ben-manes.versions'
 
 apply from: 'versioning.gradle'
+apply from :'robolectric-hermetic.gradle'
 
 version semverVersion()
 def (major, minor, patch, versionNum, gitTag, gitHash, commitsFromTag, repoDirty) =

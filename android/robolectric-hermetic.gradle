@@ -1,0 +1,41 @@
+def androidSdkVersions = [
+    "5.0.2_r3-robolectric-r0"
+]
+
+def allSdkConfigurations = []
+
+androidSdkVersions.forEach { version ->
+    allSdkConfigurations << configurations.create(version)
+    dependencies.add(version, "org.robolectric:android-all:${version}")
+}
+
+task createRobolectricDeps {
+}
+
+task copyLibs(type: Copy) {
+    into "$buildDir/output/libs"
+    from configurations.compile
+
+    doLast {
+        def f = new File("$buildDir/output/README.txt")
+        f.delete()
+
+        f << "# Include the following jar files on your classpath:\n"
+        f << "#\n"
+
+        source.forEach { file ->
+            f << "libs/${file.name}\n"
+        }
+    }
+}
+
+task copySdks(type: Copy) {
+    into "$buildDir/output/libs"
+    from allSdkConfigurations
+}
+
+task filesForHermeticBuild {
+    dependsOn createRobolectricDeps
+    dependsOn copyLibs
+    dependsOn copySdks
+}

@@ -16,8 +16,11 @@ filter_code () {
 case "$1" in
 
     "UNIT")
+        echo "Downloading robolectric depenrencies..."
+        ./gradlew filesForHermeticBuild
+
         echo "Running project unit tests"
-        ./gradlew testDebugProguardUnitTest --stacktrace
+        ./gradlew testDebugProguardUnitTest --stacktrace -Drobolectric.dependency.dir=android/build/output/libs/
         filter_code $?
         ;;
 
