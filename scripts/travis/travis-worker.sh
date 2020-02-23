@@ -25,6 +25,9 @@ case "$1" in
         ;;
 
     "COVERAGE")
+        echo "Downloading robolectric depenrencies..."
+        ./gradlew filesForHermeticBuild
+
         echo "Generating project code coverage"
         ./gradlew jacocoTestReport coveralls
         filter_code $?
