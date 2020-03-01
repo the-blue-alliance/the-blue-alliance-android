@@ -19,6 +19,7 @@ import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
+import com.thebluealliance.androidclient.tracing.TracingController;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -46,6 +47,7 @@ public abstract class DatafeedFragment
     @Inject protected Lazy<EventBusSubscriber> mEventBusSubscriber;
     @Inject protected NoDataBinder mNoDataBinder;
     @Inject protected Tracker mAnalyticsTracker;
+    @Inject protected TracingController mTracingController;
     @Inject protected CacheableDatafeed mDatafeed;
 
     protected @Nullable RefreshController mRefreshController;
@@ -74,6 +76,7 @@ public abstract class DatafeedFragment
         mSubscriber.setRefreshController(mRefreshController);
         mSubscriber.setRefreshTag(mRefreshTag);
         mSubscriber.setTracker(mAnalyticsTracker);
+        mSubscriber.setTracingController(mTracingController);
         mBinder.setActivity(getActivity());
         mBinder.setNoDataBinder(mNoDataBinder);
         mBinder.setNoDataParams(getNoDataParams());

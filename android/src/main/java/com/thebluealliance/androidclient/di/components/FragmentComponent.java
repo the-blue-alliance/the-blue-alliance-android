@@ -48,6 +48,7 @@ import com.thebluealliance.androidclient.fragments.teamAtEvent.TeamAtEventSummar
 import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.models.FirebaseNotification;
 import com.thebluealliance.androidclient.subscribers.SubscriberModule;
+import com.thebluealliance.androidclient.tracing.TracingModule;
 
 import javax.inject.Singleton;
 
@@ -62,7 +63,8 @@ import dagger.Component;
                 DatabaseWriterModule.class,
                 ClickListenerModule.class,
                 GceModule.class,
-                ConfigModule.class},
+                ConfigModule.class,
+                TracingModule.class},
         dependencies = {ApplicationComponent.class})
 public interface FragmentComponent {
 
