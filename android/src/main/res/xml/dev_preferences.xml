@@ -1,75 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="@string/pref_header_api">
+    <PreferenceCategory
+        app:title="@string/pref_header_api"
+        app:iconSpaceReserved="false">
         <Preference
-                android:key="redownload_data"
-                android:persistent="false"
-                android:selectable="true"
-                android:summary="@string/pref_redownload_data_detail"
-                android:title="@string/pref_redownload_data"/>
+            app:key="redownload_data"
+            app:persistent="false"
+            app:selectable="true"
+            app:summary="@string/pref_redownload_data_detail"
+            app:title="@string/pref_redownload_data"
+            app:iconSpaceReserved="false"/>
         <Preference
-                android:key="clear_okhttp_cache"
-                android:persistent="false"
-                android:selectable="true"
-                android:title="@string/pref_clear_okhttp"
-                android:summary="@string/pref_clear_okhttp_detail"/>
+            app:key="clear_okhttp_cache"
+            app:persistent="false"
+            app:selectable="true"
+            app:title="@string/pref_clear_okhttp"
+            app:summary="@string/pref_clear_okhttp_detail"
+            app:iconSpaceReserved="false"/>
         <EditTextPreference
-                android:key="tba_host"
-                android:summary="@string/pref_tba_host_detail"
-                android:title="@string/pref_tba_host"/>
+            app:key="tba_host"
+            app:summary="@string/pref_tba_host_detail"
+            app:title="@string/pref_tba_host"
+            app:iconSpaceReserved="false"/>
         <Preference
-                android:key="update_api_status"
-                android:persistent="false"
-                android:selectable="true"
-                android:summary="@string/pref_update_status_detail"
-                android:title="@string/pref_update_status"/>
+            app:key="update_api_status"
+            app:persistent="false"
+            app:selectable="true"
+            app:summary="@string/pref_update_status_detail"
+            app:title="@string/pref_update_status"
+            app:iconSpaceReserved="false"/>
         <Preference
-                android:key="refresh_remote_config"
-                android:persistent="false"
-                android:selectable="true"
-                android:title="@string/pref_refresh_remote_config"
-                android:summary="@string/pref_refresh_remote_config_detail"/>
+            app:key="refresh_remote_config"
+            app:persistent="false"
+            app:selectable="true"
+            app:title="@string/pref_refresh_remote_config"
+            app:summary="@string/pref_refresh_remote_config_detail"
+            app:iconSpaceReserved="false"/>
         <EditTextPreference
-                android:key="config_lookup"
-                android:persistent="false"
-                android:selectable="true"
-                android:title="@string/pref_query_config"
-                android:summary="@string/pref_query_config_detail" />
+            app:key="config_lookup"
+            app:persistent="false"
+            app:selectable="true"
+            app:title="@string/pref_query_config"
+            app:summary="@string/pref_query_config_detail"
+            app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_header_account">
+    <PreferenceCategory
+        app:title="@string/pref_header_account"
+        app:iconSpaceReserved="false">
         <Preference
-                android:key="gcm_register"
-                android:selectable="true"
-                android:title="@string/pref_gcm_register" />
+            app:key="gcm_register"
+            app:selectable="true"
+            app:title="@string/pref_gcm_register"
+            app:iconSpaceReserved="false"/>
         <Preference
-                android:key="update_mytba"
-                android:selectable="true"
-                android:title="@string/pref_update_mytba" />
+            app:key="update_mytba"
+            app:selectable="true"
+            app:title="@string/pref_update_mytba"
+            app:iconSpaceReserved="false"/>
         <Preference
-                android:key="migrate_auth"
-                android:selectable="true"
-                android:title="@string/pref_migrate_legacy_auth" />
+            app:key="migrate_auth"
+            app:selectable="true"
+            app:title="@string/pref_migrate_legacy_auth"
+            app:iconSpaceReserved="false"/>
         <Preference
-                android:key="add_mytba_item"
-                android:selectable="true"
-                android:title="Add sample item to myTBA"/>
+            app:key="add_mytba_item"
+            app:selectable="true"
+            app:title="Add sample item to myTBA"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_header_analytics">
+    <PreferenceCategory
+        app:title="@string/pref_header_analytics"
+        app:iconSpaceReserved="false">
         <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="analytics_debug_key"
-                android:summary="@string/pref_analytics_detail"
-                android:title="@string/pref_analytics_key"/>
+            app:defaultValue="true"
+            app:key="analytics_debug_key"
+            app:summary="@string/pref_analytics_detail"
+            app:title="@string/pref_analytics_key"
+            app:iconSpaceReserved="false"/>
         <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="analytics_dry_run"
-                android:summary="@string/pref_dry_run_detail"
-                android:title="@string/pref_dry_run"/>
+            app:defaultValue="true"
+            app:key="analytics_dry_run"
+            app:summary="@string/pref_dry_run_detail"
+            app:title="@string/pref_dry_run"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 
 

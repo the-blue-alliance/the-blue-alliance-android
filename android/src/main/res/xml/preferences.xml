@@ -1,69 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:iconSpaceReserved="false">
 
-    <PreferenceCategory android:title="@string/pref_header_account">
+    <PreferenceCategory
+        app:title="@string/pref_header_account"
+        app:iconSpaceReserved="false">
 
         <SwitchPreference
-            android:key="mytba_enabled"
-            android:persistent="false"
-            android:title="@string/is_mytba_enabled" />
+            app:key="mytba_enabled"
+            app:persistent="false"
+            app:title="@string/is_mytba_enabled"
+            app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_header_notifications">
+    <PreferenceCategory
+        app:title="@string/pref_header_notifications"
+        app:iconSpaceReserved="false">
         <Preference
-            android:key="notifications"
-            android:persistent="false"
-            android:title="@string/notification_settings" />
+            app:key="notifications"
+            app:persistent="false"
+            app:title="@string/notification_settings"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_header_general">
+    <PreferenceCategory
+        app:title="@string/pref_header_general"
+        app:iconSpaceReserved="false">
         <ListPreference
-            android:key="dark_mode"
-            android:title="@string/pref_dark_mode"
-            android:summary="@string/pref_dark_mode_summary"/>
+            app:key="dark_mode"
+            app:title="@string/pref_dark_mode"
+            app:summary="@string/pref_dark_mode_summary"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_header_appinfo">
+    <PreferenceCategory
+        app:title="@string/pref_header_appinfo"
+        app:iconSpaceReserved="false">
         <Preference
-            android:key="tba_link"
-            android:persistent="false"
-            android:selectable="true"
-            android:summary="@string/tbasite_summary"
-            android:title="@string/tbasite_label" />
+            app:key="tba_link"
+            app:persistent="false"
+            app:selectable="true"
+            app:summary="@string/tbasite_summary"
+            app:title="@string/tbasite_label"
+            app:iconSpaceReserved="false"/>
 
         <Preference
-            android:key="github_link"
-            android:persistent="false"
-            android:selectable="true"
-            android:summary="@string/github_summary"
-            android:title="@string/github_label" />
+            app:key="github_link"
+            app:persistent="false"
+            app:selectable="true"
+            app:summary="@string/github_summary"
+            app:title="@string/github_label"
+            app:iconSpaceReserved="false"/>
 
         <Preference
-            android:key="contributors"
-            android:persistent="false"
-            android:selectable="true"
-            android:summary="@string/contributors_summary"
-            android:title="@string/contributors" />
+            app:key="contributors"
+            app:persistent="false"
+            app:selectable="true"
+            app:summary="@string/contributors_summary"
+            app:title="@string/contributors"
+            app:iconSpaceReserved="false"/>
 
         <Preference
-            android:key="changelog"
-            android:persistent="false"
-            android:selectable="true"
-            android:title="@string/changelog" />
+            app:key="changelog"
+            app:persistent="false"
+            app:selectable="true"
+            app:title="@string/changelog"
+            app:iconSpaceReserved="false" />
 
         <Preference
-            android:key="app_version"
-            android:persistent="false"
-            android:selectable="true"
-            android:title="@string/settings_build_info_label" />
+            app:key="app_version"
+            app:persistent="false"
+            app:selectable="true"
+            app:title="@string/settings_build_info_label"
+            app:iconSpaceReserved="false"/>
 
         <Preference
-            android:key="licenses"
-            android:persistent="false"
-            android:selectable="true"
-            android:title="@string/license_label" />
+            app:key="licenses"
+            app:persistent="false"
+            app:selectable="true"
+            app:title="@string/license_label"
+            app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
 
