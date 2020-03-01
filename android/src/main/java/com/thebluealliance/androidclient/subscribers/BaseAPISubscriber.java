@@ -135,7 +135,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
                     mConsumer.onComplete();
                     bindTrace.stop();
                 } catch (Exception e) {
-                    TbaLogger.e("UNABLE TO COMPLETE RENDER");
+                    TbaLogger.e("UNABLE TO COMPLETE RENDER", e);
                     e.printStackTrace();
                     mConsumer.onError(e);
                 }
@@ -160,6 +160,12 @@ public abstract class BaseAPISubscriber<APIType, BindType>
                 mConsumer.onError(throwable);
             }
         });
+        if (mRefreshTrace != null) {
+            mRefreshTrace.putAttribute("exception_type", throwable.getClass().getSimpleName());
+            mRefreshTrace.stop();
+        }
+        TbaLogger.e("Exception on datafeed!", throwable);
+        throwable.printStackTrace();
         sendExceptionUpdate(throwable);
     }
 
