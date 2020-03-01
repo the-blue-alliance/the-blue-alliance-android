@@ -16,7 +16,6 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
 
 import android.view.MenuItem;
-import android.view.View;
 
 import com.google.common.collect.ImmutableMap;
 import com.thebluealliance.androidclient.BuildConfig;

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.Analytics;
