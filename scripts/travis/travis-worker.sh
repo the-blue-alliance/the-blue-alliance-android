@@ -29,7 +29,7 @@ case "$1" in
         ./gradlew filesForHermeticBuild
 
         echo "Generating project code coverage"
-        ./gradlew jacocoTestReport coveralls
+        ./gradlew jacocoTestReport coveralls -Drobolectric.offline=true -Drobolectric.dependency.dir=android/build/output/libs/
         filter_code $?
         ;;
 
