@@ -3,6 +3,7 @@ plugins {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 apply plugin: 'checkstyle'
 apply plugin: 'gitsemver'
 apply plugin: 'com.github.triplet.play'
@@ -251,11 +252,11 @@ dependencies {
     implementation "com.google.firebase:firebase-config:19.1.1"
     implementation "com.google.android.material:material:1.2.0-alpha04"
 
-    testImplementation 'com.github.phil-lopreiato:firebasecrash-noop:v0.1'
-    releaseImplementation "com.google.firebase:firebase-crash:${firebaseCrashVersion}"
-    debugImplementation "com.google.firebase:firebase-crash:${firebaseCrashVersion}"
-    debugBlueImplementation "com.google.firebase:firebase-crash:${firebaseCrashVersion}"
-    debugProguardImplementation "com.google.firebase:firebase-crash:${firebaseCrashVersion}"
+    implementation 'com.google.firebase:firebase-analytics:17.2.2'
+    releaseImplementation "com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}"
+    debugImplementation "com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}"
+    debugBlueImplementation "com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}"
+    debugProguardImplementation "com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}"
 
     // Square Libraries
     implementation 'com.squareup.picasso:picasso:2.5.2'
