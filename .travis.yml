@@ -20,7 +20,6 @@ android:
 env:
   matrix:
   - JOB=UNIT
-  - JOB=COVERAGE
   - JOB=CHECKSTYLE
   - JOB=DATAFEED_CODEGEN
   - JOB=PROD-BUILD

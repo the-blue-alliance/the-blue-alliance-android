@@ -20,16 +20,7 @@ case "$1" in
         ./gradlew filesForHermeticBuild
 
         echo "Running project unit tests"
-        ./gradlew testDebugProguardUnitTest --stacktrace -Drobolectric.offline=true -Drobolectric.dependency.dir=android/build/output/libs/
-        filter_code $?
-        ;;
-
-    "COVERAGE")
-        echo "Downloading robolectric depenrencies..."
-        ./gradlew filesForHermeticBuild
-
-        echo "Generating project code coverage"
-        ./gradlew jacocoTestReport coveralls -Drobolectric.offline=true -Drobolectric.dependency.dir=android/build/output/libs/
+        ./gradlew testDebugProguardUnitTest --stacktrace -Drobolectric.offline=true -Drobolectric.dependency.dir=android/build/output/libs/ -Drobolectric.logging.enabled=true
         filter_code $?
         ;;
 
