@@ -30,7 +30,9 @@ case "$1" in
         echo "Running project checkstyle"
         ./gradlew checkstyle
         CODE=$?
-        html2text android/build/outputs/checkstyle/checkstyle.html
+        if test "$TRAVIS" = "true" ; then
+            html2text android/build/reports/checkstyle/checkstyle.html
+        fi
         filter_code $CODE
         ;;
 

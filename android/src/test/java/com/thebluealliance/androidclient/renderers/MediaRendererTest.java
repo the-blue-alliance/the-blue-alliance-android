@@ -20,7 +20,8 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(DefaultTestRunner.class)
+@Config(manifest = Config.NONE, application = TestTbaAndroid.class, sdk = DefaultTestRunner.SDK_EMULATE_LEVEL)
+@RunWith(ParameterizedRobolectricTestRunner.class)
 public class MediaRendererTest {
 
     private String mMediaName;
