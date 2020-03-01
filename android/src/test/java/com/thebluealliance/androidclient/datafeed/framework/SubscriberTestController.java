@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
+import com.thebluealliance.androidclient.tracing.TracingController;
 
 import javax.annotation.Nullable;
 
@@ -34,6 +35,7 @@ public class SubscriberTestController<API, VIEW> {
       BaseAPISubscriber<API, VIEW> subscriber) {
         mSubscriber = spy(subscriber);
         mSubscriber.setRefreshController(mock(RefreshController.class));
+        mSubscriber.setTracingController(new TracingController(null));
         return this;
     }
 
