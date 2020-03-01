@@ -11,6 +11,8 @@ import com.thebluealliance.androidclient.datafeed.APISubscriber;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
+import com.thebluealliance.androidclient.tracing.TraceWrapper;
+import com.thebluealliance.androidclient.tracing.TracingController;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -40,11 +42,13 @@ public abstract class BaseAPISubscriber<APIType, BindType>
     @Nullable RefreshController mRefreshController; //TODO hook up to DI
     String mRefreshTag;
     Tracker mAnalyticsTracker;
+    TracingController mTracingController;
     boolean hasBinderBoundViews;
     boolean shouldBindImmediately;
     boolean shouldBindOnce;
 
     private long mRefreshStart;
+    @Nullable private TraceWrapper mRefreshTrace;
 
     public BaseAPISubscriber() {
         shouldBindImmediately = true;
@@ -78,6 +82,10 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         mAnalyticsTracker = tracker;
     }
 
+    public void setTracingController(TracingController tracing) {
+        mTracingController = tracing;
+    }
+
     /**
      * Called when a refresh begins
      */
@@ -86,6 +94,8 @@ public abstract class BaseAPISubscriber<APIType, BindType>
             mRefreshController.notifyRefreshingStateChanged(mRefreshTag, true);
         }
         mRefreshStart = System.nanoTime();
+        mRefreshTrace = mTracingController.newTrace("data_refresh_" + mRefreshTag);
+        mRefreshTrace.putAttribute("refresh_type", Integer.toString(refreshType));
         if (refreshType == RefreshController.REQUESTED_BY_USER) {
             sendRefreshUpdate();
         }
@@ -119,10 +129,13 @@ public abstract class BaseAPISubscriber<APIType, BindType>
             }
             if (mConsumer != null) {
                 try {
+                    TraceWrapper bindTrace = mTracingController.newTrace("data_bind_" + mRefreshTag);
+                    bindTrace.start();
                     bindViewsIfNeeded();
                     mConsumer.onComplete();
+                    bindTrace.stop();
                 } catch (Exception e) {
-                    TbaLogger.e("UNABLE TO COMPLETE RENDER");
+                    TbaLogger.e("UNABLE TO COMPLETE RENDER", e);
                     e.printStackTrace();
                     mConsumer.onError(e);
                 }
@@ -130,6 +143,9 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         });
 
         long totalRefreshTime = System.nanoTime() - mRefreshStart;
+        if (mRefreshTrace != null) {
+            mRefreshTrace.stop();
+        }
         sendTimingUpdate(totalRefreshTime / 1000); // Convert to ms
     }
 
@@ -144,6 +160,12 @@ public abstract class BaseAPISubscriber<APIType, BindType>
                 mConsumer.onError(throwable);
             }
         });
+        if (mRefreshTrace != null) {
+            mRefreshTrace.putAttribute("exception_type", throwable.getClass().getSimpleName());
+            mRefreshTrace.stop();
+        }
+        TbaLogger.e("Exception on datafeed!", throwable);
+        throwable.printStackTrace();
         sendExceptionUpdate(throwable);
     }
 
@@ -168,7 +190,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
                     bindViewsIfNeeded();
                     mConsumer.updateData(mDataToBind);
                 } catch (Exception e) {
-                    TbaLogger.e("UNABLE TO RENDER");
+                    TbaLogger.e("UNABLE TO RENDER", e);
                     e.printStackTrace();
                     mConsumer.onError(e);
                 }

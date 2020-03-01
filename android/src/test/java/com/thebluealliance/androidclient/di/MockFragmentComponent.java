@@ -18,7 +18,8 @@ import dagger.Component;
                 MockDatabaseWriterModule.class,
                 MockAccountModule.class,
                 MockClickListenerModule.class,
-                MockGceModule.class},
+                MockGceModule.class,
+                MockTracingModule.class},
         dependencies = {MockApplicationComponent.class})
 public interface MockFragmentComponent extends FragmentComponent {
 
