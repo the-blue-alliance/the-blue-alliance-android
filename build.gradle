@@ -10,11 +10,15 @@ buildscript {
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        maven {
+            url 'https://maven.fabric.io/public'
+        }
         google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.3'
         classpath 'com.google.gms:google-services:4.3.3'
+        classpath 'io.fabric.tools:gradle:1.31.2'
 
         // dependency analysis
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.27.0'
@@ -49,7 +53,6 @@ allprojects {
     ext {
         playServicesVersion = '16.0.1'
         firebaseVersion = '16.0.6'
-        firebaseCrashVersion = '16.2.1'
         googleApiClientVersion = '1.21.0'
         mockitoVersion = '2.27.0'
         retrofitVersion = '2.5.0'
