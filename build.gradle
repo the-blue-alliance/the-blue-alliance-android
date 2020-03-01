@@ -82,3 +82,13 @@ if (System.env.TRAVIS == 'true') {
     }
 }
 
+if (System.env.robolectric_offline == 'true') {
+    allprojects {
+        tasks.withType(Test) {
+            systemProperty 'robolectric.offline', true
+            systemProperty 'robolectric.dependency.dir', './build/output/libs/'
+            systemProperty 'robolectric.logging.enabled', true
+        }
+    }
+}
+

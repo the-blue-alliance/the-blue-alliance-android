@@ -18,9 +18,11 @@ case "$1" in
     "UNIT")
         echo "Downloading robolectric depenrencies..."
         ./gradlew filesForHermeticBuild
+        echo "Downloaded:"
+        ls -l android/build/output/libs
 
         echo "Running project unit tests"
-        ./gradlew testDebugProguardUnitTest --stacktrace -Drobolectric.offline=true -Drobolectric.dependency.dir=android/build/output/libs/ -Drobolectric.logging.enabled=true
+        ./gradlew testDebugProguardUnitTest --stacktrace -Drobolectric_offline=true
         filter_code $?
         ;;
 
