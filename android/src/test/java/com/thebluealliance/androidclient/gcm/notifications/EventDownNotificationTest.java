@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.gcm.notifications;
 import android.content.Context;
 
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 
@@ -12,9 +11,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import static org.junit.Assert.assertEquals;
 
-@RunWith(DefaultTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class EventDownNotificationTest {
 
     private static final String KEY = "DOWN";

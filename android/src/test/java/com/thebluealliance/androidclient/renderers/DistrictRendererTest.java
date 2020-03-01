@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.renderers;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.DistrictListElement;
@@ -15,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import rx.Observable;
 
 import static org.junit.Assert.assertEquals;
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
-@RunWith(DefaultTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class DistrictRendererTest {
     private static final String DISTRICT_KEY = "2015ne";
 

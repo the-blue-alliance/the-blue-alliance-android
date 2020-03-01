@@ -2,8 +2,6 @@ package com.thebluealliance.androidclient.renderers;
 
 import android.content.res.Resources;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
-import com.thebluealliance.androidclient.TestTbaAndroid;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
@@ -15,10 +13,9 @@ import com.thebluealliance.androidclient.types.ModelType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.ParameterizedRobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,8 +30,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
-@Config(manifest = Config.NONE, application = TestTbaAndroid.class, sdk = DefaultTestRunner.SDK_EMULATE_LEVEL)
-@RunWith(ParameterizedRobolectricTestRunner.class)
+@RunWith(Parameterized.class)
 public class MatchRendererTest {
 
     @Mock APICache mDatafeed;
@@ -44,7 +40,7 @@ public class MatchRendererTest {
     private Match mMatch;
     private MatchRenderer mRenderer;
 
-    @ParameterizedRobolectricTestRunner.Parameters(name = "MatchKey = {0}")
+    @Parameterized.Parameters(name = "MatchKey = {0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
           {"2015necmp_qm1"},

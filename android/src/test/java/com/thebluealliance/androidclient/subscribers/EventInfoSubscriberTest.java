@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
@@ -12,7 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(DefaultTestRunner.class)
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+@RunWith(AndroidJUnit4.class)
 public class EventInfoSubscriberTest extends TestCase {
 
     private EventInfoSubscriber mSubscriber;

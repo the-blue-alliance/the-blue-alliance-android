@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import android.content.Context;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
@@ -16,15 +15,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 
 import java.util.List;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(DefaultTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(AndroidJUnit4.class)
 public class TeamInfoSubscriberTest {
 
     @Mock AppConfig mAppConfig;

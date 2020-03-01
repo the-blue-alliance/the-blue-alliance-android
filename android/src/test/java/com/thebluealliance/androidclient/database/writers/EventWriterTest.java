@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.database.writers;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.google.gson.Gson;
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
@@ -15,10 +14,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-@RunWith(DefaultTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class EventWriterTest {
 
     @Mock Database mDb;

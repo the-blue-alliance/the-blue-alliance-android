@@ -1,18 +1,16 @@
 package com.thebluealliance.androidclient.helpers;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(DefaultTestRunner.class)
-@Config(manifest = Config.NONE)
+@RunWith(AndroidJUnit4.class)
 public class TeamHelperTest {
 
     @Test

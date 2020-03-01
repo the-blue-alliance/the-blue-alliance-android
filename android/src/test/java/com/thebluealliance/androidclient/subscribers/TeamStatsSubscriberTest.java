@@ -4,7 +4,6 @@ import android.content.res.Resources;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
@@ -18,11 +17,13 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.when;
 
-@RunWith(DefaultTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class TeamStatsSubscriberTest {
 
     @Mock Resources mResources;

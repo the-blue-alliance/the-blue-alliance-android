@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.JsonArray;
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.interfaces.YearsParticipatedUpdate;
 
@@ -14,9 +13,11 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import static org.mockito.Mockito.verify;
 
-@RunWith(DefaultTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class YearsParticipatedDropdownSubscriberTest {
     @Mock YearsParticipatedUpdate mCallback;
 

@@ -1,15 +1,16 @@
 package com.thebluealliance.androidclient.validators;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 
 import org.junit.runner.RunWith;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import static org.junit.Assert.assertEquals;
 
-@RunWith(DefaultTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class ValidatorTest {
 
     @org.junit.Test

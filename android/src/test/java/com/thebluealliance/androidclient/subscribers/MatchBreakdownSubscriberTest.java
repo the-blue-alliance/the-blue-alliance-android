@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.binders.MatchBreakdownBinder;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
@@ -16,11 +15,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.when;
 
-@RunWith(DefaultTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class MatchBreakdownSubscriberTest {
 
     @Mock AppConfig mConfig;

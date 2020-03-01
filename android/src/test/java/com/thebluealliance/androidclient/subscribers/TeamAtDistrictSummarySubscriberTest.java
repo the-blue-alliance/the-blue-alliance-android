@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import android.content.res.Resources;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
@@ -24,12 +23,14 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(DefaultTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class TeamAtDistrictSummarySubscriberTest {
 
     @Mock Database mDb;

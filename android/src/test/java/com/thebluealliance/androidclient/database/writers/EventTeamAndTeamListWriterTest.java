@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.database.writers;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
@@ -17,12 +16,14 @@ import org.mockito.Mock;
 
 import java.util.List;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-@RunWith(DefaultTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class EventTeamAndTeamListWriterTest {
 
     @Mock Database mDb;

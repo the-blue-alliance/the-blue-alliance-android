@@ -6,7 +6,6 @@ import android.content.Intent;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
@@ -21,10 +20,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(DefaultTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class DistrictPointsUpdatedNotificationTest {
     private Context mContext;
     private DistrictPointsUpdatedNotification mNotification;

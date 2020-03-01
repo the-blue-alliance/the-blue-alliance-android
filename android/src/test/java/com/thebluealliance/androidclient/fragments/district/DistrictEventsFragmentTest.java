@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.fragments.district;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.fragments.framework.BaseFragmentTest;
@@ -16,7 +15,9 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
-@RunWith(DefaultTestRunner.class)
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+@RunWith(AndroidJUnit4.class)
 public class DistrictEventsFragmentTest extends BaseFragmentTest {
 
     DistrictEventsFragment mFragment;
