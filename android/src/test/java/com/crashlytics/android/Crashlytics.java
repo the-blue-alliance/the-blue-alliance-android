@@ -1,6 +1,11 @@
 package com.crashlytics.android;
 
-public class Crashlytics {
+public final class Crashlytics {
+
+    private Crashlytics() {
+        
+    }
+
     public static void log(String message) {
         // noop
     }
