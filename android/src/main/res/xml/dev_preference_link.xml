@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
     <Preference
-        android:key="dev_settings"
-        android:selectable="true"
-        android:title="@string/dev_settings" />
+        app:key="dev_settings"
+        app:selectable="true"
+        app:title="@string/dev_settings"
+        app:iconSpaceReserved="false"/>
 </PreferenceScreen>

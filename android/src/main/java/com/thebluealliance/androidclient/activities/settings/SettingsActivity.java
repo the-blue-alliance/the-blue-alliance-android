@@ -5,16 +5,17 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.SwitchPreference;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreference;
 
 import android.view.MenuItem;
-import android.view.View;
 
 import com.google.common.collect.ImmutableMap;
 import com.thebluealliance.androidclient.BuildConfig;
@@ -36,13 +37,28 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
+        @Nullable ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(android.R.id.content, new SettingsFragment())
+                .commit();
     }
 
-    public static class SettingsFragment extends PreferenceFragment {
+    public static class SettingsFragment extends PreferenceFragmentCompat {
 
         @Inject AccountController mAccountController;
+
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.preferences, rootKey);
+
+            if (Utilities.isDebuggable()) {
+                addPreferencesFromResource(R.xml.dev_preference_link);
+            }
+        }
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +71,6 @@ public class SettingsActivity extends AppCompatActivity {
                                 .applicationComponent(application.getComponent())
                                 .build()
                                 .inject(this);
-            addPreferencesFromResource(R.xml.preferences);
 
             Preference appVersion = findPreference("app_version");
 
@@ -75,73 +90,78 @@ public class SettingsActivity extends AppCompatActivity {
                   buildTime,
                   commit);
             }
-            appVersion.setSummary(versionInfo);
-            appVersion.setIntent(new Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/"
-                            + "commit/" + commit)));
+            if (appVersion != null) {
+                appVersion.setSummary(versionInfo);
+                appVersion.setIntent(new Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/"
+                                + "commit/" + commit)));
+            }
 
             Preference githubLink = findPreference("github_link");
-            githubLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/")));
+            if (githubLink != null) {
+                githubLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/")));
+            }
 
             Preference licenses = findPreference("licenses");
-            licenses.setIntent(new Intent(getActivity(), OpenSourceLicensesActivity.class));
+            if (licenses != null) {
+                licenses.setIntent(new Intent(getActivity(), OpenSourceLicensesActivity.class));
+            }
 
             Preference contributors = findPreference("contributors");
-            contributors.setIntent(new Intent(getActivity(), ContributorsActivity.class));
+            if (contributors != null) {
+                contributors.setIntent(new Intent(getActivity(), ContributorsActivity.class));
+            }
 
             Preference notifications = findPreference("notifications");
-            notifications.setIntent(new Intent(getActivity(), NotificationSettingsActivity.class));
+            if (notifications != null) {
+                notifications.setIntent(new Intent(getActivity(), NotificationSettingsActivity.class));
+            }
 
             Preference changelog = findPreference("changelog");
-            changelog.setIntent(new Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/"
-                            + "releases/tag/v" + versionName)));
+            if (changelog != null) {
+                changelog.setIntent(new Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/the-blue-alliance/the-blue-alliance-android/"
+                                + "releases/tag/v" + versionName)));
+            }
 
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
 
             final SwitchPreference mytbaEnabled = (SwitchPreference) findPreference("mytba_enabled");
             final Activity activity = getActivity();
-            mytbaEnabled.setChecked(mAccountController.isMyTbaEnabled());
-            mytbaEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean enabled = mAccountController.isMyTbaEnabled();
-                    TbaLogger.d("myTBA is: " + enabled);
-                    activity.startActivity(new Intent(getActivity(), MyTBAOnboardingActivity.class));
-                    return true;
-                }
-            });
+            if (mytbaEnabled != null) {
+                mytbaEnabled.setChecked(mAccountController.isMyTbaEnabled());
+                mytbaEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        boolean enabled = mAccountController.isMyTbaEnabled();
+                        TbaLogger.d("myTBA is: " + enabled);
+                        activity.startActivity(new Intent(getActivity(), MyTBAOnboardingActivity.class));
+                        return true;
+                    }
+                });
+            }
 
             ImmutableMap<String, String> darkModePrefsForAppVersion = getDarkModeOptions();
-            ListPreference darkModePref = (ListPreference) findPreference("dark_mode");
-            darkModePref.setEntries(darkModePrefsForAppVersion.keySet().toArray(new String[]{}));
-            darkModePref.setEntryValues(darkModePrefsForAppVersion.values().toArray(new String[]{}));
-            darkModePref.setOnPreferenceChangeListener((preference, newPref) -> {
-                int newValue = Utilities.getCurrentDarkModePreference((String)newPref);
-                TbaLogger.d("Setting dark mode preference to " + newValue);
-                AppCompatDelegate.setDefaultNightMode(newValue);
-                return true;
-            });
+            final ListPreference darkModePref = (ListPreference) findPreference("dark_mode");
+            if (darkModePref != null) {
+                darkModePref.setEntries(darkModePrefsForAppVersion.keySet().toArray(new String[]{}));
+                darkModePref.setEntryValues(darkModePrefsForAppVersion.values().toArray(new String[]{}));
+                darkModePref.setOnPreferenceChangeListener((preference, newPref) -> {
+                    int newValue = Utilities.getCurrentDarkModePreference((String) newPref);
+                    TbaLogger.d("Setting dark mode preference to " + newValue);
+                    AppCompatDelegate.setDefaultNightMode(newValue);
+                    return true;
+                });
+            }
 
             if (Utilities.isDebuggable()) {
-                addPreferencesFromResource(R.xml.dev_preference_link);
                 Preference devSettings = findPreference("dev_settings");
-                devSettings.setIntent(new Intent(getActivity(), com.thebluealliance.androidclient.activities.settings.DevSettingsActivity.class));
-            }
-        }
-
-
-        @Override
-        public void onViewCreated(View view, Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
-
-            // Remove padding from the list view
-            View listView = getView().findViewById(android.R.id.list);
-            if (listView != null) {
-                listView.setPadding(0, 0, 0, 0);
+                if (devSettings != null) {
+                    devSettings.setIntent(new Intent(getActivity(), com.thebluealliance.androidclient.activities.settings.DevSettingsActivity.class));
+                }
             }
         }
 
@@ -150,8 +170,10 @@ public class SettingsActivity extends AppCompatActivity {
             super.onResume();
 
             // Enable might have failed; update the state of the switch when we resume
-            SwitchPreference mytbaEnabled = (SwitchPreference) findPreference("mytba_enabled");
-            mytbaEnabled.setChecked(mAccountController.isMyTbaEnabled());
+            SwitchPreference mytbaEnabled = findPreference("mytba_enabled");
+            if (mytbaEnabled != null) {
+                mytbaEnabled.setChecked(mAccountController.isMyTbaEnabled());
+            }
         }
 
 

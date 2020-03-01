@@ -2,11 +2,10 @@ package com.thebluealliance.androidclient.activities.settings;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
+
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.Analytics;
@@ -25,6 +24,8 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 import okhttp3.Cache;
 
 public class DevSettingsActivity extends AppCompatActivity {
@@ -32,16 +33,25 @@ public class DevSettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getFragmentManager().beginTransaction()
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        getSupportFragmentManager()
+                .beginTransaction()
                 .replace(android.R.id.content, new DevSettingsFragment())
                 .commit();
     }
 
-    public static class DevSettingsFragment extends PreferenceFragment {
+    public static class DevSettingsFragment extends PreferenceFragmentCompat {
 
         @Inject AppConfig mConfig;
         @Inject Cache mOkCache;
+
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+
+        }
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -50,18 +60,16 @@ public class DevSettingsActivity extends AppCompatActivity {
             addPreferencesFromResource(R.xml.dev_preferences);
 
             Preference analyticsDryRun = findPreference("analytics_dry_run");
-            analyticsDryRun.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
+            if (analyticsDryRun != null) {
+                analyticsDryRun.setOnPreferenceChangeListener((preference, newValue) -> {
                     Analytics.setAnalyticsDryRun(getActivity(), (boolean) newValue);
                     return true;
-                }
-            });
+                });
+            }
 
             Preference clearOkCache = findPreference("clear_okhttp_cache");
-            clearOkCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
+            if (clearOkCache != null) {
+                clearOkCache.setOnPreferenceClickListener(preference -> {
                     if (mOkCache != null) {
                         Toast.makeText(getActivity(), "Clearing okhttp cache", Toast.LENGTH_SHORT).show();
                         try {
@@ -72,94 +80,95 @@ public class DevSettingsActivity extends AppCompatActivity {
                         }
                     }
                     return true;
-                }
-            });
+                });
+            }
 
             Preference refreshConfig = findPreference("refresh_remote_config");
-            refreshConfig.setOnPreferenceClickListener(preference -> {
-                Toast.makeText(getActivity(), "Updating remote config...", Toast.LENGTH_SHORT).show();
-                mConfig.updateRemoteData(task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getActivity(), "Update complete", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(), "Error updating config", Toast.LENGTH_SHORT).show();
-                    }
+            if (refreshConfig != null) {
+                refreshConfig.setOnPreferenceClickListener(preference -> {
+                    Toast.makeText(getActivity(), "Updating remote config...", Toast.LENGTH_SHORT).show();
+                    mConfig.updateRemoteData(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getActivity(), "Update complete", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), "Error updating config", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    return true;
                 });
-                return true;
-            });
+            }
 
             Preference configLookup = findPreference("config_lookup");
-            configLookup.setOnPreferenceChangeListener((preference, o) -> {
-                if (o instanceof String) {
-                    Toast.makeText(getActivity(), "Looking up key " + o, Toast.LENGTH_SHORT).show();
-                    String confValue = mConfig.getString((String)o);
-                    Toast.makeText(getActivity(), "Value: " + confValue, Toast.LENGTH_SHORT).show();
-                }
-                return false;
-            });
+            if (configLookup != null) {
+                configLookup.setOnPreferenceChangeListener((preference, o) -> {
+                    if (o instanceof String) {
+                        Toast.makeText(getActivity(), "Looking up key " + o, Toast.LENGTH_SHORT).show();
+                        String confValue = mConfig.getString((String) o);
+                        Toast.makeText(getActivity(), "Value: " + confValue, Toast.LENGTH_SHORT).show();
+                    }
+                    return false;
+                });
+            }
 
             Preference addMyTBAItem = findPreference("add_mytba_item");
-            addMyTBAItem.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    /*Favorite fav = new Favorite();
-                    fav.setUserName(AccountHelper.getSelectedAccount(getActivity()));
-                    fav.setModelKey("frc111");
-                    fav.setModelEnum(ModelType.TEAM.getEnum());
-                    Database.getInstance(getActivity()).getFavoritesTable().add(fav);*/
+            if (addMyTBAItem != null) {
+                addMyTBAItem.setOnPreferenceClickListener(preference -> {
+                /*Favorite fav = new Favorite();
+                fav.setUserName(AccountHelper.getSelectedAccount(getActivity()));
+                fav.setModelKey("frc111");
+                fav.setModelEnum(ModelType.TEAM.getEnum());
+                Database.getInstance(getActivity()).getFavoritesTable().add(fav);*/
                     Toast.makeText(getActivity(), "TODO", Toast.LENGTH_SHORT).show();
                     return true;
-                }
-            });
+                });
+            }
 
             Preference redownload = findPreference("redownload_data");
-            redownload.setOnPreferenceClickListener(preference -> {
-                Intent redownloadIntent = new Intent(getActivity(), RedownloadActivity.class);
-                redownloadIntent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_TEAMS, LoadTBAData.LOAD_DISTRICTS});
-                startActivity(redownloadIntent);
-                return true;
-            });
+            if (redownload != null) {
+                redownload.setOnPreferenceClickListener(preference -> {
+                    Intent redownloadIntent = new Intent(getActivity(), RedownloadActivity.class);
+                    redownloadIntent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_TEAMS, LoadTBAData.LOAD_DISTRICTS});
+                    startActivity(redownloadIntent);
+                    return true;
+                });
+            }
 
             Preference updateStatus = findPreference("update_api_status");
-            updateStatus.setOnPreferenceClickListener(preference -> {
-                Intent serviceIntent = new Intent(getActivity(), StatusRefreshService.class);
-                getActivity().startService(serviceIntent);
-                Toast.makeText(getActivity(), R.string.update_status_launched, Toast.LENGTH_SHORT)
-                  .show();
-                return true;
-            });
+            if (updateStatus != null) {
+                updateStatus.setOnPreferenceClickListener(preference -> {
+                    Intent serviceIntent = new Intent(getActivity(), StatusRefreshService.class);
+                    getActivity().startService(serviceIntent);
+                    Toast.makeText(getActivity(), R.string.update_status_launched, Toast.LENGTH_SHORT)
+                            .show();
+                    return true;
+                });
+            }
 
             Preference gcmRegister = findPreference("gcm_register");
-            gcmRegister.setOnPreferenceClickListener((preference) -> {
-                getActivity().startService(new Intent(getActivity(),
-                                                      MyTbaRegistrationService.class));
-                return false;
-            });
+            if (gcmRegister != null) {
+                gcmRegister.setOnPreferenceClickListener((preference) -> {
+                    getActivity().startService(new Intent(getActivity(),
+                            MyTbaRegistrationService.class));
+                    return false;
+                });
+            }
 
             Preference updateMytba = findPreference("update_mytba");
-            updateMytba.setOnPreferenceClickListener((preference) -> {
-                getActivity().startService(
-                        MyTbaUpdateService.newInstance(getActivity(), true, true));
-                return false;
-            });
+            if (updateMytba != null) {
+                updateMytba.setOnPreferenceClickListener((preference) -> {
+                    getActivity().startService(
+                            MyTbaUpdateService.newInstance(getActivity(), true, true));
+                    return false;
+                });
+            }
 
             Preference migrateAuth = findPreference("migrate_auth");
-            migrateAuth.setOnPreferenceClickListener((preference) -> {
-                getActivity().startService(new Intent(getActivity(),
-                                                      MigrateLegacyUserToFirebase.class));
-                return false;
-            });
-
-        }
-
-        @Override
-        public void onViewCreated(View view, Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
-
-            // Remove padding from the list view
-            View listView = getView().findViewById(android.R.id.list);
-            if (listView != null) {
-                listView.setPadding(0, 0, 0, 0);
+            if (migrateAuth != null) {
+                migrateAuth.setOnPreferenceClickListener((preference) -> {
+                    getActivity().startService(new Intent(getActivity(),
+                            MigrateLegacyUserToFirebase.class));
+                    return false;
+                });
             }
         }
     }
