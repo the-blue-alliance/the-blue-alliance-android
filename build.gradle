@@ -53,6 +53,7 @@ allprojects {
     ext {
         playServicesVersion = '16.0.1'
         firebaseVersion = '16.0.6'
+        crashlyticsVersion = '2.10.1'
         googleApiClientVersion = '1.21.0'
         mockitoVersion = '2.27.0'
         retrofitVersion = '2.5.0'
