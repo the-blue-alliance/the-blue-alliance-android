@@ -23,7 +23,11 @@ case "$1" in
 
         echo "Running project unit tests"
         ./gradlew testDebugProguardUnitTest --stacktrace -Drobolectric_offline=true
-        filter_code $?
+        CODE=$?
+        if test "$TRAVIS" = "true" ; then
+            html2text android/build/reports/tests/testDebugProguardUnitTest/index.html
+        fi
+        filter_code $CODE
         ;;
 
     "CHECKSTYLE")
