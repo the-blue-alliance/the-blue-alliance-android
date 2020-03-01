@@ -8,6 +8,7 @@ apply plugin: 'checkstyle'
 apply plugin: 'gitsemver'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'com.facebook.testing.screenshot'
+apply plugin: 'com.google.firebase.firebase-perf'
 
 apply from: '../code_coverage.gradle'
 
@@ -250,6 +251,7 @@ dependencies {
     implementation "com.google.firebase:firebase-core:17.2.3"
     implementation "com.google.firebase:firebase-auth:19.2.0"
     implementation "com.google.firebase:firebase-config:19.1.2"
+    implementation 'com.google.firebase:firebase-perf:19.0.5'
 
     implementation 'com.google.firebase:firebase-analytics:17.2.3'
     releaseImplementation "com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}"
