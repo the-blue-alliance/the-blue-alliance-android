@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.gcm;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.config.AppConfig;
 
 import org.junit.Before;
@@ -12,12 +11,14 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(DefaultTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class GcmControllerTest {
 
     private static final String TEST_ID = "meow";

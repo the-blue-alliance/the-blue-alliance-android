@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.database;
 
 import android.database.sqlite.SQLiteDatabase;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
 import com.thebluealliance.androidclient.database.tables.FavoritesTable;
@@ -15,6 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static com.thebluealliance.androidclient.database.Database.TABLE_API;
 import static com.thebluealliance.androidclient.database.Database.TABLE_AWARDS;
@@ -31,7 +32,7 @@ import static com.thebluealliance.androidclient.database.Database.TABLE_TEAMS;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(DefaultTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class DatabaseTest {
 
     private static final String BASE_TABLE_CREATE = "CREATE TABLE %1$s (id INTEGER PRIMARY KEY);";

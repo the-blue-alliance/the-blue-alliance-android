@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Team;
@@ -14,9 +13,11 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import static org.mockito.Mockito.verify;
 
-@RunWith(DefaultTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class TeamListSubscriberTest {
 
     @Mock TeamRenderer mRenderer;

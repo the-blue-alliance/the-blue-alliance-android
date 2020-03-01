@@ -126,7 +126,6 @@ android {
             // This is needed for robolectric - see
             // https://github.com/robolectric/robolectric-gradle-plugin/issues/144
             jvmArgs '-noverify'
-            systemProperty 'robolectric.dependency.repo.url', 'https://repo1.maven.org/maven2'
         }
     }
 
@@ -162,6 +161,9 @@ android {
         preDexLibraries = preDexEnabled && !travisBuild
     }
 
+    useLibrary 'android.test.runner'
+    useLibrary 'android.test.base'
+    useLibrary 'android.test.mock'
 }
 
 play {
@@ -285,10 +287,13 @@ dependencies {
     annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:${permissionDispatcherVersion}"
 
     // testing
+    testImplementation 'androidx.test:core:1.2.0'
+    testImplementation 'androidx.test:runner:1.2.0'
+    testImplementation 'androidx.test:rules:1.2.0'
+    testImplementation 'androidx.test.ext:junit:1.1.1'
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testImplementation "org.robolectric:robolectric:${robolectricVersion}"
     testImplementation "org.robolectric:shadows-multidex:${robolectricVersion}"
-    testImplementation 'junit:junit:4.13'
-    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // instrumentation

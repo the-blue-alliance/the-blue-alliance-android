@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.renderers;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.CardedAwardListElement;
@@ -15,10 +14,12 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.HashMap;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(DefaultTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 public class AwardRendererTest {
 
     private static final String AWARD_INDIVIDUAL = "award_individual";

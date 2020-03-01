@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.renderers;
 
-import com.thebluealliance.androidclient.DefaultTestRunner;
-import com.thebluealliance.androidclient.TestTbaAndroid;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.models.Media;
@@ -10,9 +8,8 @@ import com.thebluealliance.androidclient.types.MediaType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.ParameterizedRobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,8 +17,7 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@Config(manifest = Config.NONE, application = TestTbaAndroid.class, sdk = DefaultTestRunner.SDK_EMULATE_LEVEL)
-@RunWith(ParameterizedRobolectricTestRunner.class)
+@RunWith(Parameterized.class)
 public class MediaRendererTest {
 
     private String mMediaName;
@@ -29,7 +25,7 @@ public class MediaRendererTest {
     private Media mMedia;
     private MediaRenderer mRenderer;
 
-    @ParameterizedRobolectricTestRunner.Parameters(name = "MediaType = {0}")
+    @Parameterized.Parameters(name = "MediaType = {0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 {"media_cdphotothread", "cdphotothread"},

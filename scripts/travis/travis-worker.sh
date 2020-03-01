@@ -18,26 +18,25 @@ case "$1" in
     "UNIT")
         echo "Downloading robolectric depenrencies..."
         ./gradlew filesForHermeticBuild
+        echo "Downloaded:"
+        ls -l android/build/output/libs
 
         echo "Running project unit tests"
-        ./gradlew testDebugProguardUnitTest --stacktrace -Drobolectric.dependency.dir=android/build/output/libs/
-        filter_code $?
-        ;;
-
-    "COVERAGE")
-        echo "Downloading robolectric depenrencies..."
-        ./gradlew filesForHermeticBuild
-
-        echo "Generating project code coverage"
-        ./gradlew jacocoTestReport coveralls
-        filter_code $?
+        ./gradlew testDebugProguardUnitTest --stacktrace -Drobolectric_offline=true
+        CODE=$?
+        if test "$TRAVIS" = "true" ; then
+            html2text android/build/reports/tests/testDebugProguardUnitTest/index.html
+        fi
+        filter_code $CODE
         ;;
 
     "CHECKSTYLE")
         echo "Running project checkstyle"
         ./gradlew checkstyle
         CODE=$?
-        html2text android/build/outputs/checkstyle/checkstyle.html
+        if test "$TRAVIS" = "true" ; then
+            html2text android/build/reports/checkstyle/checkstyle.html
+        fi
         filter_code $CODE
         ;;
 
