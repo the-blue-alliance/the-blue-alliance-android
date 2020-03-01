@@ -190,7 +190,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
                     bindViewsIfNeeded();
                     mConsumer.updateData(mDataToBind);
                 } catch (Exception e) {
-                    TbaLogger.e("UNABLE TO RENDER");
+                    TbaLogger.e("UNABLE TO RENDER", e);
                     e.printStackTrace();
                     mConsumer.onError(e);
                 }
