@@ -22,7 +22,7 @@ Travis support requires the official client: https://github.com/travis-ci/travis
 """
 
 PACKAGE = 'com.thebluealliance.androidclient'
-CHANGELOG_PATH = 'android/src/release/play/en-US/whatsnew'
+CHANGELOG_PATH = 'android/src/release/play/release-notes/en-US/default.txt'
 INAPP_CHANGELOG = 'android/src/main/res/raw/changelog.txt'
 APK_PATH_FORMAT = 'android/build/outputs/apk/release/tba-android-v{}-release.apk'
 SHORTLOG_PATH = 'RELEASE_SHORTLOG'

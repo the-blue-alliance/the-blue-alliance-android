@@ -1,5 +1,7 @@
 plugins {
     id "com.github.plnice.canidropjetifier" version "0.4"
+    id 'jacoco'
+    id 'com.github.triplet.play' version '2.7.2'
 }
 
 apply plugin: 'com.android.application'
@@ -9,8 +11,6 @@ apply plugin: 'gitsemver'
 apply plugin: 'com.github.triplet.play'
 apply plugin: 'com.facebook.testing.screenshot'
 apply plugin: 'com.google.firebase.firebase-perf'
-
-apply from: '../code_coverage.gradle'
 
 // dependency checker plugin
 // run ./gradlew dependencyUpdates to generate report
@@ -169,8 +169,7 @@ android {
 }
 
 play {
-    serviceAccountEmail = localProps.getProperty('play.release.serviceEmail', 'some-email-address')
-    pk12File = file(localProps.getProperty('play.release.keyFile', 'somefile.p12'))
+    serviceAccountCredentials = file(localProps.getProperty('play.release.credentialFile', 'somefile.json'))
     track = 'beta'
 }
 
