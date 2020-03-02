@@ -35,6 +35,16 @@ public static *** v(...);
     public void onEvent*(**);
 }
 
+-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+   long producerIndex;
+   long consumerIndex;
+}
+
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+   long producerNode;
+   long consumerNode;
+}
+
 -dontnote com.google.**
 -dontwarn afu.org.checkerframework.**
 -dontwarn org.checkerframework.**
