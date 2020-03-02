@@ -1,9 +1,11 @@
-Version 6.0.2:
+Version 6.0.3:
  - Welcome to the 2020 season!
  - Target Android Q
  - Support for system dark mode!
  - We now show team avatars
+ - Bug fixes & reliability improvements
 
 View the full changelog for this and previous releases on the GitHub page:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
+
 
