@@ -8,6 +8,9 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
@@ -55,7 +58,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
 
-public class GCMMessageHandler extends IntentService implements FollowsChecker {
+public class GCMMessageHandler extends JobIntentService implements FollowsChecker {
 
     /**
      * Stack (bundle) notifications together into a Group for better UX on Nougat+ and Android Wear
@@ -74,6 +77,9 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     /** If grouping won't work, use this ID to make each notification replace its predecessor. */
     public static final int SINGULAR_NOTIFICATION_ID = 363;
 
+    public static final int JOB_ID = 254;
+
+    @Inject GoogleCloudMessaging mCloudMessaging;
     @Inject MyTbaDatafeed mMyTbaDatafeed;
     @Inject DatabaseWriter mWriter;
     @Inject SharedPreferences mPrefs;
@@ -85,14 +91,6 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
     @Inject AppConfig mAppConfig;
 
     private NotificationComponent mComponenet;
-
-    public GCMMessageHandler() {
-        this("GCMMessageHandler");
-    }
-
-    public GCMMessageHandler(String name) {
-        super(name);
-    }
 
     @Override
     public void onCreate() {
@@ -109,6 +107,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                     .datafeedModule(application.getDatafeedModule())
                     .rendererModule(new RendererModule())
                     .authModule(application.getAuthModule())
+                    .gcmModule(application.getGcmModule())
                     .build();
         }
     }
@@ -131,14 +130,19 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
                 || subTable.hasNotificationType(teamAtEventInterestKey, notificationType);
     }
 
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, GCMMessageHandler.class, JOB_ID, work);
+    }
+
     @Override
-    protected void onHandleIntent(Intent intent) {
-
+    protected void onHandleWork(Intent intent) {
         Bundle extras = intent.getExtras();
+        if (extras == null) {
+            TbaLogger.w("Intent with no extras!");
+            return;
+        }
 
-        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
-
-        String messageType = gcm.getMessageType(intent);
+        String messageType = mCloudMessaging.getMessageType(intent);
         TbaLogger.d("GCM Message type: " + messageType);
         TbaLogger.d("Intent extras: " + extras.toString());
 
@@ -148,8 +152,6 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
         handleMessage(getApplicationContext(), type, data);
 
         TbaLogger.i("Received : (" + type + ")  " + data);
-
-        GCMBroadcastReceiver.completeWakefulIntent(intent);
     }
 
     public void handleMessage(Context c, String messageType, String messageData) {
@@ -255,7 +257,7 @@ public class GCMMessageHandler extends IntentService implements FollowsChecker {
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...
-            e.printStackTrace();
+            TbaLogger.e("Error parsing notification", e);
         }
     }
 

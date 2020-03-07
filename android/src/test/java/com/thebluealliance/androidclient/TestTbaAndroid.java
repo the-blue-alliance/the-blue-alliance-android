@@ -29,7 +29,6 @@ public class TestTbaAndroid extends TbaAndroid {
     @Override
     public void onCreate() {
         disableStetho();
-        FirebaseApp.initializeApp(this);
         super.onCreate();
     }
 
