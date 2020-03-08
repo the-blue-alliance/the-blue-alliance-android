@@ -24,7 +24,6 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class GenericNotification extends BaseNotification<GenericNotificationViewModel> {
 
@@ -85,6 +84,7 @@ public class GenericNotification extends BaseNotification<GenericNotificationVie
         stored.setBody(message);
         stored.setMessageData(messageData);
         stored.setTime(Calendar.getInstance().getTime());
+        stored.setSystemId(getNotificationId());
 
         Intent intent = getIntent(context);
 
@@ -125,7 +125,7 @@ public class GenericNotification extends BaseNotification<GenericNotificationVie
 
     @Override
     public int getNotificationId() {
-        return (new Date().getTime() + ":" + getNotificationType() + ":" + messageData).hashCode();
+        return (getNotificationType() + ":" + messageData).hashCode();
     }
 
 

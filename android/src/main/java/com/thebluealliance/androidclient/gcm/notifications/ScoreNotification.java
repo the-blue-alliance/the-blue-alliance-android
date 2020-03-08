@@ -142,6 +142,7 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         stored.setMessageData(messageData);
+        stored.setSystemId(getNotificationId());
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(notificationTitle)
@@ -167,7 +168,7 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
 
     @Override
     public int getNotificationId() {
-        return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
+        return (getNotificationType() + ":" + matchKey).hashCode();
     }
 
     @Override

@@ -19,7 +19,6 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class DistrictPointsUpdatedNotification
         extends BaseNotification<GenericNotificationViewModel> {
@@ -69,6 +68,7 @@ public class DistrictPointsUpdatedNotification
         stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
+        stored.setSystemId(getNotificationId());
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(title)
@@ -91,7 +91,7 @@ public class DistrictPointsUpdatedNotification
 
     @Override
     public int getNotificationId() {
-        return (new Date().getTime() + ":" + getNotificationType() + ":" + districtKey).hashCode();
+        return (getNotificationType() + ":" + districtKey).hashCode();
     }
 
     @Nullable

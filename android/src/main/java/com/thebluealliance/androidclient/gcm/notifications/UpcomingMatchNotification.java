@@ -168,6 +168,7 @@ public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNot
         stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
+        stored.setSystemId(getNotificationId());
 
         PendingIntent watchIntent = null;
         String watchTitle = null;
@@ -214,7 +215,7 @@ public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNot
 
     @Override
     public int getNotificationId() {
-        return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
+        return (getNotificationType() + ":" + matchKey).hashCode();
     }
 
     @Override

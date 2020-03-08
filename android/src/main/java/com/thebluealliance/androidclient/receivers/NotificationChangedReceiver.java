@@ -28,6 +28,7 @@ public class NotificationChangedReceiver extends BroadcastReceiver {
     public static final String ACTION_NOTIFICATION_DELETED = "com.thebluealliance.androidclient.intent.action.NOTIFICATION_DELETED";
 
     public static final String EXTRA_INTENT = "com.thebluealliance.androidclient.intent.extra.INTENT";
+    public static final String EXTRA_NOTIFICATION_ID = "com.thebluealliance.androidclient.intent.extra.NOTIFICATION_ID";
 
     public static Intent newIntent(Context context) {
         return new Intent(context, NotificationChangedReceiver.class);

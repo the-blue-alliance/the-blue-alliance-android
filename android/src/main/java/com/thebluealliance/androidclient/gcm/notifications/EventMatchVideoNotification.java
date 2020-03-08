@@ -69,6 +69,7 @@ public class EventMatchVideoNotification extends BaseNotification<EventMatchVide
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         stored.setMessageData(messageData);
+        stored.setSystemId(getNotificationId());
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setOnlyAlertOnce(true)

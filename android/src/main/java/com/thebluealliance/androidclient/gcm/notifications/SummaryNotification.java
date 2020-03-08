@@ -4,9 +4,6 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
@@ -19,6 +16,10 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.receivers.NotificationChangedReceiver;
 
 import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 public class SummaryNotification extends BaseNotification<Void> {
     /**
@@ -53,13 +54,9 @@ public class SummaryNotification extends BaseNotification<Void> {
         String notificationTitle = context.getString(R.string.notification_summary, size);
         style.setBigContentTitle(notificationTitle);
 
-        if (!GCMMessageHandler.SUMMARY_NOTIFICATION_IS_A_HEADER) {
-            style.setSummaryText(
-                    size > MAX ? context.getString(R.string.notification_summary_more, size - MAX)
-                               : context.getString(R.string.app_name));
-        } // else don't set the summary line since on these Android versions, the header already
-          // shows the app name and overflow count. "" would show an extra •,
-          // "The Blue Alliance • • now."
+        style.setSummaryText(
+                size > MAX ? context.getString(R.string.notification_summary_more, size - MAX)
+                        : context.getString(R.string.app_name));
 
         Intent instance = getIntent(context);
         PendingIntent intent = makeNotificationIntent(context, instance);
@@ -68,7 +65,7 @@ public class SummaryNotification extends BaseNotification<Void> {
         dismissIntent.setAction(NotificationChangedReceiver.ACTION_NOTIFICATION_DELETED);
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, dismissIntent, 0);
 
-        return new NotificationCompat.Builder(context)
+        return getBaseBuilder(context)
                 .setContentTitle(notificationTitle)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setColor(ContextCompat.getColor(context, R.color.primary))
@@ -76,7 +73,7 @@ public class SummaryNotification extends BaseNotification<Void> {
                 .setDeleteIntent(onDismiss)
                 .setAutoCancel(true)
                 .setGroup(GCMMessageHandler.GROUP_KEY)
-                .setGroupSummary(GCMMessageHandler.STACK_NOTIFICATIONS)
+                .setGroupSummary(true)
                 .setStyle(style).build();
     }
 
@@ -99,13 +96,6 @@ public class SummaryNotification extends BaseNotification<Void> {
     public int getNotificationId() {
         /* All have the same ID so future notifications replace it */
         return 1337;
-    }
-
-    /* Checks if we've already posted a notification */
-    public static boolean isNotificationActive(Context context, Database db) {
-        NotificationsTable table = db.getNotificationsTable();
-        return table.getActive().size() > 1;
-        // The newest notification has already been added to the table, so we're checking if there are 2+ active
     }
 
     @Nullable

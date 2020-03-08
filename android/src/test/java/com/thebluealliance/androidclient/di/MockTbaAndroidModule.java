@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.DatabaseWithMocks;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.writers.AwardListWriter;
 import com.thebluealliance.androidclient.database.writers.AwardWriter;
@@ -46,19 +47,19 @@ public class MockTbaAndroidModule {
     @Provides
     @Singleton
     public Context provideApplicationContext() {
-        return Mockito.mock(Context.class);
+        return spy(ApplicationProvider.getApplicationContext());
     }
 
     @Provides
     @Singleton
-    public Database provideDatabase() {
-        return Mockito.mock(Database.class);
+    public Database provideDatabase(Context context) {
+        return spy(new DatabaseWithMocks(context));
     }
 
     @Provides
     @Singleton
     public SharedPreferences provideSharedPrefs(Context context) {
-        return ApplicationProvider.getApplicationContext().getSharedPreferences("prefs", 0);
+        return spy(context.getSharedPreferences("prefs", 0));
     }
 
     @Provides

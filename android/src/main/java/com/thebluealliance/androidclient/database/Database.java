@@ -215,9 +215,9 @@ public class Database extends SQLiteOpenHelper {
 
     @Inject Gson mGson;
 
-    private Database(Context context) {
+    protected Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        ((TbaAndroid)context.getApplicationContext()).getDbComponent().inject(this);
+        inject(context);
         mDb = getWritableDatabase();
         mTeamsTable = new TeamsTable(mDb, mGson);
         mAwardsTable = new AwardsTable(mDb, mGson);
@@ -231,6 +231,10 @@ public class Database extends SQLiteOpenHelper {
         mFavoritesTable = new FavoritesTable(mDb);
         mSubscriptionsTable = new SubscriptionsTable(mDb);
         mNotificationsTable = new NotificationsTable(mDb);
+    }
+
+    protected void inject(Context context) {
+        ((TbaAndroid)context.getApplicationContext()).getDbComponent().inject(this);
     }
 
     public static synchronized Database getInstance(Context context) {

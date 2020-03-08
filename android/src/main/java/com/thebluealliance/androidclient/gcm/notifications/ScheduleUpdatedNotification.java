@@ -92,6 +92,7 @@ public class ScheduleUpdatedNotification extends BaseNotification<ScheduleUpdate
         stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
+        stored.setSystemId(getNotificationId());
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(title)
@@ -114,7 +115,7 @@ public class ScheduleUpdatedNotification extends BaseNotification<ScheduleUpdate
 
     @Override
     public int getNotificationId() {
-        return (new Date().getTime() + ":" + getNotificationType() + ":" + eventKey).hashCode();
+        return (getNotificationType() + ":" + eventKey).hashCode();
     }
 
     @Override
