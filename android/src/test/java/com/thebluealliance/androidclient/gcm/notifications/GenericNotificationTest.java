@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.notifications;
+package com.thebluealliance.androidclient.gcm.notifications;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;

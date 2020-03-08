@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.notifications;
+package com.thebluealliance.androidclient.gcm.notifications;
 
 import android.content.Context;
 import android.content.Intent;
