@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.notifications;
+package com.thebluealliance.androidclient.gcm.notifications;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +8,6 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.database.writers.MatchWriter;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
@@ -30,9 +29,12 @@ import static org.mockito.Mockito.verify;
 @RunWith(AndroidJUnit4.class)
 public class ScoreNotificationTest {
 
-    @Mock private Context mContext;
-    @Mock private MatchWriter mWriter;
-    @Mock private MatchRenderer mRenderer;
+    @Mock
+    private Context mContext;
+    @Mock
+    private MatchWriter mWriter;
+    @Mock
+    private MatchRenderer mRenderer;
 
     private ScoreNotification mNotification;
     private JsonObject mData;

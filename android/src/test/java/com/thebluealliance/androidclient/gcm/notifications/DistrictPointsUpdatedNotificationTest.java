@@ -1,4 +1,4 @@
-package com.thebluealliance.androidclient.notifications;
+package com.thebluealliance.androidclient.gcm.notifications;
 
 import android.app.Notification;
 import android.content.Context;
@@ -9,8 +9,6 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.gcm.notifications.DistrictPointsUpdatedNotification;
-import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
@@ -70,7 +68,7 @@ public class DistrictPointsUpdatedNotificationTest {
         assertNotNull(stored);
         assertEquals(stored.getType(), NotificationTypes.DISTRICT_POINTS_UPDATED);
         assertEquals(stored.getTitle(), mContext.getString(R.string.notification_district_points_title, "PNW"));
-        assertEquals(stored.getBody(), mContext.getString(R.string.notification_district_points_updated,"Pacific Northwest"));
+        assertEquals(stored.getBody(), mContext.getString(R.string.notification_district_points_updated, "Pacific Northwest"));
         assertEquals(stored.getMessageData(), mData.toString());
         assertEquals(stored.getIntent(), MyTBAHelper.serializeIntent(mNotification.getIntent(mContext)));
         assertNotNull(stored.getTime());

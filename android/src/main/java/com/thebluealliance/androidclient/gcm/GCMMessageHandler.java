@@ -27,7 +27,6 @@ import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.di.components.DaggerNotificationComponent;
-import com.thebluealliance.androidclient.di.components.NotificationComponent;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
@@ -88,26 +87,22 @@ public class GCMMessageHandler extends JobIntentService implements FollowsChecke
     @Inject AccountController mAccountController;
     @Inject AppConfig mAppConfig;
 
-    private NotificationComponent mComponenet;
-
     @Override
     public void onCreate() {
         super.onCreate();
-        getComponent();
-        mComponenet.inject(this);
+        inject();
     }
 
-    private void getComponent() {
-        if (mComponenet == null) {
-            TbaAndroid application = ((TbaAndroid) getApplication());
-            mComponenet = DaggerNotificationComponent.builder()
-                    .applicationComponent(application.getComponent())
-                    .datafeedModule(application.getDatafeedModule())
-                    .rendererModule(new RendererModule())
-                    .authModule(application.getAuthModule())
-                    .gcmModule(application.getGcmModule())
-                    .build();
-        }
+    protected void inject() {
+        TbaAndroid application = ((TbaAndroid) getApplication());
+        DaggerNotificationComponent.builder()
+                .applicationComponent(application.getComponent())
+                .datafeedModule(application.getDatafeedModule())
+                .rendererModule(new RendererModule())
+                .authModule(application.getAuthModule())
+                .gcmModule(application.getGcmModule())
+                .build()
+                .inject(this);
     }
 
     @Override
@@ -133,7 +128,7 @@ public class GCMMessageHandler extends JobIntentService implements FollowsChecke
     }
 
     @Override
-    protected void onHandleWork(Intent intent) {
+    public void onHandleWork(Intent intent) {
         Bundle extras = intent.getExtras();
         if (extras == null) {
             TbaLogger.w("Intent with no extras!");
@@ -205,13 +200,18 @@ public class GCMMessageHandler extends JobIntentService implements FollowsChecke
                     break;
             }
 
-            if (notification == null) return;
+            if (notification == null) {
+                TbaLogger.w("Unknown notification for type " + messageType);
+                return;
+            }
+
+            TbaLogger.d("Notification type picked");
 
             try {
                 notification.parseMessageData();
+                TbaLogger.d("JSON Data parsed");
             } catch (JsonParseException e) {
-                TbaLogger.e("Error parsing incoming message json");
-                e.printStackTrace();
+                TbaLogger.e("Error parsing incoming message json", e);
                 return;
             }
 
@@ -220,7 +220,10 @@ public class GCMMessageHandler extends JobIntentService implements FollowsChecke
                 Notification built;
 
                 built = notification.buildNotification(c, this);
-                if (built == null) return;
+                if (built == null) {
+                    TbaLogger.d("Unable to build notification type " + messageType);
+                    return;
+                }
 
                 /* Update the data coming from this notification in the local db */
                 notification.updateDataLocally();
@@ -252,6 +255,8 @@ public class GCMMessageHandler extends JobIntentService implements FollowsChecke
 
                     notify(c, notification, built);
                 }
+            } else {
+                TbaLogger.d("Notification type " + messageType + " disabled by config");
             }
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...
@@ -264,6 +269,7 @@ public class GCMMessageHandler extends JobIntentService implements FollowsChecke
         int id = STACK_NOTIFICATIONS ? notification.getNotificationId() : SINGULAR_NOTIFICATION_ID;
 
         setNotificationParams(built, c, notification.getNotificationType(), mPrefs);
+        TbaLogger.i(("Notifying: " + id));
         notificationManager.notify(id, built);
     }
 

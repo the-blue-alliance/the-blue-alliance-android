@@ -33,6 +33,7 @@ import org.mockito.Mockito;
 
 import javax.inject.Singleton;
 
+import androidx.test.core.app.ApplicationProvider;
 import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
@@ -40,7 +41,7 @@ import dagger.Provides;
 import static org.mockito.Mockito.spy;
 
 @Module
-public class MockTbaAndroidModule  {
+public class MockTbaAndroidModule {
 
     @Provides
     @Singleton
@@ -57,7 +58,7 @@ public class MockTbaAndroidModule  {
     @Provides
     @Singleton
     public SharedPreferences provideSharedPrefs(Context context) {
-        return Mockito.mock(SharedPreferences.class);
+        return ApplicationProvider.getApplicationContext().getSharedPreferences("prefs", 0);
     }
 
     @Provides
