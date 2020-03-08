@@ -46,7 +46,7 @@ def notify(message_type, json_data):
         --es message_data '%s'"""
     command = template % (message_type, json_text)
 
-    print "\nSending " + message_type + " broadcast"
+    print("\nSending " + message_type + " broadcast")
 
     subprocess.call(["adb", "shell", command])
 
