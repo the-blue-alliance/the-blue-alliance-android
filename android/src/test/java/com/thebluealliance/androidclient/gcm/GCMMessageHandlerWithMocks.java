@@ -5,8 +5,6 @@ import android.content.Context;
 
 import com.thebluealliance.androidclient.TestTbaAndroid;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
-import com.thebluealliance.androidclient.di.DaggerMockNotificationComponent;
-import com.thebluealliance.androidclient.di.MockRendererModule;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 
 import javax.annotation.Nullable;
@@ -21,25 +19,7 @@ public class GCMMessageHandlerWithMocks extends GCMMessageHandler {
 
     @Override
     protected void inject() {
-        TestTbaAndroid application = ((TestTbaAndroid) getApplication());
-        DaggerMockNotificationComponent.builder()
-                .mockApplicationComponent(application.getMockComponent())
-                .mockDatafeedModule(application.getMockDatafeedModule())
-                .mockRendererModule(new MockRendererModule())
-                .mockAuthModule(application.getMockAuthModule())
-                .mockGcmModule(application.getMockGcmModule())
-                .build()
-                .inject(this);
-        initMocks();
-    }
-
-    public void initMocks() {
-        DatabaseMocker.mockMatchesTable(mDb);
-        DatabaseMocker.mockEventsTable(mDb);
-        DatabaseMocker.mockAwardsTable(mDb);
-        DatabaseMocker.mockFavoritesTable(mDb);
-        DatabaseMocker.mockSubscriptionsTable(mDb);
-        DatabaseMocker.mockNotificationsTable(mDb);
+        ((TestTbaAndroid) getApplication()).getMockNotificationComponent().inject(this);
     }
 
     @Override

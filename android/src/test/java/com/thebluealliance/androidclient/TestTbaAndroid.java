@@ -2,6 +2,8 @@ package com.thebluealliance.androidclient;
 
 import com.thebluealliance.androidclient.di.DaggerMockApplicationComponent;
 import com.thebluealliance.androidclient.di.DaggerMockDatafeedComponent;
+import com.thebluealliance.androidclient.di.DaggerMockDbComponent;
+import com.thebluealliance.androidclient.di.DaggerMockNotificationComponent;
 import com.thebluealliance.androidclient.di.MockAccountModule;
 import com.thebluealliance.androidclient.di.MockApplicationComponent;
 import com.thebluealliance.androidclient.di.MockAuthModule;
@@ -9,8 +11,12 @@ import com.thebluealliance.androidclient.di.MockBinderModule;
 import com.thebluealliance.androidclient.di.MockDatabaseWriterModule;
 import com.thebluealliance.androidclient.di.MockDatafeedComponent;
 import com.thebluealliance.androidclient.di.MockDatafeedModule;
+import com.thebluealliance.androidclient.di.MockDbComponent;
 import com.thebluealliance.androidclient.di.MockGceModule;
 import com.thebluealliance.androidclient.di.MockGcmModule;
+import com.thebluealliance.androidclient.di.MockHttpModule;
+import com.thebluealliance.androidclient.di.MockNotificationComponent;
+import com.thebluealliance.androidclient.di.MockRendererModule;
 import com.thebluealliance.androidclient.di.MockTbaAndroidModule;
 
 public class TestTbaAndroid extends TbaAndroid {
@@ -24,6 +30,7 @@ public class TestTbaAndroid extends TbaAndroid {
     private MockAuthModule mMockAuthModule;
     private MockGcmModule mMockGcmModule;
     private MockGceModule mMockGceModule;
+    private MockHttpModule mMockHttpModule;
 
     @Override
     public void onCreate() {
@@ -87,6 +94,13 @@ public class TestTbaAndroid extends TbaAndroid {
         return mMockGcmModule;
     }
 
+    public MockHttpModule getMockHttpModule() {
+        if (mMockHttpModule == null) {
+            mMockHttpModule = new MockHttpModule();
+        }
+        return mMockHttpModule;
+    }
+
     public MockApplicationComponent getMockComponent() {
         if (mComponent == null) {
             mComponent = DaggerMockApplicationComponent.builder()
@@ -94,6 +108,23 @@ public class TestTbaAndroid extends TbaAndroid {
                     .build();
         }
         return mComponent;
+    }
+
+    public MockDbComponent getMockDbComponent() {
+        return DaggerMockDbComponent.builder()
+                .mockTbaAndroidModule(getMockModule())
+                .mockHttpModule(getMockHttpModule())
+                .build();
+    }
+
+    public MockNotificationComponent getMockNotificationComponent() {
+        return  DaggerMockNotificationComponent.builder()
+                .mockApplicationComponent(getMockComponent())
+                .mockDatafeedModule(getMockDatafeedModule())
+                .mockRendererModule(new MockRendererModule())
+                .mockAuthModule(getMockAuthModule())
+                .mockGcmModule(getMockGcmModule())
+                .build();
     }
 
     private MockDatafeedComponent getMockDatafeedComponenet() {
