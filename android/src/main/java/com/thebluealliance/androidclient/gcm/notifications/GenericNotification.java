@@ -24,7 +24,6 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.GenericNotificationViewModel;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class GenericNotification extends BaseNotification<GenericNotificationViewModel> {
 
