@@ -110,10 +110,12 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
      * Wraps an intent in an intent to NotificationChangedReceiver
      */
     protected PendingIntent makeNotificationIntent(Context context, Intent activityIntent) {
+        int notificationId = getNotificationId();
         Intent clickIntent = NotificationChangedReceiver.newIntent(context);
         clickIntent.setAction(NotificationChangedReceiver.ACTION_NOTIFICATION_CLICKED);
         clickIntent.putExtra(NotificationChangedReceiver.EXTRA_INTENT, activityIntent);
-        return PendingIntent.getBroadcast(context, getNotificationId(), clickIntent, 0);
+        clickIntent.putExtra(NotificationChangedReceiver.EXTRA_NOTIFICATION_ID, notificationId);
+        return PendingIntent.getBroadcast(context, notificationId, clickIntent, 0);
     }
 
     /**
@@ -122,6 +124,7 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
     public NotificationCompat.Builder getBaseBuilder(Context context) {
         Intent dismissIntent = NotificationChangedReceiver.newIntent(context);
         dismissIntent.setAction(NotificationChangedReceiver.ACTION_NOTIFICATION_DELETED);
+        dismissIntent.putExtra(NotificationChangedReceiver.EXTRA_NOTIFICATION_ID, getNotificationId());
         PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, dismissIntent, 0);
 
         NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();

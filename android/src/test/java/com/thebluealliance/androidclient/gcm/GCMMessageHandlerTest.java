@@ -2,10 +2,12 @@ package com.thebluealliance.androidclient.gcm;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.database.DatabaseWithMocks;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
@@ -18,6 +20,7 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.robolectric.ParameterizedRobolectricTestRunner;
 import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
 
 import java.util.Arrays;
@@ -66,38 +69,19 @@ public class GCMMessageHandlerTest {
         }
 
         @Test
-        public void testPostAndDismissSingleNotificationWithSystem() {
+        public void testPostAndDismissSingleNotification() {
             Intent intent = buildIntent(mNotificationType, mNotificationDataFileName);
             GCMMessageHandlerWithMocks service = Robolectric.setupService(GCMMessageHandlerWithMocks.class);
             service.onCreate();
             service.onHandleWork(intent);
 
-            // Check we post the notification with the system
             List<Notification> notifications = Shadows.shadowOf(mNotificationManager).getAllNotifications();
             assertEquals(1, notifications.size());
+
+            // Check we post the notification with the system
             Notification notification = notifications.get(0);
             assertEquals(BaseNotification.NOTIFICATION_CHANNEL, notification.getChannelId());
             assertEquals(mExpectedPriority, notification.priority);
-
-            // Grab the notification we rendered to check with
-            BaseNotification lastPosted = service.getLastNotification();
-            assertNotNull(lastPosted);
-
-            // Cancel the notification
-            mNotificationManager.cancel(lastPosted.getNotificationId());
-
-            // Double check the system has cleared it (eg the id is right)
-            notifications = Shadows.shadowOf(mNotificationManager).getAllNotifications();
-            assertEquals(0, notifications.size());
-        }
-
-
-        @Test
-        public void testPostAndDismissSingleNotificatioInDb() {
-            Intent intent = buildIntent(mNotificationType, mNotificationDataFileName);
-            GCMMessageHandlerWithMocks service = Robolectric.setupService(GCMMessageHandlerWithMocks.class);
-            service.onCreate();
-            service.onHandleWork(intent);
 
             // Grab the notification we rendered to check with
             BaseNotification lastPosted = service.getLastNotification();
@@ -114,9 +98,9 @@ public class GCMMessageHandlerTest {
             // Cancel the notification
             mNotificationManager.cancel(lastPosted.getNotificationId());
 
-            // Double check we remove the notification from being active in the db
-            storedNotifications = dbTable.getActive();
-            assertEquals(0, storedNotifications.size());
+            // Double check the system has cleared it (eg the id is right)
+            notifications =  Shadows.shadowOf(mNotificationManager).getAllNotifications();
+            assertEquals(0, notifications.size());
         }
     }
 
