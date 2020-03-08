@@ -11,8 +11,6 @@ import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.database.writers.EventWriter;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
-import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -35,8 +33,10 @@ import static org.mockito.Mockito.verify;
 @RunWith(AndroidJUnit4.class)
 public class AllianceSelectionNotificationTest {
 
-    @Mock private Context mContext;
-    @Mock private EventWriter mWriter;
+    @Mock
+    private Context mContext;
+    @Mock
+    private EventWriter mWriter;
     private AllianceSelectionNotification mNotification;
     private JsonObject mData;
 

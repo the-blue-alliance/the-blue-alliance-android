@@ -11,8 +11,6 @@ import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.database.writers.AwardListWriter;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
-import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -37,8 +35,10 @@ import static org.mockito.Mockito.verify;
 @RunWith(AndroidJUnit4.class)
 public class AwardsPostedNotificationTest {
 
-    @Mock private Context mContext;
-    @Mock private AwardListWriter mWriter;
+    @Mock
+    private Context mContext;
+    @Mock
+    private AwardListWriter mWriter;
     private AwardsPostedNotification mNotification;
     private JsonObject mData;
 

@@ -2,8 +2,6 @@ package com.thebluealliance.androidclient.gcm.notifications;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
-import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
-import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 
 import org.junit.Before;
 import org.junit.Test;

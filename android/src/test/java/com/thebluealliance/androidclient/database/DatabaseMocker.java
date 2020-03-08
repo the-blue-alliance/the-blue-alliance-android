@@ -7,9 +7,11 @@ import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
 import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
 import com.thebluealliance.androidclient.database.tables.EventsTable;
+import com.thebluealliance.androidclient.database.tables.FavoritesTable;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
+import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 
@@ -92,6 +94,22 @@ public final class DatabaseMocker {
         SQLiteDatabase db = mock(SQLiteDatabase.class);
         MediasTable table = new MediasTable(db, HttpModule.getGson());
         when(database.getMediasTable()).thenReturn(table);
+        when(database.getWritableDatabase()).thenReturn(db);
+        return table;
+    }
+
+    public static FavoritesTable mockFavoritesTable(Database database) {
+        SQLiteDatabase db = mock(SQLiteDatabase.class);
+        FavoritesTable table = new FavoritesTable(db);
+        when(database.getFavoritesTable()).thenReturn(table);
+        when(database.getWritableDatabase()).thenReturn(db);
+        return table;
+    }
+
+    public static SubscriptionsTable mockSubscriptionsTable(Database database) {
+        SQLiteDatabase db = mock(SQLiteDatabase.class);
+        SubscriptionsTable table = new SubscriptionsTable(db);
+        when(database.getSubscriptionsTable()).thenReturn(table);
         when(database.getWritableDatabase()).thenReturn(db);
         return table;
     }
