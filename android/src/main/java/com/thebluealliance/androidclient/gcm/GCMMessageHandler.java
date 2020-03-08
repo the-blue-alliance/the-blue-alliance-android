@@ -8,12 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.core.app.JobIntentService;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
-
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -39,7 +34,6 @@ import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
-import com.thebluealliance.androidclient.gcm.notifications.SummaryNotification;
 import com.thebluealliance.androidclient.gcm.notifications.TeamMatchVideoNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
@@ -55,37 +49,35 @@ import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
 
+import androidx.core.app.JobIntentService;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+
 public class GCMMessageHandler extends JobIntentService implements FollowsChecker {
 
-    /**
-     * Stack (bundle) notifications together into a Group for better UX on Nougat+ and Android Wear
-     * but not on KitKat because SupportLib 24.2.1 NotificationManagerCompat drops grouped
-     * notifications (http://stackoverflow.com/a/34953411/1682419) nor on Lollipop API 21 because
-     * the OS messes up groups (it shows a summary and the first two source notifications as
-     * separate items instead of one group.)
-     */
-    public static final boolean STACK_NOTIFICATIONS =
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1;
-    /** True if phones/tablets will bundle up the stack using the summary as a header. */
-    public static final boolean SUMMARY_NOTIFICATION_IS_A_HEADER =
-            STACK_NOTIFICATIONS && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N;
-    /** The setGroup() key to group notifications into a stack/bundle as feasible. */
-    public static final String GROUP_KEY = STACK_NOTIFICATIONS ? "tba-android" : null;
-    /** If grouping won't work, use this ID to make each notification replace its predecessor. */
-    public static final int SINGULAR_NOTIFICATION_ID = 363;
-
+    public static final String GROUP_KEY = "tba-android";
     public static final int JOB_ID = 254;
 
-    @Inject GoogleCloudMessaging mCloudMessaging;
-    @Inject MyTbaDatafeed mMyTbaDatafeed;
-    @Inject DatabaseWriter mWriter;
-    @Inject SharedPreferences mPrefs;
-    @Inject EventBus mEventBus;
-    @Inject TBAStatusController mStatusController;
-    @Inject MatchRenderer mMatchRenderer;
-    @Inject Database mDb;
-    @Inject AccountController mAccountController;
-    @Inject AppConfig mAppConfig;
+    @Inject
+    GoogleCloudMessaging mCloudMessaging;
+    @Inject
+    MyTbaDatafeed mMyTbaDatafeed;
+    @Inject
+    DatabaseWriter mWriter;
+    @Inject
+    SharedPreferences mPrefs;
+    @Inject
+    EventBus mEventBus;
+    @Inject
+    TBAStatusController mStatusController;
+    @Inject
+    MatchRenderer mMatchRenderer;
+    @Inject
+    Database mDb;
+    @Inject
+    AccountController mAccountController;
+    @Inject
+    AppConfig mAppConfig;
 
     @Override
     public void onCreate() {
@@ -142,131 +134,108 @@ public class GCMMessageHandler extends JobIntentService implements FollowsChecke
         // We got a standard message. Parse it and handle it.
         String type = extras.getString("notification_type", "");
         String data = extras.getString("message_data", "");
-        handleMessage(getApplicationContext(), type, data);
-
-        TbaLogger.i("Received : (" + type + ")  " + data);
-    }
-
-    public void handleMessage(Context c, String messageType, String messageData) {
+        TbaLogger.i("Received Notification : (" + type + ")  " + data);
         try {
-            BaseNotification notification = null;
-            switch (messageType) {
-                case NotificationTypes.UPDATE_FAVORITES:
-                    Intent favIntent = MyTbaUpdateService.newInstance(c, true, false);
-                    c.startService(favIntent);
-                    break;
-                case NotificationTypes.UPDATE_SUBSCRIPTIONS:
-                    Intent subIntent = MyTbaUpdateService.newInstance(c, false, true);
-                    c.startService(subIntent);
-                    break;
-                case NotificationTypes.PING:
-                case NotificationTypes.BROADCAST:
-                    notification = new GenericNotification(messageType, messageData);
-                    break;
-                case NotificationTypes.MATCH_SCORE:
-                case "score":
-                    notification = new ScoreNotification(messageData, mWriter.getMatchWriter().get(), mMatchRenderer);
-                    break;
-                case NotificationTypes.UPCOMING_MATCH:
-                    notification = new UpcomingMatchNotification(messageData);
-                    break;
-                case NotificationTypes.ALLIANCE_SELECTION:
-                    notification = new AllianceSelectionNotification(messageData, mWriter.getEventWriter().get());
-                    break;
-                case NotificationTypes.LEVEL_STARTING:
-                    notification = new CompLevelStartingNotification(messageData);
-                    break;
-                case NotificationTypes.SCHEDULE_UPDATED:
-                    notification = new ScheduleUpdatedNotification(messageData);
-                    break;
-                case NotificationTypes.AWARDS:
-                    notification = new AwardsPostedNotification(messageData, mWriter.getAwardListWriter().get());
-                    break;
-                case NotificationTypes.DISTRICT_POINTS_UPDATED:
-                    notification = new DistrictPointsUpdatedNotification(messageData);
-                    break;
-                case NotificationTypes.TEAM_MATCH_VIDEO:
-                    notification = new TeamMatchVideoNotification(messageData, mWriter.getMatchWriter().get());
-                    break;
-                case NotificationTypes.EVENT_MATCH_VIDEO:
-                    notification = new EventMatchVideoNotification(messageData);
-                    break;
-                case NotificationTypes.EVENT_DOWN:
-                    notification = new EventDownNotification(messageData);
-                    /* Don't break, we also want to schedule a status update here */
-                case NotificationTypes.SYNC_STATUS:
-                    TbaLogger.i("Updating TBA API Status via push notification");
-                    mStatusController.scheduleStatusUpdate(c);
-                    break;
-            }
-
-            if (notification == null) {
-                TbaLogger.w("Unknown notification for type " + messageType);
-                return;
-            }
-
-            TbaLogger.d("Notification type picked");
-
-            try {
-                notification.parseMessageData();
-                TbaLogger.d("JSON Data parsed");
-            } catch (JsonParseException e) {
-                TbaLogger.e("Error parsing incoming message json", e);
-                return;
-            }
-
-            boolean enabled = mPrefs.getBoolean("enable_notifications", true);
-            if (enabled) {
-                Notification built;
-
-                built = notification.buildNotification(c, this);
-                if (built == null) {
-                    TbaLogger.d("Unable to build notification type " + messageType);
-                    return;
-                }
-
-                /* Update the data coming from this notification in the local db */
-                notification.updateDataLocally();
-
-                /* Store this notification for future access */
-                StoredNotification stored = notification.getStoredNotification();
-                if (stored != null) {
-                    NotificationsTable table = mDb.getNotificationsTable();
-                    table.add(stored);
-                    table.prune();
-                }
-
-                // Tell interested parties that a new notification has arrived
-                mEventBus.post(new NotificationsUpdatedEvent(notification));
-
-                if (notification.shouldShow()) {
-                    if (SummaryNotification.isNotificationActive(c, mDb)) {
-                        // Multiple notifications: Stack them into a Group by posting the new
-                        // notification THEN (re)posting a summary. If we can't stack them, post
-                        // the new one XOR a summary, all with the same ID to replace any
-                        // predecessor notification.
-                        if (STACK_NOTIFICATIONS) {
-                            notify(c, notification, built);
-                        }
-
-                        notification = new SummaryNotification(mDb);
-                        built = notification.buildNotification(c, this);
-                    }
-
-                    notify(c, notification, built);
-                }
-            } else {
-                TbaLogger.d("Notification type " + messageType + " disabled by config");
-            }
+            handleMessage(getApplicationContext(), type, data);
+            TbaLogger.d("Notification " + type + " processed successfully");
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...
             TbaLogger.e("Error parsing notification", e);
         }
     }
 
+    public void handleMessage(Context c, String messageType, String messageData) {
+        boolean enabled = mPrefs.getBoolean("enable_notifications", true);
+        if (!enabled) {
+            TbaLogger.d("Notification disabled locally, bailing early");
+            return;
+        }
+
+        BaseNotification notification = null;
+        switch (messageType) {
+            case NotificationTypes.UPDATE_FAVORITES:
+                Intent favIntent = MyTbaUpdateService.newInstance(c, true, false);
+                c.startService(favIntent);
+                return;
+            case NotificationTypes.UPDATE_SUBSCRIPTIONS:
+                Intent subIntent = MyTbaUpdateService.newInstance(c, false, true);
+                c.startService(subIntent);
+                return;
+            case NotificationTypes.PING:
+            case NotificationTypes.BROADCAST:
+                notification = new GenericNotification(messageType, messageData);
+                break;
+            case NotificationTypes.MATCH_SCORE:
+            case "score":
+                notification = new ScoreNotification(messageData, mWriter.getMatchWriter().get(), mMatchRenderer);
+                break;
+            case NotificationTypes.UPCOMING_MATCH:
+                notification = new UpcomingMatchNotification(messageData);
+                break;
+            case NotificationTypes.ALLIANCE_SELECTION:
+                notification = new AllianceSelectionNotification(messageData, mWriter.getEventWriter().get());
+                break;
+            case NotificationTypes.LEVEL_STARTING:
+                notification = new CompLevelStartingNotification(messageData);
+                break;
+            case NotificationTypes.SCHEDULE_UPDATED:
+                notification = new ScheduleUpdatedNotification(messageData);
+                break;
+            case NotificationTypes.AWARDS:
+                notification = new AwardsPostedNotification(messageData, mWriter.getAwardListWriter().get());
+                break;
+            case NotificationTypes.DISTRICT_POINTS_UPDATED:
+                notification = new DistrictPointsUpdatedNotification(messageData);
+                break;
+            case NotificationTypes.TEAM_MATCH_VIDEO:
+                notification = new TeamMatchVideoNotification(messageData, mWriter.getMatchWriter().get());
+                break;
+            case NotificationTypes.EVENT_MATCH_VIDEO:
+                notification = new EventMatchVideoNotification(messageData);
+                break;
+            case NotificationTypes.EVENT_DOWN:
+                notification = new EventDownNotification(messageData);
+                mStatusController.scheduleStatusUpdate(c);
+                break;
+            case NotificationTypes.SYNC_STATUS:
+                TbaLogger.i("Updating TBA API Status via push notification");
+                mStatusController.scheduleStatusUpdate(c);
+                return;
+            default:
+                TbaLogger.w("Unknown notification for type " + messageType);
+                return;
+        }
+
+        notification.parseMessageData();
+
+        Notification built;
+        built = notification.buildNotification(c, this);
+
+        /* Update the data coming from this notification in the local db */
+        notification.updateDataLocally();
+
+        /* Store this notification for future access */
+        StoredNotification stored = notification.getStoredNotification();
+        if (stored != null) {
+            NotificationsTable table = mDb.getNotificationsTable();
+            table.add(stored);
+            table.prune();
+        }
+
+        // Tell interested parties that a new notification has arrived
+        mEventBus.post(new NotificationsUpdatedEvent(notification));
+
+        if (!notification.shouldShow()) {
+            TbaLogger.d("Not displaying notification type " + messageType);
+            return;
+        }
+
+        notify(c, notification, built);
+    }
+
     private void notify(Context c, BaseNotification notification, Notification built) {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(c);
-        int id = STACK_NOTIFICATIONS ? notification.getNotificationId() : SINGULAR_NOTIFICATION_ID;
+        int id = notification.getNotificationId();
 
         setNotificationParams(built, c, notification.getNotificationType(), mPrefs);
         TbaLogger.i(("Notifying: " + id));
@@ -299,13 +268,6 @@ public class GCMMessageHandler extends JobIntentService implements FollowsChecke
             switch (messageType) {
                 case NotificationTypes.PING:
                     priority = Notification.PRIORITY_LOW;
-                    break;
-                case NotificationTypes.SUMMARY:
-                    // If Android will really display a component notification then a group summary,
-                    // don't let the summary heads-up atop the component.
-                    if (SUMMARY_NOTIFICATION_IS_A_HEADER) {
-                        priority = Notification.PRIORITY_DEFAULT;
-                    }
                     break;
             }
 

@@ -27,6 +27,8 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
 public abstract class BaseNotification<VIEWMODEL> extends ListElement implements ViewModelRenderer<VIEWMODEL, Void> {
 
     public static String NOTIFICATION_CHANNEL = "mytba_notification";
@@ -99,6 +101,7 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
      * Most notifications will build their stored notification in {@code buildNotification}, so
      * this method should be called after that.
      */
+    @Nullable
     public StoredNotification getStoredNotification() {
         return stored;
     }
@@ -124,14 +127,13 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
         NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
         wearableExtender.setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background));
 
-        return new NotificationCompat.Builder(context)
+        return new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setColor(ContextCompat.getColor(context, R.color.primary))
                 .setGroup(GCMMessageHandler.GROUP_KEY)
                 .setDeleteIntent(onDismiss)
                 .setAutoCancel(true)
-                .extend(wearableExtender)
-                .setChannelId(NOTIFICATION_CHANNEL);
+                .extend(wearableExtender);
     }
 
     /**

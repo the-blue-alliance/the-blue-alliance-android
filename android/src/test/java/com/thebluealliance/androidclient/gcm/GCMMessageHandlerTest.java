@@ -63,7 +63,7 @@ public class GCMMessageHandlerTest {
         }
 
         @Test
-        public void testPostSingleNotification() {
+        public void testPostAndDismissSingleNotification() {
             Intent intent = buildIntent(mNotificationType, mNotificationDataFileName);
             GCMMessageHandlerWithMocks service = Robolectric.setupService(GCMMessageHandlerWithMocks.class);
             service.onCreate();
