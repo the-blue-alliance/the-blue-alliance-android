@@ -91,7 +91,7 @@ public class DistrictPointsUpdatedNotification
 
     @Override
     public int getNotificationId() {
-        return (new Date().getTime() + ":" + getNotificationType() + ":" + districtKey).hashCode();
+        return (getNotificationType() + ":" + districtKey).hashCode();
     }
 
     @Nullable

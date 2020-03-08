@@ -25,6 +25,7 @@ import java.util.List;
 import androidx.test.core.app.ApplicationProvider;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(Enclosed.class)
 public class GCMMessageHandlerTest {
@@ -75,6 +76,12 @@ public class GCMMessageHandlerTest {
             Notification notification = notifications.get(0);
             assertEquals(BaseNotification.NOTIFICATION_CHANNEL, notification.getChannelId());
             assertEquals(mExpectedPriority, notification.priority);
+
+            BaseNotification lastPosted = service.getLastNotification();
+            assertNotNull(lastPosted);
+            mNotificationManager.cancel(lastPosted.getNotificationId());
+            notifications =  Shadows.shadowOf(mNotificationManager).getAllNotifications();
+            assertEquals(0, notifications.size());
         }
     }
 

@@ -98,7 +98,7 @@ public class AllianceSelectionNotification extends BaseNotification<AllianceSele
 
     @Override
     public int getNotificationId() {
-        return (new Date().getTime() + ":" + getNotificationType() + ":" + eventKey).hashCode();
+        return (getNotificationType() + ":" + eventKey).hashCode();
     }
 
     @Override

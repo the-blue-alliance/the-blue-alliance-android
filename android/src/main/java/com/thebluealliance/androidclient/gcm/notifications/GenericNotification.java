@@ -125,7 +125,7 @@ public class GenericNotification extends BaseNotification<GenericNotificationVie
 
     @Override
     public int getNotificationId() {
-        return (new Date().getTime() + ":" + getNotificationType() + ":" + messageData).hashCode();
+        return (getNotificationType() + ":" + messageData).hashCode();
     }
 
 

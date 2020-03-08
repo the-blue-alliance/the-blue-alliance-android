@@ -233,12 +233,12 @@ public class GCMMessageHandler extends JobIntentService implements FollowsChecke
         notify(c, notification, built);
     }
 
-    private void notify(Context c, BaseNotification notification, Notification built) {
+    protected void notify(Context c, BaseNotification notification, Notification built) {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(c);
         int id = notification.getNotificationId();
 
         setNotificationParams(built, c, notification.getNotificationType(), mPrefs);
-        TbaLogger.i(("Notifying: " + id));
+        TbaLogger.i("Notifying: " + id);
         notificationManager.notify(id, built);
     }
 

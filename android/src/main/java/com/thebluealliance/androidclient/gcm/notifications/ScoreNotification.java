@@ -167,7 +167,7 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
 
     @Override
     public int getNotificationId() {
-        return (new Date().getTime() + ":" + getNotificationType() + ":" + matchKey).hashCode();
+        return (getNotificationType() + ":" + matchKey).hashCode();
     }
 
     @Override

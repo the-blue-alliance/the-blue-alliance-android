@@ -114,7 +114,7 @@ public class ScheduleUpdatedNotification extends BaseNotification<ScheduleUpdate
 
     @Override
     public int getNotificationId() {
-        return (new Date().getTime() + ":" + getNotificationType() + ":" + eventKey).hashCode();
+        return (getNotificationType() + ":" + eventKey).hashCode();
     }
 
     @Override

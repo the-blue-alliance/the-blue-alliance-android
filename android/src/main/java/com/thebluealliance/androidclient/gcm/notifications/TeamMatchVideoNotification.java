@@ -111,7 +111,7 @@ public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoN
 
     @Override
     public int getNotificationId() {
-        return (new Date().getTime() + ":" + getNotificationType() + ":" + mMatchKey).hashCode();
+        return (getNotificationType() + ":" + mMatchKey).hashCode();
     }
 
     @Override

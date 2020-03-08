@@ -154,7 +154,7 @@ public class CompLevelStartingNotification extends BaseNotification<CompLevelSta
 
     @Override
     public int getNotificationId() {
-        return (new Date().getTime() + ":" + getNotificationType() + ":" + eventKey).hashCode();
+        return (getNotificationType() + ":" + eventKey + ":" + compLevelAbbrev).hashCode();
     }
 
     @Override
