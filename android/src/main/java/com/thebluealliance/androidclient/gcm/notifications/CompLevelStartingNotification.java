@@ -105,6 +105,7 @@ public class CompLevelStartingNotification extends BaseNotification<CompLevelSta
         stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
+        stored.setSystemId(getNotificationId());
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(title)

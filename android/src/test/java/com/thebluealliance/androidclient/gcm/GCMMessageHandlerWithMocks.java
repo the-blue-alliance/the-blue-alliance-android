@@ -4,7 +4,7 @@ import android.app.Notification;
 import android.content.Context;
 
 import com.thebluealliance.androidclient.TestTbaAndroid;
-import com.thebluealliance.androidclient.database.DatabaseMocker;
+import com.thebluealliance.androidclient.database.DatabaseWithMocks;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 
 import javax.annotation.Nullable;
@@ -31,5 +31,9 @@ public class GCMMessageHandlerWithMocks extends GCMMessageHandler {
     @Nullable
     public BaseNotification getLastNotification() {
         return mLastNotification;
+    }
+
+    public DatabaseWithMocks getDatabase() {
+        return (DatabaseWithMocks)mDb;
     }
 }

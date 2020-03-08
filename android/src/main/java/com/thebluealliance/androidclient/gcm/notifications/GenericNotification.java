@@ -85,6 +85,7 @@ public class GenericNotification extends BaseNotification<GenericNotificationVie
         stored.setBody(message);
         stored.setMessageData(messageData);
         stored.setTime(Calendar.getInstance().getTime());
+        stored.setSystemId(getNotificationId());
 
         Intent intent = getIntent(context);
 

@@ -93,6 +93,7 @@ public class AwardsPostedNotification extends BaseNotification<AwardsPostedNotif
         stored.setMessageData(messageData);
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
+        stored.setSystemId(getNotificationId());
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(title)

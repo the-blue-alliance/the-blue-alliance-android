@@ -94,6 +94,7 @@ public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoN
         stored.setIntent(MyTBAHelper.serializeIntent(instance));
         stored.setTime(Calendar.getInstance().getTime());
         stored.setMessageData(messageData);
+        stored.setSystemId(getNotificationId());
 
         NotificationCompat.Builder builder = getBaseBuilder(context, instance)
                 .setContentTitle(title)
