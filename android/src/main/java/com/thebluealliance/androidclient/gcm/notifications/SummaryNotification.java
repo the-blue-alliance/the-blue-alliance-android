@@ -8,8 +8,6 @@ import android.content.Intent;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.HomeActivity;
-import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -28,23 +26,22 @@ public class SummaryNotification extends BaseNotification<Void> {
      */
     static final int MAX = 7;
 
-    private final Database mDb;
+    public static final int NOTIFICATION_ID = 1337;
 
-    public SummaryNotification(Database db) {
+    private final List<StoredNotification> mActiveNotifications;
+
+    public SummaryNotification(List<StoredNotification> activeNotifications) {
         super(NotificationTypes.SUMMARY, "");
-        mDb = db;
+        mActiveNotifications = activeNotifications;
     }
 
     @Override
     public Notification buildNotification(Context context, FollowsChecker followsChecker) {
-        NotificationsTable table = mDb.getNotificationsTable();
-
-        List<StoredNotification> active = table.getActive();
         NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
-        int size = active.size();
+        int size = mActiveNotifications.size();
         int count = 0;
 
-        for (StoredNotification n : active) {
+        for (StoredNotification n : mActiveNotifications) {
             if (++count > MAX) {
                 break;
             }
@@ -95,7 +92,7 @@ public class SummaryNotification extends BaseNotification<Void> {
     @Override
     public int getNotificationId() {
         /* All have the same ID so future notifications replace it */
-        return 1337;
+        return NOTIFICATION_ID;
     }
 
     @Nullable

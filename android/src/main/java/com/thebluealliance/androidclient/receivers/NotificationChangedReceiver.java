@@ -34,15 +34,18 @@ public class NotificationChangedReceiver extends BroadcastReceiver {
         return new Intent(context, NotificationChangedReceiver.class);
     }
 
-    @Inject Database mDb;
+    @Inject
+    Database mDb;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        ((TbaAndroid)context.getApplicationContext()).getDbComponent().inject(this);
-        if (intent.getAction().equals(ACTION_NOTIFICATION_CLICKED)) {
+        TbaLogger.i("Notification changed receiver: " + intent);
+        ((TbaAndroid) context.getApplicationContext()).getDbComponent().inject(this);
+
+        Bundle extras = intent.getExtras();
+        if (ACTION_NOTIFICATION_CLICKED.equals(intent.getAction())) {
             // Check for an intent to launch
-            Bundle extras = intent.getExtras();
-            if (extras.containsKey(EXTRA_INTENT)) {
+            if (extras != null && extras.containsKey(EXTRA_INTENT)) {
                 Intent extraIntent = extras.getParcelable(EXTRA_INTENT);
                 System.out.println("Intent: " + extraIntent.toString());
                 extraIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -51,8 +54,8 @@ public class NotificationChangedReceiver extends BroadcastReceiver {
         }
 
         // Mark all notifications as not active
-        TbaLogger.d("Notification Dismiss!");
-        NotificationsTable table = Database.getInstance(context).getNotificationsTable();
+        TbaLogger.d("Notifications Dismissed!");
+        NotificationsTable table = mDb.getNotificationsTable();
         table.dismissAll();
     }
 }

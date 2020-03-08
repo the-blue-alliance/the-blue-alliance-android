@@ -34,6 +34,7 @@ import com.thebluealliance.androidclient.gcm.notifications.GenericNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.gcm.notifications.ScheduleUpdatedNotification;
 import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
+import com.thebluealliance.androidclient.gcm.notifications.SummaryNotification;
 import com.thebluealliance.androidclient.gcm.notifications.TeamMatchVideoNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
@@ -46,6 +47,8 @@ import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.RendererModule;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -215,11 +218,11 @@ public class GCMMessageHandler extends JobIntentService implements FollowsChecke
         notification.updateDataLocally();
 
         /* Store this notification for future access */
+        NotificationsTable storedNotificationTable = mDb.getNotificationsTable();
         StoredNotification stored = notification.getStoredNotification();
         if (stored != null) {
-            NotificationsTable table = mDb.getNotificationsTable();
-            table.add(stored);
-            table.prune();
+            storedNotificationTable.add(stored);
+            storedNotificationTable.prune();
         }
 
         // Tell interested parties that a new notification has arrived
@@ -230,16 +233,23 @@ public class GCMMessageHandler extends JobIntentService implements FollowsChecke
             return;
         }
 
-        notify(c, notification, built);
+        List<StoredNotification> activeNotifications = storedNotificationTable.getActive();
+        notify(c, notification, built, activeNotifications);
     }
 
-    protected void notify(Context c, BaseNotification notification, Notification built) {
+    protected void notify(Context c, BaseNotification notification, Notification built, List<StoredNotification> activeNotifications) {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(c);
         int id = notification.getNotificationId();
 
         setNotificationParams(built, c, notification.getNotificationType(), mPrefs);
         TbaLogger.i("Notifying: " + id);
         notificationManager.notify(id, built);
+
+        if (activeNotifications.size() > 1) {
+            TbaLogger.i("Posting summary for " + activeNotifications.size() + " notifications");
+            SummaryNotification summary = new SummaryNotification(activeNotifications);
+            notificationManager.notify(summary.getNotificationId(), summary.buildNotification(c, this));
+        }
     }
 
     private static Uri getSoundUri(Context c, int soundId) {

@@ -6,6 +6,9 @@ import android.content.Context;
 import com.thebluealliance.androidclient.TestTbaAndroid;
 import com.thebluealliance.androidclient.database.DatabaseWithMocks;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
+import com.thebluealliance.androidclient.models.StoredNotification;
+
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -23,8 +26,8 @@ public class GCMMessageHandlerWithMocks extends GCMMessageHandler {
     }
 
     @Override
-    protected void notify(Context c, BaseNotification notification, Notification built) {
-        super.notify(c, notification, built);
+    protected void notify(Context c, BaseNotification notification, Notification built, List<StoredNotification> activeNotifications) {
+        super.notify(c, notification, built, activeNotifications);
         mLastNotification = notification;
     }
 
@@ -34,6 +37,6 @@ public class GCMMessageHandlerWithMocks extends GCMMessageHandler {
     }
 
     public DatabaseWithMocks getDatabase() {
-        return (DatabaseWithMocks)mDb;
+        return (DatabaseWithMocks) mDb;
     }
 }
