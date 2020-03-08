@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.gcm;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;

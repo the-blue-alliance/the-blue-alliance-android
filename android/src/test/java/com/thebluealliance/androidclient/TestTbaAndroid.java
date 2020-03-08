@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient;
 
-import com.google.firebase.FirebaseApp;
 import com.thebluealliance.androidclient.di.DaggerMockApplicationComponent;
 import com.thebluealliance.androidclient.di.DaggerMockDatafeedComponent;
 import com.thebluealliance.androidclient.di.MockAccountModule;
