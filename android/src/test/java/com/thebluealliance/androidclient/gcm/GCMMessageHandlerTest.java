@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
+import com.thebluealliance.androidclient.gcm.notifications.SummaryNotification;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import org.junit.Before;
@@ -25,6 +26,7 @@ import java.util.Collection;
 import java.util.List;
 
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -67,9 +69,8 @@ public class GCMMessageHandlerTest {
 
         @Test
         public void testPostAndDismissSingleNotification() {
+            GCMMessageHandlerWithMocks service = buildAndStartService();
             Intent intent = buildIntent(mNotificationType, mNotificationDataFileName);
-            GCMMessageHandlerWithMocks service = Robolectric.setupService(GCMMessageHandlerWithMocks.class);
-            service.onCreate();
             service.onHandleWork(intent);
 
             List<Notification> notifications = Shadows.shadowOf(mNotificationManager).getAllNotifications();
@@ -96,9 +97,42 @@ public class GCMMessageHandlerTest {
             mNotificationManager.cancel(lastPosted.getNotificationId());
 
             // Double check the system has cleared it (eg the id is right)
-            notifications =  Shadows.shadowOf(mNotificationManager).getAllNotifications();
+            notifications = Shadows.shadowOf(mNotificationManager).getAllNotifications();
             assertEquals(0, notifications.size());
         }
+    }
+
+    @RunWith(AndroidJUnit4.class)
+    public static class TestNotificationSummary {
+        private NotificationManager mNotificationManager;
+
+        @Before
+        public void setUp() {
+            Context applicationContext = ApplicationProvider.getApplicationContext();
+            mNotificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        }
+
+        @Test
+        public void testSummaryPosted() {
+            GCMMessageHandlerWithMocks service = buildAndStartService();
+            Intent intent1 = buildIntent(NotificationTypes.SCHEDULE_UPDATED, "notification_schedule_updated");
+            Intent intent2 = buildIntent(NotificationTypes.MATCH_SCORE, "notification_match_score");
+            service.onHandleWork(intent1);
+            service.onHandleWork(intent2);
+
+            // There should be three notifications posted (the two we sent, plus the summary)
+            List<Notification> notifications = Shadows.shadowOf(mNotificationManager).getAllNotifications();
+            assertEquals(3, notifications.size());
+
+            Notification summaryNotification = Shadows.shadowOf(mNotificationManager).getNotification(SummaryNotification.NOTIFICATION_ID);
+            assertNotNull(summaryNotification);
+        }
+    }
+
+    private static GCMMessageHandlerWithMocks buildAndStartService() {
+        GCMMessageHandlerWithMocks service = Robolectric.setupService(GCMMessageHandlerWithMocks.class);
+        service.onCreate();
+        return service;
     }
 
     private static Intent buildIntent(String notificationType, String dataFileName) {
