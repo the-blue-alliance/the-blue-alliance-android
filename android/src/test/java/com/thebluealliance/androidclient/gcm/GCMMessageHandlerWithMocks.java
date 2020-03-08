@@ -26,6 +26,9 @@ public class GCMMessageHandlerWithMocks extends GCMMessageHandler {
     }
 
     public void initMocks() {
+        DatabaseMocker.mockMatchesTable(mDb);
+        DatabaseMocker.mockEventsTable(mDb);
+        DatabaseMocker.mockAwardsTable(mDb);
         DatabaseMocker.mockFavoritesTable(mDb);
         DatabaseMocker.mockSubscriptionsTable(mDb);
         DatabaseMocker.mockNotificationsTable(mDb);
