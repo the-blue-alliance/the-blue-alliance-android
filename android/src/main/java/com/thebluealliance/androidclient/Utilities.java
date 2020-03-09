@@ -35,7 +35,6 @@ import java.io.StringWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.Format;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -301,7 +300,7 @@ public final class Utilities {
      * <p>
      * This uses a localized "and" string.
      */
-    public static String stringifyListOfStrings(Context context, ArrayList<String> strings) {
+    public static String stringifyListOfStrings(Context context, List<String> strings) {
         String finalString = "";
         Resources r = context.getResources();
         int size = strings.size();

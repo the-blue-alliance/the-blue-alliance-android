@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -142,11 +144,19 @@ public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNot
             scheduledStartTimeString = format.format(scheduledStartTime);
         }
 
-        // Boldify the team numbers that the user is following.
-        Predicate<String> isFollowing = teamNumber -> followsChecker.followsTeam(context,
-                teamNumber, matchKey, NotificationTypes.UPCOMING_MATCH);
-        CharSequence redTeamNumbers = Utilities.boldNameList(Arrays.asList(redTeams), isFollowing);
-        CharSequence blueTeamNumbers = Utilities.boldNameList(Arrays.asList(blueTeams), isFollowing);
+        // Boldify the team numbers that the user is following, but only if the system supports
+        // java 8 language features
+        CharSequence redTeamNumbers;
+        CharSequence blueTeamNumbers;
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            Predicate<String> isFollowing = teamNumber -> followsChecker.followsTeam(context,
+                    teamNumber, matchKey, NotificationTypes.UPCOMING_MATCH);
+            redTeamNumbers = Utilities.boldNameList(Arrays.asList(redTeams), isFollowing);
+            blueTeamNumbers = Utilities.boldNameList(Arrays.asList(blueTeams), isFollowing);
+        } else {
+            redTeamNumbers = Utilities.stringifyListOfStrings(context, Arrays.asList(redTeams));
+            blueTeamNumbers = Utilities.stringifyListOfStrings(context, Arrays.asList(blueTeams));
+        }
 
         String matchTitle = MatchHelper.getMatchTitleFromMatchKey(context, matchKey);
         String matchAbbrevTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, matchKey);
