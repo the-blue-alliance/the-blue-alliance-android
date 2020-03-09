@@ -229,7 +229,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
-        if (unbindViews && unbinder != null) {
+        if (unbindViews && mAreViewsBound && unbinder != null) {
             unbinder.unbind();
             mAreViewsBound = false;
         }
