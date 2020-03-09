@@ -25,11 +25,20 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
 
     ListViewAdapter mAdapter;
 
+    private boolean mAreViewsBound;
     private Unbinder unbinder;
+
+    public ListViewBinder() {
+        super();
+        mAreViewsBound = false;
+    }
 
     @Override
     public void bindViews() {
-        unbinder = ButterKnife.bind(this, mRootView);
+        if (!mAreViewsBound) {
+            unbinder = ButterKnife.bind(this, mRootView);
+            mAreViewsBound = true;
+        }
     }
 
     @Override
@@ -112,7 +121,7 @@ public class ListViewBinder extends AbstractDataBinder<List<ListItem>> {
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
-        if (unbindViews && unbinder != null) {
+        if (unbindViews && mAreViewsBound && unbinder != null) {
             unbinder.unbind();
         }
         if (listView != null) {
