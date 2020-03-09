@@ -1,4 +1,4 @@
-Version 6.0.3:<br>
+Version 6.0.4:<br>
  - Welcome to the 2020 season!<br>
  - Target Android Q<br>
  - Support for system dark mode!<br>
@@ -7,4 +7,5 @@ Version 6.0.3:<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>
+<br>
 <br>
