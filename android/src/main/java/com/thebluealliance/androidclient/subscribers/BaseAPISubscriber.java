@@ -95,6 +95,7 @@ public abstract class BaseAPISubscriber<APIType, BindType>
         }
         mRefreshStart = System.nanoTime();
         mRefreshTrace = mTracingController.newTrace("data_refresh_" + mRefreshTag);
+        mRefreshTrace.start();
         mRefreshTrace.putAttribute("refresh_type", Integer.toString(refreshType));
         if (refreshType == RefreshController.REQUESTED_BY_USER) {
             sendRefreshUpdate();
