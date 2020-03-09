@@ -76,7 +76,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     }
 
     public void scheduleStatusUpdate(Context context) {
-        context.startService(new Intent(context, StatusRefreshService.class));
+        StatusRefreshService.enqueueWork(context);
     }
 
     public @Nullable ApiStatus fetchApiStatus() {

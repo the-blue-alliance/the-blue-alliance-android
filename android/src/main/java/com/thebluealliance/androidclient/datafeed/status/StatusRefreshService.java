@@ -1,9 +1,8 @@
 package com.thebluealliance.androidclient.datafeed.status;
 
-import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import androidx.annotation.WorkerThread;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.TbaAndroid;
@@ -24,6 +23,9 @@ import java.util.concurrent.ExecutionException;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
+import androidx.core.app.JobIntentService;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
 import rx.schedulers.Schedulers;
@@ -31,17 +33,21 @@ import rx.schedulers.Schedulers;
 /**
  * Service to hit the TBA Status endpoint and store the result in SharedPreferences
  */
-public class StatusRefreshService extends IntentService {
+public class StatusRefreshService extends JobIntentService {
 
-    @Inject @Named("tba_apiv3_rx") TbaApiV3 mRetrofitAPI;
-    @Inject SharedPreferences mPrefs;
-    @Inject EventBus mEventBus;
-    @Inject OkHttpClient mHttpClient;
-    @Inject AppConfig mAppConfig;
+    public static final int JOB_ID = 148;
 
-    public StatusRefreshService() {
-        super("API Status Refresh");
-    }
+    @Inject
+    @Named("tba_apiv3_rx")
+    TbaApiV3 mRetrofitAPI;
+    @Inject
+    SharedPreferences mPrefs;
+    @Inject
+    EventBus mEventBus;
+    @Inject
+    OkHttpClient mHttpClient;
+    @Inject
+    AppConfig mAppConfig;
 
     @Override
     public void onCreate() {
@@ -49,8 +55,12 @@ public class StatusRefreshService extends IntentService {
         getComponenet().inject(this);
     }
 
+    public static void enqueueWork(Context context) {
+        enqueueWork(context, StatusRefreshService.class, JOB_ID, new Intent(context, StatusRefreshService.class));
+    }
+
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleWork(@NonNull Intent intent) {
         TbaLogger.d("Updating TBA Status");
         Schedulers.io().createWorker().schedule(this::updateTbaStatus);
     }
@@ -66,19 +76,19 @@ public class StatusRefreshService extends IntentService {
         try {
             mAppConfig.updateRemoteDataBlocking();
         } catch (ExecutionException | InterruptedException e) {
-            TbaLogger.w("Error updating FirebaseRemoteConfig: " + e.getMessage());
+            TbaLogger.w("Error updating FirebaseRemoteConfig: " + e.getMessage(), e);
         }
 
         Response<ApiStatus> response;
         try {
             response = mRetrofitAPI.fetchApiStatus().toBlocking().first();
         } catch (Exception ex) {
-            TbaLogger.w("Error updating TBA status: " + ex.getMessage());
+            TbaLogger.w("Error updating TBA status: " + ex.getMessage(), ex);
             return;
         }
         if (!response.isSuccessful()) {
             TbaLogger.w("Unable to update myTBA Status\n"
-                        + response.code() + " " + response.message());
+                    + response.code() + " " + response.message());
             return;
         }
         ApiStatus status = response.body();
