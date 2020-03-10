@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- General strings -->
+    <string name="welcome_prefix">ようこそ</string>
+    <string name="welcome">The Blue Alliance</string>
+    <string name="sign_in_with_google">Googleでログイン</string>
+    <string name="next_caps">次へ</string>
+    <string name="continue_caps">続ける</string>
+    <string name="finish_caps">終了</string>
+    <string name="cancel_caps">キャンセル</string>
+    <string name="skip_intro_caps">説明をスキップ</string>
+    <string name="welcome_message">次へをクリックして\n 初期データをダウンロード</string>
+    <string name="check_out_mytba">待っている間に、myTBAをチェックしませんか？</string>
+    <string name="what_is_mytba">myTBAとは？</string>
+    <string name="check_out_mytba_description">myTBAを使用すると、FRCでお気に入りのものを追跡し、試合のスコア、イベントの結果などに関する通知を受け取ることができます。</string>
+    <string name="mytba_favorites_description">チーム、イベント、試合などをお気に入りとしてマークすると、簡単にアクセスできます。</string>
+    <string name="mytba_subscriptions_description">チームの次の試合やイベントの勝者などの多くの情報を定期的に受け取ることができます。</string>
+    <string name="mytba_yellow_button_description">この黄色いボタンがあればいつでもmyTBAを使用出来ます。</string>
+    <string name="mytba_get_started_title">myTBAを開始してもよろしいですか？</string>
+    <string name="mytba_login_prompt">あなたのデータをセーブや同期するためにGoogleで登録する</string>
+    <string name="mytba_login_success">成功！</string>
+    <string name="mytba_login_success_subtitle">myTBAをご利用ください。</string>
+    <string name="mytba_no_signin_intent">ログインできませんでした</string>
+    <string name="mytba_no_play_services">あー、うーん...</string>
+    <string name="mytba_no_play_services_subtitle">お使いの端末にGoogle Playサービスがないため、myTBAを利用できません。</string>
+    <string name="update_message">アプリは最新の状態です。次へをクリックして新しいデータをダウンロードしてください。</string>
+    <string name="please_read_changelog">お待ちの間、アプリの最近のアップデートをご確認ください。</string>
+    <string name="load_finished_message">設定完了！アプリをご利用ください。</string>
+
+    <!-- No Connection Dialog -->
+    <string name="check_connection_title">接続を確認する</string>
+    <string name="warning_no_internet_connection">インターネットに接続していません。接続を確認し、再度お試しください。</string>
+    <string name="retry">もう一度</string>
+    <string name="connection_lost_title">Connection lost</string>
+    <string name="connection_lost">Your internet connection was interrupted. Check your connection and try again.</string>
+    <string name="ok">OK</string>
+    <string name="first_datafeed_down_warning"><i>FIRST</i> is currently experiencing technical difficulties updating data, please check back later.</string>
+    <string name="event_not_updating_warning">This event does not currently have live data available. Please check back later.</string>
+
+    <!-- Fatal Error Dialog -->
+    <string name="fatal_error">Fatal Error</string>
+    <string name="fatal_error_message">Well, this is really bad. We don\'t know what happened. If you want, you can contact the developer with the error information.</string>
+    <string name="contact_developer">Contact Developer</string>
+    <string name="send_email">メールを送信</string>
+
+    <!-- myTBA prompt dialog -->
+    <string name="mytba_prompt_title">Do you want to enable myTBA?</string>
+    <string name="mytba_prompt_message">You can always enable it later in Settings.</string>
+    <string name="mytba_prompt_yes">Enable Now</string>
+    <string name="mytba_prompt_cancel">Maybe Later</string>
+
+    <!-- Status Messages -->
+    <string name="loading_config">Loading app configuration</string>
+    <string name="loading_teams" formatted="false">Loading teams from %1$d to %2$d</string>
+    <string name="loading_events">Loading %s events</string>
+    <string name="loading_districts">Loading %d districts</string>
+    <string name="loading_almost_finished">Finishing setup…</string>
+    <string name="loading_finished">Loading complete</string>
+</resources>
