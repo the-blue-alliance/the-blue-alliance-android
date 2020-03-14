@@ -161,6 +161,7 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
         super.unbind(unbindViews);
         if (unbindViews && unbinder != null) {
             unbinder.unbind();
+            unbinder = null;
         }
         if (expandableListView != null) {
             expandableListView.setVisibility(View.GONE);

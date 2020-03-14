@@ -107,6 +107,7 @@ public class RecyclerViewBinder extends AbstractDataBinder<List<Object>> {
         super.unbind(unbindViews);
         if (unbindViews && unbinder != null) {
             unbinder.unbind();
+            unbinder = null;
         }
         if (mRecyclerView != null) {
             mRecyclerView.setVisibility(View.GONE);

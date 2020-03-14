@@ -301,6 +301,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
         super.unbind(unbindViews);
         if (unbindViews && unbinder != null) {
             unbinder.unbind();
+            unbinder = null;
         }
     }
 
