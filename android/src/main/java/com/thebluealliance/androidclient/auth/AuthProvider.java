@@ -31,6 +31,7 @@ public interface AuthProvider {
     @Nullable
     Intent buildSignInIntent();
 
+
     Observable<? extends User> userFromSignInResult(int requestCode, int resultCode, Intent data);
 
     Observable<? extends User> signInLegacyUser();

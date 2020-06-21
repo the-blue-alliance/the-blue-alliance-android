@@ -43,6 +43,7 @@ public class AuthModule {
         return new GoogleAuthProvider(mContext, accountController);
     }
 
+
     @Provides @Named("firebase_auth")
     public AuthProvider provideFirebaseAuthProvider(@Nullable FirebaseAuth firebaseAuth,
                                                     GoogleAuthProvider googleAuthProvider) {

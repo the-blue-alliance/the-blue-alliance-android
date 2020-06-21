@@ -94,7 +94,7 @@ android {
 
     defaultConfig {
         applicationId "com.thebluealliance.androidclient"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 29
         versionCode versionNum
         versionName version.toString()
@@ -215,6 +215,7 @@ repositories {
     maven {
         url "http://github.com/wada811/Android-Material-Design-Colors/raw/master/repository/"
     }
+    mavenCentral()
 }
 
 task checkstyle(type: Checkstyle) {
@@ -291,6 +292,7 @@ dependencies {
     implementation 'javax.annotation:javax.annotation-api:1.3.2'
     implementation "com.github.hotchemi:permissionsdispatcher:${permissionDispatcherVersion}"
     annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:${permissionDispatcherVersion}"
+    implementation 'com.willowtreeapps:signinwithapplebutton:0.3'
 
     // testing
     testImplementation 'androidx.test:core:1.2.0'
