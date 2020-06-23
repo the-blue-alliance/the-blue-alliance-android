@@ -215,7 +215,6 @@ repositories {
     maven {
         url "http://github.com/wada811/Android-Material-Design-Colors/raw/master/repository/"
     }
-    mavenCentral()
 }
 
 task checkstyle(type: Checkstyle) {
