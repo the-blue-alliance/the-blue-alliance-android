@@ -8,10 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.SignInButton;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.MyTBAOnboardingPagerAdapter;
+import com.thebluealliance.androidclient.auth.apple.AppleAuthProvider;
+import com.willowtreeapps.signinwithapplebutton.view.SignInWithAppleButton;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -21,6 +24,7 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
     private final SignInButton mSignInButton;
     private final TextView myTBATitle;
     private final TextView myTBASubtitle;
+    private SignInWithAppleButton mSignInWithAppleButton;
 
     private Callbacks mCallbacks;
 
@@ -31,6 +35,7 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
 
         myTBATitle = (TextView) findViewById(R.id.mytba_title);
         myTBASubtitle = (TextView) findViewById(R.id.mytba_subtitle);
+        mSignInWithAppleButton = findViewById(R.id.sign_in_with_apple_button);
 
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         mViewPager.setAdapter(new MyTBAOnboardingPagerAdapter(mViewPager));
@@ -42,6 +47,8 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
         mSignInButton = findViewById(R.id.google_sign_in_button);
         mSignInButton.setSize(SignInButton.SIZE_WIDE);
         mSignInButton.setOnClickListener(this);
+
+        mSignInWithAppleButton.setOnClickListener(this);
     }
 
     public void setCallbacks(Callbacks callbacks) {
@@ -57,6 +64,11 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
                     mCallbacks.onSignInButtonClicked();
                 }
                 break;
+            case R.id.sign_in_with_apple_button:
+                Toast.makeText(getContext(), "Clicked", Toast.LENGTH_SHORT).show();
+                if (mCallbacks != null) {
+                    mCallbacks.onAppleButtonClicked();
+                }
         }
 
     }
@@ -102,9 +114,12 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
         myTBASubtitle.setText(R.string.mytba_login_success_subtitle);
 
         mSignInButton.setVisibility(View.GONE);
+        mSignInWithAppleButton.setVisibility(View.GONE);
     }
 
     public interface Callbacks {
         void onSignInButtonClicked();
+
+        void onAppleButtonClicked();
     }
 }

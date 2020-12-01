@@ -26,6 +26,7 @@ import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
 import com.thebluealliance.androidclient.auth.AuthProvider;
+import com.thebluealliance.androidclient.auth.apple.AppleAuthProvider;
 import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.di.components.DaggerAuthComponent;
@@ -413,6 +414,20 @@ public class OnboardingActivity extends AppCompatActivity
             Toast.makeText(this, R.string.mytba_no_signin_intent, Toast.LENGTH_SHORT).show();
             TbaLogger.e("Unable to get login Intent");
         }
+    }
+
+    @Override
+    public void onAppleButtonClicked() {
+//        if (AppleAuthProvider.getCurrentUser() == null){
+//            AppleAuthProvider.startSignUpWithApple(this);
+//        } else if (AppleAuthProvider.getCurrentUser() != null){
+//            AppleAuthProvider.getPendingAuthResult();
+//        } else {
+//            Toast.makeText(this, R.string.mytba_no_signin_intent, Toast.LENGTH_SHORT).show();
+//            TbaLogger.e("Unable to get login Intent");
+//        }
+        AppleAuthProvider.startSignUpWithApple(this);
+        Toast.makeText(this, R.string.mytba_no_signin_intent, Toast.LENGTH_SHORT).show();
     }
 
     public DatafeedComponent getComponent() {
