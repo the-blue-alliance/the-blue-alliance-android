@@ -141,16 +141,7 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
 
     @Override
     public void onAppleButtonClicked() {
-//            if (AppleAuthProvider.getCurrentUser() == null){
-//                AppleAuthProvider.startSignUpWithApple(this);
-//            } else if (AppleAuthProvider.getCurrentUser() != null){
-//                AppleAuthProvider.getPendingAuthResult();
-//            } else {
-//                Toast.makeText(this, R.string.mytba_no_signin_intent, Toast.LENGTH_SHORT).show();
-//                TbaLogger.e("Unable to get login Intent");
-//            }
-            AppleAuthProvider.startSignUpWithApple(this);
-            Toast.makeText(this, R.string.mytba_no_signin_intent, Toast.LENGTH_SHORT).show();
+            AppleAuthProvider.startPendingAuthResult(this);
     }
 
     private AuthComponent getComponent() {

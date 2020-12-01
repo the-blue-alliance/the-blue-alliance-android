@@ -17,7 +17,7 @@
     <string name="mytba_subscriptions_description">You can subscribe to a variety of notifications, such as upcoming matches for a team or the winners of an event.</string>
     <string name="mytba_yellow_button_description">You can use myTBA anywhere you see this yellow button.</string>
     <string name="mytba_get_started_title">Ready to get started with myTBA?</string>
-    <string name="mytba_login_prompt">Sign in with your Google account so we can save and sync your data.</string>
+    <string name="mytba_login_prompt">Sign in with your Google or Apple account so we can save and sync your data.</string>
     <string name="mytba_login_success">Success!</string>
     <string name="mytba_login_success_subtitle">Enjoy using myTBA.</string>
     <string name="mytba_no_signin_intent">Unable to complete login</string>

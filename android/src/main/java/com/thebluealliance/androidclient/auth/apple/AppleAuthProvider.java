@@ -2,121 +2,100 @@ package com.thebluealliance.androidclient.auth.apple;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.OAuthProvider;
+import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import static com.crashlytics.android.core.CrashlyticsCore.TAG;
 
 public class AppleAuthProvider {
     private static FirebaseAuth mAuth;
-    private final Context mContext;
-    private final AccountController mAccountController;
-    public static OAuthProvider.Builder provider = OAuthProvider.newBuilder("apple.com");
+    public static final OAuthProvider.Builder provider = OAuthProvider.newBuilder("apple.com");
+
+    // Request Scopes
+    private static final List<String> scopes =
+            new ArrayList<String>() {
+                {
+                    add("email");
+                    add("name");
+                }
+            };
+
+
 
     @Inject
     public AppleAuthProvider(Context context, AccountController accountController) {
         mAuth.getCurrentUser();
-        mAccountController = accountController;
-        mContext = context;
 
     }
 
     public static FirebaseUser getCurrentUser(){
-        FirebaseUser user = mAuth.getCurrentUser();
-        return user;
+        return mAuth.getCurrentUser();
     }
-
+    // ReAuthenticate a User
     public static void reAuthenticateApple(Context context){
         // The user is already signed-in.
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        provider.setScopes(scopes);
 
         assert firebaseUser != null;
         firebaseUser
-                .startActivityForReauthenticateWithProvider(/* activity= */ (Activity) context, provider.build())
+                .startActivityForReauthenticateWithProvider((Activity) context, provider.build())
                 .addOnSuccessListener(
-                        new OnSuccessListener<AuthResult>() {
-                            @Override
-                            public void onSuccess(AuthResult authResult) {
-                                // User is re-authenticated with fresh tokens and
-                                // should be able to perform sensitive operations
-                                // like account deletion and email or password
-                                // update.
-                            }
+                        authResult -> {
+                            // User is re-authenticated with fresh tokens and
+                            // should be able to perform sensitive operations
+                            // like account deletion and email or password
+                            // update.
                         })
                 .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // Handle failure.
-                            }
+                        e -> {
+                            // Handle failure.
                         });
     }
 
-    public static void getPendingAuthResult(){
+    // Used when there is a pending Intent from the Apple Provider
+    public static void startPendingAuthResult(Context context){
         mAuth = FirebaseAuth.getInstance();
         Task<AuthResult> pending = mAuth.getPendingAuthResult();
         if (pending != null) {
-            pending.addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                @Override
-                public void onSuccess(AuthResult authResult) {
-                    Log.d(TAG, "checkPending:onSuccess:" + authResult);
-                    // Get the user profile with authResult.getUser() and
-                    // authResult.getAdditionalUserInfo(), and the ID
-                    // token from Apple with authResult.getCredential().
+            pending.addOnSuccessListener(authResult -> {
+                TbaLogger.d("Pending Sign In with Apple Result: " + authResult);
+                // Get the user profile with authResult.getUser() and
+                // authResult.getAdditionalUserInfo(), and the ID
+                // token from Apple with authResult.getCredential().
 
-                    authResult.getUser();
-                    authResult.getAdditionalUserInfo();
-                    authResult.getCredential();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.w(TAG, "checkPending:onFailure", e);
-                }
-            });
+                authResult.getUser();
+                authResult.getAdditionalUserInfo();
+                authResult.getCredential();
+            }).addOnFailureListener(e -> TbaLogger.w("Pending Sign In with Apple Result: ", e));
         } else {
-            Log.d(TAG, "pending: null");
+            startSignUpWithApple(context);
         }
     }
 
     public static void startSignUpWithApple(Context context){
         mAuth = FirebaseAuth.getInstance();
+        provider.setScopes(scopes);
         mAuth.startActivityForSignInWithProvider((Activity) context, provider.build())
                 .addOnSuccessListener(
-                        new OnSuccessListener<AuthResult>() {
-                            @Override
-                            public void onSuccess(AuthResult authResult) {
-                                // Sign-in successful!
-                                Log.d(TAG, "activitySignIn:onSuccess:" + authResult.getUser());
-                                FirebaseUser user = authResult.getUser();
-                                AuthCredential credential = authResult.getCredential();
-                                // ...
-                            }
+                        authResult -> {
+                            // Sign-in successful!
+                            TbaLogger.d("Start Sign Up with Apple: " + authResult.getUser());
                         })
-                .addOnFailureListener(
-                        new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "activitySignIn:onFailure", e);
-                            }
-                        });
+                .addOnFailureListener(e -> TbaLogger.w("Start Sign Up with Apple Failure: ", e));
     }
-
 
 }
