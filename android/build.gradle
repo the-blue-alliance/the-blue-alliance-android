@@ -39,8 +39,7 @@ if (localPropFile.exists()) {
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion '29.0.3'
+    compileSdkVersion 31
 
     signingConfigs {
         release {
@@ -88,7 +87,7 @@ android {
 
     defaultConfig {
         applicationId "com.thebluealliance.androidclient"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode versionNum
         versionName version.toString()
@@ -224,29 +223,29 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.preference:preference:1.1.0'
-    implementation 'com.google.android:flexbox:2.0.1'
+    implementation 'androidx.preference:preference:1.2.0'
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    implementation 'com.google.android.material:material:1.2.0-alpha05'
+    implementation 'com.google.android.material:material:1.6.0-alpha02'
 
     // Play Services Libraries
     // See http://developer.android.com/google/play-services/setup.html
     implementation 'com.google.guava:guava:24.1-jre'
-    implementation "com.google.android.gms:play-services-base:17.1.0"
-    implementation "com.google.android.gms:play-services-analytics:17.0.0"
+    implementation "com.google.android.gms:play-services-base:18.0.1"
+    implementation "com.google.android.gms:play-services-analytics:18.0.1"
     implementation "com.google.android.gms:play-services-gcm:17.0.0"
-    implementation "com.google.android.gms:play-services-auth:17.0.0"
-    implementation "com.google.android.gms:play-services-flags:17.0.0"
-    implementation "com.google.android.gms:play-services-stats:17.0.0"
-    implementation "com.google.firebase:firebase-core:17.2.3"
-    implementation "com.google.firebase:firebase-auth:19.2.0"
-    implementation "com.google.firebase:firebase-config:19.1.2"
-    implementation 'com.google.firebase:firebase-perf:19.0.5'
-
-    implementation 'com.google.firebase:firebase-analytics:17.2.3'
+    implementation "com.google.android.gms:play-services-auth:20.1.0"
+    implementation "com.google.android.gms:play-services-flags:18.0.1"
+    implementation "com.google.android.gms:play-services-stats:17.0.3"
+    implementation "com.google.firebase:firebase-core:20.1.0"
+    implementation "com.google.firebase:firebase-auth:21.0.1"
+    implementation "com.google.firebase:firebase-config:21.0.1"
+    implementation 'com.google.firebase:firebase-perf:20.0.5'
+    implementation 'com.google.firebase:firebase-analytics:20.1.0'
+    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
     // Square Libraries
     implementation 'com.squareup.picasso:picasso:2.5.2'
@@ -255,8 +254,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
 
     implementation "com.google.dagger:dagger:${daggerVersion}"
-    implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
-    implementation 'com.google.firebase:firebase-analytics:17.5.0'
+    implementation 'com.google.firebase:firebase-crashlytics:18.2.8'
+    implementation 'com.google.firebase:firebase-analytics:20.1.0'
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // Other third party libraries
@@ -276,24 +275,24 @@ dependencies {
     implementation 'io.nlopez.smartadapters:library:1.3.1'
     implementation 'com.wada811:android-material-design-colors:3.0.0'
     implementation 'javax.annotation:javax.annotation-api:1.3.2'
-    implementation "com.github.hotchemi:permissionsdispatcher:${permissionDispatcherVersion}"
-    annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:${permissionDispatcherVersion}"
+    implementation "com.github.permissions-dispatcher:permissionsdispatcher:${permissionDispatcherVersion}"
+    annotationProcessor "com.github.permissions-dispatcher:permissionsdispatcher-processor:${permissionDispatcherVersion}"
 
     // testing
-    testImplementation 'androidx.test:core:1.2.0'
-    testImplementation 'androidx.test:runner:1.2.0'
-    testImplementation 'androidx.test:rules:1.2.0'
-    testImplementation 'androidx.test.ext:junit:1.1.1'
+    testImplementation 'androidx.test:core:1.4.0'
+    testImplementation 'androidx.test:runner:1.4.0'
+    testImplementation 'androidx.test:rules:1.4.0'
+    testImplementation 'androidx.test.ext:junit:1.1.3'
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testImplementation "org.robolectric:robolectric:${robolectricVersion}"
     testImplementation "org.robolectric:shadows-multidex:${robolectricVersion}"
     testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // instrumentation
-    androidTestImplementation 'androidx.annotation:annotation:1.1.0'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test:rules:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.annotation:annotation:1.3.0'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test:rules:1.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     // Leak Canary

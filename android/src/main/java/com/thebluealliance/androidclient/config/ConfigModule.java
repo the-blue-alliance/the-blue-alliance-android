@@ -19,12 +19,7 @@ public class ConfigModule {
     @Provides @Singleton @Nullable
     public FirebaseRemoteConfig provideFirebaseRemoteConfig() {
         try {
-            FirebaseRemoteConfig config = FirebaseRemoteConfig.getInstance();
-            FirebaseRemoteConfigSettings settings = new FirebaseRemoteConfigSettings.Builder()
-                    .setDeveloperModeEnabled(BuildConfig.DEBUG)
-                    .build();
-            config.setConfigSettings(settings);
-            return config;
+            return FirebaseRemoteConfig.getInstance();
         } catch (IllegalStateException ex) {
             /* When there is no google-secrets.json file found, the library throws an exception
              * here which causes insta-crashes for us. Silently recover here...

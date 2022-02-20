@@ -412,7 +412,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
                             .setAdapter(adapter, (dialog, position) -> {
                                 switch (position) {
                                     case 0: // take picture
-                                        ViewTeamActivityPermissionsDispatcher.takePictureWithCheck(this);
+                                        ViewTeamActivityPermissionsDispatcher.takePictureWithPermissionCheck(this);
                                         dialog.cancel();
                                         break;
                                     case 1: // select from gallery
@@ -491,6 +491,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CHOOSE_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 Uri uri = data.getData();

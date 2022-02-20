@@ -7,9 +7,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigFetchException;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigClientException;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigServerException;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigFetchThrottledException;
 import com.thebluealliance.androidclient.Analytics;
+import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.APIv3RequestInterceptor;
 
@@ -80,16 +82,12 @@ public class AppConfig {
             return;
         }
 
-        boolean isDeveloperMode = mFirebaseRemoteConfig.getInfo()
-                                                       .getConfigSettings()
-                                                       .isDeveloperModeEnabled();
-
         TbaLogger.i("Updating remote configuration");
-        mActiveTask = mFirebaseRemoteConfig.fetch(isDeveloperMode ? 0 : CACHE_EXIPIRATION)
+        mActiveTask = mFirebaseRemoteConfig.fetch(BuildConfig.DEBUG ? 0 : CACHE_EXIPIRATION)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         TbaLogger.i("Remote config update succeeded");
-                        mFirebaseRemoteConfig.activateFetched();
+                        mFirebaseRemoteConfig.activate();
 
                         /* Update the analytics ID in a static class
                          * This is horrible, nasty, good-for-nothing, hacky, and disgusting
@@ -111,7 +109,7 @@ public class AppConfig {
     private void handleUpdateException(Exception e) {
         if (e instanceof FirebaseRemoteConfigFetchThrottledException) {
             TbaLogger.d("RemoteConfig fetch throttled");
-        } else if (e instanceof FirebaseRemoteConfigFetchException) {
+        } else if (e instanceof FirebaseRemoteConfigServerException || e instanceof FirebaseRemoteConfigClientException) {
             TbaLogger.i("Error fetching RemoteConfig: " + e.getMessage());
         } else {
             TbaLogger.w("Error fetching RemoteConfig: " + e.getMessage(), e);

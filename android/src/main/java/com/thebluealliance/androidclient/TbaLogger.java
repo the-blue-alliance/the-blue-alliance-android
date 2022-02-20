@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 /**
  * A wrapper class for {@link android.util.Log} that we can extend to do other things in the future
@@ -13,27 +13,27 @@ public final class TbaLogger {
 
     public static synchronized void d(String msg) {
         String callingClass = getCallerCallerClassName();
-        Crashlytics.log(msg);
+        FirebaseCrashlytics.getInstance().log(msg);
         android.util.Log.d(callingClass, msg);
     }
 
     public static synchronized void d(String msg, Throwable tr) {
         String callingClass = getCallerCallerClassName();
-        Crashlytics.log(msg);
-        Crashlytics.logException(tr);
+        FirebaseCrashlytics.getInstance().log(msg);
+        FirebaseCrashlytics.getInstance().recordException(tr);
         android.util.Log.d(callingClass, msg, tr);
     }
 
     public static synchronized void e(String msg) {
         String callingClass = getCallerCallerClassName();
-        Crashlytics.log(msg);
+        FirebaseCrashlytics.getInstance().log(msg);
         android.util.Log.e(callingClass, msg);
     }
 
     public static synchronized void e(String msg, Throwable tr) {
         String callingClass = getCallerCallerClassName();
-        Crashlytics.log(msg);
-        Crashlytics.logException(tr);
+        FirebaseCrashlytics.getInstance().log(msg);
+        FirebaseCrashlytics.getInstance().recordException(tr);
         android.util.Log.e(callingClass, msg, tr);
     }
 
@@ -43,53 +43,53 @@ public final class TbaLogger {
 
     public static synchronized void i(String msg) {
         String callingClass = getCallerCallerClassName();
-        Crashlytics.log(msg);
+        FirebaseCrashlytics.getInstance().log(msg);
         android.util.Log.i(callingClass, msg);
     }
 
     public static synchronized void i(String msg, Throwable tr) {
         String callingClass = getCallerCallerClassName();
-        Crashlytics.log(msg);
-        Crashlytics.logException(tr);
+        FirebaseCrashlytics.getInstance().log(msg);
+        FirebaseCrashlytics.getInstance().recordException(tr);
         android.util.Log.i(callingClass, msg, tr);
     }
 
     public static synchronized void v(String msg) {
         String callingClass = getCallerCallerClassName();
-        Crashlytics.log(msg);
+        FirebaseCrashlytics.getInstance().log(msg);
         android.util.Log.v(callingClass, msg);
     }
 
     public static synchronized void v(String msg, Throwable tr) {
         String callingClass = getCallerCallerClassName();
-        Crashlytics.log(msg);
-        Crashlytics.logException(tr);
+        FirebaseCrashlytics.getInstance().log(msg);
+        FirebaseCrashlytics.getInstance().recordException(tr);
         android.util.Log.v(callingClass, msg, tr);
     }
 
     public static synchronized void w(String msg) {
         String callingClass = getCallerCallerClassName();
-        Crashlytics.log(msg);
+        FirebaseCrashlytics.getInstance().log(msg);
         android.util.Log.w(callingClass, msg);
     }
 
     public static synchronized void w(String msg, Throwable tr) {
         String callingClass = getCallerCallerClassName();
-        Crashlytics.log(msg);
-        Crashlytics.logException(tr);
+        FirebaseCrashlytics.getInstance().log(msg);
+        FirebaseCrashlytics.getInstance().recordException(tr);
         android.util.Log.w(callingClass, msg, tr);
     }
 
     public static synchronized void wtf(String msg) {
         String callingClass = getCallerCallerClassName();
-        Crashlytics.log(msg);
+        FirebaseCrashlytics.getInstance().log(msg);
         android.util.Log.wtf(callingClass, msg);
     }
 
     public static synchronized void wtf(String msg, Throwable tr) {
         String callingClass = getCallerCallerClassName();
-        Crashlytics.log(msg);
-        Crashlytics.logException(tr);
+        FirebaseCrashlytics.getInstance().log(msg);
+        FirebaseCrashlytics.getInstance().recordException(tr);
         android.util.Log.wtf(callingClass, msg, tr);
     }
 

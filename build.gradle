@@ -48,10 +48,10 @@ allprojects {
         retrofitVersion = '2.5.0'
         rxJavaVersion = '1.2.7'
         rxAndroidVersion = '1.2.1'
-        gsonVersion = '2.8.5'
-        daggerVersion = '2.22.1'
+        gsonVersion = '2.8.6'
+        daggerVersion = '2.28.3'
         robolectricVersion = '4.3.1'
-        permissionDispatcherVersion = '2.2.0'
+        permissionDispatcherVersion = '4.9.1'
 
         travisBuild = System.getenv("TRAVIS") == "true"
         // allows for -Dpre-dex=false to be set
