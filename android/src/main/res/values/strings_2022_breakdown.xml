@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="breakdown2022_auto_taxi">Taxi</string>
+    <string name="breakdown2022_auto_cargo">Auto Cargo Count</string>
+    <string name="breakdown2022_auto_cargo_points">Auto Cargo Points</string>
+    <string name="breakdown2022_auto_quintet">Quintet</string>
+    <string name="breakdown2022_teleop_cargo">Teleop Cargo Count</string>
+    <string name="breakdown2022_teleop_cargo_points">Teleop Cargo Points</string>
+    <string name="breakdown2022_endgame_points">Hangar Points</string>
+    <string name="breakdown2022_cargo_bonus">Cargo Bonus</string>
+    <string name="breakdown2022_hangar_bonus">Hangar Bonus</string>
+</resources>

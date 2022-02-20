@@ -19,6 +19,7 @@ public class MatchBreakdownSubscriber extends BaseAPISubscriber<Match, MatchBrea
     static final String SHOW_2018_KEY = "show_2018_breakdowns";
     static final String SHOW_2019_KEY = "show_2019_breakdowns";
     static final String SHOW_2020_KEY = "show_2020_breakdowns";
+    static final String SHOW_2022_KEY = "show_2022_breakdowns";
 
     private final Gson mGson;
     private final AppConfig mConfig;
@@ -54,6 +55,10 @@ public class MatchBreakdownSubscriber extends BaseAPISubscriber<Match, MatchBrea
                 break;
             case 2020:
                 shouldShowBreakdown = mConfig.getBoolean(SHOW_2020_KEY);
+                TbaLogger.i("Showing 2020 breakdown? " + shouldShowBreakdown);
+                break;
+            case 2022:
+                shouldShowBreakdown = mConfig.getBoolean(SHOW_2022_KEY);
                 TbaLogger.i("Showing 2020 breakdown? " + shouldShowBreakdown);
                 break;
         }
