@@ -5,10 +5,9 @@ plugins {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'checkstyle'
 apply plugin: 'gitsemver'
-apply plugin: 'com.facebook.testing.screenshot'
 apply plugin: 'com.google.firebase.firebase-perf'
 
 // dependency checker plugin
@@ -28,11 +27,6 @@ tasks.withType(Test) {
         exceptionFormat "full"
         quiet.events = ["passed", "skipped"]
     }
-}
-
-project.afterEvaluate {
-    def pullScreenshots = project.tasks.getByName("pullScreenshots")
-    pullScreenshots.dependsOn updateScreenshotDirs
 }
 
 def localProps = new Properties()
@@ -177,11 +171,6 @@ play {
 }
 */
 
-screenshots {
-    testApkTarget = 'packageDebugAndroidTest'
-    connectedAndroidTestTarget = 'connectedDebugAndroidTest'
-}
-
 println "Version: " + android.defaultConfig.versionName + "/" + android.defaultConfig.versionCode
 
 task updateScreenshotDirs {
@@ -213,7 +202,7 @@ repositories {
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
     maven {
-        url "http://github.com/wada811/Android-Material-Design-Colors/raw/master/repository/"
+        url "https://github.com/wada811/Android-Material-Design-Colors/raw/master/repository/"
     }
 }
 
@@ -258,10 +247,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-perf:19.0.5'
 
     implementation 'com.google.firebase:firebase-analytics:17.2.3'
-    releaseImplementation "com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}"
-    debugImplementation "com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}"
-    debugBlueImplementation "com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}"
-    debugProguardImplementation "com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}"
 
     // Square Libraries
     implementation 'com.squareup.picasso:picasso:2.5.2'
@@ -270,6 +255,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
 
     implementation "com.google.dagger:dagger:${daggerVersion}"
+    implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // Other third party libraries

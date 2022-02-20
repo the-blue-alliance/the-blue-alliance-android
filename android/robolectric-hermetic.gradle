@@ -15,7 +15,7 @@ task createRobolectricDeps {
 
 task copyLibs(type: Copy) {
     into "$buildDir/output/libs"
-    from configurations.compile
+    from configurations.implementation
 }
 
 task copySdks(type: Copy) {

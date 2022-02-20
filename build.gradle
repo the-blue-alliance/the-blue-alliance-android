@@ -6,16 +6,12 @@ buildscript {
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots/"
         }
-        maven {
-            url 'https://maven.fabric.io/public'
-        }
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.1'
-        classpath 'com.google.gms:google-services:4.3.3'
-        classpath 'io.fabric.tools:gradle:1.31.2'
-        classpath 'com.google.firebase:perf-plugin:1.3.1'
+        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.google.gms:google-services:4.3.10'
+        classpath 'com.google.firebase:perf-plugin:1.4.1'
 
         // code coverage testing
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
@@ -23,8 +19,7 @@ buildscript {
         // versioning
         classpath files('libs/gradle-gitsemver-0.6.0.jar')
 
-        // Automated Screenshot Testing
-        classpath 'com.facebook.testing.screenshot:plugin:0.5.0'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
     }
 }
 
