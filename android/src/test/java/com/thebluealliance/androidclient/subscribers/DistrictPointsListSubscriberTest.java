@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.annotation.LooperMode;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+@LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)
 public class DistrictPointsListSubscriberTest {
 

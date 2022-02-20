@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.models.EventWeekTab;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.annotation.LooperMode;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.junit.Assert.assertEquals;
 
+@LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)
 public class EventTabSubscriberTest {
 

@@ -10,9 +10,11 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.annotation.LooperMode;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+@LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)
 public class EventInfoSubscriberTest extends TestCase {
 

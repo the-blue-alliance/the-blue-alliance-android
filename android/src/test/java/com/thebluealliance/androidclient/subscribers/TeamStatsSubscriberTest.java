@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.annotation.LooperMode;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.when;
 
+@LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)
 public class TeamStatsSubscriberTest {
 

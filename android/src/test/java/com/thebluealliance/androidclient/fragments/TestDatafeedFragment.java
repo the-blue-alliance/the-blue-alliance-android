@@ -16,6 +16,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.annotation.LooperMode;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import rx.subjects.PublishSubject;
@@ -25,7 +26,11 @@ import rx.subjects.Subject;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.robolectric.Shadows.shadowOf;
 
+import android.os.Looper;
+
+@LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)
 public class TestDatafeedFragment extends BaseFragmentTest {
 
@@ -65,6 +70,8 @@ public class TestDatafeedFragment extends BaseFragmentTest {
         verify(mStatusController).fetchApiStatus();
 
         mController.attach();
+        shadowOf(Looper.getMainLooper()).idle();
+
         getInjectedFragmentParams();
         verifyFragmentAttach();
 

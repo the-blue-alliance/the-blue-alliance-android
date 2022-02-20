@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.accounts;
 
 import android.content.Context;
+import android.os.Looper;
 
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.annotation.LooperMode;
 
 import java.util.concurrent.ExecutionException;
 
@@ -19,7 +21,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.robolectric.Shadows.shadowOf;
 
+@LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)
 public class UpdateUserModelSettingsTest {
 
@@ -42,6 +46,8 @@ public class UpdateUserModelSettingsTest {
         when(mMyTbaDatafeed.updateModelSettings(mContext, mSettings))
                 .thenReturn(ModelPrefsResult.SUCCESS);
         mTask.execute().get();
+
+        shadowOf(Looper.getMainLooper()).idle();
         verify(mCallbacks).onSuccess();
     }
 
@@ -50,6 +56,8 @@ public class UpdateUserModelSettingsTest {
         when(mMyTbaDatafeed.updateModelSettings(mContext, mSettings))
                 .thenReturn(ModelPrefsResult.ERROR);
         mTask.execute().get();
+
+        shadowOf(Looper.getMainLooper()).idle();
         verify(mCallbacks).onError();
     }
 
@@ -58,6 +66,8 @@ public class UpdateUserModelSettingsTest {
         when(mMyTbaDatafeed.updateModelSettings(mContext, mSettings))
                 .thenReturn(ModelPrefsResult.NOOP);
         mTask.execute().get();
+
+        shadowOf(Looper.getMainLooper()).idle();
         verify(mCallbacks).onNoOp();
     }
 }

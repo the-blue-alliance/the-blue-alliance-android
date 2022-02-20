@@ -4,6 +4,7 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Looper;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
@@ -11,6 +12,7 @@ import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.annotation.LooperMode;
 
 import javax.annotation.Nullable;
 
@@ -18,7 +20,9 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.junit.Assert.assertNotNull;
+import static org.robolectric.Shadows.shadowOf;
 
+@LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)
 public class TestGCMBroadcastReceiver {
 
@@ -35,6 +39,7 @@ public class TestGCMBroadcastReceiver {
     public void testSchedulesJob() {
         Intent intent = buildIntent();
         mApplicationContext.sendBroadcast(intent);
+        shadowOf(Looper.getMainLooper()).idle();
 
         @Nullable JobInfo job = mJobScheduler.getPendingJob(GCMMessageHandler.JOB_ID);
         assertNotNull(job);

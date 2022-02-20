@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.annotation.LooperMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,11 @@ import java.util.List;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.mockito.Mockito.verify;
+import static org.robolectric.Shadows.shadowOf;
 
+import android.os.Looper;
+
+@LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)
 public class YearsParticipatedDropdownSubscriberTest {
     @Mock YearsParticipatedUpdate mCallback;
@@ -44,6 +49,8 @@ public class YearsParticipatedDropdownSubscriberTest {
     public void testParsedData() {
         int[] expected = {2015, 2014, 2013, 2012};
         mSubscriber.onNext(mYearsParticipated);
+        shadowOf(Looper.getMainLooper()).idle();
+
         verify(mCallback).updateYearsParticipated(expected);
     }
 }

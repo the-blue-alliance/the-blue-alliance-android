@@ -19,6 +19,9 @@ buildscript {
         // versioning
         classpath files('libs/gradle-gitsemver-0.6.0.jar')
 
+        // Screenshot testing
+        classpath 'com.facebook.testing.screenshot:plugin:0.14.0'
+
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
     }
 }
@@ -50,7 +53,7 @@ allprojects {
         rxAndroidVersion = '1.2.1'
         gsonVersion = '2.8.6'
         daggerVersion = '2.28.3'
-        robolectricVersion = '4.3.1'
+        robolectricVersion = '4.7.3'
         permissionDispatcherVersion = '4.9.1'
 
         travisBuild = System.getenv("TRAVIS") == "true"

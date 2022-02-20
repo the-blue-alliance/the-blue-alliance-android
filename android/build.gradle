@@ -9,6 +9,7 @@ apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'checkstyle'
 apply plugin: 'gitsemver'
 apply plugin: 'com.google.firebase.firebase-perf'
+apply plugin: 'com.facebook.testing.screenshot'
 
 // dependency checker plugin
 // run ./gradlew dependencyUpdates to generate report

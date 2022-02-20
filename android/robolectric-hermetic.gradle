@@ -1,6 +1,7 @@
 def androidSdkVersions = [
     "5.0.2_r3-robolectric-r0",
-    "10-robolectric-5803371"
+    "10-robolectric-5803371",
+    "12-robolectric-7732740"
 ]
 
 def allSdkConfigurations = []

@@ -7,6 +7,9 @@ import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.robolectric.Shadows.shadowOf;
+
+import android.os.Looper;
 
 public final class DatafeedTestDriver {
 
@@ -26,6 +29,7 @@ public final class DatafeedTestDriver {
           .withApiData(null)
           .parse()
           .bind();
+        shadowOf(Looper.getMainLooper()).idle();
     }
 
     public static <API extends JsonElement, VIEW>
@@ -36,6 +40,7 @@ public final class DatafeedTestDriver {
           .withApiData((API)JsonNull.INSTANCE)
           .parse()
           .bind();
+        shadowOf(Looper.getMainLooper()).idle();
     }
 
     public static <API, VIEW> void testSimpleParsing(
@@ -46,12 +51,14 @@ public final class DatafeedTestDriver {
         controller = controller
           .withConsumer(consumer)
           .onNext(data);
+        shadowOf(Looper.getMainLooper()).idle();
 
         verify(controller.getSubscriber()).parseData();
         verify(controller.getSubscriber()).bindData();
         verify(consumer).updateData(controller.getParsedData());
 
         controller = controller.complete();
+        shadowOf(Looper.getMainLooper()).idle();
 
         verify(controller.getSubscriber()).onCompleted();
         verify(consumer).onComplete();

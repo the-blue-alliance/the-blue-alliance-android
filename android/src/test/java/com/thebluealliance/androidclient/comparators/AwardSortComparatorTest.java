@@ -7,10 +7,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import edu.emory.mathcs.backport.java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 

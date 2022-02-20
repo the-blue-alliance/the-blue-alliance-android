@@ -6,11 +6,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.annotation.LooperMode;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static org.mockito.Mockito.verify;
 
+@LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)
 public class EventBusSubscriberTest {
 
