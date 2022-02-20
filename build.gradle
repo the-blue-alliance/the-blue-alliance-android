@@ -2,11 +2,7 @@
 
 buildscript {
     repositories {
-        jcenter()
         mavenCentral()
-        maven {
-            url "http://dl.bintray.com/palantir/releases"
-        }
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots/"
         }
@@ -21,23 +17,23 @@ buildscript {
         classpath 'io.fabric.tools:gradle:1.31.2'
         classpath 'com.google.firebase:perf-plugin:1.3.1'
 
-        // dependency analysis
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.27.0'
-
         // code coverage testing
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
 
         // versioning
-        classpath 'com.palantir:gradle-gitsemver:0.6.0'
+        classpath files('libs/gradle-gitsemver-0.6.0.jar')
 
         // Automated Screenshot Testing
         classpath 'com.facebook.testing.screenshot:plugin:0.5.0'
     }
 }
 
+plugins {
+    id "com.github.ben-manes.versions" version "0.42.0"
+}
+
 allprojects {
     repositories {
-        jcenter()
         mavenCentral()
         google()
         maven { url 'https://jitpack.io' }
