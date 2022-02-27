@@ -17,7 +17,6 @@ import com.thebluealliance.api.model.IMatchAlliancesContainer;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.gridlayout.widget.GridLayout;
 import butterknife.BindView;
@@ -242,16 +241,16 @@ public class MatchBreakdownView2022 extends AbstractMatchBreakdownView {
                           TextView lowerHub,
                           TextView upperHub,
                           TextView totalPoints) {
-        int lowerHubTotal = getIntDefaultValue(allianceData, prefix + "CargoLowerNear") +
-                getIntDefaultValue(allianceData, prefix + "CargoLowerFar") +
-                getIntDefaultValue(allianceData, prefix + "CargoLowerBlue") +
-                getIntDefaultValue(allianceData, prefix + "CargoLowerRed");
+        int lowerHubTotal = getIntDefaultValue(allianceData, prefix + "CargoLowerNear")
+                + getIntDefaultValue(allianceData, prefix + "CargoLowerFar")
+                + getIntDefaultValue(allianceData, prefix + "CargoLowerBlue")
+                + getIntDefaultValue(allianceData, prefix + "CargoLowerRed");
         lowerHub.setText(Integer.toString(lowerHubTotal));
 
-        int upperHubTotal = getIntDefaultValue(allianceData, prefix + "CargoUpperNear") +
-                getIntDefaultValue(allianceData, prefix + "CargoUpperFar") +
-                getIntDefaultValue(allianceData, prefix + "CargoUpperBlue") +
-                getIntDefaultValue(allianceData, prefix + "CargoUpperRed");
+        int upperHubTotal = getIntDefaultValue(allianceData, prefix + "CargoUpperNear")
+                + getIntDefaultValue(allianceData, prefix + "CargoUpperFar")
+                + getIntDefaultValue(allianceData, prefix + "CargoUpperBlue")
+                + getIntDefaultValue(allianceData, prefix + "CargoUpperRed");
         upperHub.setText(Integer.toString(upperHubTotal));
 
         totalPoints.setText(getIntDefault(allianceData, prefix + "CargoPoints"));

@@ -31,7 +31,6 @@ import org.robolectric.annotation.LooperMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -42,7 +41,6 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.robolectric.Shadows.shadowOf;
 
 @LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)
