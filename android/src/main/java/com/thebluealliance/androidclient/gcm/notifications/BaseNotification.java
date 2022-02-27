@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -115,7 +117,8 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
         clickIntent.setAction(NotificationChangedReceiver.ACTION_NOTIFICATION_CLICKED);
         clickIntent.putExtra(NotificationChangedReceiver.EXTRA_INTENT, activityIntent);
         clickIntent.putExtra(NotificationChangedReceiver.EXTRA_NOTIFICATION_ID, notificationId);
-        return PendingIntent.getBroadcast(context, notificationId, clickIntent, 0);
+        int intentFlags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0;
+        return PendingIntent.getBroadcast(context, notificationId, clickIntent, intentFlags);
     }
 
     /**
@@ -125,7 +128,8 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
         Intent dismissIntent = NotificationChangedReceiver.newIntent(context);
         dismissIntent.setAction(NotificationChangedReceiver.ACTION_NOTIFICATION_DELETED);
         dismissIntent.putExtra(NotificationChangedReceiver.EXTRA_NOTIFICATION_ID, getNotificationId());
-        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, dismissIntent, 0);
+        int intentFlags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0;
+        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, dismissIntent, intentFlags);
 
         NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
         wearableExtender.setBackground(BitmapFactory.decodeResource(context.getResources(), R.drawable.tba_blue_background));
