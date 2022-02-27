@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import com.google.common.collect.ImmutableMap;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;

@@ -10,17 +10,13 @@ import com.appspot.tbatv_prod_hrd.Tbamobile;
 import com.appspot.tbatv_prod_hrd.TeamMedia;
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.accounts.AccountController;
-import com.thebluealliance.androidclient.accounts.AccountModule;
-import com.thebluealliance.androidclient.auth.AuthModule;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.firebase.FirebaseAuthProvider;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.androidclient.gcm.GcmController;
-import com.thebluealliance.androidclient.gcm.GcmModule;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -30,7 +26,6 @@ import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
-import dagger.hilt.migration.DisableInstallInCheck;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 

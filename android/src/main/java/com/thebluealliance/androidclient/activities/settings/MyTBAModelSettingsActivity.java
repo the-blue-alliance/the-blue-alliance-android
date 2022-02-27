@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;

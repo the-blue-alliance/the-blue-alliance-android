@@ -13,7 +13,6 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thebluealliance.androidclient.Analytics;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.config.LocalProperties;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -95,7 +94,6 @@ import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
-import dagger.hilt.migration.DisableInstallInCheck;
 
 /**
  * App-wide dependency injection items

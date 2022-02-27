@@ -24,7 +24,6 @@ import org.greenrobot.eventbus.EventBus;
 import javax.inject.Inject;
 
 import dagger.Lazy;
-import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 

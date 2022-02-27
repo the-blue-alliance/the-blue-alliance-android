@@ -10,7 +10,6 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
-import dagger.hilt.migration.DisableInstallInCheck;
 
 @InstallIn(SingletonComponent.class)
 @Module

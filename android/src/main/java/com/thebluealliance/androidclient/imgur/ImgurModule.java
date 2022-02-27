@@ -12,7 +12,6 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
-import dagger.hilt.migration.DisableInstallInCheck;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 

@@ -9,7 +9,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
 
 import com.google.gson.Gson;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
@@ -23,8 +22,6 @@ import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
-
-import javax.inject.Inject;
 
 
 //SUPPRESS CHECKSTYLE FinalClass

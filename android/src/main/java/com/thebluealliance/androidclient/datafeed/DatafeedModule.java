@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.datafeed;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.annotation.VisibleForTesting;
 
@@ -18,7 +17,6 @@ import com.thebluealliance.androidclient.datafeed.retrofit.FirebaseAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
-import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -27,7 +25,6 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
-import dagger.hilt.migration.DisableInstallInCheck;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;

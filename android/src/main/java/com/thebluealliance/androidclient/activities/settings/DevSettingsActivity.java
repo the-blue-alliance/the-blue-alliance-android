@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;

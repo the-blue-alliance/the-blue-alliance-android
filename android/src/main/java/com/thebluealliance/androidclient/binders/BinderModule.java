@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.thebluealliance.androidclient.helpers.FragmentBinder;
-import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listeners.EventInfoContainerClickListener;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
-import com.thebluealliance.androidclient.renderers.RendererModule;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -17,9 +15,7 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.components.ActivityComponent;
-import dagger.hilt.android.components.ActivityRetainedComponent;
 import dagger.hilt.android.qualifiers.ApplicationContext;
-import dagger.hilt.migration.DisableInstallInCheck;
 
 @InstallIn(ActivityComponent.class)
 @Module

@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.fragments.mytba;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.view.ViewCompat;
 import androidx.viewpager.widget.ViewPager;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;

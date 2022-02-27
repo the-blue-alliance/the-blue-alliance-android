@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 
@@ -8,7 +7,6 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
-import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
 import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
 import com.thebluealliance.androidclient.renderers.DistrictRenderer;
@@ -16,7 +14,6 @@ import com.thebluealliance.androidclient.renderers.EventRenderer;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.MediaRenderer;
 import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
-import com.thebluealliance.androidclient.renderers.RendererModule;
 import com.thebluealliance.androidclient.renderers.TeamRenderer;
 
 import org.greenrobot.eventbus.EventBus;
@@ -25,10 +22,8 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.android.components.ActivityComponent;
-import dagger.hilt.android.components.ActivityRetainedComponent;
 import dagger.hilt.android.qualifiers.ActivityContext;
 import dagger.hilt.android.qualifiers.ApplicationContext;
-import dagger.hilt.migration.DisableInstallInCheck;
 
 /**
  * Module that injects {@link BaseAPISubscriber} objects to bind datafeed values to views

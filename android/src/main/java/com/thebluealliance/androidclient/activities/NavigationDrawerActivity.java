@@ -22,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint;
  * <p>
  * This allows for the easy reuse of a single navigation drawer throughout the app.
  */
+@AndroidEntryPoint
 public abstract class NavigationDrawerActivity extends AppCompatActivity
         implements NavigationDrawerFragment.NavigationDrawerListener {
 
