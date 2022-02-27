@@ -8,7 +8,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -42,6 +44,7 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
+import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.RendererModule;
@@ -49,20 +52,19 @@ import com.thebluealliance.androidclient.renderers.RendererModule;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
-import androidx.core.app.JobIntentService;
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
-public class GCMMessageHandler extends JobIntentService implements FollowsChecker {
+public class GCMMessageHandler extends FirebaseMessagingService implements FollowsChecker {
 
     public static final String GROUP_KEY = "tba-android";
     public static final int JOB_ID = 254;
 
-    @Inject
-    GoogleCloudMessaging mCloudMessaging;
     @Inject
     MyTbaDatafeed mMyTbaDatafeed;
     @Inject
@@ -118,25 +120,28 @@ public class GCMMessageHandler extends JobIntentService implements FollowsChecke
                 || subTable.hasNotificationType(teamAtEventInterestKey, notificationType);
     }
 
-    public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, GCMMessageHandler.class, JOB_ID, work);
+    @Override
+    public void onNewToken(@NonNull String s) {
+        // Kick off the registration service
+        Context context = getApplicationContext();
+        Intent registerIntent = new Intent(context, MyTbaRegistrationService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(registerIntent);
+        } else {
+            context.startService(registerIntent);
+        }
     }
 
     @Override
-    public void onHandleWork(Intent intent) {
-        Bundle extras = intent.getExtras();
-        if (extras == null) {
-            TbaLogger.w("Intent with no extras!");
-            return;
-        }
-
-        String messageType = mCloudMessaging.getMessageType(intent);
+    public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
+        String messageType = remoteMessage.getMessageType();
+        Map<String, String> messageData = remoteMessage.getData();
         TbaLogger.d("GCM Message type: " + messageType);
-        TbaLogger.d("Intent extras: " + extras.toString());
+        TbaLogger.d("GCM Message: " + messageData);
 
         // We got a standard message. Parse it and handle it.
-        String type = extras.getString("notification_type", "");
-        String data = extras.getString("message_data", "");
+        String type = messageData.containsKey("notification_type") ? messageData.get("notification_type") : "";
+        String data = messageData.containsKey("message_data") ? messageData.get("message_data") : "";
         TbaLogger.i("Received Notification : (" + type + ")  " + data);
         try {
             handleMessage(getApplicationContext(), type, data);
@@ -273,25 +278,23 @@ public class GCMMessageHandler extends JobIntentService implements FollowsChecke
             built.flags |= Notification.FLAG_SHOW_LIGHTS;
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            int priority = Notification.PRIORITY_HIGH;
-            switch (messageType) {
-                case NotificationTypes.PING:
-                    priority = Notification.PRIORITY_LOW;
-                    break;
-            }
+        int priority = Notification.PRIORITY_HIGH;
+        switch (messageType) {
+            case NotificationTypes.PING:
+                priority = Notification.PRIORITY_LOW;
+                break;
+        }
 
-            boolean headsUpPref = prefs.getBoolean("notification_headsup", true);
-            if (headsUpPref) {
-                built.priority = priority;
-            } else {
-                built.priority = Notification.PRIORITY_DEFAULT;
-            }
+        boolean headsUpPref = prefs.getBoolean("notification_headsup", true);
+        if (headsUpPref) {
+            built.priority = priority;
+        } else {
+            built.priority = Notification.PRIORITY_DEFAULT;
+        }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                built.visibility = Notification.VISIBILITY_PUBLIC;
-                built.category = Notification.CATEGORY_SOCIAL;
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            built.visibility = Notification.VISIBILITY_PUBLIC;
+            built.category = Notification.CATEGORY_SOCIAL;
         }
     }
 }

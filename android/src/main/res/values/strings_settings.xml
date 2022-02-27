@@ -29,6 +29,7 @@
     <string name="pref_tba_host">TBA Host</string>
     <string name="pref_tba_host_detail">Web address of another TBA instance that the app will use</string>
 
+    <string name="pref_gcm_token">GCM Token</string>
     <string name="pref_gcm_register">Re-register for GCM</string>
     <string name="pref_migrate_legacy_auth">Migrate legacy auth</string>
     <string name="pref_update_mytba">Update myTBA Data</string>

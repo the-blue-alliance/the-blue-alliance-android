@@ -8,11 +8,6 @@
     <!-- For Android Beam support -->
     <uses-permission android:name="android.permission.NFC" />
 
-    <!-- GCM stuff -->
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="com.thebluealliance.androidclient.permission.C2D_MESSAGE" />
-
     <!-- Device Accounts -->
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -25,7 +20,8 @@
                      android:maxSdkVersion="22"/>
 
     <!-- Used so we can save images taken with the camera -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+                     android:maxSdkVersion="9"/>
 
     <application
         android:name=".TbaAndroid"
@@ -214,30 +210,17 @@
             </intent-filter>
         </receiver>
 
-        <!--
-             The receiver's android:permission filters Intents by sender permission.
-             ${gcmPermissionRequired} is defined in android/build.gradle so debug builds accept
-             Intents from 'adb shell am broadcast'. See test_notification.py .
-        -->
-        <receiver
-            android:name=".gcm.GCMBroadcastReceiver"
-            android:permission="${gcmPermissionRequired}"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-
-                <category android:name="com.thebluealliance.androidclient" />
-            </intent-filter>
-        </receiver>
-
         <receiver
             android:name=".receivers.NotificationChangedReceiver"
             android:exported="false" />
 
         <service
             android:name=".gcm.GCMMessageHandler"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
         <service
             android:name=".accounts.AccountAuthenticatorService"
             android:exported="false">
@@ -264,9 +247,6 @@
             android:exported="false" />
         <service
                 android:name=".auth.firebase.MigrateLegacyUserToFirebase"
-                android:exported="false" />
-        <service
-                android:name=".mytba.MyTbaRegistrationService"
                 android:exported="false" />
 
         <!-- FileProvider for capturing team media -->

@@ -1,9 +1,14 @@
 package com.thebluealliance.androidclient.mytba;
 
-import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
@@ -11,21 +16,26 @@ import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.di.components.MyTbaComponent;
 import com.thebluealliance.androidclient.gcm.GcmController;
 
-import java.io.IOException;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
  * Service to send the newly registered user's GCM tokens to the backend
  */
-public class MyTbaRegistrationService extends IntentService {
+public class MyTbaRegistrationWorker extends Worker {
 
-    @Inject GoogleCloudMessaging mGoogleCloudMessaging;
+    public static final int JOB_ID = 125;
+
+    @Inject @Nullable
+    FirebaseMessaging mFirebaseMessaging;
     @Inject GcmController mGcmController;
     @Inject MyTbaDatafeed mMyTbaDatafeed;
 
-    public MyTbaRegistrationService() {
-        super("Register MyTBA");
+    public MyTbaRegistrationWorker(
+            @NonNull Context context,
+            @NonNull WorkerParameters params) {
+        super(context, params);
     }
 
     @Override
@@ -36,9 +46,12 @@ public class MyTbaRegistrationService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (mFirebaseMessaging == null) {
+            TbaLogger.w("Can't load FirebaseMessaging, skipping registration");
+            return;
+        }
         try {
-            String senderId = mGcmController.getSenderId();
-            String regid = mGoogleCloudMessaging.register(senderId);
+            String regid = mFirebaseMessaging.getToken().getResult();
 
             TbaLogger.d("Device registered with GCM, ID: " + regid);
 
@@ -49,7 +62,7 @@ public class MyTbaRegistrationService extends IntentService {
                 // Store the registration ID locally, so we don't have to do this again
                 mGcmController.storeRegistrationId(regid);
             }
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             TbaLogger.e("Error registering gcm:" + ex.getMessage());
             // If there is an error, don't just keep trying to register.
             // Require the user to click a button again, or perform
