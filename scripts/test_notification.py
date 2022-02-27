@@ -22,7 +22,10 @@
 #     "test_notification.py upcoming_match -h", ...
 
 
-import subprocess, json, random
+import subprocess
+import json
+import random
+import sys
 
 
 # Sends a test push-notification over adb to TBA Android app.
@@ -49,23 +52,6 @@ def notify(message_type, json_data):
     print("\nSending " + message_type + " broadcast")
 
     subprocess.call(["adb", "shell", command])
-
-def get_notification_commands():
-    commands = []
-
-    commands.append('awards_posted_command')
-    commands.append('schedule_updated_command')
-    commands.append('alliance_selection_command')
-    commands.append('event_down_command')
-    commands.append('ping_command')
-    commands.append('level_starting_command')
-    commands.append('broadcast_command')
-    commands.append('match_score_command')
-    commands.append('upcoming_match_command')
-    commands.append('team_match_video_command')
-    commands.append('event_match_video_command')
-
-    return commands
 
 
 # ====== scriptine commands ======
@@ -282,21 +268,30 @@ event_match_video_sample = {
 def event_match_video_command(data=event_match_video_sample):
     notify('event_match_video', data)
 
-def spam_command(count=10):
-    commands = get_notification_commands()
 
-    for command in range(count):
-        globals()[random.choice(commands)]()
-
-
-def all_command():
-    commands = get_notification_commands()
-
-    for command in commands:
-        globals()[command]()
+COMMANDS = {
+    'awards_post': awards_posted_command,
+    'schedule_updated': schedule_updated_command,
+    'alliance_selection': alliance_selection_command,
+    'event_down': event_down_command,
+    'ping': ping_command,
+    'level_starting': level_starting_command,
+    'broadcast': broadcast_command,
+    'match_score': match_score_command,
+    'upcoming_match': upcoming_match_command,
+    'team_match_video': team_match_video_command,
+    'event_match_video': event_match_video_command,
+}
 
 # ====== main ======
 
+def main():
+    cmd = sys.argv[1]
+    if cmd in COMMANDS:
+        COMMANDS[cmd]()
+    else:
+        print(f"Unkown command {cmd}")
+        sys.exit(1)
+
 if __name__ == '__main__':
-    import scriptine
-    scriptine.run()
+    main()
