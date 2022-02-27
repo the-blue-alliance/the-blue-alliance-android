@@ -18,9 +18,11 @@ import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class DistrictEventsFragment extends RecyclerViewFragment<List<Event>,
         EventListSubscriber, DistrictEventsBinder> {
 
@@ -45,11 +47,6 @@ public class DistrictEventsFragment extends RecyclerViewFragment<List<Event>,
         mKey = key;
         super.onCreate(savedInstanceState);
         mSubscriber.setRenderMode(EventListSubscriber.MODE_DISTRICT);
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

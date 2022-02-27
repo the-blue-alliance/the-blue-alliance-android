@@ -18,8 +18,10 @@ import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class EventInfoFragment
   extends DatafeedFragment<Event, EventInfoBinder.Model, EventInfoSubscriber, EventInfoBinder> {
 
@@ -69,11 +71,6 @@ public class EventInfoFragment
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(mBinder);
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

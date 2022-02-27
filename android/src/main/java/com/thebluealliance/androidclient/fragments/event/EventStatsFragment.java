@@ -33,6 +33,7 @@ import com.thebluealliance.androidclient.views.NoDataView;
 import java.util.Arrays;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
 /**
@@ -42,6 +43,7 @@ import rx.Observable;
  * @author Bryce Matsuda
  * @author Nathan Walters
  */
+@AndroidEntryPoint
 public class EventStatsFragment
   extends DatafeedFragment<StatsListSubscriber.Model, List<ListItem>, StatsListSubscriber, StatsListBinder> {
 
@@ -188,11 +190,6 @@ public class EventStatsFragment
             mRadioState = new SparseArray<>();
             mRadioGroup.saveHierarchyState(mRadioState);
         }
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

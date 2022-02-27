@@ -2,21 +2,21 @@ package com.thebluealliance.androidclient.fragments.mytba;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceGroup;
-import android.preference.PreferenceScreen;
 import android.view.View;
 import android.widget.ListView;
 
+import androidx.annotation.Nullable;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroup;
+import androidx.preference.PreferenceScreen;
+
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.background.mytba.CreateSubscriptionPanel;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -28,7 +28,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-public class MyTBASettingsFragment extends PreferenceFragment {
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
+public class MyTBASettingsFragment extends PreferenceFragmentCompat {
 
     public static final String MODEL_KEY = "model_key";
     public static final String MODEL_TYPE = "model_type";
@@ -55,6 +58,11 @@ public class MyTBASettingsFragment extends PreferenceFragment {
     }
 
     @Override
+    public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
+
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (activity instanceof LoadModelSettingsCallback) {
@@ -68,14 +76,6 @@ public class MyTBASettingsFragment extends PreferenceFragment {
         if (getArguments() == null || !getArguments().containsKey(MODEL_KEY)) {
             throw new IllegalArgumentException("MyTBASettingsFragment must be constructed with a model key");
         }
-        TbaAndroid application = (TbaAndroid) getActivity().getApplication();
-        DaggerMyTbaComponent.builder()
-                .tBAAndroidModule(application.getModule())
-                .accountModule(application.getAccountModule())
-                .authModule(application.getAuthModule())
-                .applicationComponent(application.getComponent())
-                .build()
-                .inject(this);
         modelKey = getArguments().getString(MODEL_KEY);
         modelType = ModelHelper.getModelFromEnum(getArguments().getInt(MODEL_TYPE));
         savedStateBundle = getArguments().getBundle(SAVED_STATE_BUNDLE);
@@ -86,7 +86,7 @@ public class MyTBASettingsFragment extends PreferenceFragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Create the preference screen that will hold all the preferences
-        PreferenceScreen p = getPreferenceManager().createPreferenceScreen(getActivity());
+        androidx.preference.PreferenceScreen p = getPreferenceManager().createPreferenceScreen(getActivity());
         this.setPreferenceScreen(p);
 
         // Create the list of preferences

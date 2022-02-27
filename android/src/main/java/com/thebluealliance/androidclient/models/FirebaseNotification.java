@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -35,15 +36,17 @@ public class FirebaseNotification {
     @JsonIgnore private String jsonString;
     @JsonIgnore private BaseNotification notification;
     @JsonIgnore private static final DateFormat DATE_FORMAT;
+    @JsonIgnore private final Gson gson;
 
     static {
         DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    public FirebaseNotification() {
+    public FirebaseNotification(Gson gson) {
         jsonString = "";
         notification = null;
+        this.gson = gson;
     }
 
     public Map<String, Object> getPayload() {
@@ -85,13 +88,14 @@ public class FirebaseNotification {
                 notification = new ScoreNotification(
                         messageData,
                         writer.getMatchWriter().get(),
-                        matchRenderer);
+                        matchRenderer,
+                        this.gson);
                 break;
             case NotificationTypes.UPCOMING_MATCH:
-                notification = new UpcomingMatchNotification(messageData);
+                notification = new UpcomingMatchNotification(messageData, this.gson);
                 break;
             case NotificationTypes.ALLIANCE_SELECTION:
-                notification = new AllianceSelectionNotification(messageData, writer.getEventWriter().get());
+                notification = new AllianceSelectionNotification(messageData, writer.getEventWriter().get(), this.gson);
                 break;
             case NotificationTypes.LEVEL_STARTING:
                 notification = new CompLevelStartingNotification(messageData);
@@ -100,7 +104,7 @@ public class FirebaseNotification {
                 notification = new ScheduleUpdatedNotification(messageData);
                 break;
             case NotificationTypes.AWARDS:
-                notification = new AwardsPostedNotification(messageData, writer.getAwardListWriter().get());
+                notification = new AwardsPostedNotification(messageData, writer.getAwardListWriter().get(), this.gson);
                 break;
             case NotificationTypes.DISTRICT_POINTS_UPDATED:
                 notification = new DistrictPointsUpdatedNotification(messageData);

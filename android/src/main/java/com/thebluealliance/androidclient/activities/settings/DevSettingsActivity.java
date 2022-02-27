@@ -17,7 +17,7 @@ import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFireba
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
-import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
+import com.thebluealliance.androidclient.mytba.MyTbaRegistrationWorker;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 
 import java.io.IOException;
@@ -26,8 +26,13 @@ import javax.inject.Inject;
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.Cache;
 
+@AndroidEntryPoint
 public class DevSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +48,7 @@ public class DevSettingsActivity extends AppCompatActivity {
                 .commit();
     }
 
+    @AndroidEntryPoint
     public static class DevSettingsFragment extends PreferenceFragmentCompat {
 
         @Inject AppConfig mConfig;
@@ -56,7 +62,6 @@ public class DevSettingsActivity extends AppCompatActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            ((TbaAndroid)(getActivity().getApplication())).getDatafeedComponenet().inject(this);
             addPreferencesFromResource(R.xml.dev_preferences);
 
             Preference analyticsDryRun = findPreference("analytics_dry_run");
@@ -147,8 +152,8 @@ public class DevSettingsActivity extends AppCompatActivity {
             Preference gcmRegister = findPreference("gcm_register");
             if (gcmRegister != null) {
                 gcmRegister.setOnPreferenceClickListener((preference) -> {
-                    getActivity().startService(new Intent(getActivity(),
-                            MyTbaRegistrationService.class));
+                    WorkManager.getInstance(getActivity())
+                            .enqueue(new OneTimeWorkRequest.Builder(MyTbaRegistrationWorker.class).build());
                     return false;
                 });
             }

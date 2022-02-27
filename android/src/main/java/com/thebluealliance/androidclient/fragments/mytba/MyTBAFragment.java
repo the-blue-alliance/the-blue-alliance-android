@@ -17,30 +17,19 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
 import com.thebluealliance.androidclient.adapters.MyTBAFragmentPagerAdapter;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MyTBAFragment extends Fragment {
 
     private ViewPager mViewPager;
     private SlidingTabs mTabs;
 
     @Inject AccountController mAccountController;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        TbaAndroid application = (TbaAndroid) getActivity().getApplication();
-        DaggerMyTbaComponent.builder()
-                .tBAAndroidModule(application.getModule())
-                .accountModule(application.getAccountModule())
-                .authModule(application.getAuthModule())
-                .applicationComponent(application.getComponent())
-                .build()
-                .inject(this);
-    }
 
     @Override
     public void onResume() {

@@ -11,8 +11,10 @@ import com.thebluealliance.androidclient.subscribers.DistrictRankingsSubscriber;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class DistrictRankingsFragment
   extends ListViewFragment<List<DistrictRanking>, DistrictRankingsSubscriber> {
 
@@ -39,11 +41,6 @@ public class DistrictRankingsFragment
         }
         mDistrictKey = key;
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

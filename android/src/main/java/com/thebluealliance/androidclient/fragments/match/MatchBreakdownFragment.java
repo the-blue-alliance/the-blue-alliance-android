@@ -15,8 +15,10 @@ import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.MatchBreakdownSubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class MatchBreakdownFragment extends DatafeedFragment<Match, MatchBreakdownBinder.Model,
         MatchBreakdownSubscriber, MatchBreakdownBinder> {
 
@@ -49,11 +51,6 @@ public class MatchBreakdownFragment extends DatafeedFragment<Match, MatchBreakdo
         mBinder.setRootView(view);
         mBinder.setNoDataView((NoDataView) view.findViewById(R.id.no_data));
         return view;
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

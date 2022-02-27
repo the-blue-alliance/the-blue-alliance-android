@@ -13,8 +13,10 @@ import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamAtDistrictBreakdownSubscriber;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class TeamAtDistrictBreakdownFragment
   extends ExpandableListViewFragment<DistrictRanking, TeamAtDistrictBreakdownSubscriber> {
 
@@ -50,11 +52,6 @@ public class TeamAtDistrictBreakdownFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

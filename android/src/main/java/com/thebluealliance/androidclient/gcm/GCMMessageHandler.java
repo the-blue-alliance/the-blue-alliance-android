@@ -6,13 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.config.AppConfig;
@@ -23,7 +21,6 @@ import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
-import com.thebluealliance.androidclient.di.components.DaggerNotificationComponent;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
 import com.thebluealliance.androidclient.gcm.notifications.AwardsPostedNotification;
@@ -44,10 +41,10 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
-import com.thebluealliance.androidclient.mytba.MyTbaRegistrationService;
+import com.thebluealliance.androidclient.mytba.MyTbaRegistrationWorker;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
-import com.thebluealliance.androidclient.renderers.RendererModule;
+
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -59,48 +56,27 @@ import javax.inject.Inject;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class GCMMessageHandler extends FirebaseMessagingService implements FollowsChecker {
 
     public static final String GROUP_KEY = "tba-android";
     public static final int JOB_ID = 254;
 
-    @Inject
-    MyTbaDatafeed mMyTbaDatafeed;
-    @Inject
-    DatabaseWriter mWriter;
-    @Inject
-    SharedPreferences mPrefs;
-    @Inject
-    EventBus mEventBus;
-    @Inject
-    TBAStatusController mStatusController;
-    @Inject
-    MatchRenderer mMatchRenderer;
-    @Inject
-    Database mDb;
-    @Inject
-    AccountController mAccountController;
-    @Inject
-    AppConfig mAppConfig;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        inject();
-    }
-
-    protected void inject() {
-        TbaAndroid application = ((TbaAndroid) getApplication());
-        DaggerNotificationComponent.builder()
-                .applicationComponent(application.getComponent())
-                .datafeedModule(application.getDatafeedModule())
-                .rendererModule(new RendererModule())
-                .authModule(application.getAuthModule())
-                .gcmModule(application.getGcmModule())
-                .build()
-                .inject(this);
-    }
+    @Inject MyTbaDatafeed mMyTbaDatafeed;
+    @Inject DatabaseWriter mWriter;
+    @Inject SharedPreferences mPrefs;
+    @Inject EventBus mEventBus;
+    @Inject TBAStatusController mStatusController;
+    @Inject MatchRenderer mMatchRenderer;
+    @Inject Database mDb;
+    @Inject AccountController mAccountController;
+    @Inject AppConfig mAppConfig;
+    @Inject Gson mGson;
 
     @Override
     public boolean followsTeam(Context context, String teamNumber, String matchKey,
@@ -123,13 +99,8 @@ public class GCMMessageHandler extends FirebaseMessagingService implements Follo
     @Override
     public void onNewToken(@NonNull String s) {
         // Kick off the registration service
-        Context context = getApplicationContext();
-        Intent registerIntent = new Intent(context, MyTbaRegistrationService.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(registerIntent);
-        } else {
-            context.startService(registerIntent);
-        }
+        WorkManager.getInstance(getApplicationContext())
+                .enqueue(new OneTimeWorkRequest.Builder(MyTbaRegistrationWorker.class).build());
     }
 
     @Override
@@ -175,13 +146,13 @@ public class GCMMessageHandler extends FirebaseMessagingService implements Follo
                 break;
             case NotificationTypes.MATCH_SCORE:
             case "score":
-                notification = new ScoreNotification(messageData, mWriter.getMatchWriter().get(), mMatchRenderer);
+                notification = new ScoreNotification(messageData, mWriter.getMatchWriter().get(), mMatchRenderer, mGson);
                 break;
             case NotificationTypes.UPCOMING_MATCH:
-                notification = new UpcomingMatchNotification(messageData);
+                notification = new UpcomingMatchNotification(messageData, mGson);
                 break;
             case NotificationTypes.ALLIANCE_SELECTION:
-                notification = new AllianceSelectionNotification(messageData, mWriter.getEventWriter().get());
+                notification = new AllianceSelectionNotification(messageData, mWriter.getEventWriter().get(), mGson);
                 break;
             case NotificationTypes.LEVEL_STARTING:
                 notification = new CompLevelStartingNotification(messageData);
@@ -190,16 +161,16 @@ public class GCMMessageHandler extends FirebaseMessagingService implements Follo
                 notification = new ScheduleUpdatedNotification(messageData);
                 break;
             case NotificationTypes.AWARDS:
-                notification = new AwardsPostedNotification(messageData, mWriter.getAwardListWriter().get());
+                notification = new AwardsPostedNotification(messageData, mWriter.getAwardListWriter().get(), mGson);
                 break;
             case NotificationTypes.DISTRICT_POINTS_UPDATED:
                 notification = new DistrictPointsUpdatedNotification(messageData);
                 break;
             case NotificationTypes.TEAM_MATCH_VIDEO:
-                notification = new TeamMatchVideoNotification(messageData, mWriter.getMatchWriter().get());
+                notification = new TeamMatchVideoNotification(messageData, mWriter.getMatchWriter().get(), mGson);
                 break;
             case NotificationTypes.EVENT_MATCH_VIDEO:
-                notification = new EventMatchVideoNotification(messageData);
+                notification = new EventMatchVideoNotification(messageData, mGson);
                 break;
             case NotificationTypes.EVENT_DOWN:
                 notification = new EventDownNotification(messageData);

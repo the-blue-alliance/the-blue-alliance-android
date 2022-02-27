@@ -15,15 +15,14 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.components.SingletonComponent;
+import dagger.hilt.migration.DisableInstallInCheck;
 
+@InstallIn(SingletonComponent.class)
 @Module(includes = AccountModule.class)
 public class AuthModule {
-
-    private final Context mContext;
-
-    public AuthModule(Context context) {
-        mContext = context;
-    }
 
     @Provides @Singleton @Nullable
     public FirebaseAuth provideFirebaseAuth() {
@@ -39,8 +38,8 @@ public class AuthModule {
     }
 
     @Provides
-    public GoogleAuthProvider provideGoogleAuthProvider(AccountController accountController) {
-        return new GoogleAuthProvider(mContext, accountController);
+    public GoogleAuthProvider provideGoogleAuthProvider(@ApplicationContext Context context, AccountController accountController) {
+        return new GoogleAuthProvider(context, accountController);
     }
 
     @Provides @Named("firebase_auth")

@@ -25,6 +25,9 @@ import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MoreSearchResultsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final int TEAM_RESULTS = 1;
@@ -53,8 +56,6 @@ public class MoreSearchResultsActivity extends AppCompatActivity implements Load
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
-
-        ((TbaAndroid)getApplication()).getDbComponent().inject(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));

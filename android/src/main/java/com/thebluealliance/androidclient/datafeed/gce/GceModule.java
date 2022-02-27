@@ -27,13 +27,18 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.components.SingletonComponent;
+import dagger.hilt.migration.DisableInstallInCheck;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 
 /**
  * Dagger Module for Google Cloud Endpoints and their related things
  */
-@Module(includes = {HttpModule.class, AccountModule.class, GcmModule.class, AuthModule.class})
+@InstallIn(SingletonComponent.class)
+@Module
 public class GceModule {
 
     // Format with app engine project ID
@@ -94,7 +99,7 @@ public class GceModule {
     }
 
     @Provides @Singleton MyTbaDatafeed provideMyTbaDatafeed(
-            Context context,
+            @ApplicationContext Context context,
             GceAuthController authController,
             GcmController gcmController,
             Tbamobile tbamobile,

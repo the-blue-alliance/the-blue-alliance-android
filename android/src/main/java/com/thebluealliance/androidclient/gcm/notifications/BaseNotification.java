@@ -13,10 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.gcm.FollowsChecker;
 import com.thebluealliance.androidclient.gcm.GCMMessageHandler;
 import com.thebluealliance.androidclient.helpers.EventHelper;
@@ -37,7 +35,6 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
 
     String messageData;
     String messageType;
-    Gson gson;
     protected boolean display;
     StoredNotification stored;
     protected Date notificationTime;
@@ -48,7 +45,6 @@ public abstract class BaseNotification<VIEWMODEL> extends ListElement implements
     public BaseNotification(String messageType, String messageData) {
         this.messageType = messageType;
         this.messageData = messageData;
-        this.gson = HttpModule.getGson();
         this.display = true;
         this.stored = null;
 

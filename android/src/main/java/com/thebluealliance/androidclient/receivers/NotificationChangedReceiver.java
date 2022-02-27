@@ -12,6 +12,8 @@ import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Android is predictably stupid when it comes to handling notifications. Specifically, clicking
  * a notification with setAutoCancel() set to true won't trigger the delete intent of the
@@ -22,6 +24,7 @@ import javax.inject.Inject;
  * Depending on the action specified in the broadcast intent, this may launch an activity specified
  * in the intent's extras. However, it will always mark all notifications as not active.
  */
+@AndroidEntryPoint
 public class NotificationChangedReceiver extends BroadcastReceiver {
 
     public static final String ACTION_NOTIFICATION_CLICKED = "com.thebluealliance.androidclient.intent.action.NOTIFICATION_CLICKED";
@@ -40,7 +43,6 @@ public class NotificationChangedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         TbaLogger.i("Notification changed receiver: " + intent);
-        ((TbaAndroid) context.getApplicationContext()).getDbComponent().inject(this);
 
         Bundle extras = intent.getExtras();
         if (ACTION_NOTIFICATION_CLICKED.equals(intent.getAction())) {

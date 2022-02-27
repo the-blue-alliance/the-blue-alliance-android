@@ -68,6 +68,10 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.components.SingletonComponent;
+import dagger.hilt.migration.DisableInstallInCheck;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 
@@ -76,18 +80,13 @@ import static com.thebluealliance.androidclient.datafeed.deserializers.RankingsR
 /**
  * Dagger module that handles OkHttp and Gson
  */
+@InstallIn(SingletonComponent.class)
 @Module(includes = {TBAAndroidModule.class})
 public class HttpModule {
 
     public static int CACHE_SIZE = 10 * 1024 * 1024;
-    private static Gson sGson;
 
     public HttpModule() {}
-
-    @Provides @Singleton
-    public Gson provideGson() {
-        return getGson();
-    }
 
     @Provides @Singleton
     public APIv3RequestInterceptor provideApiRequestInterceptor(SharedPreferences prefs) {
@@ -106,87 +105,7 @@ public class HttpModule {
     }
 
     @Provides @Singleton
-    public Cache provideOkCache(Context context) {
+    public Cache provideOkCache(@ApplicationContext Context context) {
         return new Cache(context.getCacheDir(), CACHE_SIZE);
     }
-
-    @VisibleForTesting
-    public static Gson getGson() {
-        if (sGson != null) return sGson;
-        GsonBuilder builder = new GsonBuilder();
-        AwardDeserializer awardDeserializer = new AwardDeserializer();
-        EventDeserializer eventDeserializer = new EventDeserializer();
-        MatchDeserializer matchDeserializer = new MatchDeserializer();
-        TeamDeserializer teamDeserializer = new TeamDeserializer();
-        MediaDeserializer mediaDeserializer = new MediaDeserializer();
-        DistrictDeserializer districtDeserializer = new DistrictDeserializer();
-        APIStatusDeserializer apiStatusDeserializer = new APIStatusDeserializer();
-        RankingsResponseDeserializer rankingsResponseDeserializer = new RankingsResponseDeserializer();
-        RankingSortOrderDeserializer sortOrderDeserializer = new RankingSortOrderDeserializer();
-        AllianceDeserializer allianceDeserializer = new AllianceDeserializer();
-        AllianceBackupDeserializer backupDeserializer = new AllianceBackupDeserializer();
-        MatchAllianceDeserializer matchAllianceDeserializer = new MatchAllianceDeserializer();
-        MatchVideoDeserializer matchVideoDeserializer = new MatchVideoDeserializer();
-        AwardRecipientDeserializer recipientDeserializer = new AwardRecipientDeserializer();
-        DistrictTeamDeserializer districtTeamDeserializer = new DistrictTeamDeserializer();
-        DistrictEventPointsDeserializer eventPointsDeserializer = new DistrictEventPointsDeserializer();
-        RecordDeserializer recordDeserializer = new RecordDeserializer();
-        TeamAtEventStatusDeserializer teamAtEventStatusDeserializer = new TeamAtEventStatusDeserializer();
-        Playoff playoffStatusDeserializer = new Playoff();
-
-        builder.registerTypeAdapter(IAward.class, awardDeserializer);
-        builder.registerTypeAdapter(Award.class, awardDeserializer);
-        builder.registerTypeAdapter(IAwardRecipient.class, recipientDeserializer);
-        builder.registerTypeAdapter(Award.AwardRecipient.class, recipientDeserializer);
-
-        builder.registerTypeAdapter(IEvent.class, eventDeserializer);
-        builder.registerTypeAdapter(Event.class, eventDeserializer);
-
-        builder.registerTypeAdapter(IMatch.class, matchDeserializer);
-        builder.registerTypeAdapter(Match.class, matchDeserializer);
-
-        builder.registerTypeAdapter(ITeam.class, teamDeserializer);
-        builder.registerTypeAdapter(Team.class, teamDeserializer);
-
-        builder.registerTypeAdapter(IMedia.class, mediaDeserializer);
-        builder.registerTypeAdapter(Media.class, mediaDeserializer);
-
-        builder.registerTypeAdapter(IApiStatus.class, apiStatusDeserializer);
-        builder.registerTypeAdapter(ApiStatus.class, apiStatusDeserializer);
-
-        builder.registerTypeAdapter(IRankingResponseObject.class, rankingsResponseDeserializer);
-        builder.registerTypeAdapter(RankingResponseObject.class, rankingsResponseDeserializer);
-        builder.registerTypeAdapter(RankingItem.class, new RankingItemDeserializer());
-        builder.registerTypeAdapter(RankingItem.TeamRecord.class, recordDeserializer);
-        builder.registerTypeAdapter(ITeamRecord.class, recordDeserializer);
-        builder.registerTypeAdapter(IRankingSortOrder.class, sortOrderDeserializer);
-        builder.registerTypeAdapter(RankingSortOrder.class, sortOrderDeserializer);
-
-        builder.registerTypeAdapter(IEventAlliance.class, allianceDeserializer);
-        builder.registerTypeAdapter(EventAlliance.class, allianceDeserializer);
-
-        builder.registerTypeAdapter(IMatchAlliancesContainer.class, matchAllianceDeserializer);
-        builder.registerTypeAdapter(MatchAlliancesContainer.class, matchAllianceDeserializer);
-        builder.registerTypeAdapter(IAllianceBackup.class, backupDeserializer);
-        builder.registerTypeAdapter(EventAlliance.AllianceBackup.class, backupDeserializer);
-
-        builder.registerTypeAdapter(IMatchVideo.class, matchVideoDeserializer);
-        builder.registerTypeAdapter(Match.MatchVideo.class, matchVideoDeserializer);
-
-        builder.registerTypeAdapter(District.class, districtDeserializer);
-        builder.registerTypeAdapter(IDistrict.class, districtDeserializer);
-        builder.registerTypeAdapter(IDistrictRanking.class, districtTeamDeserializer);
-        builder.registerTypeAdapter(DistrictRanking.class, districtTeamDeserializer);
-        builder.registerTypeAdapter(IDistrictEventPoints.class, eventPointsDeserializer);
-        builder.registerTypeAdapter(DistrictPointBreakdown.class, eventPointsDeserializer);
-
-        builder.registerTypeAdapter(ITeamAtEventStatus.class, teamAtEventStatusDeserializer);
-        builder.registerTypeAdapter(TeamAtEventStatus.class, teamAtEventStatusDeserializer);
-        builder.registerTypeAdapter(ITeamAtEventPlayoff.class, playoffStatusDeserializer);
-        builder.registerTypeAdapter(TeamAtEventPlayoff.class, playoffStatusDeserializer);
-
-        sGson = builder.create();
-        return sGson;
-    }
-
 }

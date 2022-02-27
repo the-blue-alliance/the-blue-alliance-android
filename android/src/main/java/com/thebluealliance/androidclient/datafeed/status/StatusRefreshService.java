@@ -5,13 +5,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.api.rx.TbaApiV3;
 import com.thebluealliance.androidclient.config.AppConfig;
-import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
-import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;
 import com.thebluealliance.androidclient.models.ApiStatus;
@@ -26,6 +23,8 @@ import javax.inject.Named;
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 import androidx.core.app.JobIntentService;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
 import rx.schedulers.Schedulers;
@@ -33,6 +32,7 @@ import rx.schedulers.Schedulers;
 /**
  * Service to hit the TBA Status endpoint and store the result in SharedPreferences
  */
+@AndroidEntryPoint
 public class StatusRefreshService extends JobIntentService {
 
     public static final int JOB_ID = 148;
@@ -48,12 +48,6 @@ public class StatusRefreshService extends JobIntentService {
     OkHttpClient mHttpClient;
     @Inject
     AppConfig mAppConfig;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        getComponenet().inject(this);
-    }
 
     public static void enqueueWork(Context context) {
         enqueueWork(context, StatusRefreshService.class, JOB_ID, new Intent(context, StatusRefreshService.class));
@@ -109,14 +103,5 @@ public class StatusRefreshService extends JobIntentService {
             startActivity(new Intent(this, UpdateRequiredActivity.class));
         }
 
-    }
-
-    private DatafeedComponent getComponenet() {
-        TbaAndroid application = ((TbaAndroid) getApplication());
-        return DaggerDatafeedComponent.builder()
-                .applicationComponent(application.getComponent())
-                .datafeedModule(application.getDatafeedModule())
-                .httpModule(application.getHttpModule())
-                .build();
     }
 }

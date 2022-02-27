@@ -4,6 +4,9 @@ import android.os.Bundle;
 
 import com.thebluealliance.androidclient.fragments.FirebaseTickerFragment;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class EventTickerFragment extends FirebaseTickerFragment {
 
     private static final String KEY = "event_key";
@@ -29,11 +32,6 @@ public class EventTickerFragment extends FirebaseTickerFragment {
         }
 
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

@@ -14,18 +14,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class RecreateSearchIndexes extends IntentService {
     // TODO: Rename actions, choose action names that describe tasks that this
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_RECREATE_SEARCH = "com.thebluealliance.androidclient.background.action.RECREATE_SEARCH";
 
     @Inject Database mDb;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        ((TbaAndroid)getApplication()).getDbComponent().inject(this);
-    }
 
     /**
      * Starts this service to perform action Foo with the given parameters. If the service is

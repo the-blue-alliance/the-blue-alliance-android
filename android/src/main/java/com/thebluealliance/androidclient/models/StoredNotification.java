@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.models;
 import android.content.ContentValues;
 import androidx.annotation.Nullable;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.gcm.notifications.AllianceSelectionNotification;
@@ -127,18 +128,18 @@ public class StoredNotification {
      * {@link BaseNotification#getView(android.content.Context, android.view.LayoutInflater, android.view.View)}
      * @return Appropriate BaseNotification
      */
-    public @Nullable BaseNotification getNotification(DatabaseWriter writer, MatchRenderer matchRenderer) {
+    public @Nullable BaseNotification getNotification(DatabaseWriter writer, MatchRenderer matchRenderer, Gson gson) {
         BaseNotification notification;
         String data = getMessageData();
         switch (getType()) {
             case NotificationTypes.MATCH_SCORE:
-                notification = new ScoreNotification(data, writer.getMatchWriter().get(), matchRenderer);
+                notification = new ScoreNotification(data, writer.getMatchWriter().get(), matchRenderer, gson);
                 break;
             case NotificationTypes.UPCOMING_MATCH:
-                notification = new UpcomingMatchNotification(data);
+                notification = new UpcomingMatchNotification(data, gson);
                 break;
             case NotificationTypes.ALLIANCE_SELECTION:
-                notification = new AllianceSelectionNotification(data, writer.getEventWriter().get());
+                notification = new AllianceSelectionNotification(data, writer.getEventWriter().get(), gson);
                 break;
             case NotificationTypes.LEVEL_STARTING:
                 notification = new CompLevelStartingNotification(data);
@@ -147,7 +148,7 @@ public class StoredNotification {
                 notification = new ScheduleUpdatedNotification(data);
                 break;
             case NotificationTypes.AWARDS:
-                notification = new AwardsPostedNotification(data, writer.getAwardListWriter().get());
+                notification = new AwardsPostedNotification(data, writer.getAwardListWriter().get(), gson);
                 break;
             case NotificationTypes.DISTRICT_POINTS_UPDATED:
                 notification = new DistrictPointsUpdatedNotification(data);

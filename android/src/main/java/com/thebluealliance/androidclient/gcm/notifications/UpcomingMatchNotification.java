@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.common.base.Predicate;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -45,14 +46,16 @@ import java.util.List;
 
 public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNotificationViewModel> {
 
+    private final Gson mGson;
     private String eventName, eventKey, matchKey;
     private String[] redTeams, blueTeams;
     private JsonElement matchTime;
     private JsonArray teamKeys;
     private JsonElement webcast;
 
-    public UpcomingMatchNotification(String messageData) {
+    public UpcomingMatchNotification(String messageData, Gson gson) {
         super("upcoming_match", messageData);
+        mGson = gson;
     }
 
     public String getEventName() {
@@ -106,7 +109,7 @@ public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNot
 
         eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
         teamKeys = jsonData.get("team_keys").getAsJsonArray();
-        ArrayList<String> teamKeyList = gson.fromJson(teamKeys, new TypeToken<List<String>>(){}.getType());
+        ArrayList<String> teamKeyList = mGson.fromJson(teamKeys, new TypeToken<List<String>>(){}.getType());
         int allianceSize = teamKeyList.size() / 2;
         redTeams = new String[allianceSize];
         blueTeams = new String[allianceSize];

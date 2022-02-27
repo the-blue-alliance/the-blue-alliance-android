@@ -42,7 +42,6 @@ import com.thebluealliance.androidclient.adapters.NavigationDrawerAdapter;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.User;
 import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
-import com.thebluealliance.androidclient.di.components.HasMyTbaComponent;
 import com.thebluealliance.androidclient.listitems.DividerListItem;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
@@ -54,6 +53,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -69,6 +69,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  *
  * @author tanis7x
  */
+@AndroidEntryPoint
 public class NavigationDrawerFragment extends Fragment {
     /**
      * Per the design guidelines, you should show the drawer on launch until the user manually
@@ -124,10 +125,6 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Activity activity = getActivity();
-        if (activity instanceof HasMyTbaComponent) {
-            ((HasMyTbaComponent) activity).getMyTbaComponent().inject(this);
-        }
 
         // Read in the flag indicating whether or not the user has demonstrated awareness of the
         // drawer. See PREF_USER_LEARNED_DRAWER for details.

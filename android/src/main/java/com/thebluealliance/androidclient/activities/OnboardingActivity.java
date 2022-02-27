@@ -21,17 +21,12 @@ import butterknife.Unbinder;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
-import com.thebluealliance.androidclient.di.components.DaggerAuthComponent;
-import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
-import com.thebluealliance.androidclient.di.components.DatafeedComponent;
-import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
@@ -42,18 +37,18 @@ import javax.inject.Named;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.hilt.android.AndroidEntryPoint;
 
+@AndroidEntryPoint
 public class OnboardingActivity extends AppCompatActivity
   implements LoadTBAData.LoadTBADataCallbacks,
-  MyTBAOnboardingViewPager.Callbacks, HasDatafeedComponent {
+  MyTBAOnboardingViewPager.Callbacks {
 
     private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";
     private static final String LOADING_COMPLETE = "loading_complete";
     private static final String MYTBA_LOGIN_COMPLETE = "mytba_login_complete";
     private static final String LOAD_FRAGMENT_TAG = "loadFragment";
     private static final int SIGNIN_CODE = 254;
-
-    private DatafeedComponent mComponent;
 
     @BindView(R.id.view_pager)
     DisableSwipeViewPager viewPager;
@@ -85,12 +80,6 @@ public class OnboardingActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TbaAndroid application = (TbaAndroid) getApplication();
-        DaggerAuthComponent.builder()
-                .accountModule(application.getAccountModule())
-                .authModule(application.getAuthModule())
-                .build()
-                .inject(this);
         setContentView(R.layout.activity_onboarding);
         unbinder = ButterKnife.bind(this);
 
@@ -413,16 +402,5 @@ public class OnboardingActivity extends AppCompatActivity
             Toast.makeText(this, R.string.mytba_no_signin_intent, Toast.LENGTH_SHORT).show();
             TbaLogger.e("Unable to get login Intent");
         }
-    }
-
-    public DatafeedComponent getComponent() {
-        if (mComponent == null) {
-            TbaAndroid application = ((TbaAndroid) getApplication());
-            mComponent = DaggerDatafeedComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .build();
-        }
-        return mComponent;
     }
 }

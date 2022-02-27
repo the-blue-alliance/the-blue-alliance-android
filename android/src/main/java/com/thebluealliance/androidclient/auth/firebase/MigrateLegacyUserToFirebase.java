@@ -3,16 +3,16 @@ package com.thebluealliance.androidclient.auth.firebase;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.User;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
-import com.thebluealliance.androidclient.di.components.MyTbaComponent;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MigrateLegacyUserToFirebase extends IntentService {
 
     @Inject @Named("firebase_auth") AuthProvider mAuthProvider;
@@ -25,12 +25,6 @@ public class MigrateLegacyUserToFirebase extends IntentService {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        getComponenet().inject(this);
-    }
-
-    @Override
     protected void onHandleIntent(Intent intent) {
         TbaLogger.i("Trying to migrate legacy auth to Firebase");
         User user = mAuthProvider.signInLegacyUser().toBlocking().firstOrDefault(null);
@@ -40,15 +34,5 @@ public class MigrateLegacyUserToFirebase extends IntentService {
         } else {
             TbaLogger.i("Failed to migrate");
         }
-    }
-
-    private MyTbaComponent getComponenet() {
-        TbaAndroid application = ((TbaAndroid) getApplication());
-        return DaggerMyTbaComponent.builder()
-                                   .applicationComponent(application.getComponent())
-                                   .gceModule(application.getGceModule())
-                                   .authModule(application.getAuthModule())
-                                   .gcmModule(application.getGcmModule())
-                                   .build();
     }
 }

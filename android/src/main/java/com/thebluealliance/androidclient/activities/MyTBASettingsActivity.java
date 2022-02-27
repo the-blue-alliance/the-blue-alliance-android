@@ -29,10 +29,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
 import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
 import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
@@ -41,10 +39,12 @@ import com.thebluealliance.androidclient.types.ModelType;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Activity which hosts a FAB that opens a myTBA model settings panel.
  */
-
+@AndroidEntryPoint
 public abstract class MyTBASettingsActivity extends DatafeedActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
     private static final String SETTINGS_PANEL_OPEN = "settings_panel_open";
@@ -91,15 +91,6 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TbaAndroid application = (TbaAndroid) getApplication();
-        DaggerMyTbaComponent.builder()
-                .tBAAndroidModule(application.getModule())
-                .accountModule(application.getAccountModule())
-                .authModule(application.getAuthModule())
-                .applicationComponent(application.getComponent())
-                .build()
-                .inject(this);
-
         super.setContentView(R.layout.activity_mytba_settings);
 
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator);
@@ -156,7 +147,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         super.setModelKey(key, modelType);
         // Now that we have a model key, we can create a settings fragment for the appropriate model type
         mSettingsFragment = MyTBASettingsFragment.newInstance(modelKey, modelType, savedPreferenceState);
-        getFragmentManager().beginTransaction().replace(R.id.settings_list, mSettingsFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.settings_list, mSettingsFragment).commit();
 
         // Disable the submit settings button so we can't hit it before the content is loaded
         // This prevents accidentally wiping settings (see #317)

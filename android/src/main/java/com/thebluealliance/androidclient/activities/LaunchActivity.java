@@ -21,16 +21,16 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.background.RecreateSearchIndexes;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
-import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
-import com.thebluealliance.androidclient.di.components.DatafeedComponent;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.Cache;
 
+@AndroidEntryPoint
 public class LaunchActivity extends AppCompatActivity {
 
     @Inject TBAStatusController mStatusController;
@@ -39,7 +39,6 @@ public class LaunchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getComponenet().inject(this);
 
         // Create intent to launch data download activity
         Intent redownloadIntent = new Intent(this, RedownloadActivity.class);
@@ -226,13 +225,5 @@ public class LaunchActivity extends AppCompatActivity {
 
         // Default to kicking the user to the events list if none of the URIs match
         goToHome();
-    }
-
-    private DatafeedComponent getComponenet() {
-        TbaAndroid application = ((TbaAndroid) getApplication());
-        return DaggerDatafeedComponent.builder()
-          .applicationComponent(application.getComponent())
-          .datafeedModule(application.getDatafeedModule())
-          .build();
     }
 }

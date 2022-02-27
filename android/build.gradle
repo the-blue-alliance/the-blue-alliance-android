@@ -258,6 +258,8 @@ dependencies {
     implementation "com.google.dagger:hilt-android:${daggerVersion}"
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
     annotationProcessor "com.google.dagger:hilt-compiler:${daggerVersion}"
+    implementation 'androidx.hilt:hilt-work:1.0.0'
+    annotationProcessor 'androidx.hilt:hilt-compiler:1.0.0'
 
     // Other third party libraries
     implementation "com.google.code.gson:gson:${gsonVersion}"

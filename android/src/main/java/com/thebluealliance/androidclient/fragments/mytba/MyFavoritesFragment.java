@@ -11,19 +11,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class MyFavoritesFragment extends ListViewFragment<List<Favorite>, FavoriteListSubscriber> {
 
     @Inject MyTbaDatafeed mMyTbaDatafeed;
 
     public static MyFavoritesFragment newInstance() {
         return new MyFavoritesFragment();
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

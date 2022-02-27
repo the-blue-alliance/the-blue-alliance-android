@@ -38,9 +38,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class RecentNotificationsFragment
         extends DatafeedFragment<List<StoredNotification>, List<Object>, RecentNotificationsSubscriber, RecentNotificationsListBinder>
         implements RecyclerViewBinder.RecyclerViewAdapterCreatorInitializer {
@@ -122,11 +124,5 @@ public class RecentNotificationsFragment
                 .map(ScoreNotificationViewModel.class, ScoreNotificationItemView.class)
                 .map(ScheduleUpdatedNotificationViewModel.class, ScheduleUpdatedNotificationItemView.class)
                 .map(GenericNotificationViewModel.class, GenericNotificationItemView.class);
-    }
-
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 }

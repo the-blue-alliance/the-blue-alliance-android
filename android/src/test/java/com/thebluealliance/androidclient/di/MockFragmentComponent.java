@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.di;
 
 
 import com.thebluealliance.androidclient.BaseTestActivity;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.fragments.framework.SimpleDatafeedFragment;
 
 import javax.inject.Singleton;

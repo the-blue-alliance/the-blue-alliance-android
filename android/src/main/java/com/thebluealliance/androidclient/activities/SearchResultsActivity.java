@@ -36,6 +36,9 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class SearchResultsActivity extends NavigationDrawerActivity implements SearchView.OnQueryTextListener {
 
     private static final int MAX_RESULTS_PER_CATEGORY = 5;
@@ -53,8 +56,6 @@ public class SearchResultsActivity extends NavigationDrawerActivity implements S
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
-
-        ((TbaAndroid)getApplication()).getDbComponent().inject(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));

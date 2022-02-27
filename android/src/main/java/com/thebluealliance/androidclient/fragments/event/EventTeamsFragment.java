@@ -18,9 +18,11 @@ import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class EventTeamsFragment extends RecyclerViewFragment<List<Team>, TeamListRecyclerSubscriber, RecyclerViewBinder> {
 
     private static final String KEY = "event_key";
@@ -42,11 +44,6 @@ public class EventTeamsFragment extends RecyclerViewFragment<List<Team>, TeamLis
         }
         super.onCreate(savedInstanceState);
         mSubscriber.setRenderMode(Team.RENDER_DETAILS_BUTTON);
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

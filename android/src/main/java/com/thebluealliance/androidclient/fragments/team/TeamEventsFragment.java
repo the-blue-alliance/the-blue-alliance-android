@@ -26,9 +26,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class TeamEventsFragment extends RecyclerViewFragment<List<Event>, EventListSubscriber, RecyclerViewBinder> implements HasYearParam {
     public static final String YEAR = "YEAR";
     public static final String TEAM_KEY = "TEAM_KEY";
@@ -82,11 +84,6 @@ public class TeamEventsFragment extends RecyclerViewFragment<List<Event>, EventL
     @Override
     public int getYear() {
         return mYear;
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

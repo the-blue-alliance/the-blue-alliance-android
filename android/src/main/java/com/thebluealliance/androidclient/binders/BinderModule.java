@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.binders;
 
+import android.content.Context;
 import android.content.res.Resources;
 
 import com.thebluealliance.androidclient.helpers.FragmentBinder;
@@ -14,15 +15,15 @@ import org.greenrobot.eventbus.EventBus;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.components.ActivityComponent;
+import dagger.hilt.android.components.ActivityRetainedComponent;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.migration.DisableInstallInCheck;
 
-@Module(includes = {RendererModule.class, ClickListenerModule.class})
+@InstallIn(ActivityComponent.class)
+@Module
 public class BinderModule {
-
-    private final Resources mResources;
-
-    public BinderModule(Resources resources) {
-        mResources = resources;
-    }
 
     @Provides
     public FragmentBinder provideFragmentBinder() {
@@ -75,8 +76,8 @@ public class BinderModule {
     }
 
     @Provides
-    public DistrictPointsListBinder provideDistrictPointsListBinder() {
-        return new DistrictPointsListBinder(mResources);
+    public DistrictPointsListBinder provideDistrictPointsListBinder(@ApplicationContext Context context) {
+        return new DistrictPointsListBinder(context.getResources());
     }
 
     @Provides
