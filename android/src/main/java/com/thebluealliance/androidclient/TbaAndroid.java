@@ -32,6 +32,9 @@ import javax.inject.Inject;
 
 import static com.thebluealliance.androidclient.gcm.notifications.BaseNotification.NOTIFICATION_CHANNEL;
 
+import dagger.hilt.android.HiltAndroidApp;
+
+@HiltAndroidApp
 public class TbaAndroid extends MultiDexApplication {
 
     @Inject TBAStatusController mStatusController;

@@ -10,6 +10,7 @@ apply plugin: 'checkstyle'
 apply plugin: 'gitsemver'
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.facebook.testing.screenshot'
+apply plugin: 'dagger.hilt.android.plugin'
 
 // dependency checker plugin
 // run ./gradlew dependencyUpdates to generate report
@@ -251,10 +252,12 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
 
-    implementation "com.google.dagger:dagger:${daggerVersion}"
     implementation 'com.google.firebase:firebase-crashlytics:18.2.8'
     implementation 'com.google.firebase:firebase-analytics:20.1.0'
+    implementation "com.google.dagger:dagger:${daggerVersion}"
+    implementation "com.google.dagger:hilt-android:${daggerVersion}"
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+    annotationProcessor "com.google.dagger:hilt-compiler:${daggerVersion}"
 
     // Other third party libraries
     implementation "com.google.code.gson:gson:${gsonVersion}"
