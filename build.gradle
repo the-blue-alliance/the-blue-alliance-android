@@ -56,13 +56,13 @@ allprojects {
         robolectricVersion = '4.7.3'
         permissionDispatcherVersion = '4.9.1'
 
-        travisBuild = System.getenv("TRAVIS") == "true"
+        travisBuild = System.getenv("CI") == "true"
         // allows for -Dpre-dex=false to be set
         preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
     }
 }
 
-if (System.env.TRAVIS == 'true') {
+if (System.env.CI == 'true') {
     allprojects {
         tasks.withType(Test) {
             // containers (currently) have 2 dedicated cores and 4GB of memory
