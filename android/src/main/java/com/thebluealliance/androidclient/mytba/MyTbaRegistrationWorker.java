@@ -1,13 +1,14 @@
 package com.thebluealliance.androidclient.mytba;
 
 import android.content.Context;
-import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.hilt.work.HiltWorker;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
@@ -51,7 +52,8 @@ public class MyTbaRegistrationWorker extends Worker {
             return Result.success();
         }
         try {
-            String regId = mFirebaseMessaging.getToken().getResult();
+            Task<String> tokenTask = mFirebaseMessaging.getToken();
+            String regId = Tasks.await(tokenTask);
 
             TbaLogger.d("Device registered with GCM, ID: " + regId);
 

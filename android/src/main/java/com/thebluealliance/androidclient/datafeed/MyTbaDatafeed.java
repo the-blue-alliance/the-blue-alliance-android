@@ -104,10 +104,12 @@ public class MyTbaDatafeed {
         request.mobile_id = regId;
         request.operating_system = GcmController.OS_ANDROID;
         request.device_uuid = Utilities.getDeviceUUID(mApplicationContext);
+        request.name = android.os.Build.MODEL;
 
         Response<ModelsMobileApiMessagesBaseResponse> response = null;
         try {
              response = mTbaMobile.register(authHeader, request).execute();
+             TbaLogger.d("MyTBA Registration response: " + response);
         } catch (IOException e) {
             e.printStackTrace();
         }
