@@ -10,8 +10,8 @@
 #Thu Oct 22 16:23:52 EDT 2015
 release.key.password=android
 release.key.alias=androiddebugkey
-release.key=/home/runner/work/.android/debug.keystore
+release.key=/home/runner/.android/debug.keystore
 release.key.aliasPass=android
 
 play.release.serviceEmail=foo@bar.com
-play.release.keyFile=/home/runner/work/.android/debug.keystore
+play.release.keyFile=/home/runner/.android/debug.keystore
