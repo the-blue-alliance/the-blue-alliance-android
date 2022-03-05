@@ -1,4 +1,4 @@
-Version 7.0.0:
+Version 7.0.1:
  - Welcome back for the 2022 season!
  - Target Android 12
  - Support 2022 game specifics
