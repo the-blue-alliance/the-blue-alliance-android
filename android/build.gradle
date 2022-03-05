@@ -54,6 +54,7 @@ android {
             debug {
                 applicationIdSuffix ".development"
                 testCoverageEnabled true
+                manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
             }
 
             debugProguard {
@@ -63,6 +64,7 @@ android {
                 zipAlignEnabled true
                 proguardFiles 'proguard-rules.txt'
                 testProguardFile 'proguard-rules.txt'
+                manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
             }
 
             // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
@@ -71,6 +73,7 @@ android {
             debugBlue {
                 signingConfig signingConfigs.debug
                 applicationIdSuffix ".development"
+                manifestPlaceholders = [gcmPermissionRequired: ""]
             }
 
             release {
@@ -78,6 +81,7 @@ android {
                 minifyEnabled true
                 zipAlignEnabled true
                 proguardFiles 'proguard-rules.txt'
+                manifestPlaceholders = [gcmPermissionRequired: "com.google.android.c2dm.permission.SEND"]
             }
         }
     }

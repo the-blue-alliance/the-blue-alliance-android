@@ -215,6 +215,22 @@
             android:name=".receivers.NotificationChangedReceiver"
             android:exported="false" />
 
+        <!--
+             The receiver's android:permission filters Intents by sender permission.
+             ${gcmPermissionRequired} is defined in android/build.gradle so debug builds accept
+             Intents from 'adb shell am broadcast'. See test_notification.py .
+        -->
+        <receiver
+            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+            android:exported="true"
+            android:permission="${gcmPermissionRequired}"
+            tools:replace="android:permission">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.thebluealliance.androidclient" />
+            </intent-filter>
+        </receiver>
+
         <service
             android:name=".gcm.GCMMessageHandler"
             android:exported="false">
