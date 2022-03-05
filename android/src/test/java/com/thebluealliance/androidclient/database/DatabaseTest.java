@@ -9,12 +9,14 @@ import com.thebluealliance.androidclient.database.tables.MatchesTable;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RuntimeEnvironment;
 
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import static com.thebluealliance.androidclient.database.Database.TABLE_API;
@@ -44,7 +46,7 @@ public class DatabaseTest {
 
     @Before
     public void setUp() {
-        mDbHelper = Database.getInstance(RuntimeEnvironment.application);
+        mDbHelper = Database.getInstance(ApplicationProvider.getApplicationContext(), TBAAndroidModule.getGson());
         mDb = SQLiteDatabase.create(null);
     }
 

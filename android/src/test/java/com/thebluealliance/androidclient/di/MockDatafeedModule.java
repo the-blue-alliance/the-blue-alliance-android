@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.api.rx.TbaApiV3;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
+import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.retrofit.FirebaseAPI;
@@ -25,6 +26,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.components.SingletonComponent;
+import dagger.hilt.testing.TestInstallIn;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -32,7 +35,8 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 
 import static org.mockito.Mockito.when;
 
-@Module(includes = MockTbaAndroidModule.class)
+@TestInstallIn(components = SingletonComponent.class, replaces = {DatafeedModule.class, HttpModule.class})
+@Module
 public class MockDatafeedModule {
     @Provides @Singleton @Named("tba_retrofit")
     public Retrofit provideTBARetrofit(
@@ -99,12 +103,6 @@ public class MockDatafeedModule {
     public FirebaseAPI provideFirebaseAPI(@Named("firebase_retrofit") Retrofit retrofit) {
         return Mockito.mock(FirebaseAPI.class);
     }
-
-    @Provides @Singleton
-    public Gson provideGson() {
-        return HttpModule.getGson();
-    }
-
 
     @Provides @Singleton
     public Cache provideOkCache(Context context) {

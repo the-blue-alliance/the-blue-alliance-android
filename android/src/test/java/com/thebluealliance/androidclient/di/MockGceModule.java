@@ -7,6 +7,7 @@ import com.appspot.tbatv_prod_hrd.Tbamobile;
 import com.appspot.tbatv_prod_hrd.TeamMedia;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.datafeed.gce.GceAuthController;
+import com.thebluealliance.androidclient.datafeed.gce.GceModule;
 import com.thebluealliance.androidclient.datafeed.gce.TbaSuggestionController;
 
 import org.mockito.Mockito;
@@ -15,8 +16,11 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.components.SingletonComponent;
+import dagger.hilt.testing.TestInstallIn;
 
-@Module()
+@TestInstallIn(components = SingletonComponent.class, replaces = GceModule.class)
+@Module
 public class MockGceModule {
 
     @Provides

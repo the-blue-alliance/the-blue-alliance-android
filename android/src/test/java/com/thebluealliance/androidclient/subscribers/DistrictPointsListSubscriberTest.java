@@ -6,6 +6,7 @@ import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
@@ -42,7 +43,7 @@ public class DistrictPointsListSubscriberTest {
         DatabaseMocker.mockEventsTable(mDb);
         DatabaseMocker.mockTeamsTable(mDb);
         DistrictPointBreakdownRenderer renderer = new DistrictPointBreakdownRenderer();
-        mSubscriber = new DistrictPointsListSubscriber(mDb, HttpModule.getGson(), renderer);
+        mSubscriber = new DistrictPointsListSubscriber(mDb, TBAAndroidModule.getGson(), renderer);
         mPoints = ModelMaker.getModel(JsonObject.class, "2015necmp_points");
     }
 

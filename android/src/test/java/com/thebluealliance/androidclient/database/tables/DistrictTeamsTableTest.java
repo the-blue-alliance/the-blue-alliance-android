@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.database.DbTableTestDriver;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictTeamKey;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import org.junit.Before;
@@ -33,7 +34,7 @@ public class DistrictTeamsTableTest {
     public void setUp() {
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_DISTRICTTEAMS);
-        mGson = HttpModule.getGson();
+        mGson = TBAAndroidModule.getGson();
         mTable = spy(new DistrictTeamsTable(db, mGson));
         AddDistrictTeamKey keyAdder = new AddDistrictTeamKey("2015ne");
         mDistrictTeams = ModelMaker.getModelList(DistrictRanking.class, "2015ne_rankings");

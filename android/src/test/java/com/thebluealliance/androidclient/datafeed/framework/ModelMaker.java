@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.datafeed.framework;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -54,7 +55,7 @@ public class ModelMaker {
         fileName = fileName + ".json";
         ClassLoader classLoader = getClass().getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(fileName);
-        Gson gson = HttpModule.getGson();
+        Gson gson = TBAAndroidModule.getGson();
 
         return gson.fromJson(new BufferedReader(new InputStreamReader(inputStream)), modelClass);
     }
@@ -63,7 +64,7 @@ public class ModelMaker {
         fileName = fileName + ".json";
         ClassLoader classLoader = getClass().getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(fileName);
-        Gson gson = HttpModule.getGson();
+        Gson gson = TBAAndroidModule.getGson();
         List<MODEL> output = new ArrayList<>();
         JsonArray fileData =
           gson.fromJson(new BufferedReader(new InputStreamReader(inputStream)), JsonArray.class);

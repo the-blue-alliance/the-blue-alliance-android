@@ -3,8 +3,7 @@ package com.thebluealliance.androidclient.gcm;
 import android.app.Notification;
 import android.content.Context;
 
-import com.thebluealliance.androidclient.TestTbaAndroid;
-import com.thebluealliance.androidclient.database.DatabaseWithMocks;
+import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
@@ -21,11 +20,6 @@ public class GCMMessageHandlerWithMocks extends GCMMessageHandler {
     private BaseNotification mLastNotification;
 
     @Override
-    protected void inject() {
-        ((TestTbaAndroid) getApplication()).getMockNotificationComponent().inject(this);
-    }
-
-    @Override
     protected void notify(Context c, BaseNotification notification, Notification built, List<StoredNotification> activeNotifications) {
         super.notify(c, notification, built, activeNotifications);
         mLastNotification = notification;
@@ -36,7 +30,7 @@ public class GCMMessageHandlerWithMocks extends GCMMessageHandler {
         return mLastNotification;
     }
 
-    public DatabaseWithMocks getDatabase() {
-        return (DatabaseWithMocks) mDb;
+    public Database getDatabase() {
+        return mDb;
     }
 }

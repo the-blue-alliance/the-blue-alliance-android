@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.di;
 
+import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.listeners.ContributorClickListener;
 import com.thebluealliance.androidclient.listeners.EventInfoContainerClickListener;
 import com.thebluealliance.androidclient.listeners.SocialClickListener;
@@ -10,7 +11,10 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.android.components.ActivityComponent;
+import dagger.hilt.testing.TestInstallIn;
 
+@TestInstallIn(components = ActivityComponent.class, replaces = ClickListenerModule.class)
 @Module
 public class MockClickListenerModule {
 

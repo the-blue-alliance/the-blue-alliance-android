@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.di;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.thebluealliance.androidclient.auth.AuthModule;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.google.GoogleAuthProvider;
 
@@ -11,7 +12,10 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.components.SingletonComponent;
+import dagger.hilt.testing.TestInstallIn;
 
+@TestInstallIn(components = SingletonComponent.class, replaces = AuthModule.class)
 @Module
 public class MockAuthModule {
 

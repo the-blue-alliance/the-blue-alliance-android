@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWithMocks;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -38,27 +39,26 @@ import androidx.test.core.app.ApplicationProvider;
 import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.components.SingletonComponent;
+import dagger.hilt.internal.TestSingletonComponent;
+import dagger.hilt.testing.TestInstallIn;
 
 import static org.mockito.Mockito.spy;
 
 @Module
+@TestInstallIn(components = SingletonComponent.class, replaces = TBAAndroidModule.class)
 public class MockTbaAndroidModule {
-
+    /*
     @Provides
     @Singleton
-    public Context provideApplicationContext() {
-        return spy(ApplicationProvider.getApplicationContext());
+    public Database provideDatabase(@ApplicationContext Context context, Gson gson) {
+        return spy(new DatabaseWithMocks(context, gson));
     }
 
     @Provides
     @Singleton
-    public Database provideDatabase(Context context) {
-        return spy(new DatabaseWithMocks(context));
-    }
-
-    @Provides
-    @Singleton
-    public SharedPreferences provideSharedPrefs(Context context) {
+    public SharedPreferences provideSharedPrefs(@ApplicationContext Context context) {
         return spy(context.getSharedPreferences("prefs", 0));
     }
 
@@ -70,7 +70,7 @@ public class MockTbaAndroidModule {
 
     @Provides
     @Singleton
-    public Tracker provideAndroidTracker(Context context) {
+    public Tracker provideAndroidTracker() {
         return Mockito.mock(Tracker.class);
     }
 
@@ -110,4 +110,5 @@ public class MockTbaAndroidModule {
                 districtTeamList, event, eventList, eventTeam, eventTeamList, match, matchList, media,
                 mediaList, team, teamList, yearsParticipated, eventTeamAndTeamList, eventDetail));
     }
+     */
 }

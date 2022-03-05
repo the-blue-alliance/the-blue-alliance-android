@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
@@ -53,7 +54,7 @@ public class MatchInfoSubscriberTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        mGson = HttpModule.getGson();
+        mGson = TBAAndroidModule.getGson();
         mRenderer = spy(new MatchRenderer(mCache, mResources));
         mMediaRenderer = spy(new MediaRenderer());
         mSubscriber = new MatchInfoSubscriber(mGson, mEventBus, mRenderer, mMediaRenderer, mResources);

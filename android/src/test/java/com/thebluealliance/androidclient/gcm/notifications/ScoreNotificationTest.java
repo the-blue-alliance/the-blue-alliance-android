@@ -8,6 +8,7 @@ import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.database.writers.MatchWriter;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
@@ -44,7 +45,7 @@ public class ScoreNotificationTest {
         mContext = mock(Context.class, RETURNS_DEEP_STUBS);
         mWriter = mock(MatchWriter.class);
         mData = ModelMaker.getModel(JsonObject.class, "notification_match_score");
-        mNotification = new ScoreNotification(mData.toString(), mWriter, mRenderer);
+        mNotification = new ScoreNotification(mData.toString(), mWriter, mRenderer, TBAAndroidModule.getGson());
     }
 
     @Test
@@ -69,14 +70,14 @@ public class ScoreNotificationTest {
     @Test(expected = JsonParseException.class)
     public void testParseNoMatch() {
         mData.remove("match");
-        mNotification = new ScoreNotification(mData.toString(), mWriter, mRenderer);
+        mNotification = new ScoreNotification(mData.toString(), mWriter, mRenderer, TBAAndroidModule.getGson());
         mNotification.parseMessageData();
     }
 
     @Test(expected = JsonParseException.class)
     public void testParseNoEventName() {
         mData.remove("event_name");
-        mNotification = new ScoreNotification(mData.toString(), mWriter, mRenderer);
+        mNotification = new ScoreNotification(mData.toString(), mWriter, mRenderer, TBAAndroidModule.getGson());
         mNotification.parseMessageData();
     }
 

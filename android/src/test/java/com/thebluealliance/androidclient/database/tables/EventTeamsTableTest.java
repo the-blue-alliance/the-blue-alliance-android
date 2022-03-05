@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DbTableTestDriver;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 
@@ -35,7 +36,7 @@ public class EventTeamsTableTest {
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_EVENTTEAMS);
         mStatus = ModelMaker.getModel(TeamAtEventStatus.class, "2015necmp_frc1124_status");
-        mGson = HttpModule.getGson();
+        mGson = TBAAndroidModule.getGson();
         mTable = spy(new EventTeamsTable(db, mGson));
         mEventTeams = new ArrayList<>();
         EventTeam et1 = new EventTeam();

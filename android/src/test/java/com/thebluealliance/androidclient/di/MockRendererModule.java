@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.MediaRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
+import com.thebluealliance.androidclient.renderers.RendererModule;
 import com.thebluealliance.androidclient.renderers.TeamRenderer;
 
 import org.mockito.Mockito;
@@ -18,8 +19,11 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.components.SingletonComponent;
+import dagger.hilt.testing.TestInstallIn;
 
-@Module(includes = MockDatafeedModule.class)
+@TestInstallIn(components = SingletonComponent.class, replaces = RendererModule.class)
+@Module
 public class MockRendererModule  {
     @Provides @Singleton
     public MyTbaModelRenderer provideMyTbaModelRenderer(

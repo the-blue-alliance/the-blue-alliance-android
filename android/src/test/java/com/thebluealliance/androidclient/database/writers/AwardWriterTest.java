@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.Award;
 
 import org.junit.Before;
@@ -36,7 +37,7 @@ public class AwardWriterTest  {
         mAwardsTable = DatabaseMocker.mockAwardsTable(mDb);
         mAward = ModelMaker.getModel(Award.class, "award_team");
         mWriter = new AwardWriter(mDb);
-        mGson = HttpModule.getGson();
+        mGson = TBAAndroidModule.getGson();
     }
 
     @Test

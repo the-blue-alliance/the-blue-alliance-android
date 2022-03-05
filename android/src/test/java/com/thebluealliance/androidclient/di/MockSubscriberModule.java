@@ -31,6 +31,7 @@ import com.thebluealliance.androidclient.subscribers.MediaListSubscriber;
 import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.RecentNotificationsSubscriber;
 import com.thebluealliance.androidclient.subscribers.StatsListSubscriber;
+import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.subscribers.SubscriptionListSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamAtDistrictBreakdownSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamAtDistrictSummarySubscriber;
@@ -47,8 +48,11 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.android.components.ActivityComponent;
+import dagger.hilt.testing.TestInstallIn;
 
-@Module(includes = {MockTbaAndroidModule.class, MockRendererModule.class})
+@TestInstallIn(components = ActivityComponent.class, replaces = SubscriberModule.class)
+@Module
 public class MockSubscriberModule {
 
     @Provides

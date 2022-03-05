@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import org.junit.Before;
@@ -39,7 +40,7 @@ public class TeamAtDistrictBreakdownSubscriberTest {
         DatabaseMocker.mockEventsTable(mDb);
         when(mResources.getString(anyInt())).thenReturn("String");
 
-        mGson = HttpModule.getGson();
+        mGson = TBAAndroidModule.getGson();
         mSubscriber = new TeamAtDistrictBreakdownSubscriber(mResources, mDb, mGson);
         mDistrictTeam = ModelMaker.getModelList(DistrictRanking.class, "2015ne_rankings").get(0);
     }

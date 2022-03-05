@@ -3,11 +3,13 @@ package com.thebluealliance.androidclient.database.writers;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.google.gson.Gson;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import org.junit.Before;
@@ -38,7 +40,7 @@ public class DistrictTeamListWriterTest {
         mTable = DatabaseMocker.mockDistrictTeamsTable(mDb);
         mDistrictTeams = ModelMaker.getModelList(DistrictRanking.class, "2015ne_rankings");
         mWriter = new DistrictTeamListWriter(mDb);
-        mGson = HttpModule.getGson();
+        mGson = TBAAndroidModule.getGson();
     }
 
     @Test

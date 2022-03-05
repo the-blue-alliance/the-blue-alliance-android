@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DbTableTestDriver;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.Event;
 
 import org.junit.Before;
@@ -36,7 +37,7 @@ public class EventsTableTest {
         db.execSQL(Database.CREATE_EVENTS);
         db.execSQL(Database.CREATE_DISTRICTS);
         db.execSQL(Database.CREATE_SEARCH_EVENTS);
-        mGson = HttpModule.getGson();
+        mGson = TBAAndroidModule.getGson();
         DistrictsTable districtsTable = spy(new DistrictsTable(db, mGson));
         mTable = spy(new EventsTable(db, mGson, districtsTable));
         mEvents = ModelMaker.getModelList(Event.class, "2015_events");

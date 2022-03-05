@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
@@ -66,7 +67,7 @@ public class RecentNotificationsSubscriberTest {
 
         DatabaseMocker.mockNotificationsTable(mDb);
         DatabaseWriter writer = mockDatabaseWriter();
-        mSubscriber = new RecentNotificationsSubscriber(writer, mContext, mRenderer);
+        mSubscriber = new RecentNotificationsSubscriber(writer, mContext, mRenderer, TBAAndroidModule.getGson());
         List<JsonObject> notificationData = ModelMaker.getMultiModelList(JsonObject.class,
           "notification_alliance_selection",
           "notification_awards_posted",

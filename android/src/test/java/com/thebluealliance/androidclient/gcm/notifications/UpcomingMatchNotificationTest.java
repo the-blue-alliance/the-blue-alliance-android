@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class UpcomingMatchNotificationTest {
     public void setUp() {
         mContext = mock(Context.class, RETURNS_DEEP_STUBS);
         mData = ModelMaker.getModel(JsonObject.class, "notification_upcoming_match");
-        mNotification = new UpcomingMatchNotification(mData.toString());
+        mNotification = new UpcomingMatchNotification(mData.toString(), TBAAndroidModule.getGson());
     }
 
     @Test
@@ -57,28 +58,28 @@ public class UpcomingMatchNotificationTest {
     @Test(expected = JsonParseException.class)
     public void testParseNoMatchKey() {
         mData.remove("match_key");
-        mNotification = new UpcomingMatchNotification(mData.toString());
+        mNotification = new UpcomingMatchNotification(mData.toString(), TBAAndroidModule.getGson());
         mNotification.parseMessageData();
     }
 
     @Test(expected = JsonParseException.class)
     public void testParseNoEventName() {
         mData.remove("event_name");
-        mNotification = new UpcomingMatchNotification(mData.toString());
+        mNotification = new UpcomingMatchNotification(mData.toString(), TBAAndroidModule.getGson());
         mNotification.parseMessageData();
     }
 
     @Test(expected = JsonParseException.class)
     public void testParseNoTeams() {
         mData.remove("team_keys");
-        mNotification = new UpcomingMatchNotification(mData.toString());
+        mNotification = new UpcomingMatchNotification(mData.toString(), TBAAndroidModule.getGson());
         mNotification.parseMessageData();
     }
 
     @Test
     public void testParseNoTime() {
         mData.remove("scheduled_time");
-        mNotification = new UpcomingMatchNotification(mData.toString());
+        mNotification = new UpcomingMatchNotification(mData.toString(), TBAAndroidModule.getGson());
         mNotification.parseMessageData();
         assertTrue(mNotification.getMatchTime().isJsonNull());
     }
@@ -86,7 +87,7 @@ public class UpcomingMatchNotificationTest {
     @Test
     public void testParseNoWebcast() {
         mData.remove("webcast");
-        mNotification = new UpcomingMatchNotification(mData.toString());
+        mNotification = new UpcomingMatchNotification(mData.toString(), TBAAndroidModule.getGson());
         mNotification.parseMessageData();
         assertTrue(mNotification.getWebcast().isJsonNull());
     }

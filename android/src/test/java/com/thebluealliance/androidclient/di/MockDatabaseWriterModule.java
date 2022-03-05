@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.di;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.writers.AwardListWriter;
 import com.thebluealliance.androidclient.database.writers.AwardWriter;
+import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
 import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictTeamListWriter;
 import com.thebluealliance.androidclient.database.writers.DistrictTeamWriter;
@@ -26,8 +27,11 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.components.SingletonComponent;
+import dagger.hilt.testing.TestInstallIn;
 
-@Module(includes = MockTbaAndroidModule.class)
+@TestInstallIn(components = SingletonComponent.class, replaces = DatabaseWriterModule.class)
+@Module
 public class MockDatabaseWriterModule {
     @Provides @Singleton
     public AwardListWriter awardListWriter(Database db) {

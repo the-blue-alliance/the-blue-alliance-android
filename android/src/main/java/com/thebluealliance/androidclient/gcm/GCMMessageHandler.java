@@ -65,7 +65,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class GCMMessageHandler extends FirebaseMessagingService implements FollowsChecker {
 
     public static final String GROUP_KEY = "tba-android";
-    public static final int JOB_ID = 254;
 
     @Inject MyTbaDatafeed mMyTbaDatafeed;
     @Inject DatabaseWriter mWriter;
@@ -120,6 +119,7 @@ public class GCMMessageHandler extends FirebaseMessagingService implements Follo
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...
             TbaLogger.e("Error parsing notification", e);
+            throw e;
         }
     }
 
@@ -130,7 +130,7 @@ public class GCMMessageHandler extends FirebaseMessagingService implements Follo
             return;
         }
 
-        BaseNotification notification = null;
+        BaseNotification notification;
         switch (messageType) {
             case NotificationTypes.UPDATE_FAVORITES:
                 Intent favIntent = MyTbaUpdateService.newInstance(c, true, false);

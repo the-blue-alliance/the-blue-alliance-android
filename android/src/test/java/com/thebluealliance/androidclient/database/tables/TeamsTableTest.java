@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DbTableTestDriver;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.Team;
 
 import org.junit.Before;
@@ -37,7 +38,7 @@ public class TeamsTableTest {
         db.execSQL(Database.CREATE_TEAMS);
         db.execSQL(Database.CREATE_SEARCH_TEAMS);
 
-        mGson = HttpModule.getGson();
+        mGson = TBAAndroidModule.getGson();
         mTable = spy(new TeamsTable(db, mGson));
         mTeams = ModelMaker.getModelList(Team.class, "2015necmp_teams");
         for (int i = 0; i < mTeams.size(); i++) {

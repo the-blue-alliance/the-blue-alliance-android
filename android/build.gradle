@@ -229,6 +229,8 @@ dependencies {
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'com.google.android.material:material:1.6.0-alpha02'
     implementation "androidx.work:work-runtime:$workManagerVersion"
+    androidTestImplementation "androidx.work:work-testing:$workManagerVersion"
+    testImplementation "androidx.work:work-testing:$workManagerVersion"
 
     // Play Services Libraries
     // See http://developer.android.com/google/play-services/setup.html
@@ -258,6 +260,10 @@ dependencies {
     implementation "com.google.dagger:hilt-android:${daggerVersion}"
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
     annotationProcessor "com.google.dagger:hilt-compiler:${daggerVersion}"
+    androidTestImplementation  "com.google.dagger:hilt-android-testing:${daggerVersion}"
+    androidTestAnnotationProcessor "com.google.dagger:hilt-compiler:${daggerVersion}"
+    testImplementation "com.google.dagger:hilt-android-testing:${daggerVersion}"
+    testAnnotationProcessor "com.google.dagger:hilt-compiler:${daggerVersion}"
     implementation 'androidx.hilt:hilt-work:1.0.0'
     annotationProcessor 'androidx.hilt:hilt-compiler:1.0.0'
 

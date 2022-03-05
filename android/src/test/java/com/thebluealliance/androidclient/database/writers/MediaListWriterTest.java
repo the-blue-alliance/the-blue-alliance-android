@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.Media;
 
 import org.junit.Before;
@@ -38,7 +39,7 @@ public class MediaListWriterTest {
         mTable = DatabaseMocker.mockMediasTable(mDb);
         mMedias = ModelMaker.getModelList(Media.class, "media_frc254_2014");
         mWriter = new MediaListWriter(mDb);
-        mGson = HttpModule.getGson();
+        mGson = TBAAndroidModule.getGson();
     }
 
     @Test

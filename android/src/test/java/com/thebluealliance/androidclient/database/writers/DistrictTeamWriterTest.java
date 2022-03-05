@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import org.junit.Before;
@@ -33,7 +34,7 @@ public class DistrictTeamWriterTest {
     @Before
     public void setUp() {
         mDb = mock(Database.class);
-        mGson = HttpModule.getGson();
+        mGson = TBAAndroidModule.getGson();
         mTable = DatabaseMocker.mockDistrictTeamsTable(mDb);
         mDistrictTeam = ModelMaker.getModelList(DistrictRanking.class, "2015ne_rankings").get(0);
         mWriter = new DistrictTeamWriter(mDb);

@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.database.writers.AwardListWriter;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -47,7 +48,7 @@ public class AwardsPostedNotificationTest {
         mContext = RuntimeEnvironment.application.getApplicationContext();
         mWriter = mock(AwardListWriter.class);
         mData = ModelMaker.getModel(JsonObject.class, "notification_awards_posted");
-        mNotification = new AwardsPostedNotification(mData.toString(), mWriter);
+        mNotification = new AwardsPostedNotification(mData.toString(), mWriter, TBAAndroidModule.getGson());
     }
 
     @Test
@@ -74,21 +75,21 @@ public class AwardsPostedNotificationTest {
     @Test(expected = JsonParseException.class)
     public void testNoEventKey() {
         mData.remove("event_key");
-        mNotification = new AwardsPostedNotification(mData.toString(), mWriter);
+        mNotification = new AwardsPostedNotification(mData.toString(), mWriter, TBAAndroidModule.getGson());
         mNotification.parseMessageData();
     }
 
     @Test(expected = JsonParseException.class)
     public void testNoEventName() {
         mData.remove("event_name");
-        mNotification = new AwardsPostedNotification(mData.toString(), mWriter);
+        mNotification = new AwardsPostedNotification(mData.toString(), mWriter,  TBAAndroidModule.getGson());
         mNotification.parseMessageData();
     }
 
     @Test(expected = JsonParseException.class)
     public void testNoAwards() {
         mData.remove("awards");
-        mNotification = new AwardsPostedNotification(mData.toString(), mWriter);
+        mNotification = new AwardsPostedNotification(mData.toString(), mWriter,  TBAAndroidModule.getGson());
         mNotification.parseMessageData();
     }
 

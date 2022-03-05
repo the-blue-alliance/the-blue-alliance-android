@@ -9,6 +9,7 @@ import com.thebluealliance.androidclient.database.DbTableTestDriver;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.District;
 
 import org.junit.Before;
@@ -33,7 +34,7 @@ public class DistrictsTableTest {
     public void setUp() {
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_DISTRICTS);
-        mGson = HttpModule.getGson();
+        mGson = TBAAndroidModule.getGson();
         mTable = spy(new DistrictsTable(db, mGson));
         AddDistrictKeys keyAdder = new AddDistrictKeys(2015);
         mDistricts = ModelMaker.getModelList(District.class, "2015_districts");

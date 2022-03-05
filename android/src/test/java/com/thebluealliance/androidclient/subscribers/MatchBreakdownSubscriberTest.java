@@ -7,6 +7,7 @@ import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.Match;
 
 import org.junit.Before;
@@ -40,7 +41,7 @@ public class MatchBreakdownSubscriberTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        mGson = HttpModule.getGson();
+        mGson = TBAAndroidModule.getGson();
         mSubscriber = new MatchBreakdownSubscriber(mGson, mConfig);
         mMatch2014 = ModelMaker.getModel(Match.class, "2014necmp_qf2m1");
         mMatch2015 = ModelMaker.getModel(Match.class, "2015necmp_qm1");

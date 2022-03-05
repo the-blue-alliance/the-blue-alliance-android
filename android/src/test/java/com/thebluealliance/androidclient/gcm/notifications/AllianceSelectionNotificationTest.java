@@ -7,10 +7,12 @@ import android.content.Intent;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.database.writers.EventWriter;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -45,7 +47,7 @@ public class AllianceSelectionNotificationTest {
         mContext = RuntimeEnvironment.application.getApplicationContext();
         mWriter = mock(EventWriter.class);
         mData = ModelMaker.getModel(JsonObject.class, "notification_alliance_selection");
-        mNotification = new AllianceSelectionNotification(mData.toString(), mWriter);
+        mNotification = new AllianceSelectionNotification(mData.toString(), mWriter, TBAAndroidModule.getGson());
     }
 
     @Test
@@ -70,7 +72,7 @@ public class AllianceSelectionNotificationTest {
     @Test(expected = JsonParseException.class)
     public void testNoEvent() {
         mData.remove("event");
-        mNotification = new AllianceSelectionNotification(mData.toString(), mWriter);
+        mNotification = new AllianceSelectionNotification(mData.toString(), mWriter, TBAAndroidModule.getGson());
         mNotification.parseMessageData();
     }
 
