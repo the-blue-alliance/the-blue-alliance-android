@@ -22,7 +22,7 @@
 
     <!-- Used so we can save images taken with the camera -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-                     android:maxSdkVersion="9"/>
+                     android:maxSdkVersion="18"/>
 
     <application
         android:name=".TbaAndroid"
