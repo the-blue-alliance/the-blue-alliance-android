@@ -9,4 +9,21 @@
     <string name="breakdown2022_endgame_points">Hangar Points</string>
     <string name="breakdown2022_cargo_bonus">Cargo Bonus</string>
     <string name="breakdown2022_hangar_bonus">Hangar Bonus</string>
+
+    <string name="breakdown2022_avg_taxi_points">Average Taxi Points</string>
+    <string name="breakdown2022_avg_cargo_lower">Average Cargo Count (Lower)</string>
+    <string name="breakdown2022_avg_cargo_upper">Average Cargo Count (Upper)</string>
+    <string name="breakdown2022_avg_cargo">Average Cargo Count</string>
+    <string name="breakdown2022_avg_cargo_points">Average Cargo Point</string>
+    <string name="breakdown2022_avg_endgame_points">Average Hangar Points</string>
+
+    <string name="breakdown2022_taxi_line">Taxi Line</string>
+    <string name="breakdown2022_quintet_achieved">Quintet Achieved</string>
+    <string name="breakdown2022_low_climb">Low Climb</string>
+    <string name="breakdown2022_mid_climb">Mid Climb</string>
+    <string name="breakdown2022_high_climb">High Climb</string>
+    <string name="breakdown2022_traversal_climb">Traversal Climb</string>
+    <string name="breakdown2022_cargo_bonus_achieved">Cargo Bonus Achieved</string>
+    <string name="breakdown2022_hangar_bonus_achieved">Hangar Bonus Achieved</string>
+
 </resources>
