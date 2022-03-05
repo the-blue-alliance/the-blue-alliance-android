@@ -57,13 +57,14 @@ public class MockTbaAndroidModule {
 
     @Provides @Singleton
     public Database provideDatabase(@ApplicationContext Context context, Gson gson) {
-        return spy(new DatabaseWithMocks(context, gson));
+        Database db = spy(new DatabaseWithMocks(context, gson));
+        return db;
     }
 
     @Provides
     @Singleton
     public SharedPreferences provideSharedPrefs(@ApplicationContext Context context) {
-        return spy(context.getSharedPreferences("prefs", 0));
+        return context.getSharedPreferences("prefs", 0);
     }
 
     @Provides

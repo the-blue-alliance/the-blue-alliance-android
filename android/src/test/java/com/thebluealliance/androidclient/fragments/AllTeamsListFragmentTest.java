@@ -19,7 +19,7 @@ import dagger.hilt.android.testing.HiltTestApplication;
 @Config(application = HiltTestApplication.class)
 @RunWith(AndroidJUnit4.class)
 public class AllTeamsListFragmentTest extends BaseFragmentTest {
-    
+
     @Rule
     public HiltAndroidRule hiltRule = new HiltAndroidRule(this);
 

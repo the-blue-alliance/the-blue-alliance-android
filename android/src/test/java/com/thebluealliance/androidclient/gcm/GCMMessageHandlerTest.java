@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.gcm.notifications.SummaryNotification;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -59,10 +60,13 @@ public class GCMMessageHandlerTest {
         @ParameterizedRobolectricTestRunner.Parameter(2)
         public int mExpectedPriority;
 
+        private GCMMessageHandlerWithMocks mService;
+
         @Before
         public void setUp() {
             Context applicationContext = ApplicationProvider.getApplicationContext();
             mNotificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            mService = buildAndStartService();
         }
 
         @ParameterizedRobolectricTestRunner.Parameters(name = "NotificationType = {0}")
@@ -80,13 +84,11 @@ public class GCMMessageHandlerTest {
             });
         }
 
-        @Ignore
         @Test
         public void testPostAndDismissSingleNotification() {
-            GCMMessageHandlerWithMocks service = buildAndStartService();
 
             RemoteMessage message = buildMessage(mNotificationType, mNotificationDataFileName);
-            service.onMessageReceived(message);
+            mService.onMessageReceived(message);
 
             List<Notification> notifications = Shadows.shadowOf(mNotificationManager).getAllNotifications();
             assertEquals(1, notifications.size());
@@ -97,11 +99,11 @@ public class GCMMessageHandlerTest {
             assertEquals(mExpectedPriority, notification.priority);
 
             // Grab the notification we rendered to check with
-            BaseNotification lastPosted = service.getLastNotification();
+            BaseNotification lastPosted = mService.getLastNotification();
             assertNotNull(lastPosted);
 
             // Check we write the notification to the local DB
-            NotificationsTable dbTable = service.getDatabase().getNotificationsTable();
+            NotificationsTable dbTable = mService.getDatabase().getNotificationsTable();
             List<StoredNotification> storedNotifications = dbTable.getActive();
             assertEquals(1, storedNotifications.size());
             StoredNotification stored = storedNotifications.get(0);
@@ -125,21 +127,22 @@ public class GCMMessageHandlerTest {
         @Rule public HiltAndroidRule hiltRule = new HiltAndroidRule(this);
 
         private NotificationManager mNotificationManager;
+        private GCMMessageHandlerWithMocks mService;
 
         @Before
         public void setUp() {
             Context applicationContext = ApplicationProvider.getApplicationContext();
             mNotificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            mService = buildAndStartService();
         }
 
         @Test
         public void testSummaryPosted() {
-            GCMMessageHandlerWithMocks service = buildAndStartService();
             RemoteMessage message1 = buildMessage(NotificationTypes.SCHEDULE_UPDATED, "notification_schedule_updated");
             RemoteMessage message2 = buildMessage(NotificationTypes.MATCH_SCORE, "notification_match_score");
 
-            service.onMessageReceived(message1);
-            service.onMessageReceived(message2);
+            mService.onMessageReceived(message1);
+            mService.onMessageReceived(message2);
 
             // There should be three notifications posted (the two we sent, plus the summary)
             List<Notification> notifications = Shadows.shadowOf(mNotificationManager).getAllNotifications();
