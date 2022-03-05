@@ -18,17 +18,17 @@ import dagger.hilt.testing.TestInstallIn;
 @Module
 public class MockClickListenerModule {
 
-    @Provides @Singleton
+    @Provides
     public SocialClickListener provideSocialClickListener() {
         return Mockito.mock(SocialClickListener.class);
     }
 
-    @Provides @Singleton
+    @Provides
     public EventInfoContainerClickListener provideEventInfoContainerClickListener() {
         return Mockito.mock(EventInfoContainerClickListener.class);
     }
 
-    @Provides @Singleton
+    @Provides
     public ContributorClickListener provideContributorClickListener() {
         return Mockito.mock(ContributorClickListener.class);
     }

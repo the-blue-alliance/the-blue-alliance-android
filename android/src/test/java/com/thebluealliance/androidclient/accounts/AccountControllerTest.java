@@ -6,7 +6,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
+import com.google.common.util.concurrent.Futures;
 import com.thebluealliance.androidclient.auth.User;
 import com.thebluealliance.androidclient.config.AppConfig;
 
@@ -16,7 +18,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.work.Configuration;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
+import androidx.work.testing.SynchronousExecutor;
+import androidx.work.testing.WorkManagerTestInitHelper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -27,6 +35,9 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
 public class AccountControllerTest {
@@ -61,6 +72,14 @@ public class AccountControllerTest {
                                                    mAccountManager,
                                                    mAppConfig,
                                                    TEST_ACCOUNT_TYPE);
+
+        Context context = ApplicationProvider.getApplicationContext();
+        final Configuration config = new Configuration.Builder()
+                .setMinimumLoggingLevel(Log.DEBUG)
+                .setExecutor(new SynchronousExecutor())
+                .build();
+        WorkManagerTestInitHelper.initializeTestWorkManager(
+                context, config);
     }
 
     @Test
@@ -99,14 +118,18 @@ public class AccountControllerTest {
      *  - start the service to load myTBA data
      */
     @Test
-    public void testOnAccountConnect() {
+    public void testOnAccountConnect() throws ExecutionException, InterruptedException {
         when(mAccountManager.getAccountsByType(TEST_ACCOUNT_TYPE)).thenReturn(new Account[]{});
         mAccountController.onAccountConnect(mContext, mUser);
 
         verify(mEditor).putBoolean(PREF_MYTBA_ENABLED, true);
         verify(mEditor).putString(PREF_SELECTED_ACCOUNT, TEST_ACCOUNT_NAME);
         verify(mAccountManager).addAccountExplicitly(any(Account.class), eq(null), eq(null));
-        verify(mContext, times(2)).startService(any(Intent.class));
+        verify(mContext, times(1)).startService(any(Intent.class));
+
+        WorkManager workManager = WorkManager.getInstance(ApplicationProvider.getApplicationContext());
+        List<WorkInfo> tasks = workManager.getWorkInfosByTag("register-mytba").get();
+        assertEquals(tasks.size(), 1);
     }
 
     @Test

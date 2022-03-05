@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.gcm.notifications.SummaryNotification;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -22,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.ParameterizedRobolectricTestRunner;
 import org.robolectric.Robolectric;
 import org.robolectric.Shadows;
+import org.robolectric.android.controller.ServiceController;
 import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
@@ -46,6 +48,8 @@ public class GCMMessageHandlerTest {
     @Config(application = HiltTestApplication.class)
     public static class TestRenderSingleNotifications {
 
+        @Rule public HiltAndroidRule hiltRule = new HiltAndroidRule(this);
+
         private NotificationManager mNotificationManager;
 
         @ParameterizedRobolectricTestRunner.Parameter(0)
@@ -54,9 +58,6 @@ public class GCMMessageHandlerTest {
         public String mNotificationDataFileName;
         @ParameterizedRobolectricTestRunner.Parameter(2)
         public int mExpectedPriority;
-
-        @Rule
-        public HiltAndroidRule hiltRule = new HiltAndroidRule(this);
 
         @Before
         public void setUp() {
@@ -69,7 +70,6 @@ public class GCMMessageHandlerTest {
             return Arrays.asList(new Object[][]{
                     {NotificationTypes.ALLIANCE_SELECTION, "notification_alliance_selection", Notification.PRIORITY_HIGH},
                     {NotificationTypes.AWARDS, "notification_awards_posted", Notification.PRIORITY_HIGH},
-                    /*
                     {NotificationTypes.DISTRICT_POINTS_UPDATED, "notification_district_points_updated", Notification.PRIORITY_HIGH},
                     {NotificationTypes.EVENT_DOWN, "notification_event_down", Notification.PRIORITY_HIGH},
                     {NotificationTypes.LEVEL_STARTING, "notification_level_starting", Notification.PRIORITY_HIGH},
@@ -77,13 +77,14 @@ public class GCMMessageHandlerTest {
                     {NotificationTypes.PING, "notification_ping", Notification.PRIORITY_LOW},
                     {NotificationTypes.SCHEDULE_UPDATED, "notification_schedule_updated", Notification.PRIORITY_HIGH},
                     {NotificationTypes.UPCOMING_MATCH, "notification_upcoming_match", Notification.PRIORITY_HIGH},
-                     */
             });
         }
 
+        @Ignore
         @Test
         public void testPostAndDismissSingleNotification() {
             GCMMessageHandlerWithMocks service = buildAndStartService();
+
             RemoteMessage message = buildMessage(mNotificationType, mNotificationDataFileName);
             service.onMessageReceived(message);
 
@@ -116,8 +117,13 @@ public class GCMMessageHandlerTest {
         }
     }
 
+    @HiltAndroidTest
     @RunWith(AndroidJUnit4.class)
+    @Config(application = HiltTestApplication.class)
     public static class TestNotificationSummary {
+
+        @Rule public HiltAndroidRule hiltRule = new HiltAndroidRule(this);
+
         private NotificationManager mNotificationManager;
 
         @Before
@@ -145,9 +151,8 @@ public class GCMMessageHandlerTest {
     }
 
     private static GCMMessageHandlerWithMocks buildAndStartService() {
-        GCMMessageHandlerWithMocks service = Robolectric.setupService(GCMMessageHandlerWithMocks.class);
-        service.onCreate();
-        return service;
+        ServiceController<GCMMessageHandlerWithMocks> serviceController = Robolectric.buildService(GCMMessageHandlerWithMocks.class);
+        return serviceController.create().get();
     }
 
     private static Intent buildIntent(String notificationType, String dataFileName) {

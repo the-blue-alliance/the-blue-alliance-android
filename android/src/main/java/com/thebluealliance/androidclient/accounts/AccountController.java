@@ -113,7 +113,7 @@ public class AccountController {
 
     private void registerForGcm(Context context) {
         WorkManager.getInstance(context)
-                .enqueue(new OneTimeWorkRequest.Builder(MyTbaRegistrationWorker.class).build());
+                .enqueue(new OneTimeWorkRequest.Builder(MyTbaRegistrationWorker.class).addTag("register-mytba").build());
     }
 
     private void loadMyTbaData(Context context) {

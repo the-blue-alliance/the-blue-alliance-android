@@ -109,7 +109,7 @@ public class MockBinderModule {
         return Mockito.spy(new NoDataBinder());
     }
 
-    @Provides @Singleton
+    @Provides
     public SimpleBinder provideSimpleBinder() {
         return Mockito.mock(SimpleBinder.class);
     }

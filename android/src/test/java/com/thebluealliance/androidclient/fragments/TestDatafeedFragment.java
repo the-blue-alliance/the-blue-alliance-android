@@ -14,11 +14,17 @@ import com.thebluealliance.androidclient.fragments.framework.SimpleSubscriber;
 
 import org.greenrobot.eventbus.EventBus;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.annotation.Config;
 import org.robolectric.annotation.LooperMode;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
+import dagger.hilt.android.testing.HiltTestApplication;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
@@ -30,9 +36,15 @@ import static org.robolectric.Shadows.shadowOf;
 
 import android.os.Looper;
 
+
+@HiltAndroidTest
+@Config(application = HiltTestApplication.class)
 @LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)
 public class TestDatafeedFragment extends BaseFragmentTest {
+
+    @Rule
+    public HiltAndroidRule hiltRule = new HiltAndroidRule(this);
 
     private SimpleDatafeedFragment mFragment;
     private DatafeedFragmentTestController<SimpleDatafeedFragment> mController;

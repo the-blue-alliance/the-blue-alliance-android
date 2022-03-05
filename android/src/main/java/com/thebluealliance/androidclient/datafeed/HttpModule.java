@@ -21,7 +21,7 @@ import okhttp3.OkHttpClient;
  * Dagger module that handles OkHttp and Gson
  */
 @InstallIn(SingletonComponent.class)
-@Module(includes = {TBAAndroidModule.class})
+@Module
 public class HttpModule {
 
     public static int CACHE_SIZE = 10 * 1024 * 1024;

@@ -13,7 +13,7 @@ import dagger.hilt.components.SingletonComponent;
 import dagger.hilt.testing.TestInstallIn;
 
 @TestInstallIn(components = SingletonComponent.class, replaces = AccountModule.class)
-@Module(includes = MockTbaAndroidModule.class)
+@Module()
 public class MockAccountModule {
 
     public MockAccountModule() {}

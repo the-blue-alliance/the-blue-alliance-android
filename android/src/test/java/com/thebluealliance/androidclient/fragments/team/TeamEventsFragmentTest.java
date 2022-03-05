@@ -9,16 +9,29 @@ import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.renderers.EventRenderer;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
+import dagger.hilt.android.testing.HiltTestApplication;
+
+
+@HiltAndroidTest
+@Config(application = HiltTestApplication.class)
 @RunWith(AndroidJUnit4.class)
 public class TeamEventsFragmentTest extends BaseFragmentTest {
+
+    @Rule
+    public HiltAndroidRule hiltRule = new HiltAndroidRule(this);
+
 
     TeamEventsFragment mFragment;
     List<ListItem> mEvents;

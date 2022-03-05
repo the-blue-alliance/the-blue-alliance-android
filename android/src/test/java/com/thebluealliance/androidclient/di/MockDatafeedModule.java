@@ -26,6 +26,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 import dagger.hilt.testing.TestInstallIn;
 import okhttp3.Cache;
@@ -35,14 +36,14 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 
 import static org.mockito.Mockito.when;
 
-@TestInstallIn(components = SingletonComponent.class, replaces = {DatafeedModule.class, HttpModule.class})
 @Module
+@TestInstallIn(components = SingletonComponent.class, replaces = DatafeedModule.class)
 public class MockDatafeedModule {
+
     @Provides @Singleton @Named("tba_retrofit")
     public Retrofit provideTBARetrofit(
             Gson gson,
-            OkHttpClient okHttpClient,
-            SharedPreferences prefs) {
+            OkHttpClient okHttpClient) {
         return new Retrofit.Builder()
                 .baseUrl(ApiConstants.TBA_URL)
                 .client(okHttpClient)
@@ -64,7 +65,7 @@ public class MockDatafeedModule {
     }
 
     @Provides @Singleton @Named("tba_api")
-    public TbaApiV2 provideRxTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
+    public TbaApiV2 provideRxTBAAPI() {
         return Mockito.mock(TbaApiV2.class);
     }
 
@@ -79,17 +80,17 @@ public class MockDatafeedModule {
     }
 
     @Provides @Singleton
-    public com.thebluealliance.androidclient.api.call.TbaApiV2 provideTBAAPI(@Named("tba_retrofit") Retrofit retrofit) {
+    public com.thebluealliance.androidclient.api.call.TbaApiV2 provideTBAAPI() {
         return Mockito.mock(com.thebluealliance.androidclient.api.call.TbaApiV2.class);
     }
 
     @Provides @Singleton @Named("github_api")
-    public GitHubAPI provideGitHubAPI(@Named("github_retrofit") Retrofit retrofit) {
+    public GitHubAPI provideGitHubAPI() {
         return Mockito.mock(GitHubAPI.class);
     }
 
     @Provides @Singleton @Named("firebase_retrofit")
-    public Retrofit provideFirebaseRetrofit(Context context, Gson gson, OkHttpClient okHttpClient) {
+    public Retrofit provideFirebaseRetrofit(Gson gson, OkHttpClient okHttpClient) {
         String firebaseUrl = FirebaseTickerFragment.FIREBASE_URL_DEFAULT;
         return new Retrofit.Builder()
                 .baseUrl(firebaseUrl)
@@ -100,22 +101,12 @@ public class MockDatafeedModule {
     }
 
     @Provides @Singleton @Named("firebase_api")
-    public FirebaseAPI provideFirebaseAPI(@Named("firebase_retrofit") Retrofit retrofit) {
+    public FirebaseAPI provideFirebaseAPI() {
         return Mockito.mock(FirebaseAPI.class);
     }
 
     @Provides @Singleton
-    public Cache provideOkCache(Context context) {
-        return new Cache(context.getCacheDir(), HttpModule.CACHE_SIZE);
-    }
-
-    @Provides @Singleton
-    public OkHttpClient getOkHttp(Cache responseCache) {
-        return Mockito.mock(OkHttpClient.class);
-    }
-
-    @Provides @Singleton
-    public APICache provideApiCache(Database db) {
+    public APICache provideApiCache() {
         return Mockito.mock(APICache.class);
     }
 
@@ -132,8 +123,7 @@ public class MockDatafeedModule {
     }
 
     @Provides @Singleton
-    public TBAStatusController provideTbaStatusController(SharedPreferences prefs, Gson gson,
-                                                          Cache cache, Context context) {
+    public TBAStatusController provideTbaStatusController() {
         return Mockito.mock(TBAStatusController.class);
     }
 }

@@ -54,14 +54,13 @@ import dagger.hilt.testing.TestInstallIn;
 @TestInstallIn(components = ActivityComponent.class, replaces = SubscriberModule.class)
 @Module
 public class MockSubscriberModule {
-
     @Provides
     public TeamInfoSubscriber provideTeamInfoSubscriber() {
         return Mockito.mock(TeamInfoSubscriber.class);
     }
 
     @Provides
-    public EventListSubscriber providesEventListRecyclerSubscriber(Context context) {
+    public EventListSubscriber providesEventListRecyclerSubscriber() {
         return Mockito.mock(EventListSubscriber.class);
     }
 
@@ -76,40 +75,37 @@ public class MockSubscriberModule {
     }
 
     @Provides
-    public TeamListSubscriber provideTeamListSubscriber(TeamRenderer renderer) {
+    public TeamListSubscriber provideTeamListSubscriber() {
         return Mockito.mock(TeamListSubscriber.class);
     }
 
     @Provides
-    public RankingsListSubscriber provideRankingsListRecyclerSubscriber(Database db, EventBus eventBus) {
+    public RankingsListSubscriber provideRankingsListRecyclerSubscriber() {
         return Mockito.mock(RankingsListSubscriber.class);
     }
 
     @Provides
-    public MatchListSubscriber provideMatchListSubscriber(Database db, EventBus eventBus) {
+    public MatchListSubscriber provideMatchListSubscriber() {
         return Mockito.mock(MatchListSubscriber.class);
     }
 
     @Provides
-    public AllianceListSubscriber provideAllianceListSubscriber(EventRenderer renderer) {
+    public AllianceListSubscriber provideAllianceListSubscriber() {
         return Mockito.mock(AllianceListSubscriber.class);
     }
 
     @Provides
-    public DistrictPointsListSubscriber provideDistrictPointsListSubscriber(
-            Database db,
-            Gson gson,
-            DistrictPointBreakdownRenderer renderer) {
+    public DistrictPointsListSubscriber provideDistrictPointsListSubscriber() {
         return Mockito.mock(DistrictPointsListSubscriber.class);
     }
 
     @Provides
-    public StatsListSubscriber provideStatsListSubscriber(Database db, EventBus eventBus) {
+    public StatsListSubscriber provideStatsListSubscriber() {
         return Mockito.mock(StatsListSubscriber.class);
     }
 
     @Provides
-    public AwardsListSubscriber provideAwardsListSubscriber(Database db, AwardRenderer renderer) {
+    public AwardsListSubscriber provideAwardsListSubscriber() {
         return Mockito.mock(AwardsListSubscriber.class);
     }
 
@@ -119,7 +115,7 @@ public class MockSubscriberModule {
     }
 
     @Provides
-    public TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(MatchRenderer renderer) {
+    public TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber() {
         return Mockito.mock(TeamAtEventSummarySubscriber.class);
     }
 
@@ -129,55 +125,47 @@ public class MockSubscriberModule {
     }
 
     @Provides
-    public DistrictListSubscriber provideDistrictListSubscriber(Database db, DistrictRenderer renderer) {
+    public DistrictListSubscriber provideDistrictListSubscriber() {
         return Mockito.mock(DistrictListSubscriber.class);
     }
 
     @Provides
-    public DistrictRankingsSubscriber provideDistrictRankingsSubscriber(Database db) {
+    public DistrictRankingsSubscriber provideDistrictRankingsSubscriber() {
         return Mockito.mock(DistrictRankingsSubscriber.class);
     }
 
     @Provides
-    public TeamAtDistrictSummarySubscriber provideTeamAtDistrictSummarySubscriber(
-            Database db,
-            EventBus eventBus) {
+    public TeamAtDistrictSummarySubscriber provideTeamAtDistrictSummarySubscriber() {
         return Mockito.mock(TeamAtDistrictSummarySubscriber.class);
     }
 
     @Provides
-    public TeamAtDistrictBreakdownSubscriber provideTeamAtDistrictBreakdownSubscriber(
-            Database db,
-            Gson gson) {
+    public TeamAtDistrictBreakdownSubscriber provideTeamAtDistrictBreakdownSubscriber() {
         return Mockito.mock(TeamAtDistrictBreakdownSubscriber.class);
     }
 
     @Provides
-    public MatchInfoSubscriber provideMatchInfoSubscriber(
-            Gson gson,
-            EventBus eventBus,
-            MatchRenderer renderer,
-            MediaRenderer mediaRenderer) {
+    public MatchInfoSubscriber provideMatchInfoSubscriber() {
         return Mockito.mock(MatchInfoSubscriber.class);
     }
 
     @Provides
-    public WebcastListSubscriber provideWebcastListSubscriber(EventRenderer renderer) {
+    public WebcastListSubscriber provideWebcastListSubscriber() {
         return Mockito.mock(WebcastListSubscriber.class);
     }
 
     @Provides
-    public RecentNotificationsSubscriber provideRecentNotificationsSubscriber(DatabaseWriter writer) {
+    public RecentNotificationsSubscriber provideRecentNotificationsSubscriber() {
         return Mockito.mock(RecentNotificationsSubscriber.class);
     }
 
     @Provides
-    public SubscriptionListSubscriber provideSubscriptionListSubscriber(MyTbaModelRenderer renderer) {
+    public SubscriptionListSubscriber provideSubscriptionListSubscriber() {
         return Mockito.mock(SubscriptionListSubscriber.class);
     }
 
     @Provides
-    public FavoriteListSubscriber provideFavoriteListSubscriber(MyTbaModelRenderer renderer) {
+    public FavoriteListSubscriber provideFavoriteListSubscriber() {
         return Mockito.mock(FavoriteListSubscriber.class);
     }
 
@@ -191,7 +179,7 @@ public class MockSubscriberModule {
         return Mockito.mock(MatchBreakdownSubscriber.class);
     }
 
-    @Provides @Singleton
+    @Provides
     public SimpleSubscriber provideBaseSubscriber() {
         return Mockito.mock(SimpleSubscriber.class);
     }

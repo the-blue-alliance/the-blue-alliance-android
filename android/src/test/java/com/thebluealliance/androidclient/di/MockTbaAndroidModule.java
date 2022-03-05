@@ -49,9 +49,13 @@ import static org.mockito.Mockito.spy;
 @Module
 @TestInstallIn(components = SingletonComponent.class, replaces = TBAAndroidModule.class)
 public class MockTbaAndroidModule {
-    /*
-    @Provides
-    @Singleton
+
+    @Provides @Singleton
+    public Gson provideGson() {
+        return TBAAndroidModule.getGson();
+    }
+
+    @Provides @Singleton
     public Database provideDatabase(@ApplicationContext Context context, Gson gson) {
         return spy(new DatabaseWithMocks(context, gson));
     }
@@ -83,32 +87,4 @@ public class MockTbaAndroidModule {
     public FirebaseRemoteConfig provideFirebaseRemoteConfig() {
         return Mockito.mock(FirebaseRemoteConfig.class);
     }
-
-    @Provides
-    @Singleton
-    public DatabaseWriter provideDatabaseWriter(
-            Lazy<AwardWriter> award,
-            Lazy<AwardListWriter> awardList,
-            Lazy<DistrictWriter> district,
-            Lazy<DistrictListWriter> districtList,
-            Lazy<DistrictTeamWriter> districtTeam,
-            Lazy<DistrictTeamListWriter> districtTeamList,
-            Lazy<EventWriter> event,
-            Lazy<EventListWriter> eventList,
-            Lazy<EventTeamWriter> eventTeam,
-            Lazy<EventTeamListWriter> eventTeamList,
-            Lazy<MatchWriter> match,
-            Lazy<MatchListWriter> matchList,
-            Lazy<MediaWriter> media,
-            Lazy<MediaListWriter> mediaList,
-            Lazy<TeamWriter> team,
-            Lazy<TeamListWriter> teamList,
-            Lazy<YearsParticipatedWriter> yearsParticipated,
-            Lazy<EventTeamAndTeamListWriter> eventTeamAndTeamList,
-            Lazy<EventDetailWriter> eventDetail) {
-        return spy(new DatabaseWriter(award, awardList, district, districtList, districtTeam,
-                districtTeamList, event, eventList, eventTeam, eventTeamList, match, matchList, media,
-                mediaList, team, teamList, yearsParticipated, eventTeamAndTeamList, eventDetail));
-    }
-     */
 }
