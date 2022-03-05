@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.database.writers;
 
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
-import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import javax.inject.Singleton;
 

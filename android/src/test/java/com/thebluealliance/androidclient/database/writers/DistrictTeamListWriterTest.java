@@ -1,13 +1,16 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import android.database.sqlite.SQLiteDatabase;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.google.gson.Gson;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
-import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.DistrictRanking;
@@ -18,11 +21,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import java.util.List;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 @RunWith(AndroidJUnit4.class)
 public class DistrictTeamListWriterTest {

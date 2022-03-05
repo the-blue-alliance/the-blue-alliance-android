@@ -1,5 +1,13 @@
 package com.thebluealliance.androidclient.renderers;
 
+import static com.thebluealliance.androidclient.renderers.MatchRenderer.RENDER_DEFAULT;
+import static com.thebluealliance.androidclient.renderers.MatchRenderer.RENDER_MATCH_INFO;
+import static com.thebluealliance.androidclient.renderers.MatchRenderer.RENDER_NOTIFICATION;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
+
 import android.content.res.Resources;
 
 import com.thebluealliance.androidclient.datafeed.APICache;
@@ -21,14 +29,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import rx.Observable;
-
-import static com.thebluealliance.androidclient.renderers.MatchRenderer.RENDER_DEFAULT;
-import static com.thebluealliance.androidclient.renderers.MatchRenderer.RENDER_MATCH_INFO;
-import static com.thebluealliance.androidclient.renderers.MatchRenderer.RENDER_NOTIFICATION;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
 public class MatchRendererTest {

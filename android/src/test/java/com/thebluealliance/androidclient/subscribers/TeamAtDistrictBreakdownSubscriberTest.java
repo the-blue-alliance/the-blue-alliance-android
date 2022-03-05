@@ -1,11 +1,15 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.when;
+
 import android.content.res.Resources;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
-import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
@@ -17,11 +21,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.LooperMode;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.when;
 
 @LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)

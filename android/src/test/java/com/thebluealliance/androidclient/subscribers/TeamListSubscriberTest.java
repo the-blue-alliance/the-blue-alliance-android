@@ -1,5 +1,9 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import static org.mockito.Mockito.verify;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.models.Team;
@@ -13,10 +17,6 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.LooperMode;
 
 import java.util.List;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.mockito.Mockito.verify;
 
 @LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)

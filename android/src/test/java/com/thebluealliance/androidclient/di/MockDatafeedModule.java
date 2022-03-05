@@ -1,17 +1,15 @@
 package com.thebluealliance.androidclient.di;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+
+import static org.mockito.Mockito.when;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.api.ApiConstants;
 import com.thebluealliance.androidclient.api.rx.TbaApiV2;
 import com.thebluealliance.androidclient.api.rx.TbaApiV3;
-import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
-import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.retrofit.FirebaseAPI;
 import com.thebluealliance.androidclient.datafeed.retrofit.GitHubAPI;
@@ -26,15 +24,11 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 import dagger.hilt.testing.TestInstallIn;
-import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-
-import static org.mockito.Mockito.when;
 
 @Module
 @TestInstallIn(components = SingletonComponent.class, replaces = DatafeedModule.class)

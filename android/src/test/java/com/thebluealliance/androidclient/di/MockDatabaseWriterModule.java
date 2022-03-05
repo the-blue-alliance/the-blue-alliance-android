@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.di;
 
 import static org.mockito.Mockito.spy;
 
-import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.database.writers.AwardListWriter;
 import com.thebluealliance.androidclient.database.writers.AwardWriter;

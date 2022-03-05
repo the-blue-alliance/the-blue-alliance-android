@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.di;
 
-import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
 import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
 import com.thebluealliance.androidclient.renderers.DistrictRenderer;

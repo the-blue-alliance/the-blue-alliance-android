@@ -7,8 +7,6 @@ import com.thebluealliance.androidclient.listeners.SocialClickListener;
 
 import org.mockito.Mockito;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.android.components.ActivityComponent;

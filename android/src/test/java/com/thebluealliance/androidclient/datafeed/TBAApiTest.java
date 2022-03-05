@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -17,8 +19,6 @@ import org.robolectric.RobolectricTestRunner;
 
 import java.util.ArrayList;
 import java.util.Date;
-
-import static org.junit.Assert.assertEquals;
 
 @Ignore
 @RunWith(RobolectricTestRunner.class)

@@ -1,12 +1,5 @@
 package com.thebluealliance.androidclient.database;
 
-import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-
-import java.util.List;
-
-import rx.functions.Action1;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -14,6 +7,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
+
+import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+
+import java.util.List;
+
+import rx.functions.Action1;
 
 public final class DbTableTestDriver {
 

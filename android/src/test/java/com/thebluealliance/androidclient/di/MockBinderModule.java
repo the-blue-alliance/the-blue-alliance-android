@@ -26,8 +26,6 @@ import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import org.greenrobot.eventbus.EventBus;
 import org.mockito.Mockito;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.android.components.ActivityComponent;

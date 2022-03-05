@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.di.TBAAndroidModule;
 
 import javax.inject.Singleton;
 

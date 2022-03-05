@@ -1,19 +1,6 @@
 package com.thebluealliance.androidclient.di;
 
-import android.content.Context;
-
-import com.google.gson.Gson;
-import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.fragments.framework.SimpleSubscriber;
-import com.thebluealliance.androidclient.renderers.AwardRenderer;
-import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
-import com.thebluealliance.androidclient.renderers.DistrictRenderer;
-import com.thebluealliance.androidclient.renderers.EventRenderer;
-import com.thebluealliance.androidclient.renderers.MatchRenderer;
-import com.thebluealliance.androidclient.renderers.MediaRenderer;
-import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
-import com.thebluealliance.androidclient.renderers.TeamRenderer;
 import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
 import com.thebluealliance.androidclient.subscribers.AwardsListSubscriber;
 import com.thebluealliance.androidclient.subscribers.ContributorListSubscriber;
@@ -41,10 +28,7 @@ import com.thebluealliance.androidclient.subscribers.TeamListSubscriber;
 import com.thebluealliance.androidclient.subscribers.TeamStatsSubscriber;
 import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
 
-import org.greenrobot.eventbus.EventBus;
 import org.mockito.Mockito;
-
-import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
