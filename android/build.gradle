@@ -1,6 +1,6 @@
 plugins {
     id "com.github.plnice.canidropjetifier" version "0.4"
-    //id 'com.github.triplet.play' version '2.7.2'
+    id 'com.github.triplet.play' version '3.7.0'
 }
 
 apply plugin: 'com.android.application'
@@ -164,12 +164,10 @@ android {
     useLibrary 'android.test.mock'
 }
 
-/*
 play {
     serviceAccountCredentials = file(localProps.getProperty('play.release.credentialFile', 'somefile.json'))
     track = 'beta'
 }
-*/
 
 println "Version: " + android.defaultConfig.versionName + "/" + android.defaultConfig.versionCode
 

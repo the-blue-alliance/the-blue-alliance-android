@@ -214,7 +214,7 @@ def build_apk(args):
     time.sleep(2)
 
     # Don't rebuild the app, because we've built it already
-    script_args = ["./gradlew", "publishApkRelease"]
+    script_args = ["./gradlew", "publishBundle"]
     if args.dry_run:
         script_args.append("-m")
     if not args.skip_validate:
