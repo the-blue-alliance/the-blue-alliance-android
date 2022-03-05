@@ -1,5 +1,11 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
@@ -7,12 +13,6 @@ import com.thebluealliance.androidclient.helpers.TeamHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class TeamRankExtractorTest {

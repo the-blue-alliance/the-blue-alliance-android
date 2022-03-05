@@ -12,8 +12,10 @@ import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamAtDistrictSummarySubscriber;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class TeamAtDistrictSummaryFragment
   extends ListViewFragment<DistrictRanking, TeamAtDistrictSummarySubscriber> {
 
@@ -53,11 +55,6 @@ public class TeamAtDistrictSummaryFragment
         View view = super.onCreateView(inflater, container, savedInstanceState);
         mListView.setSelector(R.drawable.transparent);
         return view;
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

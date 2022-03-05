@@ -4,28 +4,26 @@ import android.content.Context;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.components.ActivityComponent;
+import dagger.hilt.android.qualifiers.ActivityContext;
 
+@InstallIn(ActivityComponent.class)
 @Module
 public class ClickListenerModule {
 
-    private Context mContext;
-
-    public ClickListenerModule(Context context) {
-        mContext = context;
+    @Provides
+    public SocialClickListener provideSocialClickListener(@ActivityContext Context context) {
+        return new SocialClickListener(context);
     }
 
     @Provides
-    public SocialClickListener provideSocialClickListener() {
-        return new SocialClickListener(mContext);
+    public EventInfoContainerClickListener provideEventInfoContainerClickListener(@ActivityContext Context context) {
+        return new EventInfoContainerClickListener(context);
     }
 
     @Provides
-    public EventInfoContainerClickListener provideEventInfoContainerClickListener() {
-        return new EventInfoContainerClickListener(mContext);
-    }
-
-    @Provides
-    public ContributorClickListener provideContributorClickListener() {
-        return new ContributorClickListener(mContext);
+    public ContributorClickListener provideContributorClickListener(@ActivityContext Context context) {
+        return new ContributorClickListener(context);
     }
 }

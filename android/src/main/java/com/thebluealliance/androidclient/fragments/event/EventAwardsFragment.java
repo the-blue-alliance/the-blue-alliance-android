@@ -14,8 +14,10 @@ import com.thebluealliance.androidclient.subscribers.AwardsListSubscriber;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class EventAwardsFragment extends ListViewFragment<List<Award>, AwardsListSubscriber> implements HasEventParam {
     private static final String EVENT_KEY = "eventKey", TEAM_KEY = "teamKey";
 
@@ -60,11 +62,6 @@ public class EventAwardsFragment extends ListViewFragment<List<Award>, AwardsLis
         mListView.setClipToPadding(false);
         mListView.setDivider(null);
         return view;
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

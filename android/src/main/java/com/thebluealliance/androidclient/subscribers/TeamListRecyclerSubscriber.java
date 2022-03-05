@@ -12,6 +12,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.qualifiers.ApplicationContext;
+
 public class TeamListRecyclerSubscriber extends BaseAPISubscriber<List<Team>, List<Object>> {
 
     private Context mContext;
@@ -21,7 +23,7 @@ public class TeamListRecyclerSubscriber extends BaseAPISubscriber<List<Team>, Li
     int mRenderMode;
 
     @Inject
-    public TeamListRecyclerSubscriber(Context context) {
+    public TeamListRecyclerSubscriber(@ApplicationContext Context context) {
         super();
         mContext = context;
         mDataToBind = new ArrayList<>();

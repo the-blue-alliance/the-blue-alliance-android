@@ -1,14 +1,20 @@
 package com.thebluealliance.androidclient.database.tables;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.spy;
+
 import android.database.sqlite.SQLiteDatabase;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DbTableTestDriver;
-import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.District;
 
 import org.junit.Before;
@@ -16,12 +22,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.spy;
 
 @RunWith(AndroidJUnit4.class)
 public class DistrictsTableTest {
@@ -33,7 +33,7 @@ public class DistrictsTableTest {
     public void setUp() {
         SQLiteDatabase db = SQLiteDatabase.create(null);
         db.execSQL(Database.CREATE_DISTRICTS);
-        mGson = HttpModule.getGson();
+        mGson = TBAAndroidModule.getGson();
         mTable = spy(new DistrictsTable(db, mGson));
         AddDistrictKeys keyAdder = new AddDistrictKeys(2015);
         mDistricts = ModelMaker.getModelList(District.class, "2015_districts");

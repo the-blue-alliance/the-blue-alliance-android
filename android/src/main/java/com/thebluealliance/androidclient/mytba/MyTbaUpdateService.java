@@ -4,13 +4,13 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
-import com.thebluealliance.androidclient.di.components.MyTbaComponent;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MyTbaUpdateService extends IntentService {
 
     private static final String UPDATE_FAVORITES = "favorites";
@@ -32,12 +32,6 @@ public class MyTbaUpdateService extends IntentService {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        getComponenet().inject(this);
-    }
-
-    @Override
     protected void onHandleIntent(Intent intent) {
         boolean updateFavorites = intent.getBooleanExtra(UPDATE_FAVORITES, true);
         boolean updateSubscriptions = intent.getBooleanExtra(UPDATE_SUBSCRIPTIONS, true);
@@ -47,14 +41,5 @@ public class MyTbaUpdateService extends IntentService {
         if (updateSubscriptions) {
             mDatafeed.updateUserSubscriptions();
         }
-    }
-
-    private MyTbaComponent getComponenet() {
-        TbaAndroid application = ((TbaAndroid) getApplication());
-        return DaggerMyTbaComponent.builder()
-                                   .applicationComponent(application.getComponent())
-                                   .gceModule(application.getGceModule())
-                                   .authModule(application.getAuthModule())
-                                   .build();
     }
 }

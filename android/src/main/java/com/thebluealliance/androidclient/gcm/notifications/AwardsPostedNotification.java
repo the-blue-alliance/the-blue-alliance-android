@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -36,13 +37,15 @@ import java.util.List;
 public class AwardsPostedNotification extends BaseNotification<AwardsPostedNotificationViewModel> {
 
     private final AwardListWriter mWriter;
+    private final Gson mGson;
     private String eventName, eventKey;
     private List<Award> awards;
 
-    public AwardsPostedNotification(String messageData, AwardListWriter writer) {
+    public AwardsPostedNotification(String messageData, AwardListWriter writer, Gson gson) {
         super(NotificationTypes.AWARDS, messageData);
         awards = new ArrayList<>();
         mWriter = writer;
+        mGson = gson;
     }
 
     public String getEventName() {
@@ -73,7 +76,7 @@ public class AwardsPostedNotification extends BaseNotification<AwardsPostedNotif
         }
         JsonArray awardArray = jsonData.get("awards").getAsJsonArray();
         for (JsonElement element : awardArray) {
-            awards.add(gson.fromJson(element, Award.class));
+            awards.add(mGson.fromJson(element, Award.class));
         }
     }
 

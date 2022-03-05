@@ -11,15 +11,15 @@ import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
 import com.thebluealliance.androidclient.database.writers.EventListWriter;
 import com.thebluealliance.androidclient.database.writers.TeamListWriter;
-import com.thebluealliance.androidclient.di.components.DatafeedComponent;
-import com.thebluealliance.androidclient.di.components.HasDatafeedComponent;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.LoadTBADataCallbacks {
 
-    DatafeedComponent mComponent;
     @Inject @Named("tba_apiv3_call") TbaApiV3 mDatafeed;
     @Inject AppConfig mConfig;
     @Inject Database mDb;
@@ -36,10 +36,6 @@ public class LoadTBADataTaskFragment extends Fragment implements LoadTBAData.Loa
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (getActivity() instanceof HasDatafeedComponent) {
-            mComponent = ((HasDatafeedComponent) getActivity()).getComponent();
-        }
-        mComponent.inject(this);
 
         if (activity instanceof LoadTBAData.LoadTBADataCallbacks) {
             callback = (LoadTBAData.LoadTBADataCallbacks) activity;

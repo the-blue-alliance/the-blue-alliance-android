@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.di;
 
-import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
 import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
 import com.thebluealliance.androidclient.renderers.DistrictRenderer;
@@ -10,6 +9,7 @@ import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.MediaRenderer;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
+import com.thebluealliance.androidclient.renderers.RendererModule;
 import com.thebluealliance.androidclient.renderers.TeamRenderer;
 
 import org.mockito.Mockito;
@@ -18,41 +18,39 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.components.SingletonComponent;
+import dagger.hilt.testing.TestInstallIn;
 
-@Module(includes = MockDatafeedModule.class)
+@TestInstallIn(components = SingletonComponent.class, replaces = RendererModule.class)
+@Module
 public class MockRendererModule  {
     @Provides @Singleton
-    public MyTbaModelRenderer provideMyTbaModelRenderer(
-            APICache cache,
-            EventRenderer eventRenderer,
-            TeamRenderer teamRenderer,
-            MatchRenderer matchRenderer,
-            DistrictRenderer districtRenderer) {
+    public MyTbaModelRenderer provideMyTbaModelRenderer() {
         return Mockito.mock(MyTbaModelRenderer.class);
     }
 
     @Provides @Singleton
-    public EventRenderer provideEventRenderer(APICache cache) {
+    public EventRenderer provideEventRenderer() {
         return Mockito.mock(EventRenderer.class);
     }
 
     @Provides @Singleton
-    public AwardRenderer provideAwardRenderer(APICache cache) {
+    public AwardRenderer provideAwardRenderer() {
         return Mockito.mock(AwardRenderer.class);
     }
 
     @Provides @Singleton
-    public TeamRenderer provideTeamRenderer(APICache cache) {
+    public TeamRenderer provideTeamRenderer() {
         return Mockito.mock(TeamRenderer.class);
     }
 
     @Provides @Singleton
-    public MatchRenderer provideMatchRenderer(APICache cache) {
+    public MatchRenderer provideMatchRenderer() {
         return Mockito.mock(MatchRenderer.class);
     }
 
     @Provides @Singleton
-    public DistrictRenderer provideDistrictRenderer(APICache cache) {
+    public DistrictRenderer provideDistrictRenderer() {
         return Mockito.mock(DistrictRenderer.class);
     }
 
@@ -72,15 +70,7 @@ public class MockRendererModule  {
     }
 
     @Provides @Singleton
-    public ModelRendererSupplier provideModelRendererSupplier(
-            AwardRenderer awardRenderer,
-            DistrictPointBreakdownRenderer districtPointBreakdownRenderer,
-            DistrictTeamRenderer districtTeamRenderer,
-            EventRenderer eventRenderer,
-            TeamRenderer teamRenderer,
-            MatchRenderer matchRenderer,
-            MediaRenderer mediaRenderer,
-            DistrictRenderer districtRenderer) {
+    public ModelRendererSupplier provideModelRendererSupplier() {
         return Mockito.mock(ModelRendererSupplier.class);
     }
 }

@@ -1,8 +1,6 @@
-Version 6.0.4:
- - Welcome to the 2020 season!
- - Target Android Q
- - Support for system dark mode!
- - We now show team avatars
+Version 7.0.0:
+ - Welcome back for the 2022 season!
+ - Target Android 12
  - Bug fixes & reliability improvements
 
 View the full changelog for this and previous releases on the GitHub page:

@@ -5,52 +5,30 @@ import android.app.NotificationManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.hilt.work.HiltWorkerFactory;
 import androidx.multidex.MultiDexApplication;
+import androidx.work.Configuration;
 
 import com.facebook.stetho.Stetho;
-import com.thebluealliance.androidclient.accounts.AccountModule;
-import com.thebluealliance.androidclient.auth.AuthModule;
-import com.thebluealliance.androidclient.binders.BinderModule;
 import com.thebluealliance.androidclient.config.AppConfig;
-import com.thebluealliance.androidclient.database.writers.DatabaseWriterModule;
-import com.thebluealliance.androidclient.datafeed.DatafeedModule;
-import com.thebluealliance.androidclient.datafeed.HttpModule;
-import com.thebluealliance.androidclient.datafeed.gce.GceModule;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
-import com.thebluealliance.androidclient.di.TBAAndroidModule;
-import com.thebluealliance.androidclient.di.components.ApplicationComponent;
-import com.thebluealliance.androidclient.di.components.DaggerApplicationComponent;
-import com.thebluealliance.androidclient.di.components.DaggerDatafeedComponent;
-import com.thebluealliance.androidclient.di.components.DaggerDbComponent;
-import com.thebluealliance.androidclient.di.components.DatafeedComponent;
-import com.thebluealliance.androidclient.di.components.DbComponent;
-import com.thebluealliance.androidclient.gcm.GcmModule;
-import com.thebluealliance.androidclient.imgur.ImgurModule;
 
 import javax.inject.Inject;
 
 import static com.thebluealliance.androidclient.gcm.notifications.BaseNotification.NOTIFICATION_CHANNEL;
 
-public class TbaAndroid extends MultiDexApplication {
+import dagger.hilt.android.HiltAndroidApp;
+
+@HiltAndroidApp
+public class TbaAndroid extends MultiDexApplication implements Configuration.Provider {
 
     @Inject TBAStatusController mStatusController;
     @Inject AppConfig mAppConfig;
+    @Inject HiltWorkerFactory mWorkerFactory;
 
-    private ApplicationComponent mComponent;
-    private DbComponent mDbComponent;
-    private TBAAndroidModule mModule;
-    private DatafeedModule mDatafeedModule;
-    private BinderModule mBinderModule;
-    private DatabaseWriterModule mDatabaseWriterModule;
-    private AuthModule mAuthModule;
     private boolean mShouldBindStetho;
-
-    private HttpModule mHttpModule;
-    private GceModule mGceModule;
-    private ImgurModule mImgurModule;
-    private AccountModule mAccountModule;
-    private GcmModule mGcmModule;
 
     public TbaAndroid() {
         super();
@@ -67,7 +45,6 @@ public class TbaAndroid extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         TbaLogger.i("Welcome to The Blue Alliance for Android, v" + BuildConfig.VERSION_NAME);
-        getDatafeedComponenet().inject(this);
         mAppConfig.updateRemoteData();
         registerActivityLifecycleCallbacks(mStatusController);
 
@@ -105,98 +82,11 @@ public class TbaAndroid extends MultiDexApplication {
         mShouldBindStetho = false;
     }
 
-    public TBAAndroidModule getModule() {
-        if (mModule == null) {
-            mModule = new TBAAndroidModule(this);
-        }
-        return mModule;
-    }
-
-    public DatafeedModule getDatafeedModule() {
-        if (mDatafeedModule == null) {
-            mDatafeedModule = new DatafeedModule();
-        }
-        return mDatafeedModule;
-    }
-
-    public HttpModule getHttpModule() {
-        if (mHttpModule == null) {
-            mHttpModule = new HttpModule();
-        }
-        return mHttpModule;
-    }
-
-    public GceModule getGceModule() {
-        if (mGceModule == null) {
-            mGceModule = new GceModule();
-        }
-        return mGceModule;
-    }
-
-    public ImgurModule getImgurModule() {
-        if (mImgurModule == null) {
-            mImgurModule = new ImgurModule();
-        }
-        return mImgurModule;
-    }
-
-    public BinderModule getBinderModule() {
-        if (mBinderModule == null) {
-            mBinderModule = new BinderModule(getResources());
-        }
-        return mBinderModule;
-    }
-
-    public DatabaseWriterModule getDatabaseWriterModule() {
-        if (mDatabaseWriterModule == null) {
-            mDatabaseWriterModule = new DatabaseWriterModule();
-        }
-        return mDatabaseWriterModule;
-    }
-
-    public AuthModule getAuthModule() {
-        if (mAuthModule == null) {
-            mAuthModule = new AuthModule(this);
-        }
-        return mAuthModule;
-    }
-
-    public AccountModule getAccountModule() {
-        if (mAccountModule == null) {
-            mAccountModule = new AccountModule();
-        }
-        return mAccountModule;
-    }
-
-    public GcmModule getGcmModule() {
-        if (mGcmModule == null) {
-            mGcmModule = new GcmModule();
-        }
-        return mGcmModule;
-    }
-
-    public ApplicationComponent getComponent() {
-        if (mComponent == null) {
-            mComponent = DaggerApplicationComponent.builder()
-              .tBAAndroidModule(getModule())
-              .build();
-        }
-        return mComponent;
-    }
-
-    public DbComponent getDbComponent() {
-        if (mDbComponent == null) {
-            mDbComponent = DaggerDbComponent.builder()
-                .tBAAndroidModule(getModule())
+    @NonNull
+    @Override
+    public Configuration getWorkManagerConfiguration() {
+        return new Configuration.Builder()
+                .setWorkerFactory(mWorkerFactory)
                 .build();
-        }
-        return mDbComponent;
-    }
-
-    public DatafeedComponent getDatafeedComponenet() {
-        return DaggerDatafeedComponent.builder()
-          .applicationComponent(getComponent())
-          .datafeedModule(getDatafeedModule())
-          .build();
     }
 }

@@ -16,8 +16,10 @@ import com.thebluealliance.androidclient.subscribers.ContributorListSubscriber;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class ContributorsFragment extends ListViewFragment<JsonElement, ContributorListSubscriber> {
 
     @Inject @Named("github_api") GitHubAPI mAPI;
@@ -32,11 +34,6 @@ public class ContributorsFragment extends ListViewFragment<JsonElement, Contribu
         View view = super.onCreateView(inflater, container, savedInstanceState);
         mListView.setOnItemClickListener(mContributorClickListener);
         return view;
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

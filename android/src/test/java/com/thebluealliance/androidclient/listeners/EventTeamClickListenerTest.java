@@ -1,16 +1,16 @@
 package com.thebluealliance.androidclient.listeners;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+
 import android.content.Context;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
 
 @RunWith(AndroidJUnit4.class)
 public class EventTeamClickListenerTest {

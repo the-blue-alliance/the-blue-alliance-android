@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.fragments.mytba;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.view.ViewCompat;
 import androidx.viewpager.widget.ViewPager;
@@ -12,35 +11,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
 import com.thebluealliance.androidclient.adapters.MyTBAFragmentPagerAdapter;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MyTBAFragment extends Fragment {
 
     private ViewPager mViewPager;
     private SlidingTabs mTabs;
 
     @Inject AccountController mAccountController;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        TbaAndroid application = (TbaAndroid) getActivity().getApplication();
-        DaggerMyTbaComponent.builder()
-                .tBAAndroidModule(application.getModule())
-                .accountModule(application.getAccountModule())
-                .authModule(application.getAuthModule())
-                .applicationComponent(application.getComponent())
-                .build()
-                .inject(this);
-    }
 
     @Override
     public void onResume() {

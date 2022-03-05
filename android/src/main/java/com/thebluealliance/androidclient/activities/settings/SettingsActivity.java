@@ -20,17 +20,18 @@ import android.view.MenuItem;
 import com.google.common.collect.ImmutableMap;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
 import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
 import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class SettingsActivity extends AppCompatActivity {
 
     @Override
@@ -47,6 +48,7 @@ public class SettingsActivity extends AppCompatActivity {
                 .commit();
     }
 
+    @AndroidEntryPoint
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
         @Inject AccountController mAccountController;
@@ -63,15 +65,6 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            TbaAndroid application = (TbaAndroid) getActivity().getApplication();
-            DaggerMyTbaComponent.builder()
-                                .tBAAndroidModule(application.getModule())
-                                .accountModule(application.getAccountModule())
-                                .authModule(application.getAuthModule())
-                                .applicationComponent(application.getComponent())
-                                .build()
-                                .inject(this);
-
             Preference appVersion = findPreference("app_version");
 
             String versionInfo;

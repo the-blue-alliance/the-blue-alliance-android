@@ -1,6 +1,13 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import android.content.Context;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
@@ -19,13 +26,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.LooperMode;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)

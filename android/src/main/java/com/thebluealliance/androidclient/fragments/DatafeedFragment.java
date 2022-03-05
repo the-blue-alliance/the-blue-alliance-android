@@ -14,8 +14,6 @@ import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController.RefreshType;
 import com.thebluealliance.androidclient.datafeed.refresh.Refreshable;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 import com.thebluealliance.androidclient.subscribers.EventBusSubscriber;
@@ -52,17 +50,12 @@ public abstract class DatafeedFragment
 
     protected @Nullable RefreshController mRefreshController;
     protected Observable<? extends T> mObservable;
-    protected FragmentComponent mComponent;
     protected String mRefreshTag;
     protected boolean isCurrentlyVisible;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getActivity() instanceof HasFragmentComponent) {
-            mComponent = ((HasFragmentComponent) getActivity()).getComponent();
-        }
-        inject();
 
         if (getActivity() instanceof DatafeedActivity) {
             mRefreshController = ((DatafeedActivity) getActivity()).getRefreshController();
@@ -185,16 +178,6 @@ public abstract class DatafeedFragment
             getNewObservables(refreshType);
         }
     }
-
-    /**
-     * Fragments should inject themselves (to preserve Dagger's strong typing)
-     * They just need to have the following line: mComponent.inject(this);
-     * Plus, whatever else they want
-     * If the types don't match, add the fragment to
-     * {@link com.thebluealliance.androidclient.subscribers.SubscriberModule} and rebuild
-     * Called in {@link #onCreate(Bundle)}
-     */
-    protected abstract void inject();
 
     /**
      * For child to make a call to return the Observable containing the main data model

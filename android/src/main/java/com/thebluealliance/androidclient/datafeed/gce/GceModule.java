@@ -10,30 +10,30 @@ import com.appspot.tbatv_prod_hrd.Tbamobile;
 import com.appspot.tbatv_prod_hrd.TeamMedia;
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.accounts.AccountController;
-import com.thebluealliance.androidclient.accounts.AccountModule;
-import com.thebluealliance.androidclient.auth.AuthModule;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.auth.firebase.FirebaseAuthProvider;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.datafeed.retrofit.LenientGsonConverterFactory;
 import com.thebluealliance.androidclient.gcm.GcmController;
-import com.thebluealliance.androidclient.gcm.GcmModule;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.components.SingletonComponent;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 
 /**
  * Dagger Module for Google Cloud Endpoints and their related things
  */
-@Module(includes = {HttpModule.class, AccountModule.class, GcmModule.class, AuthModule.class})
+@InstallIn(SingletonComponent.class)
+@Module
 public class GceModule {
 
     // Format with app engine project ID
@@ -94,7 +94,7 @@ public class GceModule {
     }
 
     @Provides @Singleton MyTbaDatafeed provideMyTbaDatafeed(
-            Context context,
+            @ApplicationContext Context context,
             GceAuthController authController,
             GcmController gcmController,
             Tbamobile tbamobile,

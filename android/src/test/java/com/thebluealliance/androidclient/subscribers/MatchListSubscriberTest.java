@@ -1,6 +1,14 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import android.content.res.Resources;
+
+import androidx.annotation.StringRes;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.database.Database;
@@ -21,14 +29,6 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.LooperMode;
 
 import java.util.List;
-
-import androidx.annotation.StringRes;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)

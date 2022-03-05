@@ -6,17 +6,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
-import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
 import com.thebluealliance.androidclient.interfaces.InvalidateHost;
-import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.models.ApiStatus;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,17 +18,19 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * An activity that serves as a host to datafeed fragments
  */
+@AndroidEntryPoint
 public abstract class DatafeedActivity extends BaseActivity
-        implements HasFragmentComponent, InvalidateHost {
+        implements InvalidateHost {
 
     @Inject protected RefreshController mRefreshController;
     @Inject protected TBAStatusController mStatusController;
     @Inject protected EventBus mEventBus;
 
-    protected FragmentComponent mComponent;
     protected Menu mOptionsMenu;
 
     private boolean mRefreshEnabled;
@@ -46,7 +42,6 @@ public abstract class DatafeedActivity extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        inject();
         mRefreshController.reset();
     }
 
@@ -136,24 +131,5 @@ public abstract class DatafeedActivity extends BaseActivity
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onApiStatusUpdated(ApiStatus tbaStatus) {
         commonStatusUpdate(tbaStatus);
-    }
-
-    public abstract void inject();
-
-    @Override
-    public FragmentComponent getComponent() {
-        if (mComponent == null) {
-            TbaAndroid application = ((TbaAndroid) getApplication());
-            mComponent = DaggerFragmentComponent.builder()
-                    .applicationComponent(application.getComponent())
-                    .datafeedModule(application.getDatafeedModule())
-                    .binderModule(application.getBinderModule())
-                    .databaseWriterModule(application.getDatabaseWriterModule())
-                    .authModule(application.getAuthModule())
-                    .subscriberModule(new SubscriberModule(this))
-                    .clickListenerModule(new ClickListenerModule(this))
-                    .build();
-        }
-        return mComponent;
     }
 }

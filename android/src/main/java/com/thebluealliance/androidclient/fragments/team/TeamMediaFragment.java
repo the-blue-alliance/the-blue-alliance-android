@@ -24,8 +24,10 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class TeamMediaFragment extends DatafeedFragment<
         List<Media>,
         List<ListGroup>,
@@ -99,11 +101,6 @@ public class TeamMediaFragment extends DatafeedFragment<
     @Override
     public int getYear() {
         return mYear;
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

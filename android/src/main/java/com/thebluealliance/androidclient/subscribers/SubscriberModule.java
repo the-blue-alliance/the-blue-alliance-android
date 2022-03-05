@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 
@@ -8,7 +7,6 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
-import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.renderers.AwardRenderer;
 import com.thebluealliance.androidclient.renderers.DistrictPointBreakdownRenderer;
 import com.thebluealliance.androidclient.renderers.DistrictRenderer;
@@ -16,41 +14,39 @@ import com.thebluealliance.androidclient.renderers.EventRenderer;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 import com.thebluealliance.androidclient.renderers.MediaRenderer;
 import com.thebluealliance.androidclient.renderers.MyTbaModelRenderer;
-import com.thebluealliance.androidclient.renderers.RendererModule;
 import com.thebluealliance.androidclient.renderers.TeamRenderer;
 
 import org.greenrobot.eventbus.EventBus;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.components.ActivityComponent;
+import dagger.hilt.android.qualifiers.ActivityContext;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 
 /**
  * Module that injects {@link BaseAPISubscriber} objects to bind datafeed values to views
  * Each of these are annotated as @Singleton, so references are shared within their component
  * (e.g. unique references per activity)
  */
-@Module(includes = {TBAAndroidModule.class, RendererModule.class, })
+@InstallIn(ActivityComponent.class)
+@Module
 public class SubscriberModule {
 
-    private Activity mActivity;
-
-    public SubscriberModule(Activity activity) {
-        mActivity = activity;
-    }
-
     @Provides
-    public TeamInfoSubscriber provideTeamInfoSubscriber(Context context, AppConfig config) {
+    public TeamInfoSubscriber provideTeamInfoSubscriber(@ActivityContext Context context, AppConfig config) {
         return new TeamInfoSubscriber(context.getApplicationContext(), config);
     }
 
     @Provides
-    public EventListSubscriber provideEventListRecyclerSubscriber(Context context) {
+    public EventListSubscriber provideEventListRecyclerSubscriber(@ActivityContext Context context) {
         return new EventListSubscriber(context);
     }
 
     @Provides
-    public MediaListSubscriber provideMediaListSubscriber(EventBus eventBus) {
-        return new MediaListSubscriber(mActivity.getResources(), eventBus);
+    public MediaListSubscriber provideMediaListSubscriber(@ActivityContext  Context context, EventBus eventBus) {
+        return new MediaListSubscriber(context.getResources(), eventBus);
     }
 
     @Provides
@@ -71,8 +67,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public MatchListSubscriber provideMatchListSubscriber(Database db, EventBus eventBus) {
-        return new MatchListSubscriber(mActivity.getResources(), db, eventBus);
+    public MatchListSubscriber provideMatchListSubscriber(@ActivityContext Context context, Database db, EventBus eventBus) {
+        return new MatchListSubscriber(context.getResources(), db, eventBus);
     }
 
     @Provides
@@ -89,8 +85,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public StatsListSubscriber provideStatsListSubscriber(Database db, EventBus eventBus) {
-        return new StatsListSubscriber(mActivity.getResources(), db, eventBus);
+    public StatsListSubscriber provideStatsListSubscriber(@ActivityContext Context context, Database db, EventBus eventBus) {
+        return new StatsListSubscriber(context.getResources(), db, eventBus);
     }
 
     @Provides
@@ -99,15 +95,16 @@ public class SubscriberModule {
     }
 
     @Provides
-    public TeamStatsSubscriber provideTeamStatsSubscriber() {
-        return new TeamStatsSubscriber(mActivity.getResources());
+    public TeamStatsSubscriber provideTeamStatsSubscriber(@ActivityContext Context context) {
+        return new TeamStatsSubscriber(context.getResources());
     }
 
     @Provides
-    public TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(MatchRenderer renderer,
+    public TeamAtEventSummarySubscriber provideTeamAtEventSummarySubscriber(@ApplicationContext Context context,
+                                                                            MatchRenderer renderer,
                                                                             AppConfig config,
                                                                             EventBus bus) {
-        return new TeamAtEventSummarySubscriber(mActivity.getApplicationContext(),
+        return new TeamAtEventSummarySubscriber(context,
                                                 config,
                                                 bus,
                                                 renderer);
@@ -129,17 +126,13 @@ public class SubscriberModule {
     }
 
     @Provides
-    public TeamAtDistrictSummarySubscriber provideTeamAtDistrictSummarySubscriber(
-      Database db,
-      EventBus eventBus) {
-        return new TeamAtDistrictSummarySubscriber(db, mActivity.getResources(), eventBus);
+    public TeamAtDistrictSummarySubscriber provideTeamAtDistrictSummarySubscriber(@ActivityContext Context context, Database db, EventBus eventBus) {
+        return new TeamAtDistrictSummarySubscriber(db, context.getResources(), eventBus);
     }
 
     @Provides
-    public TeamAtDistrictBreakdownSubscriber provideTeamAtDistrictBreakdownSubscriber(
-      Database db,
-      Gson gson) {
-        return new TeamAtDistrictBreakdownSubscriber(mActivity.getResources(), db, gson);
+    public TeamAtDistrictBreakdownSubscriber provideTeamAtDistrictBreakdownSubscriber(@ActivityContext Context context, Database db, Gson gson) {
+        return new TeamAtDistrictBreakdownSubscriber(context.getResources(), db, gson);
     }
 
     @Provides
@@ -157,8 +150,8 @@ public class SubscriberModule {
         return new WebcastListSubscriber(renderer);
     }
 
-    @Provides RecentNotificationsSubscriber provideRecentNotificationsSubscriber(DatabaseWriter writer, MatchRenderer matchRenderer) {
-        return new RecentNotificationsSubscriber(writer, mActivity, matchRenderer);
+    @Provides RecentNotificationsSubscriber provideRecentNotificationsSubscriber(@ActivityContext Context context, DatabaseWriter writer, MatchRenderer matchRenderer, Gson gson) {
+        return new RecentNotificationsSubscriber(writer, context, matchRenderer, gson);
     }
 
     @Provides

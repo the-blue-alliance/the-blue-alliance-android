@@ -1,13 +1,18 @@
 package com.thebluealliance.androidclient.database.writers;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import android.database.sqlite.SQLiteDatabase;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.MatchesTable;
-import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.models.Match;
 
 import org.junit.Before;
@@ -16,11 +21,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import java.util.List;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 @RunWith(AndroidJUnit4.class)
 public class MatchListWriterTest {
@@ -43,7 +43,7 @@ public class MatchListWriterTest {
           "2015necmp_sf1m1",
           "2015necmp_f1m1");
         mWriter = new MatchListWriter(mDb);
-        mGson = HttpModule.getGson();
+        mGson = TBAAndroidModule.getGson();
     }
 
     @Test

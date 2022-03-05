@@ -12,32 +12,28 @@ import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewDistrictFragmentPagerAdapter;
-import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
-import com.thebluealliance.androidclient.listeners.ClickListenerModule;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class ViewDistrictActivity extends MyTBASettingsActivity
-  implements ViewPager.OnPageChangeListener, HasFragmentComponent {
+  implements ViewPager.OnPageChangeListener {
 
     public static final String DISTRICT_ABBREV = "districtKey";
     public static final String YEAR = "year";
 
     private String mDistrictKey;
     private int mYear;
-    private FragmentComponent mComponent;
 
     public static Intent newInstance(Context c, String districtAbbrev, int year) {
         Intent intent = new Intent(c, ViewDistrictActivity.class);
@@ -174,31 +170,9 @@ public class ViewDistrictActivity extends MyTBASettingsActivity
 
     }
 
-    @Override
-    public FragmentComponent getComponent() {
-        if (mComponent == null) {
-            TbaAndroid application = ((TbaAndroid) getApplication());
-            mComponent = DaggerFragmentComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .binderModule(application.getBinderModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .authModule(application.getAuthModule())
-              .subscriberModule(new SubscriberModule(this))
-              .clickListenerModule(new ClickListenerModule(this))
-              .build();
-        }
-        return mComponent;
-    }
-
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onActionBarTitleUpdated(ActionBarTitleEvent event) {
         setActionBarTitle(event.getTitle());
-    }
-
-    @Override
-    public void inject() {
-        getComponent().inject(this);
     }
 }

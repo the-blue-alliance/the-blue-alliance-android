@@ -1,5 +1,11 @@
 package com.thebluealliance.androidclient.models;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.api.model.IAwardRecipient;
 
@@ -8,12 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
 
 @RunWith(AndroidJUnit4.class)
 public class AwardTest {

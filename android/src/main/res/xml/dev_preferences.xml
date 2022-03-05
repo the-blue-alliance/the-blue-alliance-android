@@ -52,6 +52,11 @@
         app:title="@string/pref_header_account"
         app:iconSpaceReserved="false">
         <Preference
+            app:key="gcm_registration_id"
+            app:title="@string/pref_gcm_token"
+            app:iconSpaceReserved="false"
+            app:enabled="false" />
+        <Preference
             app:key="gcm_register"
             app:selectable="true"
             app:title="@string/pref_gcm_register"

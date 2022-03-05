@@ -1,5 +1,12 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import static org.mockito.Mockito.verify;
+import static org.robolectric.Shadows.shadowOf;
+
+import android.os.Looper;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.interfaces.YearsParticipatedUpdate;
@@ -13,13 +20,6 @@ import org.robolectric.annotation.LooperMode;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.mockito.Mockito.verify;
-import static org.robolectric.Shadows.shadowOf;
-
-import android.os.Looper;
 
 @LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)

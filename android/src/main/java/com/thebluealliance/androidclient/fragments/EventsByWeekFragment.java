@@ -25,8 +25,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class EventsByWeekFragment
         extends DatafeedFragment<List<Event>, List<EventWeekTab>, EventTabSubscriber, EventTabBinder> {
 
@@ -145,11 +147,6 @@ public class EventsByWeekFragment
             mFragmentBinder.onPageSelected(mSelectedTab);
         }
         mFragmentAdapter.setAutoBindOnceAtPosition(mViewPager.getCurrentItem(), true);
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

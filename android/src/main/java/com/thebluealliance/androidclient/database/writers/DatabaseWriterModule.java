@@ -1,14 +1,18 @@
 package com.thebluealliance.androidclient.database.writers;
 
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.di.TBAAndroidModule;
+import com.thebluealliance.androidclient.database.DatabaseWriter;
 
 import javax.inject.Singleton;
 
+import dagger.Lazy;
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.components.SingletonComponent;
 
-@Module(includes = TBAAndroidModule.class)
+@InstallIn(SingletonComponent.class)
+@Module
 public class DatabaseWriterModule {
 
     @Provides @Singleton
@@ -112,5 +116,33 @@ public class DatabaseWriterModule {
     @Provides @Singleton
     public FavoriteCollectionWriter provideFavoriteCollectionWriter(Database db) {
         return new FavoriteCollectionWriter(db);
+    }
+
+
+    @Provides
+    @Singleton
+    public DatabaseWriter provideDatabaseWriter(
+            Lazy<AwardWriter> award,
+            Lazy<AwardListWriter> awardList,
+            Lazy<DistrictWriter> district,
+            Lazy<DistrictListWriter> districtList,
+            Lazy<DistrictTeamWriter> districtTeam,
+            Lazy<DistrictTeamListWriter> districtTeamList,
+            Lazy<EventWriter> event,
+            Lazy<EventListWriter> eventList,
+            Lazy<EventTeamWriter> eventTeam,
+            Lazy<EventTeamListWriter> eventTeamList,
+            Lazy<MatchWriter> match,
+            Lazy<MatchListWriter> matchList,
+            Lazy<MediaWriter> media,
+            Lazy<MediaListWriter> mediaList,
+            Lazy<TeamWriter> team,
+            Lazy<TeamListWriter> teamList,
+            Lazy<YearsParticipatedWriter> yearsParticipated,
+            Lazy<EventTeamAndTeamListWriter> eventTeamAndTeamList,
+            Lazy<EventDetailWriter> eventDetail) {
+        return new DatabaseWriter(award, awardList, district, districtList, districtTeam,
+                districtTeamList, event, eventList, eventTeam, eventTeamList, match, matchList, media,
+                mediaList, team, teamList, yearsParticipated, eventTeamAndTeamList, eventDetail);
     }
 }

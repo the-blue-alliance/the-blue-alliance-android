@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.renderers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.models.Media;
@@ -13,9 +16,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Collection;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(Parameterized.class)
 public class MediaRendererTest {

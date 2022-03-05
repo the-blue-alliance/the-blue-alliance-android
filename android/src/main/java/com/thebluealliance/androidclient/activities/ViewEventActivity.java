@@ -11,27 +11,24 @@ import android.view.MenuItem;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
-import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.models.ApiStatus;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class ViewEventActivity extends MyTBASettingsActivity
-        implements ViewPager.OnPageChangeListener, HasFragmentComponent {
+        implements ViewPager.OnPageChangeListener {
 
     public static final String EVENTKEY = "eventKey";
     public static final String TAB = "tab";
@@ -41,7 +38,6 @@ public class ViewEventActivity extends MyTBASettingsActivity
     private ViewPager pager;
     private ViewEventFragmentPagerAdapter adapter;
     private boolean isDistrict;
-    private FragmentComponent mComponent;
 
     /**
      * Will be run in {@code onResume()}; used to perform UI setup that can't happen before the
@@ -256,27 +252,5 @@ public class ViewEventActivity extends MyTBASettingsActivity
     public void onActionBarTitleUpdated(ActionBarTitleEvent event) {
         setActionBarTitle(event.getTitle());
         setActionBarSubtitle(event.getSubtitle());
-    }
-
-    public FragmentComponent getComponent() {
-        if (mComponent == null) {
-            TbaAndroid application = ((TbaAndroid) getApplication());
-            mComponent = DaggerFragmentComponent.builder()
-                    .applicationComponent(application.getComponent())
-                    .datafeedModule(application.getDatafeedModule())
-                    .binderModule(application.getBinderModule())
-                    .databaseWriterModule(application.getDatabaseWriterModule())
-                    .gceModule(application.getGceModule())
-                    .authModule(application.getAuthModule())
-                    .subscriberModule(new SubscriberModule(this))
-                    .clickListenerModule(new ClickListenerModule(this))
-                    .build();
-        }
-        return mComponent;
-    }
-
-    @Override
-    public void inject() {
-        getComponent().inject(this);
     }
 }

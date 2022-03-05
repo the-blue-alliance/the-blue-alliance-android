@@ -1,11 +1,17 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
-import com.thebluealliance.androidclient.datafeed.HttpModule;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.listitems.DistrictTeamListElement;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.Event;
@@ -19,12 +25,6 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.LooperMode;
 
 import java.util.List;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)
@@ -42,7 +42,7 @@ public class DistrictPointsListSubscriberTest {
         DatabaseMocker.mockEventsTable(mDb);
         DatabaseMocker.mockTeamsTable(mDb);
         DistrictPointBreakdownRenderer renderer = new DistrictPointBreakdownRenderer();
-        mSubscriber = new DistrictPointsListSubscriber(mDb, HttpModule.getGson(), renderer);
+        mSubscriber = new DistrictPointsListSubscriber(mDb, TBAAndroidModule.getGson(), renderer);
         mPoints = ModelMaker.getModel(JsonObject.class, "2015necmp_points");
     }
 

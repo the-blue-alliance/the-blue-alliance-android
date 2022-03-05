@@ -5,12 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 
 import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * Android is predictably stupid when it comes to handling notifications. Specifically, clicking
@@ -22,6 +23,7 @@ import javax.inject.Inject;
  * Depending on the action specified in the broadcast intent, this may launch an activity specified
  * in the intent's extras. However, it will always mark all notifications as not active.
  */
+@AndroidEntryPoint
 public class NotificationChangedReceiver extends BroadcastReceiver {
 
     public static final String ACTION_NOTIFICATION_CLICKED = "com.thebluealliance.androidclient.intent.action.NOTIFICATION_CLICKED";
@@ -40,7 +42,6 @@ public class NotificationChangedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         TbaLogger.i("Notification changed receiver: " + intent);
-        ((TbaAndroid) context.getApplicationContext()).getDbComponent().inject(this);
 
         Bundle extras = intent.getExtras();
         if (ACTION_NOTIFICATION_CLICKED.equals(intent.getAction())) {

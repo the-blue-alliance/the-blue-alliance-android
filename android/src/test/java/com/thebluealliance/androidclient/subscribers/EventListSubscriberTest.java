@@ -1,6 +1,11 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import android.content.Context;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
@@ -18,11 +23,6 @@ import org.robolectric.annotation.LooperMode;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)

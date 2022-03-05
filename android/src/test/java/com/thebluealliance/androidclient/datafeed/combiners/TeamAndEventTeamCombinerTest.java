@@ -1,5 +1,10 @@
 package com.thebluealliance.androidclient.datafeed.combiners;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.thebluealliance.androidclient.database.writers.EventTeamAndTeamListWriter;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
@@ -11,11 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
 public class TeamAndEventTeamCombinerTest {

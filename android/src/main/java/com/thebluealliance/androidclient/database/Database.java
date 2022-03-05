@@ -9,7 +9,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
 
 import com.google.gson.Gson;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
@@ -23,8 +22,6 @@ import com.thebluealliance.androidclient.database.tables.MediasTable;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
-
-import javax.inject.Inject;
 
 
 //SUPPRESS CHECKSTYLE FinalClass
@@ -213,12 +210,13 @@ public class Database extends SQLiteOpenHelper {
     private SubscriptionsTable mSubscriptionsTable;
     private NotificationsTable mNotificationsTable;
 
-    @Inject Gson mGson;
+    private Gson mGson;
 
-    protected Database(Context context) {
+    protected Database(Context context, Gson gson) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        inject(context);
+        mGson = gson;
         mDb = getWritableDatabase();
+
         mTeamsTable = new TeamsTable(mDb, mGson);
         mAwardsTable = new AwardsTable(mDb, mGson);
         mMatchesTable = new MatchesTable(mDb, mGson);
@@ -233,13 +231,9 @@ public class Database extends SQLiteOpenHelper {
         mNotificationsTable = new NotificationsTable(mDb);
     }
 
-    protected void inject(Context context) {
-        ((TbaAndroid)context.getApplicationContext()).getDbComponent().inject(this);
-    }
-
-    public static synchronized Database getInstance(Context context) {
+    public static synchronized Database getInstance(Context context, Gson gson) {
         if (sDbInstance == null) {
-            sDbInstance = new Database(context.getApplicationContext());
+            sDbInstance = new Database(context.getApplicationContext(), gson);
             sDbInstance.setWriteAheadLoggingEnabled(true);
         }
         return sDbInstance;

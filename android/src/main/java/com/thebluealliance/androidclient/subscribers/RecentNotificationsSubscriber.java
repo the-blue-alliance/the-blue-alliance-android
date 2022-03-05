@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.subscribers;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
@@ -17,14 +18,16 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
 
     private final DatabaseWriter mWriter;
     private final MatchRenderer mMatchRenderer;
+    private final Gson mGson;
     private Context mContext;
 
     @Inject
-    public RecentNotificationsSubscriber(DatabaseWriter writer, Context context, MatchRenderer matchRenderer) {
+    public RecentNotificationsSubscriber(DatabaseWriter writer, Context context, MatchRenderer matchRenderer, Gson gson) {
         super();
         mWriter = writer;
         mContext = context;
         mMatchRenderer = matchRenderer;
+        mGson = gson;
         mDataToBind = new ArrayList<>();
     }
 
@@ -33,7 +36,7 @@ public class RecentNotificationsSubscriber extends BaseAPISubscriber<List<Stored
         mDataToBind.clear();
         for (int i = 0; i < mAPIData.size(); i++) {
             StoredNotification notification = mAPIData.get(i);
-            BaseNotification renderable = notification.getNotification(mWriter, mMatchRenderer);
+            BaseNotification renderable = notification.getNotification(mWriter, mMatchRenderer, mGson);
             if (renderable != null) {
                 renderable.parseMessageData();
                 Object viewModel = renderable.renderToViewModel(mContext, null);

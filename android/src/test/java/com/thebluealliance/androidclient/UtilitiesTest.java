@@ -1,8 +1,14 @@
 package com.thebluealliance.androidclient;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
 
@@ -11,12 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RuntimeEnvironment;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 @RunWith(AndroidJUnit4.class)
 public class UtilitiesTest {

@@ -1,5 +1,11 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
@@ -17,12 +23,6 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.LooperMode;
 
 import java.util.List;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)

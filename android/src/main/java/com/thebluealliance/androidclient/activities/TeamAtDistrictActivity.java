@@ -14,34 +14,29 @@ import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtDistrictFragmentPagerAdapter;
-import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
-import com.thebluealliance.androidclient.listeners.ClickListenerModule;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class TeamAtDistrictActivity extends DatafeedActivity
-  implements HasFragmentComponent {
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
+public class TeamAtDistrictActivity extends DatafeedActivity {
 
     public static final String DISTRICT_KEY = "districtKey";
     public static final String TEAM_KEY = "teamKey";
 
     private String mDistrictKey;
     private String mTeamKey;
-    private FragmentComponent mComponent;
 
     public static Intent newInstance(Context c, String teamAtDistrictKey) {
         return newInstance(c, DistrictTeamHelper.getTeamKey(teamAtDistrictKey), DistrictTeamHelper.getDistrictKey(teamAtDistrictKey));
@@ -155,26 +150,5 @@ public class TeamAtDistrictActivity extends DatafeedActivity
     public void onActionBarTitleUpdated(ActionBarTitleEvent event) {
         setActionBarTitle(event.getTitle());
         setActionBarSubtitle(event.getSubtitle());
-    }
-
-    @Override
-    public FragmentComponent getComponent() {
-        if (mComponent == null) {
-            TbaAndroid application = ((TbaAndroid) getApplication());
-            mComponent = DaggerFragmentComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .binderModule(application.getBinderModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .authModule(application.getAuthModule())
-              .subscriberModule(new SubscriberModule(this))
-              .clickListenerModule(new ClickListenerModule(this))
-              .build();
-        }
-        return mComponent;
-    }
-
-    public void inject() {
-        getComponent().inject(this);
     }
 }

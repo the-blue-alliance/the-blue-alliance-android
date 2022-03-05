@@ -1,19 +1,25 @@
 package com.thebluealliance.androidclient.di;
 
-import com.google.gson.Gson;
 import com.thebluealliance.androidclient.datafeed.HttpModule;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
-import dagger.Provides;
+import dagger.hilt.components.SingletonComponent;
+import dagger.hilt.testing.TestInstallIn;
 
-@Module(includes = {MockTbaAndroidModule.class})
+@Module
+@TestInstallIn(components = SingletonComponent.class, replaces = HttpModule.class)
 public class MockHttpModule {
-
+/*
     @Provides
     @Singleton
-    public Gson provideGson() {
-        return HttpModule.getGson();
+    public OkHttpClient getOkHttp() {
+        return Mockito.mock(OkHttpClient.class);
     }
+
+
+    @Provides @Singleton
+    public Cache provideOkCache(@ApplicationContext Context context) {
+        return new Cache(context.getCacheDir(), HttpModule.CACHE_SIZE);
+    }
+ */
 }

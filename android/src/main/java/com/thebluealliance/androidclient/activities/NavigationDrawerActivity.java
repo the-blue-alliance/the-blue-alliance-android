@@ -10,23 +10,21 @@ import android.view.Gravity;
 import android.widget.FrameLayout;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
-import com.thebluealliance.androidclient.di.components.HasMyTbaComponent;
-import com.thebluealliance.androidclient.di.components.MyTbaComponent;
 import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
 import com.thebluealliance.androidclient.views.ScrimInsetsFrameLayout;
+
+import dagger.hilt.android.AndroidEntryPoint;
 
 /**
  * Activity that provides a navigation drawer.
  * <p>
  * This allows for the easy reuse of a single navigation drawer throughout the app.
  */
-
+@AndroidEntryPoint
 public abstract class NavigationDrawerActivity extends AppCompatActivity
-        implements NavigationDrawerFragment.NavigationDrawerListener, HasMyTbaComponent {
+        implements NavigationDrawerFragment.NavigationDrawerListener {
 
     private static final String IS_DRAWER_OPEN = "is_drawer_open";
 
@@ -280,16 +278,5 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
         if (!isDrawerOpen()) {
             getSupportActionBar().setTitle(mActionBarTitle);
         }
-    }
-
-    @Override
-    public MyTbaComponent getMyTbaComponent() {
-        TbaAndroid application = (TbaAndroid) getApplication();
-        return DaggerMyTbaComponent.builder()
-                .tBAAndroidModule(application.getModule())
-                .accountModule(application.getAccountModule())
-                .authModule(application.getAuthModule())
-                .applicationComponent(application.getComponent())
-                .build();
     }
 }

@@ -3,10 +3,11 @@ package com.thebluealliance.androidclient.background.mytba;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.Preference;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceScreen;
+
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceScreen;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountController;

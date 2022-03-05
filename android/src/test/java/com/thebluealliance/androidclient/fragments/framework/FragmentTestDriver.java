@@ -1,10 +1,14 @@
 package com.thebluealliance.androidclient.fragments.framework;
 
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import android.app.Activity;
 import android.content.ComponentName;
+import android.widget.ListView;
+
 import androidx.annotation.IdRes;
 import androidx.fragment.app.Fragment;
-import android.widget.ListView;
 
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 import com.thebluealliance.androidclient.binders.ListViewBinder;
@@ -18,9 +22,6 @@ import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowListView;
 
 import java.util.List;
-
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public final class FragmentTestDriver {
 

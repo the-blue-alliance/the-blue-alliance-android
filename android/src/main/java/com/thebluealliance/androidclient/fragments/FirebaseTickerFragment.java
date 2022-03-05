@@ -27,8 +27,6 @@ import com.thebluealliance.androidclient.adapters.AnimatedRecyclerMultiAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.retrofit.FirebaseAPI;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.firebase.FirebaseChildType;
 import com.thebluealliance.androidclient.firebase.ResumeableRxFirebase;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
@@ -63,12 +61,14 @@ import javax.inject.Named;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.hilt.android.AndroidEntryPoint;
 import io.nlopez.smartadapters.utils.Mapper;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
+@AndroidEntryPoint
 public abstract class FirebaseTickerFragment extends Fragment implements Action1<List<FirebaseNotification>>, View.OnClickListener {
 
     public static final String FIREBASE_URL_DEFAULT = "https://thebluealliance.firebaseio.com/";
@@ -108,15 +108,10 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
     private FirebaseChildNodesState mChildNodeState = FirebaseChildNodesState.LOADING;
     private String mFirebaseUrl;
     private int mFirebaseLoadDepth;
-    protected FragmentComponent mComponent;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getActivity() instanceof HasFragmentComponent) {
-            mComponent = ((HasFragmentComponent) getActivity()).getComponent();
-        }
-        inject();
         loadFirebaseParams();
         mFirebaseSubscriber = new ResumeableRxFirebase();
         // Delivery will be resumed once the view hierarchy is created
@@ -496,7 +491,6 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
         }
 
         for (FirebaseNotification firebaseNotification : firebaseNotifications) {
-            mComponent.inject(firebaseNotification);
             mAllNotifications.add(0, firebaseNotification.getNotification());
         }
 
@@ -514,8 +508,6 @@ public abstract class FirebaseTickerFragment extends Fragment implements Action1
                 .add(GenericNotificationViewModel.class, GenericNotificationItemView.class);
         return mapper;
     }
-
-    protected abstract void inject();
 
     protected abstract String getFirebaseUrlSuffix();
 

@@ -10,12 +10,9 @@ import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesBaseResponse;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesMediaSuggestionMessage;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.gce.GceAuthController;
-import com.thebluealliance.androidclient.di.components.DaggerSuggestionComponent;
-import com.thebluealliance.androidclient.di.components.SuggestionComponent;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.imgur.ImgurApi;
 import com.thebluealliance.imgur.responses.UploadResponse;
@@ -24,6 +21,7 @@ import java.io.File;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Response;
@@ -32,6 +30,7 @@ import retrofit2.Response;
  * An {@link IntentService} that takes details about an image stored locally, uploads it to imgur,
  * and then posts it as a suggestion to TBA
  */
+@AndroidEntryPoint
 public class ImgurSuggestionService extends IntentService {
 
     public static final String EXTRA_FILEPATH = "filepath";
@@ -109,12 +108,6 @@ public class ImgurSuggestionService extends IntentService {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        getComponent().inject(this);
-    }
-
-    @Override
     protected void onHandleIntent(Intent intent) {
         TbaLogger.d("IMGUR SERVICE START");
         String filepath = intent.getStringExtra(EXTRA_FILEPATH);
@@ -189,18 +182,6 @@ public class ImgurSuggestionService extends IntentService {
 
             wakeLock.release();
         }
-    }
-
-    private SuggestionComponent getComponent() {
-        TbaAndroid application = (TbaAndroid) getApplication();
-        return DaggerSuggestionComponent.builder()
-                .applicationComponent(application.getComponent())
-                .gceModule(application.getGceModule())
-                .httpModule(application.getHttpModule())
-                .imgurModule(application.getImgurModule())
-                .tBAAndroidModule(application.getModule())
-                .authModule(application.getAuthModule())
-                .build();
     }
 
     private String getAuthHeader() {

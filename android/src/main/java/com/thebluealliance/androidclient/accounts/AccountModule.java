@@ -12,7 +12,10 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.components.SingletonComponent;
 
+@InstallIn(SingletonComponent.class)
 @Module(includes = TBAAndroidModule.class)
 public class AccountModule {
 

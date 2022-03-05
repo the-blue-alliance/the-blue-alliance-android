@@ -14,6 +14,7 @@ import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.subscribers.RankingsListSubscriber;
 import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
@@ -24,6 +25,7 @@ import rx.Observable;
  * @author Bryce Matsuda
  * @author Nathan Walters
  */
+@AndroidEntryPoint
 public class EventRankingsFragment extends RecyclerViewFragment<RankingResponseObject, RankingsListSubscriber, RecyclerViewBinder> {
 
     public static final String KEY = "eventKey";
@@ -51,11 +53,6 @@ public class EventRankingsFragment extends RecyclerViewFragment<RankingResponseO
             mEventKey = getArguments().getString(KEY, "");
         }
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

@@ -11,8 +11,10 @@ import com.thebluealliance.androidclient.subscribers.WebcastListSubscriber;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class GamedayWebcastsFragment extends ListViewFragment<List<Event>, WebcastListSubscriber> {
 
     private int mYear;
@@ -27,11 +29,6 @@ public class GamedayWebcastsFragment extends ListViewFragment<List<Event>, Webca
         mYear = Utilities.getCurrentYear();
         mWeek = Utilities.getCurrentCompWeek();
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

@@ -26,8 +26,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import javax.inject.Inject;
 
 import dagger.Lazy;
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class TeamInfoFragment
         extends DatafeedFragment<TeamInfoSubscriber.Model, TeamInfoBinder.Model, TeamInfoSubscriber, TeamInfoBinder> {
 
@@ -106,11 +108,6 @@ public class TeamInfoFragment
         if (event.getEvent() != null) {
             showCurrentEvent(mEventRenderer.get().renderFromModel(event.getEvent(), null));
         }
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

@@ -16,9 +16,12 @@ import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class EventListFragment extends RecyclerViewFragment<List<Event>, EventListSubscriber, RecyclerViewBinder> {
 
     public static final String YEAR = "YEAR";
@@ -48,11 +51,6 @@ public class EventListFragment extends RecyclerViewFragment<List<Event>, EventLi
         super.onCreate(savedInstanceState);
 
         setShouldBindImmediately(getArguments().getBoolean(SHOULD_BIND_IMMEDIATELY, true));
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

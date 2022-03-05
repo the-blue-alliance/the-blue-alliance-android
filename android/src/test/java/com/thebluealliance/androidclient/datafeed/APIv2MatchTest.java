@@ -1,12 +1,12 @@
 package com.thebluealliance.androidclient.datafeed;
 
+import static junit.framework.Assert.assertEquals;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-
-import static junit.framework.Assert.assertEquals;
 
 @Ignore
 @Config(manifest = Config.NONE)

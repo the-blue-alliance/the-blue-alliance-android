@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.common.base.Predicate;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
@@ -43,13 +44,15 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
 
     private final MatchWriter mWriter;
     private final MatchRenderer mRenderer;
+    private final Gson mGson;
     private String eventName, eventKey, matchKey;
     private Match match;
 
-    public ScoreNotification(String messageData, MatchWriter writer, MatchRenderer matchRenderer) {
+    public ScoreNotification(String messageData, MatchWriter writer, MatchRenderer matchRenderer, Gson gson) {
         super(NotificationTypes.MATCH_SCORE, messageData);
         mWriter = writer;
         mRenderer = matchRenderer;
+        mGson = gson;
     }
 
     public String getEventName() {
@@ -75,7 +78,7 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
             throw new JsonParseException("Notification data does not contain 'match");
         }
         JsonObject match = jsonData.get("match").getAsJsonObject();
-        this.match = gson.fromJson(match, Match.class);
+        this.match = mGson.fromJson(match, Match.class);
         this.matchKey = this.match.getKey();
         this.eventKey = MatchHelper.getEventKeyFromMatchKey(matchKey);
         if (!jsonData.has("event_name")) {

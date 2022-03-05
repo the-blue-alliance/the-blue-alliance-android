@@ -22,8 +22,10 @@ import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class EventMatchesFragment
   extends DatafeedFragment<List<Match>, List<ListGroup>, MatchListSubscriber, MatchListBinder> implements HasEventParam {
 
@@ -87,11 +89,6 @@ public class EventMatchesFragment
             mListState = mListView.onSaveInstanceState();
             mFirstVisiblePosition = mListView.getFirstVisiblePosition();
         }
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

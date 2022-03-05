@@ -11,8 +11,10 @@ import com.thebluealliance.androidclient.subscribers.DistrictListSubscriber;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class DistrictListFragment
   extends ListViewFragment<List<District>, DistrictListSubscriber> {
 
@@ -34,11 +36,6 @@ public class DistrictListFragment
             mYear = getArguments().getInt(YEAR, Utilities.getCurrentYear());
         }
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

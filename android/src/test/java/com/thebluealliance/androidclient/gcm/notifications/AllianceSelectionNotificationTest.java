@@ -1,8 +1,17 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -11,6 +20,7 @@ import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.database.writers.EventWriter;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.StoredNotification;
@@ -20,15 +30,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RuntimeEnvironment;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 @RunWith(AndroidJUnit4.class)
 public class AllianceSelectionNotificationTest {
@@ -45,7 +46,7 @@ public class AllianceSelectionNotificationTest {
         mContext = RuntimeEnvironment.application.getApplicationContext();
         mWriter = mock(EventWriter.class);
         mData = ModelMaker.getModel(JsonObject.class, "notification_alliance_selection");
-        mNotification = new AllianceSelectionNotification(mData.toString(), mWriter);
+        mNotification = new AllianceSelectionNotification(mData.toString(), mWriter, TBAAndroidModule.getGson());
     }
 
     @Test
@@ -70,7 +71,7 @@ public class AllianceSelectionNotificationTest {
     @Test(expected = JsonParseException.class)
     public void testNoEvent() {
         mData.remove("event");
-        mNotification = new AllianceSelectionNotification(mData.toString(), mWriter);
+        mNotification = new AllianceSelectionNotification(mData.toString(), mWriter, TBAAndroidModule.getGson());
         mNotification.parseMessageData();
     }
 

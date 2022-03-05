@@ -23,6 +23,8 @@ buildscript {
         classpath 'com.facebook.testing.screenshot:plugin:0.14.0'
 
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
+
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.41'
     }
 }
 
@@ -52,9 +54,10 @@ allprojects {
         rxJavaVersion = '1.2.7'
         rxAndroidVersion = '1.2.1'
         gsonVersion = '2.8.6'
-        daggerVersion = '2.28.3'
+        daggerVersion = '2.41'
         robolectricVersion = '4.7.3'
         permissionDispatcherVersion = '4.9.1'
+        workManagerVersion = '2.7.1'
 
         travisBuild = System.getenv("CI") == "true"
         // allows for -Dpre-dex=false to be set

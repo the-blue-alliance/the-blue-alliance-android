@@ -1,6 +1,16 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
 import android.content.Context;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
@@ -9,6 +19,7 @@ import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
+import com.thebluealliance.androidclient.di.TBAAndroidModule;
 import com.thebluealliance.androidclient.gcm.notifications.NotificationTypes;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
@@ -31,16 +42,6 @@ import org.robolectric.annotation.LooperMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 @LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)
@@ -66,7 +67,7 @@ public class RecentNotificationsSubscriberTest {
 
         DatabaseMocker.mockNotificationsTable(mDb);
         DatabaseWriter writer = mockDatabaseWriter();
-        mSubscriber = new RecentNotificationsSubscriber(writer, mContext, mRenderer);
+        mSubscriber = new RecentNotificationsSubscriber(writer, mContext, mRenderer, TBAAndroidModule.getGson());
         List<JsonObject> notificationData = ModelMaker.getMultiModelList(JsonObject.class,
           "notification_alliance_selection",
           "notification_awards_posted",

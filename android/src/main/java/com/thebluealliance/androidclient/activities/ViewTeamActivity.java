@@ -37,7 +37,6 @@ import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
@@ -45,15 +44,10 @@ import com.thebluealliance.androidclient.adapters.DialogListWithIconsAdapter;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
-import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.eventbus.TeamAvatarUpdateEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.YearsParticipatedUpdate;
-import com.thebluealliance.androidclient.listeners.ClickListenerModule;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.subscribers.YearsParticipatedDropdownSubscriber;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
@@ -70,6 +64,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.hilt.android.AndroidEntryPoint;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnShowRationale;
 import permissions.dispatcher.PermissionRequest;
@@ -79,10 +74,10 @@ import rx.schedulers.Schedulers;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 @RuntimePermissions
+@AndroidEntryPoint
 public class ViewTeamActivity extends MyTBASettingsActivity implements
         ViewPager.OnPageChangeListener,
         View.OnClickListener,
-        HasFragmentComponent,
         YearsParticipatedUpdate {
 
     public static final String EXTRA_TEAM_KEY = "team_key";
@@ -104,8 +99,6 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     @BindView(R.id.view_pager) ViewPager mPager;
 
     private Snackbar mMediaSnackbar;
-
-    private FragmentComponent mComponent;
     private int mCurrentSelectedYearPosition = -1,
             mSelectedTab = -1;
 
@@ -541,27 +534,5 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     private void markMediaSnackbarAsDismissed() {
         PreferenceManager.getDefaultSharedPreferences(ViewTeamActivity.this)
                 .edit().putBoolean(PREF_MEDIA_SNACKBAR_DISMISSED, true).commit();
-    }
-
-    public FragmentComponent getComponent() {
-        if (mComponent == null) {
-            TbaAndroid application = ((TbaAndroid) getApplication());
-            mComponent = DaggerFragmentComponent.builder()
-                    .applicationComponent(application.getComponent())
-                    .datafeedModule(application.getDatafeedModule())
-                    .binderModule(application.getBinderModule())
-                    .databaseWriterModule(application.getDatabaseWriterModule())
-                    .gceModule(application.getGceModule())
-                    .authModule(application.getAuthModule())
-                    .subscriberModule(new SubscriberModule(this))
-                    .clickListenerModule(new ClickListenerModule(this))
-                    .build();
-        }
-        return mComponent;
-    }
-
-    @Override
-    public void inject() {
-        getComponent().inject(this);
     }
 }

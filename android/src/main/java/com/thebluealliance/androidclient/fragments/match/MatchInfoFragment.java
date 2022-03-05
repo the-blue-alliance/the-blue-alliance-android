@@ -8,8 +8,10 @@ import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber;
 import com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber.Model;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class MatchInfoFragment extends ListViewFragment<Model, MatchInfoSubscriber> {
 
     private static final String KEY = "key";
@@ -35,11 +37,6 @@ public class MatchInfoFragment extends ListViewFragment<Model, MatchInfoSubscrib
         }
         mEventKey = MatchHelper.getEventKeyFromMatchKey(mMatchKey);
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

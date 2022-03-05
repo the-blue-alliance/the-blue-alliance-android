@@ -1,5 +1,10 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.helpers.DistrictTeamHelper;
 import com.thebluealliance.androidclient.models.DistrictRanking;
@@ -10,11 +15,6 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
 public class AddDistrictTeamKeyTest {

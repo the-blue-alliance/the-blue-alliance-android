@@ -21,9 +21,11 @@ import com.thebluealliance.androidclient.viewmodels.SimpleTeamViewModel;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class TeamAtEventSummaryFragment extends RecyclerViewFragment<TeamAtEventSummarySubscriber.Model, TeamAtEventSummarySubscriber, RecyclerViewBinder> implements HasEventParam {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
@@ -65,11 +67,6 @@ public class TeamAtEventSummaryFragment extends RecyclerViewFragment<TeamAtEvent
                     getResources().getDimensionPixelSize(R.dimen.fab_list_padding));
             mRecyclerView.setClipToPadding(false);
         }
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

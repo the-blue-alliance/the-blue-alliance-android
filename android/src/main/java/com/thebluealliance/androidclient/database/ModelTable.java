@@ -88,7 +88,9 @@ public abstract class ModelTable<T extends TbaDatabaseModel> {
             }
             mDb.setTransactionSuccessful();
         } finally {
-            mDb.endTransaction();
+            if (mDb.inTransaction()) {
+                mDb.endTransaction();
+            }
         }
         return inserted;
     }

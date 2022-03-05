@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
@@ -24,14 +25,16 @@ public class EventMatchVideoNotification extends BaseNotification<EventMatchVide
 
     private String eventName;
     private String eventKey;
+    private final Gson mGson;
 
-    public EventMatchVideoNotification(String messageData) {
+    public EventMatchVideoNotification(String messageData, Gson gson) {
         super(NotificationTypes.EVENT_MATCH_VIDEO, messageData);
+        mGson = gson;
     }
 
     @Override
     public void parseMessageData() throws JsonParseException {
-        JsonObject jsonData = gson.fromJson(messageData, JsonObject.class);
+        JsonObject jsonData = mGson.fromJson(messageData, JsonObject.class);
         if (!jsonData.has("event_key")) {
             throw new JsonParseException("EventMatchVideoNotification has no event key");
         }

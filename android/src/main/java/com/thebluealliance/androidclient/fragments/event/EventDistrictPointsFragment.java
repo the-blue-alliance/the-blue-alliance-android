@@ -23,8 +23,10 @@ import com.thebluealliance.androidclient.views.NoDataView;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class EventDistrictPointsFragment
         extends DatafeedFragment<JsonElement, List<ListItem>, DistrictPointsListSubscriber, DistrictPointsListBinder> {
     private static final String KEY = "event_key";
@@ -87,11 +89,6 @@ public class EventDistrictPointsFragment
             mAdapter = (ListViewAdapter) mListView.getAdapter();
             mListState = mListView.onSaveInstanceState();
         }
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

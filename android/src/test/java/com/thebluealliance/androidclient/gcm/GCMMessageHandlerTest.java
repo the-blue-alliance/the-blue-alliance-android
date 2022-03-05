@@ -1,10 +1,17 @@
 package com.thebluealliance.androidclient.gcm;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
@@ -14,28 +21,33 @@ import com.thebluealliance.androidclient.gcm.notifications.SummaryNotification;
 import com.thebluealliance.androidclient.models.StoredNotification;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.robolectric.ParameterizedRobolectricTestRunner;
 import org.robolectric.Robolectric;
 import org.robolectric.Shadows;
+import org.robolectric.android.controller.ServiceController;
+import org.robolectric.annotation.Config;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
+import dagger.hilt.android.testing.HiltTestApplication;
 
 @RunWith(Enclosed.class)
 public class GCMMessageHandlerTest {
 
+    @HiltAndroidTest
     @RunWith(ParameterizedRobolectricTestRunner.class)
+    @Config(application = HiltTestApplication.class)
     public static class TestRenderSingleNotifications {
+
+        @Rule public HiltAndroidRule hiltRule = new HiltAndroidRule(this);
 
         private NotificationManager mNotificationManager;
 
@@ -46,10 +58,13 @@ public class GCMMessageHandlerTest {
         @ParameterizedRobolectricTestRunner.Parameter(2)
         public int mExpectedPriority;
 
+        private GCMMessageHandlerWithMocks mService;
+
         @Before
         public void setUp() {
             Context applicationContext = ApplicationProvider.getApplicationContext();
             mNotificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            mService = buildAndStartService();
         }
 
         @ParameterizedRobolectricTestRunner.Parameters(name = "NotificationType = {0}")
@@ -69,9 +84,9 @@ public class GCMMessageHandlerTest {
 
         @Test
         public void testPostAndDismissSingleNotification() {
-            GCMMessageHandlerWithMocks service = buildAndStartService();
-            Intent intent = buildIntent(mNotificationType, mNotificationDataFileName);
-            service.onHandleWork(intent);
+
+            RemoteMessage message = buildMessage(mNotificationType, mNotificationDataFileName);
+            mService.onMessageReceived(message);
 
             List<Notification> notifications = Shadows.shadowOf(mNotificationManager).getAllNotifications();
             assertEquals(1, notifications.size());
@@ -82,11 +97,11 @@ public class GCMMessageHandlerTest {
             assertEquals(mExpectedPriority, notification.priority);
 
             // Grab the notification we rendered to check with
-            BaseNotification lastPosted = service.getLastNotification();
+            BaseNotification lastPosted = mService.getLastNotification();
             assertNotNull(lastPosted);
 
             // Check we write the notification to the local DB
-            NotificationsTable dbTable = service.getDatabase().getNotificationsTable();
+            NotificationsTable dbTable = mService.getDatabase().getNotificationsTable();
             List<StoredNotification> storedNotifications = dbTable.getActive();
             assertEquals(1, storedNotifications.size());
             StoredNotification stored = storedNotifications.get(0);
@@ -102,23 +117,30 @@ public class GCMMessageHandlerTest {
         }
     }
 
+    @HiltAndroidTest
     @RunWith(AndroidJUnit4.class)
+    @Config(application = HiltTestApplication.class)
     public static class TestNotificationSummary {
+
+        @Rule public HiltAndroidRule hiltRule = new HiltAndroidRule(this);
+
         private NotificationManager mNotificationManager;
+        private GCMMessageHandlerWithMocks mService;
 
         @Before
         public void setUp() {
             Context applicationContext = ApplicationProvider.getApplicationContext();
             mNotificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            mService = buildAndStartService();
         }
 
         @Test
         public void testSummaryPosted() {
-            GCMMessageHandlerWithMocks service = buildAndStartService();
-            Intent intent1 = buildIntent(NotificationTypes.SCHEDULE_UPDATED, "notification_schedule_updated");
-            Intent intent2 = buildIntent(NotificationTypes.MATCH_SCORE, "notification_match_score");
-            service.onHandleWork(intent1);
-            service.onHandleWork(intent2);
+            RemoteMessage message1 = buildMessage(NotificationTypes.SCHEDULE_UPDATED, "notification_schedule_updated");
+            RemoteMessage message2 = buildMessage(NotificationTypes.MATCH_SCORE, "notification_match_score");
+
+            mService.onMessageReceived(message1);
+            mService.onMessageReceived(message2);
 
             // There should be three notifications posted (the two we sent, plus the summary)
             List<Notification> notifications = Shadows.shadowOf(mNotificationManager).getAllNotifications();
@@ -130,9 +152,8 @@ public class GCMMessageHandlerTest {
     }
 
     private static GCMMessageHandlerWithMocks buildAndStartService() {
-        GCMMessageHandlerWithMocks service = Robolectric.setupService(GCMMessageHandlerWithMocks.class);
-        service.onCreate();
-        return service;
+        ServiceController<GCMMessageHandlerWithMocks> serviceController = Robolectric.buildService(GCMMessageHandlerWithMocks.class);
+        return serviceController.create().get();
     }
 
     private static Intent buildIntent(String notificationType, String dataFileName) {
@@ -141,5 +162,10 @@ public class GCMMessageHandlerTest {
         intent.putExtra("notification_type", notificationType);
         intent.putExtra("message_data", notificationData.toString());
         return intent;
+    }
+
+    private static RemoteMessage buildMessage(String notificationType, String dataFileName) {
+        Intent intent = buildIntent(notificationType, dataFileName);
+        return new RemoteMessage(intent.getExtras());
     }
 }

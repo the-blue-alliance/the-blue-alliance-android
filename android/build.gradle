@@ -1,6 +1,5 @@
 plugins {
     id "com.github.plnice.canidropjetifier" version "0.4"
-    id 'jacoco'
     //id 'com.github.triplet.play' version '2.7.2'
 }
 
@@ -10,6 +9,7 @@ apply plugin: 'checkstyle'
 apply plugin: 'gitsemver'
 apply plugin: 'com.google.firebase.firebase-perf'
 apply plugin: 'com.facebook.testing.screenshot'
+apply plugin: 'dagger.hilt.android.plugin'
 
 // dependency checker plugin
 // run ./gradlew dependencyUpdates to generate report
@@ -60,11 +60,11 @@ android {
             debugProguard {
                 applicationIdSuffix ".development"
                 testCoverageEnabled true
-                manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
                 minifyEnabled true
                 zipAlignEnabled true
                 proguardFiles 'proguard-rules.txt'
                 testProguardFile 'proguard-rules.txt'
+                manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
             }
 
             // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
@@ -77,11 +77,11 @@ android {
             }
 
             release {
-                manifestPlaceholders = [gcmPermissionRequired: "com.google.android.c2dm.permission.SEND"]
                 signingConfig signingConfigs.release
                 minifyEnabled true
                 zipAlignEnabled true
                 proguardFiles 'proguard-rules.txt'
+                manifestPlaceholders = [gcmPermissionRequired: "com.google.android.c2dm.permission.SEND"]
             }
         }
     }
@@ -231,13 +231,16 @@ dependencies {
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'com.google.android.material:material:1.6.0-alpha02'
+    implementation "androidx.work:work-runtime:$workManagerVersion"
+    androidTestImplementation "androidx.work:work-testing:$workManagerVersion"
+    testImplementation "androidx.work:work-testing:$workManagerVersion"
 
     // Play Services Libraries
     // See http://developer.android.com/google/play-services/setup.html
     implementation 'com.google.guava:guava:24.1-jre'
     implementation "com.google.android.gms:play-services-base:18.0.1"
     implementation "com.google.android.gms:play-services-analytics:18.0.1"
-    implementation "com.google.android.gms:play-services-gcm:17.0.0"
+    implementation "com.google.firebase:firebase-messaging:23.0.0"
     implementation "com.google.android.gms:play-services-auth:20.1.0"
     implementation "com.google.android.gms:play-services-flags:18.0.1"
     implementation "com.google.android.gms:play-services-stats:17.0.3"
@@ -254,10 +257,18 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
 
-    implementation "com.google.dagger:dagger:${daggerVersion}"
     implementation 'com.google.firebase:firebase-crashlytics:18.2.8'
     implementation 'com.google.firebase:firebase-analytics:20.1.0'
+    implementation "com.google.dagger:dagger:${daggerVersion}"
+    implementation "com.google.dagger:hilt-android:${daggerVersion}"
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+    annotationProcessor "com.google.dagger:hilt-compiler:${daggerVersion}"
+    androidTestImplementation  "com.google.dagger:hilt-android-testing:${daggerVersion}"
+    androidTestAnnotationProcessor "com.google.dagger:hilt-compiler:${daggerVersion}"
+    testImplementation "com.google.dagger:hilt-android-testing:${daggerVersion}"
+    testAnnotationProcessor "com.google.dagger:hilt-compiler:${daggerVersion}"
+    implementation 'androidx.hilt:hilt-work:1.0.0'
+    annotationProcessor 'androidx.hilt:hilt-compiler:1.0.0'
 
     // Other third party libraries
     implementation "com.google.code.gson:gson:${gsonVersion}"

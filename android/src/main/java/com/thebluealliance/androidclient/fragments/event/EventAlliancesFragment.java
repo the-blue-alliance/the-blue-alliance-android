@@ -13,8 +13,10 @@ import com.thebluealliance.androidclient.subscribers.AllianceListSubscriber;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class EventAlliancesFragment extends ListViewFragment<List<EventAlliance>, AllianceListSubscriber> {
     private static final String KEY = "event_key";
 
@@ -44,11 +46,6 @@ public class EventAlliancesFragment extends ListViewFragment<List<EventAlliance>
         mListView.setCacheColorHint(getResources().getColor(android.R.color.transparent));
         mListView.setSelector(R.drawable.transparent);
         return view;
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

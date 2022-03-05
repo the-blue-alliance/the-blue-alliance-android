@@ -16,8 +16,10 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.TeamTabBinder;
 import com.thebluealliance.androidclient.subscribers.TeamTabSubscriber;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class AllTeamsListFragment extends DatafeedFragment<Integer, Integer, TeamTabSubscriber, TeamTabBinder> {
 
     public static final String SELECTED_TAB = "selected_tab";
@@ -77,11 +79,6 @@ public class AllTeamsListFragment extends DatafeedFragment<Integer, Integer, Tea
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_TAB)) {
             mViewPager.setCurrentItem(savedInstanceState.getInt(SELECTED_TAB));
         }
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

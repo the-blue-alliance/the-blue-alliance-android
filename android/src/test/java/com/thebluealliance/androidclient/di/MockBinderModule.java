@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.di;
 
 import android.content.Context;
 
+import com.thebluealliance.androidclient.binders.BinderModule;
 import com.thebluealliance.androidclient.binders.DistrictEventsBinder;
 import com.thebluealliance.androidclient.binders.DistrictPointsListBinder;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
@@ -25,19 +26,15 @@ import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import org.greenrobot.eventbus.EventBus;
 import org.mockito.Mockito;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
+import dagger.hilt.android.components.ActivityComponent;
+import dagger.hilt.android.qualifiers.ActivityContext;
+import dagger.hilt.testing.TestInstallIn;
 
-@Module(includes = {MockRendererModule.class, MockClickListenerModule.class})
+@TestInstallIn(components = ActivityComponent.class, replaces = BinderModule.class)
+@Module
 public class MockBinderModule {
-
-    private Context mContext;
-
-    public MockBinderModule(Context context) {
-        mContext = context;
-    }
 
     @Provides
     public FragmentBinder provideFragmentBinder() {
@@ -90,14 +87,14 @@ public class MockBinderModule {
     }
 
     @Provides
-    public DistrictPointsListBinder provideDistrictPointsListBinder() {
-        return Mockito.spy(new DistrictPointsListBinder(mContext.getResources()));
+    public DistrictPointsListBinder provideDistrictPointsListBinder(@ActivityContext Context context) {
+        return Mockito.spy(new DistrictPointsListBinder(context.getResources()));
     }
 
     @Provides
-    public DistrictEventsBinder provideDistrictEventsBinder() {
+    public DistrictEventsBinder provideDistrictEventsBinder(@ActivityContext Context context) {
         EventBus eventBus = Mockito.mock(EventBus.class);
-        return Mockito.spy(new DistrictEventsBinder(eventBus, mContext.getResources()));
+        return Mockito.spy(new DistrictEventsBinder(eventBus, context.getResources()));
     }
 
     @Provides
@@ -110,7 +107,7 @@ public class MockBinderModule {
         return Mockito.spy(new NoDataBinder());
     }
 
-    @Provides @Singleton
+    @Provides
     public SimpleBinder provideSimpleBinder() {
         return Mockito.mock(SimpleBinder.class);
     }

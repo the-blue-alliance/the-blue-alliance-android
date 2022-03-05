@@ -5,15 +5,16 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.accounts.UpdateUserModelSettings;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class UpdateUserModelSettingsTaskFragment extends Fragment {
 
     private UpdateUserModelSettings task;
@@ -33,15 +34,6 @@ public class UpdateUserModelSettingsTaskFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TbaAndroid application = (TbaAndroid) getActivity().getApplication();
-        DaggerMyTbaComponent.builder()
-                            .tBAAndroidModule(application.getModule())
-                            .accountModule(application.getAccountModule())
-                            .authModule(application.getAuthModule())
-                            .applicationComponent(application.getComponent())
-                            .gceModule(application.getGceModule())
-                            .build()
-                            .inject(this);
 
         Bundle arguments = getArguments();
         if (arguments == null) {

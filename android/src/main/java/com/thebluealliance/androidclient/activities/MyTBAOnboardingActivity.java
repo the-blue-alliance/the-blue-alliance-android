@@ -9,12 +9,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.auth.AuthProvider;
-import com.thebluealliance.androidclient.di.components.AuthComponent;
-import com.thebluealliance.androidclient.di.components.DaggerAuthComponent;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 
 import javax.inject.Inject;
@@ -23,8 +20,10 @@ import javax.inject.Named;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.hilt.android.AndroidEntryPoint;
 
 
+@AndroidEntryPoint
 public class MyTBAOnboardingActivity extends AppCompatActivity
         implements MyTBAOnboardingViewPager.Callbacks{
 
@@ -47,7 +46,6 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mytba_onboarding);
         ButterKnife.bind(this);
-        getComponent().inject(this);
 
         mMyTBAOnboardingViewPager.setCallbacks(this);
         mMyTBAOnboardingViewPager.setTitleText(R.string.what_is_mytba);
@@ -136,13 +134,5 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
             Toast.makeText(this, R.string.mytba_no_signin_intent, Toast.LENGTH_SHORT).show();
             TbaLogger.e("Unable to get login Intent");
         }
-    }
-
-    private AuthComponent getComponent() {
-        TbaAndroid application = (TbaAndroid) getApplication();
-        return DaggerAuthComponent.builder()
-                                  .authModule(application.getAuthModule())
-                                  .accountModule(application.getAccountModule())
-                                  .build();
     }
 }

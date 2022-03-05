@@ -1,5 +1,12 @@
 package com.thebluealliance.androidclient.datafeed.deserializers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
@@ -15,13 +22,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Calendar;
 import java.util.List;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class ApiStatusDeserializerTest {

@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.google.common.base.Predicate;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
@@ -36,16 +37,18 @@ public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoN
     private String mMatchKey;
     private List<String> mMatchTeamKeys;
     private Match mMatch;
-    private MatchWriter mWriter;
+    private final MatchWriter mWriter;
+    private final Gson mGson;
 
-    public TeamMatchVideoNotification(String messageData, MatchWriter writer) {
+    public TeamMatchVideoNotification(String messageData, MatchWriter writer, Gson gson) {
         super(NotificationTypes.SCHEDULE_UPDATED, messageData);
         mWriter = writer;
+        mGson = gson;
     }
 
     @Override
     public void parseMessageData() throws JsonParseException {
-        JsonObject jsonData = gson.fromJson(messageData, JsonObject.class);
+        JsonObject jsonData = mGson.fromJson(messageData, JsonObject.class);
         if (!jsonData.has("match_key")) {
             throw new JsonParseException("TeamMatchVideoNotification has no match key");
         }
@@ -54,7 +57,7 @@ public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoN
         mEventName = jsonData.get("event_name").getAsString();
         mMatchTeamKeys = new ArrayList<>();
 
-        mMatch = gson.fromJson(jsonData.get("match"), Match.class);
+        mMatch = mGson.fromJson(jsonData.get("match"), Match.class);
         if (mMatch.getAlliances() != null) {
             mMatchTeamKeys.addAll(mMatch.getAlliances().getBlue().getTeamKeys());
             mMatchTeamKeys.addAll(mMatch.getAlliances().getRed().getTeamKeys());

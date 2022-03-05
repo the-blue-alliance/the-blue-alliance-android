@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.thebluealliance.androidclient">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -7,11 +8,6 @@
 
     <!-- For Android Beam support -->
     <uses-permission android:name="android.permission.NFC" />
-
-    <!-- GCM stuff -->
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="com.thebluealliance.androidclient.permission.C2D_MESSAGE" />
 
     <!-- Device Accounts -->
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
@@ -25,7 +21,8 @@
                      android:maxSdkVersion="22"/>
 
     <!-- Used so we can save images taken with the camera -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+                     android:maxSdkVersion="9"/>
 
     <application
         android:name=".TbaAndroid"
@@ -214,30 +211,33 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".receivers.NotificationChangedReceiver"
+            android:exported="false" />
+
         <!--
              The receiver's android:permission filters Intents by sender permission.
              ${gcmPermissionRequired} is defined in android/build.gradle so debug builds accept
              Intents from 'adb shell am broadcast'. See test_notification.py .
         -->
         <receiver
-            android:name=".gcm.GCMBroadcastReceiver"
+            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+            android:exported="true"
             android:permission="${gcmPermissionRequired}"
-            android:exported="true">
+            tools:replace="android:permission">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-
                 <category android:name="com.thebluealliance.androidclient" />
             </intent-filter>
         </receiver>
 
-        <receiver
-            android:name=".receivers.NotificationChangedReceiver"
-            android:exported="false" />
-
         <service
             android:name=".gcm.GCMMessageHandler"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
         <service
             android:name=".accounts.AccountAuthenticatorService"
             android:exported="false">
@@ -265,9 +265,6 @@
         <service
                 android:name=".auth.firebase.MigrateLegacyUserToFirebase"
                 android:exported="false" />
-        <service
-                android:name=".mytba.MyTbaRegistrationService"
-                android:exported="false" />
 
         <!-- FileProvider for capturing team media -->
         <provider
@@ -279,5 +276,16 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <!--
+        Disable App Startup for Work Manager
+        https://developer.android.com/topic/libraries/architecture/workmanager/advanced/custom-configuration
+        -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove">
+        </provider>
+
     </application>
 </manifest>

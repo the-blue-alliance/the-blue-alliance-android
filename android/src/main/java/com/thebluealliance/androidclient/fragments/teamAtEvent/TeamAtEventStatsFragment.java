@@ -12,9 +12,11 @@ import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.TeamStatsSubscriber;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class TeamAtEventStatsFragment extends RecyclerViewFragment<JsonElement, TeamStatsSubscriber, RecyclerViewBinder> implements HasEventParam {
 
     public static final String TEAM_KEY = "team", EVENT_KEY = "event";
@@ -39,11 +41,6 @@ public class TeamAtEventStatsFragment extends RecyclerViewFragment<JsonElement, 
         mTeamKey = getArguments().getString(TEAM_KEY);
         mEventKey = getArguments().getString(EVENT_KEY);
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

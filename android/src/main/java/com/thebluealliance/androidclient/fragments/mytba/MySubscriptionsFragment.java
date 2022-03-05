@@ -11,8 +11,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
+@AndroidEntryPoint
 public class MySubscriptionsFragment
   extends ListViewFragment<List<Subscription>, SubscriptionListSubscriber> {
 
@@ -20,11 +22,6 @@ public class MySubscriptionsFragment
 
     public static MySubscriptionsFragment newInstance() {
         return new MySubscriptionsFragment();
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
     }
 
     @Override

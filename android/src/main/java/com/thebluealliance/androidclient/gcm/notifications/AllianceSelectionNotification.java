@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.thebluealliance.androidclient.R;
@@ -30,12 +31,14 @@ import java.util.Date;
 public class AllianceSelectionNotification extends BaseNotification<AllianceSelectionNotificationViewModel> {
 
     private final EventWriter mWriter;
+    private final Gson mGson;
     private Event event;
     private String eventKey;
 
-    public AllianceSelectionNotification(String messageData, EventWriter writer) {
+    public AllianceSelectionNotification(String messageData, EventWriter writer, Gson gson) {
         super(NotificationTypes.ALLIANCE_SELECTION, messageData);
         mWriter = writer;
+        mGson = gson;
     }
 
     public Event getEvent() {
@@ -52,7 +55,7 @@ public class AllianceSelectionNotification extends BaseNotification<AllianceSele
         if (!jsonData.has("event")) {
             throw new JsonParseException("Notification data does not have an 'event' object");
         }
-        event = gson.fromJson(jsonData.get("event"), Event.class);
+        event = mGson.fromJson(jsonData.get("event"), Event.class);
         eventKey = event.getKey();
     }
 

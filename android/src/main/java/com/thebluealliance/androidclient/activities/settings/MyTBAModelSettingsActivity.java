@@ -17,11 +17,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
-import com.thebluealliance.androidclient.di.components.DaggerMyTbaComponent;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
 import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
@@ -31,6 +29,9 @@ import com.thebluealliance.androidclient.types.ModelType;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
     private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
@@ -68,15 +69,6 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TbaAndroid application = (TbaAndroid) getApplication();
-        DaggerMyTbaComponent.builder()
-                            .tBAAndroidModule(application.getModule())
-                            .accountModule(application.getAccountModule())
-                            .authModule(application.getAuthModule())
-                            .applicationComponent(application.getComponent())
-                            .build()
-                            .inject(this);
-
         setContentView(R.layout.activity_mytba_model_settings);
 
         settingsListContainer = findViewById(R.id.settings_list);
@@ -123,7 +115,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         // Create the settings fragment
         saveModelPreferencesFab.setEnabled(false);
         settings = MyTBASettingsFragment.newInstance(this.modelKey, this.modelType, savedPreferenceState);
-        getFragmentManager().beginTransaction().replace(R.id.settings_list, settings).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.settings_list, settings).commit();
 
         // Create drawable for the FAB
         Resources res = getResources();

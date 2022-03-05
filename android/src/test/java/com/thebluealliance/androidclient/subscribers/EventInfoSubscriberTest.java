@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
@@ -11,8 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.LooperMode;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 @LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)

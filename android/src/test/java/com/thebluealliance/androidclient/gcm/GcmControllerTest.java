@@ -1,7 +1,14 @@
 package com.thebluealliance.androidclient.gcm;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.thebluealliance.androidclient.config.AppConfig;
 
@@ -10,13 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
 public class GcmControllerTest {

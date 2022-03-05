@@ -16,12 +16,14 @@ import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.nlopez.smartadapters.SmartAdapter;
 import rx.Observable;
 
 /**
  * Displays 1000 team numbers starting with {@link #START}
  */
+@AndroidEntryPoint
 public class TeamListFragment extends RecyclerViewFragment<List<Team>, TeamListRecyclerSubscriber, RecyclerViewBinder> {
 
     private static final String START = "START";
@@ -39,8 +41,8 @@ public class TeamListFragment extends RecyclerViewFragment<List<Team>, TeamListR
     @Override
     public void onCreate(Bundle savedInstanceState) {
         int teamNumberStart = getArguments().getInt(START);
-
         mPageStart = teamNumberStart / 500;
+        mCombiner = new TeamPageCombiner();
         super.onCreate(savedInstanceState);
     }
 
@@ -53,12 +55,6 @@ public class TeamListFragment extends RecyclerViewFragment<List<Team>, TeamListR
         // mListView.setFastScrollEnabled(true);
 
         return view;
-    }
-
-    @Override
-    protected void inject() {
-        mComponent.inject(this);
-        mCombiner = new TeamPageCombiner();
     }
 
     @Override

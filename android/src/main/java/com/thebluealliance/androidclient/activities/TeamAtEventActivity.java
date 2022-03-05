@@ -16,6 +16,7 @@ import androidx.core.view.ViewCompat;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.hilt.android.AndroidEntryPoint;
 import rx.schedulers.Schedulers;
 
 import android.util.Base64;
@@ -29,25 +30,19 @@ import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
-import com.thebluealliance.androidclient.TbaAndroid;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
-import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
-import com.thebluealliance.androidclient.di.components.HasFragmentComponent;
 import com.thebluealliance.androidclient.eventbus.TeamAvatarUpdateEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.EventsParticipatedUpdate;
-import com.thebluealliance.androidclient.listeners.ClickListenerModule;
 import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.subscribers.EventsParticipatedDropdownSubscriber;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
@@ -59,15 +54,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+@AndroidEntryPoint
 public class TeamAtEventActivity extends MyTBASettingsActivity
-  implements ViewPager.OnPageChangeListener, HasFragmentComponent, EventsParticipatedUpdate {
+  implements ViewPager.OnPageChangeListener, EventsParticipatedUpdate {
 
     public static final String EVENT = "eventKey";
     public static final String TEAM = "teamKey";
 
     private String mEventKey, mTeamKey;
     private TeamAtEventFragmentPagerAdapter mAdapter;
-    private FragmentComponent mComponent;
 
     private int mCurrentSelectedEventPosition = -1;
     private ImmutableList<Event> mEventsParticipated;
@@ -343,25 +338,5 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
     @Override
     public void onPageScrollStateChanged(int state) {
 
-    }
-
-    public FragmentComponent getComponent() {
-        if (mComponent == null) {
-            TbaAndroid application = ((TbaAndroid) getApplication());
-            mComponent = DaggerFragmentComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .binderModule(application.getBinderModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .authModule(application.getAuthModule())
-              .subscriberModule(new SubscriberModule(this))
-              .clickListenerModule(new ClickListenerModule(this))
-              .build();
-        }
-        return mComponent;
-    }
-
-    public void inject() {
-        getComponent().inject(this);
     }
 }

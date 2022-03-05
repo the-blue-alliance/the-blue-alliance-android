@@ -7,13 +7,11 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaAndroid;
-import com.thebluealliance.androidclient.di.components.DaggerFragmentComponent;
-import com.thebluealliance.androidclient.di.components.FragmentComponent;
 import com.thebluealliance.androidclient.fragments.ContributorsFragment;
-import com.thebluealliance.androidclient.listeners.ClickListenerModule;
-import com.thebluealliance.androidclient.subscribers.SubscriberModule;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class ContributorsActivity extends DatafeedActivity {
 
     @Override
@@ -61,26 +59,5 @@ public class ContributorsActivity extends DatafeedActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public FragmentComponent getComponent() {
-        if (mComponent == null) {
-            TbaAndroid application = ((TbaAndroid) getApplication());
-            mComponent = DaggerFragmentComponent.builder()
-              .applicationComponent(application.getComponent())
-              .datafeedModule(application.getDatafeedModule())
-              .binderModule(application.getBinderModule())
-              .databaseWriterModule(application.getDatabaseWriterModule())
-              .authModule(application.getAuthModule())
-              .subscriberModule(new SubscriberModule(this))
-              .clickListenerModule(new ClickListenerModule(this))
-              .build();
-        }
-        return mComponent;
-    }
-
-    public void inject() {
-        getComponent().inject(this);
     }
 }
