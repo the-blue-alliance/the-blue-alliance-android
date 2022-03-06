@@ -114,7 +114,7 @@ public class HomeActivity extends DatafeedActivity {
         String currentYear = Integer.toString(mStatusController.getCurrentCompYear());
         if (savedInstanceState != null) {
             mFromSavedInstance = true;
-            TbaLogger.d("StartActivity is from saved instance");
+            TbaLogger.d("StartActivity is from saved instance " + savedInstanceState);
 
             if (savedInstanceState.containsKey(STATE_SELECTED_YEAR_SPINNER_POSITION)) {
                 mCurrentSelectedYearPosition = savedInstanceState.getInt(STATE_SELECTED_YEAR_SPINNER_POSITION);
@@ -173,6 +173,7 @@ public class HomeActivity extends DatafeedActivity {
         if (subFragment != null) {
             subFragment.onSaveInstanceState(outState);
         }
+        TbaLogger.d("Saved state" + outState);
     }
 
     private void switchToModeForId(int id, Bundle savedInstanceState) {
@@ -211,8 +212,10 @@ public class HomeActivity extends DatafeedActivity {
                 fragment = GamedayFragment.newInstance(gamedayTab);
                 break;
         }
-        fragment.setRetainInstance(true);
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support).replace(R.id.container, fragment, MAIN_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.fade_in_support, R.anim.fade_out_support)
+                .replace(R.id.container, fragment, MAIN_FRAGMENT_TAG)
+                .commit();
         // This must be done before we lose the drawer
         mCurrentSelectedNavigationItemId = id;
 
