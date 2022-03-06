@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.binders;
 
+import static com.thebluealliance.androidclient.renderers.MatchRenderer.RENDER_DEFAULT;
+
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
-import androidx.appcompat.app.AlertDialog;
-import androidx.cardview.widget.CardView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +14,9 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import butterknife.Unbinder;
+import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
@@ -39,9 +41,8 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import rx.android.schedulers.AndroidSchedulers;
-
-import static com.thebluealliance.androidclient.renderers.MatchRenderer.RENDER_DEFAULT;
 
 public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 

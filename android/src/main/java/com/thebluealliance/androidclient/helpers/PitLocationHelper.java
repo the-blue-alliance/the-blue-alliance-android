@@ -2,9 +2,10 @@ package com.thebluealliance.androidclient.helpers;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.JsonReader;
+
+import androidx.annotation.Nullable;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;

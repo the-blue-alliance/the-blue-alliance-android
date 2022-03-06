@@ -7,6 +7,12 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
@@ -45,19 +51,12 @@ import com.thebluealliance.androidclient.mytba.MyTbaRegistrationWorker;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
-
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 
 import dagger.hilt.android.AndroidEntryPoint;
 

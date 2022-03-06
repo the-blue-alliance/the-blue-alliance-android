@@ -1,9 +1,9 @@
 package com.thebluealliance.androidclient.tracing;
 
-import com.google.firebase.perf.metrics.Trace;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.google.firebase.perf.metrics.Trace;
 
 public class TraceWrapper {
     private @Nullable Trace mTrace;

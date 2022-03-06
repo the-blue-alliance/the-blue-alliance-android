@@ -1,12 +1,15 @@
 package com.thebluealliance.androidclient.views.breakdowns;
 
+import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getIntDefaultValue;
+
 import android.content.Context;
-import androidx.annotation.StringRes;
-import androidx.gridlayout.widget.GridLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.StringRes;
+import androidx.gridlayout.widget.GridLayout;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
@@ -14,8 +17,6 @@ import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import java.util.List;
-
-import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getIntDefaultValue;
 
 public class MatchBreakdownView2016 extends AbstractMatchBreakdownView {
 

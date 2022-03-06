@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
+import androidx.core.app.JobIntentService;
+
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
@@ -19,10 +23,6 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.WorkerThread;
-import androidx.core.app.JobIntentService;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.OkHttpClient;

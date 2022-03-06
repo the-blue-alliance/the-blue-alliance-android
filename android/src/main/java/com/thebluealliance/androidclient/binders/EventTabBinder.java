@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.binders;
 
 import androidx.annotation.Nullable;
 
-import butterknife.Unbinder;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.models.EventWeekTab;
@@ -10,6 +9,7 @@ import com.thebluealliance.androidclient.models.EventWeekTab;
 import java.util.List;
 
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class EventTabBinder extends AbstractDataBinder<List<EventWeekTab>> {
 

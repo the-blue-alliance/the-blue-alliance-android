@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.imgur;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.res.Resources;
+
 import androidx.core.app.NotificationCompat;
 
 import com.thebluealliance.androidclient.R;

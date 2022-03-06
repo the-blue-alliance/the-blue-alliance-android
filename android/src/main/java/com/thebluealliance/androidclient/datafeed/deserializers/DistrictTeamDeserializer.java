@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.datafeed.deserializers;
 
+import static com.thebluealliance.androidclient.helpers.JSONHelper.isNull;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -13,8 +15,6 @@ import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import java.lang.reflect.Type;
 import java.util.List;
-
-import static com.thebluealliance.androidclient.helpers.JSONHelper.isNull;
 
 public class DistrictTeamDeserializer implements JsonDeserializer<DistrictRanking> {
     @Override

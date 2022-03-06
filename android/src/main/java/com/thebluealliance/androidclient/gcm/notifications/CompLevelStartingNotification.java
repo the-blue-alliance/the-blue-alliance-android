@@ -4,12 +4,13 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

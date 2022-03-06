@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.gcm.notifications;
 
 import android.app.Notification;
 import android.content.Context;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.JsonObject;

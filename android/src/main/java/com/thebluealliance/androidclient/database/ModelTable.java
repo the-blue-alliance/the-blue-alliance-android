@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.database;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 

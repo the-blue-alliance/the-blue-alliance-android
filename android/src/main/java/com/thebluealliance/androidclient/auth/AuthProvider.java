@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.auth;
 
 import android.content.Intent;
+
 import androidx.annotation.Nullable;
 
 import rx.Observable;

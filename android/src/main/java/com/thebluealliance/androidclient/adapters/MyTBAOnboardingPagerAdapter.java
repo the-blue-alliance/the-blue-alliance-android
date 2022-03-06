@@ -1,8 +1,9 @@
 package com.thebluealliance.androidclient.adapters;
 
-import androidx.viewpager.widget.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.viewpager.widget.PagerAdapter;
 
 import com.thebluealliance.androidclient.R;
 

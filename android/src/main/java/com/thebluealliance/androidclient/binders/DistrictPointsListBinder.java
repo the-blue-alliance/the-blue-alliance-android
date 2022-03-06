@@ -1,9 +1,10 @@
 package com.thebluealliance.androidclient.binders;
 
 import android.content.res.Resources;
-import androidx.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.ListItem;

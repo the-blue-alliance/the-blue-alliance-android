@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.models;
 
 import android.content.ContentValues;
 import android.content.res.Resources;
+
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;

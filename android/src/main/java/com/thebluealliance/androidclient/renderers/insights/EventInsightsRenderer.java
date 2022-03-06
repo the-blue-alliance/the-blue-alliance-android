@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.renderers.insights;
 
 import android.content.res.Resources;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 

@@ -2,8 +2,9 @@ package com.thebluealliance.androidclient.imgur;
 
 import android.content.Context;
 import android.net.Uri;
-import androidx.appcompat.app.AlertDialog;
 import android.text.Html;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.thebluealliance.androidclient.TbaLogger;
 

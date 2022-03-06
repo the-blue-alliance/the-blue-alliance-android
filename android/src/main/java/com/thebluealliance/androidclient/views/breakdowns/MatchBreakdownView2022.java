@@ -1,5 +1,10 @@
 package com.thebluealliance.androidclient.views.breakdowns;
 
+import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getBooleanDefault;
+import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getIntDefault;
+import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getIntDefaultValue;
+import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.teamNumberFromKey;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.AttributeSet;
@@ -7,6 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.gridlayout.widget.GridLayout;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
@@ -17,15 +25,8 @@ import com.thebluealliance.api.model.IMatchAlliancesContainer;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-import androidx.gridlayout.widget.GridLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getBooleanDefault;
-import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getIntDefault;
-import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.getIntDefaultValue;
-import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownHelper.teamNumberFromKey;
 
 public class MatchBreakdownView2022 extends AbstractMatchBreakdownView {
     @BindView(R.id.breakdown2022_container)                     GridLayout breakdownContainer;

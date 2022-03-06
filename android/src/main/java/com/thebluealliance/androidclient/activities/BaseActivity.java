@@ -8,12 +8,13 @@ import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.IntDef;
-import androidx.appcompat.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.IntDef;
+import androidx.appcompat.app.AlertDialog;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.types.ModelType;

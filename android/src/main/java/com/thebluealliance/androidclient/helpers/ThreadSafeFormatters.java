@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.helpers;
 
+import static java.util.Locale.ENGLISH;
+
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -8,8 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.annotation.concurrent.ThreadSafe;
-
-import static java.util.Locale.ENGLISH;
 
 /**
  * {@link java.text.SimpleDateFormat} is not thread-safe, so wrap calls to formats in

@@ -1,9 +1,10 @@
 package com.thebluealliance.androidclient.binders;
 
-import androidx.annotation.Nullable;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+
+import androidx.annotation.Nullable;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;

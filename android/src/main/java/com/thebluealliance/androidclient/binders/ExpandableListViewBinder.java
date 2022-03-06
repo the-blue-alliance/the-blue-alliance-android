@@ -1,10 +1,10 @@
 package com.thebluealliance.androidclient.binders;
 
-import androidx.annotation.Nullable;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import butterknife.Unbinder;
+import androidx.annotation.Nullable;
+
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>> {
 

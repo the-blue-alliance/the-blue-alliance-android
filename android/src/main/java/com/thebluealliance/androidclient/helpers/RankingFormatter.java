@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.helpers;
 
 import android.content.res.Resources;
+
 import androidx.annotation.IntDef;
 
 import com.thebluealliance.androidclient.R;

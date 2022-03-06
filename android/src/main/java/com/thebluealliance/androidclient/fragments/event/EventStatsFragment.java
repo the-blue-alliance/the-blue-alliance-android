@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.fragments.event;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.appcompat.app.AlertDialog;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;

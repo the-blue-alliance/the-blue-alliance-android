@@ -1,10 +1,11 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.os.Bundle;
-import androidx.core.view.ViewCompat;
+import android.view.MenuItem;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import android.view.MenuItem;
+import androidx.core.view.ViewCompat;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.fragments.ContributorsFragment;

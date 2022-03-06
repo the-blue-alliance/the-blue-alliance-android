@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import static com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber.Model;
+
 import android.content.res.Resources;
 
 import com.google.gson.Gson;
@@ -17,8 +19,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.thebluealliance.androidclient.subscribers.MatchInfoSubscriber.Model;
 
 public class MatchInfoSubscriber extends BaseAPISubscriber<Model, List<ListItem>> {
 

@@ -3,11 +3,12 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.core.app.TaskStackBuilder;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.Gravity;
 import android.widget.FrameLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.TaskStackBuilder;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;

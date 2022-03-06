@@ -1,5 +1,10 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import static com.thebluealliance.androidclient.helpers.RankingFormatter.BOLD_TITLES;
+import static com.thebluealliance.androidclient.helpers.RankingFormatter.LINE_BREAKS;
+import static com.thebluealliance.androidclient.helpers.RankingFormatter.buildRankingString;
+import static com.thebluealliance.androidclient.helpers.RankingFormatter.formatSortOrder;
+
 import android.content.res.Resources;
 
 import com.thebluealliance.androidclient.R;
@@ -19,11 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
-
-import static com.thebluealliance.androidclient.helpers.RankingFormatter.BOLD_TITLES;
-import static com.thebluealliance.androidclient.helpers.RankingFormatter.LINE_BREAKS;
-import static com.thebluealliance.androidclient.helpers.RankingFormatter.buildRankingString;
-import static com.thebluealliance.androidclient.helpers.RankingFormatter.formatSortOrder;
 
 public class RankingsListSubscriber extends BaseAPISubscriber<RankingResponseObject, List<Object>> {
 

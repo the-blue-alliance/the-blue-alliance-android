@@ -2,11 +2,15 @@ package com.thebluealliance.androidclient.activities.settings;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import android.view.MenuItem;
-import android.widget.Toast;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
@@ -22,11 +26,6 @@ import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
 import java.io.IOException;
 
 import javax.inject.Inject;
-
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.Cache;

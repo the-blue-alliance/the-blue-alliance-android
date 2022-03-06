@@ -1,5 +1,11 @@
 package com.thebluealliance.androidclient;
 
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY;
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO;
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_UNSPECIFIED;
+import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -8,8 +14,6 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import androidx.annotation.RawRes;
-import androidx.appcompat.app.AlertDialog;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateFormat;
@@ -18,6 +22,10 @@ import android.util.ArrayMap;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
+
+import androidx.annotation.RawRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.common.base.Predicate;
 import com.thebluealliance.androidclient.activities.HomeActivity;
@@ -44,14 +52,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import androidx.appcompat.app.AppCompatDelegate;
 import me.xuender.unidecode.Unidecode;
-
-import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY;
-import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO;
-import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_UNSPECIFIED;
-import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES;
 
 public final class Utilities {
 

@@ -1,12 +1,13 @@
 package com.thebluealliance.androidclient.binders;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;

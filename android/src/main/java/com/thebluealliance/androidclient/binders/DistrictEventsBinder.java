@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.binders;
 
 import android.content.res.Resources;
+
 import androidx.annotation.Nullable;
 
 import com.thebluealliance.androidclient.R;

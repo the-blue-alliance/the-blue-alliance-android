@@ -1,9 +1,10 @@
 package com.thebluealliance.androidclient.activities;
 
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import androidx.annotation.Nullable;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;

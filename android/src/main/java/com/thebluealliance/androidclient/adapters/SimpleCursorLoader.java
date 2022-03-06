@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+
 import androidx.loader.content.AsyncTaskLoader;
 
 /**

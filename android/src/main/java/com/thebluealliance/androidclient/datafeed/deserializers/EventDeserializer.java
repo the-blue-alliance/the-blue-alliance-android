@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient.datafeed.deserializers;
 
+import static com.thebluealliance.androidclient.helpers.JSONHelper.isNull;
+
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -12,8 +14,6 @@ import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.lang.reflect.Type;
-
-import static com.thebluealliance.androidclient.helpers.JSONHelper.isNull;
 
 
 public class EventDeserializer implements JsonDeserializer<Event> {

@@ -2,14 +2,14 @@ package com.thebluealliance.androidclient.renderers.insights;
 
 import android.content.res.Resources;
 
+import androidx.annotation.StringRes;
+
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.EventTypeHeader;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
 import java.util.List;
-
-import androidx.annotation.StringRes;
 
 public class EventInsights2020Renderer extends EventInsightsRenderer {
 

@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.helpers;
 
 import android.content.Context;
+
 import androidx.annotation.Nullable;
 
 import com.thebluealliance.androidclient.R;

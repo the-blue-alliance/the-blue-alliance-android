@@ -1,11 +1,12 @@
 package com.thebluealliance.androidclient.listitems.gameday;
 
 import android.content.Context;
-import androidx.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
+import androidx.annotation.LayoutRes;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listitems.ListElement;

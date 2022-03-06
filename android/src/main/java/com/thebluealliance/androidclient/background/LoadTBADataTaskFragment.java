@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.background;
 
 import android.app.Activity;
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
 
 import com.thebluealliance.androidclient.api.call.TbaApiV3;

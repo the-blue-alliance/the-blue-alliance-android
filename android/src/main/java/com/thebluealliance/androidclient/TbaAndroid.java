@@ -1,5 +1,7 @@
 package com.thebluealliance.androidclient;
 
+import static com.thebluealliance.androidclient.gcm.notifications.BaseNotification.NOTIFICATION_CHANNEL;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
@@ -16,8 +18,6 @@ import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 
 import javax.inject.Inject;
-
-import static com.thebluealliance.androidclient.gcm.notifications.BaseNotification.NOTIFICATION_CHANNEL;
 
 import dagger.hilt.android.HiltAndroidApp;
 

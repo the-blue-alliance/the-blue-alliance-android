@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.renderers;
 
 import android.content.res.Resources;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;

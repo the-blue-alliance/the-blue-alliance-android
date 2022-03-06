@@ -2,11 +2,12 @@ package com.thebluealliance.androidclient.listeners;
 
 import android.content.Context;
 import android.content.Intent;
+import android.view.View;
+import android.widget.AdapterView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import android.view.View;
-import android.widget.AdapterView;
 
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.TeamAtEventActivity;

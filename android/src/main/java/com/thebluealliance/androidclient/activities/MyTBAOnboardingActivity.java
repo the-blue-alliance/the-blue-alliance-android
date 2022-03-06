@@ -2,11 +2,12 @@ package com.thebluealliance.androidclient.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;

@@ -1,11 +1,12 @@
 package com.thebluealliance.androidclient.tracing;
 
+import androidx.annotation.Nullable;
+
 import com.google.firebase.perf.FirebasePerformance;
 import com.thebluealliance.androidclient.TbaLogger;
 
 import javax.inject.Singleton;
 
-import androidx.annotation.Nullable;
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;

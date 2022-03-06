@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.datafeed;
 
 import android.content.SharedPreferences;
+
 import androidx.annotation.VisibleForTesting;
 
 import com.google.gson.Gson;

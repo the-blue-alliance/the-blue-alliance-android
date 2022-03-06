@@ -1,9 +1,10 @@
 package com.thebluealliance.androidclient.datafeed.refresh;
 
+import android.view.MenuItem;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.UiThread;
 import androidx.collection.ArrayMap;
-import android.view.MenuItem;
 
 import com.thebluealliance.androidclient.R;
 

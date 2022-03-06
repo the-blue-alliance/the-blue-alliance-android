@@ -1,5 +1,8 @@
 package com.thebluealliance.androidclient.subscribers;
 
+import static com.thebluealliance.androidclient.helpers.RankingFormatter.NONE;
+import static com.thebluealliance.androidclient.helpers.RankingFormatter.buildRankingString;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.Html;
@@ -39,9 +42,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Nullable;
-
-import static com.thebluealliance.androidclient.helpers.RankingFormatter.NONE;
-import static com.thebluealliance.androidclient.helpers.RankingFormatter.buildRankingString;
 
 public class TeamAtEventSummarySubscriber extends BaseAPISubscriber<TeamAtEventSummarySubscriber.Model, List<Object>> {
 

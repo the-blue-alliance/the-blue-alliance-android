@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.tracing;
 
-import com.google.firebase.perf.FirebasePerformance;
-
 import androidx.annotation.Nullable;
+
+import com.google.firebase.perf.FirebasePerformance;
 
 public class TracingController {
     private @Nullable FirebasePerformance mFirebasePef;

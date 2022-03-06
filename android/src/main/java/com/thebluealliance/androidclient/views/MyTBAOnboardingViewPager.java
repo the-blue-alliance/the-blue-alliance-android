@@ -1,13 +1,14 @@
 package com.thebluealliance.androidclient.views;
 
 import android.content.Context;
-import androidx.annotation.StringRes;
-import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.StringRes;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.common.SignInButton;
 import com.thebluealliance.androidclient.R;

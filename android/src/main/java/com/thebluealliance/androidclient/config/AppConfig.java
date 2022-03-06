@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.config;
 
 import android.content.SharedPreferences;
+
 import androidx.annotation.WorkerThread;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -8,8 +9,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigClientException;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigServerException;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigFetchThrottledException;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigServerException;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.TbaLogger;

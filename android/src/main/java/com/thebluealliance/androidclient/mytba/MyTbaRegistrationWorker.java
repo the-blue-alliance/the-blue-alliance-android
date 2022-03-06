@@ -14,7 +14,6 @@ import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.gcm.GcmController;
 
-
 import javax.annotation.Nullable;
 
 import dagger.assisted.Assisted;

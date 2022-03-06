@@ -4,8 +4,9 @@ import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.thebluealliance.androidclient.R;
 

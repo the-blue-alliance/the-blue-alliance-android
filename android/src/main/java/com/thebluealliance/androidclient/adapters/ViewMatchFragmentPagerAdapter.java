@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.adapters;
 
 import android.content.res.Resources;
+
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;

@@ -6,6 +6,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
@@ -14,17 +20,6 @@ import androidx.core.app.NavUtils;
 import androidx.core.app.TaskStackBuilder;
 import androidx.core.view.ViewCompat;
 import androidx.viewpager.widget.ViewPager;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import dagger.hilt.android.AndroidEntryPoint;
-import rx.schedulers.Schedulers;
-
-import android.util.Base64;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.NfcUris;
@@ -53,6 +48,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import dagger.hilt.android.AndroidEntryPoint;
+import rx.schedulers.Schedulers;
 
 @AndroidEntryPoint
 public class TeamAtEventActivity extends MyTBASettingsActivity
