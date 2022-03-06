@@ -1,10 +1,14 @@
 #! /usr/bin/env python3
 
-import collections
 import sys
 import json
 from optparse import OptionParser
 from glob import glob
+
+try:
+    from collections.abc import Mapping
+except ImportError: # Python 2.7 compatibility
+    from collections import Mapping
 
 # Dict keys we merge into the same key in the real spec
 MERGE_KEYS = ["paths", "definitions"]
@@ -13,8 +17,8 @@ ALL_PROPERTIES_KEY = "allProperties"
 
 
 def update(d, u):
-    for k, v in u.items():
-        if isinstance(v, collections.Mapping):
+    for k, v in list(u.items()):
+        if isinstance(v, Mapping):
             r = update(d.get(k, {}), v)
             d[k] = r
         else:
@@ -50,18 +54,18 @@ def main():
             print("Data file is invalid")
             sys.exit(-1)
 
-        for key, value in data.items():
+        for key, value in list(data.items()):
             if key in MERGE_KEYS:
                 if key not in swagger_data:
                     swagger_data[key] = {}
                 update(swagger_data[key], value)
             elif key == HEADER_KEY:
-                for path, obj in swagger_data["paths"].items():
+                for path, obj in list(swagger_data["paths"].items()):
                     if not isinstance(obj.get("parameters", None), list):
                         obj["parameters"] = []
                     obj["parameters"].extend(value)
             elif key == ALL_PROPERTIES_KEY:
-                for model, obj in swagger_data["definitions"].items():
+                for model, obj in list(swagger_data["definitions"].items()):
                   if model not in value.get("exclude", []) and "parameters" in value:
                         swagger_data["definitions"][model]["properties"].update(value["parameters"])
 
