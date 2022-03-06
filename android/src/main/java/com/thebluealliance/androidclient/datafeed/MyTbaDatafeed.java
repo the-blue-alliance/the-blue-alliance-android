@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.Handler;
 import android.widget.Toast;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.WorkerThread;
+
 import com.appspot.tbatv_prod_hrd.Favorites;
 import com.appspot.tbatv_prod_hrd.Model;
 import com.appspot.tbatv_prod_hrd.Subscriptions;
@@ -35,10 +38,11 @@ import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettin
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.models.Favorite;
 import com.thebluealliance.androidclient.models.Subscription;
-import com.thebluealliance.androidclient.mytba.ModelPrefsResult;
 import com.thebluealliance.androidclient.types.ModelType;
 
 import java.io.IOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -47,11 +51,20 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import dagger.hilt.android.qualifiers.ApplicationContext;
 import retrofit2.Response;
 import rx.Observable;
 
 @Singleton
 public class MyTbaDatafeed {
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({MODEL_PREF_SUCCESS, MODEL_PREF_FAIL, MODEL_PREF_NOOP})
+    public @interface ModelPrefsResult {}
+    public static final int MODEL_PREF_SUCCESS = 0;
+    public static final int MODEL_PREF_FAIL = 1;
+    public static final int MODEL_PREF_NOOP = 2;
+
     private static final String LAST_FAVORITES_UPDATE = "last_mytba_favorites_update_%s";
     private static final String LAST_SUBSCRIPTIONS_UPDATE = "last_mytba_subscriptions_update_%s";
 
@@ -69,7 +82,7 @@ public class MyTbaDatafeed {
 
     @Inject
     public MyTbaDatafeed(
-            Context context,
+            @ApplicationContext Context context,
             GceAuthController authController,
             GcmController gcmController,
             Tbamobile tbaMobile,
@@ -93,6 +106,7 @@ public class MyTbaDatafeed {
         mAccountController = accountController;
     }
 
+    @WorkerThread
     public boolean register(String regId) {
         TbaLogger.d("Registering for GCM");
         if (!ConnectionDetector.isConnectedToInternet(mApplicationContext)) {
@@ -117,6 +131,7 @@ public class MyTbaDatafeed {
         return (response != null && (response.code() == 200 || response.code() == 304));
     }
 
+    @WorkerThread
     public boolean unregister() {
         TbaLogger.d("Unregistering for GCM");
         if (!ConnectionDetector.isConnectedToInternet(mApplicationContext)) {
@@ -139,6 +154,7 @@ public class MyTbaDatafeed {
         return (response != null && (response.code() == 200 || response.code() == 304));
     }
 
+    @WorkerThread
     public void updateUserFavorites() {
         List<Favorite> favoriteModels = new ArrayList<>();
         String currentUser = mAccountController.getSelectedAccount();
@@ -199,6 +215,7 @@ public class MyTbaDatafeed {
 
     }
 
+    @WorkerThread
     public void updateUserSubscriptions() {
         String currentUser = mAccountController.getSelectedAccount();
         String prefString = String.format(LAST_SUBSCRIPTIONS_UPDATE, currentUser);
@@ -263,8 +280,8 @@ public class MyTbaDatafeed {
 
     }
 
-    public ModelPrefsResult updateModelSettings(Context context,
-                                                ModelNotificationFavoriteSettings  settings) {
+    @WorkerThread
+    public @ModelPrefsResult int updateModelSettings(ModelNotificationFavoriteSettings  settings) {
         String modelKey = settings.modelKey;
         List<String> notifications = settings.enabledNotifications;
         boolean isFavorite = settings.isFavorite;
@@ -303,7 +320,7 @@ public class MyTbaDatafeed {
         if (((isFavorite && favoritesTable.exists(key))
              || (!isFavorite && !favoritesTable.exists(key))) && !notificationsHaveChanged) {
             // nothing has changed, no-op
-            return ModelPrefsResult.NOOP;
+            return MODEL_PREF_NOOP;
         } else {
             try {
                 String authHeader = mAuthController.getAuthHeader();
@@ -313,22 +330,22 @@ public class MyTbaDatafeed {
                         .execute();
                 if (response == null) {
                     TbaLogger.w("Null response for mytba update");
-                    return ModelPrefsResult.ERROR;
+                    return MODEL_PREF_FAIL;
                 }
                 if (!response.isSuccessful()) {
                     TbaLogger.w("mytba update error " + response.code() + ": " + response.message());
-                    return ModelPrefsResult.ERROR;
+                    return MODEL_PREF_FAIL;
                 }
 
                 ModelsMobileApiMessagesBaseResponse prefResponse = response.body();
                 TbaLogger.d("Mytba result: " + prefResponse.code + "/" + prefResponse.message);
                 if (response.code() == 401 || prefResponse.code == 401) {
                     TbaLogger.e(prefResponse.message);
-                    return ModelPrefsResult.ERROR;
+                    return MODEL_PREF_FAIL;
                 }
                 JsonObject responseJson = JSONHelper.getasJsonObject(prefResponse.message);
                 if (responseJson == null || responseJson.isJsonNull()) {
-                    return ModelPrefsResult.ERROR;
+                    return MODEL_PREF_FAIL;
                 }
                 JsonObject fav = responseJson.get("favorite").getAsJsonObject(),
                         sub = responseJson.get("subscription").getAsJsonObject();
@@ -351,10 +368,10 @@ public class MyTbaDatafeed {
                                                                 modelType.getEnum()));
                     }
                 } else if (subCode == 500) {
-                    Toast.makeText(context,
-                                   String.format(context.getString(R.string.mytba_error),
-                                                 subCode,
-                                                 sub.get("message").getAsString()),
+                    Toast.makeText(mApplicationContext,
+                                   mApplicationContext.getString(R.string.mytba_error,
+                                           subCode,
+                                           sub.get("message").getAsString()),
                                    Toast.LENGTH_SHORT).show();
                 }
                 // otherwise, we tried to add a favorite that already exists/remove one that didn't
@@ -367,18 +384,18 @@ public class MyTbaDatafeed {
                         favoritesTable.add(new Favorite(user, modelKey, modelType.getEnum()));
                     }
                 } else if (favCode == 500) {
-                    Toast.makeText(context,
-                                   String.format(context.getString(R.string.mytba_error),
-                                                 favCode,
-                                                 fav.get("message").getAsString()),
+                    Toast.makeText(mApplicationContext,
+                                   mApplicationContext.getString(R.string.mytba_error,
+                                           favCode,
+                                           fav.get("message").getAsString()),
                                    Toast.LENGTH_SHORT).show();
                 }
-                return ModelPrefsResult.SUCCESS;
+                return MODEL_PREF_SUCCESS;
 
             } catch (IOException e) {
-                TbaLogger.e("IO Exception while updating model preferences!");
+                TbaLogger.e("IO Exception while updating model preferences!", e);
                 e.printStackTrace();
-                return ModelPrefsResult.ERROR;
+                return MODEL_PREF_FAIL;
             }
         }
     }

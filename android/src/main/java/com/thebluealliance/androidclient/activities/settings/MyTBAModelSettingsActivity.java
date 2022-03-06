@@ -19,23 +19,18 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.UpdateUserModelSettingsWorker;
 import com.thebluealliance.androidclient.activities.BaseActivity;
-import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
-import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
 import com.thebluealliance.androidclient.helpers.ModelHelper;
 import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 import com.thebluealliance.androidclient.types.ModelType;
 
-import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
-
-    private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
 
     private static final String EXTRA_MODEL_KEY = "model_key";
     private static final String EXTRA_MODEL_TYPE = "model_type";
@@ -45,20 +40,11 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     private Bundle savedPreferenceState;
     private FloatingActionButton saveModelPreferencesFab;
 
-    private String modelKey;
-    private ModelType modelType;
-
     private MyTBASettingsFragment settings;
-    private UpdateUserModelSettingsTaskFragment saveSettingsTaskFragment;
 
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
 
     private TransitionDrawable fabDrawable;
-
-    private View settingsListContainer;
-    private View greenContainer;
-
-    @Inject MyTbaDatafeed mMyTbaDatafeed;
 
     public static Intent newInstance(Context context, String modelKey, ModelType modelType) {
         Intent intent = new Intent(context, MyTBAModelSettingsActivity.class);
@@ -72,16 +58,15 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mytba_model_settings);
 
-        settingsListContainer = findViewById(R.id.settings_list);
-        greenContainer = findViewById(R.id.green_container);
-
         setSearchEnabled(false);
 
         String modelKey = getIntent().getExtras().getString(EXTRA_MODEL_KEY);
         int modelType = getIntent().getExtras().getInt(EXTRA_MODEL_TYPE, -1);
+        ModelType modelType1;
+        String modelKey1;
         if (modelKey != null && modelType != -1) {
-            this.modelKey = modelKey;
-            this.modelType = ModelHelper.getModelFromEnum(modelType);
+            modelKey1 = modelKey;
+            modelType1 = ModelHelper.getModelFromEnum(modelType);
         } else {
             throw new IllegalArgumentException("MyTBAModelSettingsActivity must be created with a model key!");
         }
@@ -89,7 +74,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setTitle(this.modelType.getSingularTitle() + " Settings");
+        getSupportActionBar().setTitle(modelType1.getSingularTitle() + " Settings");
 
         toolbar.setNavigationIcon(R.drawable.ic_close_black_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -111,11 +96,9 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
             savedPreferenceState = savedInstanceState.getBundle(MyTBASettingsFragment.SAVED_STATE_BUNDLE);
         }
 
-        saveSettingsTaskFragment = (UpdateUserModelSettingsTaskFragment) getSupportFragmentManager().findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
-
         // Create the settings fragment
         saveModelPreferencesFab.setEnabled(false);
-        settings = MyTBASettingsFragment.newInstance(this.modelKey, this.modelType, savedPreferenceState);
+        settings = MyTBASettingsFragment.newInstance(modelKey1, modelType1, savedPreferenceState);
         getSupportFragmentManager().beginTransaction().replace(R.id.settings_list, settings).commit();
 
         // Create drawable for the FAB
@@ -157,54 +140,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.close_settings_button) {
-            // Save all the things!
-            if (saveSettingsTaskFragment == null) {
-                saveSettingsTaskFragment = UpdateUserModelSettingsTaskFragment
-                        .newInstance(settings.getSettings());
-                getSupportFragmentManager().beginTransaction().add(saveSettingsTaskFragment,
-                                                                   SAVE_SETTINGS_TASK_FRAGMENT_TAG)
-                                           .commit();
-
-                /**
-                 * Maybe use these animations in a future release, but they aren't ready for prime time yet.
-                 */
-                /*
-                Path curvedPath = new Path();
-                float buttonStartX = fabContainer.getLeft();
-                float buttonStartY = fabContainer.getTop();
-                curvedPath.moveTo(buttonStartX, buttonStartY);
-
-                float ctrl1x = (float) ((settingsListContainer.getX() + settingsListContainer.getWidth() / 2) + settingsListContainer.getWidth()/2 * 0.24);
-                float ctrl1y = (float) ((settingsListContainer.getY() + settingsListContainer.getHeight() / 2) + settingsListContainer.getHeight()/2 * 0.6);
-                float ctrl2x = (float) ((settingsListContainer.getX() + settingsListContainer.getWidth() / 2));
-                float ctrl2y = (float) ((settingsListContainer.getY() + settingsListContainer.getHeight() / 2) + settingsListContainer.getHeight()/2 * 0.3);
-                float endPosX = (settingsListContainer.getX() + settingsListContainer.getWidth() / 2 - fabContainer.getWidth() / 2);
-                float endPosY = (settingsListContainer.getY() + settingsListContainer.getHeight() / 2 - fabContainer.getHeight() / 2);
-                curvedPath.cubicTo(ctrl1x, ctrl1y, ctrl2x, ctrl2y, endPosX, endPosY);
-                ObjectAnimator fabPathAnimator = ObjectAnimator.ofFloat(fabContainer, View.X, View.Y, curvedPath);
-                fabPathAnimator.setInterpolator(new AccelerateInterpolator());
-                fabPathAnimator.setDuration(300);
-
-                int centerOfButtonOutsideX = (settingsListContainer.getLeft() + settingsListContainer.getRight()) / 2;
-                int centerOfButtonOutsideY = (settingsListContainer.getTop() + settingsListContainer.getBottom()) / 2;
-
-                float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - settingsListContainer.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - settingsListContainer.getTop(), 2));
-                Animator circularReveal = ViewAnimationUtils.createCircularReveal(greenContainer, centerOfButtonOutsideX, centerOfButtonOutsideY, 0, finalRadius);
-                circularReveal.setInterpolator(new AccelerateInterpolator());
-                circularReveal.setDuration(300);
-                circularReveal.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        greenContainer.setVisibility(View.VISIBLE);
-                    }
-                });
-
-                AnimatorSet set = new AnimatorSet();
-                set.play(fabPathAnimator);
-                set.play(circularReveal).after(250);
-                set.start(); */
-
-            }
+            UpdateUserModelSettingsWorker.runWithCallbacks(this, settings.getSettings(), this);
         }
     }
 

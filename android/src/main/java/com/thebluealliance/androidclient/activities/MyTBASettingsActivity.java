@@ -24,16 +24,14 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.ViewCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
+import com.thebluealliance.androidclient.accounts.UpdateUserModelSettingsWorker;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
-import com.thebluealliance.androidclient.fragments.tasks.UpdateUserModelSettingsTaskFragment;
 import com.thebluealliance.androidclient.interfaces.LoadModelSettingsCallback;
 import com.thebluealliance.androidclient.interfaces.ModelSettingsCallbacks;
 import com.thebluealliance.androidclient.types.ModelType;
@@ -49,7 +47,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 public abstract class MyTBASettingsActivity extends DatafeedActivity implements View.OnClickListener, ModelSettingsCallbacks, LoadModelSettingsCallback {
 
     private static final String SETTINGS_PANEL_OPEN = "settings_panel_open";
-    private static final String SAVE_SETTINGS_TASK_FRAGMENT_TAG = "task_fragment_tag";
 
     @ColorRes private static final int FAB_COLOR = R.color.accent;
     @ColorRes private static final int FAB_COLOR_SUCCESS = R.color.green;
@@ -61,10 +58,9 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     View mForegroundDim;
     Toolbar mSettingsToolbar;
 
-    private Handler mFabHandler = new Handler();
+    private final Handler mFabHandler = new Handler();
 
     private MyTBASettingsFragment mSettingsFragment;
-    private UpdateUserModelSettingsTaskFragment mSaveSettingsTaskFragment;
 
     private boolean mIsMyTBAEnabled;
     private boolean mIsSettingsPanelOpen = false;
@@ -126,8 +122,6 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
             }
             savedPreferenceState = savedInstanceState.getBundle(MyTBASettingsFragment.SAVED_STATE_BUNDLE);
         }
-
-        mSaveSettingsTaskFragment = (UpdateUserModelSettingsTaskFragment) getSupportFragmentManager().findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
     }
 
     @Override
@@ -183,24 +177,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
                     return;
                 }
 
-                if (mSaveSettingsTaskFragment == null) {
-                    mSaveSettingsTaskFragment = UpdateUserModelSettingsTaskFragment
-                            .newInstance(mSettingsFragment.getSettings());
-                    getSupportFragmentManager().beginTransaction()
-                                               .add(mSaveSettingsTaskFragment,
-                                                    SAVE_SETTINGS_TASK_FRAGMENT_TAG)
-                                               .commit();
-                    mSaveInProgress = true;
-
-                    final FragmentManager fm = getSupportFragmentManager();
-                    final Fragment settingsFragment = fm.findFragmentByTag(SAVE_SETTINGS_TASK_FRAGMENT_TAG);
-                    mFabHandler.postDelayed(() -> {
-                        if (settingsFragment != null) {
-                            fm.beginTransaction().remove(settingsFragment).commitAllowingStateLoss();
-                        }
-                        mSaveSettingsTaskFragment = null;
-                    }, 1);
-                }
+                UpdateUserModelSettingsWorker.runWithCallbacks(this, mSettingsFragment.getSettings(), this);
             }
         }
     }
