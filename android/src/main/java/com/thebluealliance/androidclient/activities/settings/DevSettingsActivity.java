@@ -17,7 +17,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
-import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
+import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
 import com.thebluealliance.androidclient.mytba.MyTbaRegistrationWorker;
@@ -130,7 +130,7 @@ public class DevSettingsActivity extends AppCompatActivity {
             if (redownload != null) {
                 redownload.setOnPreferenceClickListener(preference -> {
                     Intent redownloadIntent = new Intent(getActivity(), RedownloadActivity.class);
-                    redownloadIntent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_TEAMS, LoadTBAData.LOAD_DISTRICTS});
+                    redownloadIntent.putExtra(LoadTBADataWorker.DATA_TO_LOAD, new short[]{LoadTBADataWorker.LOAD_EVENTS, LoadTBADataWorker.LOAD_TEAMS, LoadTBADataWorker.LOAD_DISTRICTS});
                     startActivity(redownloadIntent);
                     return true;
                 });

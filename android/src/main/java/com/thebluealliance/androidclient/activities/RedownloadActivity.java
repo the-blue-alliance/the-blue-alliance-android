@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.Html;
 import android.view.View;
 import android.view.WindowManager;
@@ -17,70 +16,80 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
-import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
-import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
+import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.UUID;
 
+import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
 import dagger.hilt.android.AndroidEntryPoint;
-
-;
 
 @AndroidEntryPoint
 public class RedownloadActivity extends AppCompatActivity
-  implements View.OnClickListener, LoadTBAData.LoadTBADataCallbacks {
+  implements LoadTBADataWorker.LoadTBADataCallbacks {
 
     private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";
     private static final String LOADING_COMPLETE = "loading_complete";
-    private static final String LOAD_FRAGMENT_TAG = "loadFragment";
+    private static final String LOAD_TASK_UUID = "load_task_uuid";
 
-    private DisableSwipeViewPager viewPager;
-    private TextView loadingMessage;
-    private ProgressBar loadingProgressBar;
-    private View continueToEndButton;
+    @BindView(R.id.view_pager)
+    DisableSwipeViewPager viewPager;
+
+    @BindView(R.id.loading_message)
+    TextView loadingMessage;
+
+    @BindView(R.id.loading_progress_bar)
+    ProgressBar loadingProgressBar;
+
+    @BindView(R.id.continue_to_end)
+    View continueToEndButton;
+
+    @BindView(R.id.changelog)
+    TextView changelog;
 
     private String currentLoadingMessage = "";
-
-    private LoadTBADataTaskFragment loadFragment;
-
+    private @Nullable UUID dataLoadTask = null;
     private boolean isDataFinishedLoading = false;
-
     private short[] mDataToLoad;
+
+    @Inject SharedPreferences mPreferences;
+
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_redownload);
+        unbinder = ButterKnife.bind(this);
 
         // Extract relevant data from the intent
         Bundle extras = getIntent().getExtras();
-        if (extras != null && extras.containsKey(LoadTBAData.DATA_TO_LOAD)) {
-            mDataToLoad = extras.getShortArray(LoadTBAData.DATA_TO_LOAD);
+        if (extras != null && extras.containsKey(LoadTBADataWorker.DATA_TO_LOAD)) {
+            mDataToLoad = extras.getShortArray(LoadTBADataWorker.DATA_TO_LOAD);
         }
 
-        setContentView(R.layout.activity_redownload);
-
-        viewPager = (DisableSwipeViewPager) findViewById(R.id.view_pager);
         viewPager.setSwipeEnabled(false);
         viewPager.setOffscreenPageLimit(10);
         viewPager.setAdapter(new FirstLaunchPagerAdapter(this));
 
-        loadingMessage = (TextView) findViewById(R.id.loading_message);
-        loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progress_bar);
-        continueToEndButton = findViewById(R.id.continue_to_end);
-        continueToEndButton.setOnClickListener(this);
-
         // Setup the changelog
-        TextView changelog = (TextView) findViewById(R.id.changelog);
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(getResources().openRawResource(R.raw.changelog)));
             try {
@@ -113,21 +122,10 @@ public class RedownloadActivity extends AppCompatActivity
             if (savedInstanceState.containsKey(LOADING_COMPLETE)) {
                 isDataFinishedLoading = savedInstanceState.getBoolean(LOADING_COMPLETE);
             }
-        }
 
-        findViewById(R.id.welcome_next_page).setOnClickListener(this);
-        findViewById(R.id.finish).setOnClickListener(this);
-
-        loadFragment = (LoadTBADataTaskFragment) getSupportFragmentManager().findFragmentByTag(LOAD_FRAGMENT_TAG);
-
-        if (loadFragment != null) {
-            viewPager.setCurrentItem(1, false);
-
-            LoadTBAData.LoadProgressInfo info = loadFragment.getLastProgressUpdate();
-            if (info != null) {
-                if (!loadFragment.wasLastUpdateDelivered() && info.state != LoadTBAData.LoadProgressInfo.STATE_FINISHED) {
-                    onProgressUpdate(info);
-                }
+            if (savedInstanceState.containsKey(LOAD_TASK_UUID)) {
+                dataLoadTask = UUID.fromString(savedInstanceState.getString(LOAD_TASK_UUID));
+                LoadTBADataWorker.subscribeToJob(this, dataLoadTask, this);
             }
         }
 
@@ -145,27 +143,37 @@ public class RedownloadActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(CURRENT_LOADING_MESSAGE_KEY, currentLoadingMessage);
-        outState.putBoolean(LOADING_COMPLETE, isDataFinishedLoading);
+    protected void onDestroy() {
+        super.onDestroy();
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
     }
 
     @Override
-    public void onClick(View view) {
-        int id = view.getId();
-        switch (id) {
-            case R.id.welcome_next_page:
-                beginLoadingIfConnected();
-                break;
-            case R.id.continue_to_end:
-                viewPager.setCurrentItem(2);
-                break;
-            case R.id.finish:
-                startActivity(new Intent(this, HomeActivity.class));
-                finish();
-                break;
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(CURRENT_LOADING_MESSAGE_KEY, currentLoadingMessage);
+        outState.putBoolean(LOADING_COMPLETE, isDataFinishedLoading);
+        if (dataLoadTask != null) {
+            outState.putString(LOAD_TASK_UUID, dataLoadTask.toString());
         }
+    }
+
+    @OnClick(R.id.welcome_next_page)
+    public void onWelcomeNextPageClick(View view) {
+        beginLoadingIfConnected();
+    }
+
+    @OnClick(R.id.continue_to_end)
+    public void onContinueToEndClick(View view) {
+        viewPager.setCurrentItem(2);
+    }
+
+    @OnClick(R.id.finish)
+    public void onFinishClick(View view) {
+        startActivity(new Intent(this, HomeActivity.class));
+        finish();
     }
 
     private void beginLoadingIfConnected() {
@@ -193,16 +201,17 @@ public class RedownloadActivity extends AppCompatActivity
     }
 
     private void beginLoading() {
-        Fragment f = new LoadTBADataTaskFragment();
-        Bundle args = new Bundle();
-        args.putShortArray(LoadTBAData.DATA_TO_LOAD, mDataToLoad);
-        f.setArguments(args);
-        f.setRetainInstance(true);
-        getSupportFragmentManager().beginTransaction().add(f, LOAD_FRAGMENT_TAG).commit();
+        int[] intData = new int[mDataToLoad.length];
+        for (int i = 0; i < mDataToLoad.length; i++) {
+            intData[i] = mDataToLoad[i];
+        }
+        dataLoadTask = LoadTBADataWorker.runWithCallbacks(this, intData, this);
     }
 
     private void onError(final String stacktrace) {
-        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(Constants.ALL_DATA_LOADED_KEY, false).commit();
+        mPreferences.edit()
+                .putBoolean(Constants.ALL_DATA_LOADED_KEY, false)
+                .apply();
 
         // Return to the first page
         viewPager.setCurrentItem(0);
@@ -234,7 +243,7 @@ public class RedownloadActivity extends AppCompatActivity
     }
 
     private void onLoadFinished() {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        SharedPreferences.Editor editor = mPreferences.edit();
         editor.putBoolean(Constants.ALL_DATA_LOADED_KEY, true);
         editor.putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE).apply();
 
@@ -283,9 +292,7 @@ public class RedownloadActivity extends AppCompatActivity
         viewPager.setCurrentItem(0);
 
         // Cancel task
-        if (loadFragment != null) {
-            loadFragment.cancelTask();
-        }
+        LoadTBADataWorker.cancel(this);
 
         // Show a warning
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -312,18 +319,18 @@ public class RedownloadActivity extends AppCompatActivity
         loadingMessage.setText(message);
     }
 
-    public void onProgressUpdate(LoadTBAData.LoadProgressInfo info) {
+    public void onProgressUpdate(LoadTBADataWorker.LoadProgressInfo info) {
         switch (info.state) {
-            case LoadTBAData.LoadProgressInfo.STATE_LOADING:
+            case LoadTBADataWorker.LoadProgressInfo.STATE_LOADING:
                 onLoadingMessageUpdated(info.message);
                 break;
-            case LoadTBAData.LoadProgressInfo.STATE_FINISHED:
+            case LoadTBADataWorker.LoadProgressInfo.STATE_FINISHED:
                 onLoadFinished();
                 break;
-            case LoadTBAData.LoadProgressInfo.STATE_NO_CONNECTION:
+            case LoadTBADataWorker.LoadProgressInfo.STATE_NO_CONNECTION:
                 onConnectionLost();
                 break;
-            case LoadTBAData.LoadProgressInfo.STATE_ERROR:
+            case LoadTBADataWorker.LoadProgressInfo.STATE_ERROR:
                 onError(info.message);
                 break;
         }

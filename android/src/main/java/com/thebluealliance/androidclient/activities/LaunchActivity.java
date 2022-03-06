@@ -7,7 +7,6 @@ import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.TaskStackBuilder;
@@ -19,7 +18,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.background.RecreateSearchIndexes;
-import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
+import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 
 import java.util.regex.Matcher;
@@ -35,6 +34,7 @@ public class LaunchActivity extends AppCompatActivity {
 
     @Inject TBAStatusController mStatusController;
     @Inject Cache mDatafeedCache;
+    @Inject SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ public class LaunchActivity extends AppCompatActivity {
         // Create intent to launch data download activity
         Intent redownloadIntent = new Intent(this, RedownloadActivity.class);
         boolean redownload = checkDataRedownload(redownloadIntent);
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(Constants.ALL_DATA_LOADED_KEY, false) && !redownload) {
+        if (mSharedPreferences.getBoolean(Constants.ALL_DATA_LOADED_KEY, false) && !redownload) {
             if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
                 Parcelable[] rawMsgs = getIntent().getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
                 NdefMessage message = (NdefMessage) rawMsgs[0];
@@ -87,23 +87,23 @@ public class LaunchActivity extends AppCompatActivity {
     }
 
     private boolean checkDataRedownload(Intent intent) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int lastVersion = prefs.getInt(Constants.APP_VERSION_KEY, -1);
-        int lastYear = prefs.getInt(Constants.LAST_YEAR_KEY, -1);
+        int lastVersion = mSharedPreferences.getInt(Constants.APP_VERSION_KEY, -1);
+        int lastYear = mSharedPreferences.getInt(Constants.LAST_YEAR_KEY, -1);
         int maxYear = mStatusController.getMaxCompYear();
 
-        if (lastVersion == -1 && !prefs.getBoolean(Constants.ALL_DATA_LOADED_KEY, false)) {
+        if (lastVersion == -1 && !mSharedPreferences.getBoolean(Constants.ALL_DATA_LOADED_KEY, false)) {
             // on a clean install, don't think we're updating
-            prefs.edit()
-              .putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE)
-              .putInt(Constants.LAST_YEAR_KEY, maxYear).apply();
+            mSharedPreferences.edit()
+                    .putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE)
+                    .putInt(Constants.LAST_YEAR_KEY, maxYear)
+                    .apply();
             return false;
         }
 
         boolean redownload = false;
-        TbaLogger.d("Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + prefs.contains(Constants.APP_VERSION_KEY));
+        TbaLogger.d("Last version: " + lastVersion + "/" + BuildConfig.VERSION_CODE + " " + mSharedPreferences.contains(Constants.APP_VERSION_KEY));
 
-        if (prefs.contains(Constants.APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
+        if (mSharedPreferences.contains(Constants.APP_VERSION_KEY) && lastVersion < BuildConfig.VERSION_CODE) {
             /* Clear OkHttp cache for the new version. */
             mStatusController.clearOkCacheIfNeeded(mStatusController.fetchApiStatus(), true);
 
@@ -112,19 +112,19 @@ public class LaunchActivity extends AppCompatActivity {
             if (lastVersion < 14) {
                 // addition of districts. Download the required data
                 redownload = true;
-                intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_DISTRICTS});
+                intent.putExtra(LoadTBADataWorker.DATA_TO_LOAD, new short[]{LoadTBADataWorker.LOAD_EVENTS, LoadTBADataWorker.LOAD_DISTRICTS});
             }
 
             if (lastVersion < 16) {
                 // addition of myTBA - Prompt the user for an account
                 redownload = true;
-                intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS});
+                intent.putExtra(LoadTBADataWorker.DATA_TO_LOAD, new short[]{LoadTBADataWorker.LOAD_EVENTS});
             }
 
             if (lastVersion < 21) {
                 // redownload to get event short names
                 redownload = true;
-                intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS});
+                intent.putExtra(LoadTBADataWorker.DATA_TO_LOAD, new short[]{LoadTBADataWorker.LOAD_EVENTS});
             }
 
             if (lastVersion < 46) {
@@ -136,27 +136,28 @@ public class LaunchActivity extends AppCompatActivity {
             if (lastVersion < 3000000) {
                 // v3.0 - Reload everything to warm okhttp caches
                 redownload = true;
-                intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_TEAMS, LoadTBAData.LOAD_DISTRICTS});
+                intent.putExtra(LoadTBADataWorker.DATA_TO_LOAD, new short[]{LoadTBADataWorker.LOAD_EVENTS, LoadTBADataWorker.LOAD_TEAMS, LoadTBADataWorker.LOAD_DISTRICTS});
             }
 
             if (lastVersion < 4000200) {
                 // v4.0 - Redownload everything since we recreate the db
                 redownload = true;
-                intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_TEAMS, LoadTBAData.LOAD_DISTRICTS});
+                intent.putExtra(LoadTBADataWorker.DATA_TO_LOAD, new short[]{LoadTBADataWorker.LOAD_EVENTS, LoadTBADataWorker.LOAD_TEAMS, LoadTBADataWorker.LOAD_DISTRICTS});
             }
         }
 
         // If the max year is increased, redownload all data for updates
-        if (prefs.contains(Constants.LAST_YEAR_KEY) && lastYear < maxYear){
+        if (mSharedPreferences.contains(Constants.LAST_YEAR_KEY) && lastYear < maxYear){
             redownload = true;
-            intent.putExtra(LoadTBAData.DATA_TO_LOAD, new short[]{LoadTBAData.LOAD_EVENTS, LoadTBAData.LOAD_TEAMS, LoadTBAData.LOAD_DISTRICTS});
+            intent.putExtra(LoadTBADataWorker.DATA_TO_LOAD, new short[]{LoadTBADataWorker.LOAD_EVENTS, LoadTBADataWorker.LOAD_TEAMS, LoadTBADataWorker.LOAD_DISTRICTS});
         }
 
         // If we don't have to redownload, store the version code here. Otherwise, let the
         // RedownloadActivity store the version code upon completion
-        prefs.edit()
-          .putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE)
-          .putInt(Constants.LAST_YEAR_KEY, maxYear).apply();
+        mSharedPreferences.edit()
+                .putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE)
+                .putInt(Constants.LAST_YEAR_KEY, maxYear)
+                .apply();
         return redownload;
     }
 

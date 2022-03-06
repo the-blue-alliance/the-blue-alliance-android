@@ -2,8 +2,19 @@ package com.thebluealliance.androidclient.background.firstlaunch;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.preference.PreferenceManager;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.hilt.work.HiltWorker;
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.OutOfQuotaPolicy;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
@@ -30,59 +41,71 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
+import javax.inject.Named;
+
+import dagger.assisted.Assisted;
+import dagger.assisted.AssistedInject;
 import retrofit2.Call;
 import retrofit2.Response;
-import rx.schedulers.Schedulers;
 
-public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, Void> {
+@HiltWorker
+public class LoadTBADataWorker extends Worker {
 
+    private static final String WORK_TAG = "load_initial_data";
     public static final String DATA_TO_LOAD = "data_to_load";
     public static final short LOAD_TEAMS = 0,
             LOAD_EVENTS = 1,
             LOAD_DISTRICTS = 2;
 
-    private TbaApiV3 datafeed;
-    private AppConfig config;
-    private LoadTBADataCallbacks callbacks;
-    private Context context;
-    private long startTime;
-    private Database mDb;
-    private TeamListWriter mTeamWriter;
-    private EventListWriter mEventWriter;
-    private DistrictListWriter mDistrictWriter;
+    private final Context mApplicationContext;
+    private final TbaApiV3 mDatafeed;
+    private final AppConfig mAppConfig;
+    private final Database mDb;
+    private final TeamListWriter mTeamWriter;
+    private final EventListWriter mEventWriter;
+    private final DistrictListWriter mDistrictWriter;
+    private final SharedPreferences mSharedPreferences;
 
-    public LoadTBAData(TbaApiV3 datafeed, AppConfig config, LoadTBADataCallbacks callbacks, Context c,
-                       Database db, TeamListWriter teamWriter, EventListWriter eventWriter, DistrictListWriter districtWriter) {
-        this.datafeed = datafeed;
-        this.config = config;
-        this.callbacks = callbacks;
-        this.context = c.getApplicationContext();
-        this.startTime = System.currentTimeMillis();
-        this.mDb = db;
-        this.mTeamWriter = teamWriter;
-        this.mEventWriter = eventWriter;
-        this.mDistrictWriter = districtWriter;
+    private long mStartTime;
+
+    @AssistedInject
+    public LoadTBADataWorker(
+            @Assisted @NonNull Context context,
+            @Assisted @NonNull WorkerParameters params,
+            @Named("tba_apiv3_call") TbaApiV3 datafeed,
+            AppConfig appConfig,
+            Database db,
+            TeamListWriter teamListWriter,
+            EventListWriter eventListWriter,
+            DistrictListWriter districtListWriter,
+            SharedPreferences sharedPreferences) {
+        super(context, params);
+        mApplicationContext = context.getApplicationContext();
+        mDatafeed = datafeed;
+        mAppConfig = appConfig;
+        mDb = db;
+        mTeamWriter = teamListWriter;
+        mEventWriter = eventListWriter;
+        mDistrictWriter = districtListWriter;
+        mSharedPreferences = sharedPreferences;
     }
 
+    @NonNull
     @Override
-    protected Void doInBackground(Short... params) {
-        if (callbacks == null) {
-            throw new IllegalArgumentException("callbacks must not be null!");
-        }
-
-        TbaLogger.d("Input: " + Arrays.deepToString(params));
-
-        Short[] dataToLoad;
-        if (params == null) {
-            dataToLoad = new Short[]{LOAD_TEAMS,
+    public Result doWork() {
+        mStartTime = System.currentTimeMillis();
+        int[] params = getInputData().getIntArray(DATA_TO_LOAD);
+        int[] dataToLoad;
+        if (params == null || params.length == 0) {
+            dataToLoad = new int[]{LOAD_TEAMS,
                     LOAD_EVENTS,
                     LOAD_DISTRICTS};
         } else {
             dataToLoad = params;
         }
-
-        TbaLogger.d("Loading: " + Arrays.deepToString(dataToLoad));
 
         /* We need to download and cache every team and event into the database. To avoid
          * unexpected behavior caused by changes in network connectivity, we will load all
@@ -92,37 +115,35 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
 
         try {
             /* First, do a blocking update of Remote Config */
-            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, context.getString(R.string.loading_config)));
-            config.updateRemoteDataBlocking();
+            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, mApplicationContext.getString(R.string.loading_config)));
+            mAppConfig.updateRemoteDataBlocking();
 
-            Call<ApiStatus> statusCall = datafeed.fetchApiStatus();
+            Call<ApiStatus> statusCall = mDatafeed.fetchApiStatus();
             Response<ApiStatus> statusResponse = statusCall.execute();
-            if (!statusResponse.isSuccessful() || statusResponse.body() == null) {
-                onConnectionError();
-                return null;
+            if (!statusResponse.isSuccessful() || statusResponse.body() == null || statusResponse.body().getMaxSeason() == null) {
+                TbaLogger.e("Bad API status response: " + statusResponse);
+                return onConnectionError();
             }
+
             int maxCompYear = statusResponse.body().getMaxSeason();
-
-
             List<Team> allTeams = new ArrayList<>();
             int maxPageNum = 0;
             if (Arrays.binarySearch(dataToLoad, LOAD_TEAMS) != -1) {
                 mDb.getTeamsTable().deleteAllRows();
                 // First we will load all the teams
                 for (int pageNum = 0; pageNum < 20; pageNum++) {  // limit to 20 pages to prevent potential infinite loop
-                    if (isCancelled()) {
-                        return null;
+                    if (isStopped()) {
+                        return Result.failure();
                     }
                     int start = pageNum * Constants.API_TEAM_LIST_PAGE_SIZE;
                     int end = start + Constants.API_TEAM_LIST_PAGE_SIZE - 1;
                     start = start == 0 ? 1 : start;
-                    publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_teams), start, end)));
+                    publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, mApplicationContext.getString(R.string.loading_teams, start, end)));
                     Call<List<Team>> teamListCall =
-                            datafeed.fetchTeamPage(pageNum, ApiConstants.TBA_CACHE_WEB);
+                            mDatafeed.fetchTeamPage(pageNum, ApiConstants.TBA_CACHE_WEB);
                     Response<List<Team>> teamListResponse = teamListCall.execute();
-                    if (teamListResponse == null || !teamListResponse.isSuccessful()) {
-                        onConnectionError();
-                        return null;
+                    if (!teamListResponse.isSuccessful()) {
+                        return onConnectionError();
                     }
                     if (teamListResponse.body() == null || teamListResponse.body().isEmpty()) {
                         // No teams found for a page; we are done
@@ -146,19 +167,19 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                 mDb.getEventsTable().deleteAllRows();
                 // Now we load all events
                 for (int year = Constants.FIRST_COMP_YEAR; year <= maxCompYear; year++) {
-                    if (isCancelled()) {
-                        return null;
+                    if (isStopped()) {
+                        return Result.failure();
                     }
-                    publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_events), Integer.toString(year))));
+                    publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, mApplicationContext.getString(R.string.loading_events, Integer.toString(year))));
                     Call<List<Event>> eventListCall =
-                            datafeed.fetchEventsInYear(year, ApiConstants.TBA_CACHE_WEB);
+                            mDatafeed.fetchEventsInYear(year, ApiConstants.TBA_CACHE_WEB);
                     Response<List<Event>> eventListResponse = eventListCall.execute();
-                    if (eventListResponse == null
-                            || !eventListResponse.isSuccessful()) {
-                        onConnectionError();
-                        return null;
+                    if (!eventListResponse.isSuccessful()) {
+                        return onConnectionError();
                     }
-                    if (eventListResponse.body() == null) continue;
+                    if (eventListResponse.body() == null) {
+                        continue;
+                    }
                     Date lastModified = eventListResponse.headers().getDate("Last-Modified");
                     List<Event> responseBody = eventListResponse.body();
                     if (lastModified != null) {
@@ -169,7 +190,7 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     }
                     allEvents.addAll(responseBody);
                     TbaLogger.i(String.format("Loaded %1$d events in %2$d",
-                                              eventListResponse.body().size(), year));
+                            eventListResponse.body().size(), year));
                 }
             }
 
@@ -178,19 +199,17 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                 mDb.getDistrictsTable().deleteAllRows();
                 //load all districts
                 for (int year = Constants.FIRST_DISTRICT_YEAR; year <= maxCompYear; year++) {
-                    if (isCancelled()) {
-                        return null;
+                    if (isStopped()) {
+                        return Result.failure();
                     }
-                    publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, String.format(context.getString(R.string.loading_districts), year)));
+                    publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, mApplicationContext.getString(R.string.loading_districts, year)));
                     AddDistrictKeys keyAdder = new AddDistrictKeys(year);
                     Call<List<District>> districtListCall =
-                            datafeed.fetchDistrictList(year, ApiConstants.TBA_CACHE_WEB);
+                            mDatafeed.fetchDistrictList(year, ApiConstants.TBA_CACHE_WEB);
                     Response<List<District>> districtListResponse = districtListCall.execute();
-                    if (districtListResponse == null
-                            || !districtListResponse.isSuccessful()
+                    if (!districtListResponse.isSuccessful()
                             || districtListResponse.body() == null) {
-                        onConnectionError();
-                        return null;
+                        return onConnectionError();
                     }
 
                     List<District> newDistrictList = districtListResponse.body();
@@ -204,26 +223,26 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
                     }
                     allDistricts.addAll(newDistrictList);
                     TbaLogger.i(String.format("Loaded %1$d districts in %2$d",
-                                              newDistrictList.size(), year));
+                            newDistrictList.size(), year));
                 }
             }
 
-            if (isCancelled()) {
-                return null;
+            if (isStopped()) {
+                return Result.failure();
             }
             // If no exception has been thrown at this point, we have all the data. We can now
             // insert it into the database. Pass a 0 as the last-modified time here, because we set
             // it individually above
-            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, context.getString(R.string.loading_almost_finished)));
+            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, mApplicationContext.getString(R.string.loading_almost_finished)));
 
             TbaLogger.i("Writing " + allTeams.size() + " teams");
-            Schedulers.io().createWorker().schedule(() -> mTeamWriter.write(allTeams, 0L));
+            mTeamWriter.write(allTeams, 0L);
             TbaLogger.i("Writing " + allEvents.size() + " events");
-            Schedulers.io().createWorker().schedule(() -> mEventWriter.write(allEvents, 0L));
+            mEventWriter.write(allEvents, 0L);
             TbaLogger.i("Writing " + allDistricts.size() + " districts");
-            Schedulers.io().createWorker().schedule(() -> mDistrictWriter.write(allDistricts, 0L));
+            mDistrictWriter.write(allDistricts, 0L);
 
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+            SharedPreferences.Editor editor = mSharedPreferences.edit();
 
             // Write TBA Status
             editor.putString(TBAStatusController.STATUS_PREF_KEY, statusResponse.body().getJsonBlob());
@@ -243,41 +262,81 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             }
             editor.putInt(Constants.APP_VERSION_KEY, BuildConfig.VERSION_CODE);
             editor.apply();
-            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_FINISHED, context.getString(R.string.loading_finished)));
+
+            AnalyticsHelper.sendTimingUpdate(mApplicationContext, System.currentTimeMillis() - mStartTime, "load all data", "");
+            return Result.success(new LoadProgressInfo(LoadProgressInfo.STATE_FINISHED, mApplicationContext.getString(R.string.loading_finished)).toData());
         } catch (RuntimeException ex) {
             // This is bad, probably an error in the response from the server
-            ex.printStackTrace();
-            // Alert the user that there was a problem
-            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_ERROR, Utilities.exceptionStacktraceToString(ex)));
-        } catch (IOException | InterruptedException e) {
+            TbaLogger.e("Error loading initial data", ex);
+            return onFailure(new LoadProgressInfo(LoadProgressInfo.STATE_ERROR, Utilities.exceptionStacktraceToString(ex)));
+        } catch (IOException | InterruptedException | ExecutionException e) {
             /* Some sort of network error */
-            e.printStackTrace();
-            onConnectionError();
-        } catch (Exception e) {
-            e.printStackTrace();
-            publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_ERROR, Utilities.exceptionStacktraceToString(e)));
-        }
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        if (context != null) {
-            AnalyticsHelper.sendTimingUpdate(context, System.currentTimeMillis() - startTime, "load all data", "");
+            TbaLogger.e("Error loading initial data", e);
+            return onConnectionError();
         }
     }
 
-    private void onConnectionError() {
-        publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_NO_CONNECTION, context.getString(R.string.connection_lost)));
+    private Result onConnectionError() {
+        LoadProgressInfo progress = new LoadProgressInfo(LoadProgressInfo.STATE_NO_CONNECTION, mApplicationContext.getString(R.string.connection_lost));
+        return Result.failure(progress.toData());
     }
 
-    @Override
-    protected void onProgressUpdate(LoadProgressInfo... values) {
-        callbacks.onProgressUpdate(values[0]);
+    private Result onFailure(LoadProgressInfo progress) {
+        return Result.failure(progress.toData());
     }
 
-    public class LoadProgressInfo {
+    private void publishProgress(LoadProgressInfo progress) {
+        setProgressAsync(progress.toData());
+    }
+
+    public interface LoadTBADataCallbacks {
+        void onProgressUpdate(LoadProgressInfo info);
+    }
+
+    public static UUID runWithCallbacks(AppCompatActivity activity, int[] dataToLoad, LoadTBADataCallbacks callback) {
+        OneTimeWorkRequest downloadRequest =
+                new OneTimeWorkRequest.Builder(LoadTBADataWorker.class)
+                    .setInputData(new Data.Builder().putIntArray(DATA_TO_LOAD, dataToLoad).build())
+                    .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                    .build();
+
+        WorkManager workManager = WorkManager.getInstance(activity);
+        workManager.enqueueUniqueWork(WORK_TAG, ExistingWorkPolicy.REPLACE, downloadRequest);
+        subscribeToJob(activity, downloadRequest.getId(), callback);
+        return downloadRequest.getId();
+    }
+
+    public static void subscribeToJob(AppCompatActivity activity, UUID jobId, LoadTBADataCallbacks callback) {
+        WorkManager workManager = WorkManager.getInstance(activity);
+        workManager.getWorkInfoByIdLiveData(jobId).observe(activity, info -> {
+            if (info == null) {
+                return;
+            }
+
+            @Nullable Data progressData = null;
+            if (info.getState().isFinished()) {
+                progressData = info.getOutputData();
+            } else if (info.getState() == WorkInfo.State.RUNNING){
+                progressData = info.getProgress();
+            }
+
+            if (progressData == null) {
+                TbaLogger.d("Unable to get load data progress! " + info);
+                return;
+            }
+
+            LoadProgressInfo progress = LoadProgressInfo.fromData(progressData);
+            TbaLogger.d("Data load progress: " + progress);
+            callback.onProgressUpdate(progress);
+        });
+    }
+
+    public static void cancel(Context context) {
+        WorkManager workManager = WorkManager.getInstance(context);
+        workManager.cancelUniqueWork(WORK_TAG);
+    }
+
+    public static class LoadProgressInfo {
 
         public static final int STATE_LOADING = 0;
         public static final int STATE_FINISHED = 1;
@@ -292,9 +351,26 @@ public class LoadTBAData extends AsyncTask<Short, LoadTBAData.LoadProgressInfo, 
             this.message = message;
         }
 
-    }
+        @Override
+        public String toString() {
+            return "LoadProgressInfo{"
+                    + "state=" + state
+                    + ", message='" + message + '\''
+                    + '}';
+        }
 
-    public interface LoadTBADataCallbacks {
-        void onProgressUpdate(LoadProgressInfo info);
+        public static LoadProgressInfo fromData(Data data) {
+            return new LoadProgressInfo(
+                    data.getInt("state", -1),
+                    data.getString("message")
+            );
+        }
+
+        public Data toData() {
+            return new Data.Builder()
+                    .putInt("state", this.state)
+                    .putString("message", this.message)
+                    .build();
+        }
     }
 }

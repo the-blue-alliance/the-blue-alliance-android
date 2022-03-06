@@ -25,7 +25,7 @@ public class EventInsights2022Renderer extends EventInsightsRenderer {
 
 
     private static @StringRes
-    final int[] matchInsightTitles = {
+    final int[] MATCH_INSIGHT_TITLES = {
             R.string.breakdown_avg_score,
             R.string.breakdown_avg_win_score,
             R.string.breakdown_avg_win_margin,
@@ -38,7 +38,7 @@ public class EventInsights2022Renderer extends EventInsightsRenderer {
             R.string.breakdown_avg_foul_score,
             R.string.breakdown_avg_score,
     };
-    private static final String[] matchInsightKeys = {
+    private static final String[] MATCH_INSIGHT_KEYS = {
             "average_score",
             "average_win_score",
             "average_win_margin",
@@ -55,10 +55,10 @@ public class EventInsights2022Renderer extends EventInsightsRenderer {
         mEventStats.add(new EventTypeHeader(mResources.getString(R.string.breakdown_match_stats)));
 
         addHighScore(quals, elims, "high_score");
-        addQualVsElimInsights(quals, elims, matchInsightTitles, matchInsightKeys);
+        addQualVsElimInsights(quals, elims, MATCH_INSIGHT_TITLES, MATCH_INSIGHT_KEYS);
     }
 
-    private static @StringRes int[] bonusInsightTitles = {
+    private static final @StringRes int[] BONUS_INSIGHT_TITLES = {
             R.string.breakdown2022_taxi_line,
             R.string.breakdown2022_quintet_achieved,
             R.string.breakdown2022_low_climb,
@@ -69,7 +69,7 @@ public class EventInsights2022Renderer extends EventInsightsRenderer {
             R.string.breakdown2022_hangar_bonus_achieved,
             R.string.breakdown2018_unicorn_matches,
     };
-    private static String[] bonusInsightKeys = {
+    private static final String[] BONUS_INSIGHT_KEYS = {
             "taxi_count",
             "quintet_count",
             "low_climb_count",
@@ -82,6 +82,6 @@ public class EventInsights2022Renderer extends EventInsightsRenderer {
     };
     private void generate2022BonusInsights(JsonObject quals, JsonObject elims) {
         mEventStats.add(new EventTypeHeader(mResources.getString(R.string.breakdown2017_bonus_stats)));
-        addQualVsElimInsightsWithPercentage(quals, elims, bonusInsightTitles, bonusInsightKeys);
+        addQualVsElimInsightsWithPercentage(quals, elims, BONUS_INSIGHT_TITLES, BONUS_INSIGHT_KEYS);
     }
 }

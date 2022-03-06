@@ -5,9 +5,9 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
@@ -25,11 +24,15 @@ import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
 import com.thebluealliance.androidclient.auth.AuthProvider;
-import com.thebluealliance.androidclient.background.LoadTBADataTaskFragment;
-import com.thebluealliance.androidclient.background.firstlaunch.LoadTBAData;
+import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -42,13 +45,15 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class OnboardingActivity extends AppCompatActivity
-  implements LoadTBAData.LoadTBADataCallbacks,
+  implements LoadTBADataWorker.LoadTBADataCallbacks,
   MyTBAOnboardingViewPager.Callbacks {
 
     private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";
     private static final String LOADING_COMPLETE = "loading_complete";
     private static final String MYTBA_LOGIN_COMPLETE = "mytba_login_complete";
-    private static final String LOAD_FRAGMENT_TAG = "loadFragment";
+    private static final String WELCOME_PAGER_STATE = "welcome_pager_state";
+    private static final String MYTBA_PAGER_STATE = "mytba_pager_state";
+    private static final String LOAD_TASK_UUID = "load_task_uuid";
     private static final int SIGNIN_CODE = 254;
 
     @BindView(R.id.view_pager)
@@ -69,14 +74,13 @@ public class OnboardingActivity extends AppCompatActivity
     private Unbinder unbinder;
 
     private String currentLoadingMessage = "";
-
-    private LoadTBADataTaskFragment loadFragment;
-
     private boolean isDataFinishedLoading = false;
     private boolean isMyTBALoginComplete = false;
+    private @Nullable UUID dataLoadTask = null;
 
     @Inject @Named("firebase_auth") AuthProvider mAuthProvider;
     @Inject AccountController mAccountController;
+    @Inject SharedPreferences mPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,20 +109,18 @@ public class OnboardingActivity extends AppCompatActivity
             if (savedInstanceState.containsKey(MYTBA_LOGIN_COMPLETE)) {
                 isMyTBALoginComplete = savedInstanceState.getBoolean(MYTBA_LOGIN_COMPLETE);
             }
-        }
 
-        loadFragment = (LoadTBADataTaskFragment) getSupportFragmentManager()
-                .findFragmentByTag(LOAD_FRAGMENT_TAG);
+            if (savedInstanceState.containsKey(WELCOME_PAGER_STATE)) {
+                viewPager.onRestoreInstanceState(savedInstanceState.getParcelable(WELCOME_PAGER_STATE));
+            }
 
-        if (loadFragment != null) {
-            viewPager.setCurrentItem(1, false);
+            if (savedInstanceState.containsKey(MYTBA_PAGER_STATE)) {
+                mMyTBAOnboardingViewPager.getViewPager().onRestoreInstanceState(savedInstanceState.getParcelable(MYTBA_PAGER_STATE));
+            }
 
-            LoadTBAData.LoadProgressInfo info = loadFragment.getLastProgressUpdate();
-            if (info != null) {
-                if (!loadFragment.wasLastUpdateDelivered()
-                            && info.state != LoadTBAData.LoadProgressInfo.STATE_FINISHED) {
-                    onProgressUpdate(info);
-                }
+            if (savedInstanceState.containsKey(LOAD_TASK_UUID)) {
+                dataLoadTask = UUID.fromString(savedInstanceState.getString(LOAD_TASK_UUID));
+                LoadTBADataWorker.subscribeToJob(this, dataLoadTask, this);
             }
         }
 
@@ -150,11 +152,16 @@ public class OnboardingActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(CURRENT_LOADING_MESSAGE_KEY, currentLoadingMessage);
         outState.putBoolean(LOADING_COMPLETE, isDataFinishedLoading);
         outState.putBoolean(MYTBA_LOGIN_COMPLETE, isMyTBALoginComplete);
+        outState.putParcelable(WELCOME_PAGER_STATE, viewPager.onSaveInstanceState());
+        outState.putParcelable(MYTBA_PAGER_STATE, mMyTBAOnboardingViewPager.getViewPager().onSaveInstanceState());
+        if (dataLoadTask != null) {
+            outState.putString(LOAD_TASK_UUID, dataLoadTask.toString());
+        }
     }
 
     @Override
@@ -243,15 +250,13 @@ public class OnboardingActivity extends AppCompatActivity
     }
 
     private void beginLoading() {
-        Fragment f = new LoadTBADataTaskFragment();
-        f.setRetainInstance(true);
-        getSupportFragmentManager().beginTransaction().add(f, LOAD_FRAGMENT_TAG).commit();
+        dataLoadTask = LoadTBADataWorker.runWithCallbacks(this, new int[0] /* load everything */, this);
     }
 
     private void onError(final String stacktrace) {
-        PreferenceManager.getDefaultSharedPreferences(this).edit()
-                         .putBoolean(Constants.ALL_DATA_LOADED_KEY, false)
-                         .apply();
+        mPreferences.edit()
+                .putBoolean(Constants.ALL_DATA_LOADED_KEY, false)
+                .apply();
 
         // Return to the first page
         if (viewPager != null) {
@@ -294,9 +299,9 @@ public class OnboardingActivity extends AppCompatActivity
     }
 
     private void onLoadFinished() {
-        PreferenceManager.getDefaultSharedPreferences(this).edit()
-                         .putBoolean(Constants.ALL_DATA_LOADED_KEY, true)
-                         .apply();
+        mPreferences.edit()
+                .putBoolean(Constants.ALL_DATA_LOADED_KEY, true)
+                .apply();
 
         isDataFinishedLoading = true;
 
@@ -347,10 +352,7 @@ public class OnboardingActivity extends AppCompatActivity
             viewPager.setCurrentItem(0);
         }
 
-        // Cancel task
-        if (loadFragment != null) {
-            loadFragment.cancelTask();
-        }
+        LoadTBADataWorker.cancel(this);
 
         // Show a warning
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -377,18 +379,18 @@ public class OnboardingActivity extends AppCompatActivity
         }
     }
 
-    public void onProgressUpdate(LoadTBAData.LoadProgressInfo info) {
+    public void onProgressUpdate(LoadTBADataWorker.LoadProgressInfo info) {
         switch (info.state) {
-            case LoadTBAData.LoadProgressInfo.STATE_LOADING:
+            case LoadTBADataWorker.LoadProgressInfo.STATE_LOADING:
                 onLoadingMessageUpdated(info.message);
                 break;
-            case LoadTBAData.LoadProgressInfo.STATE_FINISHED:
+            case LoadTBADataWorker.LoadProgressInfo.STATE_FINISHED:
                 onLoadFinished();
                 break;
-            case LoadTBAData.LoadProgressInfo.STATE_NO_CONNECTION:
+            case LoadTBADataWorker.LoadProgressInfo.STATE_NO_CONNECTION:
                 onConnectionLost();
                 break;
-            case LoadTBAData.LoadProgressInfo.STATE_ERROR:
+            case LoadTBADataWorker.LoadProgressInfo.STATE_ERROR:
                 onError(info.message);
                 break;
         }
