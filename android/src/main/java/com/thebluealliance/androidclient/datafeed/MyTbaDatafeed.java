@@ -163,7 +163,7 @@ public class MyTbaDatafeed {
         Date now = new Date();
         Date futureTime = new Date(mPrefs.getLong(prefString, 0) + Constants.MY_TBA_UPDATE_TIMEOUT);
         if (now.before(futureTime)) {
-            TbaLogger.d("Not updating myTBA subscriptions. Too soon since last update");
+            TbaLogger.d("Not updating myTBA favorites. Too soon since last update");
             return;
         }
         if (!ConnectionDetector.isConnectedToInternet(mApplicationContext)) {

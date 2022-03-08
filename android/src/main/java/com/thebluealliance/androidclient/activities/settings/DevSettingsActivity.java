@@ -21,7 +21,7 @@ import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorke
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
 import com.thebluealliance.androidclient.mytba.MyTbaRegistrationWorker;
-import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateWorker;
 
 import java.io.IOException;
 
@@ -159,8 +159,7 @@ public class DevSettingsActivity extends AppCompatActivity {
             Preference updateMytba = findPreference("update_mytba");
             if (updateMytba != null) {
                 updateMytba.setOnPreferenceClickListener((preference) -> {
-                    getActivity().startService(
-                            MyTbaUpdateService.newInstance(getActivity(), true, true));
+                    MyTbaUpdateWorker.run(getActivity(), true, true);
                     return false;
                 });
             }

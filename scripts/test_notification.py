@@ -268,6 +268,13 @@ event_match_video_sample = {
 def event_match_video_command(data=event_match_video_sample):
     notify('event_match_video', data)
 
+def update_favorites_command():
+    notify('update_favorites', {})
+
+
+def update_subscriptions_command():
+    notify('update_subscriptions', {})
+
 
 COMMANDS = {
     'awards_post': awards_posted_command,
@@ -281,6 +288,8 @@ COMMANDS = {
     'upcoming_match': upcoming_match_command,
     'team_match_video': team_match_video_command,
     'event_match_video': event_match_video_command,
+    'update_favorites': update_favorites_command,
+    'update_subscriptions': update_subscriptions_command,
 }
 
 # ====== main ======
