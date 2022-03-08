@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.gcm;
 
 import android.app.Notification;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
@@ -48,7 +47,7 @@ import com.thebluealliance.androidclient.helpers.MyTBAHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.mytba.MyTbaRegistrationWorker;
-import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateWorker;
 import com.thebluealliance.androidclient.renderers.MatchRenderer;
 
 import org.greenrobot.eventbus.EventBus;
@@ -132,12 +131,10 @@ public class GCMMessageHandler extends FirebaseMessagingService implements Follo
         BaseNotification notification;
         switch (messageType) {
             case NotificationTypes.UPDATE_FAVORITES:
-                Intent favIntent = MyTbaUpdateService.newInstance(c, true, false);
-                c.startService(favIntent);
+                MyTbaUpdateWorker.run(c, true, false);
                 return;
             case NotificationTypes.UPDATE_SUBSCRIPTIONS:
-                Intent subIntent = MyTbaUpdateService.newInstance(c, false, true);
-                c.startService(subIntent);
+                MyTbaUpdateWorker.run(c, false, true);
                 return;
             case NotificationTypes.PING:
             case NotificationTypes.BROADCAST:

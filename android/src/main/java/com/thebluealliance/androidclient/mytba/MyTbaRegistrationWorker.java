@@ -4,6 +4,8 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.hilt.work.HiltWorker;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -29,6 +31,14 @@ public class MyTbaRegistrationWorker extends Worker {
     final FirebaseMessaging mFirebaseMessaging;
     final GcmController mGcmController;
     final MyTbaDatafeed mMyTbaDatafeed;
+
+    public static void run(Context context) {
+       OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MyTbaUpdateWorker.class)
+                .addTag("register-mytba")
+                .build();
+        WorkManager.getInstance(context)
+                .enqueue(workRequest);
+    }
 
     @AssistedInject
     public MyTbaRegistrationWorker(

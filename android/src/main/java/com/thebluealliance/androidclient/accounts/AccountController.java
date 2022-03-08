@@ -3,18 +3,15 @@ package com.thebluealliance.androidclient.accounts;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 
 import androidx.annotation.Nullable;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.auth.User;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.mytba.MyTbaRegistrationWorker;
-import com.thebluealliance.androidclient.mytba.MyTbaUpdateService;
+import com.thebluealliance.androidclient.mytba.MyTbaUpdateWorker;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -113,13 +110,11 @@ public class AccountController {
     }
 
     private void registerForGcm(Context context) {
-        WorkManager.getInstance(context)
-                .enqueue(new OneTimeWorkRequest.Builder(MyTbaRegistrationWorker.class).addTag("register-mytba").build());
+        MyTbaRegistrationWorker.run(context);
     }
 
     private void loadMyTbaData(Context context) {
-        Intent intent = MyTbaUpdateService.newInstance(context, true, true);
-        context.startService(intent);
+        MyTbaUpdateWorker.run(context, true, true);
     }
 
 }

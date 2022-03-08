@@ -6,7 +6,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -14,7 +13,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -124,11 +122,13 @@ public class AccountControllerTest {
         verify(mEditor).putBoolean(PREF_MYTBA_ENABLED, true);
         verify(mEditor).putString(PREF_SELECTED_ACCOUNT, TEST_ACCOUNT_NAME);
         verify(mAccountManager).addAccountExplicitly(any(Account.class), eq(null), eq(null));
-        verify(mContext, times(1)).startService(any(Intent.class));
 
         WorkManager workManager = WorkManager.getInstance(ApplicationProvider.getApplicationContext());
-        List<WorkInfo> tasks = workManager.getWorkInfosByTag("register-mytba").get();
-        assertEquals(tasks.size(), 1);
+        List<WorkInfo> registerTasks = workManager.getWorkInfosByTag("register-mytba").get();
+        assertEquals(registerTasks.size(), 1);
+
+        List<WorkInfo> updateTasks = workManager.getWorkInfosByTag("update-mytba").get();
+        assertEquals(updateTasks.size(), 1);
     }
 
     @Test
