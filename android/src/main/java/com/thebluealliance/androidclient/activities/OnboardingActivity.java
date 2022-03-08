@@ -315,26 +315,39 @@ public class OnboardingActivity extends AppCompatActivity
         loadingMessage.postDelayed(() -> {
             ValueAnimator fadeOutAnimation = ValueAnimator.ofFloat(1.0f, 0.0f);
             fadeOutAnimation.addUpdateListener(animation -> {
-                loadingMessage.setAlpha((float) animation.getAnimatedValue());
-                loadingProgressBar.setAlpha((float) animation.getAnimatedValue());
+                if (loadingMessage != null) {
+                    loadingMessage.setAlpha((float) animation.getAnimatedValue());
+                }
+                if (loadingProgressBar != null) {
+                    loadingProgressBar.setAlpha((float) animation.getAnimatedValue());
+                }
             });
             fadeOutAnimation.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    loadingMessage.setVisibility(View.GONE);
-                    loadingProgressBar.setVisibility(View.GONE);
+                    if (loadingMessage != null) {
+                        loadingMessage.setVisibility(View.GONE);
+                    }
+                    if (loadingProgressBar != null) {
+                        loadingProgressBar.setVisibility(View.GONE);
+                    }
                 }
             });
             fadeOutAnimation.setDuration(250);
 
             ValueAnimator fadeInAnimation = ValueAnimator.ofFloat(0.0f, 1.0f);
-            fadeInAnimation.addUpdateListener(animation ->
-                    continueToEndButton.setAlpha((float) animation.getAnimatedValue()));
+            fadeInAnimation.addUpdateListener(animation -> {
+                if (continueToEndButton != null) {
+                    continueToEndButton.setAlpha((float) animation.getAnimatedValue());
+                }
+            });
             fadeInAnimation.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    continueToEndButton.setAlpha(0.0f);
-                    continueToEndButton.setVisibility(View.VISIBLE);
+                    if (continueToEndButton != null) {
+                        continueToEndButton.setAlpha(0.0f);
+                        continueToEndButton.setVisibility(View.VISIBLE);
+                    }
                 }
             });
             fadeInAnimation.setDuration(250);
