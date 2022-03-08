@@ -92,7 +92,7 @@ public class TeamInfoBinder extends AbstractDataBinder<TeamInfoBinder.Model> {
             teamName.setText(data.nickname);
         }
 
-        if (data.location.isEmpty()) {
+        if (data.location == null || data.location.isEmpty()) {
             // No location; hide the location view
             teamLocationContainer.setVisibility(View.GONE);
         } else {
