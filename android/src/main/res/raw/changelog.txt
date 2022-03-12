@@ -1,4 +1,4 @@
-Version 7.0.3:<br>
+Version 7.0.4:<br>
  - Welcome back for the 2022 season!<br>
  - Support 2022 game specifics<br>
  - Bug fixes & reliability improvements<br>
