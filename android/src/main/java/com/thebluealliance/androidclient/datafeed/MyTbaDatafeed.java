@@ -22,6 +22,7 @@ import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesRegistrationReque
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesSubscriptionCollection;
 import com.appspot.tbatv_prod_hrd.model.ModelsMobileApiMessagesSubscriptionMessage;
 import com.google.gson.JsonObject;
+import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -118,7 +119,11 @@ public class MyTbaDatafeed {
         request.mobile_id = regId;
         request.operating_system = GcmController.OS_ANDROID;
         request.device_uuid = Utilities.getDeviceUUID(mApplicationContext);
-        request.name = android.os.Build.MODEL;
+        if (BuildConfig.DEBUG) {
+            request.name = android.os.Build.MODEL + " (Debug)";
+        } else {
+            request.name = android.os.Build.MODEL;
+        }
 
         Response<ModelsMobileApiMessagesBaseResponse> response = null;
         try {
