@@ -41,6 +41,7 @@ import com.thebluealliance.androidclient.gcm.notifications.ScoreNotification;
 import com.thebluealliance.androidclient.gcm.notifications.SummaryNotification;
 import com.thebluealliance.androidclient.gcm.notifications.TeamMatchVideoNotification;
 import com.thebluealliance.androidclient.gcm.notifications.UpcomingMatchNotification;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.helpers.MyTBAHelper;
@@ -113,6 +114,7 @@ public class GCMMessageHandler extends FirebaseMessagingService implements Follo
         TbaLogger.i("Received Notification : (" + type + ")  " + data);
         try {
             handleMessage(getApplicationContext(), type, data);
+            AnalyticsHelper.sendNotificationReceived(getApplicationContext(), type);
             TbaLogger.d("Notification " + type + " processed successfully");
         } catch (Exception e) {
             // We probably tried to post a null notification or something like that. Oops...

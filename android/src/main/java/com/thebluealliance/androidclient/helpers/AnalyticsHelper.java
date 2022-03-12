@@ -45,6 +45,27 @@ public final class AnalyticsHelper {
                 .build());
     }
 
+    public static void sendMyTbaRegistrationHit(Context c) {
+        if (!ANALYTICS_ENABLED) return;
+
+        Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("mytba")
+                .setAction("mytba_registration")
+                .build());
+    }
+
+    public static void sendNotificationReceived(Context c, String notif_type) {
+        if (!ANALYTICS_ENABLED) return;
+
+        Tracker t = Analytics.getTracker(Analytics.GAnalyticsTracker.ANDROID_TRACKER, c);
+        t.send(new HitBuilders.EventBuilder()
+                .setCategory("mytba")
+                .setAction("mytba_notification_received")
+                .setLabel(notif_type)
+                .build());
+    }
+
     public static Map<String, String> getRefreshHit(String key) {
         return new HitBuilders.EventBuilder()
           .setCategory("refresh")

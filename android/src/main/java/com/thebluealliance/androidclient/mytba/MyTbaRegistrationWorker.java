@@ -16,6 +16,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.gcm.GcmController;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
 
 import javax.annotation.Nullable;
 
@@ -34,7 +35,7 @@ public class MyTbaRegistrationWorker extends Worker {
     final MyTbaDatafeed mMyTbaDatafeed;
 
     public static void run(Context context) {
-       OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MyTbaUpdateWorker.class)
+       OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MyTbaRegistrationWorker.class)
                 .addTag("register-mytba")
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .build();
@@ -74,6 +75,9 @@ public class MyTbaRegistrationWorker extends Worker {
                 // we had success on the server. Now store locally
                 // Store the registration ID locally, so we don't have to do this again
                 mGcmController.storeRegistrationId(regId);
+                AnalyticsHelper.sendMyTbaRegistrationHit(getApplicationContext());
+            } else {
+                TbaLogger.e("MyTBA Registration failed");
             }
         } catch (Exception ex) {
             TbaLogger.e("Error registering gcm:" + ex.getMessage());

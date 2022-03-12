@@ -20,6 +20,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.background.RecreateSearchIndexes;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
+import com.thebluealliance.androidclient.mytba.MyTbaRegistrationWorker;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -143,6 +144,11 @@ public class LaunchActivity extends AppCompatActivity {
                 // v4.0 - Redownload everything since we recreate the db
                 redownload = true;
                 intent.putExtra(LoadTBADataWorker.DATA_TO_LOAD, new short[]{LoadTBADataWorker.LOAD_EVENTS, LoadTBADataWorker.LOAD_TEAMS, LoadTBADataWorker.LOAD_DISTRICTS});
+            }
+
+            if (lastVersion < 7000400) {
+                // We had a bug with registration, force everybody to re-register on update
+                MyTbaRegistrationWorker.run(this);
             }
         }
 
