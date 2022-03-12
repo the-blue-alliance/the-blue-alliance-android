@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.hilt.work.HiltWorker;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
@@ -35,6 +36,7 @@ public class MyTbaRegistrationWorker extends Worker {
     public static void run(Context context) {
        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(MyTbaUpdateWorker.class)
                 .addTag("register-mytba")
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .build();
         WorkManager.getInstance(context)
                 .enqueue(workRequest);
