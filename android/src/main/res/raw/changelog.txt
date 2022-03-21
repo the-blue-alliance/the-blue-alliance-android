@@ -1,8 +1,7 @@
-Version 7.0.4:<br>
+Version 7.0.5:<br>
  - Welcome back for the 2022 season!<br>
- - Support 2022 game specifics<br>
- - Bug fixes & reliability improvements<br>
- - Target Android 12<br>
+ - Fix initial data load hanging on Android <12<br>
+ - Other bug fixes & reliability improvements<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>
