@@ -1,14 +1,20 @@
 package com.thebluealliance.androidclient.background.firstlaunch;
 
+import static com.thebluealliance.androidclient.gcm.notifications.BaseNotification.NOTIFICATION_CHANNEL;
+
+import android.app.Notification;
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.hilt.work.HiltWorker;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
+import androidx.work.ForegroundInfo;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkInfo;
@@ -16,6 +22,8 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -91,6 +99,24 @@ public class LoadTBADataWorker extends Worker {
         mEventWriter = eventListWriter;
         mDistrictWriter = districtListWriter;
         mSharedPreferences = sharedPreferences;
+    }
+
+    @NonNull
+    @Override
+    public ListenableFuture<ForegroundInfo> getForegroundInfoAsync() {
+        Context context = getApplicationContext();
+
+        String title = context.getString(R.string.notification_onboarding);
+        Notification notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(context, R.color.primary))
+                .setContentTitle(title)
+                .setTicker(title)
+                .setOngoing(true)
+                .build();
+
+        ForegroundInfo info = new ForegroundInfo(title.hashCode(), notification);
+        return Futures.immediateFuture(info);
     }
 
     @NonNull

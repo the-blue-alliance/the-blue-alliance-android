@@ -102,4 +102,11 @@
     <string name="notification_ping_header">Ping</string>
     <string name="notification_broadcast_header">Broadcast</string>
 
+    <!-- *********************
+        Background Worker Progress Notifications
+        ********************* -->
+    <string name="notification_onboarding">Loading TBA Data...</string>
+    <string name="notification_mytba_prefs_update">Updating myTBA Preferences...</string>
+    <string name="notification_mytba_register">Setting up myTBA...</string>
+
 </resources>

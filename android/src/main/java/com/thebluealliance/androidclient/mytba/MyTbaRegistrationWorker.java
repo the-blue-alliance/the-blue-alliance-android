@@ -1,9 +1,15 @@
 package com.thebluealliance.androidclient.mytba;
 
+import static com.thebluealliance.androidclient.gcm.notifications.BaseNotification.NOTIFICATION_CHANNEL;
+
+import android.app.Notification;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.hilt.work.HiltWorker;
+import androidx.work.ForegroundInfo;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkManager;
@@ -12,7 +18,10 @@ import androidx.work.WorkerParameters;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.gcm.GcmController;
@@ -86,5 +95,23 @@ public class MyTbaRegistrationWorker extends Worker {
             // exponential back-off.
         }
         return Result.success();
+    }
+
+    @NonNull
+    @Override
+    public ListenableFuture<ForegroundInfo> getForegroundInfoAsync() {
+        Context context = getApplicationContext();
+
+        String title = context.getString(R.string.notification_mytba_register);
+        Notification notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(context, R.color.primary))
+                .setContentTitle(title)
+                .setTicker(title)
+                .setOngoing(true)
+                .build();
+
+        ForegroundInfo info = new ForegroundInfo(title.hashCode(), notification);
+        return Futures.immediateFuture(info);
     }
 }

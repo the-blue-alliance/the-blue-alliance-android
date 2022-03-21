@@ -1,18 +1,27 @@
 package com.thebluealliance.androidclient.accounts;
 
+import static com.thebluealliance.androidclient.gcm.notifications.BaseNotification.NOTIFICATION_CHANNEL;
+
+import android.app.Notification;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.hilt.work.HiltWorker;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
+import androidx.work.ForegroundInfo;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.OutOfQuotaPolicy;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.MyTbaDatafeed;
 import com.thebluealliance.androidclient.helpers.ModelNotificationFavoriteSettings;
@@ -48,6 +57,24 @@ public class UpdateUserModelSettingsWorker extends Worker {
             TbaLogger.e("Error updating mytba settings: " + ex.getMessage(), ex);
             return Result.failure();
         }
+    }
+
+    @NonNull
+    @Override
+    public ListenableFuture<ForegroundInfo> getForegroundInfoAsync() {
+        Context context = getApplicationContext();
+
+        String title = context.getString(R.string.notification_mytba_prefs_update);
+        Notification notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ContextCompat.getColor(context, R.color.primary))
+                .setContentTitle(title)
+                .setTicker(title)
+                .setOngoing(true)
+                .build();
+
+        ForegroundInfo info = new ForegroundInfo(title.hashCode(), notification);
+        return Futures.immediateFuture(info);
     }
 
     public static void runWithCallbacks(AppCompatActivity activity, ModelNotificationFavoriteSettings settings, ModelSettingsCallbacks callbacks) {
