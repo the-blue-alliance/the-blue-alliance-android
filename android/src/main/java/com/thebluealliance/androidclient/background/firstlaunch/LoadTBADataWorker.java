@@ -309,23 +309,32 @@ public class LoadTBADataWorker extends Worker {
     public static void subscribeToJob(AppCompatActivity activity, UUID jobId, LoadTBADataCallbacks callback) {
         WorkManager workManager = WorkManager.getInstance(activity);
         workManager.getWorkInfoByIdLiveData(jobId).observe(activity, info -> {
+            TbaLogger.d("Data load info: " + info);
             if (info == null) {
                 return;
             }
 
-            @Nullable Data progressData = null;
+            @Nullable LoadProgressInfo progress = null;
             if (info.getState().isFinished()) {
-                progressData = info.getOutputData();
+                Data progressData = info.getOutputData();
+                progress = LoadProgressInfo.fromData(progressData);
             } else if (info.getState() == WorkInfo.State.RUNNING){
-                progressData = info.getProgress();
+                Data progressData = info.getProgress();
+                progress = LoadProgressInfo.fromData(progressData);
             }
 
-            if (progressData == null) {
+            if (info.getState() == WorkInfo.State.FAILED && progress != null && progress.state == -1) {
+                // If we had some other framework-level exception, add an error message so we
+                // don't just spin forever
+                TbaLogger.e("Failure loading TBA data!");
+                progress = new LoadProgressInfo(LoadProgressInfo.STATE_ERROR, "Error loading TBA data!");
+            }
+
+            if (progress == null) {
                 TbaLogger.d("Unable to get load data progress! " + info);
                 return;
             }
 
-            LoadProgressInfo progress = LoadProgressInfo.fromData(progressData);
             TbaLogger.d("Data load progress: " + progress);
             callback.onProgressUpdate(progress);
         });
