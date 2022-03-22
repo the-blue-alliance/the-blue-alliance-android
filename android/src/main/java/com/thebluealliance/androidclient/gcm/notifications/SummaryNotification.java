@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -60,7 +61,8 @@ public class SummaryNotification extends BaseNotification<Void> {
 
         Intent dismissIntent = NotificationChangedReceiver.newIntent(context);
         dismissIntent.setAction(NotificationChangedReceiver.ACTION_NOTIFICATION_DELETED);
-        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, dismissIntent, 0);
+        int dismissFlags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0;
+        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, dismissIntent, dismissFlags);
 
         return getBaseBuilder(context)
                 .setContentTitle(notificationTitle)
