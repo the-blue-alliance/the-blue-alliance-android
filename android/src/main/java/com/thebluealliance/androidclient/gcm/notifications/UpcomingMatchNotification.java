@@ -195,10 +195,13 @@ public class UpcomingMatchNotification extends BaseNotification<UpcomingMatchNot
                                                                          webcastType,
                                                                          webcastJson,
                                                                          0);
-                watchIntent = PendingIntent.getActivity(context,
-                                                        (int)System.currentTimeMillis(),
-                                                        webcastIntent,
-                                                        0);
+                int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0;
+                watchIntent = PendingIntent.getActivity(
+                        context,
+                        (int)System.currentTimeMillis(),
+                        webcastIntent,
+                        flags
+                );
             }
         }
 
