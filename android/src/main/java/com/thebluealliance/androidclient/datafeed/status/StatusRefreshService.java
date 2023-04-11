@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.datafeed.status;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -100,7 +101,9 @@ public class StatusRefreshService extends JobIntentService {
 
         if (status.getMinAppVersion() != null
                 && BuildConfig.VERSION_CODE < status.getMinAppVersion()) {
-            startActivity(new Intent(this, UpdateRequiredActivity.class));
+            Intent newIntent = new Intent(this, UpdateRequiredActivity.class);
+            newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(newIntent);
         }
 
     }
