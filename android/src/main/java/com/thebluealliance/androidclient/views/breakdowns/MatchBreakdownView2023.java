@@ -13,17 +13,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.gridlayout.widget.GridLayout;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import butterknife.BindView;
