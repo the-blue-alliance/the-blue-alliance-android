@@ -183,8 +183,8 @@ public class MatchBreakdownView2023 extends AbstractMatchBreakdownView {
         setBonus(blueData, "activation", blueActivationBonus);
 
         /* Fouls */
-//        setFouls(blueData, foulsRed);
-//        setFouls(redData, foulsBlue);
+        setFouls(blueData, foulsRed);
+        setFouls(redData, foulsBlue);
 
         /* Adjustment points */
         adjustRed.setText(getIntDefault(redData, "adjustPoints"));
