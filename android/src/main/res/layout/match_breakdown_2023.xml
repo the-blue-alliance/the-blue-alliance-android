@@ -16,6 +16,11 @@
         app:rowCount="29"
         app:alignmentMode="alignBounds" >
 
+        <!--
+            Test data from:
+            https://www.thebluealliance.com/match/2023paca_qm1
+        -->
+
         <!-- Teams -->
         <TextView
             android:id="@+id/breakdown_red1"
@@ -67,16 +72,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:tint="@color/primary_text_color"
-                android:src="@drawable/ic_close_black_24dp"/>
+                android:src="@drawable/ic_check_black_24dp"/>
             <TextView
                 android:id="@+id/breakdown2023_red_auto_mobility_bonus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="(+10)"/>
+                tools:text="(+6)"/>
         </LinearLayout>
         <TextView
             android:text="@string/breakdown2023_auto_mobility"
-            style="@style/breakdown_category" />
+            style="@style/breakdown_categorySubtotal" />
         <LinearLayout
             style="@style/breakdown_blueItem"
             android:orientation="horizontal">
@@ -91,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:tint="@color/primary_text_color"
-                android:src="@drawable/ic_check_black_24dp"/>
+                android:src="@drawable/ic_close_black_24dp"/>
             <ImageView
                 android:id="@+id/breakdown2023_blue_auto_mobility_robot3"
                 android:layout_width="wrap_content"
@@ -102,168 +107,156 @@
                 android:id="@+id/breakdown2023_blue_auto_mobility_bonus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="(+20)"/>
+                tools:text="(+3)"/>
         </LinearLayout>
 
-        <!-- Auto Cargo  -->
-        <LinearLayout
-            style="@style/breakdown_redItem"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/breakdown2023_red_auto_lower_hub"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:drawablePadding="3dp"
-                android:drawableLeft="@drawable/ic_keyboard_arrow_down_black_24dp"
-                app:drawableTint="@color/primary_text_color"
-                tools:text="2"/>
-            <TextView
-                android:id="@+id/breakdown2023_red_auto_upper_hub"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawablePadding="3dp"
-                android:drawableLeft="@drawable/ic_keyboard_arrow_up_black_24dp"
-                app:drawableTint="@color/primary_text_color"
-                tools:text="2"/>
-        </LinearLayout>
+        <!-- Auto Piece Count  -->
         <TextView
-            android:text="@string/breakdown2023_auto_cargo"
+            android:id="@+id/breakdown2023_red_auto_piece_count"
+            style="@style/breakdown_redItem"
+            tools:text="2"/>
+        <TextView
+            android:text="@string/breakdown2023_auto_piece_count"
             style="@style/breakdown_category" />
-        <LinearLayout
-            style="@style/breakdown_blueItem"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/breakdown2023_blue_auto_lower_hub"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:drawablePadding="3dp"
-                android:drawableLeft="@drawable/ic_keyboard_arrow_down_black_24dp"
-                app:drawableTint="@color/primary_text_color"
-                tools:text="2"/>
-            <TextView
-                android:id="@+id/breakdown2023_blue_auto_upper_hub"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawablePadding="3dp"
-                android:drawableLeft="@drawable/ic_keyboard_arrow_up_black_24dp"
-                app:drawableTint="@color/primary_text_color"
-                tools:text="1"/>
-        </LinearLayout>
-
-        <!-- Auto Cargo Points -->
         <TextView
-            android:id="@+id/breakdown2023_red_auto_cargo"
-            style="@style/breakdown_redItem"
+            android:id="@+id/breakdown2023_blue_auto_piece_count"
+            style="@style/breakdown_blueItem"
+            tools:text="1"/>
+
+        <!-- Auto Piece Points -->
+        <TextView
+            android:id="@+id/breakdown2023_red_auto_piece_points"
+            style="@style/breakdown_redTotal"
             tools:text="10"/>
         <TextView
-            android:text="@string/breakdown2023_auto_cargo_points"
-            style="@style/breakdown_category" />
+            android:text="@string/breakdown2023_auto_piece_points"
+            style="@style/breakdown_categorySubtotal" />
         <TextView
-            android:id="@+id/breakdown2023_blue_auto_cargo"
-            style="@style/breakdown_blueItem"
-            tools:text="25"/>
+            android:id="@+id/breakdown2023_blue_auto_piece_points"
+            style="@style/breakdown_blueTotal"
+            tools:text="6"/>
 
-        <!-- Auto Quintet -->
+        <!-- Auto Charge Station Robot 1 -->
         <LinearLayout
             style="@style/breakdown_redItem"
             android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/breakdown2023_red_quintet"
+            <TextView
+                android:id="@+id/breakdown2023_red_auto_charge_station_robot1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:backgroundTint="@color/primary_text_color"
-                tools:background="@drawable/ic_check_black_24dp" />
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text=""/>
         </LinearLayout>
         <TextView
-            android:text="@string/breakdown2023_auto_quintet"
+            android:text="@string/breakdown2023_auto_charge_station_robot_1"
             style="@style/breakdown_category" />
         <LinearLayout
             style="@style/breakdown_blueItem"
             android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/breakdown2023_blue_quintet"
+            <TextView
+                android:id="@+id/breakdown2023_blue_auto_charge_station_robot1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:backgroundTint="@color/primary_text_color"
-                tools:background="@drawable/ic_check_black_24dp" />
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text=""/>
+        </LinearLayout>
+
+        <!-- Auto Charge Station Robot 2 -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2023_red_auto_charge_station_robot2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text=""/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2023_auto_charge_station_robot_2"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2023_blue_auto_charge_station_robot2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text=""/>
+        </LinearLayout>
+
+        <!-- Auto Charge Station Robot 3 -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2023_red_auto_charge_station_robot3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text=""/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2023_auto_charge_station_robot_3"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2023_blue_auto_charge_station_robot3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text=""/>
         </LinearLayout>
 
         <!-- Auto Points -->
         <TextView
             android:id="@+id/breakdown_auto_total_red"
             style="@style/breakdown_redTotal"
-            tools:text="60"/>
+            tools:text="28"/>
         <TextView
             android:text="@string/breakdown_auto_total"
             style="@style/breakdown_categoryTotal" />
         <TextView
             android:id="@+id/breakdown_auto_total_blue"
             style="@style/breakdown_blueTotal"
-            tools:text="5"/>
+            tools:text="17"/>
 
-        <!-- Teleop Cargo  -->
-        <LinearLayout
+        <!-- Teleop Piece Count  -->
+        <TextView
+            android:id="@+id/breakdown2023_red_teleop_piece_count"
             style="@style/breakdown_redItem"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/breakdown2023_red_teleop_lower_hub"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:drawablePadding="3dp"
-                android:drawableLeft="@drawable/ic_keyboard_arrow_down_black_24dp"
-                app:drawableTint="@color/primary_text_color"
-                tools:text="2"/>
-            <TextView
-                android:id="@+id/breakdown2023_red_teleop_upper_hub"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawablePadding="3dp"
-                android:drawableLeft="@drawable/ic_keyboard_arrow_up_black_24dp"
-                app:drawableTint="@color/primary_text_color"
-                tools:text="2"/>
-        </LinearLayout>
+            tools:text="11"/>
         <TextView
-            android:text="@string/breakdown2023_teleop_cargo"
-            style="@style/breakdown_category" />
-        <LinearLayout
-            style="@style/breakdown_blueItem"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/breakdown2023_blue_teleop_lower_hub"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:drawablePadding="3dp"
-                android:drawableLeft="@drawable/ic_keyboard_arrow_down_black_24dp"
-                app:drawableTint="@color/primary_text_color"
-                tools:text="2"/>
-            <TextView
-                android:id="@+id/breakdown2023_blue_teleop_upper_hub"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawablePadding="3dp"
-                android:drawableLeft="@drawable/ic_keyboard_arrow_up_black_24dp"
-                app:drawableTint="@color/primary_text_color"
-                tools:text="1"/>
-        </LinearLayout>
-
-        <!-- Teleop Cargo Points -->
-        <TextView
-            android:id="@+id/breakdown2023_red_teleop_cargo"
-            style="@style/breakdown_redItem"
-            tools:text="10"/>
-        <TextView
-            android:text="@string/breakdown2023_teleop_cargo_points"
+            android:text="@string/breakdown2023_teleop_piece_count"
             style="@style/breakdown_category" />
         <TextView
-            android:id="@+id/breakdown2023_blue_teleop_cargo"
+            android:id="@+id/breakdown2023_blue_teleop_piece_count"
             style="@style/breakdown_blueItem"
-            tools:text="25"/>
+            tools:text="17"/>
 
-        <!-- Endgame Climb -->
+        <!-- Teleop Piece Points -->
+        <TextView
+            android:id="@+id/breakdown2023_red_teleop_piece_points"
+            style="@style/breakdown_redTotal"
+            tools:text="33"/>
+        <TextView
+            android:text="@string/breakdown2023_teleop_piece_points"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown2023_blue_teleop_piece_points"
+            style="@style/breakdown_blueTotal"
+            tools:text="56"/>
+
+        <!-- Endgame -->
         <LinearLayout
             style="@style/breakdown_redItem"
             android:orientation="horizontal">
@@ -272,7 +265,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                tools:text="Park (+5)"/>
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text="Engaged (+10)"/>
         </LinearLayout>
         <TextView
             android:text="@string/breakdown_endgame_robot_1"
@@ -285,7 +280,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                tools:text="Hang (+25)"/>
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text="Engaged (+10)"/>
         </LinearLayout>
         <LinearLayout
             style="@style/breakdown_redItem"
@@ -295,7 +292,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                tools:text="Park (+5)"/>
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text="Engaged (+10)"/>
         </LinearLayout>
         <TextView
             android:text="@string/breakdown_endgame_robot_2"
@@ -308,7 +307,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                tools:text="Hang (+25)"/>
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text="Engaged (+10)"/>
         </LinearLayout>
         <LinearLayout
             style="@style/breakdown_redItem"
@@ -318,7 +319,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                tools:text="Hang (+25)"/>
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text="Park (+2)"/>
         </LinearLayout>
         <TextView
             android:text="@string/breakdown_endgame_robot_3"
@@ -331,41 +334,68 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                tools:text="Hang (+25)"/>
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text="Park (+2)"/>
         </LinearLayout>
-
-        <!-- Endgame Points -->
-        <TextView
-            android:id="@+id/breakdown_endgame_total_red"
-            style="@style/breakdown_redTotal"
-            tools:text="30"/>
-        <TextView
-            android:text="@string/breakdown2023_endgame_points"
-            style="@style/breakdown_categorySubtotal" />
-        <TextView
-            android:id="@+id/breakdown_endgame_total_blue"
-            style="@style/breakdown_blueTotal"
-            tools:text="75"/>
 
         <!-- Teleop Total -->
         <TextView
             android:id="@+id/breakdown_teleop_total_red"
             style="@style/breakdown_redTotal"
-            tools:text="40"/>
+            tools:text="55"/>
         <TextView
             android:text="@string/breakdown_teleop_total"
             style="@style/breakdown_categoryTotal" />
         <TextView
             android:id="@+id/breakdown_teleop_total_blue"
             style="@style/breakdown_blueTotal"
-            tools:text="80"/>
+            tools:text="78"/>
 
-        <!-- Cargo Bonus -->
+        <!-- Links  -->
+        <TextView
+            android:id="@+id/breakdown2023_red_links"
+            style="@style/breakdown_redItem"
+            tools:text="1 (+5)"/>
+        <TextView
+            android:text="@string/breakdown2023_teleop_links"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2023_blue_links"
+            style="@style/breakdown_blueItem"
+            tools:text="5 (+25)"/>
+
+        <!-- Coopertition Criteria Met -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2023_red_coopertition_criteria"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tint="@color/primary_text_color"
+                android:src="@drawable/ic_close_black_24dp" />
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2023_teleop_coop_criteria"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2023_blue_coopertition_criteria"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tint="@color/primary_text_color"
+                android:src="@drawable/ic_close_black_24dp" />
+        </LinearLayout>
+
+        <!-- Sustainability Bonus -->
         <LinearLayout
             style="@style/breakdown_redItem"
             android:orientation="horizontal">
             <TextView
-                android:id="@+id/breakdown2023_red_cargo_bonus"
+                android:id="@+id/breakdown2023_red_sustainability_bonus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:drawableTint="@color/primary_text_color"
@@ -373,13 +403,13 @@
                 tools:text=""/>
         </LinearLayout>
         <TextView
-            android:text="@string/breakdown2023_cargo_bonus"
+            android:text="@string/breakdown2023_teleop_sustainability_bonus"
             style="@style/breakdown_category" />
         <LinearLayout
             style="@style/breakdown_blueItem"
             android:orientation="horizontal">
             <TextView
-                android:id="@+id/breakdown2023_blue_cargo_bonus"
+                android:id="@+id/breakdown2023_blue_sustainability_bonus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:drawableTint="@color/primary_text_color"
@@ -387,26 +417,26 @@
                 tools:text="(+1 RP)"/>
         </LinearLayout>
 
-        <!-- Hangar Bonus -->
+        <!-- Activation Bonus -->
         <LinearLayout
             style="@style/breakdown_redItem"
             android:orientation="horizontal">
             <TextView
-                android:id="@+id/breakdown2023_red_hangar_bonus"
+                android:id="@+id/breakdown2023_red_activation_bonus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:drawableTint="@color/primary_text_color"
-                android:drawableLeft="@drawable/ic_close_black_24dp"
-                tools:text=""/>
+                android:drawableLeft="@drawable/ic_check_black_24dp"
+                tools:text="(+1 RP)"/>
         </LinearLayout>
         <TextView
-            android:text="@string/breakdown2023_hangar_bonus"
+            android:text="@string/breakdown2023_teleop_activation_bonus"
             style="@style/breakdown_category" />
         <LinearLayout
             style="@style/breakdown_blueItem"
             android:orientation="horizontal">
             <TextView
-                android:id="@+id/breakdown2023_blue_hangar_bonus"
+                android:id="@+id/breakdown2023_blue_activation_bonus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:drawableTint="@color/primary_text_color"
@@ -418,14 +448,14 @@
         <TextView
             android:id="@+id/breakdown_fouls_red"
             style="@style/breakdown_redItem"
-            tools:text="+ 0 / + 0"/>
+            tools:text="1 (+5) / 0"/>
         <TextView
             android:text="@string/breakdown_foul_tech_foul"
             style="@style/breakdown_category" />
         <TextView
             android:id="@+id/breakdown_fouls_blue"
             style="@style/breakdown_blueItem"
-            tools:text="+ 5 / + 15 / + 1 RP"/>
+            tools:text="0 / 0"/>
 
         <!-- Adjustments -->
         <TextView
@@ -444,20 +474,20 @@
         <TextView
             android:id="@+id/breakdown_total_red"
             style="@style/breakdown_redTotal"
-            tools:text="100"/>
+            tools:text="93"/>
         <TextView
             android:text="@string/breakdown_total"
             style="@style/breakdown_categoryTotal" />
         <TextView
             android:id="@+id/breakdown_total_blue"
             style="@style/breakdown_blueTotal"
-            tools:text="90"/>
+            tools:text="120"/>
 
         <!-- Ranking Points -->
         <TextView
             android:id="@+id/breakdown_red_rp"
             style="@style/breakdown_redTotal"
-            tools:text="1 RP"/>
+            tools:text="+1 RP"/>
         <TextView
             android:text="@string/breakdown_rp"
             android:id="@+id/breakdown_rp_header"
@@ -465,6 +495,6 @@
         <TextView
             android:id="@+id/breakdown_blue_rp"
             style="@style/breakdown_blueTotal"
-            tools:text="2 RP"/>
+            tools:text="+4 RP"/>
     </androidx.gridlayout.widget.GridLayout>
 </ScrollView>
