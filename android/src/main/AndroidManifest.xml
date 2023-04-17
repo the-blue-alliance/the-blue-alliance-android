@@ -33,6 +33,16 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <!-- Configure FCM notification defaults - these will be used if FCM shows a notification
+         (because the notification doesn't get processed by us due to a problem such as a crash) -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/primary" />
+
         <!--
         Don't load analytics from xml. See #303
         <meta-data
