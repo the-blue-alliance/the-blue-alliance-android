@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient.datafeed.status;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
