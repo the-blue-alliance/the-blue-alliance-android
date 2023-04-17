@@ -1,6 +1,5 @@
-Version 7.0.5:
- - Welcome back for the 2022 season!
- - Fix initial data load hanging on Android <12
+Version 8.0.0:
+ - Welcome back for the 2023 season!
  - Other bug fixes & reliability improvements
 
 View the full changelog for this and previous releases on the GitHub page:
