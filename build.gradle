@@ -9,9 +9,9 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath 'com.android.tools.build:gradle:7.1.3'
         classpath 'com.google.gms:google-services:4.3.15'
-        classpath 'com.google.firebase:perf-plugin:1.4.1'
+        classpath 'com.google.firebase:perf-plugin:1.4.2'
 
         // code coverage testing
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
@@ -22,7 +22,7 @@ buildscript {
         // Screenshot testing
         classpath 'com.facebook.testing.screenshot:plugin:0.14.0'
 
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.5'
 
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.41'
     }
@@ -53,11 +53,11 @@ allprojects {
         retrofitVersion = '2.5.0'
         rxJavaVersion = '1.2.7'
         rxAndroidVersion = '1.2.1'
-        gsonVersion = '2.8.6'
+        gsonVersion = '2.8.9'
         daggerVersion = '2.41'
         robolectricVersion = '4.7.3'
         permissionDispatcherVersion = '4.9.1'
-        workManagerVersion = '2.7.1'
+        workManagerVersion = '2.8.1'
 
         travisBuild = System.getenv("CI") == "true"
         // allows for -Dpre-dex=false to be set
