@@ -63,8 +63,10 @@ public class GceModule {
             // Fall back to prod
             appspotId = "tbatv-prod-hrd";
         }
+        String testUrl = "https://py3-api-dot-tbatv-prod-hrd.appspot.com";
         return new Retrofit.Builder()
-                .baseUrl(String.format(GCE_URL_FORMAT, appspotId))
+                //.baseUrl(String.format(GCE_URL_FORMAT, appspotId))
+                .baseUrl(testUrl)
                 .client(okHttpClient)
                 .addConverterFactory(LenientGsonConverterFactory.create(gson))
                 .build();
