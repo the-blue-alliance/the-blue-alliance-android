@@ -60,10 +60,12 @@ public final class TeamHelper {
         if (key == null) return -1;
 
         Matcher teamNumberMatcher = Pattern.compile("^frc(\\d{1,4})[a-zA-Z]?$").matcher(key);
-        if (!teamNumberMatcher.matches() || teamNumberMatcher.groupCount() < 2) return -1;
 
         // 0th group is the full matching string, 1st is our capture group for the number
+        // The 0th group is not included in groupCount()
+        if (!teamNumberMatcher.matches() || teamNumberMatcher.groupCount() < 1) return -1;
         String teamNumberString = teamNumberMatcher.group(1);
+
         if (teamNumberString == null) return -1;
         return Integer.parseInt(teamNumberString);
     }
