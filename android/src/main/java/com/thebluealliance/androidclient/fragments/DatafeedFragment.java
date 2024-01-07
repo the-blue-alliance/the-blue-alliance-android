@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.fragment.app.Fragment;
+import androidx.viewbinding.ViewBinding;
 
 import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.activities.DatafeedActivity;
@@ -37,7 +38,7 @@ import rx.schedulers.Schedulers;
  * @param <B> {@link AbstractDataBinder} that will take prepared data -> view
  */
 public abstract class DatafeedFragment
-        <T, V, S extends BaseAPISubscriber<T, V>, B extends AbstractDataBinder<V>>
+        <T, V, VB extends ViewBinding, S extends BaseAPISubscriber<T, V>, B extends AbstractDataBinder<V, VB>>
         extends Fragment implements Refreshable {
 
     @Inject protected S mSubscriber;

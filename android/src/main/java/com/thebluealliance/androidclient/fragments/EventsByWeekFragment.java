@@ -15,6 +15,7 @@ import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.EventsByWeekFragmentPagerAdapter;
 import com.thebluealliance.androidclient.binders.EventTabBinder;
+import com.thebluealliance.androidclient.databinding.FragmentEventListFragmentPagerBinding;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.helpers.FragmentBinder;
 import com.thebluealliance.androidclient.models.Event;
@@ -31,7 +32,7 @@ import rx.Observable;
 
 @AndroidEntryPoint
 public class EventsByWeekFragment
-        extends DatafeedFragment<List<Event>, List<EventWeekTab>, EventTabSubscriber, EventTabBinder> {
+        extends DatafeedFragment<List<Event>, List<EventWeekTab>, FragmentEventListFragmentPagerBinding, EventTabSubscriber, EventTabBinder> {
 
     public static final String YEAR = "YEAR", TAB = "tab";
 

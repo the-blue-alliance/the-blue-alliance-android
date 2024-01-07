@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.MatchBreakdownBinder;
+import com.thebluealliance.androidclient.databinding.FragmentMatchBreakdownBinding;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.MatchHelper;
 import com.thebluealliance.androidclient.models.Match;
@@ -20,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
 @AndroidEntryPoint
-public class MatchBreakdownFragment extends DatafeedFragment<Match, MatchBreakdownBinder.Model,
+public class MatchBreakdownFragment extends DatafeedFragment<Match, MatchBreakdownBinder.Model, FragmentMatchBreakdownBinding,
         MatchBreakdownSubscriber, MatchBreakdownBinder> {
 
     private static final String KEY = "key";

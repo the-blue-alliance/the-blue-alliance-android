@@ -14,23 +14,13 @@ import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.databinding.ListItemRankingBinding;
 import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class TeamRankingItemView extends BindableFrameLayout<TeamRankingViewModel> {
-
-    @BindView(R.id.team_number) TextView teamNumber;
-    @BindView(R.id.team_rank) TextView teamRank;
-    @BindView(R.id.team_record) TextView teamRecord;
-    @BindView(R.id.team_name) TextView teamName;
-    @BindView(R.id.ranking_breakdown_container) LinearLayout breakdownContainer;
-    @BindView(R.id.ranking_breakdown) TextView rankingBreakdown;
-    @BindView(R.id.ranking_summary) TextView rankingSummary;
-    @BindView(R.id.ranking_detail_button) Button rankingDetail;
-
+    private ListItemRankingBinding mBinding;
     private int originalHeight;
     private int expandedHeightDelta;
     private boolean isViewExpanded;
@@ -40,10 +30,6 @@ public class TeamRankingItemView extends BindableFrameLayout<TeamRankingViewMode
         originalHeight = 0;
         expandedHeightDelta = 0;
         isViewExpanded = false;
-
-        // Set expanding Views to View.GONE and .setEnabled(false)
-        breakdownContainer.setVisibility(View.GONE);
-        breakdownContainer.setEnabled(false);
     }
 
     @Override
@@ -53,8 +39,12 @@ public class TeamRankingItemView extends BindableFrameLayout<TeamRankingViewMode
 
     @Override
     public void onViewInflated() {
-        ButterKnife.bind(this);
+        mBinding = ListItemRankingBinding.bind(this);
         setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        // Set expanding Views to View.GONE and .setEnabled(false)
+        mBinding.rankingBreakdownContainer.setVisibility(View.GONE);
+        mBinding.rankingBreakdownContainer.setEnabled(false);
     }
 
     @Override
@@ -63,26 +53,26 @@ public class TeamRankingItemView extends BindableFrameLayout<TeamRankingViewMode
         this.setClickable(true);
         this.setFocusable(true);
 
-        rankingDetail.setOnClickListener(v -> notifyItemAction(Interactions.TEAM_RANKING_CLICKED));
-        teamNumber.setText(String.valueOf(model.getTeamNumber()));
-        teamRank.setText(String.format(getContext().getString(R.string.team_rank), model.getRank()));
-        teamRecord.setText(model.getRecord());
-        teamName.setText(model.getTeamNickname());
-        rankingSummary.setText(model.getRankingSummary());
-        rankingBreakdown.setText(Html.fromHtml(model.getRankingBreakdown()));
+        mBinding.rankingDetailButton.setOnClickListener(v -> notifyItemAction(Interactions.TEAM_RANKING_CLICKED));
+        mBinding.teamNumber.setText(String.valueOf(model.getTeamNumber()));
+        mBinding.teamRank.setText(String.format(getContext().getString(R.string.team_rank), model.getRank()));
+        mBinding.teamRecord.setText(model.getRecord());
+        mBinding.teamName.setText(model.getTeamNickname());
+        mBinding.rankingSummary.setText(model.getRankingSummary());
+        mBinding.rankingBreakdown.setText(Html.fromHtml(model.getRankingBreakdown()));
     }
 
     public void toggleRankingsExpanded() {
         if (originalHeight == 0) {
             originalHeight = getHeight();
-            breakdownContainer.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+            mBinding.rankingBreakdownContainer.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
 
-            expandedHeightDelta = breakdownContainer.getMeasuredHeight();
+            expandedHeightDelta = mBinding.rankingBreakdownContainer.getMeasuredHeight();
         }
         ValueAnimator valueAnimator;
         if (!isViewExpanded) {
-            breakdownContainer.setVisibility(View.VISIBLE);
-            breakdownContainer.setEnabled(true);
+            mBinding.rankingBreakdownContainer.setVisibility(View.VISIBLE);
+            mBinding.rankingBreakdownContainer.setEnabled(true);
             isViewExpanded = true;
             valueAnimator = ValueAnimator.ofInt(originalHeight, originalHeight + expandedHeightDelta);
         } else {
@@ -101,8 +91,8 @@ public class TeamRankingItemView extends BindableFrameLayout<TeamRankingViewMode
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    breakdownContainer.setVisibility(View.INVISIBLE);
-                    breakdownContainer.setEnabled(false);
+                    mBinding.rankingBreakdownContainer.setVisibility(View.INVISIBLE);
+                    mBinding.rankingBreakdownContainer.setEnabled(false);
                 }
 
                 @Override
@@ -112,7 +102,7 @@ public class TeamRankingItemView extends BindableFrameLayout<TeamRankingViewMode
             });
 
             // Set the animation on the custom view
-            breakdownContainer.startAnimation(a);
+            mBinding.rankingBreakdownContainer.startAnimation(a);
         }
         valueAnimator.setDuration(200);
         valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());

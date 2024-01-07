@@ -45,6 +45,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.adapters.DialogListWithIconsAdapter;
 import com.thebluealliance.androidclient.adapters.ViewTeamFragmentPagerAdapter;
+import com.thebluealliance.androidclient.databinding.ActivityViewTeamBinding;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.eventbus.TeamAvatarUpdateEvent;
@@ -65,8 +66,6 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import dagger.hilt.android.AndroidEntryPoint;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnShowRationale;
@@ -92,12 +91,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     private static final int CHOOSE_IMAGE_REQUEST = 42;
     private static final int TAKE_PICTURE_REQUEST = 43;
 
-    @BindView(R.id.team_avatar) ImageView mAvatar;
-    @BindView(R.id.year_selector_container) View mYearSelectorContainer;
-    @BindView(R.id.year_selector_subtitle_container) View mYearSelectorSubtitleContainer;
-    @BindView(R.id.year_selector_title) TextView mYearSelectorTitle;
-    @BindView(R.id.year_selector_subtitle) TextView mYearSelectorSubtitle;
-    @BindView(R.id.view_pager) ViewPager mPager;
+    private ActivityViewTeamBinding mBinding;
 
     private Snackbar mMediaSnackbar;
     private int mCurrentSelectedYearPosition = -1,
@@ -142,9 +136,9 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
 
         setModelKey(mTeamKey, ModelType.TEAM);
         setShareEnabled(true);
-        setContentView(R.layout.activity_view_team);
 
-        ButterKnife.bind(this);
+        mBinding = ActivityViewTeamBinding.inflate(getLayoutInflater());
+        setContentView(mBinding.getRoot());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -169,14 +163,14 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
             mSelectedTab = 0;
         }
 
-        mPager.setOffscreenPageLimit(3);
-        mPager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
+        mBinding.viewPager.setOffscreenPageLimit(3);
+        mBinding.viewPager.setPageMargin(Utilities.getPixelsFromDp(this, 16));
         // We will notify the fragments of the year later
         mAdapter = new ViewTeamFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, mYear);
-        mPager.setAdapter(mAdapter);
+        mBinding.viewPager.setAdapter(mAdapter);
 
         SlidingTabs tabs = (SlidingTabs) findViewById(R.id.tabs);
-        tabs.setViewPager(mPager);
+        tabs.setViewPager(mBinding.viewPager);
         tabs.setOnPageChangeListener(this);
         ViewCompat.setElevation(tabs, getResources().getDimension(R.dimen.toolbar_elevation));
 
@@ -242,21 +236,21 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
             bar.setDisplayHomeAsUpEnabled(true);
             bar.setDisplayShowTitleEnabled(false);
             String teamNumber = mTeamKey.replace("frc", "");
-            mYearSelectorTitle.setText(String.format(getString(R.string.team_actionbar_title),
+            mBinding.yearSelectorTitle.setText(String.format(getString(R.string.team_actionbar_title),
                     teamNumber));
 
             // If we call this and the years participated haven't been loaded yet, don't try to use them
             if (mYearsParticipated != null && mYearsParticipated.length > 0) {
 
-                mYearSelectorSubtitleContainer.setVisibility(View.VISIBLE);
+                mBinding.yearSelectorSubtitleContainer.setVisibility(View.VISIBLE);
 
                 final Dialog dialog = makeDialogForYearSelection(R.string.select_year, mYearsParticipated);
 
-                mYearSelectorContainer.setOnClickListener(v -> dialog.show());
+                mBinding.yearSelectorContainer.setOnClickListener(v -> dialog.show());
             } else {
                 // If there are no valid years, hide the subtitle and disable clicking
-                mYearSelectorSubtitleContainer.setVisibility(View.GONE);
-                mYearSelectorContainer.setOnClickListener(null);
+                mBinding.yearSelectorSubtitleContainer.setVisibility(View.GONE);
+                mBinding.yearSelectorContainer.setOnClickListener(null);
             }
         }
     }
@@ -282,7 +276,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         if (selectedPosition < 0 || selectedPosition >= mYearsParticipated.length) {
             return;
         }
-        mYearSelectorSubtitle.setText(String.valueOf(mYearsParticipated[selectedPosition]));
+        mBinding.yearSelectorSubtitle.setText(String.valueOf(mYearsParticipated[selectedPosition]));
     }
 
     @Override
@@ -309,12 +303,12 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         if (avatarUpdateEvent == null
                 || avatarUpdateEvent.getB64Image() == null
                 || avatarUpdateEvent.getB64Image().isEmpty()) {
-            mAvatar.setVisibility(View.GONE);
+            mBinding.teamAvatar.setVisibility(View.GONE);
         } else {
             byte[] bytes = Base64.decode(avatarUpdateEvent.getB64Image(), Base64.DEFAULT);
             Bitmap avatar = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            mAvatar.setImageBitmap(Bitmap.createScaledBitmap(avatar, 80, 80, false));
-            mAvatar.setVisibility(View.VISIBLE);
+            mBinding.teamAvatar.setImageBitmap(Bitmap.createScaledBitmap(avatar, 80, 80, false));
+            mBinding.teamAvatar.setVisibility(View.VISIBLE);
         }
     }
 

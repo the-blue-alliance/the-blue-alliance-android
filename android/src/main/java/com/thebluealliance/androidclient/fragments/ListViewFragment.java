@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.binders.ListViewBinder;
+import com.thebluealliance.androidclient.databinding.ListViewWithSpinnerBinding;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.subscribers.BaseAPISubscriber;
 import com.thebluealliance.androidclient.views.NoDataView;
@@ -20,7 +21,7 @@ import com.thebluealliance.androidclient.views.NoDataView;
 import java.util.List;
 
 public abstract class ListViewFragment<T, S extends BaseAPISubscriber<T, List<ListItem>>>
-  extends DatafeedFragment<T, List<ListItem>, S, ListViewBinder> {
+  extends DatafeedFragment<T, List<ListItem>, ListViewWithSpinnerBinding, S, ListViewBinder> {
 
     private Parcelable mListState;
     private ListViewAdapter mAdapter;

@@ -20,6 +20,7 @@ import androidx.core.view.ViewCompat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.databinding.ActivityConfirmImageSuggestionBinding;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.imgur.ImgurSuggestionService;
 import com.thebluealliance.androidclient.imgur.ImgurUtils;
@@ -30,8 +31,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -44,12 +43,7 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
 
     private static final String SAVED_TEMP_FILE_PATH = "saved_file_url";
 
-    @BindView(R.id.toolbar) Toolbar mToolbar;
-    @BindView(R.id.header) TextView mHeader;
-    @BindView(R.id.image) ImageView mImageView;
-    @BindView(R.id.progress) ProgressBar mProgressBar;
-    @BindView(R.id.confirm_fab) FloatingActionButton mConfirmFab;
-    @BindView(R.id.cancel_fab) FloatingActionButton mCancelFab;
+    private ActivityConfirmImageSuggestionBinding mBinding;
 
     private Uri mUri;
     private String mTeamKey;
@@ -71,17 +65,17 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_confirm_image_suggestion);
-        ButterKnife.bind(this);
+        mBinding = ActivityConfirmImageSuggestionBinding.inflate(getLayoutInflater());
+        setContentView(mBinding.getRoot());
 
-        mConfirmFab.setOnClickListener(this);
-        mCancelFab.setOnClickListener(this);
+        mBinding.confirmFab.setOnClickListener(this);
+        mBinding.cancelFab.setOnClickListener(this);
 
         // Disable the "confirm" FAB until we have a valid file to submit
-        mConfirmFab.setEnabled(false);
+        mBinding.confirmFab.setEnabled(false);
 
-        ViewCompat.setElevation(mToolbar, getResources().getDimension(R.dimen.toolbar_elevation));
-        setSupportActionBar(mToolbar);
+        ViewCompat.setElevation(mBinding.toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
+        setSupportActionBar(mBinding.toolbar);
         // TODO don't use hardcoded string
         getSupportActionBar().setTitle("Confirm suggestion");
 
@@ -109,15 +103,15 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
         }
 
         // Set up the header view, which displays "Team NUMBER (YEAR)"
-        mHeader.setText(getString(R.string.imgur_confirm_image_header, TeamHelper.getTeamNumber(mTeamKey), mYear));
+        mBinding.header.setText(getString(R.string.imgur_confirm_image_header, Integer.toString(TeamHelper.getTeamNumber(mTeamKey)), Integer.toString(mYear)));
 
         // Don't begin caching and loading the image until layout is complete; the ImageView must
         // have a defined width and height in order to compute inSampleSize for loading the bitmap
-        ViewTreeObserver vto = mImageView.getViewTreeObserver();
+        ViewTreeObserver vto = mBinding.image.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                mImageView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mBinding.image.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 cacheAndLoadImage();
             }
         });
@@ -158,7 +152,7 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
                 BitmapFactory.decodeStream(stream, null, options);
                 stream.close();
 
-                options.inSampleSize = calculateInSampleSize(options, mImageView.getWidth(), mImageView.getHeight());
+                options.inSampleSize = calculateInSampleSize(options, mBinding.image.getWidth(), mBinding.image.getHeight());
 
                 options.inJustDecodeBounds = false;
                 stream = new BufferedInputStream(new FileInputStream(file));
@@ -171,15 +165,15 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(bitmap -> {
-                    mImageView.setImageBitmap(bitmap);
+                    mBinding.image.setImageBitmap(bitmap);
 
                     // Fade ImageView in and ProgressBar out
-                    mImageView.setAlpha(0.0f);
-                    mImageView.animate().alpha(1.0f).setDuration(500).start();
-                    mProgressBar.setAlpha(1.0f);
-                    mProgressBar.animate().alpha(0.0f).setDuration(500).start();
+                    mBinding.image.setAlpha(0.0f);
+                    mBinding.image.animate().alpha(1.0f).setDuration(500).start();
+                    mBinding.progress.setAlpha(1.0f);
+                    mBinding.progress.animate().alpha(0.0f).setDuration(500).start();
 
-                    mConfirmFab.setEnabled(true);
+                    mBinding.confirmFab.setEnabled(true);
                 });
     }
 

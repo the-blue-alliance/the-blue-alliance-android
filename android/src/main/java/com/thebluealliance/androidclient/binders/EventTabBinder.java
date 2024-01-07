@@ -3,19 +3,16 @@ package com.thebluealliance.androidclient.binders;
 import androidx.annotation.Nullable;
 
 import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.databinding.FragmentEventListFragmentPagerBinding;
 import com.thebluealliance.androidclient.fragments.EventsByWeekFragment;
 import com.thebluealliance.androidclient.models.EventWeekTab;
 
 import java.util.List;
 
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
-public class EventTabBinder extends AbstractDataBinder<List<EventWeekTab>> {
+public class EventTabBinder extends AbstractDataBinder<List<EventWeekTab>, FragmentEventListFragmentPagerBinding> {
 
     private EventsByWeekFragment mFragment;
     private List<EventWeekTab> mTabs;
-    private Unbinder unbinder;
 
     public void setFragment(EventsByWeekFragment fragment) {
         mFragment = fragment;
@@ -36,14 +33,14 @@ public class EventTabBinder extends AbstractDataBinder<List<EventWeekTab>> {
 
     @Override
     public void bindViews() {
-        unbinder = ButterKnife.bind(this, mRootView);
+        mBinding = FragmentEventListFragmentPagerBinding.bind(mRootView);
     }
 
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
-        if (unbindViews && unbinder != null) {
-            unbinder.unbind();
+        if (unbindViews) {
+            mBinding = null;
         }
     }
 

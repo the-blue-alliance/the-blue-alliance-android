@@ -3,7 +3,8 @@ package com.thebluealliance.androidclient.binders;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RadioButton;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 
 import androidx.annotation.Nullable;
@@ -12,17 +13,12 @@ import androidx.annotation.UiThread;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
+import com.thebluealliance.androidclient.databinding.FragmentEventStatsBinding;
 import com.thebluealliance.androidclient.listitems.ListItem;
 
 import java.util.List;
 
-import butterknife.BindView;
-
-public class StatsListBinder extends ListViewBinder implements RadioGroup.OnCheckedChangeListener {
-
-    @BindView(R.id.stats_type_selector) RadioGroup mSelectorGroup;
-    @BindView(R.id.show_event_stats) RadioButton mShowEventStats;
-    @BindView(R.id.show_team_stats) RadioButton mShowTeamStats;
+public class StatsListBinder extends AbstractListViewBinder<FragmentEventStatsBinding, ListItem, ListViewAdapter> implements RadioGroup.OnCheckedChangeListener {
 
     private ListPair<ListItem> mData;
     private Menu mMenu;
@@ -30,6 +26,21 @@ public class StatsListBinder extends ListViewBinder implements RadioGroup.OnChec
 
     public StatsListBinder() {
         mSelectedList = ListPair.LIST0;
+    }
+
+    @Override
+    public void bindViews() {
+        mBinding = FragmentEventStatsBinding.bind(mRootView);
+    }
+
+    @Override
+    protected ListView getList() {
+        return mBinding.list;
+    }
+
+    @Override
+    protected ProgressBar getProgress() {
+        return mBinding.progress;
     }
 
     public void setMenu(Menu menu) {
@@ -42,13 +53,12 @@ public class StatsListBinder extends ListViewBinder implements RadioGroup.OnChec
        if (!isDataBound()) {
             // Always start with Team stats
             setSelectedList(ListPair.LIST0);
-           mShowEventStats.setChecked(false);
-           mShowTeamStats.setChecked(true);
+           mBinding.showEventStats.setChecked(false);
+           mBinding.showTeamStats.setChecked(true);
         }
 
-        mSelectorGroup.setVisibility(View.VISIBLE);
-        mSelectorGroup.setOnCheckedChangeListener(this);
-
+        mBinding.statsTypeSelector.setVisibility(View.VISIBLE);
+        mBinding.statsTypeSelector.setOnCheckedChangeListener(this);
 
         /** Call this last, it calls {@link #setDataBound(boolean)} when done */
         super.updateData(data);
@@ -85,13 +95,13 @@ public class StatsListBinder extends ListViewBinder implements RadioGroup.OnChec
         if (mData != null) {
             mData.setSelectedList(option);
             mAdapter.notifyDataSetChanged();
-            listView.setClickable(option == ListPair.LIST0);
+            getList().setClickable(option == ListPair.LIST0);
             syncSortMenuItemState(option);
 
             if (mData.isEmpty()) {
                 bindNoDataView();
             } else {
-                listView.setVisibility(View.VISIBLE);
+                getList().setVisibility(View.VISIBLE);
                 mNoDataBinder.unbindData();
             }
         }

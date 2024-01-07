@@ -50,17 +50,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
     ModelType modelType;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        NfcAdapter mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        if (mNfcAdapter != null) {
-            // Register callback
-            mNfcAdapter.setNdefPushMessageCallback(this, this);
-        }
-    }
-
-    @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Hide the shadow below the Action Bar
@@ -216,16 +205,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
 
     public void setBeamUri(String uri) {
         beamUri = uri;
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    @Override
-    public NdefMessage createNdefMessage(NfcEvent nfcEvent) {
-        if (beamUri == null || beamUri.isEmpty()) {
-            return null;
-        } else {
-            return new NdefMessage(new NdefRecord[]{NdefRecord.createMime("application/vnd.com.thebluealliance.androidclient", beamUri.getBytes())});
-        }
     }
 
     protected void setSearchEnabled(boolean enabled) {

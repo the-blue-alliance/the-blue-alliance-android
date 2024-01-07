@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.binders.EventInfoBinder;
+import com.thebluealliance.androidclient.databinding.FragmentEventInfoBinding;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
@@ -23,7 +24,7 @@ import rx.Observable;
 
 @AndroidEntryPoint
 public class EventInfoFragment
-  extends DatafeedFragment<Event, EventInfoBinder.Model, EventInfoSubscriber, EventInfoBinder> {
+  extends DatafeedFragment<Event, EventInfoBinder.Model, FragmentEventInfoBinding, EventInfoSubscriber, EventInfoBinder> {
 
     private static final String KEY = "eventKey";
 

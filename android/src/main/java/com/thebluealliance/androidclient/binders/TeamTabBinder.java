@@ -7,20 +7,17 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.thebluealliance.androidclient.adapters.TeamListFragmentPagerAdapter;
+import com.thebluealliance.androidclient.databinding.FragmentTeamListFragmentPagerBinding;
 
 import javax.inject.Inject;
 
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
-public class TeamTabBinder extends AbstractDataBinder<Integer> {
+public class TeamTabBinder extends AbstractDataBinder<Integer, FragmentTeamListFragmentPagerBinding> {
 
     public ViewPager2 viewPager;
     public TabLayout tabs;
     public Fragment parentFragment;
 
     private Integer oldData;
-    private Unbinder unbinder;
     private int initialTab;
     private TeamListFragmentPagerAdapter adapter;
     private TabLayoutMediator tabLayoutMediator;
@@ -78,15 +75,15 @@ public class TeamTabBinder extends AbstractDataBinder<Integer> {
 
     @Override
     public void bindViews() {
-        unbinder = ButterKnife.bind(this, mRootView);
+        mBinding = FragmentTeamListFragmentPagerBinding.bind(mRootView);
     }
 
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
-        if (unbindViews && unbinder != null) {
+        if (unbindViews && mBinding != null) {
             tabLayoutMediator.detach();
-            unbinder.unbind();
+            mBinding = null;
         }
     }
 

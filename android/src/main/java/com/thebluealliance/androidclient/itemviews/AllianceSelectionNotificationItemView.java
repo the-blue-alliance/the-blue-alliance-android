@@ -5,18 +5,15 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.databinding.ListItemNotificationAllianceSelectionBinding;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class AllianceSelectionNotificationItemView extends BindableFrameLayout<AllianceSelectionNotificationViewModel> {
-    @BindView(R.id.card_header) TextView header;
-    @BindView(R.id.details) TextView details;
-    @BindView(R.id.notification_time) TextView time;
-    @BindView(R.id.summary_container) View summaryContainer;
+
+    private ListItemNotificationAllianceSelectionBinding mBinding;
 
     public AllianceSelectionNotificationItemView(Context context) {
         super(context);
@@ -29,14 +26,14 @@ public class AllianceSelectionNotificationItemView extends BindableFrameLayout<A
 
     @Override
     public void onViewInflated() {
-        ButterKnife.bind(this);
+        mBinding = ListItemNotificationAllianceSelectionBinding.bind(this);
     }
 
     @Override
     public void bind(AllianceSelectionNotificationViewModel model) {
-        header.setText(model.getTitle());
-        details.setText(getContext().getString(R.string.notification_alliances_updated_gameday_details));
-        time.setText(model.getTimeString());
-        summaryContainer.setOnClickListener(new GamedayTickerClickListener(getContext(), model.getIntent()));
+        mBinding.cardHeader.setText(model.getTitle());
+        mBinding.details.setText(getContext().getString(R.string.notification_alliances_updated_gameday_details));
+        mBinding.notificationTime.setText(model.getTimeString());
+        mBinding.summaryContainer.setOnClickListener(new GamedayTickerClickListener(getContext(), model.getIntent()));
     }
 }

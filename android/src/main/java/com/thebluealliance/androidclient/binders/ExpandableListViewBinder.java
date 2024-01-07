@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.adapters.ExpandableListViewAdapter;
+import com.thebluealliance.androidclient.databinding.ExpandableListViewWithSpinnerBinding;
 import com.thebluealliance.androidclient.listitems.ListGroup;
 import com.thebluealliance.androidclient.renderers.ModelRendererSupplier;
 import com.thebluealliance.androidclient.views.ExpandableListView;
@@ -17,11 +18,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
-
-public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>> {
+public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>, ExpandableListViewWithSpinnerBinding> {
 
     public static final short
             MODE_EXPAND_NONE = 0,
@@ -29,10 +26,6 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
             MODE_EXPAND_ONLY = 2,
             MODE_EXPAND_ALL = 3;
 
-    @BindView(R.id.expandable_list) ExpandableListView expandableListView;
-    @BindView(R.id.progress) ProgressBar progressBar;
-
-    private Unbinder unbinder;
     private short mExpandMode;
     protected ModelRendererSupplier mRendererSupplier;
 
@@ -49,12 +42,12 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
 
     @Override
     public void bindViews() {
-        unbinder = ButterKnife.bind(this, mRootView);
+        mBinding = ExpandableListViewWithSpinnerBinding.bind(mRootView);
     }
 
     @Override
     public void updateData(@Nullable List<ListGroup> data) {
-        if (data == null || expandableListView == null) {
+        if (data == null || mBinding == null) {
             if (!isDataBound()) {
                 setDataBound(false);
             }
@@ -68,22 +61,19 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
             return;
         }
 
-        if (expandableListView.getExpandableListAdapter() == null) {
-            expandableListView.setAdapter(newAdapter(new ArrayList<>(data)));
+        if (mBinding.expandableList.getExpandableListAdapter() == null) {
+            mBinding.expandableList.setAdapter(newAdapter(new ArrayList<>(data)));
         } else {
-            ExpandableListViewAdapter adapter = (ExpandableListViewAdapter) expandableListView.getExpandableListAdapter();
+            ExpandableListViewAdapter adapter = (ExpandableListViewAdapter) mBinding.expandableList.getExpandableListAdapter();
             adapter.removeAllGroups();
             adapter.addAllGroups(new ArrayList<>(data));
             adapter.notifyDataSetChanged();
         }
 
-        expandableListView.setVisibility(View.VISIBLE);
+        mBinding.expandableList.setVisibility(View.VISIBLE);
         expandForMode(data);
 
-        if (progressBar != null) {
-            progressBar.setVisibility(View.GONE);
-        }
-
+        mBinding.progress.setVisibility(View.GONE);
         mNoDataBinder.unbindData();
         setDataBound(true);
     }
@@ -94,8 +84,8 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
 
     @Override
     public void onComplete() {
-        if (progressBar != null) {
-            progressBar.setVisibility(View.GONE);
+        if (mBinding != null) {
+            mBinding.progress.setVisibility(View.GONE);
         }
 
         if (!isDataBound()) {
@@ -117,8 +107,8 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
     private void bindNoDataView() {
         // Set up views for "no data" message
         try {
-            expandableListView.setVisibility(View.GONE);
-            progressBar.setVisibility(View.GONE);
+            mBinding.expandableList.setVisibility(View.GONE);
+            mBinding.progress.setVisibility(View.GONE);
             mNoDataBinder.bindData(mNoDataParams);
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,29 +119,29 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
         switch (mExpandMode) {
             case MODE_EXPAND_ALL:
                 for (int i = 0; i < groups.size(); i++) {
-                    expandableListView.expandGroup(i);
+                    mBinding.expandableList.expandGroup(i);
                 }
                 break;
             case MODE_EXPAND_FIRST:
                 if (groups.size() > 0) {
-                    expandableListView.expandGroup(0);
+                    mBinding.expandableList.expandGroup(0);
                 }
                 for (int i = 1; i < groups.size(); i++) {
-                    expandableListView.collapseGroup(i);
+                    mBinding.expandableList.collapseGroup(i);
                 }
                 break;
             case MODE_EXPAND_ONLY:
                 if (groups.size() == 1) {
-                    expandableListView.expandGroup(0);
+                    mBinding.expandableList.expandGroup(0);
                 } else {
                     for (int i = 0; i < groups.size(); i++) {
-                        expandableListView.collapseGroup(i);
+                        mBinding.expandableList.collapseGroup(i);
                     }
                 }
                 break;
             case MODE_EXPAND_NONE:
                 for (int i = 0; i < groups.size(); i++) {
-                    expandableListView.collapseGroup(i);
+                    mBinding.expandableList.collapseGroup(i);
                 }
                 break;
         }
@@ -160,15 +150,12 @@ public class ExpandableListViewBinder extends AbstractDataBinder<List<ListGroup>
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
-        if (unbindViews && unbinder != null) {
-            unbinder.unbind();
-            unbinder = null;
+        if (mBinding != null) {
+            mBinding.expandableList.setVisibility(View.GONE);
+            mBinding.progress.setVisibility(View.VISIBLE);
         }
-        if (expandableListView != null) {
-            expandableListView.setVisibility(View.GONE);
-        }
-        if (progressBar != null) {
-            progressBar.setVisibility(View.VISIBLE);
+        if (unbindViews) {
+            mBinding = null;
         }
     }
 }

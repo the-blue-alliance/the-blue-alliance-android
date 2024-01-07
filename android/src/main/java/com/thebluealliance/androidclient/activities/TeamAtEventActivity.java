@@ -28,6 +28,7 @@ import com.thebluealliance.androidclient.ShareUris;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.TeamAtEventFragmentPagerAdapter;
+import com.thebluealliance.androidclient.databinding.ActivityTeamAtEventBinding;
 import com.thebluealliance.androidclient.datafeed.CacheableDatafeed;
 import com.thebluealliance.androidclient.eventbus.TeamAvatarUpdateEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
@@ -49,8 +50,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import dagger.hilt.android.AndroidEntryPoint;
 import rx.schedulers.Schedulers;
 
@@ -67,11 +66,7 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
     private int mCurrentSelectedEventPosition = -1;
     private ImmutableList<Event> mEventsParticipated;
 
-    @BindView(R.id.team_avatar) ImageView mAvatar;
-    @BindView(R.id.event_selector_container) View mEventSelectorContainer;
-    @BindView(R.id.event_selector_subtitle_container) View mEventSelectorSubtitleContainer;
-    @BindView(R.id.event_selector_title)  TextView mEventSelectorTitle;
-    @BindView(R.id.event_selector_subtitle) TextView mEventSelectorSubtitle;
+    private ActivityTeamAtEventBinding mBinding;
 
     @Inject CacheableDatafeed mDatafeed;
 
@@ -107,9 +102,9 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
         String eventTeamKey = EventTeamHelper.generateKey(mEventKey, mTeamKey);
         setModelKey(eventTeamKey, ModelType.EVENTTEAM);
         setShareEnabled(true);
-        setContentView(R.layout.activity_team_at_event);
 
-        ButterKnife.bind(this);
+        mBinding = ActivityTeamAtEventBinding.inflate(getLayoutInflater());
+        setContentView(mBinding.getRoot());
 
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
         mAdapter = new TeamAtEventFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, mEventKey);
@@ -203,15 +198,15 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
             bar.setDisplayShowTitleEnabled(false);
 
             String teamNumber = mTeamKey.replace("frc", "");
-            mEventSelectorTitle.setText(getString(R.string.team_actionbar_title, teamNumber));
+            mBinding.eventSelectorTitle.setText(getString(R.string.team_actionbar_title, teamNumber));
 
             if (mEventsParticipated != null && mEventsParticipated.size() > 0) {
-                mEventSelectorSubtitleContainer.setVisibility(View.VISIBLE);
+                mBinding.eventSelectorSubtitle.setVisibility(View.VISIBLE);
                 final Dialog dialog = makeDialogForEventSelection(R.string.select_event, mEventsParticipated);
-                mEventSelectorContainer.setOnClickListener(v -> dialog.show());
+                mBinding.eventSelectorContainer.setOnClickListener(v -> dialog.show());
             } else {
-                mEventSelectorSubtitleContainer.setVisibility(View.GONE);
-                mEventSelectorContainer.setOnClickListener(null);
+                mBinding.eventSelectorSubtitleContainer.setVisibility(View.GONE);
+                mBinding.eventSelectorContainer.setOnClickListener(null);
             }
         }
     }
@@ -285,7 +280,7 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
         }
 
         Event selectedEvent = mEventsParticipated.get(selectedPosition);
-        mEventSelectorSubtitle.setText(getString(R.string.team_at_event_actionbar_subtitle,
+        mBinding.eventSelectorSubtitle.setText(getString(R.string.team_at_event_actionbar_subtitle,
                 selectedEvent.getYear(), selectedEvent.getShortName()));
     }
 
@@ -295,12 +290,12 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
         if (avatarUpdateEvent == null
                 || avatarUpdateEvent.getB64Image() == null
                 || avatarUpdateEvent.getB64Image().isEmpty()) {
-            mAvatar.setVisibility(View.GONE);
+            mBinding.teamAvatar.setVisibility(View.GONE);
         } else {
             byte[] bytes = Base64.decode(avatarUpdateEvent.getB64Image(), Base64.DEFAULT);
             Bitmap avatar = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            mAvatar.setImageBitmap(Bitmap.createScaledBitmap(avatar, 80, 80, false));
-            mAvatar.setVisibility(View.VISIBLE);
+            mBinding.teamAvatar.setImageBitmap(Bitmap.createScaledBitmap(avatar, 80, 80, false));
+            mBinding.teamAvatar.setVisibility(View.VISIBLE);
         }
     }
 

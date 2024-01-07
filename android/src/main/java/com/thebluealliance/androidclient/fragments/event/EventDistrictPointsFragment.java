@@ -15,6 +15,7 @@ import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.binders.DistrictPointsListBinder;
+import com.thebluealliance.androidclient.databinding.ListViewWithSpinnerBinding;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
@@ -28,7 +29,7 @@ import rx.Observable;
 
 @AndroidEntryPoint
 public class EventDistrictPointsFragment
-        extends DatafeedFragment<JsonElement, List<ListItem>, DistrictPointsListSubscriber, DistrictPointsListBinder> {
+        extends DatafeedFragment<JsonElement, List<ListItem>, ListViewWithSpinnerBinding, DistrictPointsListSubscriber, DistrictPointsListBinder> {
     private static final String KEY = "event_key";
 
     private String mEventKey;
