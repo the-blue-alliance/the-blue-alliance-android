@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.renderers;
 
 import android.content.res.Resources;
 
+import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.DatafeedModule;
 
@@ -52,8 +53,8 @@ public class RendererModule {
     }
 
     @Provides @Singleton
-    public MediaRenderer provideMediaRenderer() {
-        return new MediaRenderer();
+    public MediaRenderer provideMediaRenderer(Picasso picasso) {
+        return new MediaRenderer(picasso);
     }
 
     @Provides @Singleton

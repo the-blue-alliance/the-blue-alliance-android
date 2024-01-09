@@ -110,14 +110,14 @@ public class NavigationDrawerFragment extends Fragment {
     private NavigationDrawerAdapter mNavigationAdapter;
     private NavigationDrawerListener mListener;
 
-    private Picasso mPicasso;
-
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
     private boolean mUseActionBarToggle;
 
     @Inject AccountController mAccountController;
     @Inject @Named("firebase_auth") AuthProvider mAuthProvider;
+
+    @Inject Picasso mPicasso;
 
     // Required empty constructor
     public NavigationDrawerFragment() {
@@ -135,8 +135,6 @@ public class NavigationDrawerFragment extends Fragment {
         mFromSavedInstanceState = (savedInstanceState == null ? true : false);
 
         mNavigationAdapter = new NavigationDrawerAdapter(getActivity(), NAVIGATION_ITEMS);
-
-        mPicasso = Picasso.with(getActivity());
     }
 
     @Override
