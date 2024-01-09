@@ -81,6 +81,7 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mBinding = ActivityTeamAtEventBinding.inflate(getLayoutInflater(), mRootView, true);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null && (extras.containsKey(EVENT) && extras.containsKey(TEAM))) {
@@ -99,9 +100,6 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
         String eventTeamKey = EventTeamHelper.generateKey(mEventKey, mTeamKey);
         setModelKey(eventTeamKey, ModelType.EVENTTEAM);
         setShareEnabled(true);
-
-        mBinding = ActivityTeamAtEventBinding.inflate(getLayoutInflater());
-        setContentView(mBinding.getRoot());
 
         ViewPager pager = (ViewPager) findViewById(R.id.view_pager);
         mAdapter = new TeamAtEventFragmentPagerAdapter(getSupportFragmentManager(), mTeamKey, mEventKey);

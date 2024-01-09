@@ -130,12 +130,10 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
         if (mTeamKey == null) {
             throw new IllegalArgumentException("ViewTeamActivity must be created with a team key!");
         }
+        mBinding = ActivityViewTeamBinding.inflate(getLayoutInflater(), mRootView, true);
 
         setModelKey(mTeamKey, ModelType.TEAM);
         setShareEnabled(true);
-
-        mBinding = ActivityViewTeamBinding.inflate(getLayoutInflater());
-        setContentView(mBinding.getRoot());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

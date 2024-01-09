@@ -11,9 +11,9 @@ import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
 
-import io.nlopez.smartadapters.views.BindableFrameLayout;
+import io.nlopez.smartadapters.views.BindableRelativeLayout;
 
-public class EventItemView extends BindableFrameLayout<EventViewModel> {
+public class EventItemView extends BindableRelativeLayout<EventViewModel> {
 
     private ListItemEventBinding mBinding;
 

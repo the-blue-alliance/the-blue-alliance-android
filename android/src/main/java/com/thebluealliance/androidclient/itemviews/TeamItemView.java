@@ -12,9 +12,9 @@ import com.thebluealliance.androidclient.listeners.TeamClickListener;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.viewmodels.TeamViewModel;
 
-import io.nlopez.smartadapters.views.BindableFrameLayout;
+import io.nlopez.smartadapters.views.BindableRelativeLayout;
 
-public class TeamItemView extends BindableFrameLayout<TeamViewModel> {
+public class TeamItemView extends BindableRelativeLayout<TeamViewModel> {
     private ListItemTeamBinding mBinding;
 
     public TeamItemView(Context context) {

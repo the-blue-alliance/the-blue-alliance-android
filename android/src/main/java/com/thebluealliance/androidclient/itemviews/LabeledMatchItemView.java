@@ -3,14 +3,15 @@ package com.thebluealliance.androidclient.itemviews;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.databinding.ListItemLabeledMatchBinding;
 import com.thebluealliance.androidclient.viewmodels.LabeledMatchViewModel;
 
-import io.nlopez.smartadapters.views.BindableFrameLayout;
+import io.nlopez.smartadapters.views.BindableLinearLayout;
 
-public class LabeledMatchItemView extends BindableFrameLayout<LabeledMatchViewModel> {
+public class LabeledMatchItemView extends BindableLinearLayout<LabeledMatchViewModel> {
 
     private ListItemLabeledMatchBinding mBinding;
 
@@ -32,5 +33,10 @@ public class LabeledMatchItemView extends BindableFrameLayout<LabeledMatchViewMo
         mBinding.label.setText(model.getLabel());
         mBinding.matchContainer.removeAllViews();
         mBinding.matchContainer.addView(model.getMatch().getView(getContext(), LayoutInflater.from(getContext()), null));
+    }
+
+    @Override
+    public int getOrientation() {
+        return LinearLayout.VERTICAL;
     }
 }

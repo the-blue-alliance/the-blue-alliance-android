@@ -14,9 +14,9 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.databinding.ListItemRankingBinding;
 import com.thebluealliance.androidclient.viewmodels.TeamRankingViewModel;
 
-import io.nlopez.smartadapters.views.BindableFrameLayout;
+import io.nlopez.smartadapters.views.BindableRelativeLayout;
 
-public class TeamRankingItemView extends BindableFrameLayout<TeamRankingViewModel> {
+public class TeamRankingItemView extends BindableRelativeLayout<TeamRankingViewModel> {
     private ListItemRankingBinding mBinding;
     private int originalHeight;
     private int expandedHeightDelta;
