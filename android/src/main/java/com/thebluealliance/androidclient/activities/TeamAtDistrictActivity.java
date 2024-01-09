@@ -13,7 +13,6 @@ import androidx.core.app.TaskStackBuilder;
 import androidx.core.view.ViewCompat;
 import androidx.viewpager.widget.ViewPager;
 
-import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
@@ -91,8 +90,6 @@ public class TeamAtDistrictActivity extends DatafeedActivity {
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
-
-        setBeamUri(String.format(NfcUris.URI_TEAM_DISTRICT, mDistrictKey, mTeamKey));
     }
 
     @Override

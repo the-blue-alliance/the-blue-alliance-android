@@ -21,9 +21,7 @@ import android.text.Html;
 import android.util.Base64;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresPermission;
@@ -37,7 +35,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -330,7 +327,6 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
             return;
         }
         mYear = newYear;
-        setBeamUri(String.format(NfcUris.URI_TEAM_IN_YEAR, mTeamKey, mYear));
         setShareUri(String.format(ShareUris.URI_TEAM, TeamHelper.getTeamNumber(mTeamKey), mYear));
         mAdapter.updateYear(mYear);
         mAdapter.notifyDataSetChanged();

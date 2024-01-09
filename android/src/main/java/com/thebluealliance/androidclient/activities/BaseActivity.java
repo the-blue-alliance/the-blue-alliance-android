@@ -29,8 +29,7 @@ import java.util.Set;
  * button, and the ability to show and hide warning messages. Also provides Android Beam
  * functionality.
  */
-public abstract class BaseActivity extends NavigationDrawerActivity
-        implements NfcAdapter.CreateNdefMessageCallback {
+public abstract class BaseActivity extends NavigationDrawerActivity {
 
     @IntDef({WARNING_OFFLINE, WARNING_FIRST_API_DOWN, WARNING_EVENT_DOWN})
     @Retention(RetentionPolicy.SOURCE)
@@ -42,7 +41,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
 
     public Set<Integer> activeMessages = new HashSet<>();
 
-    String beamUri;
     String shareUri;
     boolean searchEnabled = true;
     boolean shareEnabled = false;
@@ -201,10 +199,6 @@ public abstract class BaseActivity extends NavigationDrawerActivity
 
     public void setShareEnabled(boolean enabled) {
         shareEnabled = enabled;
-    }
-
-    public void setBeamUri(String uri) {
-        beamUri = uri;
     }
 
     protected void setSearchEnabled(boolean enabled) {

@@ -10,8 +10,6 @@ import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.ActionBar;
@@ -22,7 +20,6 @@ import androidx.core.view.ViewCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.common.collect.ImmutableList;
-import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -132,7 +129,6 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
             showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
 
-        setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, mEventKey, mTeamKey));
         setShareUri(String.format(
                 ShareUris.URI_TEAM_AT_EVENT,
                 TeamHelper.getTeamNumber(mTeamKey),
@@ -266,7 +262,6 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
 
         String eventTeamKey = EventTeamHelper.generateKey(mEventKey, mTeamKey);
         setModelKey(eventTeamKey, ModelType.EVENTTEAM);
-        setBeamUri(String.format(NfcUris.URI_TEAM_AT_EVENT, mEventKey, mTeamKey));
         setShareUri(String.format(
                 ShareUris.URI_TEAM_AT_EVENT,
                 TeamHelper.getTeamNumber(mTeamKey),
