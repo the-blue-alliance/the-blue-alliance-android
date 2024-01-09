@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.itemviews;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.databinding.ListItemLabeledMatchBinding;

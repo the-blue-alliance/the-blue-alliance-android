@@ -3,26 +3,18 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.nfc.NdefMessage;
-import android.nfc.NfcAdapter;
 import android.os.Bundle;
-import android.os.Parcelable;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.TaskStackBuilder;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.background.RecreateSearchIndexes;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.mytba.MyTbaRegistrationWorker;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 

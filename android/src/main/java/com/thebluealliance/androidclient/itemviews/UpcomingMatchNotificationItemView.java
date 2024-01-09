@@ -2,15 +2,12 @@ package com.thebluealliance.androidclient.itemviews;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.databinding.ListItemNotificationUpcomingMatchBinding;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.listitems.MatchListElement;
 import com.thebluealliance.androidclient.viewmodels.UpcomingMatchNotificationViewModel;
-import com.thebluealliance.androidclient.views.MatchView;
 
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 

@@ -7,10 +7,6 @@ import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownH
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.gridlayout.widget.GridLayout;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;

@@ -1,8 +1,6 @@
 package com.thebluealliance.androidclient.itemviews;
 
 import android.content.Context;
-import android.view.View;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.databinding.ListItemNotificationAllianceSelectionBinding;

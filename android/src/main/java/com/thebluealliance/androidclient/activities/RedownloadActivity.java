@@ -11,8 +11,6 @@ import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +23,6 @@ import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
 import com.thebluealliance.androidclient.databinding.ActivityRedownloadBinding;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

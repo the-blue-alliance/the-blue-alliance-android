@@ -3,8 +3,6 @@ package com.thebluealliance.androidclient.itemviews;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;

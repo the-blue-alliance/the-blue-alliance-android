@@ -25,7 +25,6 @@ import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
 import com.thebluealliance.androidclient.databinding.ActivityOnboardingBinding;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 
 import org.jetbrains.annotations.NotNull;

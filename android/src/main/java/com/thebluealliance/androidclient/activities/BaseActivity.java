@@ -1,12 +1,6 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
-import android.nfc.NfcAdapter;
-import android.nfc.NfcEvent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;

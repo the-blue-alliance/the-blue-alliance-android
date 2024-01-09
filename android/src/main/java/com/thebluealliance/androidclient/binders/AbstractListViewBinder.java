@@ -1,10 +1,7 @@
 package com.thebluealliance.androidclient.binders;
 
 import android.view.View;
-import android.widget.Adapter;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 

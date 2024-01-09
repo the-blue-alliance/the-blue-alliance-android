@@ -1,13 +1,10 @@
 package com.thebluealliance.androidclient.itemviews;
 
 import android.content.Context;
-import android.view.View;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.databinding.ListItemNotificationCompLevelStartingBinding;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
-import com.thebluealliance.androidclient.listitems.ListItem;
 import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
 
 import io.nlopez.smartadapters.views.BindableFrameLayout;
