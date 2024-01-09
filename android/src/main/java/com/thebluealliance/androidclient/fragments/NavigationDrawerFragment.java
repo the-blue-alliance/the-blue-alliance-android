@@ -132,7 +132,7 @@ public class NavigationDrawerFragment extends Fragment {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mUserLearnedDrawer = sp.getBoolean(PREF_USER_LEARNED_DRAWER, false);
 
-        mFromSavedInstanceState = (savedInstanceState == null ? true : false);
+        mFromSavedInstanceState = (savedInstanceState == null);
 
         mNavigationAdapter = new NavigationDrawerAdapter(getActivity(), NAVIGATION_ITEMS);
     }
