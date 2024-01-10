@@ -13,80 +13,17 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.gridlayout.widget.GridLayout;
-
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.databinding.MatchBreakdown2023Binding;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import java.util.List;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class MatchBreakdownView2023 extends AbstractMatchBreakdownView {
-    @BindView(R.id.breakdown2023_container)                     GridLayout breakdownContainer;
-
-    @BindView(R.id.breakdown_red1)                              TextView red1;
-    @BindView(R.id.breakdown_blue1)                             TextView blue1;
-    @BindView(R.id.breakdown_red2)                              TextView red2;
-    @BindView(R.id.breakdown_blue2)                             TextView blue2;
-    @BindView(R.id.breakdown_red3)                              TextView red3;
-    @BindView(R.id.breakdown_blue3)                             TextView blue3;
-    @BindView(R.id.breakdown2023_red_auto_mobility_robot1)          ImageView red1Mobility;
-    @BindView(R.id.breakdown2023_red_auto_mobility_robot2)          ImageView red2Mobility;
-    @BindView(R.id.breakdown2023_red_auto_mobility_robot3)          ImageView red3Mobility;
-    @BindView(R.id.breakdown2023_red_auto_mobility_bonus)           TextView  redMobilityBonus;
-    @BindView(R.id.breakdown2023_blue_auto_mobility_robot1)         ImageView blue1Mobility;
-    @BindView(R.id.breakdown2023_blue_auto_mobility_robot2)         ImageView blue2Mobility;
-    @BindView(R.id.breakdown2023_blue_auto_mobility_robot3)         ImageView blue3Mobility;
-    @BindView(R.id.breakdown2023_blue_auto_mobility_bonus)          TextView  blueMobilityBonus;
-    @BindView(R.id.breakdown2023_red_auto_piece_count)          TextView redAutoPieceCount;
-    @BindView(R.id.breakdown2023_red_auto_piece_points)         TextView redAutoPiecePoints;
-    @BindView(R.id.breakdown2023_blue_auto_piece_count)         TextView blueAutoPieceCount;
-    @BindView(R.id.breakdown2023_blue_auto_piece_points)        TextView blueAutoPiecePoints;
-
-    @BindView(R.id.breakdown2023_red_auto_charge_station_robot1)   TextView red1AutoChargeStation;
-    @BindView(R.id.breakdown2023_red_auto_charge_station_robot2)   TextView red2AutoChargeStation;
-    @BindView(R.id.breakdown2023_red_auto_charge_station_robot3)   TextView red3AutoChargeStation;
-    @BindView(R.id.breakdown2023_blue_auto_charge_station_robot1)  TextView blue1AutoChargeStation;
-    @BindView(R.id.breakdown2023_blue_auto_charge_station_robot2)  TextView blue2AutoChargeStation;
-    @BindView(R.id.breakdown2023_blue_auto_charge_station_robot3)  TextView blue3AutoChargeStation;
-
-    @BindView(R.id.breakdown_auto_total_red)                    TextView redAutoTotal;
-    @BindView(R.id.breakdown_auto_total_blue)                   TextView blueAutoTotal;
-    @BindView(R.id.breakdown2023_red_teleop_piece_count)   TextView redTeleopPieceCount;
-    @BindView(R.id.breakdown2023_blue_teleop_piece_count)  TextView blueTeleopPieceCount;
-    @BindView(R.id.breakdown2023_red_teleop_piece_points)  TextView redTeleopPiecePoints;
-    @BindView(R.id.breakdown2023_blue_teleop_piece_points) TextView blueTeleopPiecePoints;
-    @BindView(R.id.breakdown2023_red_endgame_robot1)            TextView redEndgameRobot1;
-    @BindView(R.id.breakdown2023_red_endgame_robot2)            TextView redEndgameRobot2;
-    @BindView(R.id.breakdown2023_red_endgame_robot3)            TextView redEndgameRobot3;
-    @BindView(R.id.breakdown2023_blue_endgame_robot1)           TextView blueEndgameRobot1;
-    @BindView(R.id.breakdown2023_blue_endgame_robot2)           TextView blueEndgameRobot2;
-    @BindView(R.id.breakdown2023_blue_endgame_robot3)           TextView blueEndgameRobot3;
-    @BindView(R.id.breakdown_teleop_total_red)                  TextView redTeleopTotal;
-    @BindView(R.id.breakdown_teleop_total_blue)                 TextView blueTeleopTotal;
-    @BindView(R.id.breakdown2023_red_links)                     TextView redLinks;
-    @BindView(R.id.breakdown2023_blue_links)                    TextView blueLinks;
-    @BindView(R.id.breakdown2023_red_coopertition_criteria)     ImageView redCoopertitionCriteriaMet;
-    @BindView(R.id.breakdown2023_blue_coopertition_criteria)    ImageView blueCoopertitionCriteriaMet;
-    @BindView(R.id.breakdown2023_red_sustainability_bonus)      TextView redSustainabilityBonus;
-    @BindView(R.id.breakdown2023_blue_sustainability_bonus)     TextView blueSustainabilityBonus;
-    @BindView(R.id.breakdown2023_red_activation_bonus)          TextView redActivationBonus;
-    @BindView(R.id.breakdown2023_blue_activation_bonus)         TextView blueActivationBonus;
-    @BindView(R.id.breakdown_fouls_red)                         TextView foulsRed;
-    @BindView(R.id.breakdown_fouls_blue)                        TextView foulsBlue;
-    @BindView(R.id.breakdown_adjust_red)                        TextView adjustRed;
-    @BindView(R.id.breakdown_adjust_blue)                       TextView adjustBlue;
-    @BindView(R.id.breakdown_total_red)                         TextView totalRed;
-    @BindView(R.id.breakdown_total_blue)                        TextView totalBlue;
-    @BindView(R.id.breakdown_red_rp)                            TextView rpRed;
-    @BindView(R.id.breakdown_blue_rp)                           TextView rpBlue;
-    @BindView(R.id.breakdown_rp_header)                         TextView rpHeader;
-
+    private MatchBreakdown2023Binding mBinding;
     private Resources mResources;
 
     public MatchBreakdownView2023(Context context) {
@@ -103,8 +40,7 @@ public class MatchBreakdownView2023 extends AbstractMatchBreakdownView {
 
     @Override
     void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.match_breakdown_2023, this, true);
-        ButterKnife.bind(this);
+        mBinding = MatchBreakdown2023Binding.inflate(LayoutInflater.from(getContext()), this, true);
     }
 
 
@@ -112,7 +48,7 @@ public class MatchBreakdownView2023 extends AbstractMatchBreakdownView {
     public boolean initWithData(MatchType matchType, String winningAlliance, IMatchAlliancesContainer allianceData, JsonObject scoreData) {
         if (scoreData == null || scoreData.entrySet().isEmpty()
                 || allianceData == null || allianceData.getRed() == null || allianceData.getBlue() == null) {
-            breakdownContainer.setVisibility(GONE);
+            mBinding.breakdown2023Container.setVisibility(GONE);
             return false;
         }
 
@@ -126,89 +62,89 @@ public class MatchBreakdownView2023 extends AbstractMatchBreakdownView {
         JsonObject blueData = scoreData.get("blue").getAsJsonObject();
 
         /* Red Teams */
-        red1.setText(teamNumberFromKey(redTeams.get(0)));
-        red2.setText(teamNumberFromKey(redTeams.get(1)));
-        red3.setText(teamNumberFromKey(redTeams.get(2)));
+        mBinding.breakdownRed1.setText(teamNumberFromKey(redTeams.get(0)));
+        mBinding.breakdownRed2.setText(teamNumberFromKey(redTeams.get(1)));
+        mBinding.breakdownRed3.setText(teamNumberFromKey(redTeams.get(2)));
 
         /* Blue Teams */
-        blue1.setText(teamNumberFromKey(blueTeams.get(0)));
-        blue2.setText(teamNumberFromKey(blueTeams.get(1)));
-        blue3.setText(teamNumberFromKey(blueTeams.get(2)));
+        mBinding.breakdownBlue1.setText(teamNumberFromKey(blueTeams.get(0)));
+        mBinding.breakdownBlue2.setText(teamNumberFromKey(blueTeams.get(1)));
+        mBinding.breakdownBlue3.setText(teamNumberFromKey(blueTeams.get(2)));
 
         /* Auto Mobility */
-        setAutoMobility(redData, redMobilityBonus, red1Mobility, red2Mobility, red3Mobility);
-        setAutoMobility(blueData, blueMobilityBonus, blue1Mobility, blue2Mobility, blue3Mobility);
+        setAutoMobility(redData, mBinding.breakdown2023RedAutoMobilityBonus, mBinding.breakdown2023RedAutoMobilityRobot1, mBinding.breakdown2023RedAutoMobilityRobot2, mBinding.breakdown2023RedAutoMobilityRobot3);
+        setAutoMobility(blueData, mBinding.breakdown2023BlueAutoMobilityBonus, mBinding.breakdown2023BlueAutoMobilityRobot1, mBinding.breakdown2023BlueAutoMobilityRobot2, mBinding.breakdown2023BlueAutoMobilityRobot3);
 
         /* Auto Game Pieces */
-        setGamePieces(redData, "auto", redAutoPieceCount, redAutoPiecePoints);
-        setGamePieces(blueData, "auto", blueAutoPieceCount, blueAutoPiecePoints);
+        setGamePieces(redData, "auto", mBinding.breakdown2023RedAutoPieceCount, mBinding.breakdown2023RedAutoPiecePoints);
+        setGamePieces(blueData, "auto", mBinding.breakdown2023BlueAutoPieceCount, mBinding.breakdown2023BlueAutoPiecePoints);
 
         /* Auto Charge Station */
-        setChargeStation(redData, "auto", red1AutoChargeStation, red2AutoChargeStation, red3AutoChargeStation);
-        setChargeStation(blueData, "auto",blue1AutoChargeStation, blue2AutoChargeStation, blue3AutoChargeStation);
+        setChargeStation(redData, "auto", mBinding.breakdown2023RedAutoChargeStationRobot1, mBinding.breakdown2023RedAutoChargeStationRobot2, mBinding.breakdown2023RedAutoChargeStationRobot3);
+        setChargeStation(blueData, "auto", mBinding.breakdown2023BlueAutoChargeStationRobot1, mBinding.breakdown2023BlueAutoChargeStationRobot2, mBinding.breakdown2023BlueAutoChargeStationRobot3);
 
         /* Total Auto Points */
-        redAutoTotal.setText(getIntDefault(redData, "autoPoints"));
-        blueAutoTotal.setText(getIntDefault(blueData, "autoPoints"));
+        mBinding.breakdownAutoTotalRed.setText(getIntDefault(redData, "autoPoints"));
+        mBinding.breakdownAutoTotalBlue.setText(getIntDefault(blueData, "autoPoints"));
 
         /* Teleop Pieces */
-        setGamePieces(redData, "teleop", redTeleopPieceCount, redTeleopPiecePoints);
-        setGamePieces(blueData, "teleop", blueTeleopPieceCount, blueTeleopPiecePoints);
+        setGamePieces(redData, "teleop", mBinding.breakdown2023RedTeleopPieceCount, mBinding.breakdown2023RedTeleopPiecePoints);
+        setGamePieces(blueData, "teleop", mBinding.breakdown2023BlueTeleopPieceCount, mBinding.breakdown2023BlueTeleopPiecePoints);
 
         /* Endgame Charge Station */
-        setChargeStation(redData, "endGame", redEndgameRobot1, redEndgameRobot2, redEndgameRobot3);
-        setChargeStation(blueData, "endGame",blueEndgameRobot1, blueEndgameRobot2, blueEndgameRobot3);
+        setChargeStation(redData, "endGame", mBinding.breakdown2023RedEndgameRobot1, mBinding.breakdown2023RedEndgameRobot2, mBinding.breakdown2023RedEndgameRobot3);
+        setChargeStation(blueData, "endGame", mBinding.breakdown2023BlueEndgameRobot1, mBinding.breakdown2023BlueEndgameRobot2, mBinding.breakdown2023BlueEndgameRobot3);
 
         /* Links */
-        setLinks(redData, redLinks);
-        setLinks(blueData, blueLinks);
+        setLinks(redData, mBinding.breakdown2023RedLinks);
+        setLinks(blueData, mBinding.breakdown2023BlueLinks);
 
         /* Teleop Total */
-        redTeleopTotal.setText(getIntDefault(redData, "teleopPoints"));
-        blueTeleopTotal.setText(getIntDefault(blueData, "teleopPoints"));
+        mBinding.breakdown2023RedTeleopPiecePoints.setText(getIntDefault(redData, "teleopPoints"));
+        mBinding.breakdown2023BlueTeleopPiecePoints.setText(getIntDefault(blueData, "teleopPoints"));
 
         /* Coopertition Criteria Met */
-        setCoopertitionMet(redData, redCoopertitionCriteriaMet);
-        setCoopertitionMet(blueData, blueCoopertitionCriteriaMet);
+        setCoopertitionMet(redData, mBinding.breakdown2023RedCoopertitionCriteria);
+        setCoopertitionMet(blueData, mBinding.breakdown2023BlueCoopertitionCriteria);
 
         /* Sustainability Bonus */
-        setBonus(redData, "sustainability", redSustainabilityBonus);
-        setBonus(blueData, "sustainability", blueSustainabilityBonus);
+        setBonus(redData, "sustainability", mBinding.breakdown2023RedSustainabilityBonus);
+        setBonus(blueData, "sustainability", mBinding.breakdown2023BlueSustainabilityBonus);
 
         /* Activation Bonus */
-        setBonus(redData, "activation", redActivationBonus);
-        setBonus(blueData, "activation", blueActivationBonus);
+        setBonus(redData, "activation", mBinding.breakdown2023RedActivationBonus);
+        setBonus(blueData, "activation", mBinding.breakdown2023BlueActivationBonus);
 
         /* Fouls */
-        setFouls(blueData, foulsRed);
-        setFouls(redData, foulsBlue);
+        setFouls(blueData, mBinding.breakdownFoulsRed);
+        setFouls(redData, mBinding.breakdownFoulsBlue);
 
         /* Adjustment points */
-        adjustRed.setText(getIntDefault(redData, "adjustPoints"));
-        adjustBlue.setText(getIntDefault(blueData, "adjustPoints"));
+        mBinding.breakdownAdjustRed.setText(getIntDefault(redData, "adjustPoints"));
+        mBinding.breakdownAdjustBlue.setText(getIntDefault(blueData, "adjustPoints"));
 
         /* Total Points */
-        totalRed.setText(getIntDefault(redData, "totalPoints"));
-        totalBlue.setText(getIntDefault(blueData, "totalPoints"));
+        mBinding.breakdownTotalRed.setText(getIntDefault(redData, "totalPoints"));
+        mBinding.breakdownTotalBlue.setText(getIntDefault(blueData, "totalPoints"));
 
         /* Show RPs earned, if needed */
         if (!matchType.isPlayoff()) {
-            rpRed.setText(mResources.getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "rp")));
-            rpBlue.setText(mResources.getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "rp")));
+            mBinding.breakdownRedRp.setText(mResources.getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "rp")));
+            mBinding.breakdownBlueRp.setText(mResources.getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "rp")));
         } else {
-            rpRed.setVisibility(GONE);
-            rpBlue.setVisibility(GONE);
-            rpHeader.setVisibility(GONE);
+            mBinding.breakdownRedRp.setVisibility(GONE);
+            mBinding.breakdownBlueRp.setVisibility(GONE);
+            mBinding.breakdownRpHeader.setVisibility(GONE);
         }
 
-        breakdownContainer.setVisibility(View.VISIBLE);
+        mBinding.breakdown2023Container.setVisibility(View.VISIBLE);
 
         return true;
     }
 
     private void setAutoMobility(JsonObject allianceData,
-                             TextView bonusView,
-                             ImageView... robotStatus) {
+                                 TextView bonusView,
+                                 ImageView... robotStatus) {
         if (robotStatus.length != 3) {
             throw new RuntimeException("bad number of status views");
         }
@@ -268,10 +204,10 @@ public class MatchBreakdownView2023 extends AbstractMatchBreakdownView {
         }
         for (int robotNumber = 1; robotNumber <= 3; robotNumber++) {
             String endgameStatus = getIntDefault(allianceData, prefix + "ChargeStationRobot" + robotNumber);
-            String endgameBrideState = getIntDefault(allianceData, prefix+ "BridgeState");
+            String endgameBrideState = getIntDefault(allianceData, prefix + "BridgeState");
 
             int endgamePoints = 0;
-            if(Objects.equals(endgameStatus, "Park")) {
+            if (Objects.equals(endgameStatus, "Park")) {
                 endgamePoints = 2;
             } else if (Objects.equals(endgameStatus, "Docked")) {
                 if (Objects.equals(endgameBrideState, "Level")) {
@@ -287,7 +223,7 @@ public class MatchBreakdownView2023 extends AbstractMatchBreakdownView {
             TextView teamView = robotStatus[robotNumber - 1];
             teamView.setVisibility(VISIBLE);
             if (endgamePoints > 0) {
-                teamView.setCompoundDrawables(null,null,null,null);
+                teamView.setCompoundDrawables(null, null, null, null);
                 teamView.setText(mResources.getString(R.string.breakdown_string_with_addition_format, endgameStatus, endgamePoints));
             } else {
                 teamView.setBackgroundResource(R.drawable.ic_close_black_24dp);

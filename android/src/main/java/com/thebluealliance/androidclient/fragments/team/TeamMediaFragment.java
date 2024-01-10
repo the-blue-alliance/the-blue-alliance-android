@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
+import com.thebluealliance.androidclient.databinding.ExpandableListViewWithSpinnerBinding;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.eventbus.YearChangedEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
@@ -31,6 +32,7 @@ import rx.Observable;
 public class TeamMediaFragment extends DatafeedFragment<
         List<Media>,
         List<ListGroup>,
+        ExpandableListViewWithSpinnerBinding,
         MediaListSubscriber,
         ExpandableListViewBinder>
         implements HasYearParam, HasEventParam {

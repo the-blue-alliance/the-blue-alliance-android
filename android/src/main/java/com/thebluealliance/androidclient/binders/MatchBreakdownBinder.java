@@ -1,14 +1,12 @@
 package com.thebluealliance.androidclient.binders;
 
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
 
 import com.google.gson.JsonObject;
-import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.databinding.FragmentMatchBreakdownBinding;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.androidclient.views.breakdowns.AbstractMatchBreakdownView;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2015;
@@ -20,19 +18,12 @@ import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2020
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2022;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2023;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinder.Model> {
-
-    @BindView(R.id.match_breakdown) FrameLayout breakdownContainer;
-    @BindView(R.id.progress) ProgressBar progressBar;
+public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinder.Model, FragmentMatchBreakdownBinding> {
 
     @Override
     public void updateData(@Nullable MatchBreakdownBinder.Model data) {
         if (data == null || data.allianceData == null || data.scoreData == null
-                || breakdownContainer == null) {
+                || mBinding == null) {
             if (!isDataBound()) {
                 setDataBound(false);
             }
@@ -75,7 +66,7 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
             return;
         }
 
-        breakdownContainer.addView(breakdownView);
+        mBinding.matchBreakdown.addView(breakdownView);
         boolean success = breakdownView.initWithData(data.matchType,
                                                      data.winningAlliance,
                                                      data.allianceData,
@@ -86,11 +77,8 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
             return;
         }
 
-        if (progressBar != null) {
-            progressBar.setVisibility(View.GONE);
-        }
-
-        breakdownContainer.setVisibility(View.VISIBLE);
+        mBinding.progress.setVisibility(View.GONE);
+        mBinding.matchBreakdown.setVisibility(View.VISIBLE);
         mNoDataBinder.unbindData();
         TbaLogger.d("BINDING COMPLETE; ELAPSED TIME: " + (System.currentTimeMillis() - startTime) + "ms");
         setDataBound(true);
@@ -98,8 +86,8 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
 
     @Override
     public void onComplete() {
-        if (progressBar != null) {
-            progressBar.setVisibility(View.GONE);
+        if (mBinding != null) {
+            mBinding.progress.setVisibility(View.GONE);
         }
 
         if (!isDataBound()) {
@@ -109,7 +97,7 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
 
     @Override
     public void bindViews() {
-        ButterKnife.bind(this, mRootView);
+        mBinding = FragmentMatchBreakdownBinding.bind(mRootView);
     }
 
     @Override
@@ -126,8 +114,8 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
     private void bindNoDataView() {
         // Set up views for "no data" message
         try {
-            breakdownContainer.setVisibility(View.GONE);
-            progressBar.setVisibility(View.GONE);
+            mBinding.matchBreakdown.setVisibility(View.GONE);
+            mBinding.progress.setVisibility(View.GONE);
             mNoDataBinder.bindData(mNoDataParams);
         } catch (Exception e) {
             e.printStackTrace();

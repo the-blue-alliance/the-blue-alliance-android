@@ -3,25 +3,19 @@ package com.thebluealliance.androidclient.itemviews;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.Interactions;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.databinding.ListItemEventBinding;
 import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import io.nlopez.smartadapters.views.BindableFrameLayout;
+import io.nlopez.smartadapters.views.BindableRelativeLayout;
 
-public class EventItemView extends BindableFrameLayout<EventViewModel> {
+public class EventItemView extends BindableRelativeLayout<EventViewModel> {
 
-    @BindView(R.id.event_name) TextView eventName;
-    @BindView(R.id.event_dates) TextView eventDates;
-    @BindView(R.id.event_location) TextView eventLocation;
-    @BindView(R.id.model_settings) ImageView modelSettings;
+    private ListItemEventBinding mBinding;
 
     public EventItemView(Context context) {
         super(context);
@@ -34,7 +28,7 @@ public class EventItemView extends BindableFrameLayout<EventViewModel> {
 
     @Override
     public void onViewInflated() {
-        ButterKnife.bind(this);
+        mBinding = ListItemEventBinding.bind(this);
         setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
@@ -46,22 +40,22 @@ public class EventItemView extends BindableFrameLayout<EventViewModel> {
 
         boolean showMyTba = model.shouldShowMyTbaSettings();
 
-        eventLocation.setText(model.getLocation());
-        eventDates.setText(model.getDateString());
+        mBinding.eventLocation.setText(model.getLocation());
+        mBinding.eventDates.setText(model.getDateString());
 
         /* When rendering in mytba list, show year with event name */
         if (showMyTba) {
-            eventName.setText(String.format("%1$d %2$s", model.getYear(), model.getShortName()));
+            mBinding.eventName.setText(String.format("%1$d %2$s", model.getYear(), model.getShortName()));
         } else {
-            eventName.setText(model.getShortName());
+            mBinding.eventName.setText(model.getShortName());
         }
 
         if (showMyTba) {
             // When rendered in MyTba, add a specific click listener because we can't add
             // one to the parent ListView
-            modelSettings.setOnClickListener(new ModelSettingsClickListener(getContext(), model.getKey(), ModelType.EVENT));
+            mBinding.modelSettings.setOnClickListener(new ModelSettingsClickListener(getContext(), model.getKey(), ModelType.EVENT));
         }
-        eventDates.setVisibility(showMyTba ? View.GONE : View.VISIBLE);
-        modelSettings.setVisibility(showMyTba ? View.VISIBLE : View.GONE);
+        mBinding.eventDates.setVisibility(showMyTba ? View.GONE : View.VISIBLE);
+        mBinding.modelSettings.setVisibility(showMyTba ? View.VISIBLE : View.GONE);
     }
 }

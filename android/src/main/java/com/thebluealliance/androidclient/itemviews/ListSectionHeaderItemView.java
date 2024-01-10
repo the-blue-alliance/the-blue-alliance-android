@@ -2,18 +2,16 @@ package com.thebluealliance.androidclient.itemviews;
 
 import android.content.Context;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.databinding.ListItemEventTypeHeaderBinding;
 import com.thebluealliance.androidclient.viewmodels.ListSectionHeaderViewModel;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class ListSectionHeaderItemView extends BindableFrameLayout<ListSectionHeaderViewModel> {
 
-    @BindView(R.id.event_type) TextView eventType;
+    private ListItemEventTypeHeaderBinding mBinding;
 
     public ListSectionHeaderItemView(Context context) {
         super(context);
@@ -26,11 +24,11 @@ public class ListSectionHeaderItemView extends BindableFrameLayout<ListSectionHe
 
     @Override
     public void onViewInflated() {
-        ButterKnife.bind(this);
+        mBinding = ListItemEventTypeHeaderBinding.bind(this);
         setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
     @Override public void bind(ListSectionHeaderViewModel model) {
-        eventType.setText(model.getTitle());
+        mBinding.eventType.setText(model.getTitle());
     }
 }

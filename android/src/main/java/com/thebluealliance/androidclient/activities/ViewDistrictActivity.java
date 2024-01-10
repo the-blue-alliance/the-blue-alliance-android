@@ -11,7 +11,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.ViewCompat;
 import androidx.viewpager.widget.ViewPager;
 
-import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.ViewDistrictFragmentPagerAdapter;
@@ -90,8 +89,6 @@ public class ViewDistrictActivity extends MyTBASettingsActivity
         if (!ConnectionDetector.isConnectedToInternet(this)) {
             showWarningMessage(BaseActivity.WARNING_OFFLINE);
         }
-
-        setBeamUri(String.format(NfcUris.URI_DISTRICT, districtAbbrev));
 
         setSettingsToolbarTitle("District Settings");
     }

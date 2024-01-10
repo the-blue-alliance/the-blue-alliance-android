@@ -10,8 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -25,8 +23,8 @@ import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
 import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
+import com.thebluealliance.androidclient.databinding.ActivityOnboardingBinding;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 
 import org.jetbrains.annotations.NotNull;
@@ -37,10 +35,6 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.Unbinder;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -56,22 +50,7 @@ public class OnboardingActivity extends AppCompatActivity
     private static final String LOAD_TASK_UUID = "load_task_uuid";
     private static final int SIGNIN_CODE = 254;
 
-    @BindView(R.id.view_pager)
-    DisableSwipeViewPager viewPager;
-
-    @BindView(R.id.mytba_view_pager)
-    MyTBAOnboardingViewPager mMyTBAOnboardingViewPager;
-
-    @BindView(R.id.loading_message)
-    TextView loadingMessage;
-
-    @BindView(R.id.loading_progress_bar)
-    ProgressBar loadingProgressBar;
-
-    @BindView(R.id.continue_to_end)
-    View continueToEndButton;
-
-    private Unbinder unbinder;
+    private ActivityOnboardingBinding mBinding;
 
     private String currentLoadingMessage = "";
     private boolean isDataFinishedLoading = false;
@@ -85,21 +64,21 @@ public class OnboardingActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_onboarding);
-        unbinder = ButterKnife.bind(this);
+        mBinding = ActivityOnboardingBinding.inflate(getLayoutInflater());
+        setContentView(mBinding.getRoot());
 
-        viewPager.setSwipeEnabled(false);
-        viewPager.setOffscreenPageLimit(10);
-        viewPager.setAdapter(new FirstLaunchPagerAdapter(this));
+        mBinding.viewPager.setSwipeEnabled(false);
+        mBinding.viewPager.setOffscreenPageLimit(10);
+        mBinding.viewPager.setAdapter(new FirstLaunchPagerAdapter(this));
 
-        mMyTBAOnboardingViewPager.setCallbacks(this);
+        mBinding.mytbaViewPager.setCallbacks(this);
 
         // If the activity is being recreated after a config change, restore the message that was
         // being shown when the last activity was destroyed
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(CURRENT_LOADING_MESSAGE_KEY)) {
                 currentLoadingMessage = savedInstanceState.getString(CURRENT_LOADING_MESSAGE_KEY);
-                loadingMessage.setText(currentLoadingMessage);
+                mBinding.loadingMessage.setText(currentLoadingMessage);
             }
 
             if (savedInstanceState.containsKey(LOADING_COMPLETE)) {
@@ -111,11 +90,11 @@ public class OnboardingActivity extends AppCompatActivity
             }
 
             if (savedInstanceState.containsKey(WELCOME_PAGER_STATE)) {
-                viewPager.onRestoreInstanceState(savedInstanceState.getParcelable(WELCOME_PAGER_STATE));
+                mBinding.viewPager.onRestoreInstanceState(savedInstanceState.getParcelable(WELCOME_PAGER_STATE));
             }
 
             if (savedInstanceState.containsKey(MYTBA_PAGER_STATE)) {
-                mMyTBAOnboardingViewPager.getViewPager().onRestoreInstanceState(savedInstanceState.getParcelable(MYTBA_PAGER_STATE));
+                mBinding.mytbaViewPager.getViewPager().onRestoreInstanceState(savedInstanceState.getParcelable(MYTBA_PAGER_STATE));
             }
 
             if (savedInstanceState.containsKey(LOAD_TASK_UUID)) {
@@ -130,25 +109,29 @@ public class OnboardingActivity extends AppCompatActivity
         */
 
         if (isDataFinishedLoading) {
-            loadingProgressBar.setVisibility(View.GONE);
-            loadingMessage.setVisibility(View.GONE);
-            continueToEndButton.setVisibility(View.VISIBLE);
-            continueToEndButton.setAlpha(1.0f);
+            mBinding.loadingProgressBar.setVisibility(View.GONE);
+            mBinding.loadingMessage.setVisibility(View.GONE);
+            mBinding.continueToEnd.setVisibility(View.VISIBLE);
+            mBinding.continueToEnd.setAlpha(1.0f);
         }
 
         if (isMyTBALoginComplete) {
-            mMyTBAOnboardingViewPager.setUpForLoginSuccess();
+            mBinding.mytbaViewPager.setUpForLoginSuccess();
         } else {
-            mMyTBAOnboardingViewPager.setUpForLoginPrompt();
+            mBinding.mytbaViewPager.setUpForLoginPrompt();
         }
+
+        mBinding.continueToEnd.setOnClickListener(this::onContinueToEndClient);
+        mBinding.welcomeNextPage.setOnClickListener((View view) -> beginLoadingIfConnected());
+        mBinding.finish.setOnClickListener((View view) -> {
+            startActivity(new Intent(this, HomeActivity.class));
+            finish();
+        });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (unbinder != null) {
-            unbinder.unbind();
-        }
     }
 
     @Override
@@ -157,8 +140,8 @@ public class OnboardingActivity extends AppCompatActivity
         outState.putString(CURRENT_LOADING_MESSAGE_KEY, currentLoadingMessage);
         outState.putBoolean(LOADING_COMPLETE, isDataFinishedLoading);
         outState.putBoolean(MYTBA_LOGIN_COMPLETE, isMyTBALoginComplete);
-        outState.putParcelable(WELCOME_PAGER_STATE, viewPager.onSaveInstanceState());
-        outState.putParcelable(MYTBA_PAGER_STATE, mMyTBAOnboardingViewPager.getViewPager().onSaveInstanceState());
+        outState.putParcelable(WELCOME_PAGER_STATE, mBinding.viewPager.onSaveInstanceState());
+        outState.putParcelable(MYTBA_PAGER_STATE, mBinding.mytbaViewPager.getViewPager().onSaveInstanceState());
         if (dataLoadTask != null) {
             outState.putString(LOAD_TASK_UUID, dataLoadTask.toString());
         }
@@ -172,7 +155,7 @@ public class OnboardingActivity extends AppCompatActivity
                 mAuthProvider.userFromSignInResult(requestCode, resultCode, data)
                         .subscribe(user -> {
                             TbaLogger.d("User logged in: " + user.getEmail());
-                            mMyTBAOnboardingViewPager.setUpForLoginSuccess();
+                            mBinding.mytbaViewPager.setUpForLoginSuccess();
                             isMyTBALoginComplete = true;
                             mAccountController.onAccountConnect(OnboardingActivity.this, user);
                         }, throwable -> {
@@ -182,16 +165,15 @@ public class OnboardingActivity extends AppCompatActivity
                         });
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_LONG).show();
-                mMyTBAOnboardingViewPager.setUpForLoginPrompt();
+                mBinding.mytbaViewPager.setUpForLoginPrompt();
             }
         }
     }
 
-    @OnClick(R.id.continue_to_end)
-    public void onContinueToEndClient(View view) {
+    private void onContinueToEndClient(View view) {
         // If myTBA hasn't been activated yet, prompt the user one last time to sign in
-        if (!mMyTBAOnboardingViewPager.isOnLoginPage()) {
-            mMyTBAOnboardingViewPager.scrollToLoginPage();
+        if (!mBinding.mytbaViewPager.isOnLoginPage()) {
+            mBinding.mytbaViewPager.scrollToLoginPage();
         } else if (!isMyTBALoginComplete) {
             // Only show this dialog if play services are actually available
             new AlertDialog.Builder(this)
@@ -204,28 +186,17 @@ public class OnboardingActivity extends AppCompatActivity
                     })
                     .setNegativeButton(R.string.mytba_prompt_cancel, (dialog, dialogId) -> {
                         // Scroll to the last page
-                        viewPager.setCurrentItem(2);
+                        mBinding.viewPager.setCurrentItem(2);
                         dialog.dismiss();
                     }).create().show();
         } else {
-            viewPager.setCurrentItem(2);
+            mBinding.viewPager.setCurrentItem(2);
         }
-    }
-
-    @OnClick(R.id.welcome_next_page)
-    public void onWelcomeNextPageClick(View view) {
-        beginLoadingIfConnected();
-    }
-
-    @OnClick(R.id.finish)
-    public void onFinishClick(View view) {
-        startActivity(new Intent(this, HomeActivity.class));
-        finish();
     }
 
     private void beginLoadingIfConnected() {
         if (ConnectionDetector.isConnectedToInternet(this)) {
-            viewPager.setCurrentItem(1);
+            mBinding.viewPager.setCurrentItem(1);
             beginLoading();
         } else {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -259,9 +230,7 @@ public class OnboardingActivity extends AppCompatActivity
                 .apply();
 
         // Return to the first page
-        if (viewPager != null) {
-            viewPager.setCurrentItem(0);
-        }
+        mBinding.viewPager.setCurrentItem(0);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
@@ -305,49 +274,33 @@ public class OnboardingActivity extends AppCompatActivity
 
         isDataFinishedLoading = true;
 
-        if (loadingMessage == null) {
-            return;
-        }
-
-        loadingMessage.setText("Loading complete");
+        mBinding.loadingMessage.setText("Loading complete");
 
         // After two seconds, fade out the message and spinner and fade in the "continue" button
-        loadingMessage.postDelayed(() -> {
+        mBinding.loadingMessage.postDelayed(() -> {
             ValueAnimator fadeOutAnimation = ValueAnimator.ofFloat(1.0f, 0.0f);
             fadeOutAnimation.addUpdateListener(animation -> {
-                if (loadingMessage != null) {
-                    loadingMessage.setAlpha((float) animation.getAnimatedValue());
-                }
-                if (loadingProgressBar != null) {
-                    loadingProgressBar.setAlpha((float) animation.getAnimatedValue());
-                }
+                mBinding.loadingMessage.setAlpha((float) animation.getAnimatedValue());
+                mBinding.loadingProgressBar.setAlpha((float) animation.getAnimatedValue());
             });
             fadeOutAnimation.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    if (loadingMessage != null) {
-                        loadingMessage.setVisibility(View.GONE);
-                    }
-                    if (loadingProgressBar != null) {
-                        loadingProgressBar.setVisibility(View.GONE);
-                    }
+                    mBinding.loadingProgressBar.setVisibility(View.GONE);
+                    mBinding.loadingMessage.setVisibility(View.GONE);
                 }
             });
             fadeOutAnimation.setDuration(250);
 
             ValueAnimator fadeInAnimation = ValueAnimator.ofFloat(0.0f, 1.0f);
             fadeInAnimation.addUpdateListener(animation -> {
-                if (continueToEndButton != null) {
-                    continueToEndButton.setAlpha((float) animation.getAnimatedValue());
-                }
+                mBinding.continueToEnd.setAlpha((float) animation.getAnimatedValue());
             });
             fadeInAnimation.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    if (continueToEndButton != null) {
-                        continueToEndButton.setAlpha(0.0f);
-                        continueToEndButton.setVisibility(View.VISIBLE);
-                    }
+                    mBinding.continueToEnd.setAlpha(0.0f);
+                    mBinding.continueToEnd.setVisibility(View.VISIBLE);
                 }
             });
             fadeInAnimation.setDuration(250);
@@ -361,9 +314,7 @@ public class OnboardingActivity extends AppCompatActivity
 
     private void onConnectionLost() {
         // Scroll to first page
-        if (viewPager != null) {
-            viewPager.setCurrentItem(0);
-        }
+        mBinding.viewPager.setCurrentItem(0);
 
         LoadTBADataWorker.cancel(this);
 
@@ -387,9 +338,7 @@ public class OnboardingActivity extends AppCompatActivity
             return;
         }
         currentLoadingMessage = message;
-        if (loadingMessage != null) {
-            loadingMessage.setText(message);
-        }
+        mBinding.loadingMessage.setText(message);
     }
 
     public void onProgressUpdate(LoadTBADataWorker.LoadProgressInfo info) {

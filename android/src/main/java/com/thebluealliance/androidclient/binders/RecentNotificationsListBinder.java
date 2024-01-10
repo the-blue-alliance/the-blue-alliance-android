@@ -3,12 +3,13 @@ package com.thebluealliance.androidclient.binders;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.databinding.FragmentRecentNotificationsBinding;
 import com.thebluealliance.androidclient.eventbus.NotificationsUpdatedEvent;
 import com.thebluealliance.androidclient.gcm.notifications.BaseNotification;
 
@@ -17,32 +18,40 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
-public class RecentNotificationsListBinder extends RecyclerViewBinder {
+public class RecentNotificationsListBinder extends AbstractRecyclerViewBinder<FragmentRecentNotificationsBinding> {
 
     private int mNewNotificationCount = 0;
-    private TextView mNewNotificationIndicator;
     private boolean mIsNotificationIndicatorVisible = true;
 
     @Override
-    public void bindViews() {
-        super.bindViews();
+    protected RecyclerView getList() {
+        return mBinding.list;
+    }
 
-        mNewNotificationIndicator = (TextView) mRootView.findViewById(R.id.new_notification_indicator);
-        mNewNotificationIndicator.setOnClickListener(v -> {
+    @Override
+    protected ProgressBar getProgress() {
+        return mBinding.progress;
+    }
+
+    @Override
+    public void bindViews() {
+        mBinding = FragmentRecentNotificationsBinding.bind(mRootView);
+
+        mBinding.newNotificationIndicator.setOnClickListener(v -> {
             hideNewNotificationIndicator(true);
             // Count should be reset after we start the hide animation
             mNewNotificationCount = 0;
-            mRecyclerView.smoothScrollToPosition(0);
+            mBinding.list.smoothScrollToPosition(0);
         });
 
         hideNewNotificationIndicator(false);
 
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mBinding.list.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 // If we're at the top of the list, hide the notif indicator and reset the new
                 // notif count
-                if (mRecyclerView.computeVerticalScrollOffset() == 0) {
+                if (mBinding.list.computeVerticalScrollOffset() == 0) {
                     hideNewNotificationIndicator(true);
                     // Count should be reset after we start the hide animation
                     mNewNotificationCount = 0;
@@ -62,7 +71,7 @@ public class RecentNotificationsListBinder extends RecyclerViewBinder {
     }
 
     private void updateNewNotificationIndicator() {
-        mNewNotificationIndicator.setText(mActivity.getString(R.string.new_notifications, mNewNotificationCount));
+        mBinding.newNotificationIndicator.setText(mActivity.getString(R.string.new_notifications, mNewNotificationCount));
     }
 
     private void showNewNotificationIndicator(boolean animate) {
@@ -74,25 +83,25 @@ public class RecentNotificationsListBinder extends RecyclerViewBinder {
 
         // Defaults to invisible in the layout file so it doesn't show while the activity is
         // launching; this will only have an effect the first time it's called
-        mNewNotificationIndicator.setVisibility(View.VISIBLE);
+        mBinding.newNotificationIndicator.setVisibility(View.VISIBLE);
 
         if (animate) {
-            if (mNewNotificationIndicator.getAnimation() != null) {
-                mNewNotificationIndicator.getAnimation().cancel();
+            if (mBinding.newNotificationIndicator.getAnimation() != null) {
+                mBinding.newNotificationIndicator.getAnimation().cancel();
             }
 
             Animation anim = AnimationUtils.loadAnimation(mActivity, R.anim.slide_down);
             anim.setAnimationListener(new AnimationListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    mNewNotificationIndicator.setTranslationY(0.0f);
+                    mBinding.newNotificationIndicator.setTranslationY(0.0f);
                 }
             });
 
-            mNewNotificationIndicator.setTranslationY(0.0f);
-            mNewNotificationIndicator.startAnimation(anim);
+            mBinding.newNotificationIndicator.setTranslationY(0.0f);
+            mBinding.newNotificationIndicator.startAnimation(anim);
         } else {
-            mNewNotificationIndicator.setTranslationY(0);
+            mBinding.newNotificationIndicator.setTranslationY(0);
         }
     }
 
@@ -102,22 +111,22 @@ public class RecentNotificationsListBinder extends RecyclerViewBinder {
         }
         mIsNotificationIndicatorVisible = false;
         if (animate && mNewNotificationCount != 0) {
-            if (mNewNotificationIndicator.getAnimation() != null) {
-                mNewNotificationIndicator.getAnimation().cancel();
+            if (mBinding.newNotificationIndicator.getAnimation() != null) {
+                mBinding.newNotificationIndicator.getAnimation().cancel();
             }
 
             Animation anim = AnimationUtils.loadAnimation(mActivity, R.anim.slide_up);
             anim.setAnimationListener(new AnimationListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    mNewNotificationIndicator.setTranslationY(-1.5f * mNewNotificationIndicator.getHeight());
+                    mBinding.newNotificationIndicator.setTranslationY(-1.5f * mBinding.newNotificationIndicator.getHeight());
                 }
             });
 
-            mNewNotificationIndicator.setTranslationY(0.0f);
-            mNewNotificationIndicator.startAnimation(anim);
+            mBinding.newNotificationIndicator.setTranslationY(0.0f);
+            mBinding.newNotificationIndicator.startAnimation(anim);
         } else {
-            mNewNotificationIndicator.setTranslationY(-1.5f * mNewNotificationIndicator.getHeight());
+            mBinding.newNotificationIndicator.setTranslationY(-1.5f * mBinding.newNotificationIndicator.getHeight());
         }
     }
 
@@ -126,9 +135,9 @@ public class RecentNotificationsListBinder extends RecyclerViewBinder {
         BaseNotification notification = event.getNotification();
         notification.parseMessageData();
         addItemToBeginningOfList(notification.renderToViewModel(mActivity, null));
-        if (mRecyclerView.computeVerticalScrollOffset() == 0) {
+        if (mBinding.list.computeVerticalScrollOffset() == 0) {
             mNewNotificationCount = 0;
-            mRecyclerView.scrollToPosition(0);
+            mBinding.list.scrollToPosition(0);
         } else {
             mNewNotificationCount++;
             updateNewNotificationIndicator();
@@ -158,13 +167,8 @@ public class RecentNotificationsListBinder extends RecyclerViewBinder {
         mAdapter.notifyItemInserted(0);
         mAdapter.setAutoDataSetChanged(true);
 
-        if (mProgressBar != null) {
-            mProgressBar.setVisibility(View.GONE);
-        }
-
-        if (mRecyclerView != null) {
-            mRecyclerView.setVisibility(View.VISIBLE);
-        }
+        mBinding.progress.setVisibility(View.GONE);
+        mBinding.list.setVisibility(View.VISIBLE);
         mNoDataBinder.unbindData();
 
         setDataBound(true);

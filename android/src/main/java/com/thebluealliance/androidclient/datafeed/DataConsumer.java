@@ -31,7 +31,7 @@ public interface DataConsumer<T> {
     void onComplete();
 
     /**
-     * Called for ButterKnife Injection
+     * Called for view binding
      */
     @UiThread
     void bindViews();

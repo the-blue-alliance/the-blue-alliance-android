@@ -13,88 +13,16 @@ import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.gridlayout.widget.GridLayout;
-
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.databinding.MatchBreakdown2017Binding;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class MatchBreakdownView2017 extends AbstractMatchBreakdownView {
-
-    @BindView(R.id.breakdown2017_container)                  GridLayout breakdownContainer;
-
-    @BindView(R.id.breakdown_red1)                           TextView red1;
-    @BindView(R.id.breakdown_blue1)                          TextView blue1;
-    @BindView(R.id.breakdown_red2)                           TextView red2;
-    @BindView(R.id.breakdown_blue2)                          TextView blue2;
-    @BindView(R.id.breakdown_red3)                           TextView red3;
-    @BindView(R.id.breakdown_blue3)                          TextView blue3;
-
-    @BindView(R.id.breakdown2017_red_auto_mobility)          TextView redMobility;
-    @BindView(R.id.breakdown2017_blue_auto_mobility)         TextView blueMobility;
-    @BindView(R.id.breakdown2017_red_auto_fuel_high)         TextView redAutoFuelHigh;
-    @BindView(R.id.breakdown2017_red_auto_fuel_low)          TextView redAutoFuelLow;
-    @BindView(R.id.breakdown2017_blue_auto_fuel_high)        TextView blueAutoFuelHigh;
-    @BindView(R.id.breakdown2017_blue_auto_fuel_low)         TextView blueAutoFuelLow;
-    @BindView(R.id.breakdown2017_red_auto_pressure)          TextView redAutoPressure;
-    @BindView(R.id.breakdown2017_blue_auto_pressure)         TextView blueAutoPressure;
-    @BindView(R.id.breakdown2017_auto_rotor1_red)            ImageView redAutoRotor1;
-    @BindView(R.id.breakdown2017_auto_rotor2_red)            ImageView redAutoRotor2;
-    @BindView(R.id.breakdown2017_auto_rotor1_blue)           ImageView blueAutoRotor1;
-    @BindView(R.id.breakdown2017_auto_rotor2_blue)           ImageView blueAutoRotor2;
-    @BindView(R.id.breakdown2017_red_auto_rotor)             TextView redAutoRotorPoints;
-    @BindView(R.id.breakdown2017_blue_auto_rotor)            TextView blueAutoRotorPoints;
-    @BindView(R.id.breakdown_auto_total_red)                 TextView redAutoTotal;
-    @BindView(R.id.breakdown_auto_total_blue)                TextView blueAutoTotal;
-
-    @BindView(R.id.breakdown2017_red_teleop_fuel_high)       TextView redTeleopFuelHigh;
-    @BindView(R.id.breakdown2017_red_teleop_fuel_low)        TextView redTeleopFuelLow;
-    @BindView(R.id.breakdown2017_blue_teleop_fuel_high)      TextView blueTeleopFuelHigh;
-    @BindView(R.id.breakdown2017_blue_teleop_fuel_low)       TextView blueTeleopFuelLow;
-    @BindView(R.id.breakdown2017_red_teleop_pressure)        TextView redTeleopPressure;
-    @BindView(R.id.breakdown2017_blue_teleop_pressure)       TextView blueTeleopPressure;
-
-    @BindView(R.id.breakdown2017_teleop_rotor1_red)          ImageView redTeleopRotor1;
-    @BindView(R.id.breakdown2017_teleop_rotor2_red)          ImageView redTeleopRotor2;
-    @BindView(R.id.breakdown2017_teleop_rotor3_red)          ImageView redTeleopRotor3;
-    @BindView(R.id.breakdown2017_teleop_rotor4_red)          ImageView redTeleopRotor4;
-    @BindView(R.id.breakdown2017_teleop_rotor1_blue)         ImageView blueTeleopRotor1;
-    @BindView(R.id.breakdown2017_teleop_rotor2_blue)         ImageView blueTeleopRotor2;
-    @BindView(R.id.breakdown2017_teleop_rotor3_blue)         ImageView blueTeleopRotor3;
-    @BindView(R.id.breakdown2017_teleop_rotor4_blue)         ImageView blueTeleopRotor4;
-    @BindView(R.id.breakdown2017_red_teleop_rotor)           TextView redTeleopRotor;
-    @BindView(R.id.breakdown2017_blue_teleop_rotor)          TextView blueTeleopRotor;
-
-    @BindView(R.id.breakdown2017_red_teleop_takeoff)         TextView redTeleopTakeoff;
-    @BindView(R.id.breakdown2017_blue_teleop_takeoff)        TextView blueTeleopTakeoff;
-    @BindView(R.id.breakdown_teleop_total_red)               TextView redTeleopTotal;
-    @BindView(R.id.breakdown_teleop_total_blue)              TextView blueTeleopTotal;
-
-    @BindView(R.id.breakdown2017_red_pressure_icon)          ImageView redPressureIcon;
-    @BindView(R.id.breakdown2017_blue_pressure_icon)         ImageView bluePressureIcon;
-    @BindView(R.id.breakdown2017_red_pressure_reached)       TextView redPressureBonus;
-    @BindView(R.id.breakdown2017_blue_pressure_reached)      TextView bluePressureBonus;
-
-    @BindView(R.id.breakdown2017_red_all_rotors_icon)        ImageView redRotorsIcon;
-    @BindView(R.id.breakdown2017_blue_all_rotors_icon)       ImageView blueRotorsIcon;
-    @BindView(R.id.breakdown2017_red_all_rotors_points)      TextView redRotorBonus;
-    @BindView(R.id.breakdown2017_blue_all_rotors_points)     TextView blueRotorBonus;
-
-    @BindView(R.id.breakdown_fouls_red)                      TextView foulsRed;
-    @BindView(R.id.breakdown_fouls_blue)                     TextView foulsBlue;
-    @BindView(R.id.breakdown_adjust_red)                     TextView adjustRed;
-    @BindView(R.id.breakdown_adjust_blue)                    TextView adjustBlue;
-    @BindView(R.id.breakdown_total_red)                      TextView totalRed;
-    @BindView(R.id.breakdown_total_blue)                     TextView totalBlue;
-    @BindView(R.id.breakdown_red_rp)                         TextView rpRed;
-    @BindView(R.id.breakdown_blue_rp)                        TextView rpBlue;
-    @BindView(R.id.breakdown_rp_header)                      TextView rpHeader;
+    private MatchBreakdown2017Binding mBinding;
 
     private static final String AUTO_ROTOR_FORMAT = "rotor%1$dAuto";
     private static final String TELEOP_ROTOR_FORMAT = "rotor%1$dEngaged";
@@ -113,8 +41,7 @@ public class MatchBreakdownView2017 extends AbstractMatchBreakdownView {
 
     @Override
     void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.match_breakdown_2017, this, true);
-        ButterKnife.bind(this);
+        mBinding = MatchBreakdown2017Binding.inflate(LayoutInflater.from(getContext()), this, true);
     }
 
     @Override
@@ -124,7 +51,7 @@ public class MatchBreakdownView2017 extends AbstractMatchBreakdownView {
                                 JsonObject scoreData) {
         if (scoreData == null || scoreData.entrySet().isEmpty()
             || allianceData == null || allianceData.getRed() == null || allianceData.getBlue() == null) {
-            breakdownContainer.setVisibility(GONE);
+            mBinding.breakdown2017Container.setVisibility(GONE);
             return false;
         }
 
@@ -136,98 +63,98 @@ public class MatchBreakdownView2017 extends AbstractMatchBreakdownView {
         int redRp = 0;
         int blueRp = 0;
 
-        red1.setText(teamNumberFromKey(redTeams.get(0)));
-        red2.setText(teamNumberFromKey(redTeams.get(1)));
-        red3.setText(teamNumberFromKey(redTeams.get(2)));
+        mBinding.breakdownRed1.setText(teamNumberFromKey(redTeams.get(0)));
+        mBinding.breakdownRed2.setText(teamNumberFromKey(redTeams.get(1)));
+        mBinding.breakdownRed3.setText(teamNumberFromKey(redTeams.get(2)));
 
-        blue1.setText(teamNumberFromKey(blueTeams.get(0)));
-        blue2.setText(teamNumberFromKey(blueTeams.get(1)));
-        blue3.setText(teamNumberFromKey(blueTeams.get(2)));
+        mBinding.breakdownBlue1.setText(teamNumberFromKey(blueTeams.get(0)));
+        mBinding.breakdownBlue2.setText(teamNumberFromKey(blueTeams.get(1)));
+        mBinding.breakdownBlue3.setText(teamNumberFromKey(blueTeams.get(2)));
 
         /* Auto Mobility */
-        redMobility.setText(getIntDefault(redData, "autoMobilityPoints"));
-        blueMobility.setText(getIntDefault(blueData, "autoMobilityPoints"));
+        mBinding.breakdown2017RedAutoMobility.setText(getIntDefault(redData, "autoMobilityPoints"));
+        mBinding.breakdown2017BlueAutoMobility.setText(getIntDefault(blueData, "autoMobilityPoints"));
 
         /* Auto Fuel */
-        redAutoFuelHigh.setText(getIntDefault(redData, "autoFuelHigh"));
-        blueAutoFuelHigh.setText(getIntDefault(blueData, "autoFuelHigh"));
-        redAutoFuelLow.setText(getIntDefault(redData, "autoFuelLow"));
-        blueAutoFuelLow.setText(getIntDefault(blueData, "autoFuelLow"));
-        redAutoPressure.setText(getIntDefault(redData, "autoFuelPoints"));
-        blueAutoPressure.setText(getIntDefault(blueData, "autoFuelPoints"));
+        mBinding.breakdown2017RedAutoFuelHigh.setText(getIntDefault(redData, "autoFuelHigh"));
+        mBinding.breakdown2017BlueAutoFuelHigh.setText(getIntDefault(blueData, "autoFuelHigh"));
+        mBinding.breakdown2017RedAutoFuelLow.setText(getIntDefault(redData, "autoFuelLow"));
+        mBinding.breakdown2017BlueAutoFuelLow.setText(getIntDefault(blueData, "autoFuelLow"));
+        mBinding.breakdown2017RedAutoPressure.setText(getIntDefault(redData, "autoFuelPoints"));
+        mBinding.breakdown2017BlueAutoPressure.setText(getIntDefault(blueData, "autoFuelPoints"));
 
         /* Auto Rotors */
-        setViewVisibility(redAutoRotor1, getBooleanDefault(redData, "rotor1Auto"));
-        setViewVisibility(redAutoRotor2, getBooleanDefault(redData, "rotor2Auto"));
-        setViewVisibility(blueAutoRotor1, getBooleanDefault(blueData, "rotor1Auto"));
-        setViewVisibility(blueAutoRotor2, getBooleanDefault(blueData, "rotor2Auto"));
-        redAutoRotorPoints.setText(getIntDefault(redData, "autoRotorPoints"));
-        blueAutoRotorPoints.setText(getIntDefault(blueData, "autoRotorPoints"));
+        setViewVisibility(mBinding.breakdown2017AutoRotor1Red, getBooleanDefault(redData, "rotor1Auto"));
+        setViewVisibility(mBinding.breakdown2017AutoRotor2Red, getBooleanDefault(redData, "rotor2Auto"));
+        setViewVisibility(mBinding.breakdown2017AutoRotor1Blue, getBooleanDefault(blueData, "rotor1Auto"));
+        setViewVisibility(mBinding.breakdown2017AutoRotor2Blue, getBooleanDefault(blueData, "rotor2Auto"));
+        mBinding.breakdown2017RedAutoRotor.setText(getIntDefault(redData, "autoRotorPoints"));
+        mBinding.breakdown2017BlueAutoRotor.setText(getIntDefault(blueData, "autoRotorPoints"));
 
         /* Auto Total */
-        redAutoTotal.setText(getIntDefault(redData, "autoPoints"));
-        blueAutoTotal.setText(getIntDefault(blueData, "autoPoints"));
+        mBinding.breakdownAutoTotalRed.setText(getIntDefault(redData, "autoPoints"));
+        mBinding.breakdownAutoTotalBlue.setText(getIntDefault(blueData, "autoPoints"));
 
         /* Teleop Fuel */
-        redTeleopFuelHigh.setText(getIntDefault(redData, "teleopFuelHigh"));
-        redTeleopFuelLow.setText(getIntDefault(redData, "teleopFuelLow"));
-        blueTeleopFuelHigh.setText(getIntDefault(blueData, "teleopFuelHigh"));
-        blueTeleopFuelLow.setText(getIntDefault(blueData, "teleopFuelLow"));
-        redTeleopPressure.setText(getIntDefault(redData, "teleopFuelPoints"));
-        blueTeleopPressure.setText(getIntDefault(blueData, "teleopFuelPoints"));
+        mBinding.breakdown2017RedTeleopFuelHigh.setText(getIntDefault(redData, "teleopFuelHigh"));
+        mBinding.breakdown2017RedTeleopFuelLow.setText(getIntDefault(redData, "teleopFuelLow"));
+        mBinding.breakdown2017BlueTeleopFuelHigh.setText(getIntDefault(blueData, "teleopFuelHigh"));
+        mBinding.breakdown2017BlueTeleopFuelLow.setText(getIntDefault(blueData, "teleopFuelLow"));
+        mBinding.breakdown2017RedTeleopPressure.setText(getIntDefault(redData, "teleopFuelPoints"));
+        mBinding.breakdown2017BlueTeleopPressure.setText(getIntDefault(blueData, "teleopFuelPoints"));
 
         /* Teleop Rotors */
-        setRotorView(redTeleopRotor1, redData, 1);
-        setRotorView(redTeleopRotor2, redData, 2);
-        setRotorView(redTeleopRotor3, redData, 3);
-        setRotorView(redTeleopRotor4, redData, 4);
-        setRotorView(blueTeleopRotor1, blueData, 1);
-        setRotorView(blueTeleopRotor2, blueData, 2);
-        setRotorView(blueTeleopRotor3, blueData, 3);
-        setRotorView(blueTeleopRotor4, blueData, 4);
-        redTeleopRotor.setText(getIntDefault(redData, "teleopRotorPoints"));
-        blueTeleopRotor.setText(getIntDefault(blueData, "teleopRotorPoints"));
+        setRotorView(mBinding.breakdown2017TeleopRotor1Red, redData, 1);
+        setRotorView(mBinding.breakdown2017TeleopRotor2Red, redData, 2);
+        setRotorView(mBinding.breakdown2017TeleopRotor3Red, redData, 3);
+        setRotorView(mBinding.breakdown2017TeleopRotor4Red, redData, 4);
+        setRotorView(mBinding.breakdown2017TeleopRotor1Blue, blueData, 1);
+        setRotorView(mBinding.breakdown2017TeleopRotor2Blue, blueData, 2);
+        setRotorView(mBinding.breakdown2017TeleopRotor3Blue, blueData, 3);
+        setRotorView(mBinding.breakdown2017TeleopRotor4Blue, blueData, 4);
+        mBinding.breakdown2017RedTeleopRotor.setText(getIntDefault(redData, "teleopRotorPoints"));
+        mBinding.breakdown2017BlueTeleopRotor.setText(getIntDefault(blueData, "teleopRotorPoints"));
 
         /* Takeoff Points */
-        redTeleopTakeoff.setText(getIntDefault(redData, "teleopTakeoffPoints"));
-        blueTeleopTakeoff.setText(getIntDefault(blueData, "teleopTakeoffPoints"));
+        mBinding.breakdown2017RedTeleopTakeoff.setText(getIntDefault(redData, "teleopTakeoffPoints"));
+        mBinding.breakdown2017BlueTeleopTakeoff.setText(getIntDefault(blueData, "teleopTakeoffPoints"));
 
         /* Teleop Total */
-        redTeleopTotal.setText(getIntDefault(redData, "teleopPoints"));
-        blueTeleopTotal.setText(getIntDefault(blueData, "teleopPoints"));
+        mBinding.breakdownTeleopTotalRed.setText(getIntDefault(redData, "teleopPoints"));
+        mBinding.breakdownTeleopTotalBlue.setText(getIntDefault(blueData, "teleopPoints"));
 
         /* Pressure Bonus */
-        setPressureBonus(res, redPressureIcon, redPressureBonus, redData);
-        setPressureBonus(res, bluePressureIcon, bluePressureBonus, blueData);
+        setPressureBonus(res, mBinding.breakdown2017RedPressureIcon, mBinding.breakdown2017RedPressureReached, redData);
+        setPressureBonus(res, mBinding.breakdown2017BluePressureIcon, mBinding.breakdown2017BluePressureReached, blueData);
 
         /* Rotor Bonus */
-        setRotorBonus(res, redRotorsIcon, redRotorBonus, redData);
-        setRotorBonus(res, blueRotorsIcon, blueRotorBonus, blueData);
+        setRotorBonus(res, mBinding.breakdown2017RedAllRotorsIcon, mBinding.breakdown2017RedAllRotorsPoints, redData);
+        setRotorBonus(res, mBinding.breakdown2017BlueAllRotorsIcon, mBinding.breakdown2017BlueAllRotorsPoints, blueData);
 
         /* Overall Stuff */
-        foulsRed.setText(res.getString(R.string.breakdown_foul_format_add,
+        mBinding.breakdownFoulsRed.setText(res.getString(R.string.breakdown_foul_format_add,
                                        getIntDefaultValue(redData, "foulPoints")));
-        foulsBlue.setText(res.getString(R.string.breakdown_foul_format_add,
+        mBinding.breakdownFoulsBlue.setText(res.getString(R.string.breakdown_foul_format_add,
                                         getIntDefaultValue(blueData, "foulPoints")));
-        adjustRed.setText(getIntDefault(redData, "adjustPoints"));
-        adjustBlue.setText(getIntDefault(blueData, "adjustPoints"));
-        totalRed.setText(getIntDefault(redData, "totalPoints"));
-        totalBlue.setText(getIntDefault(blueData, "totalPoints"));
+        mBinding.breakdownAdjustRed.setText(getIntDefault(redData, "adjustPoints"));
+        mBinding.breakdownAdjustBlue.setText(getIntDefault(blueData, "adjustPoints"));
+        mBinding.breakdownTotalBlue.setText(getIntDefault(redData, "totalPoints"));
+        mBinding.breakdownTotalBlue.setText(getIntDefault(blueData, "totalPoints"));
 
         /* Show RPs earned, if needed */
         boolean showRp = !redData.get("tba_rpEarned").isJsonNull()
                          && !blueData.get("tba_rpEarned").isJsonNull();
 
         if (showRp) {
-            rpRed.setText(res.getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "tba_rpEarned")));
-            rpBlue.setText(res.getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "tba_rpEarned")));
+            mBinding.breakdownRedRp.setText(res.getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "tba_rpEarned")));
+            mBinding.breakdownBlueRp.setText(res.getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "tba_rpEarned")));
         } else {
-            rpRed.setVisibility(GONE);
-            rpBlue.setVisibility(GONE);
-            rpHeader.setVisibility(GONE);
+            mBinding.breakdownRedRp.setVisibility(GONE);
+            mBinding.breakdownBlueRp.setVisibility(GONE);
+            mBinding.breakdownRpHeader.setVisibility(GONE);
         }
 
-        breakdownContainer.setVisibility(VISIBLE);
+        mBinding.breakdown2017Container.setVisibility(VISIBLE);
         return true;
     }
 

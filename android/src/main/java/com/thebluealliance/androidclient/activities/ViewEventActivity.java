@@ -9,7 +9,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.ViewCompat;
 import androidx.viewpager.widget.ViewPager;
 
-import com.thebluealliance.androidclient.NfcUris;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -152,7 +151,6 @@ public class ViewEventActivity extends MyTBASettingsActivity
     @Override
     protected void onResume() {
         super.onResume();
-        setBeamUri(String.format(NfcUris.URI_EVENT, mEventKey));
         setShareUri(String.format(ShareUris.URI_EVENT, mEventKey));
 
         if (mOnNewIntentRunnable != null) {

@@ -1,6 +1,6 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 import android.content.res.Resources;

@@ -7,22 +7,17 @@ import android.view.ViewGroup;
 
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.GamedayFragmentPagerAdapter;
-import com.thebluealliance.androidclient.views.SlidingTabs;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import com.thebluealliance.androidclient.databinding.FragmentPagerWithTabsBinding;
 
 public class GamedayFragment extends Fragment {
 
     public static final String SELECTED_TAB = "selected_tab";
 
-    @BindView(R.id.pager) ViewPager mViewPager;
-    @BindView(R.id.tabs) SlidingTabs mTabs;
+    private FragmentPagerWithTabsBinding mBinding;
 
     private int mInitialTab;
 
@@ -48,24 +43,24 @@ public class GamedayFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_pager_with_tabs, container, false);
-        ButterKnife.bind(this, v);
+        mBinding = FragmentPagerWithTabsBinding.inflate(inflater, container, false);
+        View v = mBinding.getRoot();
 
         // Make this ridiculously big
-        mViewPager.setOffscreenPageLimit(50);
-        mViewPager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
+        mBinding.pager.setOffscreenPageLimit(50);
+        mBinding.pager.setPageMargin(Utilities.getPixelsFromDp(getActivity(), 16));
 
-        ViewCompat.setElevation(mTabs, getResources().getDimension(R.dimen.toolbar_elevation));
+        ViewCompat.setElevation(mBinding.tabs, getResources().getDimension(R.dimen.toolbar_elevation));
 
         /**
          * Fix for really strange bug. Menu bar items wouldn't appear only when navigated to from 'Events' in the nav drawer
          * Bug is some derivation of this: https://code.google.com/p/android/issues/detail?id=29472
          * So set the view pager's adapter in another thread to avoid a race condition, or something.
          */
-        mViewPager.post(() -> {
-            mViewPager.setAdapter(new GamedayFragmentPagerAdapter(getChildFragmentManager()));
-            mTabs.setViewPager(mViewPager);
-            mViewPager.setCurrentItem(mInitialTab);
+        mBinding.pager.post(() -> {
+            mBinding.pager.setAdapter(new GamedayFragmentPagerAdapter(getChildFragmentManager()));
+            mBinding.tabs.setViewPager(mBinding.pager);
+            mBinding.pager.setCurrentItem(mInitialTab);
         });
 
         return v;
@@ -74,8 +69,8 @@ public class GamedayFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mViewPager != null) {
-            outState.putInt(SELECTED_TAB, mViewPager.getCurrentItem());
+        if (mBinding != null) {
+            outState.putInt(SELECTED_TAB, mBinding.pager.getCurrentItem());
         }
     }
 }

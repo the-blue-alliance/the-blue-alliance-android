@@ -3,6 +3,8 @@ package com.thebluealliance.androidclient.binders;
 import android.app.Activity;
 import android.view.View;
 
+import androidx.viewbinding.ViewBinding;
+
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.DataConsumer;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
@@ -16,11 +18,13 @@ import com.thebluealliance.androidclient.views.NoDataView;
  *
  * @param <T>
  */
-public abstract class AbstractDataBinder<T> implements DataConsumer<T> {
+public abstract class AbstractDataBinder<T, VB extends ViewBinding> implements DataConsumer<T> {
     Activity mActivity;
     protected NoDataBinder mNoDataBinder;
     protected NoDataViewParams mNoDataParams;
     View mRootView;
+
+    VB mBinding;
 
     private boolean mIsDataBound;
 

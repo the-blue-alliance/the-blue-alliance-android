@@ -18,7 +18,10 @@ public class ImageListElement extends ListElement {
     public final String imageUrl, linkUrl;
     public final Boolean isVideo;
 
-    public ImageListElement(String imageUrl, String linkUrl, Boolean isVideo) {
+    private final Picasso picasso;
+
+    public ImageListElement(Picasso picasso, String imageUrl, String linkUrl, Boolean isVideo) {
+        this.picasso = picasso;
         this.imageUrl = imageUrl;
         this.linkUrl = linkUrl;
         this.isVideo = isVideo;
@@ -50,7 +53,6 @@ public class ImageListElement extends ListElement {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Picasso picasso = Picasso.with(c);
         picasso.load(imageUrl).into(holder.image);
         if (isVideo) {
             holder.youtubePlayIcon.setVisibility(View.VISIBLE);

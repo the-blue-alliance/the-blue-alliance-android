@@ -2,19 +2,17 @@ package com.thebluealliance.androidclient.itemviews;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.databinding.ListItemSummaryBinding;
 import com.thebluealliance.androidclient.viewmodels.LabelValueViewModel;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import io.nlopez.smartadapters.views.BindableFrameLayout;
+import io.nlopez.smartadapters.views.BindableLinearLayout;
 
-public class LabelValueItemView extends BindableFrameLayout<LabelValueViewModel> {
+public class LabelValueItemView extends BindableLinearLayout<LabelValueViewModel> {
 
-    @BindView(R.id.label) TextView label;
-    @BindView(R.id.value) TextView value;
+    private ListItemSummaryBinding mBinding;
 
     public LabelValueItemView(Context context) {
         super(context);
@@ -25,14 +23,19 @@ public class LabelValueItemView extends BindableFrameLayout<LabelValueViewModel>
     }
 
     @Override public void onViewInflated() {
-        ButterKnife.bind(this);
+        mBinding = ListItemSummaryBinding.bind(this);
     }
 
     @Override public void bind(LabelValueViewModel model) {
-        label.setText(model.getLabel());
-        value.setText(model.getValue());
+        mBinding.label.setText(model.getLabel());
+        mBinding.value.setText(model.getValue());
         if (model.getBoldText()) {
-            value.setTypeface(null, Typeface.BOLD);
+            mBinding.value.setTypeface(null, Typeface.BOLD);
         }
+    }
+
+    @Override
+    public int getOrientation() {
+        return LinearLayout.VERTICAL;
     }
 }

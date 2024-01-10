@@ -11,8 +11,6 @@ import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,8 +21,8 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
+import com.thebluealliance.androidclient.databinding.ActivityRedownloadBinding;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
-import com.thebluealliance.androidclient.views.DisableSwipeViewPager;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,10 +33,6 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.Unbinder;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -49,20 +43,7 @@ public class RedownloadActivity extends AppCompatActivity
     private static final String LOADING_COMPLETE = "loading_complete";
     private static final String LOAD_TASK_UUID = "load_task_uuid";
 
-    @BindView(R.id.view_pager)
-    DisableSwipeViewPager viewPager;
-
-    @BindView(R.id.loading_message)
-    TextView loadingMessage;
-
-    @BindView(R.id.loading_progress_bar)
-    ProgressBar loadingProgressBar;
-
-    @BindView(R.id.continue_to_end)
-    View continueToEndButton;
-
-    @BindView(R.id.changelog)
-    TextView changelog;
+    private ActivityRedownloadBinding mBinding;
 
     private String currentLoadingMessage = "";
     private @Nullable UUID dataLoadTask = null;
@@ -71,13 +52,11 @@ public class RedownloadActivity extends AppCompatActivity
 
     @Inject SharedPreferences mPreferences;
 
-    private Unbinder unbinder;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_redownload);
-        unbinder = ButterKnife.bind(this);
+        mBinding = ActivityRedownloadBinding.inflate(getLayoutInflater());
+        setContentView(mBinding.getRoot());
 
         // Extract relevant data from the intent
         Bundle extras = getIntent().getExtras();
@@ -85,9 +64,16 @@ public class RedownloadActivity extends AppCompatActivity
             mDataToLoad = extras.getShortArray(LoadTBADataWorker.DATA_TO_LOAD);
         }
 
-        viewPager.setSwipeEnabled(false);
-        viewPager.setOffscreenPageLimit(10);
-        viewPager.setAdapter(new FirstLaunchPagerAdapter(this));
+        mBinding.viewPager.setSwipeEnabled(false);
+        mBinding.viewPager.setOffscreenPageLimit(10);
+        mBinding.viewPager.setAdapter(new FirstLaunchPagerAdapter(this));
+
+        mBinding.welcomeNextPage.setOnClickListener((View view) -> beginLoadingIfConnected());
+        mBinding.continueToEnd.setOnClickListener((View view) -> mBinding.viewPager.setCurrentItem((2)));
+        mBinding.finish.setOnClickListener((View view) -> {
+            startActivity(new Intent(this, HomeActivity.class));
+            finish();
+        });
 
         // Setup the changelog
         try {
@@ -102,13 +88,13 @@ public class RedownloadActivity extends AppCompatActivity
                     line = br.readLine();
                 }
                 String everything = sb.toString();
-                changelog.setText(Html.fromHtml(everything));
+                mBinding.changelog.setText(Html.fromHtml(everything));
             } finally {
                 br.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            changelog.setText("Error reading changelog file.");
+            mBinding.changelog.setText("Error reading changelog file.");
         }
 
         // If the activity is being recreated after a config change, restore the message that was
@@ -116,7 +102,7 @@ public class RedownloadActivity extends AppCompatActivity
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(CURRENT_LOADING_MESSAGE_KEY)) {
                 currentLoadingMessage = savedInstanceState.getString(CURRENT_LOADING_MESSAGE_KEY);
-                loadingMessage.setText(currentLoadingMessage);
+                mBinding.loadingMessage.setText(currentLoadingMessage);
             }
 
             if (savedInstanceState.containsKey(LOADING_COMPLETE)) {
@@ -135,18 +121,10 @@ public class RedownloadActivity extends AppCompatActivity
         */
 
         if (isDataFinishedLoading) {
-            loadingProgressBar.setVisibility(View.GONE);
-            loadingMessage.setVisibility(View.GONE);
-            continueToEndButton.setVisibility(View.VISIBLE);
-            continueToEndButton.setAlpha(1.0f);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (unbinder != null) {
-            unbinder.unbind();
+            mBinding.loadingProgressBar.setVisibility(View.GONE);
+            mBinding.loadingMessage.setVisibility(View.GONE);
+            mBinding.continueToEnd.setVisibility(View.VISIBLE);
+            mBinding.continueToEnd.setAlpha(1.0f);
         }
     }
 
@@ -160,25 +138,9 @@ public class RedownloadActivity extends AppCompatActivity
         }
     }
 
-    @OnClick(R.id.welcome_next_page)
-    public void onWelcomeNextPageClick(View view) {
-        beginLoadingIfConnected();
-    }
-
-    @OnClick(R.id.continue_to_end)
-    public void onContinueToEndClick(View view) {
-        viewPager.setCurrentItem(2);
-    }
-
-    @OnClick(R.id.finish)
-    public void onFinishClick(View view) {
-        startActivity(new Intent(this, HomeActivity.class));
-        finish();
-    }
-
     private void beginLoadingIfConnected() {
         if (ConnectionDetector.isConnectedToInternet(this)) {
-            viewPager.setCurrentItem(1);
+            mBinding.viewPager.setCurrentItem(1);
             beginLoading();
         } else {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -214,7 +176,7 @@ public class RedownloadActivity extends AppCompatActivity
                 .apply();
 
         // Return to the first page
-        viewPager.setCurrentItem(0);
+        mBinding.viewPager.setCurrentItem(0);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
@@ -249,33 +211,33 @@ public class RedownloadActivity extends AppCompatActivity
 
         isDataFinishedLoading = true;
 
-        loadingMessage.setText("Loading complete");
+        mBinding.loadingMessage.setText("Loading complete");
 
         // After two seconds, fade out the message and spinner and fade in the "continue" button
-        loadingMessage.postDelayed(() -> {
+        mBinding.loadingMessage.postDelayed(() -> {
             ValueAnimator fadeOutAnimation = ValueAnimator.ofFloat(1.0f, 0.0f);
             fadeOutAnimation.addUpdateListener(animation -> {
-                loadingMessage.setAlpha((float) animation.getAnimatedValue());
-                loadingProgressBar.setAlpha((float) animation.getAnimatedValue());
+                mBinding.loadingMessage.setAlpha((float) animation.getAnimatedValue());
+                mBinding.loadingProgressBar.setAlpha((float) animation.getAnimatedValue());
             });
             fadeOutAnimation.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    loadingMessage.setVisibility(View.GONE);
-                    loadingProgressBar.setVisibility(View.GONE);
+                    mBinding.loadingMessage.setVisibility(View.GONE);
+                    mBinding.loadingProgressBar.setVisibility(View.GONE);
                 }
             });
             fadeOutAnimation.setDuration(250);
 
             ValueAnimator fadeInAnimation = ValueAnimator.ofFloat(0.0f, 1.0f);
             fadeInAnimation.addUpdateListener(animation -> {
-                continueToEndButton.setAlpha((float) animation.getAnimatedValue());
+                mBinding.continueToEnd.setAlpha((float) animation.getAnimatedValue());
             });
             fadeInAnimation.addListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    continueToEndButton.setAlpha(0.0f);
-                    continueToEndButton.setVisibility(View.VISIBLE);
+                    mBinding.continueToEnd.setAlpha(0.0f);
+                    mBinding.continueToEnd.setVisibility(View.VISIBLE);
                 }
             });
             fadeInAnimation.setDuration(250);
@@ -289,7 +251,7 @@ public class RedownloadActivity extends AppCompatActivity
 
     private void onConnectionLost() {
         // Scroll to first page
-        viewPager.setCurrentItem(0);
+        mBinding.viewPager.setCurrentItem(0);
 
         // Cancel task
         LoadTBADataWorker.cancel(this);
@@ -316,7 +278,7 @@ public class RedownloadActivity extends AppCompatActivity
             return;
         }
         currentLoadingMessage = message;
-        loadingMessage.setText(message);
+        mBinding.loadingMessage.setText(message);
     }
 
     public void onProgressUpdate(LoadTBADataWorker.LoadProgressInfo info) {

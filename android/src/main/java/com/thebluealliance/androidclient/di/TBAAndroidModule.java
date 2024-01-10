@@ -12,6 +12,7 @@ import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.config.LocalProperties;
 import com.thebluealliance.androidclient.database.Database;
@@ -94,6 +95,12 @@ public class TBAAndroidModule {
     @Provides @Singleton
     public Gson provideGson() {
         return getGson();
+    }
+
+    @Provides @Singleton
+    public Picasso providePicasso(@ApplicationContext Context context) {
+        return new Picasso.Builder(context)
+                .build();
     }
 
     @Provides

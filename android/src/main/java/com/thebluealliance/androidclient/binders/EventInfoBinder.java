@@ -9,18 +9,14 @@ import android.net.Uri;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.cardview.widget.CardView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.databinding.FragmentEventInfoBinding;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.eventbus.EventRankingsEvent;
 import com.thebluealliance.androidclient.eventbus.EventStatsEvent;
@@ -39,12 +35,9 @@ import org.greenrobot.eventbus.Subscribe;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import rx.android.schedulers.AndroidSchedulers;
 
-public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
+public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model, FragmentEventInfoBinding> {
 
     private LayoutInflater mInflater;
     private MatchRenderer mMatchRenderer;
@@ -53,33 +46,6 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
     @Inject SocialClickListener mSocialClickListener;
     @Inject EventInfoContainerClickListener mInfoClickListener;
-
-    @BindView(R.id.content) View content;
-    @BindView(R.id.event_name) TextView eventName;
-    @BindView(R.id.event_date) TextView eventDate;
-    @BindView(R.id.event_venue) TextView eventVenue;
-    @BindView(R.id.top_teams) TextView topTeams;
-    @BindView(R.id.top_oprs) TextView topOprs;
-    @BindView(R.id.top_teams_container) View topTeamsContainer;
-    @BindView(R.id.top_oprs_container) View topOprsContainer;
-    @BindView(R.id.progress) ProgressBar progressBar;
-    @BindView(R.id.event_date_container) View eventDateContainer;
-    @BindView(R.id.event_venue_container) View eventVenueContainer;
-    @BindView(R.id.event_website_container) View eventWebsiteContainer;
-    @BindView(R.id.event_website_title) TextView eventWebsiteTitle;
-    @BindView(R.id.event_twitter_container) View eventTwitterContainer;
-    @BindView(R.id.event_twitter_title) TextView eventTwitterTitle;
-    @BindView(R.id.event_youtube_container) View eventYoutubeContainer;
-    @BindView(R.id.event_youtube_title) TextView eventYoutubeTitle;
-    @BindView(R.id.event_cd_container) View eventCdContainer;
-    @BindView(R.id.last_match_view) FrameLayout lastMatchView;
-    @BindView(R.id.next_match_container) CardView nextMatchContainer;
-    @BindView(R.id.next_match_view) FrameLayout nextMatchView;
-    @BindView(R.id.last_match_container) CardView lastMatchContainer;
-    @BindView(R.id.event_webcast_container) FrameLayout webcastContainer;
-    @BindView((R.id.event_webcast_button)) Button webcastButton;
-
-    private Unbinder unbinder;
 
     @Inject
     public EventInfoBinder(MatchRenderer renderer,
@@ -99,7 +65,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @Override
     public void bindViews() {
         if (!mAreViewsBound) {
-            unbinder = ButterKnife.bind(this, mRootView);
+            mBinding = FragmentEventInfoBinding.bind(mRootView);
             mAreViewsBound = true;
         }
     }
@@ -115,66 +81,66 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
         mSocialClickListener.setModelKey(data.eventKey);
         mIsLive = data.isLive;
-        eventName.setText(data.nameString);
+        mBinding.eventName.setText(data.nameString);
         if (data.dateString == null || data.dateString.isEmpty()) {
-            eventDateContainer.setVisibility(View.GONE);
+            mBinding.eventDateContainer.setVisibility(View.GONE);
         } else {
-            eventDate.setText(data.dateString);
+            mBinding.eventDate.setText(data.dateString);
         }
 
         // Show a venue if it is available, otherwise show just the location. If neither is available, hide
         if (data.venueString != null && !data.venueString.isEmpty()) {
-            eventVenue.setText(data.venueString);
+            mBinding.eventVenue.setText(data.venueString);
         } else if (data.locationString != null && !data.locationString.isEmpty()) {
-            eventVenue.setText(data.locationString);
+            mBinding.eventVenue.setText(data.locationString);
         } else {
-            eventVenue.setText(R.string.no_location_available);
-            eventVenueContainer.setVisibility(View.GONE);
+            mBinding.eventVenue.setText(R.string.no_location_available);
+            mBinding.eventVenueContainer.setVisibility(View.GONE);
         }
 
         // setup social media intents
         // Default to showing the nav arrow in the venue view and the venue view being clickable
         // We need to set these again even though they're defined in XML in case we gain a location
         // or venue on a refresh and we're reusing the same view.
-        eventVenueContainer.setFocusable(true);
-        eventVenueContainer.setClickable(true);
-        eventVenueContainer.setOnClickListener(mSocialClickListener);
+        mBinding.eventVenueContainer.setFocusable(true);
+        mBinding.eventVenueContainer.setClickable(true);
+        mBinding.eventVenueContainer.setOnClickListener(mSocialClickListener);
 
         if (data.venueString != null && !data.venueString.isEmpty()) {
             // Set the tag to the event venue if it is available
-            eventVenueContainer.setTag("geo:0,0?q=" + Uri.encode(data.venueString));
+            mBinding.eventVenueContainer.setTag("geo:0,0?q=" + Uri.encode(data.venueString));
         } else if (data.locationString != null && !data.locationString.isEmpty()) {
             // Otherwise, use the location
-            eventVenueContainer.setTag("geo:0,0?q=" + Uri.encode(data.locationString));
+            mBinding.eventVenueContainer.setTag("geo:0,0?q=" + Uri.encode(data.locationString));
         } else {
             // If neither location nor venue are available, hide the nav arrow, remove the tag,
             // and set the view to not clickable so the user cannot interact with it.
             // It will contain the text "No location available".
-            eventVenueContainer.setTag(null);
-            eventVenueContainer.setFocusable(false);
-            eventVenueContainer.setClickable(false);
+            mBinding.eventVenueContainer.setTag(null);
+            mBinding.eventVenueContainer.setFocusable(false);
+            mBinding.eventVenueContainer.setClickable(false);
         }
 
         // If the event doesn't have a defined website, create a Google search for the event name
         if (data.eventWebsite != null && data.eventWebsite.isEmpty()) {
-            eventWebsiteContainer.setTag("https://www.google.com/search?q=" + Uri.encode(data.nameString));
-            eventWebsiteTitle.setText(R.string.find_event_on_google);
+            mBinding.eventWebsiteContainer.setTag("https://www.google.com/search?q=" + Uri.encode(data.nameString));
+            mBinding.eventWebsiteTitle.setText(R.string.find_event_on_google);
         } else {
-            eventWebsiteContainer.setTag(data.eventWebsite);
-            eventWebsiteTitle.setText(R.string.view_event_website);
+            mBinding.eventWebsiteContainer.setTag(data.eventWebsite);
+            mBinding.eventWebsiteTitle.setText(R.string.view_event_website);
         }
-        eventWebsiteContainer.setOnClickListener(mSocialClickListener);
+        mBinding.eventWebsiteContainer.setOnClickListener(mSocialClickListener);
 
-        eventTwitterContainer.setTag("https://twitter.com/search?q=%23" + data.eventKey);
-        eventTwitterTitle.setText(mActivity.getString(R.string.view_event_twitter, data.eventKey));
-        eventTwitterContainer.setOnClickListener(mSocialClickListener);
+        mBinding.eventTwitterContainer.setTag("https://twitter.com/search?q=%23" + data.eventKey);
+        mBinding.eventTwitterTitle.setText(mActivity.getString(R.string.view_event_twitter, data.eventKey));
+        mBinding.eventTwitterContainer.setOnClickListener(mSocialClickListener);
 
-        eventYoutubeContainer.setTag("https://www.youtube.com/results?search_query=" + data.eventKey);
-        eventYoutubeTitle.setText(mActivity.getString(R.string.view_event_youtube, data.eventKey));
-        eventYoutubeContainer.setOnClickListener(mSocialClickListener);
+        mBinding.eventYoutubeContainer.setTag("https://www.youtube.com/results?search_query=" + data.eventKey);
+        mBinding.eventYoutubeTitle.setText(mActivity.getString(R.string.view_event_youtube, data.eventKey));
+        mBinding.eventYoutubeContainer.setOnClickListener(mSocialClickListener);
 
-        eventCdContainer.setTag("https://www.chiefdelphi.com/search?q=category%3A11%20tags%3A" + data.eventKey);
-        eventCdContainer.setOnClickListener(mSocialClickListener);
+        mBinding.eventCdContainer.setTag("https://www.chiefdelphi.com/search?q=category%3A11%20tags%3A" + data.eventKey);
+        mBinding.eventCdTitle.setOnClickListener(mSocialClickListener);
 
         if (data.isLive && data.webcasts != null && data.webcasts.size() > 0) {
             if (data.webcasts.size() == 1) {
@@ -182,22 +148,22 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
                 JsonObject eventWebcast = data.webcasts.get(0).getAsJsonObject();
                 WebcastType webcastType = WebcastHelper.getType(eventWebcast.get("type")
                         .getAsString());
-                webcastButton.setText(webcastType.render(mActivity));
-                webcastButton.setOnClickListener(new WebcastClickListener(mActivity, data.eventKey,
+                mBinding.eventWebcastButton.setText(webcastType.render(mActivity));
+                mBinding.eventWebcastButton.setOnClickListener(new WebcastClickListener(mActivity, data.eventKey,
                         webcastType, eventWebcast, 1));
             } else {
-                webcastButton.setText(R.string.view_webcast_button);
-                webcastButton.setOnClickListener(v -> {
+                mBinding.eventWebcastButton.setText(R.string.view_webcast_button);
+                mBinding.eventWebcastButton.setOnClickListener(v -> {
                     Dialog chooserDialog = buildMultiWebcastDialog(data.webcasts, data.eventKey);
                     chooserDialog.show();
                 });
 
             }
-            webcastContainer.setVisibility(View.VISIBLE);
+            mBinding.eventWebcastContainer.setVisibility(View.VISIBLE);
         }
 
-        content.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.GONE);
+        mBinding.content.setVisibility(View.VISIBLE);
+        mBinding.progress.setVisibility(View.GONE);
 
         EventBus.getDefault().post(new ActionBarTitleEvent(data.actionBarTitle, data.actionBarSubtitle));
 
@@ -207,9 +173,7 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
 
     @Override
     public void onComplete() {
-        if (progressBar != null) {
-            progressBar.setVisibility(View.GONE);
-        }
+        mBinding.progress.setVisibility(View.GONE);
 
         if (!isDataBound()) {
             bindNoDataView();
@@ -230,16 +194,16 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @Override
     public void unbind(boolean unbindViews) {
         super.unbind(unbindViews);
-        if (unbindViews && mAreViewsBound && unbinder != null) {
-            unbinder.unbind();
+        if (unbindViews && mAreViewsBound) {
+            mBinding = null;
             mAreViewsBound = false;
         }
     }
 
     private void bindNoDataView() {
         try {
-            content.setVisibility(View.GONE);
-            progressBar.setVisibility(View.GONE);
+            mBinding.content.setVisibility(View.GONE);
+            mBinding.progress.setVisibility(View.GONE);
             mNoDataBinder.bindData(mNoDataParams);
         } catch (Exception e) {
             e.printStackTrace();
@@ -263,34 +227,34 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
         if (!mAreViewsBound) {
             bindViews();
         }
-        lastMatchView.setVisibility(View.VISIBLE);
-        lastMatchContainer.setVisibility(View.VISIBLE);
-        lastMatchView.removeAllViews();
-        lastMatchView.addView(match.getView(mActivity, mInflater, null));
+        mBinding.lastMatchView.setVisibility(View.VISIBLE);
+        mBinding.lastMatchContainer.setVisibility(View.VISIBLE);
+        mBinding.lastMatchView.removeAllViews();
+        mBinding.lastMatchView.addView(match.getView(mActivity, mInflater, null));
     }
 
     protected void showNextMatch(MatchListElement match) {
         if (!mAreViewsBound) {
             bindViews();
         }
-        nextMatchView.setVisibility(View.VISIBLE);
-        nextMatchContainer.setVisibility(View.VISIBLE);
-        nextMatchView.removeAllViews();
-        nextMatchView.addView(match.getView(mActivity, mInflater, null));
+        mBinding.nextMatchView.setVisibility(View.VISIBLE);
+        mBinding.nextMatchContainer.setVisibility(View.VISIBLE);
+        mBinding.nextMatchView.removeAllViews();
+        mBinding.nextMatchView.addView(match.getView(mActivity, mInflater, null));
     }
 
     protected void hideLastMatch() {
         if (!mAreViewsBound) {
             bindViews();
         }
-        lastMatchContainer.setVisibility(View.GONE);
+        mBinding.lastMatchContainer.setVisibility(View.GONE);
     }
 
     protected void hideNextMatch() {
         if (!mAreViewsBound) {
             bindViews();
         }
-        nextMatchContainer.setVisibility(View.GONE);
+        mBinding.nextMatchContainer.setVisibility(View.GONE);
     }
 
     @SuppressWarnings("unused")
@@ -318,12 +282,12 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @Subscribe
     public void onEventRankingsUpdated(EventRankingsEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
-            if (topTeamsContainer == null || topTeams == null) {
+            if (mBinding == null) {
                 return;
             }
-            topTeamsContainer.setVisibility(View.VISIBLE);
-            topTeamsContainer.setOnClickListener(mInfoClickListener);
-            topTeams.setText(Html.fromHtml(event.getRankString()));
+            mBinding.topTeamsContainer.setVisibility(View.VISIBLE);
+            mBinding.topTeamsContainer.setOnClickListener(mInfoClickListener);
+            mBinding.topTeams.setText(Html.fromHtml(event.getRankString()));
         });
     }
 
@@ -331,12 +295,12 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model> {
     @Subscribe
     public void onEventStatsUpdated(EventStatsEvent event) {
         AndroidSchedulers.mainThread().createWorker().schedule(() -> {
-            if (topOprsContainer == null || topOprs == null) {
+            if (mBinding == null) {
                 return;
             }
-            topOprsContainer.setVisibility(View.VISIBLE);
-            topOprsContainer.setOnClickListener(mInfoClickListener);
-            topOprs.setText(Html.fromHtml(event.getStatString()));
+            mBinding.topOprsContainer.setVisibility(View.VISIBLE);
+            mBinding.topOprsContainer.setOnClickListener(mInfoClickListener);
+            mBinding.topOprs.setText(Html.fromHtml(event.getStatString()));
         });
     }
 

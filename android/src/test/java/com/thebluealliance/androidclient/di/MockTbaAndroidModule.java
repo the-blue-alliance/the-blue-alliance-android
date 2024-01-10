@@ -1,5 +1,6 @@
 package com.thebluealliance.androidclient.di;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 import android.accounts.AccountManager;
@@ -9,6 +10,7 @@ import android.content.SharedPreferences;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWithMocks;
 
@@ -30,6 +32,11 @@ public class MockTbaAndroidModule {
     @Provides @Singleton
     public Gson provideGson() {
         return TBAAndroidModule.getGson();
+    }
+
+    @Provides @Singleton
+    public Picasso providePicasso() {
+        return mock(Picasso.class);
     }
 
     @Provides @Singleton

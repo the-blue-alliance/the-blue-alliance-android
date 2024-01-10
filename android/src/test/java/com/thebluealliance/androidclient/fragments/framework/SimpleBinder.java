@@ -3,8 +3,9 @@ package com.thebluealliance.androidclient.fragments.framework;
 import androidx.annotation.Nullable;
 
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
+import com.thebluealliance.androidclient.databinding.ListViewWithSpinnerBinding;
 
-public class SimpleBinder extends AbstractDataBinder<String> {
+public class SimpleBinder extends AbstractDataBinder<String, ListViewWithSpinnerBinding> {
 
     @Override
     public void updateData(@Nullable String data) {

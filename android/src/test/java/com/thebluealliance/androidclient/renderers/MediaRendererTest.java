@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.renderers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.models.Media;
@@ -12,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
@@ -20,6 +22,7 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 public class MediaRendererTest {
 
+    @Mock Picasso mPicasso;
     private String mMediaName;
     private MediaType mMediaType;
     private Media mMedia;
@@ -43,7 +46,7 @@ public class MediaRendererTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         mMedia = ModelMaker.getModel(Media.class, mMediaName);
-        mRenderer = new MediaRenderer();
+        mRenderer = new MediaRenderer(mPicasso);
     }
 
     @Test

@@ -15,104 +15,25 @@ import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-import androidx.gridlayout.widget.GridLayout;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.databinding.MatchBreakdown2020Binding;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class MatchBreakdownView2020 extends AbstractMatchBreakdownView {
-    @BindView(R.id.breakdown2020_container)                     GridLayout breakdownContainer;
-
-    @BindView(R.id.breakdown_red1)                              TextView red1;
-    @BindView(R.id.breakdown_blue1)                             TextView blue1;
-    @BindView(R.id.breakdown_red2)                              TextView red2;
-    @BindView(R.id.breakdown_blue2)                             TextView blue2;
-    @BindView(R.id.breakdown_red3)                              TextView red3;
-    @BindView(R.id.breakdown_blue3)                             TextView blue3;
-
-    @BindView(R.id.breakdown2020_red_init_line_robot1)          ImageView red1InitLine;
-    @BindView(R.id.breakdown2020_red_init_line_robot2)          ImageView red2InitLine;
-    @BindView(R.id.breakdown2020_red_init_line_robot3)          ImageView red3InitLine;
-    @BindView(R.id.breakdown2020_red_init_line_bonus)           TextView  redInitLineBonus;
-    @BindView(R.id.breakdown2020_blue_init_line_robot1)         ImageView blue1InitLine;
-    @BindView(R.id.breakdown2020_blue_init_line_robot2)         ImageView blue2InitLine;
-    @BindView(R.id.breakdown2020_blue_init_line_robot3)         ImageView blue3InitLine;
-    @BindView(R.id.breakdown2020_blue_init_line_bonus)          TextView  blueInitLineBonus;
-
-    @BindView(R.id.breakdown2020_red_auto_low_goal)             TextView redAutoLowGoal;
-    @BindView(R.id.breakdown2020_red_auto_outer_goal)           TextView redAutoOuterGoal;
-    @BindView(R.id.breakdown2020_red_auto_inner_goal)           TextView redAutoInnerGoal;
-    @BindView(R.id.breakdown2020_blue_auto_low_goal)            TextView blueAutoLowGoal;
-    @BindView(R.id.breakdown2020_blue_auto_outer_goal)          TextView blueAutoOuterGoal;
-    @BindView(R.id.breakdown2020_blue_auto_inner_goal)          TextView blueAutoInnerGoal;
-    @BindView(R.id.breakdown2020_red_auto_power_cell)           TextView redAutoPowerCell;
-    @BindView(R.id.breakdown2020_blue_auto_power_cell)          TextView blueAutoPowerCell;
-
-    @BindView(R.id.breakdown_auto_total_red)                    TextView redAutoTotal;
-    @BindView(R.id.breakdown_auto_total_blue)                   TextView blueAutoTotal;
-
-    @BindView(R.id.breakdown2020_red_teleop_low_goal)           TextView redTeleopLowGoal;
-    @BindView(R.id.breakdown2020_red_teleop_outer_goal)         TextView redTeleopOuterGoal;
-    @BindView(R.id.breakdown2020_red_teleop_inner_goal)         TextView redTeleopInnerGoal;
-    @BindView(R.id.breakdown2020_blue_teleop_low_goal)          TextView blueTelopLowGoal;
-    @BindView(R.id.breakdown2020_blue_teleop_outer_goal)        TextView blueTeleopOuterGoal;
-    @BindView(R.id.breakdown2020_blue_teleop_inner_goal)        TextView blueTeleopInnerGoal;
-    @BindView(R.id.breakdown2020_red_teleop_power_cell)         TextView redTeleopPowerCell;
-    @BindView(R.id.breakdown2020_blue_teleop_power_cell)        TextView blueTeleopPowerCell;
-    @BindView(R.id.breakdown2020_red_control_panel)             TextView redControlPanel;
-    @BindView(R.id.breakdown2020_blue_control_panel)            TextView blueControlPanel;
-
-    @BindView(R.id.breakdown2020_red_endgame_robot1)            TextView redEndgameRobot1;
-    @BindView(R.id.breakdown2020_red_endgame_robot2)            TextView redEndgameRobot2;
-    @BindView(R.id.breakdown2020_red_endgame_robot3)            TextView redEndgameRobot3;
-    @BindView(R.id.breakdown2020_blue_endgame_robot1)           TextView blueEndgameRobot1;
-    @BindView(R.id.breakdown2020_blue_endgame_robot2)           TextView blueEndgameRobot2;
-    @BindView(R.id.breakdown2020_blue_endgame_robot3)           TextView blueEndgameRobot3;
-    @BindView(R.id.breakdown2020_red_shield_generator)          TextView redShieldGenerator;
-    @BindView(R.id.breakdown2020_blue_shield_generator)         TextView blueShieldGenerator;
-    @BindView(R.id.breakdown_endgame_total_red)                 TextView redEndgameTotal;
-    @BindView(R.id.breakdown_endgame_total_blue)                TextView blueEndgameTotal;
-
-    @BindView(R.id.breakdown_teleop_total_red)                  TextView redTeleopTotal;
-    @BindView(R.id.breakdown_teleop_total_blue)                 TextView blueTeleopTotal;
-
-    @BindView(R.id.breakdown2020_red_stage1)                    ImageView redStage1;
-    @BindView(R.id.breakdown2020_red_stage2)                    ImageView redStage2;
-    @BindView(R.id.breakdown2020_red_stage3)                    ImageView redStage3;
-    @BindView(R.id.breakdown2020_red_stage3_rp)                 TextView redStage3Rp;
-    @BindView(R.id.breakdown2020_blue_stage1)                   ImageView blueStage1;
-    @BindView(R.id.breakdown2020_blue_stage2)                   ImageView blueStage2;
-    @BindView(R.id.breakdown2020_blue_stage3)                   ImageView blueStage3;
-    @BindView(R.id.breakdown2020_blue_stage3_rp)                TextView blueStage3Rp;
-
-    @BindView(R.id.breakdown2020_red_shield_generator_rp)       TextView redShieldGeneratorRp;
-    @BindView(R.id.breakdown2020_blue_shield_generator_rp)       TextView blueShieldGeneratorRp;
-
-    @BindView(R.id.breakdown_fouls_red)                         TextView foulsRed;
-    @BindView(R.id.breakdown_fouls_blue)                        TextView foulsBlue;
-    @BindView(R.id.breakdown_adjust_red)                        TextView adjustRed;
-    @BindView(R.id.breakdown_adjust_blue)                       TextView adjustBlue;
-    @BindView(R.id.breakdown_total_red)                         TextView totalRed;
-    @BindView(R.id.breakdown_total_blue)                        TextView totalBlue;
-    @BindView(R.id.breakdown_red_rp)                            TextView rpRed;
-    @BindView(R.id.breakdown_blue_rp)                           TextView rpBlue;
-    @BindView(R.id.breakdown_rp_header)                         TextView rpHeader;
-
+    private MatchBreakdown2020Binding mBinding;
     private Resources mResources;
 
-    private static @NonNull Map<String, Integer> ENDGAME_POINTS = ImmutableMap.of(
+    private static final @NonNull Map<String, Integer> ENDGAME_POINTS = ImmutableMap.of(
             "Park", 5,
             "Hang", 25);
-    private static int[] STAGE_DRAWABLES = {R.drawable.baseline_looks_one_black_24,
+    private static final int[] STAGE_DRAWABLES = {R.drawable.baseline_looks_one_black_24,
             R.drawable.baseline_looks_two_black_24,
             R.drawable.baseline_looks_3_black_24};
 
@@ -130,8 +51,7 @@ public class MatchBreakdownView2020 extends AbstractMatchBreakdownView {
 
     @Override
     void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.match_breakdown_2020, this, true);
-        ButterKnife.bind(this);
+        mBinding = MatchBreakdown2020Binding.inflate(LayoutInflater.from(getContext()), this, true);
     }
 
 
@@ -139,7 +59,7 @@ public class MatchBreakdownView2020 extends AbstractMatchBreakdownView {
     public boolean initWithData(MatchType matchType, String winningAlliance, IMatchAlliancesContainer allianceData, JsonObject scoreData) {
         if (scoreData == null || scoreData.entrySet().isEmpty()
                 || allianceData == null || allianceData.getRed() == null || allianceData.getBlue() == null) {
-            breakdownContainer.setVisibility(GONE);
+            mBinding.breakdown2020Container.setVisibility(GONE);
             return false;
         }
 
@@ -153,74 +73,74 @@ public class MatchBreakdownView2020 extends AbstractMatchBreakdownView {
         JsonObject blueData = scoreData.get("blue").getAsJsonObject();
 
         /* Red Teams */
-        red1.setText(teamNumberFromKey(redTeams.get(0)));
-        red2.setText(teamNumberFromKey(redTeams.get(1)));
-        red3.setText(teamNumberFromKey(redTeams.get(2)));
+        mBinding.breakdownRed1.setText(teamNumberFromKey(redTeams.get(0)));
+        mBinding.breakdownRed2.setText(teamNumberFromKey(redTeams.get(1)));
+        mBinding.breakdownRed3.setText(teamNumberFromKey(redTeams.get(2)));
 
         /* Blue Teams */
-        blue1.setText(teamNumberFromKey(blueTeams.get(0)));
-        blue2.setText(teamNumberFromKey(blueTeams.get(1)));
-        blue3.setText(teamNumberFromKey(blueTeams.get(2)));
+        mBinding.breakdownBlue1.setText(teamNumberFromKey(blueTeams.get(0)));
+        mBinding.breakdownBlue2.setText(teamNumberFromKey(blueTeams.get(1)));
+        mBinding.breakdownBlue3.setText(teamNumberFromKey(blueTeams.get(2)));
 
         /* Auto Initiation Line*/
-        setInitiationLine(redData, redInitLineBonus, red1InitLine, red2InitLine, red3InitLine);
-        setInitiationLine(blueData, blueInitLineBonus, blue1InitLine, blue2InitLine, blue3InitLine);
+        setInitiationLine(redData, mBinding.breakdown2020RedInitLineBonus, mBinding.breakdown2020RedInitLineRobot1, mBinding.breakdown2020RedInitLineRobot2, mBinding.breakdown2020RedInitLineRobot3);
+        setInitiationLine(blueData, mBinding.breakdown2020BlueInitLineBonus, mBinding.breakdown2020BlueInitLineRobot1, mBinding.breakdown2020BlueInitLineRobot2, mBinding.breakdown2020BlueInitLineRobot3);
 
         /* Auto Power Cells */
-        setPowerCells(redData, "auto", redAutoLowGoal, redAutoOuterGoal, redAutoInnerGoal, redAutoPowerCell);
-        setPowerCells(blueData, "auto", blueAutoLowGoal, blueAutoOuterGoal, blueAutoInnerGoal, blueAutoPowerCell);
+        setPowerCells(redData, "auto", mBinding.breakdown2020RedAutoLowGoal, mBinding.breakdown2020RedAutoOuterGoal, mBinding.breakdown2020RedAutoInnerGoal, mBinding.breakdown2020RedAutoPowerCell);
+        setPowerCells(blueData, "auto", mBinding.breakdown2020BlueAutoLowGoal, mBinding.breakdown2020BlueAutoOuterGoal, mBinding.breakdown2020BlueAutoInnerGoal, mBinding.breakdown2020BlueAutoPowerCell);
 
         /* Total Auto Points */
-        redAutoTotal.setText(getIntDefault(redData, "autoPoints"));
-        blueAutoTotal.setText(getIntDefault(blueData, "autoPoints"));
+        mBinding.breakdownAutoTotalRed.setText(getIntDefault(redData, "autoPoints"));
+        mBinding.breakdownAutoTotalBlue.setText(getIntDefault(blueData, "autoPoints"));
 
         /* Teleop Power Cell */
-        setPowerCells(redData, "teleop", redTeleopLowGoal, redTeleopOuterGoal, redTeleopInnerGoal, redTeleopPowerCell);
-        setPowerCells(blueData, "teleop", blueTelopLowGoal, blueTeleopOuterGoal, blueTeleopInnerGoal, blueTeleopPowerCell);
+        setPowerCells(redData, "teleop", mBinding.breakdown2020RedTeleopLowGoal, mBinding.breakdown2020RedTeleopOuterGoal, mBinding.breakdown2020RedTeleopInnerGoal, mBinding.breakdown2020RedTeleopPowerCell);
+        setPowerCells(blueData, "teleop", mBinding.breakdown2020BlueTeleopLowGoal, mBinding.breakdown2020BlueTeleopOuterGoal, mBinding.breakdown2020BlueTeleopInnerGoal, mBinding.breakdown2020BlueTeleopPowerCell);
 
         /* Control Panel */
-        redControlPanel.setText(getIntDefault(redData, "controlPanelPoints"));
-        blueControlPanel.setText(getIntDefault(blueData, "controlPanelPoints"));
+        mBinding.breakdown2020RedControlPanel.setText(getIntDefault(redData, "controlPanelPoints"));
+        mBinding.breakdown2020BlueControlPanel.setText(getIntDefault(blueData, "controlPanelPoints"));
 
         /* Endgame */
-        setEndgame(redData, redEndgameTotal, redShieldGenerator, redEndgameRobot1, redEndgameRobot2, redEndgameRobot3);
-        setEndgame(blueData, blueEndgameTotal, blueShieldGenerator, blueEndgameRobot1, blueEndgameRobot2, blueEndgameRobot3);
+        setEndgame(redData, mBinding.breakdownEndgameTotalRed, mBinding.breakdown2020RedShieldGenerator, mBinding.breakdown2020RedEndgameRobot1, mBinding.breakdown2020RedEndgameRobot2, mBinding.breakdown2020RedEndgameRobot3);
+        setEndgame(blueData, mBinding.breakdownEndgameTotalBlue, mBinding.breakdown2020BlueShieldGenerator, mBinding.breakdown2020BlueEndgameRobot1, mBinding.breakdown2020BlueEndgameRobot2, mBinding.breakdown2020BlueEndgameRobot3);
 
         /* Teleop Total */
-        redTeleopTotal.setText(getIntDefault(redData, "teleopPoints"));
-        blueTeleopTotal.setText(getIntDefault(blueData, "teleopPoints"));
+        mBinding.breakdownTeleopTotalRed.setText(getIntDefault(redData, "teleopPoints"));
+        mBinding.breakdownTeleopTotalBlue.setText(getIntDefault(blueData, "teleopPoints"));
 
         /* Stage Activations */
-        setStageActivations(redData, redStage3Rp, redStage1, redStage2, redStage3);
-        setStageActivations(blueData, blueStage3Rp, blueStage1, blueStage2, blueStage3);
+        setStageActivations(redData, mBinding.breakdown2020RedStage3Rp, mBinding.breakdown2020RedStage1, mBinding.breakdown2020RedStage2, mBinding.breakdown2020RedStage3);
+        setStageActivations(blueData, mBinding.breakdown2020BlueStage3Rp, mBinding.breakdown2020BlueStage1, mBinding.breakdown2020BlueStage2, mBinding.breakdown2020BlueStage3);
 
         /* Generator Operational */
-        setGeneratorOperational(redData, redShieldGeneratorRp);
-        setGeneratorOperational(blueData, blueShieldGeneratorRp);
+        setGeneratorOperational(redData, mBinding.breakdown2020RedShieldGeneratorRp);
+        setGeneratorOperational(blueData, mBinding.breakdown2020BlueShieldGeneratorRp);
 
         /* Fouls */
-        setFouls(redData, blueData, foulsRed);
-        setFouls(blueData, redData, foulsBlue);
+        setFouls(redData, blueData, mBinding.breakdownFoulsRed);
+        setFouls(blueData, redData, mBinding.breakdownFoulsBlue);
 
         /* Adjustment points */
-        adjustRed.setText(getIntDefault(redData, "adjustPoints"));
-        adjustBlue.setText(getIntDefault(blueData, "adjustPoints"));
+        mBinding.breakdownAdjustRed.setText(getIntDefault(redData, "adjustPoints"));
+        mBinding.breakdownAdjustBlue.setText(getIntDefault(blueData, "adjustPoints"));
 
         /* Total Points */
-        totalRed.setText(getIntDefault(redData, "totalPoints"));
-        totalBlue.setText(getIntDefault(blueData, "totalPoints"));
+        mBinding.breakdownTotalRed.setText(getIntDefault(redData, "totalPoints"));
+        mBinding.breakdownTotalBlue.setText(getIntDefault(blueData, "totalPoints"));
 
         /* Show RPs earned, if needed */
         if (!matchType.isPlayoff()) {
-            rpRed.setText(mResources.getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "rp")));
-            rpBlue.setText(mResources.getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "rp")));
+            mBinding.breakdownRedRp.setText(mResources.getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "rp")));
+            mBinding.breakdownBlueRp.setText(mResources.getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "rp")));
         } else {
-            rpRed.setVisibility(GONE);
-            rpBlue.setVisibility(GONE);
-            rpHeader.setVisibility(GONE);
+            mBinding.breakdownRedRp.setVisibility(GONE);
+            mBinding.breakdownBlueRp.setVisibility(GONE);
+            mBinding.breakdownRpHeader.setVisibility(GONE);
         }
 
-        breakdownContainer.setVisibility(View.VISIBLE);
+        mBinding.breakdown2020Container.setVisibility(View.VISIBLE);
 
         return true;
     }

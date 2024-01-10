@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
+import com.thebluealliance.androidclient.databinding.FragmentTeamInfoBinding;
 import com.thebluealliance.androidclient.datafeed.combiners.TeamMediaAndSocialMediaCombiner;
 import com.thebluealliance.androidclient.eventbus.LiveEventUpdateEvent;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
@@ -31,7 +32,7 @@ import rx.Observable;
 
 @AndroidEntryPoint
 public class TeamInfoFragment
-        extends DatafeedFragment<TeamInfoSubscriber.Model, TeamInfoBinder.Model, TeamInfoSubscriber, TeamInfoBinder> {
+        extends DatafeedFragment<TeamInfoSubscriber.Model, TeamInfoBinder.Model, FragmentTeamInfoBinding, TeamInfoSubscriber, TeamInfoBinder> {
 
     private static final String TEAM_KEY = "team_key";
 

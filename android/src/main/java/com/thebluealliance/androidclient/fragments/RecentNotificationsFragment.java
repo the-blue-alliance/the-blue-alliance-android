@@ -16,6 +16,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.binders.RecentNotificationsListBinder;
 import com.thebluealliance.androidclient.binders.RecyclerViewBinder;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.databinding.FragmentRecentNotificationsBinding;
 import com.thebluealliance.androidclient.itemviews.AllianceSelectionNotificationItemView;
 import com.thebluealliance.androidclient.itemviews.AwardsPostedNotificationItemView;
 import com.thebluealliance.androidclient.itemviews.CompLevelStartingNotificationItemView;
@@ -45,7 +46,7 @@ import rx.Observable;
 
 @AndroidEntryPoint
 public class RecentNotificationsFragment
-        extends DatafeedFragment<List<StoredNotification>, List<Object>, RecentNotificationsSubscriber, RecentNotificationsListBinder>
+        extends DatafeedFragment<List<StoredNotification>, List<Object>, FragmentRecentNotificationsBinding, RecentNotificationsSubscriber, RecentNotificationsListBinder>
         implements RecyclerViewBinder.RecyclerViewAdapterCreatorInitializer {
 
     @Inject Database mDb;

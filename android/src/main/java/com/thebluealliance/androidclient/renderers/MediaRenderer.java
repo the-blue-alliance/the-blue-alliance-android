@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.renderers;
 import androidx.annotation.Nullable;
 
 import com.google.gson.JsonObject;
+import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.listitems.ImageListElement;
 import com.thebluealliance.androidclient.listitems.ListElement;
 import com.thebluealliance.androidclient.models.Media;
@@ -20,9 +21,11 @@ public class MediaRenderer implements ModelRenderer<Media, Void> {
 
     private static final Pattern YOUTUBE_KEY_PATTERN = Pattern.compile("^([a-zA-Z0-9_-]*)");
 
-    @Inject
-    public MediaRenderer() {
+    private final Picasso mPicasso;
 
+    @Inject
+    public MediaRenderer(Picasso picasso) {
+        mPicasso = picasso;
     }
 
     @Override
@@ -64,6 +67,6 @@ public class MediaRenderer implements ModelRenderer<Media, Void> {
         }
         Boolean isVideo = mediaType == MediaType.YOUTUBE;
         String linkUrl = String.format(mediaType.getLinkUrlPattern(), keyForUrl);
-        return new ImageListElement(imageUrl, linkUrl, isVideo);
+        return new ImageListElement(mPicasso, imageUrl, linkUrl, isVideo);
     }
 }

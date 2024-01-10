@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseWriter;
@@ -165,8 +166,8 @@ public class SubscriberModule {
     }
 
     @Provides
-    public ContributorListSubscriber provideContributorListSubscriber() {
-        return new ContributorListSubscriber();
+    public ContributorListSubscriber provideContributorListSubscriber(Picasso picasso) {
+        return new ContributorListSubscriber(picasso);
     }
 
     @Provides

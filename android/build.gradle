@@ -40,7 +40,8 @@ if (localPropFile.exists()) {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
+    namespace "com.thebluealliance.androidclient"
 
     signingConfigs {
         release {
@@ -49,40 +50,45 @@ android {
             keyAlias localProps.getProperty("release.key.alias", "notRealAlias")
             keyPassword localProps.getProperty("release.key.aliasPass", "notRealPassword")
         }
+    }
 
-        buildTypes {
-            debug {
-                applicationIdSuffix ".development"
-                testCoverageEnabled true
-                manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
-            }
+    buildFeatures {
+        buildConfig true
+        viewBinding true
+    }
 
-            debugProguard {
-                applicationIdSuffix ".development"
-                testCoverageEnabled true
-                minifyEnabled true
-                zipAlignEnabled true
-                proguardFiles 'proguard-rules.txt'
-                testProguardFile 'proguard-rules.txt'
-                manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
-            }
+    buildTypes {
+        debug {
+            applicationIdSuffix ".development"
+            testCoverageEnabled true
+            manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
+        }
 
-            // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
-            // the apk will be in android/build/apk and you can install it by running
-            // 'adb install -r <file name>'
-            debugBlue {
-                signingConfig signingConfigs.debug
-                applicationIdSuffix ".development"
-                manifestPlaceholders = [gcmPermissionRequired: ""]
-            }
+        debugProguard {
+            applicationIdSuffix ".development"
+            testCoverageEnabled true
+            minifyEnabled true
+            zipAlignEnabled true
+            proguardFiles 'proguard-rules.txt'
+            testProguardFile 'proguard-rules.txt'
+            manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
+        }
 
-            release {
-                signingConfig signingConfigs.release
-                minifyEnabled true
-                zipAlignEnabled true
-                proguardFiles 'proguard-rules.txt'
-                manifestPlaceholders = [gcmPermissionRequired: "com.google.android.c2dm.permission.SEND"]
-            }
+        // run 'gradlew assembleDebugBlue' to do a debug signed build without using debug resources
+        // the apk will be in android/build/apk and you can install it by running
+        // 'adb install -r <file name>'
+        debugBlue {
+            signingConfig signingConfigs.debug
+            applicationIdSuffix ".development"
+            manifestPlaceholders = [gcmPermissionRequired: ""]
+        }
+
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            zipAlignEnabled true
+            proguardFiles 'proguard-rules.txt'
+            manifestPlaceholders = [gcmPermissionRequired: "com.google.android.c2dm.permission.SEND"]
         }
     }
 
@@ -123,6 +129,11 @@ android {
             jvmArgs '-noverify'
         }
     }
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/LICENSE.txt', 'META-INF/NOTICE.txt', 'META-INF/LICENSE', 'META-INF/LICENSE-FIREBASE.txt', 'META-INF/NOTICE']
+        }
+    }
 
     android.applicationVariants.all { variant ->
         variant.outputs.each { output ->
@@ -133,17 +144,6 @@ android {
         }
     }
 
-    packagingOptions {
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE-FIREBASE.txt'
-        exclude 'META-INF/NOTICE'
-    }
-
-    lintOptions {
-        abortOnError false
-    }
 
     buildTypes {
         debugBlue {
@@ -162,6 +162,9 @@ android {
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
+    lint {
+        abortOnError false
+    }
 }
 
 play {
@@ -225,10 +228,10 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.preference:preference:1.2.0'
+    implementation 'androidx.preference:preference:1.2.1'
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    implementation 'com.google.android.material:material:1.6.0-alpha02'
+    implementation 'com.google.android.material:material:1.12.0-alpha02'
     implementation "androidx.work:work-runtime:$workManagerVersion"
     androidTestImplementation "androidx.work:work-testing:$workManagerVersion"
     testImplementation "androidx.work:work-testing:$workManagerVersion"
@@ -238,26 +241,26 @@ dependencies {
     implementation 'com.google.guava:guava:24.1-jre'
 //    implementation "com.google.firebase:firebase-bom:31.2.3"
     implementation "com.google.android.gms:play-services-base:18.2.0"
-    implementation "com.google.android.gms:play-services-analytics:18.0.2"
-    implementation "com.google.firebase:firebase-messaging:23.1.2"
-    implementation "com.google.android.gms:play-services-auth:20.5.0"
+    implementation "com.google.android.gms:play-services-analytics:18.0.4"
+    implementation "com.google.firebase:firebase-messaging:23.4.0"
+    implementation "com.google.android.gms:play-services-auth:20.7.0"
     implementation "com.google.android.gms:play-services-flags:18.0.1"
     implementation "com.google.android.gms:play-services-stats:17.0.3"
     implementation "com.google.firebase:firebase-core:21.1.1"
-    implementation "com.google.firebase:firebase-auth:21.3.0"
-    implementation "com.google.firebase:firebase-config:21.3.0"
-    implementation 'com.google.firebase:firebase-perf:20.3.1'
-    implementation 'com.google.firebase:firebase-analytics:21.2.2'
+    implementation "com.google.firebase:firebase-auth:22.3.0"
+    implementation "com.google.firebase:firebase-config:21.6.0"
+    implementation 'com.google.firebase:firebase-perf:20.5.1'
+    implementation 'com.google.firebase:firebase-analytics:21.5.0'
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
     // Square Libraries
-    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.squareup.picasso:picasso:2.71828'
     implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     implementation "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
-    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 
-    implementation 'com.google.firebase:firebase-crashlytics:18.3.6'
-    implementation 'com.google.firebase:firebase-analytics:21.2.2'
+    implementation 'com.google.firebase:firebase-crashlytics:18.6.0'
+    implementation 'com.google.firebase:firebase-analytics:21.5.0'
     implementation "com.google.dagger:dagger:${daggerVersion}"
     implementation "com.google.dagger:hilt-android:${daggerVersion}"
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
@@ -266,23 +269,21 @@ dependencies {
     androidTestAnnotationProcessor "com.google.dagger:hilt-compiler:${daggerVersion}"
     testImplementation "com.google.dagger:hilt-android-testing:${daggerVersion}"
     testAnnotationProcessor "com.google.dagger:hilt-compiler:${daggerVersion}"
-    implementation 'androidx.hilt:hilt-work:1.0.0'
-    annotationProcessor 'androidx.hilt:hilt-compiler:1.0.0'
+    implementation 'androidx.hilt:hilt-work:1.1.0'
+    annotationProcessor 'androidx.hilt:hilt-compiler:1.1.0'
 
     // Other third party libraries
     implementation "com.google.code.gson:gson:${gsonVersion}"
     implementation 'me.xuender:unidecode:0.0.7'
-    implementation 'org.greenrobot:eventbus:3.1.1'
-    implementation 'de.hdodenhof:circleimageview:2.1.0'
-    implementation 'com.facebook.stetho:stetho:1.5.1'
-    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+    implementation 'org.greenrobot:eventbus:3.3.1'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.facebook.stetho:stetho:1.6.0'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.6.0'
     implementation 'com.firebase:firebase-client-android:2.5.2'
     implementation "io.reactivex:rxandroid:${rxAndroidVersion}"
     implementation "io.reactivex:rxjava:${rxJavaVersion}"
     implementation 'io.reactivex:rxjava-math:1.0.0'
-    implementation 'me.relex:circleindicator:1.2.1@aar'
-    implementation 'com.jakewharton:butterknife:10.1.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
+    implementation 'me.relex:circleindicator:2.1.6@aar'
     implementation 'io.nlopez.smartadapters:library:1.3.1'
     implementation 'com.wada811:android-material-design-colors:3.0.0'
     implementation 'javax.annotation:javax.annotation-api:1.3.2'
@@ -300,14 +301,14 @@ dependencies {
     testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // instrumentation
-    androidTestImplementation 'androidx.annotation:annotation:1.6.0'
+    androidTestImplementation 'androidx.annotation:annotation:1.7.1'
     androidTestImplementation 'androidx.test:runner:1.5.2'
     androidTestImplementation 'androidx.test:rules:1.5.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     // Leak Canary
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 }
 
 apply plugin: 'com.google.gms.google-services'

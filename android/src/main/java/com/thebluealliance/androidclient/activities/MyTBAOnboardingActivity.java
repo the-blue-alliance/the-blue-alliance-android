@@ -3,7 +3,6 @@ package com.thebluealliance.androidclient.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,14 +12,12 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.auth.AuthProvider;
+import com.thebluealliance.androidclient.databinding.ActivityMytbaOnboardingBinding;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import dagger.hilt.android.AndroidEntryPoint;
 
 
@@ -31,11 +28,7 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
     private static final String MYTBA_LOGIN_COMPLETE = "mytba_login_complete";
     private static final int SIGNIN_CODE = 254;
 
-    @BindView(R.id.mytba_view_pager)
-    MyTBAOnboardingViewPager mMyTBAOnboardingViewPager;
-
-    @BindView(R.id.continue_button_label)
-    TextView mContinueButtonText;
+    private ActivityMytbaOnboardingBinding mBinding;
 
     private boolean isMyTBALoginComplete = false;
 
@@ -45,11 +38,11 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mytba_onboarding);
-        ButterKnife.bind(this);
+        mBinding = ActivityMytbaOnboardingBinding.inflate(getLayoutInflater());
+        setContentView(mBinding.getRoot());
 
-        mMyTBAOnboardingViewPager.setCallbacks(this);
-        mMyTBAOnboardingViewPager.setTitleText(R.string.what_is_mytba);
+        mBinding.mytbaViewPager.setCallbacks(this);
+        mBinding.mytbaViewPager.setTitleText(R.string.what_is_mytba);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(MYTBA_LOGIN_COMPLETE)) {
@@ -58,12 +51,12 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
         }
 
         if (isMyTBALoginComplete) {
-            mMyTBAOnboardingViewPager.setUpForLoginSuccess();
+            mBinding.mytbaViewPager.setUpForLoginSuccess();
         } else {
-            mMyTBAOnboardingViewPager.setUpForLoginPrompt();
+            mBinding.mytbaViewPager.setUpForLoginPrompt();
         }
 
-        mMyTBAOnboardingViewPager.getViewPager().addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        mBinding.mytbaViewPager.getViewPager().addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 updateContinueButtonText();
@@ -71,13 +64,16 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
         });
 
         updateContinueButtonText();
+
+        mBinding.cancelButton.setOnClickListener((View view) -> finish());
+        mBinding.continueButton.setOnClickListener(this::onContinueClick);
     }
 
     private void updateContinueButtonText() {
-        if (mMyTBAOnboardingViewPager.isOnLoginPage()) {
-            mContinueButtonText.setText(R.string.finish_caps);
+        if (mBinding.mytbaViewPager.isOnLoginPage()) {
+            mBinding.continueButtonLabel.setText(R.string.finish_caps);
         } else {
-            mContinueButtonText.setText(R.string.skip_intro_caps);
+            mBinding.continueButtonLabel.setText(R.string.skip_intro_caps);
         }
     }
 
@@ -89,7 +85,7 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
                 mAuthProvider.userFromSignInResult(requestCode, resultCode, data)
                         .subscribe(user -> {
                             TbaLogger.d("User logged in: " + user.getEmail());
-                            mMyTBAOnboardingViewPager.setUpForLoginSuccess();
+                            mBinding.mytbaViewPager.setUpForLoginSuccess();
                             isMyTBALoginComplete = true;
                             mAccountController.onAccountConnect(MyTBAOnboardingActivity.this, user);
                         }, throwable -> {
@@ -99,7 +95,7 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
                         });
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_LONG).show();
-                mMyTBAOnboardingViewPager.setUpForLoginPrompt();
+                mBinding.mytbaViewPager.setUpForLoginPrompt();
             }
         }
     }
@@ -110,19 +106,13 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
         outState.putBoolean(MYTBA_LOGIN_COMPLETE, isMyTBALoginComplete);
     }
 
-    @OnClick(R.id.cancel_button)
-    void onCancelClick(View view) {
-        finish();
-    }
-
-    @OnClick(R.id.continue_button)
-    void onContinueClick(View view) {
-        if (mMyTBAOnboardingViewPager.isOnLoginPage()) {
+    private void onContinueClick(View view) {
+        if (mBinding.mytbaViewPager.isOnLoginPage()) {
             // On the last page, the "continue" button turns into a "finish" button
             finish();
         } else {
             // On other pages, the "continue" button becomes a "skip intro" button
-            mMyTBAOnboardingViewPager.scrollToLoginPage();
+            mBinding.mytbaViewPager.scrollToLoginPage();
         }
     }
 

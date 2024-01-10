@@ -7,67 +7,17 @@ import static com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownH
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.gridlayout.widget.GridLayout;
 
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.databinding.MatchBreakdown2015Binding;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class MatchBreakdownView2015 extends AbstractMatchBreakdownView {
-
-    @BindView(R.id.breakdown2015_container)                  GridLayout breakdownContainer;
-
-    @BindView(R.id.breakdown_red1)                           TextView red1;
-    @BindView(R.id.breakdown_blue1)                          TextView blue1;
-    @BindView(R.id.breakdown_red2)                           TextView red2;
-    @BindView(R.id.breakdown_blue2)                          TextView blue2;
-    @BindView(R.id.breakdown_red3)                           TextView red3;
-    @BindView(R.id.breakdown_blue3)                          TextView blue3;
-
-    @BindView(R.id.breakdown2015_auto_tote_points_red)       TextView autoTotePointsRed;
-    @BindView(R.id.breakdown2015_auto_tote_points_blue)      TextView autoTotePointsBlue;
-    @BindView(R.id.breakdown2015_auto_container_points_red)  TextView autoContainerPointsRed;
-    @BindView(R.id.breakdown2015_auto_container_points_blue) TextView autoContainerPointsBlue;
-    @BindView(R.id.breakdown2015_auto_robot_points_red)      TextView autoRobotPointsRed;
-    @BindView(R.id.breakdown2015_auto_robot_points_blue)     TextView autoRobotPointsBlue;
-    @BindView(R.id.breakdown_auto_total_red)                 TextView autoTotalRed;
-    @BindView(R.id.breakdown_auto_total_blue)                TextView autoTotalBlue;
-
-    @BindView(R.id.breakdown2015_tote_points_red)            TextView totePointsRed;
-    @BindView(R.id.breakdown2015_tote_points_blue)           TextView totePointsBlue;
-    @BindView(R.id.breakdown2015_container_points_red)       TextView containerPointsRed;
-    @BindView(R.id.breakdown2015_container_points_blue)      TextView containerPointsBlue;
-    @BindView(R.id.breakdown2015_litter_points_red)          TextView litterPointsRed;
-    @BindView(R.id.breakdown2015_litter_points_blue)         TextView litterPointsBlue;
-    @BindView(R.id.breakdown_teleop_total_red)               TextView teleopTotalRed;
-    @BindView(R.id.breakdown_teleop_total_blue)              TextView teleopTotalBlue;
-
-    @BindView(R.id.breakdown2015_coop_points_red)            TextView coopPointsRed;
-    @BindView(R.id.breakdown2015_coop_points_blue)           TextView coopPointsBlue;
-    @BindView(R.id.breakdown_fouls_red)                      TextView foulsRed;
-    @BindView(R.id.breakdown_fouls_blue)                     TextView foulsBlue;
-    @BindView(R.id.breakdown_adjust_red)                     TextView adjustRed;
-    @BindView(R.id.breakdown_adjust_blue)                    TextView adjustBlue;
-    @BindView(R.id.breakdown_total_red)                      TextView totalRed;
-    @BindView(R.id.breakdown_total_blue)                     TextView totalBlue;
-
-    @BindView(R.id.breakdown2015_auto_totes_icon_red)        ImageView autoTotesIconRed;
-    @BindView(R.id.breakdown2015_auto_totes_icon_blue)       ImageView autoTotesIconBlue;
-    @BindView(R.id.breakdown2015_auto_containers_icon_red)   ImageView autoContainersIconRed;
-    @BindView(R.id.breakdown2015_auto_containers_icon_blue)  ImageView autoContainersIconBlue;
-    @BindView(R.id.breakdown2015_auto_robots_icon_red)       ImageView autoRobotsIconRed;
-    @BindView(R.id.breakdown2015_auto_robots_icon_blue)      ImageView autoRobotsIconBlue;
-    @BindView(R.id.breakdown2015_coop_icon_red)              ImageView coopIconRed;
-    @BindView(R.id.breakdown2015_coop_icon_blue)             ImageView coopIconBlue;
+    private MatchBreakdown2015Binding mBinding;
 
     private static final int ROBOT_SET_POINTS = 4;
     private static final int TOTE_SET_POINTS = 6;
@@ -90,10 +40,7 @@ public class MatchBreakdownView2015 extends AbstractMatchBreakdownView {
 
     @Override
     void init() {
-        // Inflate the layout
-        LayoutInflater.from(getContext()).inflate(R.layout.match_breakdown_2015, this, true);
-
-        ButterKnife.bind(this);
+        mBinding = MatchBreakdown2015Binding.inflate(LayoutInflater.from(getContext()), this, true);
     }
 
     public boolean initWithData(MatchType matchType,
@@ -102,7 +49,7 @@ public class MatchBreakdownView2015 extends AbstractMatchBreakdownView {
                                 JsonObject scoreData) {
         if (scoreData == null || scoreData.entrySet().isEmpty()
             || allianceData == null || allianceData.getRed() == null || allianceData.getBlue() == null) {
-            breakdownContainer.setVisibility(GONE);
+            mBinding.breakdown2015Container.setVisibility(GONE);
             return false;
         }
 
@@ -111,71 +58,71 @@ public class MatchBreakdownView2015 extends AbstractMatchBreakdownView {
         JsonObject redData = scoreData.get("red").getAsJsonObject();
         JsonObject blueData = scoreData.get("blue").getAsJsonObject();
 
-        red1.setText(teamNumberFromKey(redTeams.get(0)));
-        red2.setText(teamNumberFromKey(redTeams.get(1)));
-        red3.setText(teamNumberFromKey(redTeams.get(2)));
+        mBinding.breakdownRed1.setText(teamNumberFromKey(redTeams.get(0)));
+        mBinding.breakdownRed2.setText(teamNumberFromKey(redTeams.get(1)));
+        mBinding.breakdownRed3.setText(teamNumberFromKey(redTeams.get(2)));
 
-        blue1.setText(teamNumberFromKey(blueTeams.get(0)));
-        blue2.setText(teamNumberFromKey(blueTeams.get(1)));
-        blue3.setText(teamNumberFromKey(blueTeams.get(2)));
+        mBinding.breakdownBlue1.setText(teamNumberFromKey(blueTeams.get(0)));
+        mBinding.breakdownBlue2.setText(teamNumberFromKey(blueTeams.get(1)));
+        mBinding.breakdownBlue3.setText(teamNumberFromKey(blueTeams.get(2)));
 
         /* Auto Totes */
         if (redData.get("tote_set").getAsBoolean()) {
-            autoTotePointsRed.setText(getContext().getString(R.string.breakdown_addition_format, TOTE_SET_POINTS));
-            autoTotesIconRed.setImageResource(R.drawable.ic_more_horiz_black_24dp);
+            mBinding.breakdown2015AutoTotePointsRed.setText(getContext().getString(R.string.breakdown_addition_format, TOTE_SET_POINTS));
+            mBinding.breakdown2015AutoTotesIconRed.setImageResource(R.drawable.ic_more_horiz_black_24dp);
         } else if (redData.get("tote_stack").getAsBoolean()) {
-            autoTotePointsRed.setText(getContext().getString(R.string.breakdown_addition_format, TOTE_STACK_POINTS));
-            autoTotesIconRed.setImageResource(R.drawable.ic_menu_black_24dp);
+            mBinding.breakdown2015AutoTotePointsRed.setText(getContext().getString(R.string.breakdown_addition_format, TOTE_STACK_POINTS));
+            mBinding.breakdown2015AutoTotesIconRed.setImageResource(R.drawable.ic_menu_black_24dp);
         } else {
-            autoTotePointsRed.setVisibility(GONE);
-            autoTotesIconRed.setImageResource(R.drawable.ic_clear_black_24dp);
+            mBinding.breakdown2015AutoTotePointsRed.setVisibility(GONE);
+            mBinding.breakdown2015AutoTotesIconRed.setImageResource(R.drawable.ic_clear_black_24dp);
         }
         if (blueData.get("tote_set").getAsBoolean()) {
-            autoTotePointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, TOTE_SET_POINTS));
-            autoTotesIconBlue.setImageResource(R.drawable.ic_more_horiz_black_24dp);
+            mBinding.breakdown2015AutoTotePointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, TOTE_SET_POINTS));
+            mBinding.breakdown2015AutoTotesIconBlue.setImageResource(R.drawable.ic_more_horiz_black_24dp);
         } else if (blueData.get("tote_stack").getAsBoolean()) {
-            autoTotePointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, TOTE_STACK_POINTS));
-            autoTotesIconBlue.setImageResource(R.drawable.ic_menu_black_24dp);
+            mBinding.breakdown2015AutoTotePointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, TOTE_STACK_POINTS));
+            mBinding.breakdown2015AutoTotesIconBlue.setImageResource(R.drawable.ic_menu_black_24dp);
         } else {
-            autoTotePointsBlue.setVisibility(GONE);
-            autoTotesIconBlue.setImageResource(R.drawable.ic_clear_black_24dp);
+            mBinding.breakdown2015AutoTotePointsBlue.setVisibility(GONE);
+            mBinding.breakdown2015AutoTotesIconBlue.setImageResource(R.drawable.ic_clear_black_24dp);
         }
 
         /* Auto Containers */
         if (redData.get("container_set").getAsBoolean()) {
-            autoContainerPointsRed.setText(getContext().getString(R.string.breakdown_addition_format, CONTAINER_SET_POINTS));
-            autoContainersIconRed.setImageResource(R.drawable.ic_more_horiz_black_24dp);
+            mBinding.breakdown2015AutoContainerPointsRed.setText(getContext().getString(R.string.breakdown_addition_format, CONTAINER_SET_POINTS));
+            mBinding.breakdown2015AutoContainersIconRed.setImageResource(R.drawable.ic_more_horiz_black_24dp);
         } else {
-            autoContainerPointsRed.setVisibility(GONE);
-            autoContainersIconRed.setImageResource(R.drawable.ic_clear_black_24dp);
+            mBinding.breakdown2015AutoContainerPointsRed.setVisibility(GONE);
+            mBinding.breakdown2015AutoContainersIconRed.setImageResource(R.drawable.ic_clear_black_24dp);
         }
         if (blueData.get("container_set").getAsBoolean()) {
-            autoContainerPointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, CONTAINER_SET_POINTS));
-            autoContainersIconBlue.setImageResource(R.drawable.ic_more_horiz_black_24dp);
+            mBinding.breakdown2015AutoContainerPointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, CONTAINER_SET_POINTS));
+            mBinding.breakdown2015AutoContainersIconBlue.setImageResource(R.drawable.ic_more_horiz_black_24dp);
         } else {
-            autoContainerPointsBlue.setVisibility(GONE);
-            autoContainersIconBlue.setImageResource(R.drawable.ic_clear_black_24dp);
+            mBinding.breakdown2015AutoContainerPointsBlue.setVisibility(GONE);
+            mBinding.breakdown2015AutoContainersIconBlue.setImageResource(R.drawable.ic_clear_black_24dp);
         }
 
         /* Auto Robots */
         if (redData.get("robot_set").getAsBoolean()) {
-            autoRobotPointsRed.setText(getContext().getString(R.string.breakdown_addition_format,  ROBOT_SET_POINTS));
-            autoRobotsIconRed.setImageResource(R.drawable.ic_more_horiz_black_24dp);
+            mBinding.breakdown2015AutoRobotPointsRed.setText(getContext().getString(R.string.breakdown_addition_format,  ROBOT_SET_POINTS));
+            mBinding.breakdown2015AutoRobotsIconRed.setImageResource(R.drawable.ic_more_horiz_black_24dp);
         } else {
-            autoRobotPointsRed.setVisibility(GONE);
-            autoRobotsIconRed.setImageResource(R.drawable.ic_clear_black_24dp);
+            mBinding.breakdown2015AutoRobotPointsRed.setVisibility(GONE);
+            mBinding.breakdown2015AutoRobotsIconRed.setImageResource(R.drawable.ic_clear_black_24dp);
         }
         if (blueData.get("robot_set").getAsBoolean()) {
-            autoRobotPointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, ROBOT_SET_POINTS));
-            autoRobotsIconBlue.setImageResource(R.drawable.ic_more_horiz_black_24dp);
+            mBinding.breakdown2015AutoRobotPointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, ROBOT_SET_POINTS));
+            mBinding.breakdown2015AutoRobotsIconBlue.setImageResource(R.drawable.ic_more_horiz_black_24dp);
         } else {
-            autoRobotPointsBlue.setVisibility(GONE);
-            autoRobotsIconBlue.setImageResource(R.drawable.ic_clear_black_24dp);
+            mBinding.breakdown2015AutoRobotPointsBlue.setVisibility(GONE);
+            mBinding.breakdown2015AutoRobotsIconBlue.setImageResource(R.drawable.ic_clear_black_24dp);
         }
 
         /* Auto Points */
-        autoTotalRed.setText(getIntDefault(redData, "auto_points"));
-        autoTotalBlue.setText(getIntDefault(blueData, "auto_points"));
+        mBinding.breakdownAutoTotalRed.setText(getIntDefault(redData, "auto_points"));
+        mBinding.breakdownAutoTotalBlue.setText(getIntDefault(blueData, "auto_points"));
 
         /* Teleop Points */
         int redTote = getIntDefaultValue(redData, "tote_points");
@@ -184,50 +131,50 @@ public class MatchBreakdownView2015 extends AbstractMatchBreakdownView {
         int blueContainer = getIntDefaultValue(blueData, "container_points");
         int redLitter = getIntDefaultValue(redData, "litter_points");
         int blueLitter = getIntDefaultValue(blueData, "litter_points");
-        totePointsRed.setText(getIntDefault(redData, "tote_points"));
-        totePointsBlue.setText(getIntDefault(blueData, "tote_points"));
-        containerPointsRed.setText(getIntDefault(redData, "container_points"));
-        containerPointsBlue.setText(getIntDefault(blueData, "container_points"));
-        litterPointsRed.setText(getIntDefault(redData, "litter_points"));
-        litterPointsBlue.setText(getIntDefault(blueData, "litter_points"));
+        mBinding.breakdown2015TotePointsRed.setText(getIntDefault(redData, "tote_points"));
+        mBinding.breakdown2015TotePointsBlue.setText(getIntDefault(blueData, "tote_points"));
+        mBinding.breakdown2015ContainerPointsRed.setText(getIntDefault(redData, "container_points"));
+        mBinding.breakdown2015ContainerPointsBlue.setText(getIntDefault(blueData, "container_points"));
+        mBinding.breakdown2015LitterPointsRed.setText(getIntDefault(redData, "litter_points"));
+        mBinding.breakdown2015LitterPointsBlue.setText(getIntDefault(blueData, "litter_points"));
 
-        teleopTotalRed.setText(getResources().getString(R.string.breakdown_number_format,
+        mBinding.breakdownTeleopTotalRed.setText(getResources().getString(R.string.breakdown_number_format,
                                                         (redTote + redContainer + redLitter)));
-        teleopTotalBlue.setText(getResources().getString(R.string.breakdown_number_format,
+        mBinding.breakdownTeleopTotalBlue.setText(getResources().getString(R.string.breakdown_number_format,
                                                          (blueTote + blueContainer + blueLitter)));
 
         /* Coop */
         if (matchType.isPlayoff()) {
-            coopIconRed.setVisibility(GONE);
-            coopIconBlue.setVisibility(GONE);
-            coopPointsRed.setVisibility(GONE);
-            coopPointsBlue.setVisibility(GONE);
-            coopPointsRed.setText("0");
-            coopPointsBlue.setText("0");
+            mBinding.breakdown2015CoopIconRed.setVisibility(GONE);
+            mBinding.breakdown2015CoopIconBlue.setVisibility(GONE);
+            mBinding.breakdown2015CoopPointsRed.setVisibility(GONE);
+            mBinding.breakdown2015CoopPointsBlue.setVisibility(GONE);
+            mBinding.breakdown2015CoopPointsRed.setText("0");
+            mBinding.breakdown2015CoopPointsBlue.setText("0");
         } else if (scoreData.get("coopertition").getAsString().equals("Stack")){
-            coopIconRed.setImageResource(R.drawable.ic_menu_black_24dp);
-            coopIconBlue.setImageResource(R.drawable.ic_menu_black_24dp);
-            coopPointsRed.setText(getContext().getString(R.string.breakdown_addition_format, COOP_STACK_POINTS));
-            coopPointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, COOP_STACK_POINTS));
+            mBinding.breakdown2015CoopIconRed.setImageResource(R.drawable.ic_menu_black_24dp);
+            mBinding.breakdown2015CoopIconBlue.setImageResource(R.drawable.ic_menu_black_24dp);
+            mBinding.breakdown2015CoopPointsRed.setText(getContext().getString(R.string.breakdown_addition_format, COOP_STACK_POINTS));
+            mBinding.breakdown2015CoopPointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, COOP_STACK_POINTS));
         } else if (scoreData.get("coopertition").getAsString().equals("Set")) {
-            coopIconRed.setImageResource(R.drawable.ic_more_horiz_black_24dp);
-            coopIconBlue.setImageResource(R.drawable.ic_more_horiz_black_24dp);
-            coopPointsRed.setText(getContext().getString(R.string.breakdown_addition_format, COOP_SET_POINTS));
-            coopPointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, COOP_SET_POINTS));
+            mBinding.breakdown2015CoopIconRed.setImageResource(R.drawable.ic_more_horiz_black_24dp);
+            mBinding.breakdown2015CoopIconBlue.setImageResource(R.drawable.ic_more_horiz_black_24dp);
+            mBinding.breakdown2015CoopPointsRed.setText(getContext().getString(R.string.breakdown_addition_format, COOP_SET_POINTS));
+            mBinding.breakdown2015CoopPointsBlue.setText(getContext().getString(R.string.breakdown_addition_format, COOP_SET_POINTS));
         } else {
-            coopIconRed.setImageResource(R.drawable.ic_clear_black_24dp);
-            coopIconBlue.setImageResource(R.drawable.ic_clear_black_24dp);
+            mBinding.breakdown2015CoopIconRed.setImageResource(R.drawable.ic_clear_black_24dp);
+            mBinding.breakdown2015CoopIconBlue.setImageResource(R.drawable.ic_clear_black_24dp);
         }
 
         /* Other Values */
-        foulsRed.setText(getResources().getString(R.string.breakdown_foul_format_subtract,
+        mBinding.breakdownFoulsRed.setText(getResources().getString(R.string.breakdown_foul_format_subtract,
                                                   getIntDefaultValue(redData, "foul_points")));
-        foulsBlue.setText(getResources().getString(R.string.breakdown_foul_format_subtract,
+        mBinding.breakdownFoulsBlue.setText(getResources().getString(R.string.breakdown_foul_format_subtract,
                                                    getIntDefaultValue(blueData, "foul_points")));
-        adjustRed.setText(getIntDefault(redData, "adjust_points"));
-        adjustBlue.setText(getIntDefault(blueData, "adjust_points"));
-        totalRed.setText(getIntDefault(redData, "total_points"));
-        totalBlue.setText(getIntDefault(blueData, "total_points"));
+        mBinding.breakdownAdjustRed.setText(getIntDefault(redData, "adjust_points"));
+        mBinding.breakdownAdjustBlue.setText(getIntDefault(blueData, "adjust_points"));
+        mBinding.breakdownTotalRed.setText(getIntDefault(redData, "total_points"));
+        mBinding.breakdownTotalBlue.setText(getIntDefault(blueData, "total_points"));
 
         return true;
     }

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.gson.JsonArray;
+import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.listitems.ContributorListElement;
@@ -14,6 +15,7 @@ import com.thebluealliance.androidclient.listitems.ListItem;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.annotation.LooperMode;
 
 import java.util.List;
@@ -28,7 +30,7 @@ public class ContributorListSubscriberTest {
     @Before
     public void setUp() {
         mData = ModelMaker.getModel(JsonArray.class, "contributors_list");
-        mSubscriber = new ContributorListSubscriber();
+        mSubscriber = new ContributorListSubscriber(Mockito.mock(Picasso.class));
     }
 
     @Test

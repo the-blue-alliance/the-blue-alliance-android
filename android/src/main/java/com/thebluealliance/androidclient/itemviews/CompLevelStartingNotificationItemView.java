@@ -1,22 +1,16 @@
 package com.thebluealliance.androidclient.itemviews;
 
 import android.content.Context;
-import android.view.View;
-import android.widget.TextView;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.databinding.ListItemNotificationCompLevelStartingBinding;
 import com.thebluealliance.androidclient.listeners.GamedayTickerClickListener;
 import com.thebluealliance.androidclient.viewmodels.CompLevelStartingNotificationViewModel;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.nlopez.smartadapters.views.BindableFrameLayout;
 
 public class CompLevelStartingNotificationItemView extends BindableFrameLayout<CompLevelStartingNotificationViewModel> {
-    @BindView(R.id.card_header) TextView header;
-    @BindView(R.id.title) TextView details;
-    @BindView(R.id.notification_time) TextView time;
-    @BindView(R.id.summary_container) View summaryContainer;
+    private ListItemNotificationCompLevelStartingBinding mBinding;
 
     public CompLevelStartingNotificationItemView(Context context) {
         super(context);
@@ -29,16 +23,14 @@ public class CompLevelStartingNotificationItemView extends BindableFrameLayout<C
 
     @Override
     public void onViewInflated() {
-        ButterKnife.bind(this);
+        mBinding = ListItemNotificationCompLevelStartingBinding.bind(this);
     }
 
     @Override
     public void bind(CompLevelStartingNotificationViewModel model) {
-        header.setText(model.getHeader());
-        details.setText(model.getDetails());
-        time.setText(model.getTimeString());
-        summaryContainer.setOnClickListener(new GamedayTickerClickListener(getContext(), model.getIntent()));
-
-
+        mBinding.cardHeader.setText(model.getHeader());
+        mBinding.title.setText(model.getDetails());
+        mBinding.notificationTime.setText(model.getTimeString());
+        mBinding.summaryContainer.setOnClickListener(new GamedayTickerClickListener(getContext(), model.getIntent()));
     }
 }

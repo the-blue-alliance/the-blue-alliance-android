@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.activities.TeamAtEventActivity;
 import com.thebluealliance.androidclient.adapters.EventStatsFragmentAdapter;
 import com.thebluealliance.androidclient.adapters.ListViewAdapter;
 import com.thebluealliance.androidclient.binders.StatsListBinder;
+import com.thebluealliance.androidclient.databinding.FragmentEventStatsBinding;
 import com.thebluealliance.androidclient.datafeed.combiners.TwoJsonCombiner;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.helpers.EventHelper;
@@ -46,7 +47,7 @@ import rx.Observable;
  */
 @AndroidEntryPoint
 public class EventStatsFragment
-  extends DatafeedFragment<StatsListSubscriber.Model, List<ListItem>, StatsListSubscriber, StatsListBinder> {
+  extends DatafeedFragment<StatsListSubscriber.Model, List<ListItem>, FragmentEventStatsBinding, StatsListSubscriber, StatsListBinder> {
 
     private static final String KEY = "eventKey", SORT = "sort";
 

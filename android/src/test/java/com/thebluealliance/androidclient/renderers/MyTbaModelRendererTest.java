@@ -3,10 +3,10 @@ package com.thebluealliance.androidclient.renderers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -69,7 +69,7 @@ public class MyTbaModelRendererTest {
         when(mDatafeed.fetchEvent(EVENT_KEY)).thenReturn(Observable.just(null));
         ListItem item = mRenderer.renderFromKey(EVENT_KEY, ModelType.EVENT, null);
 
-        verifyZeroInteractions(mEventRenderer);
+        verifyNoInteractions(mEventRenderer);
         assertNotNull(item);
         assertTrue(item instanceof ModelListElement);
         assertEquals(((ModelListElement)item).getText(), "2015cthar");
@@ -154,7 +154,7 @@ public class MyTbaModelRendererTest {
         when(mDatafeed.fetchDistrict(DISTRICT_KEY)).thenReturn(Observable.just(district));
 
         ListItem item = mRenderer.renderFromKey(DISTRICT_KEY, ModelType.DISTRICT, null);
-        verify(mDistrictRenderer).renderFromKey(eq(DISTRICT_KEY), eq(ModelType.DISTRICT), anyObject());
+        verify(mDistrictRenderer).renderFromKey(eq(DISTRICT_KEY), eq(ModelType.DISTRICT), any());
     }
 
     @Test

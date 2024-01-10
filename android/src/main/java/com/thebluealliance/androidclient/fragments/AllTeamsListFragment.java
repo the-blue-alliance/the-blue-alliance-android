@@ -14,13 +14,14 @@ import com.google.android.material.tabs.TabLayout;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.TeamTabBinder;
+import com.thebluealliance.androidclient.databinding.FragmentTeamListFragmentPagerBinding;
 import com.thebluealliance.androidclient.subscribers.TeamTabSubscriber;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
 
 @AndroidEntryPoint
-public class AllTeamsListFragment extends DatafeedFragment<Integer, Integer, TeamTabSubscriber, TeamTabBinder> {
+public class AllTeamsListFragment extends DatafeedFragment<Integer, Integer, FragmentTeamListFragmentPagerBinding, TeamTabSubscriber, TeamTabBinder> {
 
     public static final String SELECTED_TAB = "selected_tab";
 

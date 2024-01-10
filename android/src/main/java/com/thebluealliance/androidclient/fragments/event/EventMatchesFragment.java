@@ -11,6 +11,7 @@ import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.MatchListAdapter;
 import com.thebluealliance.androidclient.binders.ExpandableListViewBinder;
 import com.thebluealliance.androidclient.binders.MatchListBinder;
+import com.thebluealliance.androidclient.databinding.ExpandableListViewWithSpinnerBinding;
 import com.thebluealliance.androidclient.fragments.DatafeedFragment;
 import com.thebluealliance.androidclient.interfaces.HasEventParam;
 import com.thebluealliance.androidclient.listitems.ListGroup;
@@ -27,7 +28,7 @@ import rx.Observable;
 
 @AndroidEntryPoint
 public class EventMatchesFragment
-  extends DatafeedFragment<List<Match>, List<ListGroup>, MatchListSubscriber, MatchListBinder> implements HasEventParam {
+  extends DatafeedFragment<List<Match>, List<ListGroup>, ExpandableListViewWithSpinnerBinding, MatchListSubscriber, MatchListBinder> implements HasEventParam {
 
     private static final String KEY = "eventKey", TEAM = "teamKey";
 

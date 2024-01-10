@@ -15,8 +15,11 @@ public class ContributorListElement extends ListElement {
     public final int contributionCount;
     public final String avatarUrl;
 
-    public ContributorListElement(String username, int contributionCount, String avatarUrl) {
+    private final Picasso picasso;
+
+    public ContributorListElement(Picasso picasso, String username, int contributionCount, String avatarUrl) {
         super(username);
+        this.picasso = picasso;
         this.username = username;
         this.contributionCount = contributionCount;
         this.avatarUrl = avatarUrl;
@@ -40,7 +43,7 @@ public class ContributorListElement extends ListElement {
         holder.username.setText(username);
         holder.contributionCount.setText(context.getResources().getQuantityString(R.plurals
                 .contribution_count, contributionCount, contributionCount));
-        Picasso.with(context).load(avatarUrl).into(holder.avatar);
+        this.picasso.load(avatarUrl).into(holder.avatar);
 
         return convertView;
     }

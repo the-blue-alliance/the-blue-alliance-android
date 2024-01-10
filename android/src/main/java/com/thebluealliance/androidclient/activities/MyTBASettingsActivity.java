@@ -52,6 +52,8 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     @ColorRes private static final int FAB_COLOR_SUCCESS = R.color.green;
     @ColorRes private static final int FAB_COLOR_ERROR = R.color.red;
 
+    FrameLayout mRootView;
+
     CoordinatorLayout mCoordinatorLayout;
     RelativeLayout mSettingsContainer;
     FloatingActionButton mToggleSettingsPanelButton;
@@ -90,6 +92,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_mytba_settings);
 
+        mRootView = findViewById(R.id.activity_content);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator);
         mSettingsContainer = (RelativeLayout) findViewById(R.id.settings);
         mToggleSettingsPanelButton = (FloatingActionButton) findViewById(R.id.toggle_settings_button);
@@ -151,9 +154,8 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
 
     @Override
     public void setContentView(int layoutResID) {
-        FrameLayout root = (FrameLayout) findViewById(R.id.activity_content);
         LayoutInflater inflater = getLayoutInflater();
-        inflater.inflate(layoutResID, root);
+        inflater.inflate(layoutResID, mRootView);
     }
 
     @Override

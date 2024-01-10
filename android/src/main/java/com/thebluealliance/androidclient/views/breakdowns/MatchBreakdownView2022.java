@@ -14,87 +14,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.gridlayout.widget.GridLayout;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.databinding.MatchBreakdown2022Binding;
 import com.thebluealliance.androidclient.types.MatchType;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import java.util.List;
 import java.util.Map;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class MatchBreakdownView2022 extends AbstractMatchBreakdownView {
-    @BindView(R.id.breakdown2022_container)                     GridLayout breakdownContainer;
-
-    @BindView(R.id.breakdown_red1)                              TextView red1;
-    @BindView(R.id.breakdown_blue1)                             TextView blue1;
-    @BindView(R.id.breakdown_red2)                              TextView red2;
-    @BindView(R.id.breakdown_blue2)                             TextView blue2;
-    @BindView(R.id.breakdown_red3)                              TextView red3;
-    @BindView(R.id.breakdown_blue3)                             TextView blue3;
-
-    @BindView(R.id.breakdown2022_red_auto_taxi_robot1)          ImageView red1Taxi;
-    @BindView(R.id.breakdown2022_red_auto_taxi_robot2)          ImageView red2Taxi;
-    @BindView(R.id.breakdown2022_red_auto_taxi_robot3)          ImageView red3Taxi;
-    @BindView(R.id.breakdown2022_red_auto_taxi_bonus)           TextView  redTaxiBonus;
-    @BindView(R.id.breakdown2022_blue_auto_taxi_robot1)         ImageView blue1Taxi;
-    @BindView(R.id.breakdown2022_blue_auto_taxi_robot2)         ImageView blue2Taxi;
-    @BindView(R.id.breakdown2022_blue_auto_taxi_robot3)         ImageView blue3Taxi;
-    @BindView(R.id.breakdown2022_blue_auto_taxi_bonus)          TextView  blueTaxiBonus;
-
-    @BindView(R.id.breakdown2022_red_auto_lower_hub)            TextView redAutoLowerHub;
-    @BindView(R.id.breakdown2022_red_auto_upper_hub)            TextView redAutoUpperHub;
-    @BindView(R.id.breakdown2022_blue_auto_lower_hub)           TextView blueAutoLowerHub;
-    @BindView(R.id.breakdown2022_blue_auto_upper_hub)           TextView blueAutoUpperHub;
-    @BindView(R.id.breakdown2022_red_auto_cargo)                TextView redAutoCargo;
-    @BindView(R.id.breakdown2022_blue_auto_cargo)               TextView blueAutoCargo;
-
-    @BindView(R.id.breakdown2022_red_quintet)                   ImageView redQuintet;
-    @BindView(R.id.breakdown2022_blue_quintet)                  ImageView blueQuintet;
-
-    @BindView(R.id.breakdown_auto_total_red)                    TextView redAutoTotal;
-    @BindView(R.id.breakdown_auto_total_blue)                   TextView blueAutoTotal;
-
-    @BindView(R.id.breakdown2022_red_teleop_lower_hub)          TextView redTelopLowerHub;
-    @BindView(R.id.breakdown2022_red_teleop_upper_hub)          TextView redTeleopUpperHub;
-    @BindView(R.id.breakdown2022_blue_teleop_lower_hub)         TextView blueTeleopLowerHub;
-    @BindView(R.id.breakdown2022_blue_teleop_upper_hub)         TextView blueTeleopUpperHub;
-    @BindView(R.id.breakdown2022_red_teleop_cargo)              TextView redTeleopCargo;
-    @BindView(R.id.breakdown2022_blue_teleop_cargo)             TextView blueTeleopCargo;
-
-    @BindView(R.id.breakdown2022_red_endgame_robot1)            TextView redEndgameRobot1;
-    @BindView(R.id.breakdown2022_red_endgame_robot2)            TextView redEndgameRobot2;
-    @BindView(R.id.breakdown2022_red_endgame_robot3)            TextView redEndgameRobot3;
-    @BindView(R.id.breakdown2022_blue_endgame_robot1)           TextView blueEndgameRobot1;
-    @BindView(R.id.breakdown2022_blue_endgame_robot2)           TextView blueEndgameRobot2;
-    @BindView(R.id.breakdown2022_blue_endgame_robot3)           TextView blueEndgameRobot3;
-    @BindView(R.id.breakdown_endgame_total_red)                 TextView redEndgameTotal;
-    @BindView(R.id.breakdown_endgame_total_blue)                TextView blueEndgameTotal;
-
-    @BindView(R.id.breakdown_teleop_total_red)                  TextView redTeleopTotal;
-    @BindView(R.id.breakdown_teleop_total_blue)                 TextView blueTeleopTotal;
-
-    @BindView(R.id.breakdown2022_red_cargo_bonus)               TextView redCargoBonue;
-    @BindView(R.id.breakdown2022_blue_cargo_bonus)              TextView blueCargoBonus;
-
-    @BindView(R.id.breakdown2022_red_hangar_bonus)              TextView redHangarBonus;
-    @BindView(R.id.breakdown2022_blue_hangar_bonus)             TextView blueHangarBonus;
-
-    @BindView(R.id.breakdown_fouls_red)                         TextView foulsRed;
-    @BindView(R.id.breakdown_fouls_blue)                        TextView foulsBlue;
-    @BindView(R.id.breakdown_adjust_red)                        TextView adjustRed;
-    @BindView(R.id.breakdown_adjust_blue)                       TextView adjustBlue;
-    @BindView(R.id.breakdown_total_red)                         TextView totalRed;
-    @BindView(R.id.breakdown_total_blue)                        TextView totalBlue;
-    @BindView(R.id.breakdown_red_rp)                            TextView rpRed;
-    @BindView(R.id.breakdown_blue_rp)                           TextView rpBlue;
-    @BindView(R.id.breakdown_rp_header)                         TextView rpHeader;
-
+    private MatchBreakdown2022Binding mBinding;
     private Resources mResources;
 
     private static final @NonNull Map<String, Integer> ENDGAME_POINTS = ImmutableMap.of(
@@ -117,8 +49,7 @@ public class MatchBreakdownView2022 extends AbstractMatchBreakdownView {
 
     @Override
     void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.match_breakdown_2022, this, true);
-        ButterKnife.bind(this);
+        mBinding = MatchBreakdown2022Binding.inflate(LayoutInflater.from(getContext()), this, true);
     }
 
 
@@ -126,7 +57,7 @@ public class MatchBreakdownView2022 extends AbstractMatchBreakdownView {
     public boolean initWithData(MatchType matchType, String winningAlliance, IMatchAlliancesContainer allianceData, JsonObject scoreData) {
         if (scoreData == null || scoreData.entrySet().isEmpty()
                 || allianceData == null || allianceData.getRed() == null || allianceData.getBlue() == null) {
-            breakdownContainer.setVisibility(GONE);
+            mBinding.breakdown2022Container.setVisibility(GONE);
             return false;
         }
 
@@ -140,74 +71,74 @@ public class MatchBreakdownView2022 extends AbstractMatchBreakdownView {
         JsonObject blueData = scoreData.get("blue").getAsJsonObject();
 
         /* Red Teams */
-        red1.setText(teamNumberFromKey(redTeams.get(0)));
-        red2.setText(teamNumberFromKey(redTeams.get(1)));
-        red3.setText(teamNumberFromKey(redTeams.get(2)));
+        mBinding.breakdownRed1.setText(teamNumberFromKey(redTeams.get(0)));
+        mBinding.breakdownRed2.setText(teamNumberFromKey(redTeams.get(1)));
+        mBinding.breakdownRed3.setText(teamNumberFromKey(redTeams.get(2)));
 
         /* Blue Teams */
-        blue1.setText(teamNumberFromKey(blueTeams.get(0)));
-        blue2.setText(teamNumberFromKey(blueTeams.get(1)));
-        blue3.setText(teamNumberFromKey(blueTeams.get(2)));
+        mBinding.breakdownBlue1.setText(teamNumberFromKey(blueTeams.get(0)));
+        mBinding.breakdownBlue2.setText(teamNumberFromKey(blueTeams.get(1)));
+        mBinding.breakdownBlue3.setText(teamNumberFromKey(blueTeams.get(2)));
 
         /* Auto Initiation Line*/
-        setAutoTaxi(redData, redTaxiBonus, red1Taxi, red2Taxi, red3Taxi);
-        setAutoTaxi(blueData, blueTaxiBonus, blue1Taxi, blue2Taxi, blue3Taxi);
+        setAutoTaxi(redData, mBinding.breakdown2022RedAutoTaxiBonus, mBinding.breakdown2022RedAutoTaxiRobot1, mBinding.breakdown2022RedAutoTaxiRobot2, mBinding.breakdown2022RedAutoTaxiRobot3);
+        setAutoTaxi(blueData, mBinding.breakdown2022BlueAutoTaxiBonus, mBinding.breakdown2022BlueAutoTaxiRobot1, mBinding.breakdown2022BlueAutoTaxiRobot2, mBinding.breakdown2022BlueAutoTaxiRobot3);
 
         /* Auto Cargo */
-        setCargo(redData, "auto", redAutoLowerHub, redAutoUpperHub, redAutoCargo);
-        setCargo(blueData, "auto", blueAutoLowerHub, blueAutoUpperHub, blueAutoCargo);
+        setCargo(redData, "auto", mBinding.breakdown2022RedAutoLowerHub, mBinding.breakdown2022RedAutoUpperHub, mBinding.breakdown2022RedAutoCargo);
+        setCargo(blueData, "auto", mBinding.breakdown2022BlueAutoLowerHub, mBinding.breakdown2022BlueAutoUpperHub, mBinding.breakdown2022BlueAutoCargo);
 
         /* Auto Quintet */
-        setQuintet(redData, redQuintet);
-        setQuintet(blueData, blueQuintet);
+        setQuintet(redData, mBinding.breakdown2022RedQuintet);
+        setQuintet(blueData, mBinding.breakdown2022BlueQuintet);
 
         /* Total Auto Points */
-        redAutoTotal.setText(getIntDefault(redData, "autoPoints"));
-        blueAutoTotal.setText(getIntDefault(blueData, "autoPoints"));
+        mBinding.breakdownAutoTotalRed.setText(getIntDefault(redData, "autoPoints"));
+        mBinding.breakdownAutoTotalBlue.setText(getIntDefault(blueData, "autoPoints"));
 
         /* Teleop Cargo */
-        setCargo(redData, "teleop", redTelopLowerHub, redTeleopUpperHub, redTeleopCargo);
-        setCargo(blueData, "teleop", blueTeleopLowerHub, blueTeleopUpperHub, blueTeleopCargo);
+        setCargo(redData, "teleop", mBinding.breakdown2022RedTeleopLowerHub, mBinding.breakdown2022RedTeleopUpperHub, mBinding.breakdown2022RedTeleopCargo);
+        setCargo(blueData, "teleop", mBinding.breakdown2022BlueTeleopLowerHub, mBinding.breakdown2022BlueTeleopUpperHub, mBinding.breakdown2022BlueTeleopUpperHub);
 
         /* Endgame */
-        setEndgame(redData, redEndgameTotal, redEndgameRobot1, redEndgameRobot2, redEndgameRobot3);
-        setEndgame(blueData, blueEndgameTotal, blueEndgameRobot1, blueEndgameRobot2, blueEndgameRobot3);
+        setEndgame(redData, mBinding.breakdownEndgameTotalRed, mBinding.breakdown2022RedEndgameRobot1, mBinding.breakdown2022RedEndgameRobot2, mBinding.breakdown2022RedEndgameRobot3);
+        setEndgame(blueData, mBinding.breakdownEndgameTotalBlue, mBinding.breakdown2022BlueEndgameRobot1, mBinding.breakdown2022BlueEndgameRobot2, mBinding.breakdown2022BlueEndgameRobot3);
 
         /* Teleop Total */
-        redTeleopTotal.setText(getIntDefault(redData, "teleopPoints"));
-        blueTeleopTotal.setText(getIntDefault(blueData, "teleopPoints"));
+        mBinding.breakdownTeleopTotalRed.setText(getIntDefault(redData, "teleopPoints"));
+        mBinding.breakdownTeleopTotalBlue.setText(getIntDefault(blueData, "teleopPoints"));
 
         /* Cargo Bonus */
-        setBonus(redData, "cargo", redCargoBonue);
-        setBonus(blueData, "cargo", blueCargoBonus);
+        setBonus(redData, "cargo", mBinding.breakdown2022RedCargoBonus);
+        setBonus(blueData, "cargo", mBinding.breakdown2022BlueCargoBonus);
 
         /* Hangar Bonus */
-        setBonus(redData, "hangar", redHangarBonus);
-        setBonus(blueData, "hangar", blueHangarBonus);
+        setBonus(redData, "hangar", mBinding.breakdown2022RedHangarBonus);
+        setBonus(blueData, "hangar", mBinding.breakdown2022BlueHangarBonus);
 
         /* Fouls */
-        setFouls(blueData, foulsRed);
-        setFouls(redData, foulsBlue);
+        setFouls(blueData, mBinding.breakdownFoulsRed);
+        setFouls(redData, mBinding.breakdownFoulsBlue);
 
         /* Adjustment points */
-        adjustRed.setText(getIntDefault(redData, "adjustPoints"));
-        adjustBlue.setText(getIntDefault(blueData, "adjustPoints"));
+        mBinding.breakdownAdjustRed.setText(getIntDefault(redData, "adjustPoints"));
+        mBinding.breakdownAdjustBlue.setText(getIntDefault(blueData, "adjustPoints"));
 
         /* Total Points */
-        totalRed.setText(getIntDefault(redData, "totalPoints"));
-        totalBlue.setText(getIntDefault(blueData, "totalPoints"));
+        mBinding.breakdownTotalRed.setText(getIntDefault(redData, "totalPoints"));
+        mBinding.breakdownTotalBlue.setText(getIntDefault(blueData, "totalPoints"));
 
         /* Show RPs earned, if needed */
         if (!matchType.isPlayoff()) {
-            rpRed.setText(mResources.getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "rp")));
-            rpBlue.setText(mResources.getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "rp")));
+            mBinding.breakdownRedRp.setText(mResources.getString(R.string.breakdown_total_rp, getIntDefaultValue(redData, "rp")));
+            mBinding.breakdownBlueRp.setText(mResources.getString(R.string.breakdown_total_rp, getIntDefaultValue(blueData, "rp")));
         } else {
-            rpRed.setVisibility(GONE);
-            rpBlue.setVisibility(GONE);
-            rpHeader.setVisibility(GONE);
+            mBinding.breakdownRedRp.setVisibility(GONE);
+            mBinding.breakdownBlueRp.setVisibility(GONE);
+            mBinding.breakdownRpHeader.setVisibility(GONE);
         }
 
-        breakdownContainer.setVisibility(View.VISIBLE);
+        mBinding.breakdown2022Container.setVisibility(View.VISIBLE);
 
         return true;
     }
