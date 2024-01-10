@@ -54,5 +54,7 @@ public class TeamHelperTest {
         assertEquals(-1, TeamHelper.getTeamNumber(null));
         assertEquals(1124, TeamHelper.getTeamNumber("frc1124"));
         assertEquals(254, TeamHelper.getTeamNumber("frc254"));
+        assertEquals(254, TeamHelper.getTeamNumber("frc254A"));
+        assertEquals(254, TeamHelper.getTeamNumber("frc254b"));
     }
 }

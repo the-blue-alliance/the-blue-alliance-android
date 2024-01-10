@@ -2,6 +2,9 @@ package com.thebluealliance.androidclient.helpers;
 
 import androidx.annotation.Nullable;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Helper class used to verify team keys.
  *
@@ -55,6 +58,15 @@ public final class TeamHelper {
      */
     public static int getTeamNumber(@Nullable String key) {
         if (key == null) return -1;
-        return Integer.parseInt(key.substring(3));
+
+        Matcher teamNumberMatcher = Pattern.compile("^frc(\\d{1,4})[a-zA-Z]?$").matcher(key);
+
+        // 0th group is the full matching string, 1st is our capture group for the number
+        // The 0th group is not included in groupCount()
+        if (!teamNumberMatcher.matches() || teamNumberMatcher.groupCount() < 1) return -1;
+        String teamNumberString = teamNumberMatcher.group(1);
+
+        if (teamNumberString == null) return -1;
+        return Integer.parseInt(teamNumberString);
     }
 }
