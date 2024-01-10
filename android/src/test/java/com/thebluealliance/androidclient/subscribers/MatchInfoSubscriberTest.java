@@ -2,7 +2,7 @@ package com.thebluealliance.androidclient.subscribers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
@@ -44,6 +45,8 @@ public class MatchInfoSubscriberTest {
     @Mock APICache mCache;
     @Mock Resources mResources;
 
+    @Mock Picasso mPicasso;
+
     private MatchInfoSubscriber mSubscriber;
     private Gson mGson;
     private Model mData;
@@ -55,7 +58,7 @@ public class MatchInfoSubscriberTest {
         MockitoAnnotations.initMocks(this);
         mGson = TBAAndroidModule.getGson();
         mRenderer = spy(new MatchRenderer(mCache, mResources));
-        mMediaRenderer = spy(new MediaRenderer());
+        mMediaRenderer = spy(new MediaRenderer(mPicasso));
         mSubscriber = new MatchInfoSubscriber(mGson, mEventBus, mRenderer, mMediaRenderer, mResources);
         mData = new Model(
           ModelMaker.getModel(Match.class, "2015necmp_f1m1"),

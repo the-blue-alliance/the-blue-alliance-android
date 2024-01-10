@@ -9,6 +9,7 @@ import android.widget.ListView;
 
 import androidx.annotation.IdRes;
 import androidx.fragment.app.Fragment;
+import androidx.viewbinding.ViewBinding;
 
 import com.thebluealliance.androidclient.binders.AbstractDataBinder;
 import com.thebluealliance.androidclient.binders.ListViewBinder;
@@ -38,7 +39,7 @@ public final class FragmentTestDriver {
         controller.attach().pause().stop().destroy();
     }
 
-    public static <F extends DatafeedFragment<T, V, S, B>, T, V, S extends BaseAPISubscriber<T, V>, B extends AbstractDataBinder<V>> Activity
+    public static <F extends DatafeedFragment<T, V, VB, S, B>, T, VB extends ViewBinding, V, S extends BaseAPISubscriber<T, V>, B extends AbstractDataBinder<V, VB>> Activity
     bindData(F fragment, V bindData) {
         DatafeedFragmentTestController<F> controller = getController(fragment);
         controller.makeTestActivityController().makeActivity();
@@ -76,8 +77,8 @@ public final class FragmentTestDriver {
         activity.finish();
     }
 
-    public static <F extends DatafeedFragment<T, V, S, B>, T, V, S extends BaseAPISubscriber<T, V>,
-            B extends AbstractDataBinder<V>> void testNoDataBindings(F fragment, @IdRes int noDataViewRes) {
+    public static <F extends DatafeedFragment<T, V, VB, S, B>, VB extends ViewBinding, T, V, S extends BaseAPISubscriber<T, V>,
+            B extends AbstractDataBinder<V, VB>> void testNoDataBindings(F fragment, @IdRes int noDataViewRes) {
         /**
          * Still having OOM issues
         DatafeedFragmentTestController<F> controller = getController(fragment);

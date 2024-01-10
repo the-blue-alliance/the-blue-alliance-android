@@ -61,7 +61,7 @@ public class TestDatafeedFragment extends BaseFragmentTest {
 
     @Before
     public void setUp() {
-        mFragment = spy(new SimpleDatafeedFragment());
+        mFragment = spy(SimpleDatafeedFragment.class);
         mSubject = spy(new SerializedSubject<>(PublishSubject.create()));
         mFragment.setObservable(mSubject);
         mController = FragmentTestDriver.getController(mFragment)

@@ -1,8 +1,8 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -61,7 +61,7 @@ public class DistrictListSubscriberTest {
 
         assertEquals(data.size(), 5);
         for (int i = 0; i < data.size(); i++) {
-            verify(mRenderer).renderFromModel(eq(mDistricts.get(i)), anyObject());
+            verify(mRenderer).renderFromModel(eq(mDistricts.get(i)), any());
         }
     }
 }
