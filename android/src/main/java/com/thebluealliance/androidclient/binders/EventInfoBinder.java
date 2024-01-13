@@ -91,8 +91,10 @@ public class EventInfoBinder extends AbstractDataBinder<EventInfoBinder.Model, F
         // Show a venue if it is available, otherwise show just the location. If neither is available, hide
         if (data.venueString != null && !data.venueString.isEmpty()) {
             mBinding.eventVenue.setText(data.venueString);
+            mBinding.eventVenueContainer.setVisibility(View.VISIBLE);
         } else if (data.locationString != null && !data.locationString.isEmpty()) {
             mBinding.eventVenue.setText(data.locationString);
+            mBinding.eventVenueContainer.setVisibility(View.VISIBLE);
         } else {
             mBinding.eventVenue.setText(R.string.no_location_available);
             mBinding.eventVenueContainer.setVisibility(View.GONE);
