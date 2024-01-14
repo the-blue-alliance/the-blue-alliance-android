@@ -104,7 +104,7 @@ android {
         applicationId "com.thebluealliance.androidclient"
         compileSdk 34
         minSdkVersion 19
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode versionNum
         versionName version.toString()
         multiDexEnabled true
