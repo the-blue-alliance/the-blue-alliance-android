@@ -1,7 +1,8 @@
-Version 8.0.0:
- - Welcome back for the 2023 season!
+Version 9.0.0:
+ - Welcome back for the 2024 season!
  - Other bug fixes & reliability improvements
 
 View the full changelog for this and previous releases on the GitHub page:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
+
 
