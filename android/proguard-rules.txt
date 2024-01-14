@@ -101,3 +101,9 @@ public static *** v(...);
 # to avoid problem on Samsung 4.2.2 devices with appcompat v21
 # see https://code.google.com/p/android/issues/detail?id=78377
 -keep,includedescriptorclasses class !android.support.v7.view.menu.*MenuBuilder*, android.support.v7.** { *; }
+
+# Rules for Retrofit, see https://github.com/square/retrofit/issues/3751#issuecomment-1192043644
+ # R8 full mode strips generic signatures from return types if not kept.
+ -if interface * { @retrofit2.http.* public *** *(...); }
+ -keep,allowoptimization,allowshrinking,allowobfuscation class <3>
+ -keep,allowobfuscation,allowshrinking class retrofit2.Response
