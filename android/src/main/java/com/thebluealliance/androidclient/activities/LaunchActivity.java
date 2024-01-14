@@ -1,16 +1,22 @@
 package com.thebluealliance.androidclient.activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.background.RecreateSearchIndexes;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
@@ -28,6 +34,9 @@ public class LaunchActivity extends AppCompatActivity {
     @Inject Cache mDatafeedCache;
     @Inject SharedPreferences mSharedPreferences;
 
+    @Inject
+    AccountController mAccountController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +44,10 @@ public class LaunchActivity extends AppCompatActivity {
         // Create intent to launch data download activity
         Intent redownloadIntent = new Intent(this, RedownloadActivity.class);
         boolean redownload = checkDataRedownload(redownloadIntent);
+        boolean needsToRequestNotificationPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+                && mAccountController.isMyTbaEnabled();
+
         if (mSharedPreferences.getBoolean(Constants.ALL_DATA_LOADED_KEY, false) && !redownload) {
             if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
                 Uri data = getIntent().getData();
@@ -47,19 +60,21 @@ public class LaunchActivity extends AppCompatActivity {
                     if (intent != null) {
                         startActivity(intent);
                         finish();
-                        return;
                     } else {
                         goToHome();
-                        return;
                     }
                 } else {
                     goToHome();
-                    return;
                 }
             } else {
                 goToHome();
-                return;
             }
+        } else if (needsToRequestNotificationPermission) {
+            // Starting with Android 33, we need to request notification permissions
+            Toast.makeText(this, "Notification permission not found!", Toast.LENGTH_LONG).show();
+            Intent mytbaIntent = new Intent(this, MyTBAOnboardingActivity.class);
+            startActivity(mytbaIntent);
+            finish();
         } else if (redownload) {
             // Start redownload activity
             startActivity(redownloadIntent);

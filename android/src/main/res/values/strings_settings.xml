@@ -5,6 +5,7 @@
     <string name="pref_header_notifications">Notifications</string>
     <string name="pref_header_general">General</string>
     <string name="pref_header_privacy">Privacy</string>
+    <string name="pref_header_permissions">Permissions</string>
     <string name="pref_header_account">Account</string>
 
     <!-- Account -->
@@ -65,6 +66,7 @@
     <string name="select_led_color">Select LED Color</string>
 
     <string name="pref_notification_headsup">Heads Up Notifications</string>
+    <string name="pref_notification_permission_granted">Notification Permission Granted</string>
 
     <!-- Dark Mode Settings -->
     <string name="pref_dark_mode">App Theme</string>

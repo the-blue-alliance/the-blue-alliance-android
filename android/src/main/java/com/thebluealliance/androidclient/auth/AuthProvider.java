@@ -8,10 +8,6 @@ import rx.Observable;
 
 public interface AuthProvider {
 
-    void onStart();
-
-    void onStop();
-
     /**
      * Check if a user is currently signed in
      */
@@ -32,7 +28,7 @@ public interface AuthProvider {
     @Nullable
     Intent buildSignInIntent();
 
-    Observable<? extends User> userFromSignInResult(int requestCode, int resultCode, Intent data);
+    Observable<? extends User> userFromSignInResult(int resultCode, Intent data);
 
     Observable<? extends User> signInLegacyUser();
 }

@@ -3,6 +3,8 @@ package com.thebluealliance.androidclient.gcm;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import android.Manifest;
+import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -30,6 +32,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.Shadows;
 import org.robolectric.android.controller.ServiceController;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowApplication;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,9 +65,12 @@ public class GCMMessageHandlerTest {
 
         @Before
         public void setUp() {
-            Context applicationContext = ApplicationProvider.getApplicationContext();
+            Application applicationContext = ApplicationProvider.getApplicationContext();
             mNotificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
             mService = buildAndStartService();
+
+            ShadowApplication shadowApplication = Shadows.shadowOf(applicationContext);
+            shadowApplication.grantPermissions(Manifest.permission.POST_NOTIFICATIONS);
         }
 
         @ParameterizedRobolectricTestRunner.Parameters(name = "NotificationType = {0}")
@@ -129,9 +135,12 @@ public class GCMMessageHandlerTest {
 
         @Before
         public void setUp() {
-            Context applicationContext = ApplicationProvider.getApplicationContext();
+            Application applicationContext = ApplicationProvider.getApplicationContext();
             mNotificationManager = (NotificationManager) applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
             mService = buildAndStartService();
+
+            ShadowApplication shadowApplication = Shadows.shadowOf(applicationContext);
+            shadowApplication.grantPermissions(Manifest.permission.POST_NOTIFICATIONS);
         }
 
         @Test

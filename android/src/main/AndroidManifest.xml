@@ -14,6 +14,8 @@
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
     <!-- This is not needed with android 6.0 (API 23) anymore, since we only need this to
          interact with our own Authenticator to create a TBA system account
          https://developer.android.com/reference/android/Manifest.permission.html#GET_ACCOUNTS -->

@@ -1,48 +1,37 @@
 package com.thebluealliance.androidclient.views;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.annotation.StringRes;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.common.SignInButton;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.MyTBAOnboardingPagerAdapter;
-
-import me.relex.circleindicator.CircleIndicator;
+import com.thebluealliance.androidclient.databinding.MytbaOnboardingViewPagerBinding;
 
 public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnClickListener {
-
-    private final ViewPager mViewPager;
-    private final SignInButton mSignInButton;
-    private final TextView myTBATitle;
-    private final TextView myTBASubtitle;
+    final private MytbaOnboardingViewPagerBinding mBinding;
+    final private MyTBAOnboardingPagerAdapter mAdapter;
 
     private Callbacks mCallbacks;
 
     public MyTBAOnboardingViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        LayoutInflater.from(context).inflate(R.layout.mytba_onboarding_view_pager, this, true);
-
-        myTBATitle = (TextView) findViewById(R.id.mytba_title);
-        myTBASubtitle = (TextView) findViewById(R.id.mytba_subtitle);
-
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mViewPager.setAdapter(new MyTBAOnboardingPagerAdapter(mViewPager));
-        mViewPager.setOffscreenPageLimit(10);
-
-        CircleIndicator indicator = (CircleIndicator) findViewById(R.id.mytba_pager_indicator);
-        indicator.setViewPager(mViewPager);
-
-        mSignInButton = findViewById(R.id.google_sign_in_button);
-        mSignInButton.setSize(SignInButton.SIZE_WIDE);
-        mSignInButton.setOnClickListener(this);
+        mBinding = MytbaOnboardingViewPagerBinding.inflate(LayoutInflater.from(context), this);
+        mAdapter = new MyTBAOnboardingPagerAdapter(mBinding.viewPager);
+        mBinding.viewPager.setAdapter(mAdapter);
+        mBinding.viewPager.setOffscreenPageLimit(10);
+        mBinding.mytbaPagerIndicator.setViewPager(mBinding.viewPager);
+        mBinding.googleSignInButton.setSize(SignInButton.SIZE_WIDE);
+        mBinding.googleSignInButton.setOnClickListener(this);
+        mBinding.enableNotificationsButton.setOnClickListener(this);
     }
 
     public void setCallbacks(Callbacks callbacks) {
@@ -52,60 +41,76 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        switch (id) {
-            case R.id.google_sign_in_button:
-                if (mCallbacks != null) {
-                    mCallbacks.onSignInButtonClicked();
-                }
-                break;
+        if (id == R.id.google_sign_in_button && mCallbacks != null) {
+            mCallbacks.onSignInButtonClicked();
+        } else if (id == R.id.enable_notifications_button && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            mCallbacks.onEnableNotificationsButtonClicked();
         }
-
     }
 
     public void scrollToLoginPage() {
         // Login page should always be the last page
-        mViewPager.setCurrentItem(mViewPager.getAdapter().getCount() - 1);
+        mBinding.viewPager.setCurrentItem(mAdapter.getLoginPageId());
+    }
+
+    public boolean isBeforeLoginPage() {
+        return mBinding.viewPager.getCurrentItem() < mAdapter.getLoginPageId();
     }
 
     public boolean isOnLoginPage() {
-        return mViewPager.getCurrentItem() == (mViewPager.getAdapter().getCount() - 1);
+        return mBinding.viewPager.getCurrentItem() == mAdapter.getLoginPageId();
+    }
+
+    public boolean isOnNotificationPermissionPage() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                && mBinding.viewPager.getCurrentItem() == mAdapter.getNotificationPermissionPageId();
+    }
+
+    public boolean isDone() {
+        return mBinding.viewPager.getCurrentItem() == mAdapter.getCount() - 1;
+    }
+
+    public void advance() {
+        mBinding.viewPager.setCurrentItem(mBinding.viewPager.getCurrentItem() + 1);
     }
 
     public ViewPager getViewPager() {
-        return mViewPager;
+        return mBinding.viewPager;
     }
 
     public void setTitleText(@StringRes int resId) {
-        myTBATitle.setText(resId);
-    }
-
-    public void setUpForNoPlayServices() {
-        myTBATitle.setVisibility(View.VISIBLE);
-        myTBATitle.setText(R.string.mytba_no_play_services);
-
-        myTBASubtitle.setVisibility(View.VISIBLE);
-        myTBASubtitle.setText(R.string.mytba_no_play_services_subtitle);
+        mBinding.mytbaTitle.setText(resId);
     }
 
     public void setUpForLoginPrompt() {
-        myTBATitle.setVisibility(View.VISIBLE);
-        myTBATitle.setText(R.string.mytba_get_started_title);
+        mBinding.mytbaTitle.setVisibility(View.VISIBLE);
+        mBinding.mytbaTitle.setText(R.string.mytba_get_started_title);
 
-        myTBASubtitle.setVisibility(View.VISIBLE);
-        myTBASubtitle.setText(R.string.mytba_login_prompt);
+        mBinding.mytbaSubtitle.setVisibility(View.VISIBLE);
+        mBinding.mytbaSubtitle.setText(R.string.mytba_login_prompt);
     }
 
     public void setUpForLoginSuccess() {
-        myTBATitle.setVisibility(View.VISIBLE);
-        myTBATitle.setText(R.string.mytba_login_success);
+        mBinding.mytbaTitle.setVisibility(View.VISIBLE);
+        mBinding.mytbaTitle.setText(R.string.mytba_login_success);
 
-        myTBASubtitle.setVisibility(View.VISIBLE);
-        myTBASubtitle.setText(R.string.mytba_login_success_subtitle);
+        mBinding.mytbaSubtitle.setVisibility(View.VISIBLE);
+        mBinding.mytbaSubtitle.setText(R.string.mytba_login_success_subtitle);
 
-        mSignInButton.setVisibility(View.GONE);
+        mBinding.googleSignInButton.setVisibility(View.GONE);
+    }
+
+    public void setUpForPermissionResult(boolean permissionGranted) {
+        if (permissionGranted) {
+            mBinding.enableNotificationsButton.setVisibility(GONE);
+        } else {
+            mBinding.enableNotificationsClarification.setVisibility(VISIBLE);
+        }
     }
 
     public interface Callbacks {
         void onSignInButtonClicked();
+        @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+        void onEnableNotificationsButtonClicked();
     }
 }

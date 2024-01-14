@@ -1,19 +1,27 @@
 package com.thebluealliance.androidclient.adapters;
 
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.RequiresApi;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.thebluealliance.androidclient.R;
 
 public class MyTBAOnboardingPagerAdapter extends PagerAdapter {
 
-    private int mCount = 5;
-    private ViewGroup mView;
+    private final int mCount;
+    private final ViewGroup mView;
 
     public MyTBAOnboardingPagerAdapter(ViewGroup view) {
         mView = view;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Starting with API 33, there is an additional page to request notification permissions
+            mCount = 6;
+        } else {
+            mCount = 5;
+        }
     }
 
     @Override
@@ -21,9 +29,21 @@ public class MyTBAOnboardingPagerAdapter extends PagerAdapter {
         return mCount;
     }
 
+    public int getLoginPageId() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return mCount - 2;
+        } else {
+            return mCount - 1;
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    public int getNotificationPermissionPageId() {
+        return mCount - 1;
+    }
+
     @Override
     public Object instantiateItem(ViewGroup collection, int position) {
-
         int resId = 0;
         switch (position) {
             case 0:
@@ -40,6 +60,9 @@ public class MyTBAOnboardingPagerAdapter extends PagerAdapter {
                 break;
             case 4:
                 resId = R.id.page_five;
+                break;
+            case 5:
+                resId = R.id.page_six;
                 break;
         }
         return mView.findViewById(resId);

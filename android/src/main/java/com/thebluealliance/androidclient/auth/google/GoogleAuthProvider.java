@@ -2,18 +2,15 @@ package com.thebluealliance.androidclient.auth.google;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.firebase.auth.AuthCredential;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
@@ -25,14 +22,13 @@ import javax.inject.Singleton;
 import rx.Observable;
 
 @Singleton
-public class GoogleAuthProvider implements AuthProvider,
-                                           GoogleApiClient.OnConnectionFailedListener,
-                                           GoogleApiClient.ConnectionCallbacks
-{
+public class GoogleAuthProvider implements AuthProvider {
 
     private final Context mContext;
     private final AccountController mAccountController;
-    private @Nullable GoogleApiClient mGoogleApiClient;
+
+    private GoogleSignInClient mSignInClient;
+
     private @Nullable GoogleSignInUser mCurrentUser;
 
     @Inject
@@ -40,49 +36,27 @@ public class GoogleAuthProvider implements AuthProvider,
         mCurrentUser = null;
         mAccountController = accountController;
         mContext = context;
-
     }
 
     private void loadGoogleApiClient() {
         String clientId = mAccountController.getWebClientId();
+        TbaLogger.d("Google client id: " + clientId);
         if (clientId.isEmpty()) {
             // No client id set in tba.properties, can't continue
             TbaLogger.w("Oauth client ID not set, can't enable myTBA. See https://goo.gl/Swp5PC "
                         + "for config details");
-            mGoogleApiClient = null;
+            mSignInClient = null;
             return;
         }
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .requestIdToken(clientId)
                 .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
+        mSignInClient = GoogleSignIn.getClient(mContext, gso);
     }
 
     public AuthCredential getAuthCredential(String idToken) {
         return com.google.firebase.auth.GoogleAuthProvider.getCredential(idToken, null);
-    }
-
-    @Override
-    public void onStart() {
-        if (mGoogleApiClient != null
-            && !mGoogleApiClient.isConnecting()
-            && !mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.connect();
-        }
-    }
-
-    @Override
-    public void onStop() {
-        if (mGoogleApiClient != null
-            && !mGoogleApiClient.isConnecting()
-            && mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
     }
 
     @Override
@@ -97,13 +71,13 @@ public class GoogleAuthProvider implements AuthProvider,
 
     @Nullable @Override
     public Intent buildSignInIntent() {
-        if (mGoogleApiClient == null) {
+        if (mSignInClient == null) {
             // Lazy load the API client, if needed
             loadGoogleApiClient();
         }
 
-        if (mGoogleApiClient != null) {
-            return Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        if (mSignInClient != null) {
+            return mSignInClient.getSignInIntent();
         }
 
         // If we still can't get the API client, just give up
@@ -111,9 +85,9 @@ public class GoogleAuthProvider implements AuthProvider,
     }
 
     @Override
-    public Observable<GoogleSignInUser> userFromSignInResult(int requestCode, int resultCode, Intent data) {
+    public Observable<GoogleSignInUser> userFromSignInResult(int resultCode, Intent data) {
         GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-        boolean success = result.isSuccess();
+        boolean success = result != null && result.isSuccess();
         TbaLogger.d("Google Sign In Result: " + success);
         if (success) {
             mCurrentUser = new GoogleSignInUser(result.getSignInAccount());
@@ -123,40 +97,7 @@ public class GoogleAuthProvider implements AuthProvider,
 
     @WorkerThread
     public Observable<GoogleSignInUser> signInLegacyUser() {
-        if (mGoogleApiClient == null) {
-            TbaLogger.i("Lazy loading Google API Client for legacy sign in");
-            loadGoogleApiClient();
-        }
-        if (mGoogleApiClient == null) {
-            TbaLogger.i("Unable to get API Client for legacy sign in");
-            return Observable.empty();
-        }
-        onStart();
-        OptionalPendingResult<GoogleSignInResult> optionalResult = Auth.GoogleSignInApi
-                .silentSignIn(mGoogleApiClient);
-        GoogleSignInResult result = optionalResult.await();
-        onStop();
-        if (result.isSuccess()) {
-            return Observable.just(new GoogleSignInUser(result.getSignInAccount()));
-        } else {
-            TbaLogger.w("Unable to complete legacy sign in: " + result.getStatus().getStatusMessage());
-        }
+        TbaLogger.w("Legacy sign in migration no longer supported");
         return Observable.empty();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        TbaLogger.w("Google API client connection failed");
-        TbaLogger.w(connectionResult.getErrorMessage());
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        TbaLogger.d("Google API client connected");
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
     }
 }

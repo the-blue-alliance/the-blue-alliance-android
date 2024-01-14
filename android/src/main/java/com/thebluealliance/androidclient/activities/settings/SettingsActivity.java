@@ -121,18 +121,19 @@ public class SettingsActivity extends AppCompatActivity {
             Preference tbaLink = findPreference("tba_link");
             tbaLink.setIntent(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.thebluealliance.com")));
 
-            final SwitchPreference mytbaEnabled = (SwitchPreference) findPreference("mytba_enabled");
+            final SwitchPreference mytbaEnabled = findPreference("mytba_enabled");
             final Activity activity = getActivity();
             if (mytbaEnabled != null) {
                 mytbaEnabled.setChecked(mAccountController.isMyTbaEnabled());
-                mytbaEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(Preference preference, Object newValue) {
-                        boolean enabled = mAccountController.isMyTbaEnabled();
-                        TbaLogger.d("myTBA is: " + enabled);
+                mytbaEnabled.setOnPreferenceChangeListener((preference, newValue) -> {
+                    boolean enabled = mAccountController.isMyTbaEnabled();
+                    TbaLogger.d("myTBA is: " + enabled);
+                    if (!enabled) {
                         activity.startActivity(new Intent(getActivity(), MyTBAOnboardingActivity.class));
-                        return true;
+                    } else {
+                        mAccountController.setMyTbaEnabled(false);
                     }
+                    return true;
                 });
             }
 

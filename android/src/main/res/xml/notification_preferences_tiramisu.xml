@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/pref_header_permissions">
+        <SwitchPreference
+            android:key="notification_permission_enabled"
+            app:persistent="false"
+            android:title="@string/pref_notification_permission_granted" />
+    </PreferenceCategory>
+</PreferenceScreen>

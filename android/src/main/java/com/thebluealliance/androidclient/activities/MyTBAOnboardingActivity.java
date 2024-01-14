@@ -1,39 +1,37 @@
 package com.thebluealliance.androidclient.activities;
 
-import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.accounts.AccountController;
-import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.databinding.ActivityMytbaOnboardingBinding;
+import com.thebluealliance.androidclient.mytba.MyTbaOnboardingController;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 
 @AndroidEntryPoint
 public class MyTBAOnboardingActivity extends AppCompatActivity
-        implements MyTBAOnboardingViewPager.Callbacks{
+        implements MyTBAOnboardingViewPager.Callbacks,
+        MyTbaOnboardingController.MyTbaOnboardingCallbacks {
 
     private static final String MYTBA_LOGIN_COMPLETE = "mytba_login_complete";
-    private static final int SIGNIN_CODE = 254;
 
     private ActivityMytbaOnboardingBinding mBinding;
 
     private boolean isMyTBALoginComplete = false;
 
-    @Inject @Named("firebase_auth") AuthProvider mAuthProvider;
-    @Inject AccountController mAccountController;
+    @Inject
+    MyTbaOnboardingController mMyTbaOnboardingController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,49 +65,57 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
 
         mBinding.cancelButton.setOnClickListener((View view) -> finish());
         mBinding.continueButton.setOnClickListener(this::onContinueClick);
+
+        mMyTbaOnboardingController.registerActivityCallbacks(this, this);
     }
 
     private void updateContinueButtonText() {
-        if (mBinding.mytbaViewPager.isOnLoginPage()) {
+        if (mBinding.mytbaViewPager.isDone()) {
             mBinding.continueButtonLabel.setText(R.string.finish_caps);
+        } else if (mBinding.mytbaViewPager.isOnLoginPage()) {
+            mBinding.continueButtonLabel.setText(R.string.continue_caps);
         } else {
             mBinding.continueButtonLabel.setText(R.string.skip_intro_caps);
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SIGNIN_CODE) {
-            if (resultCode == RESULT_OK) {
-                mAuthProvider.userFromSignInResult(requestCode, resultCode, data)
-                        .subscribe(user -> {
-                            TbaLogger.d("User logged in: " + user.getEmail());
-                            mBinding.mytbaViewPager.setUpForLoginSuccess();
-                            isMyTBALoginComplete = true;
-                            mAccountController.onAccountConnect(MyTBAOnboardingActivity.this, user);
-                        }, throwable -> {
-                            TbaLogger.e("Error logging in");
-                            throwable.printStackTrace();
-                            mAccountController.setMyTbaEnabled(false);
-                        });
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Sign in canceled", Toast.LENGTH_LONG).show();
-                mBinding.mytbaViewPager.setUpForLoginPrompt();
-            }
+    public void onLoginSuccess() {
+        mBinding.mytbaViewPager.setUpForLoginSuccess();
+        isMyTBALoginComplete = true;
+
+        if (!mBinding.mytbaViewPager.isDone()) {
+            mBinding.mytbaViewPager.advance();
         }
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onLoginFailed() {
+        mBinding.mytbaViewPager.setUpForLoginPrompt();
+    }
+
+    @Override
+    public void onPermissionResult(boolean isGranted) {
+        mBinding.mytbaViewPager.setUpForPermissionResult(isGranted);
+
+        if (isGranted) {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(MYTBA_LOGIN_COMPLETE, isMyTBALoginComplete);
     }
 
     private void onContinueClick(View view) {
-        if (mBinding.mytbaViewPager.isOnLoginPage()) {
+        if (mBinding.mytbaViewPager.isDone()) {
             // On the last page, the "continue" button turns into a "finish" button
             finish();
+        } else if (mBinding.mytbaViewPager.isOnLoginPage()) {
+            // If there is an additional page after login, go there
+            mBinding.mytbaViewPager.advance();
         } else {
             // On other pages, the "continue" button becomes a "skip intro" button
             mBinding.mytbaViewPager.scrollToLoginPage();
@@ -118,12 +124,12 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
 
     @Override
     public void onSignInButtonClicked() {
-        Intent signInIntent = mAuthProvider.buildSignInIntent();
-        if (signInIntent != null) {
-            startActivityForResult(signInIntent, SIGNIN_CODE);
-        } else {
-            Toast.makeText(this, R.string.mytba_no_signin_intent, Toast.LENGTH_SHORT).show();
-            TbaLogger.e("Unable to get login Intent");
-        }
+        mMyTbaOnboardingController.launchSignIn(this);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    @Override
+    public void onEnableNotificationsButtonClicked() {
+        mMyTbaOnboardingController.launchNotificationPermissionRequest(this);
     }
 }

@@ -7,11 +7,12 @@ import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,12 +20,11 @@ import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
-import com.thebluealliance.androidclient.auth.AuthProvider;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
 import com.thebluealliance.androidclient.databinding.ActivityOnboardingBinding;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
+import com.thebluealliance.androidclient.mytba.MyTbaOnboardingController;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
 
 import org.jetbrains.annotations.NotNull;
@@ -33,14 +33,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class OnboardingActivity extends AppCompatActivity
   implements LoadTBADataWorker.LoadTBADataCallbacks,
-  MyTBAOnboardingViewPager.Callbacks {
+  MyTBAOnboardingViewPager.Callbacks,
+  MyTbaOnboardingController.MyTbaOnboardingCallbacks {
 
     private static final String CURRENT_LOADING_MESSAGE_KEY = "current_loading_message";
     private static final String LOADING_COMPLETE = "loading_complete";
@@ -48,18 +48,19 @@ public class OnboardingActivity extends AppCompatActivity
     private static final String WELCOME_PAGER_STATE = "welcome_pager_state";
     private static final String MYTBA_PAGER_STATE = "mytba_pager_state";
     private static final String LOAD_TASK_UUID = "load_task_uuid";
-    private static final int SIGNIN_CODE = 254;
 
     private ActivityOnboardingBinding mBinding;
 
     private String currentLoadingMessage = "";
     private boolean isDataFinishedLoading = false;
     private boolean isMyTBALoginComplete = false;
-    private @Nullable UUID dataLoadTask = null;
 
-    @Inject @Named("firebase_auth") AuthProvider mAuthProvider;
-    @Inject AccountController mAccountController;
+    private boolean didGrantNotificationPermission = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU;
+    private @Nullable UUID dataLoadTask = null;
     @Inject SharedPreferences mPreferences;
+
+    @Inject
+    MyTbaOnboardingController mMyTbaOnboardingController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,12 +122,14 @@ public class OnboardingActivity extends AppCompatActivity
             mBinding.mytbaViewPager.setUpForLoginPrompt();
         }
 
-        mBinding.continueToEnd.setOnClickListener(this::onContinueToEndClient);
+        mBinding.continueToEnd.setOnClickListener(this::onContinueToEndClick);
         mBinding.welcomeNextPage.setOnClickListener((View view) -> beginLoadingIfConnected());
         mBinding.finish.setOnClickListener((View view) -> {
             startActivity(new Intent(this, HomeActivity.class));
             finish();
         });
+
+        mMyTbaOnboardingController.registerActivityCallbacks(this, this);
     }
 
     @Override
@@ -148,33 +151,35 @@ public class OnboardingActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SIGNIN_CODE) {
-            if (resultCode == RESULT_OK) {
-                mAuthProvider.userFromSignInResult(requestCode, resultCode, data)
-                        .subscribe(user -> {
-                            TbaLogger.d("User logged in: " + user.getEmail());
-                            mBinding.mytbaViewPager.setUpForLoginSuccess();
-                            isMyTBALoginComplete = true;
-                            mAccountController.onAccountConnect(OnboardingActivity.this, user);
-                        }, throwable -> {
-                            TbaLogger.e("Error logging in");
-                            throwable.printStackTrace();
-                            mAccountController.setMyTbaEnabled(false);
-                        });
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Sign in canceled", Toast.LENGTH_LONG).show();
-                mBinding.mytbaViewPager.setUpForLoginPrompt();
-            }
+    public void onLoginSuccess() {
+        mBinding.mytbaViewPager.setUpForLoginSuccess();
+        isMyTBALoginComplete = true;
+
+        if (!mBinding.mytbaViewPager.isDone()) {
+            mBinding.mytbaViewPager.advance();
         }
     }
 
-    private void onContinueToEndClient(View view) {
+    @Override
+    public void onLoginFailed() {
+        mBinding.mytbaViewPager.setUpForLoginPrompt();
+    }
+
+    @Override
+    public void onPermissionResult(boolean isGranted) {
+        didGrantNotificationPermission = isGranted;
+        mBinding.mytbaViewPager.setUpForPermissionResult(isGranted);
+
+        if (isGranted) {
+            mBinding.viewPager.setCurrentItem(2);
+        }
+    }
+
+    private void onContinueToEndClick(View view) {
         // If myTBA hasn't been activated yet, prompt the user one last time to sign in
-        if (!mBinding.mytbaViewPager.isOnLoginPage()) {
+        if (mBinding.mytbaViewPager.isBeforeLoginPage()) {
             mBinding.mytbaViewPager.scrollToLoginPage();
-        } else if (!isMyTBALoginComplete) {
+        } else if (mBinding.mytbaViewPager.isOnLoginPage() && !isMyTBALoginComplete) {
             // Only show this dialog if play services are actually available
             new AlertDialog.Builder(this)
                     .setTitle(getString(R.string.mytba_prompt_title))
@@ -189,6 +194,22 @@ public class OnboardingActivity extends AppCompatActivity
                         mBinding.viewPager.setCurrentItem(2);
                         dialog.dismiss();
                     }).create().show();
+        } else if (mBinding.mytbaViewPager.isOnNotificationPermissionPage() && !didGrantNotificationPermission) {
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.mytba_prompt_notif_permission))
+                    .setMessage(getString(R.string.mytba_prompt_notif_permission_message))
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.mytba_prompt_yes, (dialog, dialogId) -> {
+                        // Do nothing; allow user to enable myTBA
+                        dialog.dismiss();
+                    })
+                    .setNegativeButton(R.string.mytba_prompt_cancel, (dialog, dialogId) -> {
+                        // Scroll to the last page
+                        mBinding.viewPager.setCurrentItem(2);
+                        dialog.dismiss();
+                    }).create().show();
+        } else if (!mBinding.mytbaViewPager.isDone()) {
+            mBinding.mytbaViewPager.advance();
         } else {
             mBinding.viewPager.setCurrentItem(2);
         }
@@ -360,12 +381,12 @@ public class OnboardingActivity extends AppCompatActivity
 
     @Override
     public void onSignInButtonClicked() {
-        Intent signInIntent = mAuthProvider.buildSignInIntent();
-        if (signInIntent != null) {
-            startActivityForResult(signInIntent, SIGNIN_CODE);
-        } else {
-            Toast.makeText(this, R.string.mytba_no_signin_intent, Toast.LENGTH_SHORT).show();
-            TbaLogger.e("Unable to get login Intent");
-        }
+        mMyTbaOnboardingController.launchSignIn(this);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    @Override
+    public void onEnableNotificationsButtonClicked() {
+        mMyTbaOnboardingController.launchNotificationPermissionRequest(this);
     }
 }
