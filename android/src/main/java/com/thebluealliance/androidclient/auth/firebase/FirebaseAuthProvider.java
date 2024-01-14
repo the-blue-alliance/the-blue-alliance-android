@@ -34,16 +34,6 @@ public class FirebaseAuthProvider implements AuthProvider {
     }
 
     @Override
-    public void onStart() {
-        mGoogleAuthProvider.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        mGoogleAuthProvider.onStop();
-    }
-
-    @Override
     public boolean isUserSignedIn() {
         return mFirebaseAuth != null && mFirebaseAuth.getCurrentUser() != null;
     }
@@ -80,8 +70,8 @@ public class FirebaseAuthProvider implements AuthProvider {
     }
 
     @Override
-    public Observable<FirebaseSignInUser> userFromSignInResult(int requestCode, int resultCode, Intent data) {
-        Observable<? extends User> googleUser = mGoogleAuthProvider.userFromSignInResult(requestCode, resultCode, data);
+    public Observable<FirebaseSignInUser> userFromSignInResult(int resultCode, Intent data) {
+        Observable<? extends User> googleUser = mGoogleAuthProvider.userFromSignInResult(resultCode, data);
         return googleUser.switchMap(user -> {
             if (mFirebaseAuth == null || !(user instanceof GoogleSignInUser)) {
                 return Observable.empty();
@@ -90,20 +80,15 @@ public class FirebaseAuthProvider implements AuthProvider {
             GoogleSignInUser googleSignInUser = (GoogleSignInUser) user;
             AuthCredential credential = mGoogleAuthProvider
                     .getAuthCredential(googleSignInUser.getIdToken());
-            return Observable.create(new Observable.OnSubscribe<FirebaseSignInUser>() {
-                @Override
-                public void call(Subscriber<? super FirebaseSignInUser> subscriber) {
-                    mFirebaseAuth.signInWithCredential(credential)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                AuthResult result = task.getResult();
-                                subscriber.onNext(new FirebaseSignInUser(result.getUser()));
-                            }
-                            subscriber.onCompleted();
-                        })
-                        .addOnFailureListener(subscriber::onError);
-                }
-            });
+            return Observable.create(subscriber -> mFirebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        AuthResult result = task.getResult();
+                        subscriber.onNext(new FirebaseSignInUser(result.getUser()));
+                    }
+                    subscriber.onCompleted();
+                })
+                .addOnFailureListener(subscriber::onError));
         });
     }
 

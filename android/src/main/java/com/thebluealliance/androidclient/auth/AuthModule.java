@@ -8,6 +8,7 @@ import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.accounts.AccountModule;
 import com.thebluealliance.androidclient.auth.firebase.FirebaseAuthProvider;
 import com.thebluealliance.androidclient.auth.google.GoogleAuthProvider;
+import com.thebluealliance.androidclient.mytba.MyTbaOnboardingController;
 
 import javax.annotation.Nullable;
 import javax.inject.Named;
@@ -45,5 +46,11 @@ public class AuthModule {
     public AuthProvider provideFirebaseAuthProvider(@Nullable FirebaseAuth firebaseAuth,
                                                     GoogleAuthProvider googleAuthProvider) {
         return new FirebaseAuthProvider(firebaseAuth, googleAuthProvider);
+    }
+
+    @Provides
+    public MyTbaOnboardingController provideMyTbaOnbordingController(@Named("firebase_auth") AuthProvider authProvider,
+                                                                     AccountController accountController) {
+        return new MyTbaOnboardingController(authProvider, accountController);
     }
 }

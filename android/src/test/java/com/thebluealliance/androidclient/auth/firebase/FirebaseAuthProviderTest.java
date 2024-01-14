@@ -36,18 +36,6 @@ public class FirebaseAuthProviderTest {
     }
 
     @Test
-    public void onStart() {
-        mFirebaseAuthProvider.onStart();
-        verify(mGoogleAuthProvider).onStart();
-    }
-
-    @Test
-    public void onStop() {
-        mFirebaseAuthProvider.onStop();
-        verify(mGoogleAuthProvider).onStop();
-    }
-
-    @Test
     public void isUserSignedIn() {
         assertFalse(mFirebaseAuthProvider.isUserSignedIn());
 

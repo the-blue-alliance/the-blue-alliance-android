@@ -1,8 +1,10 @@
 package com.thebluealliance.androidclient.gcm;
 
+import android.Manifest;
 import android.app.Notification;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 
@@ -214,6 +216,11 @@ public class GCMMessageHandler extends FirebaseMessagingService implements Follo
     protected void notify(Context c, BaseNotification notification, Notification built, List<StoredNotification> activeNotifications) {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(c);
         int id = notification.getNotificationId();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(c, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            TbaLogger.w("Notification permission not granted! Skipping posting notifications...");
+            return;
+        }
 
         setNotificationParams(built, c, notification.getNotificationType(), mPrefs);
         TbaLogger.i("Notifying: " + id);

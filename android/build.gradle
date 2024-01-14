@@ -40,10 +40,18 @@ if (localPropFile.exists()) {
 }
 
 android {
-    compileSdkVersion 34
     namespace "com.thebluealliance.androidclient"
 
     signingConfigs {
+        if (localProps.containsKey("debug.key")) {
+            debug {
+                storeFile file(localProps.getProperty("debug.key"))
+                storePassword localProps.getProperty("debug.key.password")
+                keyAlias localProps.getProperty("debug.key.alias")
+                keyPassword localProps.getProperty("debug.key.aliasPass")
+            }
+        }
+
         release {
             storeFile file(localProps.getProperty("release.key", "somefile.jks"))
             storePassword localProps.getProperty("release.key.password", "notRealPassword")
@@ -94,8 +102,9 @@ android {
 
     defaultConfig {
         applicationId "com.thebluealliance.androidclient"
+        compileSdk 34
         minSdkVersion 19
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode versionNum
         versionName version.toString()
         multiDexEnabled true
@@ -240,7 +249,7 @@ dependencies {
     // See http://developer.android.com/google/play-services/setup.html
     implementation 'com.google.guava:guava:24.1-jre'
 //    implementation "com.google.firebase:firebase-bom:31.2.3"
-    implementation "com.google.android.gms:play-services-base:18.2.0"
+    implementation "com.google.android.gms:play-services-base:18.3.0"
     implementation "com.google.android.gms:play-services-analytics:18.0.4"
     implementation "com.google.firebase:firebase-messaging:23.4.0"
     implementation "com.google.android.gms:play-services-auth:20.7.0"

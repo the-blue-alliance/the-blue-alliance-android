@@ -18,6 +18,10 @@
     <string name="mytba_yellow_button_description">You can use myTBA anywhere you see this yellow button.</string>
     <string name="mytba_get_started_title">Ready to get started with myTBA?</string>
     <string name="mytba_login_prompt">Sign in with your Google account so we can save and sync your data.</string>
+    <string name="mytba_enable_notifications">Enable Notifications</string>
+    <string name="mytba_enable_notifications_title">Enable Push Notifications</string>
+    <string name="mytba_enable_notifications_description">In order to receive updates about your favorite teams and events, you\'ll need to allow The Blue Alliance to trigger notifications on your device</string>
+    <string name="mytba_enable_notifications_clarification">Without granting the notification permission, you will not receive updates about ongoing events. You can always enable this later in settings.</string>
     <string name="mytba_login_success">Success!</string>
     <string name="mytba_login_success_subtitle">Enjoy using myTBA.</string>
     <string name="mytba_no_signin_intent">Unable to complete login</string>
@@ -48,6 +52,10 @@
     <string name="mytba_prompt_message">You can always enable it later in Settings.</string>
     <string name="mytba_prompt_yes">Enable Now</string>
     <string name="mytba_prompt_cancel">Maybe Later</string>
+
+    <!-- Notification prompt dialog -->
+    <string name="mytba_prompt_notif_permission">Do you want to enable notifications?</string>
+    <string name="mytba_prompt_notif_permission_message">You will not receive realtime updates until you do, but you can always enable it later in settings</string>
 
     <!-- Status Messages -->
     <string name="loading_config">Loading app configuration</string>

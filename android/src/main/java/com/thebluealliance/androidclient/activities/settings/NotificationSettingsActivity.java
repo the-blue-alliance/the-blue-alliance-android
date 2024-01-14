@@ -1,12 +1,19 @@
 package com.thebluealliance.androidclient.activities.settings;
 
-import android.app.Fragment;
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.view.View;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreference;
 
 import com.thebluealliance.androidclient.R;
 
@@ -18,23 +25,44 @@ public class NotificationSettingsActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Fragment existingFragment = getFragmentManager().findFragmentById(android.R.id.content);
+        Fragment existingFragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
         if (existingFragment == null || !existingFragment.getClass().equals(NotificationSettingsFragment.class)) {
             // Display the fragment as the main content.
-            getFragmentManager().beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .replace(android.R.id.content, new NotificationSettingsFragment())
                     .commit();
         }
     }
 
-    public static class NotificationSettingsFragment extends PreferenceFragment {
+    public static class NotificationSettingsFragment extends PreferenceFragmentCompat {
+
+        @Override
+        public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
+            setPreferencesFromResource(R.xml.notification_preferences, rootKey);
+        }
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.notification_preferences);
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
                 addPreferencesFromResource(R.xml.notification_preferences_lollipop);
+            }
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
+                addPreferencesFromResource(R.xml.notification_preferences_tiramisu);
+
+                SwitchPreference notifPermissionPref = findPreference("notification_permission_enabled");
+                ActivityResultLauncher<String> notificationPermissionLauncher =
+                        registerForActivityResult(new ActivityResultContracts.RequestPermission(), result -> notifPermissionPref.setChecked(result));
+                boolean hasPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
+                notifPermissionPref.setChecked(hasPermission);
+                notifPermissionPref.setOnPreferenceChangeListener((preference, newValue) -> {
+                    if (!((boolean) newValue)) {
+                        getContext().revokeSelfPermissionOnKill(Manifest.permission.POST_NOTIFICATIONS);
+                    } else {
+                        notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+                    }
+                    return true;
+                });
             }
         }
 
