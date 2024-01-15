@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient.helpers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +45,15 @@ public class MatchHelperTest {
     public void testGetScore() {
         assertEquals(43, Match.getRedScore(mMatch.getAlliances()).intValue());
         assertEquals(0, Match.getBlueScore(mMatch.getAlliances()).intValue());
+    }
+
+    @Test
+    public void testValidateMatchKey() {
+        assertTrue(MatchHelper.validateMatchKey("2016cthar_qm1"));
+        assertTrue(MatchHelper.validateMatchKey("2016cmpmi_ef1m2"));
+        assertTrue(MatchHelper.validateMatchKey("2016cmpmi_sf1m3"));
+        assertTrue(MatchHelper.validateMatchKey("2016cthar_qf1m2"));
+        assertTrue(MatchHelper.validateMatchKey("2023cmptx_sf10m1"));
     }
 
     @Test
