@@ -15,8 +15,8 @@ public class TeamHelperTest {
 
     @Test
     public void testValidateKey() {
-        String[] validKeys = new String[]{"frc1124", "frc254"};
-        String[] invalidKeys = new String[]{null, "", "1124", "frc", "frc11245", "frc254B"};
+        String[] validKeys = new String[]{"frc1124", "frc254", "frc11124"};
+        String[] invalidKeys = new String[]{null, "", "1124", "frc", "frc112450", "frc254B"};
 
         for (String key : validKeys) {
             assertTrue(TeamHelper.validateTeamKey(key));
@@ -29,7 +29,7 @@ public class TeamHelperTest {
 
     @Test
     public void testValidateMultiTeamKey() {
-        String[] validKeys = new String[]{"frc1124b", "frc254A"};
+        String[] validKeys = new String[]{"frc1124b", "frc254A", "frc11124b"};
         String[] invalidKeys = new String[]{null, "", "frc1124", "frc254ab", "frc1114A%"};
 
         for (String key : validKeys) {
@@ -45,6 +45,7 @@ public class TeamHelperTest {
     public void testBaseTeamKey() {
         assertEquals("frc432", TeamHelper.baseTeamKey("frc432"));
         assertEquals("frc432", TeamHelper.baseTeamKey("frc432B"));
+        assertEquals("frc10432", TeamHelper.baseTeamKey("frc10432B"));
         assertEquals("", TeamHelper.baseTeamKey(""));
         assertNull(TeamHelper.baseTeamKey(null));
     }
@@ -53,6 +54,7 @@ public class TeamHelperTest {
     public void testGetTeamNumber() {
         assertEquals(-1, TeamHelper.getTeamNumber(null));
         assertEquals(1124, TeamHelper.getTeamNumber("frc1124"));
+        assertEquals(10124, TeamHelper.getTeamNumber("frc10124"));
         assertEquals(254, TeamHelper.getTeamNumber("frc254"));
         assertEquals(254, TeamHelper.getTeamNumber("frc254A"));
         assertEquals(254, TeamHelper.getTeamNumber("frc254b"));

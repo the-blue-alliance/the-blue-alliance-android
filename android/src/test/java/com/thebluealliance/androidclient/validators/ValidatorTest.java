@@ -17,9 +17,10 @@ public class ValidatorTest {
     public void testTeamKeyValidator(){
         assertEquals(TeamHelper.validateTeamKey("frc1124"), true);
         assertEquals(TeamHelper.validateTeamKey("frc1"), true);
+        assertEquals(TeamHelper.validateTeamKey("frc11243"), true);
 
         assertEquals(TeamHelper.validateTeamKey("ftc12"), false);
-        assertEquals(TeamHelper.validateTeamKey("frc11243"), false);
+        assertEquals(TeamHelper.validateTeamKey("frc112430"), false);
         assertEquals(TeamHelper.validateTeamKey("frcfrc1124"), false);
     }
 
