@@ -24,7 +24,7 @@ public final class TeamHelper {
      * @return true if key is valid
      */
     public static boolean validateTeamKey(@Nullable String key) {
-        return !(key == null || key.isEmpty()) && key.matches("^frc\\d{1,4}$");
+        return !(key == null || key.isEmpty()) && key.matches("^frc\\d{1,5}$");
     }
 
     /**
@@ -38,7 +38,7 @@ public final class TeamHelper {
      * @return true if key is valid
      */
     public static boolean validateMultiTeamKey(@Nullable String key) {
-        return !(key == null || key.isEmpty()) && key.matches("^frc\\d{1,4}[a-zA-Z]$");
+        return !(key == null || key.isEmpty()) && key.matches("^frc\\d{1,5}[a-zA-Z]$");
     }
 
     /**
@@ -59,7 +59,7 @@ public final class TeamHelper {
     public static int getTeamNumber(@Nullable String key) {
         if (key == null) return -1;
 
-        Matcher teamNumberMatcher = Pattern.compile("^frc(\\d{1,4})[a-zA-Z]?$").matcher(key);
+        Matcher teamNumberMatcher = Pattern.compile("^frc(\\d{1,5})[a-zA-Z]?$").matcher(key);
 
         // 0th group is the full matching string, 1st is our capture group for the number
         // The 0th group is not included in groupCount()
