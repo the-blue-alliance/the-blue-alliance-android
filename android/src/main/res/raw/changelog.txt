@@ -1,8 +1,11 @@
-Version 9.0.0:<br>
+Version 9.0.1:<br>
  - Welcome back for the 2024 season!<br>
+ - Fix crashes for B team keys<br>
+ - Fix crahes when loading double elim matches<br>
  - Other bug fixes & reliability improvements<br>
 <br>
 View the full changelog for this and previous releases on the GitHub page:<br>
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases<br>
+<br>
 <br>
 <br>
