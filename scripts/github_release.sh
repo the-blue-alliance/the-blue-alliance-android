@@ -37,6 +37,9 @@ github-release release \
     --name "$NAME" \
     --description "$DESC"
 
+sleep 5
+echo "Uploading APK $APK_NAME to release @ $TAG"
+
 # Add apk
 github-release upload \
     --user $USER \
