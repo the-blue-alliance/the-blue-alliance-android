@@ -102,8 +102,13 @@ public static *** v(...);
 # see https://code.google.com/p/android/issues/detail?id=78377
 -keep,includedescriptorclasses class !android.support.v7.view.menu.*MenuBuilder*, android.support.v7.** { *; }
 
-# Rules for Retrofit, see https://github.com/square/retrofit/issues/3751#issuecomment-1192043644
  # R8 full mode strips generic signatures from return types if not kept.
+# Rules for Retrofit, see https://github.com/square/retrofit/issues/3751#issuecomment-1192043644
  -if interface * { @retrofit2.http.* public *** *(...); }
  -keep,allowoptimization,allowshrinking,allowobfuscation class <3>
  -keep,allowobfuscation,allowshrinking class retrofit2.Response
+
+ # Rules for gson + R8
+ # https://github.com/google/gson/blob/51cce39e0064a755d32f820670770f82519039de/examples/android-proguard-example/proguard.cfg#L28
+ -keep,allowobfuscation,allowshrinking class com.google.gson.reflect.TypeToken
+ -keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
