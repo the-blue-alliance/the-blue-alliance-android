@@ -52,6 +52,8 @@ public class AllTeamsListFragment extends DatafeedFragment<Integer, Integer, Fra
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_team_list_fragment_pager, container, false);
+        mBinder.setRootView(v);
+
         mViewPager = v.findViewById(R.id.team_pager);
         int pageMargin = Utilities.getPixelsFromDp(requireActivity(), 16);
         mViewPager.setPageTransformer(new MarginPageTransformer(pageMargin));
