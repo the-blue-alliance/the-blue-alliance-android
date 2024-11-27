@@ -102,9 +102,9 @@ android {
 
     defaultConfig {
         applicationId "com.thebluealliance.androidclient"
-        compileSdk 34
+        compileSdk 35
         minSdkVersion 19
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode versionNum
         versionName version.toString()
         multiDexEnabled true
