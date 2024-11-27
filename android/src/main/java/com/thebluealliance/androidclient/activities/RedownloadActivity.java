@@ -12,6 +12,7 @@ import android.text.Html;
 import android.view.View;
 import android.view.WindowManager;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -55,6 +56,7 @@ public class RedownloadActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         mBinding = ActivityRedownloadBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 

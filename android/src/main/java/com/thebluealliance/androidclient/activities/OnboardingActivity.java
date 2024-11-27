@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,6 +66,7 @@ public class OnboardingActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         mBinding = ActivityOnboardingBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
