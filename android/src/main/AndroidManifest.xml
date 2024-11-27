@@ -100,7 +100,7 @@
         <activity
             android:name=".activities.HomeActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus" />
+            android:theme="@style/AppThemeNoActionBar" />
         <activity
             android:name=".activities.settings.MyTBAModelSettingsActivity"
             android:theme="@style/AppThemeNoActionBarTranslucentLightStatus" />
@@ -108,7 +108,7 @@
             android:name=".activities.ViewEventActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".activities.HomeActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
+            android:theme="@style/AppThemeNoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
@@ -117,7 +117,7 @@
             android:name=".activities.ViewTeamActivity"
             android:launchMode="standard"
             android:parentActivityName=".activities.HomeActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
+            android:theme="@style/AppThemeNoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
@@ -126,7 +126,7 @@
             android:name=".activities.ViewMatchActivity"
             android:launchMode="standard"
             android:parentActivityName=".activities.ViewEventActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
+            android:theme="@style/AppThemeNoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.ViewEventActivity" />
@@ -134,7 +134,7 @@
         <activity
             android:name=".activities.ViewDistrictActivity"
             android:parentActivityName=".activities.HomeActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
+            android:theme="@style/AppThemeNoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.HomeActivity" />
@@ -142,7 +142,7 @@
         <activity
             android:name=".activities.TeamAtDistrictActivity"
             android:parentActivityName=".activities.ViewDistrictActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
+            android:theme="@style/AppThemeNoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.ViewDistrictActivity" />
@@ -161,7 +161,7 @@
         <activity
             android:name=".activities.TeamAtEventActivity"
             android:parentActivityName=".activities.ViewEventActivity"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus">
+            android:theme="@style/AppThemeNoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.thebluealliance.androidclient.activities.ViewEventActivity" />
@@ -169,7 +169,7 @@
         <activity
             android:name=".activities.SearchResultsActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppThemeNoActionBarTranslucentStatus"
+            android:theme="@style/AppThemeNoActionBar"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
