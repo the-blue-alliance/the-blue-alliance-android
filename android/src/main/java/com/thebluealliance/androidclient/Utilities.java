@@ -23,9 +23,12 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.RawRes;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.google.common.base.Predicate;
 import com.thebluealliance.androidclient.activities.HomeActivity;
@@ -481,5 +484,13 @@ public final class Utilities {
             default:
                 return MODE_NIGHT_UNSPECIFIED;
         }
+    }
+
+    public static void configureActivityForEdgeToEdge(AppCompatActivity activity) {
+        EdgeToEdge.enable(activity);
+
+        Window window = activity.getWindow();
+        WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(window, window.getDecorView());
+        insetsController.setAppearanceLightStatusBars(false);
     }
 }

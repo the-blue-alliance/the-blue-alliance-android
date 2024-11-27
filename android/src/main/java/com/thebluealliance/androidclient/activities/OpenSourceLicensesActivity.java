@@ -3,15 +3,11 @@ package com.thebluealliance.androidclient.activities;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.MenuItem;
-import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.databinding.ActivityOpenSourceLicensesBinding;
 
 import java.io.BufferedReader;
@@ -21,7 +17,7 @@ public class OpenSourceLicensesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        Utilities.configureActivityForEdgeToEdge(this);
 
         ActivityOpenSourceLicensesBinding binding = ActivityOpenSourceLicensesBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

@@ -5,16 +5,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
@@ -59,7 +54,7 @@ public class MoreSearchResultsActivity extends AppCompatActivity implements Load
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        Utilities.configureActivityForEdgeToEdge(this);
         setContentView(R.layout.activity_search_results);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);

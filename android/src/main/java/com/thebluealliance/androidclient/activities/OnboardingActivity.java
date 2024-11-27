@@ -21,6 +21,7 @@ import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.adapters.FirstLaunchPagerAdapter;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
 import com.thebluealliance.androidclient.databinding.ActivityOnboardingBinding;
@@ -66,7 +67,7 @@ public class OnboardingActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        Utilities.configureActivityForEdgeToEdge(this);
         mBinding = ActivityOnboardingBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 

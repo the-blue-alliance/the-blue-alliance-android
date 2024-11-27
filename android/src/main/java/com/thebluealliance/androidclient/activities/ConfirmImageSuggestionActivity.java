@@ -18,6 +18,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.databinding.ActivityConfirmImageSuggestionBinding;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.imgur.ImgurSuggestionService;
@@ -62,7 +63,7 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        Utilities.configureActivityForEdgeToEdge(this);
 
         mBinding = ActivityConfirmImageSuggestionBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());

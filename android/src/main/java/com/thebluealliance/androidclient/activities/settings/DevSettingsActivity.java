@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
@@ -16,6 +15,7 @@ import androidx.work.WorkManager;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
@@ -37,7 +37,7 @@ public class DevSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        Utilities.configureActivityForEdgeToEdge(this);
 
         ActivitySettingsBinding binding = ActivitySettingsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

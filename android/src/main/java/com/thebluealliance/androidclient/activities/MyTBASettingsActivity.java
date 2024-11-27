@@ -427,11 +427,11 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
     }
 
     protected void syncFabVisibilityWithMyTbaEnabled(boolean animate) {
-//        if (mIsMyTBAEnabled) {
-//            showFab(animate);
-//        } else {
-//            hideFab(animate);
-//        }
+        if (mIsMyTBAEnabled) {
+            showFab(animate);
+        } else {
+            hideFab(animate);
+        }
         showFab(animate);
     }
 

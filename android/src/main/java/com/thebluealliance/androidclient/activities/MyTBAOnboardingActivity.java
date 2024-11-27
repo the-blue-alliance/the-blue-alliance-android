@@ -4,13 +4,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.databinding.ActivityMytbaOnboardingBinding;
 import com.thebluealliance.androidclient.mytba.MyTbaOnboardingController;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
@@ -37,7 +37,7 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        Utilities.configureActivityForEdgeToEdge(this);
         mBinding = ActivityMytbaOnboardingBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
