@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.view.Gravity;
 import android.widget.FrameLayout;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.TaskStackBuilder;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -64,6 +65,7 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         super.setContentView(R.layout.activity_navigation_drawer);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
