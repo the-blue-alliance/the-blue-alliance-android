@@ -29,19 +29,16 @@ public class EventTabSubscriber extends BaseAPISubscriber<List<Event>, List<Even
 
         LinkedHashMap<String, EventWeekTab> eventTabs = new LinkedHashMap<>();
         for (Event event : mAPIData) {
-            int eventWeek = event.getWeek() != null
-                    ? event.getWeek()
-                    : -1;
             String label = EventHelper.generateLabelForEvent(event);
             if (!eventTabs.containsKey(label)) {
-                eventTabs.put(label, new EventWeekTab(label, eventWeek));
+                eventTabs.put(label, new EventWeekTab(label));
             }
 
             EventWeekTab tab = eventTabs.get(label);
             if (tab == null) {
                 throw new RuntimeException("Expected to find event tab, but can't!");
             }
-            tab.addEventKey(event.getKey());
+            tab.addEvent(event);
         }
 
         for (Map.Entry<String, EventWeekTab> tab : eventTabs.entrySet()) {
