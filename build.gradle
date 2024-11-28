@@ -55,7 +55,7 @@ allprojects {
         rxAndroidVersion = '1.2.1'
         gsonVersion = '2.10.1'
         daggerVersion = '2.50'
-        robolectricVersion = '4.11.1'
+        robolectricVersion = '4.14.1'
         permissionDispatcherVersion = '4.9.2'
         workManagerVersion = '2.9.0'
 

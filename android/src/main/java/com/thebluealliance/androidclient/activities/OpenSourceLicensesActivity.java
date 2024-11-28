@@ -3,11 +3,12 @@ package com.thebluealliance.androidclient.activities;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.databinding.ActivityOpenSourceLicensesBinding;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -16,9 +17,14 @@ public class OpenSourceLicensesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_open_source_licenses);
-        TextView text = (TextView) findViewById(R.id.text);
+        Utilities.configureActivityForEdgeToEdge(this);
+
+        ActivityOpenSourceLicensesBinding binding = ActivityOpenSourceLicensesBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.toolbar);
         setupActionBar();
+
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(getResources().openRawResource(R.raw.licenses)));
             try {
@@ -31,13 +37,13 @@ public class OpenSourceLicensesActivity extends AppCompatActivity {
                     line = br.readLine();
                 }
                 String everything = sb.toString();
-                text.setText(Html.fromHtml(everything));
+                binding.text.setText(Html.fromHtml(everything));
             } finally {
                 br.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            text.setText("Error reading licenses file.");
+            binding.text.setText("Error reading licenses file.");
         }
     }
 

@@ -10,7 +10,6 @@ import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.ViewCompat;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 
@@ -55,10 +54,10 @@ public class MoreSearchResultsActivity extends AppCompatActivity implements Load
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utilities.configureActivityForEdgeToEdge(this);
         setContentView(R.layout.activity_search_results);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        ViewCompat.setElevation(toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
         setSupportActionBar(toolbar);
 
         /* Report activity start to Analytics */

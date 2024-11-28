@@ -8,13 +8,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            style="@style/DefaultLightToolbarStyleWithContentInset"
-            android:background="@color/accent"
-            app:contentInsetStart="72dp"
-            app:navigationContentDescription="@string/close"
-            app:navigationIcon="@drawable/ic_close_black_24dp" />
+        <com.google.android.material.appbar.AppBarLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="@color/accent"
+          android:fitsSystemWindows="true">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                style="@style/DefaultLightToolbarStyleWithContentInset"
+                app:contentInsetStart="72dp"
+                app:navigationContentDescription="@string/close"
+                app:navigationIcon="@drawable/ic_close_black_24dp" />
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <FrameLayout
             android:id="@+id/settings_list"

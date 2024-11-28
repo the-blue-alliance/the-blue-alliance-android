@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.databinding.ActivityMytbaOnboardingBinding;
 import com.thebluealliance.androidclient.mytba.MyTbaOnboardingController;
 import com.thebluealliance.androidclient.views.MyTBAOnboardingViewPager;
@@ -36,6 +37,7 @@ public class MyTBAOnboardingActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utilities.configureActivityForEdgeToEdge(this);
         mBinding = ActivityMytbaOnboardingBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 

@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppThemeNoActionBarTranslucentStatus" parent="AppThemeNoActionBar">
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-    </style>
-
     <!-- on API >= 21, this will use the borderless seelectable background -->
     <style name="SnackbarActionStyle">
         <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>

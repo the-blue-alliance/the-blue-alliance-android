@@ -10,11 +10,9 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.ViewCompat;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.databinding.ActivityConfirmImageSuggestionBinding;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.imgur.ImgurSuggestionService;
@@ -26,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import androidx.appcompat.app.AppCompatActivity;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -59,6 +58,7 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utilities.configureActivityForEdgeToEdge(this);
 
         mBinding = ActivityConfirmImageSuggestionBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
@@ -69,7 +69,6 @@ public class ConfirmImageSuggestionActivity extends AppCompatActivity implements
         // Disable the "confirm" FAB until we have a valid file to submit
         mBinding.confirmFab.setEnabled(false);
 
-        ViewCompat.setElevation(mBinding.toolbar, getResources().getDimension(R.dimen.toolbar_elevation));
         setSupportActionBar(mBinding.toolbar);
         // TODO don't use hardcoded string
         getSupportActionBar().setTitle("Confirm suggestion");

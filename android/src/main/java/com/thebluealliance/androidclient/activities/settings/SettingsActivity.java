@@ -25,6 +25,7 @@ import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.activities.ContributorsActivity;
 import com.thebluealliance.androidclient.activities.MyTBAOnboardingActivity;
 import com.thebluealliance.androidclient.activities.OpenSourceLicensesActivity;
+import com.thebluealliance.androidclient.databinding.ActivitySettingsBinding;
 
 import javax.inject.Inject;
 
@@ -36,6 +37,11 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utilities.configureActivityForEdgeToEdge(this);
+
+        ActivitySettingsBinding binding = ActivitySettingsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
 
         @Nullable ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -43,7 +49,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
+                .replace(R.id.content, new SettingsFragment())
                 .commit();
     }
 
