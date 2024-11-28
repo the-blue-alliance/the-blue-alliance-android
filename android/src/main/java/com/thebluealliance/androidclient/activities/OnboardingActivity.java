@@ -12,11 +12,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.Constants;
 import com.thebluealliance.androidclient.R;
@@ -36,6 +31,9 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
