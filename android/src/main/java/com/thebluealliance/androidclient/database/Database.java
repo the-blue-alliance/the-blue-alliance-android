@@ -596,8 +596,9 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public Cursor getMatchesForTeamQuery(String query) {
+        String sanitizedQuery = sanitizeQuery(query);
         String selection = SearchTeam.TITLES + " MATCH ?";
-        String[] selectionArgs = new String[]{query};
+        String[] selectionArgs = new String[]{sanitizedQuery};
 
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(TABLE_SEARCH_TEAMS);
@@ -616,8 +617,9 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public Cursor getMatchesForEventQuery(String query) {
+        String sanitizedQuery = sanitizeQuery(query);
         String selection = SearchEvent.TITLES + " MATCH ?";
-        String[] selectionArgs = new String[]{query};
+        String[] selectionArgs = new String[]{sanitizedQuery};
 
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         builder.setTables(TABLE_SEARCH_EVENTS);
@@ -633,5 +635,9 @@ public class Database extends SQLiteOpenHelper {
             return null;
         }
         return cursor;
+    }
+
+    public String sanitizeQuery(String query) {
+        return query.replace("\"", "");
     }
 }
