@@ -68,14 +68,16 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix ".development"
-            testCoverageEnabled true
             manifestPlaceholders = [gcmPermissionRequired: ""] // "" => let GCMBroadcastReceiver accept Intents from 'adb shell am broadcast'
+            enableUnitTestCoverage true
+            enableAndroidTestCoverage true
         }
 
         debugProguard {
             applicationIdSuffix ".development"
-            testCoverageEnabled true
             minifyEnabled true
+            enableUnitTestCoverage true
+            enableAndroidTestCoverage true
             zipAlignEnabled true
             proguardFiles 'proguard-rules.txt'
             testProguardFile 'proguard-rules.txt'
