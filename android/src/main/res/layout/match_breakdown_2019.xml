@@ -144,23 +144,23 @@
                 android:id="@+id/breakdown2019_red_cargo_ship_null_panels"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:drawablePadding="3dp"
+                android:paddingRight="4dp"
+                android:drawablePadding="2dp"
                 android:drawableLeft="@drawable/breakdown2019_null_hatch_panel"
                 tools:text="2"/>
             <TextView
                 android:id="@+id/breakdown2019_red_cargo_ship_panels"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:drawablePadding="3dp"
+                android:paddingRight="4dp"
+                android:drawablePadding="2dp"
                 android:drawableLeft="@drawable/breakdown2019_hatch_panel"
                 tools:text="2"/>
             <TextView
                 android:id="@+id/breakdown2019_red_cargo_ship_cargo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawablePadding="3dp"
+                android:drawablePadding="2dp"
                 android:drawableLeft="@drawable/breakdown2019_cargo"
                 tools:text="2"/>
         </LinearLayout>
@@ -174,23 +174,23 @@
                 android:id="@+id/breakdown2019_blue_cargo_ship_null_panels"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:drawablePadding="3dp"
+                android:paddingRight="4dp"
+                android:drawablePadding="2dp"
                 android:drawableLeft="@drawable/breakdown2019_null_hatch_panel"
                 tools:text="2"/>
             <TextView
                 android:id="@+id/breakdown2019_blue_cargo_ship_panels"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:drawablePadding="3dp"
+                android:paddingRight="4dp"
+                android:drawablePadding="2dp"
                 android:drawableLeft="@drawable/breakdown2019_hatch_panel"
                 tools:text="3"/>
             <TextView
                 android:id="@+id/breakdown2019_blue_cargo_ship_cargo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawablePadding="3dp"
+                android:drawablePadding="2dp"
                 android:drawableLeft="@drawable/breakdown2019_cargo"
                 tools:text="1"/>
         </LinearLayout>
