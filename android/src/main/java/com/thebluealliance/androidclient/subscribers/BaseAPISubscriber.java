@@ -1,10 +1,5 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
-import androidx.annotation.VisibleForTesting;
-import androidx.annotation.WorkerThread;
-
 import com.google.android.gms.analytics.Tracker;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.datafeed.APISubscriber;
@@ -16,6 +11,10 @@ import com.thebluealliance.androidclient.tracing.TracingController;
 
 import org.greenrobot.eventbus.EventBus;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.annotation.VisibleForTesting;
+import androidx.annotation.WorkerThread;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -30,7 +29,7 @@ import rx.android.schedulers.AndroidSchedulers;
  * is accessed before {@link #parseData()} is called
  *
  * @param <APIType>  Datatype to be returned from the API (one from
- * {@link com.thebluealliance.androidclient.api.rx.TbaApiV2}
+ * {@link com.thebluealliance.androidclient.api.rx.TbaApiV3}
  * @param <BindType> Datatype to be returned for binding to views
  */
 public abstract class BaseAPISubscriber<APIType, BindType>

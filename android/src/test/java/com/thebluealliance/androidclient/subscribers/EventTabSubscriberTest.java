@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -52,7 +53,8 @@ public class EventTabSubscriberTest {
         assertEquals(tabs.size(), 16);
         for (int i = 0; i < tabs.size(); i++) {
             EventWeekTab tab = tabs.get(i);
-            assertEquals(String.format("Tab %1$d week fail", i), weeks[i], tab.getWeek());
+            int week = weeks[i];
+            assertTrue(String.format("Tab %1$d week fail", i), tab.includesWeek(week));
             assertEquals(String.format("Tab %1$d count fail", i), sizes[i], tab.getEventKeys().size());
             assertEquals(String.format("Tab %1$d label fail", i), labels[i], tab.getLabel());
         }

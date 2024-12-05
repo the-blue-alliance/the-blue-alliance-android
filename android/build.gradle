@@ -228,7 +228,6 @@ task checkstyle(type: Checkstyle) {
 dependencies {
     implementation project(':libTba')
     implementation project(':libImgur')
-    implementation project(':spectrum')
 
     // Android support libraries
     implementation("androidx.activity:activity:1.9.3")

@@ -5,12 +5,14 @@ import java.util.ArrayList;
 public class EventWeekTab {
 
     private String mLabel;
-    private int mWeek;
+    private int mStartWeek = Integer.MAX_VALUE;
+
+    private int mEndWeek = Integer.MIN_VALUE;
+
     private ArrayList<String> mEventKeys;
 
-    public EventWeekTab(String label, int week) {
+    public EventWeekTab(String label) {
         mLabel = label;
-        mWeek = week;
         mEventKeys = new ArrayList<>();
     }
 
@@ -18,16 +20,24 @@ public class EventWeekTab {
         return mLabel;
     }
 
-    public int getWeek() {
-        return mWeek;
+    public boolean includesWeek(int week) {
+        return week >= mStartWeek && week <= mEndWeek;
     }
 
     public ArrayList<String> getEventKeys() {
         return mEventKeys;
     }
 
-    public void addEventKey(String eventKey) {
-        mEventKeys.add(eventKey);
+    public void addEvent(Event event) {
+        mEventKeys.add(event.getKey());
+
+        int eventWeek = event.getWeek() != null ? event.getWeek() : -1;
+        if (mStartWeek > eventWeek) {
+            mStartWeek = eventWeek;
+        }
+        if (mEndWeek < eventWeek) {
+            mEndWeek = eventWeek;
+        }
     }
 
     @Override

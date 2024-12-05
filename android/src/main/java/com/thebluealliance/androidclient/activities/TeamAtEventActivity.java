@@ -227,7 +227,7 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
     public void updateEventsParticipated(List<Event> events) {
         mEventsParticipated = ImmutableList.copyOf(events);
 
-        int requestedEventIndex = 0;
+        int requestedEventIndex = -1;
         for (int i = 0; i < mEventsParticipated.size(); i++) {
             if (mEventsParticipated.get(i).getKey().equals(mEventKey)) {
                 requestedEventIndex = i;
