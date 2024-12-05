@@ -102,9 +102,9 @@ android {
 
     defaultConfig {
         applicationId "com.thebluealliance.androidclient"
-        compileSdk 34
+        compileSdk 35
         minSdkVersion 19
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode versionNum
         versionName version.toString()
         multiDexEnabled true
@@ -230,9 +230,9 @@ dependencies {
     implementation project(':libImgur')
 
     // Android support libraries
-    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
+    implementation("androidx.activity:activity:1.9.3")
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.core:core:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
     implementation 'androidx.multidex:multidex:2.0.1'

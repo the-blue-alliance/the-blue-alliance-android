@@ -11,6 +11,7 @@ import androidx.core.app.TaskStackBuilder;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.settings.SettingsActivity;
 import com.thebluealliance.androidclient.fragments.NavigationDrawerFragment;
 import com.thebluealliance.androidclient.listitems.NavDrawerItem;
@@ -66,9 +67,11 @@ public abstract class NavigationDrawerActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_navigation_drawer);
 
+        Utilities.configureActivityForEdgeToEdge(this);
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.nav_drawer_layout);
         mContentView = (FrameLayout) findViewById(R.id.content);
-        mDrawerLayout.setStatusBarBackground(R.color.primary_dark);
+        mDrawerLayout.setStatusBarBackground(R.color.primary);
         mDrawerContainer = (ScrimInsetsFrameLayout) findViewById(R.id.navigation_drawer_fragment_container);
 
         handler = new Handler();

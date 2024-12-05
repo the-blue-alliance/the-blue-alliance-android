@@ -16,12 +16,19 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
 
 import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.databinding.ActivitySettingsBinding;
 
 public class NotificationSettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utilities.configureActivityForEdgeToEdge(this);
+
+        ActivitySettingsBinding binding = ActivitySettingsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -29,7 +36,7 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         if (existingFragment == null || !existingFragment.getClass().equals(NotificationSettingsFragment.class)) {
             // Display the fragment as the main content.
             getSupportFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, new NotificationSettingsFragment())
+                    .replace(R.id.content, new NotificationSettingsFragment())
                     .commit();
         }
     }

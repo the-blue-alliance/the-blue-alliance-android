@@ -15,10 +15,12 @@ import androidx.work.WorkManager;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.activities.RedownloadActivity;
 import com.thebluealliance.androidclient.auth.firebase.MigrateLegacyUserToFirebase;
 import com.thebluealliance.androidclient.background.firstlaunch.LoadTBADataWorker;
 import com.thebluealliance.androidclient.config.AppConfig;
+import com.thebluealliance.androidclient.databinding.ActivitySettingsBinding;
 import com.thebluealliance.androidclient.datafeed.status.StatusRefreshService;
 import com.thebluealliance.androidclient.mytba.MyTbaRegistrationWorker;
 import com.thebluealliance.androidclient.mytba.MyTbaUpdateWorker;
@@ -35,6 +37,11 @@ public class DevSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utilities.configureActivityForEdgeToEdge(this);
+
+        ActivitySettingsBinding binding = ActivitySettingsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -42,7 +49,7 @@ public class DevSettingsActivity extends AppCompatActivity {
         }
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(android.R.id.content, new DevSettingsFragment())
+                .replace(R.id.content, new DevSettingsFragment())
                 .commit();
     }
 

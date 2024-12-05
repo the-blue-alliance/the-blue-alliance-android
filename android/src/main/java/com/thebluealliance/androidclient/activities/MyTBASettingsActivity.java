@@ -432,6 +432,7 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         } else {
             hideFab(animate);
         }
+        showFab(animate);
     }
 
     protected void showFab(boolean animate) {
