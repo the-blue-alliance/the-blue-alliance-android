@@ -18,7 +18,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.UpdateUserModelSettingsWorker;
 import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;

@@ -4,7 +4,6 @@ import android.content.Context;
 
 import androidx.collection.ArrayMap;
 
-import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
 import com.thebluealliance.androidclient.config.AppConfig;
 import com.thebluealliance.androidclient.helpers.PitLocationHelper;

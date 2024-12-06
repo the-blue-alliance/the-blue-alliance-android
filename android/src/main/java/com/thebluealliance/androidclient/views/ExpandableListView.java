@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.views;
 
 import android.content.Context;
-import android.os.Build;
 import android.util.AttributeSet;
 
 import com.thebluealliance.androidclient.Utilities;

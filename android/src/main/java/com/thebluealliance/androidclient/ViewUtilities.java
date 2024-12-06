@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient;
 
-import android.os.Build;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
