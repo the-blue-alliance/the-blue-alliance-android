@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.os.Build;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -101,21 +100,13 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
         int redScore = Match.getRedScore(alliances);
         int blueScore = Match.getBlueScore(alliances);
 
-        // Boldify the team numbers that the user is following, but only if the system supports
-        // java 8 language features
-        CharSequence firstTeams;
-        CharSequence secondTeams;
+        // Boldify the team numbers that the user is following
         ArrayList<String> redTeams = Match.teamNumbers(Match.getRedTeams(alliances));
         ArrayList<String> blueTeams = Match.teamNumbers(Match.getBlueTeams(alliances));
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-            Predicate<String> isFollowing = teamNumber -> followsChecker.followsTeam(context,
-                    teamNumber, matchKey, NotificationTypes.MATCH_SCORE);
-            firstTeams = Utilities.boldNameList(redTeams, isFollowing);
-            secondTeams = Utilities.boldNameList(blueTeams, isFollowing);
-        } else {
-            firstTeams = Utilities.stringifyListOfStrings(context, redTeams);
-            secondTeams = Utilities.stringifyListOfStrings(context, blueTeams);
-        }
+        Predicate<String> isFollowing = teamNumber -> followsChecker.followsTeam(context,
+          teamNumber, matchKey, NotificationTypes.MATCH_SCORE);
+        CharSequence firstTeams = Utilities.boldNameList(redTeams, isFollowing);
+        CharSequence secondTeams = Utilities.boldNameList(blueTeams, isFollowing);
 
         // Make sure the score string is formatted properly with the winning score first
         String scoreString;

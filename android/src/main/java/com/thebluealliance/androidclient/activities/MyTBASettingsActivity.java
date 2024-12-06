@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
@@ -246,19 +245,10 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - mSettingsContainer.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - mSettingsContainer.getTop(), 2));
 
         Animator settingsPanelAnimator;
-        // Only show the circular reveal on API >= 5.0
         mSettingsContainer.setVisibility(View.VISIBLE);
-        if (Utilities.hasLApis()) {
-            settingsPanelAnimator = ViewAnimationUtils.createCircularReveal(mSettingsContainer, centerOfButtonOutsideX, centerOfButtonOutsideY, 0, finalRadius);
-            settingsPanelAnimator.setDuration(ANIMATION_DURATION);
-            settingsPanelAnimator.setInterpolator(new DecelerateInterpolator());
-        } else {
-            settingsPanelAnimator = ValueAnimator.ofFloat(1, 0);
-            final int settingsContainerHeight = mSettingsContainer.getHeight();
-            ((ValueAnimator) settingsPanelAnimator).addUpdateListener(animation -> mSettingsContainer.setTranslationY((float) settingsContainerHeight * (float) animation.getAnimatedValue()));
-            settingsPanelAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
-            settingsPanelAnimator.setDuration(ANIMATION_DURATION);
-        }
+        settingsPanelAnimator = ViewAnimationUtils.createCircularReveal(mSettingsContainer, centerOfButtonOutsideX, centerOfButtonOutsideY, 0, finalRadius);
+        settingsPanelAnimator.setDuration(ANIMATION_DURATION);
+        settingsPanelAnimator.setInterpolator(new DecelerateInterpolator());
 
         ValueAnimator toggleButtonScaleUpAnimation = ValueAnimator.ofFloat(0, 1).setDuration(ANIMATION_DURATION);
         toggleButtonScaleUpAnimation.addListener(new AnimatorListenerAdapter() {
@@ -343,25 +333,16 @@ public abstract class MyTBASettingsActivity extends DatafeedActivity implements 
         float finalRadius = (float) Math.sqrt(Math.pow(centerOfButtonOutsideX - mSettingsContainer.getLeft(), 2) + Math.pow(centerOfButtonOutsideY - mSettingsContainer.getTop(), 2));
 
         Animator settingsPanelAnimator;
-        if (Utilities.hasLApis()) {
-            settingsPanelAnimator = ViewAnimationUtils.createCircularReveal(mSettingsContainer, centerOfButtonOutsideX, centerOfButtonOutsideY, finalRadius, 0);
-            settingsPanelAnimator.addListener(new AnimatorListenerAdapter() {
+        settingsPanelAnimator = ViewAnimationUtils.createCircularReveal(mSettingsContainer, centerOfButtonOutsideX, centerOfButtonOutsideY, finalRadius, 0);
+        settingsPanelAnimator.addListener(new AnimatorListenerAdapter() {
 
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mSettingsContainer.setVisibility(View.INVISIBLE);
-                }
-            });
-            settingsPanelAnimator.setDuration(ANIMATION_DURATION);
-            settingsPanelAnimator.setInterpolator(new AccelerateInterpolator());
-        } else {
-            settingsPanelAnimator = ValueAnimator.ofFloat(0, 1);
-            final int settingsContainerHeight = mSettingsContainer.getHeight();
-            ((ValueAnimator) settingsPanelAnimator).addUpdateListener(animation -> mSettingsContainer.setTranslationY((float) settingsContainerHeight * (float) animation.getAnimatedValue()));
-            settingsPanelAnimator.setDuration(ANIMATION_DURATION);
-            settingsPanelAnimator.setInterpolator(new AccelerateInterpolator());
-            settingsPanelAnimator.start();
-        }
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mSettingsContainer.setVisibility(View.INVISIBLE);
+            }
+        });
+        settingsPanelAnimator.setDuration(ANIMATION_DURATION);
+        settingsPanelAnimator.setInterpolator(new AccelerateInterpolator());
 
         ValueAnimator toggleButtonScaleDownAnimation = ValueAnimator.ofFloat(1, 0).setDuration(ANIMATION_DURATION);
         toggleButtonScaleDownAnimation.addUpdateListener(animation -> {

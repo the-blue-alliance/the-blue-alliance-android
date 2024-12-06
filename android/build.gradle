@@ -105,7 +105,7 @@ android {
     defaultConfig {
         applicationId "com.thebluealliance.androidclient"
         compileSdk 35
-        minSdkVersion 19
+        minSdkVersion 24
         targetSdkVersion 35
         versionCode versionNum
         versionName version.toString()

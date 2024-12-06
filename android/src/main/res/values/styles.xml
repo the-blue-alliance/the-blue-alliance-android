@@ -27,13 +27,11 @@
         <item name="android:textColor">@color/primary_text_color</item>
     </style>
 
-    <!-- on v21 or later, this lets us draw the status bar background. on < v21,
-    this is the same as simply not showing the action bar. -->
     <style name="AppThemeNoActionBarTranslucentStatus" parent="AppThemeNoActionBar" />
 
-    <!-- on v23 or later, this will show the status bar with dark status icons to go with a dark
-    status bar background -->
-    <style name="AppThemeNoActionBarTranslucentLightStatus" parent="AppThemeNoActionBarTranslucentStatus"/>
+    <style name="AppThemeNoActionBarTranslucentLightStatus" parent="AppThemeNoActionBarTranslucentStatus">
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
 
     <style name="InfoItemStyle">
         <item name="android:layout_width">match_parent</item>
@@ -140,7 +138,7 @@
     </style>
 
     <style name="ListItemButtonStyle">
-        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
         <item name="android:layout_width">48dp</item>
@@ -165,7 +163,7 @@
     </style>
 
     <style name="SnackbarActionStyle">
-        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
     </style>
 
     <style name="TabBar" parent="@style/Widget.MaterialComponents.TabLayout.Colored">

@@ -18,7 +18,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.UpdateUserModelSettingsWorker;
 import com.thebluealliance.androidclient.activities.BaseActivity;
 import com.thebluealliance.androidclient.fragments.mytba.MyTBASettingsFragment;
@@ -85,9 +84,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         });
         toolbar.setNavigationContentDescription(R.string.close);
 
-        if (Utilities.hasLApis()) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
-        }
+        getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
 
         saveModelPreferencesFab = (FloatingActionButton) findViewById(R.id.close_settings_button);
         saveModelPreferencesFab.setOnClickListener(this);

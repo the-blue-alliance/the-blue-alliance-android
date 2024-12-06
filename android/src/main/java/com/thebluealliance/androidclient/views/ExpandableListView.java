@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.views;
 
 import android.content.Context;
-import android.os.Build;
 import android.util.AttributeSet;
 
 import com.thebluealliance.androidclient.Utilities;
@@ -24,11 +23,7 @@ public class ExpandableListView extends android.widget.ExpandableListView {
     }
 
     private void updateSize() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            setIndicatorBoundsRelative(getWidth() - Utilities.getPixelsFromDp(getContext(), 40), getWidth() - Utilities.getPixelsFromDp(getContext(), 16));
-        } else {
-            setIndicatorBounds(getWidth() - Utilities.getPixelsFromDp(getContext(), 40), getWidth() - Utilities.getPixelsFromDp(getContext(), 16));
-        }
+        setIndicatorBoundsRelative(getWidth() - Utilities.getPixelsFromDp(getContext(), 40), getWidth() - Utilities.getPixelsFromDp(getContext(), 16));
     }
 
     @Override
