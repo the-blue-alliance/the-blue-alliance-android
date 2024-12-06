@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.subscribers;
 
 import android.util.ArrayMap;
 
-import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.comparators.AwardSortComparator;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
