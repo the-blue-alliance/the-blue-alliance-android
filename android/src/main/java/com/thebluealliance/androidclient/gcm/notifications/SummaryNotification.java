@@ -61,8 +61,7 @@ public class SummaryNotification extends BaseNotification<Void> {
 
         Intent dismissIntent = NotificationChangedReceiver.newIntent(context);
         dismissIntent.setAction(NotificationChangedReceiver.ACTION_NOTIFICATION_DELETED);
-        int dismissFlags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0;
-        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, dismissIntent, dismissFlags);
+        PendingIntent onDismiss = PendingIntent.getBroadcast(context, 0, dismissIntent, PendingIntent.FLAG_IMMUTABLE);
 
         return getBaseBuilder(context)
                 .setContentTitle(notificationTitle)

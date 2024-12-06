@@ -2,6 +2,8 @@ package com.thebluealliance.androidclient.subscribers;
 
 import android.content.Context;
 
+import androidx.collection.ArrayMap;
+
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.binders.TeamInfoBinder;
 import com.thebluealliance.androidclient.config.AppConfig;
@@ -27,8 +29,7 @@ public class TeamInfoSubscriber extends BaseAPISubscriber<TeamInfoSubscriber.Mod
     @Override
     public void parseData() {
         mDataToBind = new TeamInfoBinder.Model();
-        Map<MediaType, String> socialMediaByType = Utilities.getMapForPlatform(MediaType.class,
-                                                                               String.class);
+        Map<MediaType, String> socialMediaByType = new ArrayMap<MediaType, String>();
         Team team = mAPIData.team;
         List<Media> socialMedia = mAPIData.socialMedia;
         mDataToBind.teamKey = team.getKey();

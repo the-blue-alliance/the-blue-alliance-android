@@ -268,9 +268,7 @@ public class GCMMessageHandler extends FirebaseMessagingService implements Follo
             built.priority = Notification.PRIORITY_DEFAULT;
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            built.visibility = Notification.VISIBILITY_PUBLIC;
-            built.category = Notification.CATEGORY_SOCIAL;
-        }
+        built.visibility = Notification.VISIBILITY_PUBLIC;
+        built.category = Notification.CATEGORY_SOCIAL;
     }
 }

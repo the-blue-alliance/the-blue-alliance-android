@@ -85,9 +85,7 @@ public class MyTBAModelSettingsActivity extends BaseActivity implements View.OnC
         });
         toolbar.setNavigationContentDescription(R.string.close);
 
-        if (Utilities.hasLApis()) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
-        }
+        getWindow().setStatusBarColor(getResources().getColor(R.color.accent_dark));
 
         saveModelPreferencesFab = (FloatingActionButton) findViewById(R.id.close_settings_button);
         saveModelPreferencesFab.setOnClickListener(this);

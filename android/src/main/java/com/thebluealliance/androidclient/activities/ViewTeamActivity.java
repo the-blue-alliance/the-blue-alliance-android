@@ -511,13 +511,7 @@ public class ViewTeamActivity extends MyTBASettingsActivity implements
     }
 
     private boolean checkHasStoragePermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return PERMISSION_GRANTED == checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        } else {
-            // No runtime permissions before API 23, so everything is "granted" as it's declared
-            // in the app Manifest
-            return true;
-        }
+        return PERMISSION_GRANTED == checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     private void markMediaSnackbarAsDismissed() {

@@ -388,18 +388,6 @@ public final class Utilities {
         return hash;
     }
 
-    public static boolean hasKApis() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-    }
-
-    public static boolean hasLApis() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-    }
-
-    public static boolean hasMApis() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
-    }
-
     public static String getDeviceUUID(Context context) {
         return Settings.Secure.getString(context.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
     }
@@ -434,17 +422,6 @@ public final class Utilities {
     }
 
     /**
-     * {@link ArrayMap} is more memory efficient than {@link HashMap}, so prefer that if possible
-     */
-    public static <K, V> Map<K, V> getMapForPlatform(Class<K> key, Class<V> value) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            return new ArrayMap<>();
-        } else {
-            return new HashMap<>();
-        }
-    }
-
-    /**
      * On API 23+, this allows us to set the color of the status bar icons (either light or dark)
      * to look better with the status bar background. If the background is light, the icons will be
      * tinted gray/black; otherwise, they will be the default white.
@@ -456,10 +433,6 @@ public final class Utilities {
      * @param lightBackground if the background of the status bar is light
      */
     public static void setLightStatusBar(Window window, boolean lightBackground) {
-        if (!hasMApis()) {
-            return;
-        }
-
         int vis = window.getDecorView().getSystemUiVisibility();
         // Set light
         if (lightBackground) {

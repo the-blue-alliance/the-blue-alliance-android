@@ -51,9 +51,7 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-                addPreferencesFromResource(R.xml.notification_preferences_lollipop);
-            }
+            addPreferencesFromResource(R.xml.notification_preferences_lollipop);
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
                 addPreferencesFromResource(R.xml.notification_preferences_tiramisu);
 
