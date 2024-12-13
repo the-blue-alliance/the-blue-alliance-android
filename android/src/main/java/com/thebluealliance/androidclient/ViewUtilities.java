@@ -1,6 +1,5 @@
 package com.thebluealliance.androidclient;
 
-import android.os.Build;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -23,11 +22,7 @@ public final class ViewUtilities {
                 run.run();
 
                 ViewTreeObserver obs = view.getViewTreeObserver();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    obs.removeOnGlobalLayoutListener(this);
-                } else {
-                    obs.removeGlobalOnLayoutListener(this);
-                }
+                obs.removeOnGlobalLayoutListener(this);
             }
         });
     }

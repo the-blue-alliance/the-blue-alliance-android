@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import com.thebluealliance.androidclient.Utilities;
+import android.util.ArrayMap;
+
 import com.thebluealliance.androidclient.comparators.AwardSortComparator;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.eventbus.EventAwardsEvent;
@@ -40,7 +41,7 @@ public class AwardsListSubscriber extends BaseAPISubscriber<List<Award>, List<Li
     @Override
     public void parseData()  {
         mDataToBind.clear();
-        Map<String, Team> teams = Utilities.getMapForPlatform(String.class, Team.class);
+        Map<String, Team> teams = new ArrayMap<String, Team>();
         ArrayList<Award> sortedAwards = new ArrayList<>(mAPIData);
         Collections.sort(sortedAwards, AWARD_COMPARATOR);
         for (int i = 0; i < sortedAwards.size(); i++) {

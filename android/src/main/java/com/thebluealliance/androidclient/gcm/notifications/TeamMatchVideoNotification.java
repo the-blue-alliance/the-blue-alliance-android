@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.os.Build;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -78,14 +77,10 @@ public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoN
 
         ArrayList<String> teamNumbers = Match.teamNumbers(mMatchTeamKeys);
         CharSequence teamNumberString;
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-            Predicate<String> isFollowing =
-                    teamNumber -> followsChecker.followsTeam(context, teamNumber, mMatchKey,
-                            NotificationTypes.MATCH_VIDEO);
-            teamNumberString = Utilities.boldNameList(teamNumbers, isFollowing);
-        } else {
-            teamNumberString = Utilities.stringifyListOfStrings(context, teamNumbers);
-        }
+        Predicate<String> isFollowing =
+          teamNumber -> followsChecker.followsTeam(context, teamNumber, mMatchKey,
+            NotificationTypes.MATCH_VIDEO);
+        teamNumberString = Utilities.boldNameList(teamNumbers, isFollowing);
 
         String matchTitle = MatchHelper.getAbbrevMatchTitleFromMatchKey(context, mMatchKey);
         String eventCode = EventHelper.getEventCode(mMatchKey);
