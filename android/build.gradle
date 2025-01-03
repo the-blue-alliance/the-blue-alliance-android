@@ -109,7 +109,6 @@ android {
         targetSdkVersion 35
         versionCode versionNum
         versionName version.toString()
-        multiDexEnabled true
 
         testInstrumentationRunner "com.thebluealliance.androidclient.testing.TbaInstrumentationRunner"
 
@@ -148,9 +147,9 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.each { output ->
-            def apkName = "tba-android-";
-            apkName += "v" + version.tagName;
-            apkName += "-" + variant.buildType.name + ".apk";
+            def apkName = "tba-android-"
+            apkName += "v" + version.tagName
+            apkName += "-" + variant.buildType.name + ".apk"
             output.outputFileName = apkName
         }
     }
@@ -237,7 +236,6 @@ dependencies {
     implementation 'androidx.core:core:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
-    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
@@ -307,7 +305,6 @@ dependencies {
     testImplementation 'androidx.test.ext:junit:1.1.5'
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testImplementation "org.robolectric:robolectric:${robolectricVersion}"
-    testImplementation "org.robolectric:shadows-multidex:${robolectricVersion}"
     testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
 
     // instrumentation

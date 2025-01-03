@@ -2,6 +2,7 @@ package com.thebluealliance.androidclient;
 
 import static com.thebluealliance.androidclient.gcm.notifications.BaseNotification.NOTIFICATION_CHANNEL;
 
+import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
@@ -10,7 +11,6 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.hilt.work.HiltWorkerFactory;
-import androidx.multidex.MultiDexApplication;
 import androidx.work.Configuration;
 
 import com.facebook.stetho.Stetho;
@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import dagger.hilt.android.HiltAndroidApp;
 
 @HiltAndroidApp
-public class TbaAndroid extends MultiDexApplication implements Configuration.Provider {
+public class TbaAndroid extends Application implements Configuration.Provider {
 
     @Inject TBAStatusController mStatusController;
     @Inject AppConfig mAppConfig;
