@@ -4,14 +4,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import androidx.annotation.Nullable;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.datafeed.refresh.RefreshController;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.eventbus.ConnectivityChangeEvent;
 import com.thebluealliance.androidclient.interfaces.InvalidateHost;
-import com.thebluealliance.androidclient.models.ApiStatus;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -19,7 +16,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
+import androidx.annotation.Nullable;
 import dagger.hilt.android.AndroidEntryPoint;
+import thebluealliance.api.model.APIStatus;
 
 /**
  * An activity that serves as a host to datafeed fragments
@@ -79,7 +78,7 @@ public abstract class DatafeedActivity extends BaseActivity
     protected void onResume() {
         super.onResume();
         mEventBus.register(this);
-        ApiStatus status = mStatusController.fetchApiStatus();
+        APIStatus status = mStatusController.fetchApiStatus();
         commonStatusUpdate(status);
     }
 
@@ -89,12 +88,12 @@ public abstract class DatafeedActivity extends BaseActivity
         mEventBus.unregister(this);
     }
 
-    private void commonStatusUpdate(@Nullable ApiStatus newStatus) {
+    private void commonStatusUpdate(@Nullable APIStatus newStatus) {
         if (newStatus == null) {
             return;
         }
 
-        if (newStatus.getFmsApiDown()) {
+        if (newStatus.getIsDatafeedDown()) {
             // Everything is broken
             showWarningMessage(BaseActivity.WARNING_FIRST_API_DOWN);
         } else {
@@ -110,7 +109,7 @@ public abstract class DatafeedActivity extends BaseActivity
      *
      * @param newStatus The new API Status
      */
-    protected void onTbaStatusUpdate(ApiStatus newStatus) {
+    protected void onTbaStatusUpdate(APIStatus newStatus) {
         // Default to do nothing
     }
 
@@ -130,7 +129,7 @@ public abstract class DatafeedActivity extends BaseActivity
      */
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onApiStatusUpdated(ApiStatus tbaStatus) {
+    public void onApiStatusUpdated(APIStatus tbaStatus) {
         commonStatusUpdate(tbaStatus);
     }
 }

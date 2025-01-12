@@ -5,10 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.ViewCompat;
-import androidx.viewpager.widget.ViewPager;
-
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
 import com.thebluealliance.androidclient.TbaLogger;
@@ -17,14 +13,17 @@ import com.thebluealliance.androidclient.adapters.ViewEventFragmentPagerAdapter;
 import com.thebluealliance.androidclient.eventbus.ActionBarTitleEvent;
 import com.thebluealliance.androidclient.helpers.ConnectionDetector;
 import com.thebluealliance.androidclient.helpers.EventHelper;
-import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.types.ModelType;
 import com.thebluealliance.androidclient.views.SlidingTabs;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.ViewCompat;
+import androidx.viewpager.widget.ViewPager;
 import dagger.hilt.android.AndroidEntryPoint;
+import thebluealliance.api.model.APIStatus;
 
 @AndroidEntryPoint
 public class ViewEventActivity extends MyTBASettingsActivity
@@ -213,7 +212,7 @@ public class ViewEventActivity extends MyTBASettingsActivity
     }
 
     @Override
-    protected void onTbaStatusUpdate(ApiStatus newStatus) {
+    protected void onTbaStatusUpdate(APIStatus newStatus) {
         super.onTbaStatusUpdate(newStatus);
         if (newStatus.getDownEvents().contains(mEventKey)) {
             // This event is down
