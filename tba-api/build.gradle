@@ -1,0 +1,50 @@
+plugins {
+    id 'java-library'
+    id "org.openapi.generator" version "7.10.0"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+openApiGenerate {
+    generatorName.set("java")
+    remoteInputSpec.set("https://www.thebluealliance.com/swagger/api_v3.json")
+    outputDir.set("$projectDir")
+    apiPackage.set("thebluealliance.api")
+    invokerPackage.set("thebluealliance.api.client")
+    modelPackage.set("thebluealliance.api.model")
+
+    // We don't need the generated markdown docs, or tests
+    generateApiDocumentation.set(false)
+    generateModelDocumentation.set(false)
+    generateApiTests.set(false)
+    generateModelTests.set(false)
+
+    // By default the generator creates a full project, including a github workflow,
+    // gradle build files, etc.
+    // Remove all that except the generated Java files, and a couple of support files that are referenced
+    globalProperties.set([
+            apis           : "",
+            models         : "",
+            supportingFiles: "CollectionFormats.java,StringUtil.java",
+    ])
+
+    // We don't currently use the generated Retrofit interface because we are still on RxJava 1.x
+    // In the future we can set configOptions.put("useRxJava2", "true")
+    // and use the generated Retrofit interfaces as well.
+    configOptions.put("library", "retrofit2")
+    configOptions.put("serializationLibrary", "gson")
+}
+
+dependencies {
+    // in java 9+ java.annotation.Generated moved to java.annotation.processing.Generated
+    // so use this lib for back-compat
+    implementation "javax.annotation:javax.annotation-api:1.3.2"
+    implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+    implementation "io.reactivex:rxjava:${rxJavaVersion}"
+    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    implementation "com.google.code.gson:gson:${gsonVersion}"
+    implementation "com.google.code.findbugs:jsr305:3.0.2"
+}
