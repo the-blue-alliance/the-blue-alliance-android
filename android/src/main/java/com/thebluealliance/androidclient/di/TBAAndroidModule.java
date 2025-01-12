@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
 
-import androidx.annotation.VisibleForTesting;
-
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,7 +14,6 @@ import com.squareup.picasso.Picasso;
 import com.thebluealliance.androidclient.Analytics;
 import com.thebluealliance.androidclient.config.LocalProperties;
 import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.datafeed.deserializers.APIStatusDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AllianceDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictDeserializer;
@@ -30,7 +27,6 @@ import com.thebluealliance.androidclient.datafeed.deserializers.RankingItemDeser
 import com.thebluealliance.androidclient.datafeed.deserializers.RankingsResponseDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamAtEventStatusDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
-import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
@@ -46,7 +42,6 @@ import com.thebluealliance.androidclient.models.RankingSortOrder;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.api.model.IAllianceBackup;
-import com.thebluealliance.api.model.IApiStatus;
 import com.thebluealliance.api.model.IAward;
 import com.thebluealliance.api.model.IAwardRecipient;
 import com.thebluealliance.api.model.IDistrict;
@@ -69,6 +64,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Singleton;
 
+import androidx.annotation.VisibleForTesting;
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
@@ -152,7 +148,6 @@ public class TBAAndroidModule {
         TeamDeserializer teamDeserializer = new TeamDeserializer();
         MediaDeserializer mediaDeserializer = new MediaDeserializer();
         DistrictDeserializer districtDeserializer = new DistrictDeserializer();
-        APIStatusDeserializer apiStatusDeserializer = new APIStatusDeserializer();
         RankingsResponseDeserializer rankingsResponseDeserializer = new RankingsResponseDeserializer();
         RankingsResponseDeserializer.RankingSortOrderDeserializer sortOrderDeserializer = new RankingsResponseDeserializer.RankingSortOrderDeserializer();
         AllianceDeserializer allianceDeserializer = new AllianceDeserializer();
@@ -182,9 +177,6 @@ public class TBAAndroidModule {
 
         builder.registerTypeAdapter(IMedia.class, mediaDeserializer);
         builder.registerTypeAdapter(Media.class, mediaDeserializer);
-
-        builder.registerTypeAdapter(IApiStatus.class, apiStatusDeserializer);
-        builder.registerTypeAdapter(ApiStatus.class, apiStatusDeserializer);
 
         builder.registerTypeAdapter(IRankingResponseObject.class, rankingsResponseDeserializer);
         builder.registerTypeAdapter(RankingResponseObject.class, rankingsResponseDeserializer);

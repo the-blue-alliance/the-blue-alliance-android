@@ -229,6 +229,7 @@ task checkstyle(type: Checkstyle) {
 dependencies {
     implementation project(':libTba')
     implementation project(':libImgur')
+    implementation project(':tba-api')
 
     // Android support libraries
     implementation("androidx.activity:activity:1.9.3")

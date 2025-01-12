@@ -8,9 +8,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
@@ -19,17 +16,18 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.activities.UpdateRequiredActivity;
 import com.thebluealliance.androidclient.background.AnalyticsActions;
-import com.thebluealliance.androidclient.models.ApiStatus;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import okhttp3.Cache;
 import rx.schedulers.Schedulers;
+import thebluealliance.api.model.APIStatus;
 
 /**
  * A class to handle the TBA Status API
@@ -80,18 +78,24 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         StatusRefreshService.enqueueWork(context);
     }
 
-    public @Nullable ApiStatus fetchApiStatus() {
+    public @Nullable APIStatus fetchApiStatus() {
         if (!mPrefs.contains(STATUS_PREF_KEY)) {
             return null;
         }
 
         String statusJson = mPrefs.getString(STATUS_PREF_KEY, "");
-        return mGson.fromJson(statusJson, ApiStatus.class);
+        try {
+            return mGson.fromJson(statusJson, APIStatus.class);
+        } catch (Exception e) {
+            // Likely an older status model - clear it out so we can get a fresh status
+            mPrefs.edit().remove(STATUS_PREF_KEY).apply();
+            return null;
+        }
     }
 
     public int getMaxCompYear() {
-        ApiStatus status = fetchApiStatus();
-        if (status == null || status.getMaxSeason() == null) {
+        APIStatus status = fetchApiStatus();
+        if (status == null) {
             Calendar cal = Calendar.getInstance();
             return cal.get(Calendar.YEAR);
         }
@@ -99,7 +103,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     }
 
     public Integer getCurrentCompYear() {
-        ApiStatus status = fetchApiStatus();
+        APIStatus status = fetchApiStatus();
         if (status == null) {
             Calendar cal = Calendar.getInstance();
             return cal.get(Calendar.YEAR);
@@ -108,35 +112,31 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
     }
 
     public int getMinAppVersion() {
-        ApiStatus status = fetchApiStatus();
-        if (status == null || status.getMinAppVersion() == null) {
+        APIStatus status = fetchApiStatus();
+        if (status == null) {
             /* Default to the current version */
             return BuildConfig.VERSION_CODE;
         }
-        return status.getMinAppVersion();
+        return status.getAndroid().getMinAppVersion();
     }
 
     private int getLatestAppVersion() {
-        ApiStatus status = fetchApiStatus();
-        if (status == null || status.getLatestAppVersion() == null) {
+        APIStatus status = fetchApiStatus();
+        if (status == null) {
             /* Default to the current version */
             return BuildConfig.VERSION_CODE;
         }
-        return status.getLatestAppVersion();
+        return status.getAndroid().getLatestAppVersion();
     }
 
-    public void clearOkCacheIfNeeded(@Nullable ApiStatus status, boolean forceClear) {
-        long lastCacheClear = mPrefs.getLong(STATUS_CACHE_CLEAR_KEY, Long.MIN_VALUE);
+    public void clearOkCacheIfNeeded(@Nullable APIStatus status, boolean forceClear) {
         if (status != null
                 && mOkHttpCache != null
-                && (forceClear || lastCacheClear < status.getLastOkHttpCacheClear())) {
+                && forceClear) {
             Schedulers.io().createWorker().schedule(() -> {
                 TbaLogger.i("Clearing OkHttp cache");
                 try {
                     mOkHttpCache.evictAll();
-                    mPrefs.edit()
-                            .putLong(STATUS_CACHE_CLEAR_KEY, System.currentTimeMillis() / 1000L)
-                            .apply();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -187,18 +187,7 @@ public class TBAStatusController implements Application.ActivityLifecycleCallbac
         }
 
         /* Admin push message */
-        ApiStatus status = fetchApiStatus();
-        Date now = new Date();
-        if (status != null && status.getHasMessage()
-                && mLastMessageTime + DIALOG_TIMEOUT < System.nanoTime()
-                && status.getMessageExpiration().compareTo(now.getTime()) > 0) {
-            new AlertDialog.Builder(activity)
-                    .setMessage(status.getMessageText())
-                    .setCancelable(false)
-                    .setPositiveButton(R.string.ok, ((dialog, which) -> dialog.dismiss()))
-                    .show();
-            mLastMessageTime = System.nanoTime();
-        }
+        APIStatus status = fetchApiStatus();
 
         /* Clear OkHttp Cache when commanded */
         clearOkCacheIfNeeded(status, false);

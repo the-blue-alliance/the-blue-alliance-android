@@ -11,14 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.NavUtils;
-import androidx.core.app.TaskStackBuilder;
-import androidx.core.view.ViewCompat;
-import androidx.viewpager.widget.ViewPager;
-
 import com.google.common.collect.ImmutableList;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.ShareUris;
@@ -33,7 +25,6 @@ import com.thebluealliance.androidclient.helpers.EventHelper;
 import com.thebluealliance.androidclient.helpers.EventTeamHelper;
 import com.thebluealliance.androidclient.helpers.TeamHelper;
 import com.thebluealliance.androidclient.interfaces.EventsParticipatedUpdate;
-import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.subscribers.EventsParticipatedDropdownSubscriber;
 import com.thebluealliance.androidclient.types.ModelType;
@@ -47,8 +38,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NavUtils;
+import androidx.core.app.TaskStackBuilder;
+import androidx.core.view.ViewCompat;
+import androidx.viewpager.widget.ViewPager;
 import dagger.hilt.android.AndroidEntryPoint;
 import rx.schedulers.Schedulers;
+import thebluealliance.api.model.APIStatus;
 
 @AndroidEntryPoint
 public class TeamAtEventActivity extends MyTBASettingsActivity
@@ -293,7 +292,7 @@ public class TeamAtEventActivity extends MyTBASettingsActivity
     }
 
     @Override
-    protected void onTbaStatusUpdate(ApiStatus newStatus) {
+    protected void onTbaStatusUpdate(APIStatus newStatus) {
         super.onTbaStatusUpdate(newStatus);
         if (newStatus.getDownEvents().contains(mEventKey)) {
             // This event is down

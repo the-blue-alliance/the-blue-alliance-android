@@ -1,7 +1,6 @@
 package com.thebluealliance.androidclient.api.rx;
 
 import com.google.gson.JsonElement;
-import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictRanking;
@@ -18,6 +17,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
 import rx.Observable;
+import thebluealliance.api.model.APIStatus;
 
 @Deprecated
 public interface TbaApiV2 {
@@ -28,7 +28,7 @@ public interface TbaApiV2 {
    */
 
   @GET("api/v2/status")
-  Observable<Response<ApiStatus>> fetchApiStatus();
+  Observable<Response<APIStatus>> fetchApiStatus();
 
 
   /**
