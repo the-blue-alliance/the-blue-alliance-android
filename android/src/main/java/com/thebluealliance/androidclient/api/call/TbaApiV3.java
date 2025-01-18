@@ -1,29 +1,25 @@
 package com.thebluealliance.androidclient.api.call;
 
 
-
-import retrofit2.Call;
-import retrofit2.http.*;
-
-import okhttp3.RequestBody;
-
-import com.thebluealliance.androidclient.models.ApiStatus;
-import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictRanking;
-import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventAlliance;
-import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.Match;
-import com.thebluealliance.androidclient.models.RankingResponseObject;
-import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.androidclient.models.Media;
+import com.thebluealliance.androidclient.models.RankingResponseObject;
 import com.thebluealliance.androidclient.models.Robot;
+import com.thebluealliance.androidclient.models.Team;
+import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Path;
+import thebluealliance.api.model.APIStatus;
 
 public interface TbaApiV3 {
   /**
@@ -33,7 +29,7 @@ public interface TbaApiV3 {
    */
   
   @GET("api/v3/status")
-  Call<ApiStatus> fetchApiStatus();
+  Call<APIStatus> fetchApiStatus();
     
 
   /**

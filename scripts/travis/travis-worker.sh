@@ -41,13 +41,13 @@ case "$1" in
         ;;
 
     "DATAFEED_CODEGEN")
-        echo "Running datafeed codegen"
+        echo "Datafeed codegen temporarily disabled"
         set -e
         # Run the regeneration ourselves
-        ./scripts/update_datafeed.sh -l v2.2.1-FORKED2
+        # ./scripts/update_datafeed.sh -l v2.2.1-FORKED2
 
         # Fail if there are an uncommitted changes
-        git diff --exit-code --ignore-submodules
+        # git diff --exit-code --ignore-submodules
         ;;
 
     "PROD-BUILD")

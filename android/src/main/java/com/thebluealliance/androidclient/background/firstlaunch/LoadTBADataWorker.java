@@ -1,10 +1,40 @@
 package com.thebluealliance.androidclient.background.firstlaunch;
 
-import static com.thebluealliance.androidclient.gcm.notifications.BaseNotification.NOTIFICATION_CHANNEL;
-
 import android.app.Notification;
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.gson.Gson;
+import com.thebluealliance.androidclient.BuildConfig;
+import com.thebluealliance.androidclient.Constants;
+import com.thebluealliance.androidclient.R;
+import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.Utilities;
+import com.thebluealliance.androidclient.api.ApiConstants;
+import com.thebluealliance.androidclient.api.call.TbaApiV3;
+import com.thebluealliance.androidclient.config.AppConfig;
+import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
+import com.thebluealliance.androidclient.database.writers.EventListWriter;
+import com.thebluealliance.androidclient.database.writers.TeamListWriter;
+import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
+import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
+import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
+import com.thebluealliance.androidclient.models.District;
+import com.thebluealliance.androidclient.models.Event;
+import com.thebluealliance.androidclient.models.Team;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+
+import javax.inject.Named;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,43 +51,13 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
-
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.thebluealliance.androidclient.BuildConfig;
-import com.thebluealliance.androidclient.Constants;
-import com.thebluealliance.androidclient.R;
-import com.thebluealliance.androidclient.TbaLogger;
-import com.thebluealliance.androidclient.Utilities;
-import com.thebluealliance.androidclient.api.ApiConstants;
-import com.thebluealliance.androidclient.api.call.TbaApiV3;
-import com.thebluealliance.androidclient.config.AppConfig;
-import com.thebluealliance.androidclient.database.Database;
-import com.thebluealliance.androidclient.database.writers.DistrictListWriter;
-import com.thebluealliance.androidclient.database.writers.EventListWriter;
-import com.thebluealliance.androidclient.database.writers.TeamListWriter;
-import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
-import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
-import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.models.ApiStatus;
-import com.thebluealliance.androidclient.models.District;
-import com.thebluealliance.androidclient.models.Event;
-import com.thebluealliance.androidclient.models.Team;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-
-import javax.inject.Named;
-
 import dagger.assisted.Assisted;
 import dagger.assisted.AssistedInject;
 import retrofit2.Call;
 import retrofit2.Response;
+import thebluealliance.api.model.APIStatus;
+
+import static com.thebluealliance.androidclient.gcm.notifications.BaseNotification.NOTIFICATION_CHANNEL;
 
 @HiltWorker
 public class LoadTBADataWorker extends Worker {
@@ -70,6 +70,8 @@ public class LoadTBADataWorker extends Worker {
 
     private final Context mApplicationContext;
     private final TbaApiV3 mDatafeed;
+
+    private final Gson mGson;
     private final AppConfig mAppConfig;
     private final Database mDb;
     private final TeamListWriter mTeamWriter;
@@ -84,6 +86,7 @@ public class LoadTBADataWorker extends Worker {
             @Assisted @NonNull Context context,
             @Assisted @NonNull WorkerParameters params,
             @Named("tba_apiv3_call") TbaApiV3 datafeed,
+            Gson gson,
             AppConfig appConfig,
             Database db,
             TeamListWriter teamListWriter,
@@ -93,6 +96,7 @@ public class LoadTBADataWorker extends Worker {
         super(context, params);
         mApplicationContext = context.getApplicationContext();
         mDatafeed = datafeed;
+        mGson = gson;
         mAppConfig = appConfig;
         mDb = db;
         mTeamWriter = teamListWriter;
@@ -144,9 +148,9 @@ public class LoadTBADataWorker extends Worker {
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, mApplicationContext.getString(R.string.loading_config)));
             mAppConfig.updateRemoteDataBlocking();
 
-            Call<ApiStatus> statusCall = mDatafeed.fetchApiStatus();
-            Response<ApiStatus> statusResponse = statusCall.execute();
-            if (!statusResponse.isSuccessful() || statusResponse.body() == null || statusResponse.body().getMaxSeason() == null) {
+            Call<APIStatus> statusCall = mDatafeed.fetchApiStatus();
+            Response<APIStatus> statusResponse = statusCall.execute();
+            if (!statusResponse.isSuccessful() || statusResponse.body() == null) {
                 TbaLogger.e("Bad API status response: " + statusResponse);
                 return onConnectionError();
             }
@@ -271,7 +275,8 @@ public class LoadTBADataWorker extends Worker {
             SharedPreferences.Editor editor = mSharedPreferences.edit();
 
             // Write TBA Status
-            editor.putString(TBAStatusController.STATUS_PREF_KEY, statusResponse.body().getJsonBlob());
+            String statusJson = mGson.toJson(statusResponse.body());
+            editor.putString(TBAStatusController.STATUS_PREF_KEY, statusJson);
             editor.putInt(Constants.LAST_YEAR_KEY, statusResponse.body().getMaxSeason());
 
             // Loop through all pages

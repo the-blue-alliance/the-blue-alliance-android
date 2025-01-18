@@ -1,8 +1,6 @@
 package com.thebluealliance.androidclient.api.call;
 
 
-
-import com.thebluealliance.androidclient.models.ApiStatus;
 import com.thebluealliance.androidclient.models.Award;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictRanking;
@@ -18,6 +16,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
+import thebluealliance.api.model.APIStatus;
 
 @Deprecated
 public interface TbaApiV2 {
@@ -28,7 +27,7 @@ public interface TbaApiV2 {
    */
 
   @GET("api/v2/status")
-  Call<ApiStatus> fetchApiStatus();
+  Call<APIStatus> fetchApiStatus();
 
 
   /**
