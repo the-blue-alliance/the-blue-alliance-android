@@ -64,7 +64,6 @@ mkdir -p android/$APP_PKG
 cp -r libTba/swagger/tmp/$PKG/call/ android/$APP_PKG
 cp -r libTba/swagger/tmp/$PKG/rx/ android/$APP_PKG
 cp -r libTba/swagger/tmp/$PKG/model/ $DST
-cp libTba/swagger/tmp/docs/* doc/api/
 
 echo "Patching"
 OLD_NAME=DefaultApi
