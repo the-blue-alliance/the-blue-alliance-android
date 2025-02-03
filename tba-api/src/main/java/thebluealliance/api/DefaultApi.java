@@ -22,13 +22,12 @@ public interface DefaultApi {
   /**
    * 
    * Gets a large blob of data that is used on the frontend for searching. May change without notice.
-   * @param year Competition Year (or Season). Must be 4 digits. (required)
    * @param ifNoneMatch Value of the &#x60;ETag&#x60; header in the most recently cached response by the client. (optional)
    * @return Call&lt;SearchIndex&gt;
    */
   @GET("search_index")
   Call<SearchIndex> getSearchIndex(
-    @retrofit2.http.Path("year") Integer year, @retrofit2.http.Header("If-None-Match") String ifNoneMatch
+    @retrofit2.http.Header("If-None-Match") String ifNoneMatch
   );
 
 }
