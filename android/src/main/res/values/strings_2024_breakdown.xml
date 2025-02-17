@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="breakdown2024_auto_leave">Leave</string>
+    <string name="breakdown2024_auto_amp_count">Auto Amp Notes</string>
+    <string name="breakdown2024_auto_speaker_count">Auto Speaker Notes</string>
+    <string name="breakdown2024_auto_note_points">Auto Note Points</string>
+    <string name="breakdown2024_teleop_amp_count">Teleop Amp Notes</string>
+    <string name="breakdown2024_teleop_speaker_count">Teleop Speaker Notes</string>
+    <string name="breakdown2024_teleop_note_points">Teleop Note Points</string>
+    <string name="breakdown2024_harmony_points">Harmony Points</string>
+    <string name="breakdown2024_trap_points">Trap Points</string>
+    <string name="breakdown2024_melody_bonus">Melody Bonus</string>
+    <string name="breakdown2024_ensemble_bonus">Ensemble Bonus</string>
+
+</resources>
