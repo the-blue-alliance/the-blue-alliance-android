@@ -18,6 +18,7 @@ import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2020
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2022;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2023;
 import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2024;
+import com.thebluealliance.androidclient.views.breakdowns.MatchBreakdownView2025;
 import com.thebluealliance.api.model.IMatchAlliancesContainer;
 public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinder.Model, FragmentMatchBreakdownBinding> {
 
@@ -59,6 +60,9 @@ public class MatchBreakdownBinder extends AbstractDataBinder<MatchBreakdownBinde
                 break;
             case 2024:
                 breakdownView = new MatchBreakdownView2024(mActivity);
+                break;
+            case 2025:
+                breakdownView = new MatchBreakdownView2025(mActivity);
                 break;
             default:
                 breakdownView = null;

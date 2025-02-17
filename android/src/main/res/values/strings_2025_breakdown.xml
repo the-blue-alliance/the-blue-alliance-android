@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="breakdown2025_auto_coral_count">Auto Coral Count</string>
+    <string name="breakdown2025_auto_coral_points">Auto Coral Points</string>
+    <string name="breakdown2025_auto_processor_algae_count">Auto Processor Algae Count</string>
+    <string name="breakdown2025_teleop_coral_count">Teleop Coral Count</string>
+    <string name="breakdown2025_teleop_coral_points">Teleop Coral Points</string>
+    <string name="breakdown2025_teleop_processor_algae_count">Processor Algae Count</string>
+    <string name="breakdown2025_teleop_net_algae_count">Net Algae Count</string>
+    <string name="breakdown2025_teleop_algae_points">Algae Points</string>
+    <string name="breakdown2025_barge_points">Barge Points</string>
+    <string name="breakdown2025_teleop_coop_criteria">Coopertition Criteria Met</string>
+    <string name="breakdown2025_auto_bonus">Auto Bonus</string>
+    <string name="breakdown2025_coral_bonus">Coral Bonus</string>
+    <string name="breakdown2025_barge_bonus">Barge Bonus</string>
+</resources>
