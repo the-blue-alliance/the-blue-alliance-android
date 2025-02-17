@@ -1,0 +1,605 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.gridlayout.widget.GridLayout
+        app:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/breakdown2025_container"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@color/column_header_gray"
+        app:columnCount="3"
+        app:rowCount="35"
+        app:alignmentMode="alignBounds" >
+
+        <!--
+          Test data from:
+          https://www.thebluealliance.com/match/2025week0_qm13
+        -->
+
+        <!-- Teams -->
+        <TextView
+            android:id="@+id/breakdown_red1"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 1"/>
+        <TextView
+            android:text="@string/breakdown_teams"
+            style="@style/breakdown_categorySubtotal"
+            app:layout_rowSpan="3" />
+        <TextView
+            android:id="@+id/breakdown_blue1"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 1"/>
+        <TextView
+            android:id="@+id/breakdown_red2"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 2"/>
+        <TextView
+            android:id="@+id/breakdown_blue2"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 2"/>
+        <TextView
+            android:id="@+id/breakdown_red3"
+            style="@style/breakdown_redItemSmall"
+            tools:text="Red 3"/>
+        <TextView
+            android:id="@+id/breakdown_blue3"
+            style="@style/breakdown_blueItemSmall"
+            tools:text="Blue 3"/>
+
+        <!-- Auto Leave -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2025_red_auto_leave_robot1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tint="@color/primary_text_color"
+                android:src="@drawable/ic_close_black_24dp" />
+            <ImageView
+                android:id="@+id/breakdown2025_red_auto_leave_robot2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tint="@color/primary_text_color"
+                android:src="@drawable/ic_close_black_24dp"/>
+            <ImageView
+                android:id="@+id/breakdown2025_red_auto_leave_robot3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tint="@color/primary_text_color"
+                android:src="@drawable/ic_close_black_24dp"/>
+            <TextView
+                android:id="@+id/breakdown2025_red_auto_leave_bonus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="(+0)"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2024_auto_leave"
+            style="@style/breakdown_categorySubtotal" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2025_blue_auto_leave_robot1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tint="@color/primary_text_color"
+                android:src="@drawable/ic_check_black_24dp"/>
+            <ImageView
+                android:id="@+id/breakdown2025_blue_auto_leave_robot2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tint="@color/primary_text_color"
+                android:src="@drawable/ic_check_black_24dp"/>
+            <ImageView
+                android:id="@+id/breakdown2025_blue_auto_leave_robot3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tint="@color/primary_text_color"
+                android:src="@drawable/ic_check_black_24dp"/>
+            <TextView
+                android:id="@+id/breakdown2025_blue_auto_leave_bonus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="(+9)"/>
+        </LinearLayout>
+
+        <!-- Auto Coral Count  -->
+        <LinearLayout style="@style/breakdown_redItem"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/breakdown2025_red_auto_coral_L4_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_4_24px"
+                tools:text="0"/>
+            <TextView
+                android:id="@+id/breakdown2025_red_auto_coral_L3_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_3_24px"
+                tools:text="0"/>
+            <TextView
+                android:id="@+id/breakdown2025_red_auto_coral_L2_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_2_24px"
+                tools:text="0"/>
+            <TextView
+                android:id="@+id/breakdown2025_red_auto_coral_L1_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_1_24px"
+                tools:text="0"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2025_auto_coral_count"
+            style="@style/breakdown_category" />
+        <LinearLayout style="@style/breakdown_blueItem"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/breakdown2025_blue_auto_coral_L4_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_4_24px"
+                tools:text="1"/>
+            <TextView
+                android:id="@+id/breakdown2025_blue_auto_coral_L3_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_3_24px"
+                tools:text="0"/>
+            <TextView
+                android:id="@+id/breakdown2025_blue_auto_coral_L2_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_2_24px"
+                tools:text="0"/>
+            <TextView
+                android:id="@+id/breakdown2025_blue_auto_coral_L1_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_1_24px"
+                tools:text="1"/>
+        </LinearLayout>
+
+        <!-- Auto Coral Points  -->
+        <TextView
+            android:id="@+id/breakdown2025_red_auto_coral_points"
+            style="@style/breakdown_redTotal"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown2025_auto_coral_points"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown2025_blue_auto_coral_points"
+            style="@style/breakdown_blueTotal"
+            tools:text="10"/>
+
+        <!-- Auto Points -->
+        <TextView
+            android:id="@+id/breakdown_auto_total_red"
+            style="@style/breakdown_redTotal"
+            tools:text="11"/>
+        <TextView
+            android:text="@string/breakdown_auto_total"
+            style="@style/breakdown_categoryTotal" />
+        <TextView
+            android:id="@+id/breakdown_auto_total_blue"
+            style="@style/breakdown_blueTotal"
+            tools:text="14"/>
+
+        <!-- Teleop Coral Count  -->
+        <LinearLayout style="@style/breakdown_redItem"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/breakdown2025_red_teleop_coral_L4_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_4_24px"
+                tools:text="1"/>
+            <TextView
+                android:id="@+id/breakdown2025_red_teleop_coral_L3_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_3_24px"
+                tools:text="0"/>
+            <TextView
+                android:id="@+id/breakdown2025_red_teleop_coral_L2_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_2_24px"
+                tools:text="0"/>
+            <TextView
+                android:id="@+id/breakdown2025_red_teleop_coral_L1_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_1_24px"
+                tools:text="1"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2025_teleop_coral_count"
+            style="@style/breakdown_category" />
+        <LinearLayout style="@style/breakdown_blueItem"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/breakdown2025_blue_teleop_coral_L4_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_4_24px"
+                tools:text="6"/>
+            <TextView
+                android:id="@+id/breakdown2025_blue_teleop_coral_L3_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_3_24px"
+                tools:text="6"/>
+            <TextView
+                android:id="@+id/breakdown2025_blue_teleop_coral_L2_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_2_24px"
+                tools:text="2"/>
+            <TextView
+                android:id="@+id/breakdown2025_blue_teleop_coral_L1_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                app:drawableTint="@color/primary_text_color"
+                android:drawableLeft="@drawable/counter_1_24px"
+                tools:text="0"/>
+        </LinearLayout>
+
+        <!-- Teleop Coral Points  -->
+        <TextView
+            android:id="@+id/breakdown2025_red_teleop_coral_points"
+            style="@style/breakdown_redTotal"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown2025_teleop_coral_points"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown2025_blue_teleop_coral_points"
+            style="@style/breakdown_blueTotal"
+            tools:text="10"/>
+
+        <!-- Teleop Processor Algae Count  -->
+        <TextView
+            android:id="@+id/breakdown2025_red_teleop_processor_algae_count"
+            style="@style/breakdown_redItem"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown2025_teleop_processor_algae_count"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2025_blue_teleop_processor_algae_count"
+            style="@style/breakdown_blueItem"
+            tools:text="0"/>
+
+        <!-- Teleop Net Algae Count  -->
+        <TextView
+            android:id="@+id/breakdown2025_red_teleop_net_algae_count"
+            style="@style/breakdown_redItem"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown2025_teleop_net_algae_count"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown2025_blue_teleop_net_algae_count"
+            style="@style/breakdown_blueItem"
+            tools:text="1"/>
+
+        <!-- Algae Points  -->
+        <TextView
+            android:id="@+id/breakdown2025_red_teleop_algae_points"
+            style="@style/breakdown_redTotal"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown2025_teleop_algae_points"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown2025_blue_teleop_algae_points"
+            style="@style/breakdown_blueTotal"
+            tools:text="4"/>
+
+        <!-- Endgame -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2025_red_endgame_robot1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:drawableTint="@color/primary_text_color"
+                tools:text="Parked (+2)"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown_endgame_robot_1"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2025_blue_endgame_robot1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:drawableTint="@color/primary_text_color"
+                tools:text="Parked (+2)"/>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2025_red_endgame_robot2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:drawableTint="@color/primary_text_color"
+                tools:background="@drawable/ic_close_black_24dp"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown_endgame_robot_2"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2025_blue_endgame_robot2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:drawableTint="@color/primary_text_color"
+                tools:text=" Deep Cage (+12)"/>
+        </LinearLayout>
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2025_red_endgame_robot3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:drawableTint="@color/primary_text_color"
+                tools:text="Parked (+2)"/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown_endgame_robot_3"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2025_blue_endgame_robot3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:drawableTint="@color/primary_text_color"
+                tools:text="Parked (+2)"/>
+        </LinearLayout>
+
+        <!-- Barge Points  -->
+        <TextView
+            android:id="@+id/breakdown2025_red_barge_points"
+            style="@style/breakdown_redTotal"
+            tools:text="4"/>
+        <TextView
+            android:text="@string/breakdown2025_barge_points"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown2025_blue_barge_points"
+            style="@style/breakdown_blueTotal"
+            tools:text="16"/>
+
+        <!-- Teleop Total -->
+        <TextView
+            android:id="@+id/breakdown_teleop_total_red"
+            style="@style/breakdown_redTotal"
+            tools:text="11"/>
+        <TextView
+            android:text="@string/breakdown_teleop_total"
+            style="@style/breakdown_categoryTotal" />
+        <TextView
+            android:id="@+id/breakdown_teleop_total_blue"
+            style="@style/breakdown_blueTotal"
+            tools:text="75"/>
+
+        <!-- Coopertition Criteria Met -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2025_red_coopertition_criteria"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_close_black_24dp" />
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2025_teleop_coop_criteria"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/breakdown2025_blue_coopertition_criteria"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tint="@color/primary_text_color"
+                tools:src="@drawable/ic_close_black_24dp" />
+        </LinearLayout>
+
+        <!-- Auto Bonus -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2025_red_auto_bonus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableTint="@color/primary_text_color"
+                tools:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text=""/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2025_auto_bonus"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2025_blue_auto_bonus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableTint="@color/primary_text_color"
+                tools:drawableLeft="@drawable/ic_check_black_24dp"
+                tools:text="(+1 RP)"/>
+        </LinearLayout>
+
+        <!-- Coral Bonus -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2025_red_coral_bonus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableTint="@color/primary_text_color"
+                tools:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text=""/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2025_coral_bonus"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2025_blue_coral_bonus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableTint="@color/primary_text_color"
+                tools:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text=""/>
+        </LinearLayout>
+
+        <!-- Barge Bonus -->
+        <LinearLayout
+            style="@style/breakdown_redItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2025_red_barge_bonus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableTint="@color/primary_text_color"
+                tools:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text=""/>
+        </LinearLayout>
+        <TextView
+            android:text="@string/breakdown2025_barge_bonus"
+            style="@style/breakdown_category" />
+        <LinearLayout
+            style="@style/breakdown_blueItem"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/breakdown2025_blue_barge_bonus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableTint="@color/primary_text_color"
+                tools:drawableLeft="@drawable/ic_close_black_24dp"
+                tools:text=""/>
+        </LinearLayout>
+
+        <!-- Fouls -->
+        <TextView
+            android:id="@+id/breakdown_fouls_red"
+            style="@style/breakdown_redItem"
+            tools:text="1 (+5) / 0"/>
+        <TextView
+            android:text="@string/breakdown_foul_tech_foul"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown_fouls_blue"
+            style="@style/breakdown_blueItem"
+            tools:text="0 / 0"/>
+
+        <!-- Adjustments -->
+        <TextView
+            android:id="@+id/breakdown_adjust_red"
+            style="@style/breakdown_redItem"
+            tools:text="0"/>
+        <TextView
+            android:text="@string/breakdown_adjust"
+            style="@style/breakdown_category" />
+        <TextView
+            android:id="@+id/breakdown_adjust_blue"
+            style="@style/breakdown_blueItem"
+            tools:text="0"/>
+
+        <!-- Total -->
+        <TextView
+            android:id="@+id/breakdown_total_red"
+            style="@style/breakdown_redTotal"
+            tools:text="21"/>
+        <TextView
+            android:text="@string/breakdown_total"
+            style="@style/breakdown_categoryTotal" />
+        <TextView
+            android:id="@+id/breakdown_total_blue"
+            style="@style/breakdown_blueTotal"
+            tools:text="99"/>
+
+        <!-- Ranking Points -->
+        <TextView
+            android:id="@+id/breakdown_red_rp"
+            style="@style/breakdown_redTotal"
+            tools:text="+1 RP"/>
+        <TextView
+            android:text="@string/breakdown_rp"
+            android:id="@+id/breakdown_rp_header"
+            style="@style/breakdown_categorySubtotal" />
+        <TextView
+            android:id="@+id/breakdown_blue_rp"
+            style="@style/breakdown_blueTotal"
+            tools:text="+5 RP"/>
+
+    </androidx.gridlayout.widget.GridLayout>
+</ScrollView>
