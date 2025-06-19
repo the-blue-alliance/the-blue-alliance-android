@@ -9,7 +9,6 @@ import com.thebluealliance.androidclient.models.EventAlliance;
 import com.thebluealliance.androidclient.models.Match;
 import com.thebluealliance.androidclient.models.Media;
 import com.thebluealliance.androidclient.models.RankingResponseObject;
-import com.thebluealliance.androidclient.models.Robot;
 import com.thebluealliance.androidclient.models.Team;
 import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 
@@ -69,19 +68,6 @@ public interface TbaApiV3 {
   
   @GET("api/v3/district/{district_key}/rankings")
   Observable<Response<List<DistrictRanking>>> fetchDistrictRankings(
-    @Path("district_key") String districtKey, @Header("X-TBA-Cache") String xTBACache
-  );
-
-  /**
-   * District Teams Request
-   * Fetch a list of teams within a given district
-   * @param districtKey Key identifying a district (e.g. &#39;2016ne&#39;) (required)
-   * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
-   * @return Call&lt;List<Team>&gt;
-   */
-  
-  @GET("api/v3/district/{district_key}/teams")
-  Observable<Response<List<Team>>> fetchDistrictTeamsInYear(
     @Path("district_key") String districtKey, @Header("X-TBA-Cache") String xTBACache
   );
 
@@ -282,20 +268,6 @@ public interface TbaApiV3 {
   Observable<Response<TeamAtEventStatus>> fetchTeamAtEventStatus(
     @Path("team_key") String teamKey, @Path("event_key") String eventKey, @Header("X-TBA-Cache") String xTBACache
   );
-
-  /**
-   * Team Districts Request
-   * Fetch all district keys that a team has competed in
-   * @param teamKey Key identifying a single team, has format frcXXXX, where XXXX is the team number (required)
-   * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
-   * @return Call&lt;List<String>&gt;
-   */
-  
-  @GET("api/v3/team/{team_key}/districts")
-  Observable<Response<List<String>>> fetchTeamDistricts(
-    @Path("team_key") String teamKey, @Header("X-TBA-Cache") String xTBACache
-  );
-
   /**
    * Team Events Request
    * Fetch all events for a given team in a given year
@@ -335,19 +307,6 @@ public interface TbaApiV3 {
   @GET("api/v3/teams/{page}")
   Observable<Response<List<Team>>> fetchTeamPage(
     @Path("page") Integer page, @Header("X-TBA-Cache") String xTBACache
-  );
-
-  /**
-   * Team Robots Request
-   * Fetch all robots a team has made since 2015. Robot names are scraped from TIMS.
-   * @param teamKey Key identifying a single team, has format frcXXXX, where XXXX is the team number (required)
-   * @param xTBACache Special TBA App Internal Header to indicate caching strategy. (optional)
-   * @return Call&lt;List<Robot>&gt;
-   */
-  
-  @GET("api/v3/team/{team_key}/robots")
-  Observable<Response<List<Robot>>> fetchTeamRobots(
-    @Path("team_key") String teamKey, @Header("X-TBA-Cache") String xTBACache
   );
 
   /**
