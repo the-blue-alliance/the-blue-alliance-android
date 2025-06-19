@@ -1,19 +1,11 @@
 package com.thebluealliance.androidclient.subscribers;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.datafeed.framework.DatafeedTestDriver;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.listitems.ListItem;
-import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.renderers.DistrictRenderer;
 
 import org.junit.Before;
@@ -24,6 +16,14 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.LooperMode;
 
 import java.util.List;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import thebluealliance.api.model.District;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 
 @LooperMode(LooperMode.Mode.PAUSED)
 @RunWith(AndroidJUnit4.class)

@@ -38,8 +38,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import thebluealliance.api.model.District;
-
 public final class ModelInflater {
 
     private ModelInflater() {
@@ -324,6 +322,9 @@ public final class ModelInflater {
                     break;
                 case DistrictsTable.NAME:
                     district.setDisplayName(data.getString(i));
+                    break;
+                case DistrictsTable.LAST_MODIFIED:
+                    district.setLastModified(data.getLong(i));
                     break;
                 default:
             }

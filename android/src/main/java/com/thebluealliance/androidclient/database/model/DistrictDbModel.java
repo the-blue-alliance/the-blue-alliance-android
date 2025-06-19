@@ -82,6 +82,7 @@ public class DistrictDbModel implements TbaDatabaseModel {
         model.setAbbreviation(district.getAbbreviation());
         model.setYear(district.getYear());
         model.setDisplayName(district.getDisplayName());
+        model.setLastModified(0L);
         return model;
     }
 

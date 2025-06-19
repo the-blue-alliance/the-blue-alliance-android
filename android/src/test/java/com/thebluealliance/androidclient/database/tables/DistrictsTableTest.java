@@ -10,7 +10,6 @@ import com.thebluealliance.androidclient.database.model.DistrictDbModel;
 import com.thebluealliance.androidclient.datafeed.framework.ModelMaker;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.di.TBAAndroidModule;
-import com.thebluealliance.androidclient.models.District;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +18,7 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import thebluealliance.api.model.District;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
