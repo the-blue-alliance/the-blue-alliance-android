@@ -1,6 +1,7 @@
 package com.thebluealliance.androidclient.database.writers;
 
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.model.DistrictDbModel;
 
 import javax.inject.Inject;
 
@@ -16,6 +17,6 @@ public class DistrictWriter extends BaseDbWriter<District> {
     @Override
     @WorkerThread
     public void write(District district, Long lastModified) {
-        mDb.getDistrictsTable().add(district, lastModified);
+        mDb.getDistrictsTable().add(DistrictDbModel.fromDistrict(district), lastModified);
     }
 }

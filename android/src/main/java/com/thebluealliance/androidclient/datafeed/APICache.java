@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.database.Database;
+import com.thebluealliance.androidclient.database.model.DistrictDbModel;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
@@ -29,6 +30,7 @@ import com.thebluealliance.androidclient.types.EventDetailType;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -360,7 +362,7 @@ public class APICache {
     public Observable<District> fetchDistrict(String districtKey) {
         return Observable.create((observer) -> {
             try {
-                District district = mDb.getDistrictsTable().get(districtKey);
+                District district = mDb.getDistrictsTable().get(districtKey).toDistrict();
                 observer.onNext(district);
                 observer.onCompleted();
             } catch (Exception e) {
@@ -373,8 +375,11 @@ public class APICache {
         return Observable.create((observer) -> {
             try {
                 String where = String.format("%1$s = ?", DistrictsTable.YEAR);
-                List<District> districts = mDb.getDistrictsTable()
+                List<DistrictDbModel> districtModels = mDb.getDistrictsTable()
                   .getForQuery(null, where, new String[]{Integer.toString(year)});
+                List<District> districts = districtModels.stream()
+                  .map(DistrictDbModel::toDistrict)
+                  .collect(Collectors.toList());
                 observer.onNext(districts);
                 observer.onCompleted();
             } catch (Exception e) {

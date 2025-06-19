@@ -5,6 +5,7 @@ import android.database.Cursor;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.thebluealliance.androidclient.TbaLogger;
+import com.thebluealliance.androidclient.database.model.DistrictDbModel;
 import com.thebluealliance.androidclient.database.tables.AwardsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictTeamsTable;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
@@ -308,8 +309,8 @@ public final class ModelInflater {
         return eventTeam;
     }
 
-    public static District inflateDistrict(Cursor data) {
-        District district = new District();
+    public static DistrictDbModel inflateDistrict(Cursor data) {
+        DistrictDbModel district = new DistrictDbModel();
         for (int i = 0; i < data.getColumnCount(); i++) {
             switch (data.getColumnName(i)) {
                 case DistrictsTable.KEY:
