@@ -1,21 +1,15 @@
 package thebluealliance.api;
 
-import thebluealliance.api.client.CollectionFormats.*;
+import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
-import retrofit2.http.*;
-
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import okhttp3.MultipartBody;
-
+import retrofit2.http.GET;
 import thebluealliance.api.model.Award;
-import thebluealliance.api.model.DistrictList;
+import thebluealliance.api.model.District;
 import thebluealliance.api.model.DistrictRanking;
 import thebluealliance.api.model.Event;
 import thebluealliance.api.model.EventSimple;
-import thebluealliance.api.model.GetStatus401Response;
-import thebluealliance.api.model.GetTeamEventsStatusesByYear200ResponseValue;
 import thebluealliance.api.model.History;
 import thebluealliance.api.model.Match;
 import thebluealliance.api.model.MatchSimple;
@@ -25,13 +19,8 @@ import thebluealliance.api.model.TeamEventStatus;
 import thebluealliance.api.model.TeamRobot;
 import thebluealliance.api.model.TeamSimple;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 public interface TeamApi {
+
   /**
    * 
    * Gets a list of team district rankings for the given district.
@@ -121,10 +110,10 @@ public interface TeamApi {
    * Gets a key-value list of the event statuses for teams competing at the given event.
    * @param eventKey TBA Event Key, eg &#x60;2016nytr&#x60; (required)
    * @param ifNoneMatch Value of the &#x60;ETag&#x60; header in the most recently cached response by the client. (optional)
-   * @return Call&lt;Map&lt;String, GetTeamEventsStatusesByYear200ResponseValue&gt;&gt;
+   * @return Call&lt;Map&lt;String, TeamEventStatus&gt;&gt;
    */
   @GET("event/{event_key}/teams/statuses")
-  Call<Map<String, GetTeamEventsStatusesByYear200ResponseValue>> getEventTeamsStatuses(
+  Call<Map<String, TeamEventStatus>> getEventTeamsStatuses(
     @retrofit2.http.Path("event_key") String eventKey, @retrofit2.http.Header("If-None-Match") String ifNoneMatch
   );
 
@@ -170,10 +159,10 @@ public interface TeamApi {
    * Gets an array of districts representing each year the team was in a district. Will return an empty array if the team was never in a district.
    * @param teamKey TBA Team Key, eg &#x60;frc254&#x60; (required)
    * @param ifNoneMatch Value of the &#x60;ETag&#x60; header in the most recently cached response by the client. (optional)
-   * @return Call&lt;List&lt;DistrictList&gt;&gt;
+   * @return Call&lt;List&lt;District&gt;&gt;
    */
   @GET("team/{team_key}/districts")
-  Call<List<DistrictList>> getTeamDistricts(
+  Call<List<District>> getTeamDistricts(
     @retrofit2.http.Path("team_key") String teamKey, @retrofit2.http.Header("If-None-Match") String ifNoneMatch
   );
 
@@ -323,10 +312,10 @@ public interface TeamApi {
    * @param teamKey TBA Team Key, eg &#x60;frc254&#x60; (required)
    * @param year Competition Year (or Season). Must be 4 digits. (required)
    * @param ifNoneMatch Value of the &#x60;ETag&#x60; header in the most recently cached response by the client. (optional)
-   * @return Call&lt;Map&lt;String, GetTeamEventsStatusesByYear200ResponseValue&gt;&gt;
+   * @return Call&lt;Map&lt;String, TeamEventStatus&gt;&gt;
    */
   @GET("team/{team_key}/events/{year}/statuses")
-  Call<Map<String, GetTeamEventsStatusesByYear200ResponseValue>> getTeamEventsStatusesByYear(
+  Call<Map<String, TeamEventStatus>> getTeamEventsStatusesByYear(
     @retrofit2.http.Path("team_key") String teamKey, @retrofit2.http.Path("year") Integer year, @retrofit2.http.Header("If-None-Match") String ifNoneMatch
   );
 

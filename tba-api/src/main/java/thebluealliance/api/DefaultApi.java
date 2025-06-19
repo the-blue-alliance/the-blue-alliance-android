@@ -9,7 +9,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.MultipartBody;
 
-import thebluealliance.api.model.GetStatus401Response;
+import thebluealliance.api.model.InlineObject;
 import thebluealliance.api.model.SearchIndex;
 
 import java.util.ArrayList;

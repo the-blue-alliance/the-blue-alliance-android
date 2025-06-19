@@ -18,8 +18,7 @@ import thebluealliance.api.model.EventInsights;
 import thebluealliance.api.model.EventOPRs;
 import thebluealliance.api.model.EventRanking;
 import thebluealliance.api.model.EventSimple;
-import thebluealliance.api.model.GetStatus401Response;
-import thebluealliance.api.model.GetTeamEventsStatusesByYear200ResponseValue;
+import thebluealliance.api.model.InlineObject;
 import thebluealliance.api.model.Match;
 import thebluealliance.api.model.MatchSimple;
 import thebluealliance.api.model.Media;
@@ -96,6 +95,18 @@ public interface EventApi {
 
   /**
    * 
+   * Depending on the type of event (district/regional), this will return either district points or regional CMP points
+   * @param eventKey TBA Event Key, eg &#x60;2016nytr&#x60; (required)
+   * @param ifNoneMatch Value of the &#x60;ETag&#x60; header in the most recently cached response by the client. (optional)
+   * @return Call&lt;EventDistrictPoints&gt;
+   */
+  @GET("event/{event_key}/advancement_points")
+  Call<EventDistrictPoints> getEventAdvancementPoints(
+    @retrofit2.http.Path("event_key") String eventKey, @retrofit2.http.Header("If-None-Match") String ifNoneMatch
+  );
+
+  /**
+   * 
    * Gets a list of Elimination Alliances for the given Event.
    * @param eventKey TBA Event Key, eg &#x60;2016nytr&#x60; (required)
    * @param ifNoneMatch Value of the &#x60;ETag&#x60; header in the most recently cached response by the client. (optional)
@@ -132,7 +143,7 @@ public interface EventApi {
 
   /**
    * 
-   * Gets a list of team rankings for the Event.
+   * Gets a list of district points for the Event. These are always calculated, regardless of event type, and may/may not be actually useful.
    * @param eventKey TBA Event Key, eg &#x60;2016nytr&#x60; (required)
    * @param ifNoneMatch Value of the &#x60;ETag&#x60; header in the most recently cached response by the client. (optional)
    * @return Call&lt;EventDistrictPoints&gt;
@@ -303,10 +314,10 @@ public interface EventApi {
    * Gets a key-value list of the event statuses for teams competing at the given event.
    * @param eventKey TBA Event Key, eg &#x60;2016nytr&#x60; (required)
    * @param ifNoneMatch Value of the &#x60;ETag&#x60; header in the most recently cached response by the client. (optional)
-   * @return Call&lt;Map&lt;String, GetTeamEventsStatusesByYear200ResponseValue&gt;&gt;
+   * @return Call&lt;Map&lt;String, TeamEventStatus&gt;&gt;
    */
   @GET("event/{event_key}/teams/statuses")
-  Call<Map<String, GetTeamEventsStatusesByYear200ResponseValue>> getEventTeamsStatuses(
+  Call<Map<String, TeamEventStatus>> getEventTeamsStatuses(
     @retrofit2.http.Path("event_key") String eventKey, @retrofit2.http.Header("If-None-Match") String ifNoneMatch
   );
 
@@ -344,6 +355,18 @@ public interface EventApi {
   @GET("events/{year}/simple")
   Call<List<EventSimple>> getEventsByYearSimple(
     @retrofit2.http.Path("year") Integer year, @retrofit2.http.Header("If-None-Match") String ifNoneMatch
+  );
+
+  /**
+   * 
+   * For 2025+ Regional events, this will return points towards the Championship qualification pool.
+   * @param eventKey TBA Event Key, eg &#x60;2016nytr&#x60; (required)
+   * @param ifNoneMatch Value of the &#x60;ETag&#x60; header in the most recently cached response by the client. (optional)
+   * @return Call&lt;EventDistrictPoints&gt;
+   */
+  @GET("event/{event_key}/regional_champs_pool_points")
+  Call<EventDistrictPoints> getRegionalChampsPoolPoints(
+    @retrofit2.http.Path("event_key") String eventKey, @retrofit2.http.Header("If-None-Match") String ifNoneMatch
   );
 
   /**
@@ -492,10 +515,10 @@ public interface EventApi {
    * @param teamKey TBA Team Key, eg &#x60;frc254&#x60; (required)
    * @param year Competition Year (or Season). Must be 4 digits. (required)
    * @param ifNoneMatch Value of the &#x60;ETag&#x60; header in the most recently cached response by the client. (optional)
-   * @return Call&lt;Map&lt;String, GetTeamEventsStatusesByYear200ResponseValue&gt;&gt;
+   * @return Call&lt;Map&lt;String, TeamEventStatus&gt;&gt;
    */
   @GET("team/{team_key}/events/{year}/statuses")
-  Call<Map<String, GetTeamEventsStatusesByYear200ResponseValue>> getTeamEventsStatusesByYear(
+  Call<Map<String, TeamEventStatus>> getTeamEventsStatusesByYear(
     @retrofit2.http.Path("team_key") String teamKey, @retrofit2.http.Path("year") Integer year, @retrofit2.http.Header("If-None-Match") String ifNoneMatch
   );
 
