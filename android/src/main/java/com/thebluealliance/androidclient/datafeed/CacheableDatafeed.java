@@ -24,7 +24,6 @@ import com.thebluealliance.androidclient.datafeed.maps.TeamStatsExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.WeekEventsExtractor;
 import com.thebluealliance.androidclient.datafeed.maps.YearsParticipatedInfoMap;
 import com.thebluealliance.androidclient.models.Award;
-import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventAlliance;
@@ -43,6 +42,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import rx.Observable;
+import thebluealliance.api.model.District;
 
 @Singleton
 public class CacheableDatafeed {

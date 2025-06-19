@@ -24,6 +24,8 @@ repositories {
 }
 
 dependencies {
+    implementation project(':tba-api')
+
     // in java 9+ java.annotation.Generated moved to java.annotation.processing.Generated
     // so use this lib for back-compat
     implementation "javax.annotation:javax.annotation-api:1.3.2"

@@ -1,11 +1,7 @@
 package com.thebluealliance.androidclient.renderers;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
-
 import com.thebluealliance.androidclient.datafeed.APICache;
 import com.thebluealliance.androidclient.listitems.DistrictListElement;
-import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.types.ModelType;
 
@@ -13,6 +9,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
+import thebluealliance.api.model.District;
 
 @Singleton
 public class DistrictRenderer implements ModelRenderer<District, DistrictRenderer.RenderArgs> {

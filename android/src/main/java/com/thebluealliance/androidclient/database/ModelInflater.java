@@ -18,7 +18,6 @@ import com.thebluealliance.androidclient.database.tables.NotificationsTable;
 import com.thebluealliance.androidclient.database.tables.SubscriptionsTable;
 import com.thebluealliance.androidclient.database.tables.TeamsTable;
 import com.thebluealliance.androidclient.models.Award;
-import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventDetail;
@@ -37,6 +36,8 @@ import com.thebluealliance.api.model.IDistrictEventPoints;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import thebluealliance.api.model.District;
 
 public final class ModelInflater {
 
@@ -322,9 +323,6 @@ public final class ModelInflater {
                     break;
                 case DistrictsTable.NAME:
                     district.setDisplayName(data.getString(i));
-                    break;
-                case DistrictsTable.LAST_MODIFIED:
-                    district.setLastModified(data.getLong(i));
                     break;
                 default:
             }

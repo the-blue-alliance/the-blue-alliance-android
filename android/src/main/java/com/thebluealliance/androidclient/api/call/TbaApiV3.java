@@ -1,7 +1,5 @@
 package com.thebluealliance.androidclient.api.call;
 
-
-import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -12,6 +10,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
 import thebluealliance.api.model.APIStatus;
+import thebluealliance.api.model.District;
 
 public interface TbaApiV3 {
   /**

@@ -10,11 +10,12 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
-import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import thebluealliance.api.model.District;
 
 public class EventsTable extends ModelTable<Event> {
     public static final String KEY = "key",

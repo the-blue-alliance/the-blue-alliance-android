@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.datafeed.maps;
 
 import com.thebluealliance.androidclient.helpers.DistrictHelper;
-import com.thebluealliance.androidclient.models.District;
 
 import java.util.List;
 
 import rx.functions.Func1;
+import thebluealliance.api.model.District;
 
 /**
  * Because apiv2 doesn't provide year within the response, add it in later

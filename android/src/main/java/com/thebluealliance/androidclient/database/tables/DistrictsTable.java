@@ -7,7 +7,8 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
-import com.thebluealliance.androidclient.models.District;
+
+import thebluealliance.api.model.District;
 
 public class DistrictsTable extends ModelTable<District> {
 

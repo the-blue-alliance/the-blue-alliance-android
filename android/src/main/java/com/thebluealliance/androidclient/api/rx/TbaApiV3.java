@@ -2,7 +2,6 @@ package com.thebluealliance.androidclient.api.rx;
 
 import com.google.gson.JsonElement;
 import com.thebluealliance.androidclient.models.Award;
-import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventAlliance;
@@ -20,6 +19,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Path;
 import rx.Observable;
 import thebluealliance.api.model.APIStatus;
+import thebluealliance.api.model.District;
 
 public interface TbaApiV3 {
   /**

@@ -25,13 +25,12 @@
 
 package com.thebluealliance.api.model;
 
-import java.util.Objects;
-import com.google.gson.annotations.SerializedName;
-import com.thebluealliance.api.model.IDistrict;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
+
 import javax.annotation.Nullable;
+
+import io.swagger.annotations.ApiModelProperty;
+import thebluealliance.api.model.District;
 
 
 /**
@@ -59,9 +58,9 @@ public interface IEvent   {
   **/
   @ApiModelProperty(example = "null", value = "")
   @Nullable
-  public IDistrict getDistrict();
+  public District getDistrict();
 
-  public void setDistrict(IDistrict district);
+  public void setDistrict(District district);
 
 
 

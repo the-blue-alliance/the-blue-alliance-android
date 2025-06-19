@@ -10,7 +10,6 @@ import com.thebluealliance.androidclient.activities.ViewDistrictActivity;
 import com.thebluealliance.androidclient.activities.ViewEventActivity;
 import com.thebluealliance.androidclient.activities.ViewMatchActivity;
 import com.thebluealliance.androidclient.activities.ViewTeamActivity;
-import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.EventTeam;
 import com.thebluealliance.androidclient.models.Match;
@@ -39,7 +38,6 @@ public final class ModelHelper {
             case EVENTTEAM:
                 return EventTeam.NOTIFICATION_TYPES;
             case DISTRICT:
-                return District.NOTIFICATION_TYPES;
             default:
                 return new String[]{};
         }

@@ -22,7 +22,6 @@ import com.thebluealliance.androidclient.database.writers.TeamListWriter;
 import com.thebluealliance.androidclient.datafeed.maps.AddDistrictKeys;
 import com.thebluealliance.androidclient.datafeed.status.TBAStatusController;
 import com.thebluealliance.androidclient.helpers.AnalyticsHelper;
-import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 import com.thebluealliance.androidclient.models.Team;
 
@@ -56,6 +55,7 @@ import dagger.assisted.AssistedInject;
 import retrofit2.Call;
 import retrofit2.Response;
 import thebluealliance.api.model.APIStatus;
+import thebluealliance.api.model.District;
 
 import static com.thebluealliance.androidclient.gcm.notifications.BaseNotification.NOTIFICATION_CHANNEL;
 
@@ -244,13 +244,6 @@ public class LoadTBADataWorker extends Worker {
 
                     List<District> newDistrictList = districtListResponse.body();
                     keyAdder.call(newDistrictList);
-                    Date lastModified = districtListResponse.headers().getDate("Last-Modified");
-                    if (lastModified != null) {
-                        long lastModifiedTimestamp = lastModified.getTime();
-                        for (int i = 0; i < newDistrictList.size(); i++) {
-                            newDistrictList.get(i).setLastModified(lastModifiedTimestamp);
-                        }
-                    }
                     allDistricts.addAll(newDistrictList);
                     TbaLogger.i(String.format("Loaded %1$d districts in %2$d",
                             newDistrictList.size(), year));

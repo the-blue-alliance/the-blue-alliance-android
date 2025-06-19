@@ -9,8 +9,9 @@ import android.widget.TextView;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.listeners.DistrictClickListener;
 import com.thebluealliance.androidclient.listeners.ModelSettingsClickListener;
-import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.types.ModelType;
+
+import thebluealliance.api.model.District;
 
 public class DistrictListElement extends ListElement {
 

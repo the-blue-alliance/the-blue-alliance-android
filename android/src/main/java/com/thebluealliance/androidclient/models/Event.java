@@ -3,8 +3,6 @@ package com.thebluealliance.androidclient.models;
 import android.content.ContentValues;
 import android.content.Context;
 
-import androidx.annotation.IntDef;
-
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
@@ -15,7 +13,6 @@ import com.thebluealliance.androidclient.helpers.ThreadSafeFormatters;
 import com.thebluealliance.androidclient.types.EventType;
 import com.thebluealliance.androidclient.viewmodels.EventViewModel;
 import com.thebluealliance.androidclient.viewmodels.ViewModelRenderer;
-import com.thebluealliance.api.model.IDistrict;
 import com.thebluealliance.api.model.IEvent;
 
 import java.lang.annotation.Retention;
@@ -25,6 +22,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.annotation.Nullable;
+
+import androidx.annotation.IntDef;
+import thebluealliance.api.model.District;
 
 
 public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventViewModel, Integer> {
@@ -47,7 +47,7 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     private @Nullable String eventTypeString;
     private @Nullable String shortName;
     private @Nullable String address;
-    private @Nullable IDistrict district;
+    private @Nullable District district;
     private @Nullable String districtKey;
     private @Nullable String gmapsUrl;
     private @Nullable String locationName;
@@ -122,12 +122,12 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     }
 
     @Override @Nullable
-    public IDistrict getDistrict() {
+    public District getDistrict() {
         return district;
     }
 
     @Override
-    public void setDistrict(@Nullable IDistrict district) {
+    public void setDistrict(@Nullable District district) {
         this.district = district;
     }
 
@@ -402,7 +402,7 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     }
 
     public String getEventDistrictString() {
-        @Nullable IDistrict district = getDistrict();
+        @Nullable District district = getDistrict();
         return district != null
                 ? district.getDisplayName()
                 : "";
@@ -437,7 +437,7 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     public ContentValues getParams(Gson gson) {
         @Nullable Date startDate = getStartDate();
         @Nullable Date endDate = getEndDate();
-        @Nullable IDistrict district = getDistrict();
+        @Nullable District district = getDistrict();
         ContentValues params = new ContentValues();
         params.put(EventsTable.KEY, getKey());
         params.put(EventsTable.YEAR, getYear());

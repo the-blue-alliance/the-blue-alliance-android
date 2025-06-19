@@ -5,7 +5,6 @@ import android.os.Bundle;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.fragments.ListViewFragment;
-import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.NoDataViewParams;
 import com.thebluealliance.androidclient.subscribers.DistrictListSubscriber;
 
@@ -13,6 +12,7 @@ import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import rx.Observable;
+import thebluealliance.api.model.District;
 
 @AndroidEntryPoint
 public class DistrictListFragment

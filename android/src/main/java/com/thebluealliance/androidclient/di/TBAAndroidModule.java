@@ -16,7 +16,6 @@ import com.thebluealliance.androidclient.config.LocalProperties;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.datafeed.deserializers.AllianceDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.AwardDeserializer;
-import com.thebluealliance.androidclient.datafeed.deserializers.DistrictDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.DistrictTeamDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.EventDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.MatchAllianceDeserializer;
@@ -28,7 +27,6 @@ import com.thebluealliance.androidclient.datafeed.deserializers.RankingsResponse
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamAtEventStatusDeserializer;
 import com.thebluealliance.androidclient.datafeed.deserializers.TeamDeserializer;
 import com.thebluealliance.androidclient.models.Award;
-import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.DistrictPointBreakdown;
 import com.thebluealliance.androidclient.models.DistrictRanking;
 import com.thebluealliance.androidclient.models.Event;
@@ -44,7 +42,6 @@ import com.thebluealliance.androidclient.models.TeamAtEventStatus;
 import com.thebluealliance.api.model.IAllianceBackup;
 import com.thebluealliance.api.model.IAward;
 import com.thebluealliance.api.model.IAwardRecipient;
-import com.thebluealliance.api.model.IDistrict;
 import com.thebluealliance.api.model.IDistrictEventPoints;
 import com.thebluealliance.api.model.IDistrictRanking;
 import com.thebluealliance.api.model.IEvent;
@@ -147,7 +144,6 @@ public class TBAAndroidModule {
         MatchDeserializer matchDeserializer = new MatchDeserializer();
         TeamDeserializer teamDeserializer = new TeamDeserializer();
         MediaDeserializer mediaDeserializer = new MediaDeserializer();
-        DistrictDeserializer districtDeserializer = new DistrictDeserializer();
         RankingsResponseDeserializer rankingsResponseDeserializer = new RankingsResponseDeserializer();
         RankingsResponseDeserializer.RankingSortOrderDeserializer sortOrderDeserializer = new RankingsResponseDeserializer.RankingSortOrderDeserializer();
         AllianceDeserializer allianceDeserializer = new AllianceDeserializer();
@@ -197,8 +193,6 @@ public class TBAAndroidModule {
         builder.registerTypeAdapter(IMatchVideo.class, matchVideoDeserializer);
         builder.registerTypeAdapter(Match.MatchVideo.class, matchVideoDeserializer);
 
-        builder.registerTypeAdapter(District.class, districtDeserializer);
-        builder.registerTypeAdapter(IDistrict.class, districtDeserializer);
         builder.registerTypeAdapter(IDistrictRanking.class, districtTeamDeserializer);
         builder.registerTypeAdapter(DistrictRanking.class, districtTeamDeserializer);
         builder.registerTypeAdapter(IDistrictEventPoints.class, eventPointsDeserializer);
