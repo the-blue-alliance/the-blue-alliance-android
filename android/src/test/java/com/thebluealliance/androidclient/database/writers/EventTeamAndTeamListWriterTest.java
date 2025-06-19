@@ -1,12 +1,5 @@
 package com.thebluealliance.androidclient.database.writers;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.DatabaseMocker;
 import com.thebluealliance.androidclient.database.tables.EventTeamsTable;
@@ -22,6 +15,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import java.util.List;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(AndroidJUnit4.class)
 public class EventTeamAndTeamListWriterTest {
@@ -49,10 +48,10 @@ public class EventTeamAndTeamListWriterTest {
 
     @Test
     public void testEventListWriter() {
-        mWriter.write(mData, 0L);
+        mWriter.write(mData);
 
-        verify(mTeamListWriter).write(eq(mData.teams), anyLong());
-        verify(mEventTeamListWriter).write(eq(mData.eventTeams), anyLong());
+        verify(mTeamListWriter).write(eq(mData.teams));
+        verify(mEventTeamListWriter).write(eq(mData.eventTeams));
     }
 
 }

@@ -22,7 +22,6 @@ public class DistrictRanking implements TbaDatabaseModel, IDistrictRanking {
     private Integer rookieBonus;
     private String teamKey;
     private @Nullable List<IDistrictEventPoints> eventPoints;
-    private @Nullable Long lastModified;
 
     @Override public String getKey() {
         return key;
@@ -89,16 +88,6 @@ public class DistrictRanking implements TbaDatabaseModel, IDistrictRanking {
         this.eventPoints = eventPoints;
     }
 
-    @Override @Nullable
-    public Long getLastModified() {
-        return lastModified;
-    }
-
-    @Override
-    public void setLastModified(@Nullable Long lastModified) {
-        this.lastModified = lastModified;
-    }
-
     @Override
     public ContentValues getParams(Gson gson) {
         ContentValues params = new ContentValues();
@@ -125,7 +114,6 @@ public class DistrictRanking implements TbaDatabaseModel, IDistrictRanking {
         params.put(DistrictTeamsTable.CMP_POINTS, gson.toJson(event3, IDistrictEventPoints.class));
         params.put(DistrictTeamsTable.ROOKIE_POINTS, getRookieBonus());
         params.put(DistrictTeamsTable.TOTAL_POINTS, getPointTotal());
-        params.put(DistrictTeamsTable.LAST_MODIFIED, getLastModified());
         return params;
     }
 }

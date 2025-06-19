@@ -3,8 +3,6 @@ package com.thebluealliance.androidclient.models;
 import android.content.ContentValues;
 import android.content.res.Resources;
 
-import androidx.annotation.NonNull;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -27,6 +25,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import androidx.annotation.NonNull;
+
 
 public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
 
@@ -48,7 +48,6 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
     private @Nullable Long time;
     private @Nullable Long actualTime;
     private @Nullable String winningAlliance;
-    private @Nullable Long lastModified;
 
     // Other variables
     private String selectedTeam;
@@ -143,14 +142,6 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
 
     @Override public void setWinningAlliance(@Nullable String winningAlliance) {
         this.winningAlliance = winningAlliance;
-    }
-
-    @Override @Nullable public Long getLastModified() {
-        return lastModified;
-    }
-
-    @Override public void setLastModified(@Nullable Long lastModified) {
-        this.lastModified = lastModified;
     }
 
     public MatchType getType() {
@@ -302,7 +293,6 @@ public class Match implements IMatch, TbaDatabaseModel, RenderableModel<Match> {
         data.put(MatchesTable.WINNER, getWinningAlliance());
         data.put(MatchesTable.VIDEOS, gson.toJson(videos, new TypeToken<List<IMatchVideo>>(){}.getType()));
         data.put(MatchesTable.BREAKDOWN, getScoreBreakdown());
-        data.put(MatchesTable.LAST_MODIFIED, getLastModified());
         return data;
     }
 

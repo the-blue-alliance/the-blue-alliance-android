@@ -1,17 +1,8 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -32,6 +23,14 @@ import org.mockito.Mock;
 import org.robolectric.RuntimeEnvironment;
 
 import java.util.List;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(AndroidJUnit4.class)
 public class AwardsPostedNotificationTest {
@@ -69,7 +68,7 @@ public class AwardsPostedNotificationTest {
         mNotification.updateDataLocally();
 
         List<Award> awards = mNotification.getAwards();
-        verify(mWriter).write(eq(awards), anyLong());
+        verify(mWriter).write(eq(awards));
     }
 
     @Test(expected = JsonParseException.class)

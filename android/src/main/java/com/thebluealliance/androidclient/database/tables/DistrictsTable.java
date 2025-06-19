@@ -14,8 +14,7 @@ public class DistrictsTable extends ModelTable<DistrictDbModel> {
     public static final String KEY = "key",
             ABBREV = "abbrev",
             YEAR = "year",
-            NAME = "name",
-            LAST_MODIFIED = "last_modified";
+            NAME = "name";
 
     public DistrictsTable(SQLiteDatabase db, Gson gson){
         super(db, gson);
@@ -29,11 +28,6 @@ public class DistrictsTable extends ModelTable<DistrictDbModel> {
     @Override
     public String getKeyColumn() {
         return KEY;
-    }
-
-    @Override
-    public String getLastModifiedColumn() {
-        return LAST_MODIFIED;
     }
 
     @Override

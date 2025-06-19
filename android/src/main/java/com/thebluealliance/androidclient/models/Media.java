@@ -21,7 +21,6 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
 
     private String detailsJson = null;
     private String foreignKey = null;
-    private Long lastModified = null;
     private String type = null;
     private Boolean preferred;
     private String base64Image = null;
@@ -59,14 +58,6 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
 
     @Override public void setForeignKey(String foreignKey) {
         this.foreignKey = foreignKey;
-    }
-
-    @Nullable @Override public Long getLastModified() {
-        return lastModified;
-    }
-
-    @Override public void setLastModified(Long lastModified) {
-        this.lastModified = lastModified;
     }
 
     @Override public String getType() {
@@ -121,7 +112,6 @@ public class Media implements IMedia, TbaDatabaseModel, RenderableModel<Media> {
         data.put(MediasTable.DETAILS, getDetails());
         data.put(MediasTable.B64_IMAGE, getBase64Image());
         data.put(MediasTable.YEAR, getYear());
-        data.put(MediasTable.LAST_MODIFIED, getLastModified());
         return data;
     }
 

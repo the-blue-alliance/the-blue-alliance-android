@@ -14,8 +14,7 @@ public class EventDetailsTable extends ModelTable<EventDetail> {
     public static final String KEY = "key",
             EVENT_KEY = "event_key",
             DETAIL_TYPE = "detail_type",
-            JSON_DATA = "json_data",
-            LAST_MODIFIED = "last_modified";
+            JSON_DATA = "json_data";
 
     public EventDetailsTable(SQLiteDatabase db, Gson gson) {
         super(db, gson);
@@ -29,11 +28,6 @@ public class EventDetailsTable extends ModelTable<EventDetail> {
     @Override
     public String getKeyColumn() {
         return KEY;
-    }
-
-    @Override
-    public String getLastModifiedColumn() {
-        return LAST_MODIFIED;
     }
 
     @Override

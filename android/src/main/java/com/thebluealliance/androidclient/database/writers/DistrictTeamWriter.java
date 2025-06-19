@@ -1,11 +1,11 @@
 package com.thebluealliance.androidclient.database.writers;
 
-import androidx.annotation.WorkerThread;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.DistrictRanking;
 
 import javax.inject.Inject;
+
+import androidx.annotation.WorkerThread;
 
 public class DistrictTeamWriter extends BaseDbWriter<DistrictRanking> {
     @Inject
@@ -15,7 +15,7 @@ public class DistrictTeamWriter extends BaseDbWriter<DistrictRanking> {
 
     @Override
     @WorkerThread
-    public void write(DistrictRanking districtTeam, Long lastModified) {
-        mDb.getDistrictTeamsTable().add(districtTeam, lastModified);
+    public void write(DistrictRanking districtTeam) {
+        mDb.getDistrictTeamsTable().add(districtTeam);
     }
 }

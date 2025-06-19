@@ -21,8 +21,7 @@ public class MatchesTable extends ModelTable<Match> {
             ALLIANCES = "alliances",
             WINNER = "winner",
             VIDEOS = "videos",
-            BREAKDOWN = "breakdown",
-            LAST_MODIFIED = "last_modified";
+            BREAKDOWN = "breakdown";
     @Deprecated public static final String TIMESTRING = "timeString";
 
     public MatchesTable(SQLiteDatabase db, Gson gson){
@@ -37,11 +36,6 @@ public class MatchesTable extends ModelTable<Match> {
     @Override
     public String getKeyColumn() {
         return KEY;
-    }
-
-    @Override
-    public String getLastModifiedColumn() {
-        return LAST_MODIFIED;
     }
 
     @Override

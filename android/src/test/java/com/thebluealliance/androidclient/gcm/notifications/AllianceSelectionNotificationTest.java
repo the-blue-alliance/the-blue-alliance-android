@@ -1,17 +1,8 @@
 package com.thebluealliance.androidclient.gcm.notifications;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -30,6 +21,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RuntimeEnvironment;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(AndroidJUnit4.class)
 public class AllianceSelectionNotificationTest {
@@ -65,7 +64,7 @@ public class AllianceSelectionNotificationTest {
         mNotification.updateDataLocally();
 
         Event event = mNotification.getEvent();
-        verify(mWriter).write(eq(event), anyLong());
+        verify(mWriter).write(eq(event));
     }
 
     @Test(expected = JsonParseException.class)

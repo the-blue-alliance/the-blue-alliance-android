@@ -23,14 +23,14 @@ public class EventTeamAndTeamListWriter extends BaseDbWriter<EventTeamAndTeamLis
     }
 
     @Override
-    public void write(EventTeamAndTeam newModels, Long lastModified) {
+    public void write(EventTeamAndTeam newModels) {
         if (newModels == null) {
             return;
         }
         mDb.getWritableDatabase().beginTransaction();
         try {
-            mEventTeamListWriter.write(newModels.eventTeams, lastModified);
-            mTeamListWriter.write(newModels.teams, lastModified);
+            mEventTeamListWriter.write(newModels.eventTeams);
+            mTeamListWriter.write(newModels.teams);
             mDb.getWritableDatabase().setTransactionSuccessful();
         } finally {
             mDb.getWritableDatabase().endTransaction();

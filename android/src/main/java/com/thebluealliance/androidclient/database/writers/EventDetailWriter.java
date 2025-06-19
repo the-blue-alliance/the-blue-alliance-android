@@ -16,7 +16,7 @@ public class EventDetailWriter extends BaseDbWriter<EventDetail> {
 
     @Override
     @WorkerThread
-    public void write(EventDetail eventDetail, Long lastModified) {
-        mDb.getEventDetailsTable().add(eventDetail, lastModified);
+    public void write(EventDetail eventDetail) {
+        mDb.getEventDetailsTable().add(eventDetail);
     }
 }

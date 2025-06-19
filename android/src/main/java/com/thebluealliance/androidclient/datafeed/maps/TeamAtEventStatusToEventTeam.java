@@ -25,7 +25,6 @@ public class TeamAtEventStatusToEventTeam implements Func1<TeamAtEventStatus, Ev
         eventTeam.setYear(EventHelper.getYear(eventKey));
         eventTeam.setTeamKey(teamKey);
         eventTeam.setEventKey(eventKey);
-        eventTeam.setLastModified(teamAtEventStatus.getLastModified());
         return eventTeam;
     }
 }

@@ -17,8 +17,6 @@ public class RankingResponseObject implements IRankingResponseObject {
     private List<IRankingSortOrder> extraStatsInfo;
     private String eventKey;
 
-    private @Nullable Long lastModified;
-
     @Override public List<IRankingItem> getRankings() {
         return rankings;
     }
@@ -54,19 +52,10 @@ public class RankingResponseObject implements IRankingResponseObject {
         this.eventKey = eventKey;
     }
 
-    @Override @Nullable public Long getLastModified() {
-        return lastModified;
-    }
-
-    @Override public void setLastModified(@Nullable Long lastModified) {
-        this.lastModified = lastModified;
-    }
-
     public EventDetail toEventDetail(Gson gson) {
         EventDetail eventDetail = new EventDetail(eventKey, EventDetailType.RANKINGS);
         String rankingJson = gson.toJson(this, RankingResponseObject.class);
         eventDetail.setJsonData(rankingJson);
-        eventDetail.setLastModified(lastModified);
         return eventDetail;
     }
 }

@@ -18,8 +18,7 @@ public class AwardsTable extends ModelTable<Award> {
             EVENTKEY = "eventKey",
             NAME = "name",
             YEAR = "year",
-            WINNERS = "winners",
-            LAST_MODIFIED = "last_modified";
+            WINNERS = "winners";
 
     public AwardsTable(SQLiteDatabase db, Gson gson){
         super(db, gson);
@@ -36,11 +35,6 @@ public class AwardsTable extends ModelTable<Award> {
     @Override
     public String getKeyColumn() {
         return KEY;
-    }
-
-    @Override
-    public String getLastModifiedColumn() {
-        return LAST_MODIFIED;
     }
 
     @Override

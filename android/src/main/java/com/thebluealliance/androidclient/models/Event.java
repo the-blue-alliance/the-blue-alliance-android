@@ -58,7 +58,6 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
     private @Nullable Date endDate;
     private @Nullable Date startDate;
     private @Nullable String timezone;
-    private @Nullable Long lastModified;
 
     public static final String[] NOTIFICATION_TYPES = {
             NotificationTypes.UPCOMING_MATCH,
@@ -161,14 +160,6 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
 
     @Override public void setKey(String key) {
         this.key = key;
-    }
-
-    @Nullable @Override public Long getLastModified() {
-        return lastModified;
-    }
-
-    @Override public void setLastModified(@Nullable Long lastModified) {
-        this.lastModified = lastModified;
     }
 
     @Override @Nullable
@@ -454,7 +445,6 @@ public class Event implements IEvent, TbaDatabaseModel, ViewModelRenderer<EventV
         params.put(EventsTable.WEEK, getWeek());
         params.put(EventsTable.WEBCASTS, getWebcasts());
         params.put(EventsTable.WEBSITE, getWebsite());
-        params.put(EventsTable.LAST_MODIFIED, getLastModified());
         return params;
     }
 }

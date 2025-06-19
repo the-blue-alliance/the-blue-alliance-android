@@ -9,9 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-
 import com.google.common.base.Predicate;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -37,7 +34,9 @@ import com.thebluealliance.api.model.IMatchAlliancesContainer;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 public class ScoreNotification extends BaseNotification<ScoreNotificationViewModel> {
 
@@ -160,8 +159,7 @@ public class ScoreNotification extends BaseNotification<ScoreNotificationViewMod
     @Override
     public void updateDataLocally() {
         if (match != null) {
-            //TODO need last-modified time in notifications
-            mWriter.write(match, new Date().getTime());
+            mWriter.write(match);
         }
     }
 

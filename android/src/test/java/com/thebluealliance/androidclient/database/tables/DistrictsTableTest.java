@@ -71,11 +71,6 @@ public class DistrictsTableTest {
     }
 
     @Test
-    public void testLastModified() {
-        DbTableTestDriver.testLastModified(mTable, mDistricts);
-    }
-
-    @Test
     public void testDelete() {
         DbTableTestDriver.testDelete(mTable,
                                      mDistricts,

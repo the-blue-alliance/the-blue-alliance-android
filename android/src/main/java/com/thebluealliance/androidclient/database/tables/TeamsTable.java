@@ -30,8 +30,7 @@ public class TeamsTable extends ModelTable<Team> {
             LOCATION_NAME = "location_name",
             WEBSITE = "website",
             YEARS_PARTICIPATED = "yearsParticipated",
-            MOTTO = "motto",
-            LAST_MODIFIED = "last_modified";
+            MOTTO = "motto";
 
     @Inject
     public TeamsTable(SQLiteDatabase db, Gson gson) {
@@ -115,11 +114,6 @@ public class TeamsTable extends ModelTable<Team> {
     @Override
     public String getKeyColumn() {
         return KEY;
-    }
-
-    @Override
-    public String getLastModifiedColumn() {
-        return LAST_MODIFIED;
     }
 
     @Override
