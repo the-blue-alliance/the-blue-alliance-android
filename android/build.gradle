@@ -164,11 +164,6 @@ android {
         }
     }
 
-    dexOptions {
-        javaMaxHeapSize "2048M"
-        preDexLibraries = preDexEnabled && !travisBuild
-    }
-
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'

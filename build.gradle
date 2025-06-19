@@ -9,7 +9,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.8.1'
+        classpath 'com.android.tools.build:gradle:8.10.1'
         classpath 'com.google.gms:google-services:4.4.2'
         classpath 'com.google.firebase:perf-plugin:1.4.2'
 
@@ -22,14 +22,14 @@ buildscript {
         // Screenshot testing
         classpath 'com.facebook.testing.screenshot:plugin:0.15.0'
 
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.3'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.4'
 
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.50'
     }
 }
 
 plugins {
-    id "com.github.ben-manes.versions" version "0.50.0"
+    id "com.github.ben-manes.versions" version "0.42.0"
     id "org.openapi.generator" version "7.10.0"
 }
 
