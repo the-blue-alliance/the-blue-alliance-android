@@ -18,7 +18,7 @@ public class EventListWriter extends BaseDbWriter<List<Event>> {
 
     @Override
     @WorkerThread
-    public void write(List<Event> events, Long lastModified) {
-        mDb.getEventsTable().add(ImmutableList.copyOf(events), lastModified);
+    public void write(List<Event> events) {
+        mDb.getEventsTable().add(ImmutableList.copyOf(events));
     }
 }

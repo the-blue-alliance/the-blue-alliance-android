@@ -33,8 +33,7 @@ public class EventsTable extends ModelTable<Event> {
             WEEK = "competitionWeek",
             WEBCASTS = "webcasts",
             WEBSITE = "website",
-            DISTRICT_KEY = "district_key",
-            LAST_MODIFIED = "last_modified";
+            DISTRICT_KEY = "district_key";
 
 
     public static @Deprecated final String
@@ -105,7 +104,7 @@ public class EventsTable extends ModelTable<Event> {
 
             if (event.getDistrict() != null) {
                 District district = (District) event.getDistrict();
-                mDistrictsTable.add(DistrictDbModel.fromDistrict(district), event.getLastModified());
+                mDistrictsTable.add(DistrictDbModel.fromDistrict(district));
             }
             mDb.setTransactionSuccessful();
         } catch (Exception ex) {
@@ -173,11 +172,6 @@ public class EventsTable extends ModelTable<Event> {
     @Override
     public String getKeyColumn() {
         return KEY;
-    }
-
-    @Override
-    public String getLastModifiedColumn() {
-        return LAST_MODIFIED;
     }
 
     @Override

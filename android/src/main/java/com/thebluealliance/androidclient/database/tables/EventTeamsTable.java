@@ -20,8 +20,7 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
             TEAMKEY = "teamKey",
             EVENTKEY = "eventKey",
             YEAR = "year",
-            STATUS = "status",
-            LAST_MODIFIED = "last_modified";
+            STATUS = "status";
     @Deprecated
     public static final String COMPWEEK = "week";
 
@@ -73,11 +72,6 @@ public class EventTeamsTable extends ModelTable<EventTeam> {
     @Override
     public String getKeyColumn() {
         return KEY;
-    }
-
-    @Override
-    public String getLastModifiedColumn() {
-        return LAST_MODIFIED;
     }
 
     @Override

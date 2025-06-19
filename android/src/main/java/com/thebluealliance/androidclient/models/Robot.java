@@ -10,7 +10,6 @@ public class Robot implements IRobot {
     private String name;
     private String teamKey;
     private Integer year;
-    private Long lastModified;
 
     @Override public String getKey() {
         return key;
@@ -42,13 +41,5 @@ public class Robot implements IRobot {
 
     @Override public void setYear(Integer year) {
         this.year = year;
-    }
-
-    @Nullable @Override public Long getLastModified() {
-        return lastModified;
-    }
-
-    @Override public void setLastModified(Long lastModified) {
-        this.lastModified = lastModified;
     }
 }

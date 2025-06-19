@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-
 import com.google.common.base.Predicate;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -26,8 +23,10 @@ import com.thebluealliance.androidclient.viewmodels.TeamMatchVideoNotificationVi
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoNotificationViewModel> {
 
@@ -112,7 +111,7 @@ public class TeamMatchVideoNotification extends BaseNotification<TeamMatchVideoN
 
     @Override
     public void updateDataLocally() {
-        mWriter.write(mMatch, new Date().getTime());
+        mWriter.write(mMatch);
     }
 
     @Override

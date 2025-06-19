@@ -22,7 +22,6 @@ public class TeamAtEventStatus implements ITeamAtEventStatus {
     private @Nullable ITeamAtEventAlliance alliance;
     private @Nullable ITeamAtEventPlayoff playoff;
     private @Nullable ITeamAtEventQual qual;
-    private @Nullable Long lastModified;
 
     @Override public String getAllianceStatusStr() {
         return allianceStatusStr;
@@ -70,14 +69,6 @@ public class TeamAtEventStatus implements ITeamAtEventStatus {
 
     @Override public void setQual(@Nullable ITeamAtEventQual qual) {
         this.qual = qual;
-    }
-
-    @Override @Nullable public Long getLastModified() {
-        return lastModified;
-    }
-
-    @Override public void setLastModified(@Nullable Long lastModified) {
-        this.lastModified = lastModified;
     }
 
     public static class TeamAtEventAlliance implements ITeamAtEventAlliance {

@@ -25,15 +25,11 @@
 
 package com.thebluealliance.api.model;
 
-import java.util.Objects;
-import com.google.gson.annotations.SerializedName;
-import com.thebluealliance.api.model.IMatchAlliancesContainer;
-import com.thebluealliance.api.model.IMatchVideo;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.Nullable;
+
+import io.swagger.annotations.ApiModelProperty;
 
 
 /**
@@ -100,18 +96,6 @@ public interface IMatch   {
   public String getKey();
 
   public void setKey(String key);
-
-
-
-   /**
-   * Timestamp this model was last modified
-   * @return lastModified
-  **/
-  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
-  @Nullable
-  public Long getLastModified();
-
-  public void setLastModified(Long lastModified);
 
 
 

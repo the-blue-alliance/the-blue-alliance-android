@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import androidx.annotation.WorkerThread;
-;
+
 import thebluealliance.api.model.District;
 
 public class DistrictListWriter extends BaseDbWriter<List<District>> {
@@ -21,10 +21,10 @@ public class DistrictListWriter extends BaseDbWriter<List<District>> {
 
     @Override
     @WorkerThread
-    public void write(List<District> districts, Long lastModified) {
+    public void write(List<District> districts) {
         List<DistrictDbModel> models = districts.stream()
                 .map(DistrictDbModel::fromDistrict)
                 .collect(Collectors.toList());
-        mDb.getDistrictsTable().add(ImmutableList.copyOf(models), lastModified);
+        mDb.getDistrictsTable().add(ImmutableList.copyOf(models));
     }
 }

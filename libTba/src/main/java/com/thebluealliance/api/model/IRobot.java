@@ -25,11 +25,7 @@
 
 package com.thebluealliance.api.model;
 
-import java.util.Objects;
-import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import javax.annotation.Nullable;
 
 
 /**
@@ -48,19 +44,6 @@ public interface IRobot   {
   public String getKey();
 
   public void setKey(String key);
-
-
-
-   /**
-   * Timestamp this model was last modified
-   * @return lastModified
-  **/
-  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
-  @Nullable
-  public Long getLastModified();
-
-  public void setLastModified(Long lastModified);
-
 
 
    /**

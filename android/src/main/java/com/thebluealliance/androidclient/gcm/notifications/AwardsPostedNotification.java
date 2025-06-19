@@ -8,9 +8,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -32,8 +29,10 @@ import com.thebluealliance.androidclient.viewmodels.AwardsPostedNotificationView
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 public class AwardsPostedNotification extends BaseNotification<AwardsPostedNotificationViewModel> {
 
@@ -115,8 +114,7 @@ public class AwardsPostedNotification extends BaseNotification<AwardsPostedNotif
             for (Award award : awards) {
                 award.setKey(AwardHelper.createAwardKey(award.getEventKey(), award.getEnum()));
             }
-            //TODO need last-modified time in notifications
-            mWriter.write(awards, new Date().getTime());
+            mWriter.write(awards);
         }
     }
 

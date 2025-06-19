@@ -15,7 +15,7 @@ public class EventWriter extends BaseDbWriter<Event> {
 
     @Override
     @WorkerThread
-    public void write(Event event, Long lastModified) {
-        mDb.getEventsTable().add(event, lastModified);
+    public void write(Event event) {
+        mDb.getEventsTable().add(event);
     }
 }

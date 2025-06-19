@@ -63,11 +63,6 @@ public class AwardsTableTest {
     }
 
     @Test
-    public void testLastModified() {
-        DbTableTestDriver.testLastModified(mTable, mAwards);
-    }
-
-    @Test
     public void testDelete() {
         DbTableTestDriver.testDelete(mTable,
                                      mAwards,

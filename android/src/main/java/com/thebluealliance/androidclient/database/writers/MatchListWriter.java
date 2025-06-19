@@ -18,7 +18,7 @@ public class MatchListWriter extends BaseDbWriter<List<Match>> {
 
     @Override
     @WorkerThread
-    public void write(List<Match> matches, Long lastModified) {
-        mDb.getMatchesTable().add(ImmutableList.copyOf(matches), lastModified);
+    public void write(List<Match> matches) {
+        mDb.getMatchesTable().add(ImmutableList.copyOf(matches));
     }
 }

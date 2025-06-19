@@ -137,18 +137,6 @@ public interface IEvent   {
 
 
    /**
-   * Timestamp this model was last modified
-   * @return lastModified
-  **/
-  @ApiModelProperty(example = "null", value = "Timestamp this model was last modified")
-  @Nullable
-  public Long getLastModified();
-
-  public void setLastModified(Long lastModified);
-
-
-
-   /**
    * Short name of the venue
    * @return locationName
   **/

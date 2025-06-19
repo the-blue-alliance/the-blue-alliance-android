@@ -15,8 +15,7 @@ public class MediasTable extends ModelTable<Media> {
             TEAMKEY = "teamKey",
             DETAILS = "details",
             B64_IMAGE = "b64_image",
-            YEAR = "year",
-            LAST_MODIFIED = "last_modified";
+            YEAR = "year";
 
     public MediasTable(SQLiteDatabase db, Gson gson){
         super(db, gson);
@@ -30,11 +29,6 @@ public class MediasTable extends ModelTable<Media> {
     @Override
     public String getKeyColumn() {
         return FOREIGNKEY;
-    }
-
-    @Override
-    public String getLastModifiedColumn() {
-        return LAST_MODIFIED;
     }
 
     @Override
