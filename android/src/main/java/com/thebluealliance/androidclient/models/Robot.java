@@ -2,8 +2,6 @@ package com.thebluealliance.androidclient.models;
 
 import com.thebluealliance.api.model.IRobot;
 
-import javax.annotation.Nullable;
-
 public class Robot implements IRobot {
 
     private String key;
