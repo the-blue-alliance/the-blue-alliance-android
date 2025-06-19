@@ -10,6 +10,7 @@ import com.thebluealliance.androidclient.Utilities;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
+import com.thebluealliance.androidclient.database.model.DistrictDbModel;
 import com.thebluealliance.androidclient.models.District;
 import com.thebluealliance.androidclient.models.Event;
 
@@ -103,7 +104,7 @@ public class EventsTable extends ModelTable<Event> {
 
             if (event.getDistrict() != null) {
                 District district = (District) event.getDistrict();
-                mDistrictsTable.add(district, event.getLastModified());
+                mDistrictsTable.add(DistrictDbModel.fromDistrict(district), event.getLastModified());
             }
             mDb.setTransactionSuccessful();
         } catch (Exception ex) {
@@ -182,8 +183,10 @@ public class EventsTable extends ModelTable<Event> {
     public Event inflate(Cursor cursor) {
         Event event = ModelInflater.inflateEvent(cursor);
         if (event.getDistrictKey() != null) {
-            District district = mDistrictsTable.get(event.getDistrictKey());
-            event.setDistrict(district);
+            DistrictDbModel dbDistrict = mDistrictsTable.get(event.getDistrictKey());
+            if (dbDistrict != null) {
+                event.setDistrict(dbDistrict.toDistrict());
+            }
         }
         return event;
     }

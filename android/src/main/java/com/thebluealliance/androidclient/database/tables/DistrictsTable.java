@@ -7,9 +7,9 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelInflater;
 import com.thebluealliance.androidclient.database.ModelTable;
-import com.thebluealliance.androidclient.models.District;
+import com.thebluealliance.androidclient.database.model.DistrictDbModel;
 
-public class DistrictsTable extends ModelTable<District> {
+public class DistrictsTable extends ModelTable<DistrictDbModel> {
 
     public static final String KEY = "key",
             ABBREV = "abbrev",
@@ -37,7 +37,7 @@ public class DistrictsTable extends ModelTable<District> {
     }
 
     @Override
-    public District inflate(Cursor cursor) {
+    public DistrictDbModel inflate(Cursor cursor) {
         return ModelInflater.inflateDistrict(cursor);
     }
 }
