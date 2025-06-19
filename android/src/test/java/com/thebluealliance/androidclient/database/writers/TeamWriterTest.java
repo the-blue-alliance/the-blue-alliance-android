@@ -1,11 +1,6 @@
 package com.thebluealliance.androidclient.database.writers;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 import android.database.sqlite.SQLiteDatabase;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
@@ -18,6 +13,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(AndroidJUnit4.class)
 public class TeamWriterTest {
@@ -39,7 +39,7 @@ public class TeamWriterTest {
 
     @Test
     public void testTeamListWriter() {
-        mWriter.write(mTeam, 0L);
+        mWriter.write(mTeam);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         verify(db).insert(Database.TABLE_TEAMS, null, mTeam.getParams(mGson));

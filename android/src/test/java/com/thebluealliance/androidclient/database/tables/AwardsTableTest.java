@@ -1,12 +1,6 @@
 package com.thebluealliance.androidclient.database.tables;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.spy;
-
 import android.database.sqlite.SQLiteDatabase;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
@@ -21,6 +15,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.spy;
 
 @RunWith(AndroidJUnit4.class)
 public class AwardsTableTest {
@@ -73,7 +73,7 @@ public class AwardsTableTest {
 
     @Test
     public void testGetTeamAtEventAwards() {
-        mTable.add(ImmutableList.copyOf(mAwards), null);
+        mTable.add(ImmutableList.copyOf(mAwards));
 
         // Test for a team with awards
         List<Award> awards = mTable.getTeamAtEventAwards("125", "2015necmp");
