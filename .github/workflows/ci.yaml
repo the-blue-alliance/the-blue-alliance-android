@@ -13,7 +13,7 @@ jobs:
       matrix:
         job: [UNIT, CHECKSTYLE, DATAFEED_CODEGEN, PROD-BUILD]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: set up JDK 17
