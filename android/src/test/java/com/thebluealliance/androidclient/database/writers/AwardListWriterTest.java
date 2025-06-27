@@ -1,11 +1,6 @@
 package com.thebluealliance.androidclient.database.writers;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 import android.database.sqlite.SQLiteDatabase;
-
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.Database;
@@ -21,6 +16,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import java.util.List;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(AndroidJUnit4.class)
 public class AwardListWriterTest {
@@ -43,7 +43,7 @@ public class AwardListWriterTest {
 
     @Test
     public void testAwardListWriter() {
-        mWriter.write(mAwards, 0L);
+        mWriter.write(mAwards);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         for (Award award : mAwards) {

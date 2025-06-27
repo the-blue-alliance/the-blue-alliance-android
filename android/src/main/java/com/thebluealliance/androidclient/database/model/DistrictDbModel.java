@@ -6,8 +6,6 @@ import com.google.gson.Gson;
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
 import com.thebluealliance.androidclient.database.tables.DistrictsTable;
 
-import javax.annotation.Nullable;
-
 import thebluealliance.api.model.District;
 
 public class DistrictDbModel implements TbaDatabaseModel {
@@ -16,7 +14,6 @@ public class DistrictDbModel implements TbaDatabaseModel {
     private String abbreviation;
     private Integer year;
     private String displayName;
-    private Long lastModified;
 
     public DistrictDbModel() {
     }
@@ -36,17 +33,6 @@ public class DistrictDbModel implements TbaDatabaseModel {
 
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
-    }
-
-    @Nullable
-    @Override
-    public Long getLastModified() {
-        return lastModified;
-    }
-
-    @Override
-    public void setLastModified(Long lastModified) {
-        this.lastModified = lastModified;
     }
 
     public Integer getYear() {
@@ -72,7 +58,6 @@ public class DistrictDbModel implements TbaDatabaseModel {
         params.put(DistrictsTable.ABBREV, getAbbreviation());
         params.put(DistrictsTable.YEAR, getYear());
         params.put(DistrictsTable.NAME, getDisplayName());
-        params.put(DistrictsTable.LAST_MODIFIED, getLastModified());
         return params;
     }
 
@@ -82,7 +67,6 @@ public class DistrictDbModel implements TbaDatabaseModel {
         model.setAbbreviation(district.getAbbreviation());
         model.setYear(district.getYear());
         model.setDisplayName(district.getDisplayName());
-        model.setLastModified(0L);
         return model;
     }
 

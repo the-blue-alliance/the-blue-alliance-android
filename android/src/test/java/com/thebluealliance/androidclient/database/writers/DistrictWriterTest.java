@@ -40,7 +40,7 @@ public class DistrictWriterTest {
 
     @Test
     public void testDistrictWriter() {
-        mWriter.write(mDistrict, 0L);
+        mWriter.write(mDistrict);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         DistrictDbModel dbDistrict = DistrictDbModel.fromDistrict(mDistrict);

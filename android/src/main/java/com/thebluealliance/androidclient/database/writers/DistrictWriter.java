@@ -16,7 +16,7 @@ public class DistrictWriter extends BaseDbWriter<District> {
 
     @Override
     @WorkerThread
-    public void write(District district, Long lastModified) {
-        mDb.getDistrictsTable().add(DistrictDbModel.fromDistrict(district), lastModified);
+    public void write(District district) {
+        mDb.getDistrictsTable().add(DistrictDbModel.fromDistrict(district));
     }
 }

@@ -8,9 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -27,7 +24,9 @@ import com.thebluealliance.androidclient.models.StoredNotification;
 import com.thebluealliance.androidclient.viewmodels.AllianceSelectionNotificationViewModel;
 
 import java.util.Calendar;
-import java.util.Date;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 public class AllianceSelectionNotification extends BaseNotification<AllianceSelectionNotificationViewModel> {
 
@@ -96,8 +95,7 @@ public class AllianceSelectionNotification extends BaseNotification<AllianceSele
     @Override
     public void updateDataLocally() {
         if (event != null) {
-            //TODO need last-modified time in notifications
-            mWriter.write(event, new Date().getTime());
+            mWriter.write(event);
         }
     }
 

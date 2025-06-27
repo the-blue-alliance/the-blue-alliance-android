@@ -24,7 +24,6 @@ public class EventTeam implements TbaDatabaseModel {
     private String eventKey;
     private Integer year;
     private @Nullable TeamAtEventStatus status;
-    private Long lastModified;
 
     public EventTeam() {
     }
@@ -70,14 +69,6 @@ public class EventTeam implements TbaDatabaseModel {
         this.status = status;
     }
 
-    public Long getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(Long lastModified) {
-        this.lastModified = lastModified;
-    }
-
     @Override
     public ContentValues getParams(Gson gson) {
         ContentValues params = new ContentValues();
@@ -86,7 +77,6 @@ public class EventTeam implements TbaDatabaseModel {
         params.put(EventTeamsTable.EVENTKEY, getEventKey());
         params.put(EventTeamsTable.YEAR, getYear());
         params.put(EventTeamsTable.STATUS, status != null ? gson.toJson(status, TeamAtEventStatus.class) : "");
-        params.put(EventTeamsTable.LAST_MODIFIED, getLastModified());
         return params;
     }
 }

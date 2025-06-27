@@ -22,8 +22,7 @@ public class DistrictTeamsTable extends ModelTable<DistrictRanking> {
             CMP_KEY = "cmpKey",
             CMP_POINTS = "cmpPoints",
             ROOKIE_POINTS = "rookiePoints",
-            TOTAL_POINTS = "totalPoints",
-            LAST_MODIFIED = "last_modified";
+            TOTAL_POINTS = "totalPoints";
     @Deprecated public static final String
             JSON = "json",
             DISTRICT_ENUM = "districtEnum",
@@ -41,11 +40,6 @@ public class DistrictTeamsTable extends ModelTable<DistrictRanking> {
     @Override
     public String getKeyColumn() {
         return KEY;
-    }
-
-    @Override
-    public String getLastModifiedColumn() {
-        return LAST_MODIFIED;
     }
 
     @Override

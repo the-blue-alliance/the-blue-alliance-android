@@ -1,20 +1,19 @@
 package com.thebluealliance.androidclient.database.writers;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
-
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.database.ModelTable;
 
-import rx.functions.Action5;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
+import rx.functions.Action4;
 import rx.schedulers.Schedulers;
 
 /**
  * Common code for a Database Writer
  * @param <T> Type of object to be written (e.g. model type of list of models)
  */
-public abstract class BaseDbWriter<T> implements Action5<String, String, String[], T, Long> {
+public abstract class BaseDbWriter<T> implements Action4<String, String, String[], T> {
 
     protected final Database mDb;
 
@@ -27,7 +26,7 @@ public abstract class BaseDbWriter<T> implements Action5<String, String, String[
      * @param newModels New models to write
      */
     @WorkerThread
-    public abstract void write(T newModels, Long lastModified);
+    public abstract void write(T newModels);
 
     /**
      * Delete the objects associated with the query in the db
@@ -56,8 +55,7 @@ public abstract class BaseDbWriter<T> implements Action5<String, String, String[
       @Nullable String dbTable,
       @Nullable String sqlWhere,
       @Nullable String[] whereArgs,
-      T newModels,
-      Long lastModified) {
+      T newModels) {
         if (newModels == null) {
             return;
         }
@@ -65,7 +63,7 @@ public abstract class BaseDbWriter<T> implements Action5<String, String, String[
             mDb.beginTransaction();
             try {
                 clear(dbTable, sqlWhere, whereArgs);
-                write(newModels, lastModified);
+                write(newModels);
                 mDb.setTransactionSuccessful();
             } catch (Exception ex) {
                 TbaLogger.w("Error writing to db: " + ex.getMessage(), ex);

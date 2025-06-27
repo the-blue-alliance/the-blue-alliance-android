@@ -18,7 +18,6 @@ public class EventAlliance implements IEventAlliance {
     private @Nullable List<String> declines;
     private @Nullable String name;
     private @Nullable IAllianceBackup backup;
-    private @Nullable Long lastModified;
     private @Nullable ITeamAtEventPlayoff status;
 
     @Override @Nullable public String getName() {
@@ -69,14 +68,6 @@ public class EventAlliance implements IEventAlliance {
 
     public void setEventKey(@Nullable String eventKey) {
         this.eventKey = eventKey;
-    }
-
-    @Override @Nullable public Long getLastModified() {
-        return lastModified;
-    }
-
-    @Override public void setLastModified(@Nullable Long lastModified) {
-        this.lastModified = lastModified;
     }
 
     public static EventDetail toEventDetail(List<EventAlliance> alliances,

@@ -20,7 +20,6 @@ public class EventDetail implements TbaDatabaseModel {
     private final EventDetailType type;
 
     private @Nullable String jsonData;
-    private @Nullable Long lastModified;
 
     public EventDetail(String eventKey, EventDetailType type) {
         this.eventKey = eventKey;
@@ -35,16 +34,6 @@ public class EventDetail implements TbaDatabaseModel {
     @Override
     public String getKey() {
         return key;
-    }
-
-    @Override @Nullable
-    public Long getLastModified() {
-        return lastModified;
-    }
-
-    @Override
-    public void setLastModified(@Nullable Long lastModified) {
-        this.lastModified = lastModified;
     }
 
     @Nullable
@@ -80,7 +69,6 @@ public class EventDetail implements TbaDatabaseModel {
         params.put(EventDetailsTable.EVENT_KEY, eventKey);
         params.put(EventDetailsTable.DETAIL_TYPE, type.ordinal());
         params.put(EventDetailsTable.JSON_DATA, getJsonData());
-        params.put(EventDetailsTable.LAST_MODIFIED, getLastModified());
         return params;
     }
 

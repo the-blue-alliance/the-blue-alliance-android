@@ -3,8 +3,6 @@ package com.thebluealliance.androidclient.models;
 import android.content.ContentValues;
 import android.content.Context;
 
-import androidx.annotation.IntDef;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.thebluealliance.androidclient.database.TbaDatabaseModel;
@@ -21,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
+
+import androidx.annotation.IntDef;
 
 public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamViewModel, Integer> {
 
@@ -52,7 +52,6 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
     private @Nullable String location;
     private @Nullable String motto;
     private @Nullable Integer rookieYear;
-    private @Nullable Long lastModified;
 
     private List<Integer> yearsParticipated;
 
@@ -74,14 +73,6 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
 
     @Override public void setKey(String key) {
         this.key = key;
-    }
-
-    @Nullable @Override public Long getLastModified() {
-        return lastModified;
-    }
-
-    @Override public void setLastModified(Long lastModified) {
-        this.lastModified = lastModified;
     }
 
     @Nullable @Override public String getMotto() {
@@ -229,7 +220,6 @@ public class Team implements ITeam, TbaDatabaseModel, ViewModelRenderer<TeamView
             data.put(TeamsTable.YEARS_PARTICIPATED, yearsParticipatedToJsonString(yearsParticipated));
         }
         data.put(TeamsTable.MOTTO, getMotto());
-        data.put(TeamsTable.LAST_MODIFIED, getLastModified());
         return data;
     }
 

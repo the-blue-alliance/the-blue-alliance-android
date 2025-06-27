@@ -1,15 +1,15 @@
 package com.thebluealliance.androidclient.database.writers;
 
-import static com.thebluealliance.androidclient.database.writers.YearsParticipatedWriter.YearsParticipatedInfo;
-
-import androidx.annotation.WorkerThread;
-
 import com.thebluealliance.androidclient.database.Database;
 import com.thebluealliance.androidclient.models.Team;
 
 import java.util.List;
 
 import javax.inject.Inject;
+
+import androidx.annotation.WorkerThread;
+
+import static com.thebluealliance.androidclient.database.writers.YearsParticipatedWriter.YearsParticipatedInfo;
 
 public class YearsParticipatedWriter extends BaseDbWriter<YearsParticipatedInfo> {
 
@@ -23,15 +23,11 @@ public class YearsParticipatedWriter extends BaseDbWriter<YearsParticipatedInfo>
 
     @Override
     @WorkerThread
-    public void write(YearsParticipatedInfo yearsParticipatedInfo, Long lastModified) {
+    public void write(YearsParticipatedInfo yearsParticipatedInfo) {
         Team team = mDb.getTeamsTable().get(yearsParticipatedInfo.teamKey);
         if (team != null && yearsParticipatedInfo.yearsParticipated != null) {
             team.setYearsParticipated(yearsParticipatedInfo.yearsParticipated);
-
-            // Since we're taking years participated on to the team model, we don't actually want
-            // to update the last-modified timestamp here and possibly prevent future writes of
-            // actual team data
-            mTeamWriter.write(team, team.getLastModified());
+            mTeamWriter.write(team);
         }
     }
 

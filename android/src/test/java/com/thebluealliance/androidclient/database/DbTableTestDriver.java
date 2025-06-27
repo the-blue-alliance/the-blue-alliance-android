@@ -1,5 +1,12 @@
 package com.thebluealliance.androidclient.database;
 
+import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+
+import java.util.List;
+
+import rx.functions.Action1;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -7,13 +14,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
-
-import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
-
-import java.util.List;
-
-import rx.functions.Action1;
 
 public final class DbTableTestDriver {
 
@@ -24,9 +24,9 @@ public final class DbTableTestDriver {
     public static <T extends TbaDatabaseModel> void testNullValues(ModelTable<T> table) {
         T model = null;
         ImmutableList<T> models = null;
-        long ret1 = table.add(model, null);
-        long ret2 = table.update(model, null);
-        int ret3 = table.add(models, null);
+        long ret1 = table.add(model);
+        long ret2 = table.update(model);
+        int ret3 = table.add(models);
 
         assertEquals(-1, ret1);
         assertEquals(-1, ret2);
@@ -36,7 +36,7 @@ public final class DbTableTestDriver {
     public static <T extends TbaDatabaseModel> void testAddAndGet(ModelTable<T> table, T model,
                                                                   Gson gson) {
         assertFalse(table.exists(model.getKey()));
-        long ret = table.add(model, null);
+        long ret = table.add(model);
         verify(table).insertCallback(model);
 
         T result = table.get(model.getKey());
@@ -67,7 +67,7 @@ public final class DbTableTestDriver {
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
-        int ret = table.add(models, null);
+        int ret = table.add(models);
         assertEquals(models.size(), ret);
         for (T model : models) {
             verify(table).insertCallback(model);
@@ -82,14 +82,14 @@ public final class DbTableTestDriver {
                                                             T model,
                                                             Action1<T> callback,
                                                             Gson gson) {
-        table.add(model, null);
+        table.add(model);
 
         T result = table.get(model.getKey());
         assertNotNull(result);
         assertEquals(model.getParams(gson), result.getParams(gson));
 
         callback.call(result);
-        int affected = table.update(result, null);
+        int affected = table.update(result);
         assertEquals(1, affected);
         verify(table).updateCallback(result);
 
@@ -100,27 +100,6 @@ public final class DbTableTestDriver {
         return result2;
     }
 
-    public static <T extends TbaDatabaseModel> void testLastModified(ModelTable<T> table,
-                                                                     List<T> models) {
-        // First, set all the last modified timestamps to 0 and ensure we start with a clean table
-        table.deleteAllRows();
-        for (T model : models) {
-            model.setLastModified(0L);
-        }
-
-        // Insert the records, not touching last modified
-        table.add(ImmutableList.copyOf(models), null);
-
-        // Update a record with newer timestamp and update it in the db
-        T newModel = table.get(models.get(0).getKey());
-        int ret = table.update(newModel, 3L);
-        assertEquals(1, ret);
-
-        // Try and update the whole list with a smaller modified time
-        ret = table.add(ImmutableList.copyOf(models), 1L);
-        //assertEquals(models.size() - 1, ret);
-    }
-
     public static <T extends TbaDatabaseModel> void testDelete(ModelTable<T> table,
                                                                List<T> models,
                                                                String where,
@@ -128,7 +107,7 @@ public final class DbTableTestDriver {
                                                                int affectedRows) {
         // Test with one model
         T model = models.get(0);
-        table.add(model, null);
+        table.add(model);
         assertTrue(table.exists(model.getKey()));
 
         table.delete(model);
@@ -137,7 +116,7 @@ public final class DbTableTestDriver {
         verify(table).deleteCallback(model);
 
         // Test delete by a where clause
-        int count = table.add(ImmutableList.copyOf(models), null);
+        int count = table.add(ImmutableList.copyOf(models));
         assertEquals(models.size(), count);
 
         count = table.delete(where, whereArgs);

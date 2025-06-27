@@ -28,7 +28,6 @@ import com.thebluealliance.androidclient.models.Team;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -179,14 +178,7 @@ public class LoadTBADataWorker extends Worker {
                         // No teams found for a page; we are done
                         break;
                     }
-                    Date lastModified = teamListResponse.headers().getDate("Last-Modified");
                     List<Team> responseBody = teamListResponse.body();
-                    if (lastModified != null) {
-                        long lastModifiedTimestamp = lastModified.getTime();
-                        for (int i = 0; i < responseBody.size(); i++) {
-                            responseBody.get(i).setLastModified(lastModifiedTimestamp);
-                        }
-                    }
                     allTeams.addAll(responseBody);
                     maxPageNum = Math.max(maxPageNum, pageNum);
                 }
@@ -210,14 +202,7 @@ public class LoadTBADataWorker extends Worker {
                     if (eventListResponse.body() == null) {
                         continue;
                     }
-                    Date lastModified = eventListResponse.headers().getDate("Last-Modified");
                     List<Event> responseBody = eventListResponse.body();
-                    if (lastModified != null) {
-                        long lastModifiedTimestamp = lastModified.getTime();
-                        for (int i = 0; i < responseBody.size(); i++) {
-                            responseBody.get(i).setLastModified(lastModifiedTimestamp);
-                        }
-                    }
                     allEvents.addAll(responseBody);
                     TbaLogger.i(String.format("Loaded %1$d events in %2$d",
                             eventListResponse.body().size(), year));
@@ -259,11 +244,11 @@ public class LoadTBADataWorker extends Worker {
             publishProgress(new LoadProgressInfo(LoadProgressInfo.STATE_LOADING, mApplicationContext.getString(R.string.loading_almost_finished)));
 
             TbaLogger.i("Writing " + allTeams.size() + " teams");
-            mTeamWriter.write(allTeams, 0L);
+            mTeamWriter.write(allTeams);
             TbaLogger.i("Writing " + allEvents.size() + " events");
-            mEventWriter.write(allEvents, 0L);
+            mEventWriter.write(allEvents);
             TbaLogger.i("Writing " + allDistricts.size() + " districts");
-            mDistrictWriter.write(allDistricts, 0L);
+            mDistrictWriter.write(allDistricts);
 
             SharedPreferences.Editor editor = mSharedPreferences.edit();
 

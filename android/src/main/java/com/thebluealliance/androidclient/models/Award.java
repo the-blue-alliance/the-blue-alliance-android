@@ -23,7 +23,6 @@ public class Award implements IAward, RenderableModel, TbaDatabaseModel {
     private Integer awardType = null;
     private String eventKey = null;
     private String key = null;
-    private Long lastModified = null;
     private String name = null;
     private List<IAwardRecipient> recipientList = null;
     private Integer year = null;
@@ -50,14 +49,6 @@ public class Award implements IAward, RenderableModel, TbaDatabaseModel {
 
     @Override public void setKey(String key) {
         this.key = key;
-    }
-
-    @Nullable @Override public Long getLastModified() {
-        return lastModified;
-    }
-
-    @Override public void setLastModified(Long lastModified) {
-        this.lastModified = lastModified;
     }
 
     @Override public String getName() {
@@ -102,7 +93,6 @@ public class Award implements IAward, RenderableModel, TbaDatabaseModel {
         contentValues.put(AwardsTable.NAME, getName());
         contentValues.put(AwardsTable.YEAR, getYear());
         contentValues.put(AwardsTable.WINNERS, gson.toJson(getRecipientList(), new TypeToken<List<AwardRecipient>>(){}.getType()));
-        contentValues.put(AwardsTable.LAST_MODIFIED, getLastModified());
         return contentValues;
     }
 
@@ -116,7 +106,6 @@ public class Award implements IAward, RenderableModel, TbaDatabaseModel {
     public static class AwardRecipient implements IAwardRecipient {
         private @Nullable String awardee;
         private @Nullable String teamKey;
-        private @Nullable Long lastModified;
 
         @Override @Nullable public String getAwardee() {
             return awardee;
@@ -132,14 +121,6 @@ public class Award implements IAward, RenderableModel, TbaDatabaseModel {
 
         @Override public void setTeamKey(@Nullable String teamKey) {
             this.teamKey = teamKey;
-        }
-
-        @Nullable public Long getLastModified() {
-            return lastModified;
-        }
-
-        public void setLastModified(@Nullable Long lastModified) {
-            this.lastModified = lastModified;
         }
     }
 }

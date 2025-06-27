@@ -42,7 +42,7 @@ public class DistrictListWriterTest {
 
     @Test
     public void testDistrictListWriter() {
-        mWriter.write(mDistricts, 0L);
+        mWriter.write(mDistricts);
 
         SQLiteDatabase db = mDb.getWritableDatabase();
         for (District district : mDistricts) {
