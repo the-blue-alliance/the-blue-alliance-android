@@ -1,13 +1,5 @@
 # Agent Guidelines
 
-## After Every Checkpoint
+## Commits
 
-After completing each checkpoint, create a detailed commit message summarizing all changes made. The commit message should include:
-
-- A short summary line describing the checkpoint
-- A list of all new files created
-- A list of all files modified
-- Key architectural decisions made
-- Any dependencies added
-
-This ensures clear traceability of what changed at each step of the rewrite.
+When asked to commit a checkpoint, write a short summary line and a brief description of what changed and why. Keep it concise.

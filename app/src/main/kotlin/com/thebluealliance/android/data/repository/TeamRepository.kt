@@ -21,6 +21,9 @@ class TeamRepository @Inject constructor(
     private val mediaDao: MediaDao,
     private val eventTeamDao: EventTeamDao,
 ) {
+    fun observeAllTeams(): Flow<List<Team>> =
+        teamDao.observeAll().map { list -> list.map { it.toDomain() } }
+
     fun observeTeam(key: String): Flow<Team?> =
         teamDao.observe(key).map { it?.toDomain() }
 
@@ -46,6 +49,11 @@ class TeamRepository @Inject constructor(
             eventTeamDao.deleteByEvent(eventKey)
             eventTeamDao.insertAll(eventTeams)
         } catch (_: Exception) { }
+    }
+
+    suspend fun refreshTeam(teamKey: String) {
+        val dto = api.getTeam(teamKey)
+        teamDao.insertAll(listOf(dto.toEntity()))
     }
 
     suspend fun refreshTeamMedia(teamKey: String, year: Int) {
