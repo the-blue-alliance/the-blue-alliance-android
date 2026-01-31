@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.thebluealliance.android.data.local.dao.AllianceDao
 import com.thebluealliance.android.data.local.dao.AwardDao
 import com.thebluealliance.android.data.local.dao.EventDao
+import com.thebluealliance.android.data.local.dao.EventTeamDao
 import com.thebluealliance.android.data.local.dao.RankingDao
 import com.thebluealliance.android.data.local.entity.EventEntity
 import com.thebluealliance.android.data.remote.TbaApi
@@ -25,8 +26,9 @@ class EventRepositoryTest {
     private val awardDao: AwardDao = mockk(relaxUnitFun = true)
     private val rankingDao: RankingDao = mockk(relaxUnitFun = true)
     private val allianceDao: AllianceDao = mockk(relaxUnitFun = true)
+    private val eventTeamDao: EventTeamDao = mockk(relaxUnitFun = true)
 
-    private val repo = EventRepository(api, eventDao, awardDao, rankingDao, allianceDao)
+    private val repo = EventRepository(api, eventDao, awardDao, rankingDao, allianceDao, eventTeamDao)
 
     @Test
     fun `refreshEventsForYear fetches from API and inserts into DAO`() = runTest {

@@ -9,6 +9,7 @@ import com.thebluealliance.android.ui.districts.DistrictsScreen
 import com.thebluealliance.android.ui.events.EventDetailScreen
 import com.thebluealliance.android.ui.events.EventsScreen
 import com.thebluealliance.android.ui.mytba.MyTBAScreen
+import com.thebluealliance.android.ui.teams.TeamDetailScreen
 import com.thebluealliance.android.ui.teams.TeamsScreen
 
 @Composable
@@ -29,7 +30,11 @@ fun TBANavHost(
             )
         }
         composable<Route.Teams> {
-            TeamsScreen()
+            TeamsScreen(
+                onNavigateToTeam = { teamKey ->
+                    navController.navigate(Screen.TeamDetail(teamKey))
+                },
+            )
         }
         composable<Route.Districts> {
             DistrictsScreen()
@@ -40,6 +45,14 @@ fun TBANavHost(
         composable<Screen.EventDetail> {
             EventDetailScreen(
                 onNavigateBack = { navController.popBackStack() },
+            )
+        }
+        composable<Screen.TeamDetail> {
+            TeamDetailScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToEvent = { eventKey ->
+                    navController.navigate(Screen.EventDetail(eventKey))
+                },
             )
         }
     }
