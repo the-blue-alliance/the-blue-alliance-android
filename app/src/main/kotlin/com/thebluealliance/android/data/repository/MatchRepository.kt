@@ -22,7 +22,9 @@ class MatchRepository @Inject constructor(
         matchDao.observe(key).map { it?.toDomain() }
 
     suspend fun refreshEventMatches(eventKey: String) {
-        val dtos = api.getEventMatches(eventKey)
-        matchDao.insertAll(dtos.map { it.toEntity() })
+        try {
+            val dtos = api.getEventMatches(eventKey)
+            matchDao.insertAll(dtos.map { it.toEntity() })
+        } catch (_: Exception) { }
     }
 }

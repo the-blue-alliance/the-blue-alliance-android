@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RankingResponseDto(
     val rankings: List<RankingItemDto> = emptyList(),
-    @SerialName("sort_order_info") val sortOrderInfo: List<RankingSortOrderDto> = emptyList(),
-    @SerialName("extra_stats_info") val extraStatsInfo: List<RankingSortOrderDto> = emptyList(),
+    @SerialName("sort_order_info") val sortOrderInfo: List<RankingSortOrderDto>? = null,
+    @SerialName("extra_stats_info") val extraStatsInfo: List<RankingSortOrderDto>? = null,
 )
 
 @Serializable

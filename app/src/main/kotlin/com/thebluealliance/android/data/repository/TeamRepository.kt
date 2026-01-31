@@ -1,7 +1,9 @@
 package com.thebluealliance.android.data.repository
 
+import com.thebluealliance.android.data.local.dao.EventTeamDao
 import com.thebluealliance.android.data.local.dao.MediaDao
 import com.thebluealliance.android.data.local.dao.TeamDao
+import com.thebluealliance.android.data.local.entity.EventTeamEntity
 import com.thebluealliance.android.data.mappers.toDomain
 import com.thebluealliance.android.data.mappers.toEntity
 import com.thebluealliance.android.data.remote.TbaApi
@@ -17,6 +19,7 @@ class TeamRepository @Inject constructor(
     private val api: TbaApi,
     private val teamDao: TeamDao,
     private val mediaDao: MediaDao,
+    private val eventTeamDao: EventTeamDao,
 ) {
     fun observeTeam(key: String): Flow<Team?> =
         teamDao.observe(key).map { it?.toDomain() }
@@ -32,9 +35,17 @@ class TeamRepository @Inject constructor(
         teamDao.insertAll(dtos.map { it.toEntity() })
     }
 
+    fun observeEventTeamKeys(eventKey: String): Flow<List<String>> =
+        eventTeamDao.observeByEvent(eventKey).map { list -> list.map { it.teamKey } }
+
     suspend fun refreshEventTeams(eventKey: String) {
-        val dtos = api.getEventTeams(eventKey)
-        teamDao.insertAll(dtos.map { it.toEntity() })
+        try {
+            val dtos = api.getEventTeams(eventKey)
+            teamDao.insertAll(dtos.map { it.toEntity() })
+            val eventTeams = dtos.map { EventTeamEntity(eventKey = eventKey, teamKey = it.key) }
+            eventTeamDao.deleteByEvent(eventKey)
+            eventTeamDao.insertAll(eventTeams)
+        } catch (_: Exception) { }
     }
 
     suspend fun refreshTeamMedia(teamKey: String, year: Int) {

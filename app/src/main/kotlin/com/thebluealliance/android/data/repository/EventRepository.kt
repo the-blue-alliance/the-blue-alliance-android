@@ -44,19 +44,25 @@ class EventRepository @Inject constructor(
     }
 
     suspend fun refreshEventAwards(eventKey: String) {
-        val dtos = api.getEventAwards(eventKey)
-        awardDao.insertAll(dtos.flatMap { it.toEntities() })
+        try {
+            val dtos = api.getEventAwards(eventKey)
+            awardDao.insertAll(dtos.flatMap { it.toEntities() })
+        } catch (_: Exception) { }
     }
 
     suspend fun refreshEventRankings(eventKey: String) {
-        val response = api.getEventRankings(eventKey)
-        rankingDao.deleteByEvent(eventKey)
-        rankingDao.insertAll(response.rankings.map { it.toEntity(eventKey) })
+        try {
+            val response = api.getEventRankings(eventKey)
+            rankingDao.deleteByEvent(eventKey)
+            rankingDao.insertAll(response.rankings.map { it.toEntity(eventKey) })
+        } catch (_: Exception) { }
     }
 
     suspend fun refreshEventAlliances(eventKey: String) {
-        val dtos = api.getEventAlliances(eventKey)
-        allianceDao.deleteByEvent(eventKey)
-        allianceDao.insertAll(dtos.mapIndexed { index, dto -> dto.toEntity(eventKey, index + 1) })
+        try {
+            val dtos = api.getEventAlliances(eventKey)
+            allianceDao.deleteByEvent(eventKey)
+            allianceDao.insertAll(dtos.mapIndexed { index, dto -> dto.toEntity(eventKey, index + 1) })
+        } catch (_: Exception) { }
     }
 }
