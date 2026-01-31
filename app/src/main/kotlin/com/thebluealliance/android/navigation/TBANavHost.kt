@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.thebluealliance.android.ui.districts.DistrictsScreen
+import com.thebluealliance.android.ui.events.EventDetailScreen
 import com.thebluealliance.android.ui.events.EventsScreen
 import com.thebluealliance.android.ui.mytba.MyTBAScreen
 import com.thebluealliance.android.ui.teams.TeamsScreen
@@ -21,7 +22,11 @@ fun TBANavHost(
         modifier = modifier,
     ) {
         composable<Route.Events> {
-            EventsScreen()
+            EventsScreen(
+                onNavigateToEvent = { eventKey ->
+                    navController.navigate(Screen.EventDetail(eventKey))
+                },
+            )
         }
         composable<Route.Teams> {
             TeamsScreen()
@@ -31,6 +36,11 @@ fun TBANavHost(
         }
         composable<Route.MyTBA> {
             MyTBAScreen()
+        }
+        composable<Screen.EventDetail> {
+            EventDetailScreen(
+                onNavigateBack = { navController.popBackStack() },
+            )
         }
     }
 }

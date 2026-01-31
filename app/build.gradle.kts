@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.serialization)
@@ -6,6 +9,11 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     // alias(libs.plugins.google.services) // Enable when google-services.json is added
+}
+
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) load(FileInputStream(file))
 }
 
 android {
@@ -22,7 +30,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "TBA_BASE_URL", "\"https://www.thebluealliance.com/\"")
-        buildConfigField("String", "TBA_API_KEY", "\"\"")
+        buildConfigField("String", "TBA_API_KEY", "\"${localProperties.getProperty("tba.api.key", "")}\"")
+
     }
 
     buildTypes {

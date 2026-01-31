@@ -48,30 +48,36 @@ fun TBAApp() {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
+        val showBottomBar = TOP_LEVEL_DESTINATIONS.any { dest ->
+            currentDestination?.hasRoute(dest.route::class) == true
+        }
+
         Scaffold(
             bottomBar = {
-                NavigationBar {
-                    TOP_LEVEL_DESTINATIONS.forEach { dest ->
-                        val selected = currentDestination?.hasRoute(dest.route::class) == true
-                        NavigationBarItem(
-                            selected = selected,
-                            onClick = {
-                                navController.navigate(dest.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
+                if (showBottomBar) {
+                    NavigationBar {
+                        TOP_LEVEL_DESTINATIONS.forEach { dest ->
+                            val selected = currentDestination?.hasRoute(dest.route::class) == true
+                            NavigationBarItem(
+                                selected = selected,
+                                onClick = {
+                                    navController.navigate(dest.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            icon = {
-                                Icon(
-                                    imageVector = if (selected) dest.selectedIcon else dest.unselectedIcon,
-                                    contentDescription = dest.label,
-                                )
-                            },
-                            label = { Text(dest.label) },
-                        )
+                                },
+                                icon = {
+                                    Icon(
+                                        imageVector = if (selected) dest.selectedIcon else dest.unselectedIcon,
+                                        contentDescription = dest.label,
+                                    )
+                                },
+                                label = { Text(dest.label) },
+                            )
+                        }
                     }
                 }
             },
