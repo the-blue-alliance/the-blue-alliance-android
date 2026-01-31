@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
+
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,9 +35,7 @@ class EventDetailViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
-    // Derive team keys from rankings; when rankings are loaded, we know event participants
-    private val teamKeysFlow = eventRepository.observeEventRankings(eventKey)
-        .map { rankings -> rankings.map { it.teamKey }.distinct() }
+    private val teamKeysFlow = teamRepository.observeEventTeamKeys(eventKey)
 
     private val teamsFlow = teamKeysFlow.flatMapLatest { keys ->
         if (keys.isEmpty()) flowOf(emptyList()) else teamRepository.observeTeams(keys)
