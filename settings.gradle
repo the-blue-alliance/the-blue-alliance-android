@@ -1,3 +1,0 @@
-include ':libTba', ':libImgur'
-include 'android'
-include ':tba-api'
