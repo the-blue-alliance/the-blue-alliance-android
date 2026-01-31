@@ -159,13 +159,28 @@
             </LinearLayout>
 
 
-            <com.google.android.gms.common.SignInButton
-                android:id="@+id/google_sign_in_button"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="16dp" />
+                android:layout_margin="16dp"
+                android:orientation="vertical">
+
+                <com.google.android.gms.common.SignInButton
+                    android:id="@+id/google_sign_in_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/dev_sign_in_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="[dev-only] Sign In Locally"
+                    android:visibility="gone" />
+
+            </LinearLayout>
 
         </RelativeLayout>
 

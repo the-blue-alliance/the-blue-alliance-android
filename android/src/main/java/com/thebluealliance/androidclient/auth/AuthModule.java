@@ -3,6 +3,7 @@ package com.thebluealliance.androidclient.auth;
 import android.content.Context;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.TbaLogger;
 import com.thebluealliance.androidclient.accounts.AccountController;
 import com.thebluealliance.androidclient.accounts.AccountModule;
@@ -27,7 +28,11 @@ public class AuthModule {
     @Provides @Singleton @Nullable
     public FirebaseAuth provideFirebaseAuth() {
         try {
-            return FirebaseAuth.getInstance();
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            if (BuildConfig.DEBUG) {
+                auth.useEmulator("10.0.2.2", 9099);
+            }
+            return auth;
         } catch (IllegalStateException ex) {
             /* When there is no google-secrets.json file found, the library throws an exception
              * here which causes insta-crashes for us. Silently recover here...

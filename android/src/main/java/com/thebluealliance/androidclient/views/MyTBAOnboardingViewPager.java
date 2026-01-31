@@ -12,6 +12,7 @@ import androidx.annotation.StringRes;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.common.SignInButton;
+import com.thebluealliance.androidclient.BuildConfig;
 import com.thebluealliance.androidclient.R;
 import com.thebluealliance.androidclient.adapters.MyTBAOnboardingPagerAdapter;
 import com.thebluealliance.androidclient.databinding.MytbaOnboardingViewPagerBinding;
@@ -32,6 +33,11 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
         mBinding.googleSignInButton.setSize(SignInButton.SIZE_WIDE);
         mBinding.googleSignInButton.setOnClickListener(this);
         mBinding.enableNotificationsButton.setOnClickListener(this);
+
+        if (BuildConfig.DEBUG) {
+            mBinding.devSignInButton.setVisibility(View.VISIBLE);
+            mBinding.devSignInButton.setOnClickListener(this);
+        }
     }
 
     public void setCallbacks(Callbacks callbacks) {
@@ -43,6 +49,8 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
         int id = v.getId();
         if (id == R.id.google_sign_in_button && mCallbacks != null) {
             mCallbacks.onSignInButtonClicked();
+        } else if (id == R.id.dev_sign_in_button && mCallbacks != null) {
+            mCallbacks.onDevSignInButtonClicked();
         } else if (id == R.id.enable_notifications_button && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             mCallbacks.onEnableNotificationsButtonClicked();
         }
@@ -110,6 +118,7 @@ public class MyTBAOnboardingViewPager extends RelativeLayout implements View.OnC
 
     public interface Callbacks {
         void onSignInButtonClicked();
+        void onDevSignInButtonClicked();
         @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
         void onEnableNotificationsButtonClicked();
     }

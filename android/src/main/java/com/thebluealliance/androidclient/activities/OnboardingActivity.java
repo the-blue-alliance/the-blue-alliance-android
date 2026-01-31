@@ -385,6 +385,11 @@ public class OnboardingActivity extends AppCompatActivity
         mMyTbaOnboardingController.launchSignIn(this);
     }
 
+    @Override
+    public void onDevSignInButtonClicked() {
+        mMyTbaOnboardingController.launchDevSignIn(this, this);
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     public void onEnableNotificationsButtonClicked() {
