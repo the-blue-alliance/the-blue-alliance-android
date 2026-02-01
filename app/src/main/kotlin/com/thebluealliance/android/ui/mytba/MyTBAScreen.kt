@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
@@ -21,6 +23,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -42,6 +45,7 @@ fun MyTBAScreen(
     onSignIn: () -> Unit = {},
     onNavigateToTeam: (String) -> Unit = {},
     onNavigateToEvent: (String) -> Unit = {},
+    scrollToTopTrigger: Int = 0,
     viewModel: MyTBAViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -54,6 +58,17 @@ fun MyTBAScreen(
 
     val pagerState = rememberPagerState(pageCount = { TABS.size })
     val coroutineScope = rememberCoroutineScope()
+    val favoritesListState = rememberLazyListState()
+    val subscriptionsListState = rememberLazyListState()
+
+    LaunchedEffect(scrollToTopTrigger) {
+        if (scrollToTopTrigger > 0) {
+            when (pagerState.currentPage) {
+                0 -> favoritesListState.animateScrollToItem(0)
+                1 -> subscriptionsListState.animateScrollToItem(0)
+            }
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
@@ -104,8 +119,8 @@ fun MyTBAScreen(
                 modifier = Modifier.fillMaxSize(),
             ) { page ->
                 when (page) {
-                    0 -> FavoritesTab(uiState.favorites, onNavigateToTeam, onNavigateToEvent)
-                    1 -> SubscriptionsTab(uiState.subscriptions, onNavigateToTeam, onNavigateToEvent)
+                    0 -> FavoritesTab(uiState.favorites, onNavigateToTeam, onNavigateToEvent, favoritesListState)
+                    1 -> SubscriptionsTab(uiState.subscriptions, onNavigateToTeam, onNavigateToEvent, subscriptionsListState)
                 }
             }
         }
@@ -143,6 +158,7 @@ private fun FavoritesTab(
     favorites: List<Favorite>,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
+    listState: LazyListState,
 ) {
     if (favorites.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -150,7 +166,7 @@ private fun FavoritesTab(
         }
         return
     }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         items(favorites, key = { "${it.modelType}_${it.modelKey}" }) { favorite ->
             FavoriteItem(
                 favorite = favorite,
@@ -197,6 +213,7 @@ private fun SubscriptionsTab(
     subscriptions: List<Subscription>,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
+    listState: LazyListState,
 ) {
     if (subscriptions.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -204,7 +221,7 @@ private fun SubscriptionsTab(
         }
         return
     }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         items(subscriptions, key = { "${it.modelType}_${it.modelKey}" }) { subscription ->
             val typeLabel = when (subscription.modelType) {
                 ModelType.EVENT -> "Event"

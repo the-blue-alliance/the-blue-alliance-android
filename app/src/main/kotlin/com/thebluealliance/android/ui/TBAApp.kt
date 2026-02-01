@@ -21,6 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.thebluealliance.android.MainActivity
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -56,6 +59,8 @@ fun TBAApp(activity: MainActivity? = null) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
+        var scrollToTopTrigger by remember { mutableIntStateOf(0) }
+
         val showBottomBar = TOP_LEVEL_DESTINATIONS.any { dest ->
             currentDestination?.hasRoute(dest.route::class) == true
         }
@@ -86,12 +91,16 @@ fun TBAApp(activity: MainActivity? = null) {
                             NavigationBarItem(
                                 selected = selected,
                                 onClick = {
-                                    navController.navigate(dest.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
+                                    if (selected) {
+                                        scrollToTopTrigger++
+                                    } else {
+                                        navController.navigate(dest.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
                                         }
-                                        launchSingleTop = true
-                                        restoreState = true
                                     }
                                 },
                                 icon = {
@@ -110,6 +119,7 @@ fun TBAApp(activity: MainActivity? = null) {
             TBANavHost(
                 navController = navController,
                 onSignIn = { activity?.startGoogleSignIn() },
+                scrollToTopTrigger = scrollToTopTrigger,
                 modifier = Modifier.padding(innerPadding),
             )
         }
