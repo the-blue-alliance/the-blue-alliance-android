@@ -184,10 +184,10 @@ private fun EventItem(
     }
 }
 
-private val fullFormat = DateTimeFormatter.ofPattern("EEE, MMM d, yyyy", Locale.US)
-private val noYearFormat = DateTimeFormatter.ofPattern("EEE, MMM d", Locale.US)
+internal val fullFormat = DateTimeFormatter.ofPattern("EEE, MMM d, yyyy", Locale.US)
+internal val noYearFormat = DateTimeFormatter.ofPattern("EEE, MMM d", Locale.US)
 
-private fun formatEventDateRange(startDate: String?, endDate: String?): String? {
+internal fun formatEventDateRange(startDate: String?, endDate: String?): String? {
     if (startDate == null) return null
     val start = LocalDate.parse(startDate)
     val end = endDate?.let { LocalDate.parse(it) }
