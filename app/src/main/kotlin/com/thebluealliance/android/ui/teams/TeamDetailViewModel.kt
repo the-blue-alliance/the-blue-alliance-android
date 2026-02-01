@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.thebluealliance.android.data.repository.EventRepository
+import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.data.repository.TeamRepository
+import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +25,7 @@ class TeamDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val teamRepository: TeamRepository,
     private val eventRepository: EventRepository,
+    private val myTBARepository: MyTBARepository,
 ) : ViewModel() {
 
     private val teamKey: String = savedStateHandle.toRoute<Screen.TeamDetail>().teamKey
@@ -43,8 +46,23 @@ class TeamDetailViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TeamDetailUiState())
 
+    val isFavorite: StateFlow<Boolean> = myTBARepository.isFavorite(teamKey, ModelType.TEAM)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
     init {
         refreshAll()
+    }
+
+    fun toggleFavorite() {
+        viewModelScope.launch {
+            try {
+                if (isFavorite.value) {
+                    myTBARepository.removeFavorite(teamKey, ModelType.TEAM)
+                } else {
+                    myTBARepository.addFavorite(teamKey, ModelType.TEAM)
+                }
+            } catch (_: Exception) {}
+        }
     }
 
     fun refreshAll() {

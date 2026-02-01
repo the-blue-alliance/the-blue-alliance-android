@@ -24,7 +24,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideJson(): Json = Json { ignoreUnknownKeys = true }
+    fun provideJson(): Json = Json {
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+    }
 
     @Provides
     @Singleton
