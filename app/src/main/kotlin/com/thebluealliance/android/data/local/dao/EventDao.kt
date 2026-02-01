@@ -18,6 +18,9 @@ interface EventDao {
     @Query("SELECT * FROM events WHERE key IN (:keys) ORDER BY startDate ASC")
     fun observeByKeys(keys: List<String>): Flow<List<EventEntity>>
 
+    @Query("SELECT * FROM events WHERE district = :districtKey ORDER BY startDate ASC")
+    fun observeByDistrict(districtKey: String): Flow<List<EventEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(events: List<EventEntity>)
 }

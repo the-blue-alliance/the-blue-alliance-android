@@ -12,6 +12,9 @@ interface DistrictDao {
     @Query("SELECT * FROM districts WHERE year = :year ORDER BY displayName ASC")
     fun observeByYear(year: Int): Flow<List<DistrictEntity>>
 
+    @Query("SELECT * FROM districts WHERE key = :key")
+    fun observe(key: String): Flow<DistrictEntity?>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(districts: List<DistrictEntity>)
 }

@@ -1,6 +1,7 @@
 package com.thebluealliance.android.ui.events
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,6 +48,8 @@ private val TABS = listOf("Info", "Teams", "Matches", "Rankings", "Alliances", "
 @Composable
 fun EventDetailScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToTeam: (String) -> Unit = {},
+    onNavigateToMatch: (String) -> Unit = {},
     viewModel: EventDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -93,8 +96,8 @@ fun EventDetailScreen(
             ) { page ->
                 when (page) {
                     0 -> InfoTab(uiState.event)
-                    1 -> TeamsTab(uiState.teams)
-                    2 -> MatchesTab(uiState.matches)
+                    1 -> TeamsTab(uiState.teams, onNavigateToTeam)
+                    2 -> MatchesTab(uiState.matches, onNavigateToMatch)
                     3 -> RankingsTab(uiState.rankings)
                     4 -> AlliancesTab(uiState.alliances)
                     5 -> AwardsTab(uiState.awards)
@@ -162,7 +165,7 @@ private fun InfoTab(event: Event?) {
 }
 
 @Composable
-private fun TeamsTab(teams: List<Team>?) {
+private fun TeamsTab(teams: List<Team>?, onNavigateToTeam: (String) -> Unit) {
     if (teams == null) {
         LoadingBox()
         return
@@ -176,6 +179,7 @@ private fun TeamsTab(teams: List<Team>?) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clickable { onNavigateToTeam(team.key) }
                     .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
                 Text(
@@ -196,7 +200,7 @@ private fun TeamsTab(teams: List<Team>?) {
 }
 
 @Composable
-private fun MatchesTab(matches: List<Match>?) {
+private fun MatchesTab(matches: List<Match>?, onNavigateToMatch: (String) -> Unit) {
     if (matches == null) {
         LoadingBox()
         return
@@ -224,7 +228,7 @@ private fun MatchesTab(matches: List<Match>?) {
                 )
             }
             items(levelMatches, key = { it.key }) { match ->
-                MatchItem(match)
+                MatchItem(match, onClick = { onNavigateToMatch(match.key) })
                 HorizontalDivider()
             }
         }
@@ -232,7 +236,7 @@ private fun MatchesTab(matches: List<Match>?) {
 }
 
 @Composable
-private fun MatchItem(match: Match) {
+private fun MatchItem(match: Match, onClick: () -> Unit) {
     val label = when (match.compLevel) {
         "qm" -> "Q${match.matchNumber}"
         "qf" -> "QF${match.setNumber}-${match.matchNumber}"
@@ -243,6 +247,7 @@ private fun MatchItem(match: Match) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

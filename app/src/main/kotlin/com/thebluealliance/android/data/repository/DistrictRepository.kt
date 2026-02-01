@@ -18,6 +18,9 @@ class DistrictRepository @Inject constructor(
     private val districtDao: DistrictDao,
     private val districtRankingDao: DistrictRankingDao,
 ) {
+    fun observeDistrict(key: String): Flow<District?> =
+        districtDao.observe(key).map { it?.toDomain() }
+
     fun observeDistrictsForYear(year: Int): Flow<List<District>> =
         districtDao.observeByYear(year).map { list -> list.map { it.toDomain() } }
 
