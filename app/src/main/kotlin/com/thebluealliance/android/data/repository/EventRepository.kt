@@ -65,6 +65,16 @@ class EventRepository @Inject constructor(
         } catch (_: Exception) { }
     }
 
+    fun observeDistrictEvents(districtKey: String): Flow<List<Event>> =
+        eventDao.observeByDistrict(districtKey).map { list -> list.map { it.toDomain() } }
+
+    suspend fun refreshDistrictEvents(districtKey: String) {
+        try {
+            val dtos = api.getDistrictEvents(districtKey)
+            eventDao.insertAll(dtos.map { it.toEntity() })
+        } catch (_: Exception) { }
+    }
+
     suspend fun refreshEventsForYear(year: Int) {
         val dtos = api.getEventsForYear(year)
         eventDao.insertAll(dtos.map { it.toEntity() })

@@ -13,4 +13,6 @@ data class Match(
     val blueTeamKeys: List<String>,
     val blueScore: Int,
     val winningAlliance: String?,
+    val scoreBreakdown: String? = null,
+    val videos: String? = null,
 )

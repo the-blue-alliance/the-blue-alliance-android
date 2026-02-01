@@ -21,6 +21,13 @@ class MatchRepository @Inject constructor(
     fun observeMatch(key: String): Flow<Match?> =
         matchDao.observe(key).map { it?.toDomain() }
 
+    suspend fun refreshMatch(matchKey: String) {
+        try {
+            val dto = api.getMatch(matchKey)
+            matchDao.insertAll(listOf(dto.toEntity()))
+        } catch (_: Exception) { }
+    }
+
     suspend fun refreshEventMatches(eventKey: String) {
         try {
             val dtos = api.getEventMatches(eventKey)

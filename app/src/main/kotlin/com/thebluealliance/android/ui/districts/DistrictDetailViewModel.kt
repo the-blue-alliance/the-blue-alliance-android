@@ -1,0 +1,60 @@
+package com.thebluealliance.android.ui.districts
+
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.thebluealliance.android.data.repository.DistrictRepository
+import com.thebluealliance.android.data.repository.EventRepository
+import com.thebluealliance.android.navigation.Screen
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class DistrictDetailViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val districtRepository: DistrictRepository,
+    private val eventRepository: EventRepository,
+) : ViewModel() {
+
+    private val districtKey: String = savedStateHandle.toRoute<Screen.DistrictDetail>().districtKey
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
+    val uiState: StateFlow<DistrictDetailUiState> = combine(
+        districtRepository.observeDistrict(districtKey),
+        eventRepository.observeDistrictEvents(districtKey),
+        districtRepository.observeDistrictRankings(districtKey),
+    ) { district, events, rankings ->
+        DistrictDetailUiState(
+            district = district,
+            events = events,
+            rankings = rankings,
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DistrictDetailUiState())
+
+    init {
+        refreshAll()
+    }
+
+    fun refreshAll() {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            try {
+                launch { eventRepository.refreshDistrictEvents(districtKey) }
+                launch { districtRepository.refreshDistrictRankings(districtKey) }
+            } catch (_: Exception) {
+            } finally {
+                _isRefreshing.value = false
+            }
+        }
+    }
+}

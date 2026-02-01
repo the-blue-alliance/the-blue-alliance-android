@@ -108,6 +108,8 @@ fun MatchEntity.toDomain() = Match(
     blueTeamKeys = blueTeamKeys.split(",").filter { it.isNotEmpty() },
     blueScore = blueScore,
     winningAlliance = winningAlliance,
+    scoreBreakdown = scoreBreakdown,
+    videos = videos,
 )
 
 // ── Award ──

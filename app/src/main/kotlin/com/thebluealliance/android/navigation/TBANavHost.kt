@@ -5,7 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.thebluealliance.android.ui.districts.DistrictDetailScreen
 import com.thebluealliance.android.ui.districts.DistrictsScreen
+import com.thebluealliance.android.ui.matches.MatchDetailScreen
 import com.thebluealliance.android.ui.events.EventDetailScreen
 import com.thebluealliance.android.ui.events.EventsScreen
 import com.thebluealliance.android.ui.mytba.MyTBAScreen
@@ -37,7 +39,11 @@ fun TBANavHost(
             )
         }
         composable<Route.Districts> {
-            DistrictsScreen()
+            DistrictsScreen(
+                onNavigateToDistrict = { districtKey ->
+                    navController.navigate(Screen.DistrictDetail(districtKey))
+                },
+            )
         }
         composable<Route.MyTBA> {
             MyTBAScreen()
@@ -45,6 +51,25 @@ fun TBANavHost(
         composable<Screen.EventDetail> {
             EventDetailScreen(
                 onNavigateBack = { navController.popBackStack() },
+                onNavigateToTeam = { teamKey ->
+                    navController.navigate(Screen.TeamDetail(teamKey))
+                },
+                onNavigateToMatch = { matchKey ->
+                    navController.navigate(Screen.MatchDetail(matchKey))
+                },
+            )
+        }
+        composable<Screen.MatchDetail> {
+            MatchDetailScreen(
+                onNavigateBack = { navController.popBackStack() },
+            )
+        }
+        composable<Screen.DistrictDetail> {
+            DistrictDetailScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToEvent = { eventKey ->
+                    navController.navigate(Screen.EventDetail(eventKey))
+                },
             )
         }
         composable<Screen.TeamDetail> {
