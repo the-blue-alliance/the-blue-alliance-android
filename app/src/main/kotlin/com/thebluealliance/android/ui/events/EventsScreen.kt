@@ -19,6 +19,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -95,6 +96,7 @@ fun EventsScreen(
                     } else {
                         EventsList(
                             eventsByWeek = state.eventsByWeek,
+                            favoriteEventKeys = state.favoriteEventKeys,
                             onEventClick = onNavigateToEvent,
                             listState = listState,
                         )
@@ -139,10 +141,34 @@ private fun YearSelector(
 @Composable
 private fun EventsList(
     eventsByWeek: Map<Int?, List<Event>>,
+    favoriteEventKeys: Set<String>,
     onEventClick: (String) -> Unit,
     listState: LazyListState,
 ) {
+    val allEvents = eventsByWeek.values.flatten()
+    val favoriteEvents = if (favoriteEventKeys.isNotEmpty()) {
+        allEvents.filter { it.key in favoriteEventKeys }
+    } else {
+        emptyList()
+    }
+
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+        if (favoriteEvents.isNotEmpty()) {
+            item(key = "favorites_header") {
+                Text(
+                    text = "Favorites",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                )
+            }
+            items(favoriteEvents, key = { "fav_${it.key}" }) { event ->
+                EventItem(event = event, onClick = { onEventClick(event.key) })
+            }
+            item(key = "favorites_divider") {
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            }
+        }
         eventsByWeek.forEach { (week, events) ->
             item(key = "header_$week") {
                 Text(

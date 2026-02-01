@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.EventRepository
+import com.thebluealliance.android.data.repository.MyTBARepository
+import com.thebluealliance.android.domain.model.ModelType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,6 +23,7 @@ import javax.inject.Inject
 class EventsViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val tbaApi: TbaApi,
+    private val myTBARepository: MyTBARepository,
 ) : ViewModel() {
 
     private val _maxYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
@@ -40,13 +43,18 @@ class EventsViewModel @Inject constructor(
             combine(
                 eventRepository.observeEventsForYear(year),
                 _hasLoaded,
-            ) { events, hasLoaded ->
+                myTBARepository.observeFavorites(),
+            ) { events, hasLoaded, favorites ->
                 if (events.isEmpty() && !hasLoaded) {
                     EventsUiState.Loading
                 } else {
                     val grouped = events.groupBy { it.week }
                         .toSortedMap(compareBy { it ?: Int.MAX_VALUE })
-                    EventsUiState.Success(grouped)
+                    val favoriteEventKeys = favorites
+                        .filter { it.modelType == ModelType.EVENT }
+                        .map { it.modelKey }
+                        .toSet()
+                    EventsUiState.Success(grouped, favoriteEventKeys)
                 }
             }
         }
