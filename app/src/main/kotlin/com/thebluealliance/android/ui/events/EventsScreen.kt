@@ -27,6 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Event
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -170,13 +173,28 @@ private fun EventItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        val dateRange = listOfNotNull(event.startDate, event.endDate).joinToString(" - ")
-        if (dateRange.isNotEmpty()) {
+        val dateRange = formatEventDateRange(event.startDate, event.endDate)
+        if (dateRange != null) {
             Text(
                 text = dateRange,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+    }
+}
+
+private val fullFormat = DateTimeFormatter.ofPattern("EEE, MMM d, yyyy", Locale.US)
+private val noYearFormat = DateTimeFormatter.ofPattern("EEE, MMM d", Locale.US)
+
+private fun formatEventDateRange(startDate: String?, endDate: String?): String? {
+    if (startDate == null) return null
+    val start = LocalDate.parse(startDate)
+    val end = endDate?.let { LocalDate.parse(it) }
+    if (end == null || start == end) return start.format(fullFormat)
+    return if (start.year == end.year) {
+        "${start.format(noYearFormat)} - ${end.format(fullFormat)}"
+    } else {
+        "${start.format(fullFormat)} - ${end.format(fullFormat)}"
     }
 }
