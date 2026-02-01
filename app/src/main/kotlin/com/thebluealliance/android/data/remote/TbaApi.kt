@@ -6,12 +6,19 @@ import retrofit2.http.Path
 
 interface TbaApi {
 
+    // Status
+    @GET("api/v3/status")
+    suspend fun getStatus(): ApiStatusDto
+
     // Teams
     @GET("api/v3/teams/{page_num}")
     suspend fun getTeams(@Path("page_num") page: Int): List<TeamDto>
 
     @GET("api/v3/team/{team_key}")
     suspend fun getTeam(@Path("team_key") teamKey: String): TeamDto
+
+    @GET("api/v3/team/{team_key}/years_participated")
+    suspend fun getTeamYearsParticipated(@Path("team_key") teamKey: String): List<Int>
 
     @GET("api/v3/event/{event_key}/teams")
     suspend fun getEventTeams(@Path("event_key") eventKey: String): List<TeamDto>

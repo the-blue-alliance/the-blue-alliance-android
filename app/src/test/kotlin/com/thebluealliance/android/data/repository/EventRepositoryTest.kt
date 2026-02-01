@@ -1,6 +1,7 @@
 package com.thebluealliance.android.data.repository
 
 import app.cash.turbine.test
+import com.thebluealliance.android.data.local.TBADatabase
 import com.thebluealliance.android.data.local.dao.AllianceDao
 import com.thebluealliance.android.data.local.dao.AwardDao
 import com.thebluealliance.android.data.local.dao.EventDao
@@ -22,13 +23,18 @@ import org.junit.jupiter.api.Test
 class EventRepositoryTest {
 
     private val api: TbaApi = mockk()
+    private val db: TBADatabase = mockk(relaxed = true) {
+        val executor = java.util.concurrent.Executors.newSingleThreadExecutor()
+        every { queryExecutor } returns executor
+        every { transactionExecutor } returns executor
+    }
     private val eventDao: EventDao = mockk(relaxUnitFun = true)
     private val awardDao: AwardDao = mockk(relaxUnitFun = true)
     private val rankingDao: RankingDao = mockk(relaxUnitFun = true)
     private val allianceDao: AllianceDao = mockk(relaxUnitFun = true)
     private val eventTeamDao: EventTeamDao = mockk(relaxUnitFun = true)
 
-    private val repo = EventRepository(api, eventDao, awardDao, rankingDao, allianceDao, eventTeamDao)
+    private val repo = EventRepository(api, db, eventDao, awardDao, rankingDao, allianceDao, eventTeamDao)
 
     @Test
     fun `refreshEventsForYear fetches from API and inserts into DAO`() = runTest {
@@ -51,6 +57,7 @@ class EventRepositoryTest {
         repo.refreshEventsForYear(2024)
 
         coVerify(exactly = 1) { api.getEventsForYear(2024) }
+        coVerify(exactly = 1) { eventDao.deleteByYear(2024) }
         coVerify(exactly = 1) { eventDao.insertAll(any()) }
 
         val inserted = insertedSlot.captured

@@ -12,6 +12,9 @@ interface MediaDao {
     @Query("SELECT * FROM media WHERE teamKey = :teamKey AND year = :year")
     fun observeByTeamYear(teamKey: String, year: Int): Flow<List<MediaEntity>>
 
+    @Query("DELETE FROM media WHERE teamKey = :teamKey AND year = :year")
+    suspend fun deleteByTeamYear(teamKey: String, year: Int)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(media: List<MediaEntity>)
 }

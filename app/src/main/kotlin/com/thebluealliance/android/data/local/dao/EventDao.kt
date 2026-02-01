@@ -24,6 +24,12 @@ interface EventDao {
     @Query("SELECT * FROM events WHERE name LIKE '%' || :query || '%' OR key LIKE '%' || :query || '%' OR shortName LIKE '%' || :query || '%' OR city LIKE '%' || :query || '%' ORDER BY year DESC, startDate ASC LIMIT 50")
     fun search(query: String): Flow<List<EventEntity>>
 
+    @Query("DELETE FROM events WHERE year = :year")
+    suspend fun deleteByYear(year: Int)
+
+    @Query("DELETE FROM events WHERE district = :districtKey")
+    suspend fun deleteByDistrict(districtKey: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(events: List<EventEntity>)
 }

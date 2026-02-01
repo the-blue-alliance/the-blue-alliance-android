@@ -43,11 +43,13 @@ fun EventsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
+    val maxYear by viewModel.maxYear.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
     Column(modifier = Modifier.fillMaxSize()) {
         YearSelector(
             selectedYear = selectedYear,
+            maxYear = maxYear,
             onYearSelected = viewModel::selectYear,
         )
 
@@ -94,10 +96,11 @@ fun EventsScreen(
 @Composable
 private fun YearSelector(
     selectedYear: Int,
+    maxYear: Int,
     onYearSelected: (Int) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val years = (2024 downTo 1992).toList()
+    val years = (maxYear downTo 1992).toList()
 
     Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
         TextButton(onClick = { expanded = true }) {

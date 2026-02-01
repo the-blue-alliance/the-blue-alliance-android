@@ -1,5 +1,7 @@
 package com.thebluealliance.android.data.repository
 
+import androidx.room.withTransaction
+import com.thebluealliance.android.data.local.TBADatabase
 import com.thebluealliance.android.data.local.dao.DistrictDao
 import com.thebluealliance.android.data.local.dao.DistrictRankingDao
 import com.thebluealliance.android.data.mappers.toDomain
@@ -15,6 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class DistrictRepository @Inject constructor(
     private val api: TbaApi,
+    private val db: TBADatabase,
     private val districtDao: DistrictDao,
     private val districtRankingDao: DistrictRankingDao,
 ) {
@@ -29,12 +32,17 @@ class DistrictRepository @Inject constructor(
 
     suspend fun refreshDistrictsForYear(year: Int) {
         val dtos = api.getDistrictsForYear(year)
-        districtDao.insertAll(dtos.map { it.toEntity() })
+        db.withTransaction {
+            districtDao.deleteByYear(year)
+            districtDao.insertAll(dtos.map { it.toEntity() })
+        }
     }
 
     suspend fun refreshDistrictRankings(districtKey: String) {
         val dtos = api.getDistrictRankings(districtKey) ?: return
-        districtRankingDao.deleteByDistrict(districtKey)
-        districtRankingDao.insertAll(dtos.map { it.toEntity(districtKey) })
+        db.withTransaction {
+            districtRankingDao.deleteByDistrict(districtKey)
+            districtRankingDao.insertAll(dtos.map { it.toEntity(districtKey) })
+        }
     }
 }

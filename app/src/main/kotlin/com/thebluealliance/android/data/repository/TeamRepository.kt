@@ -1,5 +1,7 @@
 package com.thebluealliance.android.data.repository
 
+import androidx.room.withTransaction
+import com.thebluealliance.android.data.local.TBADatabase
 import com.thebluealliance.android.data.local.dao.EventTeamDao
 import com.thebluealliance.android.data.local.dao.MediaDao
 import com.thebluealliance.android.data.local.dao.TeamDao
@@ -17,6 +19,7 @@ import javax.inject.Singleton
 @Singleton
 class TeamRepository @Inject constructor(
     private val api: TbaApi,
+    private val db: TBADatabase,
     private val teamDao: TeamDao,
     private val mediaDao: MediaDao,
     private val eventTeamDao: EventTeamDao,
@@ -47,10 +50,11 @@ class TeamRepository @Inject constructor(
     suspend fun refreshEventTeams(eventKey: String) {
         try {
             val dtos = api.getEventTeams(eventKey)
-            teamDao.insertAll(dtos.map { it.toEntity() })
-            val eventTeams = dtos.map { EventTeamEntity(eventKey = eventKey, teamKey = it.key) }
-            eventTeamDao.deleteByEvent(eventKey)
-            eventTeamDao.insertAll(eventTeams)
+            db.withTransaction {
+                teamDao.insertAll(dtos.map { it.toEntity() })
+                eventTeamDao.deleteByEvent(eventKey)
+                eventTeamDao.insertAll(dtos.map { EventTeamEntity(eventKey = eventKey, teamKey = it.key) })
+            }
         } catch (_: Exception) { }
     }
 
@@ -61,6 +65,9 @@ class TeamRepository @Inject constructor(
 
     suspend fun refreshTeamMedia(teamKey: String, year: Int) {
         val dtos = api.getTeamMedia(teamKey, year)
-        mediaDao.insertAll(dtos.map { it.toEntity(teamKey, year) })
+        db.withTransaction {
+            mediaDao.deleteByTeamYear(teamKey, year)
+            mediaDao.insertAll(dtos.map { it.toEntity(teamKey, year) })
+        }
     }
 }

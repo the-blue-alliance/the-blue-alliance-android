@@ -12,6 +12,9 @@ interface AwardDao {
     @Query("SELECT * FROM awards WHERE eventKey = :eventKey")
     fun observeByEvent(eventKey: String): Flow<List<AwardEntity>>
 
+    @Query("DELETE FROM awards WHERE eventKey = :eventKey")
+    suspend fun deleteByEvent(eventKey: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(awards: List<AwardEntity>)
 }

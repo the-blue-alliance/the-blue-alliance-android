@@ -1,5 +1,7 @@
 package com.thebluealliance.android.data.repository
 
+import androidx.room.withTransaction
+import com.thebluealliance.android.data.local.TBADatabase
 import com.thebluealliance.android.data.local.dao.MatchDao
 import com.thebluealliance.android.data.mappers.toDomain
 import com.thebluealliance.android.data.mappers.toEntity
@@ -13,6 +15,7 @@ import javax.inject.Singleton
 @Singleton
 class MatchRepository @Inject constructor(
     private val api: TbaApi,
+    private val db: TBADatabase,
     private val matchDao: MatchDao,
 ) {
     fun observeEventMatches(eventKey: String): Flow<List<Match>> =
@@ -31,7 +34,10 @@ class MatchRepository @Inject constructor(
     suspend fun refreshEventMatches(eventKey: String) {
         try {
             val dtos = api.getEventMatches(eventKey)
-            matchDao.insertAll(dtos.map { it.toEntity() })
+            db.withTransaction {
+                matchDao.deleteByEvent(eventKey)
+                matchDao.insertAll(dtos.map { it.toEntity() })
+            }
         } catch (_: Exception) { }
     }
 }

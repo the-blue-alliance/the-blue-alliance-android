@@ -15,7 +15,15 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarBorder
@@ -58,6 +66,8 @@ fun TeamDetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()
+    val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
+    val yearsParticipated by viewModel.yearsParticipated.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState(pageCount = { TABS.size })
     val coroutineScope = rememberCoroutineScope()
 
@@ -109,7 +119,13 @@ fun TeamDetailScreen(
             ) { page ->
                 when (page) {
                     0 -> InfoTab(uiState.team)
-                    1 -> EventsTab(uiState.events, onNavigateToEvent)
+                    1 -> EventsTab(
+                        events = uiState.events,
+                        selectedYear = selectedYear,
+                        yearsParticipated = yearsParticipated,
+                        onYearSelected = viewModel::selectYear,
+                        onNavigateToEvent = onNavigateToEvent,
+                    )
                     2 -> MediaTab(uiState.media)
                 }
             }
@@ -176,44 +192,74 @@ private fun InfoTab(team: Team?) {
 }
 
 @Composable
-private fun EventsTab(events: List<Event>?, onNavigateToEvent: (String) -> Unit) {
-    if (events == null) {
-        LoadingBox()
-        return
-    }
-    if (events.isEmpty()) {
-        EmptyBox("No events")
-        return
-    }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(events, key = { it.key }) { event ->
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onNavigateToEvent(event.key) }
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-            ) {
-                Text(
-                    text = event.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
-                )
-                val location = listOfNotNull(event.city, event.state, event.country)
-                    .joinToString(", ")
-                if (location.isNotEmpty()) {
+private fun EventsTab(
+    events: List<Event>?,
+    selectedYear: Int,
+    yearsParticipated: List<Int>,
+    onYearSelected: (Int) -> Unit,
+    onNavigateToEvent: (String) -> Unit,
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        if (yearsParticipated.isNotEmpty()) {
+            var expanded by remember { mutableStateOf(false) }
+            Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
+                TextButton(onClick = { expanded = true }) {
                     Text(
-                        text = location,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        text = selectedYear.toString(),
+                        style = MaterialTheme.typography.titleMedium,
                     )
+                    Icon(Icons.Default.ArrowDropDown, contentDescription = "Select year")
                 }
-                val dateRange = listOfNotNull(event.startDate, event.endDate).joinToString(" - ")
-                if (dateRange.isNotEmpty()) {
-                    Text(
-                        text = dateRange,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                    yearsParticipated.forEach { year ->
+                        DropdownMenuItem(
+                            text = { Text(year.toString()) },
+                            onClick = {
+                                onYearSelected(year)
+                                expanded = false
+                            },
+                        )
+                    }
+                }
+            }
+        }
+
+        if (events == null) {
+            LoadingBox()
+        } else if (events.isEmpty()) {
+            EmptyBox("No events for $selectedYear")
+        } else {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(events, key = { it.key }) { event ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onNavigateToEvent(event.key) }
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                    ) {
+                        Text(
+                            text = event.name,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium,
+                        )
+                        val location = listOfNotNull(event.city, event.state, event.country)
+                            .joinToString(", ")
+                        if (location.isNotEmpty()) {
+                            Text(
+                                text = location,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        val dateRange = listOfNotNull(event.startDate, event.endDate).joinToString(" - ")
+                        if (dateRange.isNotEmpty()) {
+                            Text(
+                                text = dateRange,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
                 }
             }
         }

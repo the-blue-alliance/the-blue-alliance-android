@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
+import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.data.repository.TeamRepository
+import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +30,7 @@ class EventDetailViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val teamRepository: TeamRepository,
     private val matchRepository: MatchRepository,
+    private val myTBARepository: MyTBARepository,
 ) : ViewModel() {
 
     private val eventKey: String = savedStateHandle.toRoute<Screen.EventDetail>().eventKey
@@ -62,8 +65,23 @@ class EventDetailViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventDetailUiState())
 
+    val isFavorite: StateFlow<Boolean> = myTBARepository.isFavorite(eventKey, ModelType.EVENT)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
     init {
         refreshAll()
+    }
+
+    fun toggleFavorite() {
+        viewModelScope.launch {
+            try {
+                if (isFavorite.value) {
+                    myTBARepository.removeFavorite(eventKey, ModelType.EVENT)
+                } else {
+                    myTBARepository.addFavorite(eventKey, ModelType.EVENT)
+                }
+            } catch (_: Exception) {}
+        }
     }
 
     fun refreshAll() {
