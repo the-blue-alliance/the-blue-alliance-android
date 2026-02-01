@@ -152,8 +152,8 @@ private fun InfoTab(event: Event?) {
                 )
             }
         }
-        val dateRange = listOfNotNull(event.startDate, event.endDate).joinToString(" - ")
-        if (dateRange.isNotEmpty()) {
+        val dateRange = formatEventDateRange(event.startDate, event.endDate)
+        if (dateRange != null) {
             item {
                 Text(
                     text = dateRange,
