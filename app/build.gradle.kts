@@ -38,6 +38,7 @@ android {
         debug {
             applicationIdSuffix = ".dev"
             buildConfigField("String", "TBA_BASE_URL", "\"http://10.0.2.2:8080/\"")
+            buildConfigField("String", "TBA_API_KEY", "\"${localProperties.getProperty("tba.api.key.debug", localProperties.getProperty("tba.api.key", ""))}\"")
         }
         release {
             isMinifyEnabled = true

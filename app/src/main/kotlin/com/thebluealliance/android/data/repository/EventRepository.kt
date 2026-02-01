@@ -1,5 +1,7 @@
 package com.thebluealliance.android.data.repository
 
+import androidx.room.withTransaction
+import com.thebluealliance.android.data.local.TBADatabase
 import com.thebluealliance.android.data.local.dao.AllianceDao
 import com.thebluealliance.android.data.local.dao.AwardDao
 import com.thebluealliance.android.data.local.dao.EventDao
@@ -23,6 +25,7 @@ import javax.inject.Singleton
 @Singleton
 class EventRepository @Inject constructor(
     private val api: TbaApi,
+    private val db: TBADatabase,
     private val eventDao: EventDao,
     private val awardDao: AwardDao,
     private val rankingDao: RankingDao,
@@ -61,10 +64,11 @@ class EventRepository @Inject constructor(
     suspend fun refreshTeamEvents(teamKey: String, year: Int) {
         try {
             val dtos = api.getTeamEvents(teamKey, year)
-            eventDao.insertAll(dtos.map { it.toEntity() })
-            val eventTeams = dtos.map { EventTeamEntity(eventKey = it.key, teamKey = teamKey) }
-            eventTeamDao.deleteByTeam(teamKey)
-            eventTeamDao.insertAll(eventTeams)
+            db.withTransaction {
+                eventDao.insertAll(dtos.map { it.toEntity() })
+                eventTeamDao.deleteByTeam(teamKey)
+                eventTeamDao.insertAll(dtos.map { EventTeamEntity(eventKey = it.key, teamKey = teamKey) })
+            }
         } catch (_: Exception) { }
     }
 
@@ -74,35 +78,48 @@ class EventRepository @Inject constructor(
     suspend fun refreshDistrictEvents(districtKey: String) {
         try {
             val dtos = api.getDistrictEvents(districtKey)
-            eventDao.insertAll(dtos.map { it.toEntity() })
+            db.withTransaction {
+                eventDao.deleteByDistrict(districtKey)
+                eventDao.insertAll(dtos.map { it.toEntity() })
+            }
         } catch (_: Exception) { }
     }
 
     suspend fun refreshEventsForYear(year: Int) {
         val dtos = api.getEventsForYear(year)
-        eventDao.insertAll(dtos.map { it.toEntity() })
+        db.withTransaction {
+            eventDao.deleteByYear(year)
+            eventDao.insertAll(dtos.map { it.toEntity() })
+        }
     }
 
     suspend fun refreshEventAwards(eventKey: String) {
         try {
             val dtos = api.getEventAwards(eventKey)
-            awardDao.insertAll(dtos.flatMap { it.toEntities() })
+            db.withTransaction {
+                awardDao.deleteByEvent(eventKey)
+                awardDao.insertAll(dtos.flatMap { it.toEntities() })
+            }
         } catch (_: Exception) { }
     }
 
     suspend fun refreshEventRankings(eventKey: String) {
         try {
             val response = api.getEventRankings(eventKey)
-            rankingDao.deleteByEvent(eventKey)
-            rankingDao.insertAll(response.rankings.map { it.toEntity(eventKey) })
+            db.withTransaction {
+                rankingDao.deleteByEvent(eventKey)
+                rankingDao.insertAll(response.rankings.map { it.toEntity(eventKey) })
+            }
         } catch (_: Exception) { }
     }
 
     suspend fun refreshEventAlliances(eventKey: String) {
         try {
             val dtos = api.getEventAlliances(eventKey)
-            allianceDao.deleteByEvent(eventKey)
-            allianceDao.insertAll(dtos.mapIndexed { index, dto -> dto.toEntity(eventKey, index + 1) })
+            db.withTransaction {
+                allianceDao.deleteByEvent(eventKey)
+                allianceDao.insertAll(dtos.mapIndexed { index, dto -> dto.toEntity(eventKey, index + 1) })
+            }
         } catch (_: Exception) { }
     }
 }

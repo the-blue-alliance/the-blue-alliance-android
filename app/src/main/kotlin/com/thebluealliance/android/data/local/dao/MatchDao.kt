@@ -15,6 +15,9 @@ interface MatchDao {
     @Query("SELECT * FROM matches WHERE key = :key")
     fun observe(key: String): Flow<MatchEntity?>
 
+    @Query("DELETE FROM matches WHERE eventKey = :eventKey")
+    suspend fun deleteByEvent(eventKey: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(matches: List<MatchEntity>)
 }
