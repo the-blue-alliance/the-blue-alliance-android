@@ -21,6 +21,9 @@ class TeamRepository @Inject constructor(
     private val mediaDao: MediaDao,
     private val eventTeamDao: EventTeamDao,
 ) {
+    fun searchTeams(query: String): Flow<List<Team>> =
+        teamDao.search(query).map { list -> list.map { it.toDomain() } }
+
     fun observeAllTeams(): Flow<List<Team>> =
         teamDao.observeAll().map { list -> list.map { it.toDomain() } }
 

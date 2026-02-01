@@ -29,6 +29,9 @@ class EventRepository @Inject constructor(
     private val allianceDao: AllianceDao,
     private val eventTeamDao: EventTeamDao,
 ) {
+    fun searchEvents(query: String): Flow<List<Event>> =
+        eventDao.search(query).map { list -> list.map { it.toDomain() } }
+
     fun observeEventsForYear(year: Int): Flow<List<Event>> =
         eventDao.observeByYear(year).map { list -> list.map { it.toDomain() } }
 
