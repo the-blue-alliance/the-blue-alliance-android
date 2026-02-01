@@ -37,9 +37,8 @@ class TeamsViewModel @Inject constructor(
             _isRefreshing.value = true
             try {
                 (0..19).map { page ->
-                    launch { teamRepository.refreshTeamsPage(page) }
+                    launch { try { teamRepository.refreshTeamsPage(page) } catch (_: Exception) {} }
                 }.forEach { it.join() }
-            } catch (_: Exception) {
             } finally {
                 _isRefreshing.value = false
             }
