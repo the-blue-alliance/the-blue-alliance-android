@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Map
@@ -10,20 +11,25 @@ import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import com.thebluealliance.android.MainActivity
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.thebluealliance.android.navigation.Route
+import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.navigation.TBANavHost
 import com.thebluealliance.android.ui.theme.TBATheme
 
@@ -41,10 +47,12 @@ val TOP_LEVEL_DESTINATIONS = listOf(
     TopLevelDestination(Route.MyTBA, "myTBA", Icons.Filled.Star, Icons.Outlined.StarBorder),
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TBAApp() {
+fun TBAApp(activity: MainActivity? = null) {
     TBATheme {
         val navController = rememberNavController()
+        activity?.setNavController(navController)
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
@@ -53,6 +61,23 @@ fun TBAApp() {
         }
 
         Scaffold(
+            topBar = {
+                if (showBottomBar) {
+                    TopAppBar(
+                        title = {
+                            val dest = TOP_LEVEL_DESTINATIONS.firstOrNull { dest ->
+                                currentDestination?.hasRoute(dest.route::class) == true
+                            }
+                            Text(dest?.label ?: "")
+                        },
+                        actions = {
+                            IconButton(onClick = { navController.navigate(Screen.Search) }) {
+                                Icon(Icons.Default.Search, contentDescription = "Search")
+                            }
+                        },
+                    )
+                }
+            },
             bottomBar = {
                 if (showBottomBar) {
                     NavigationBar {
