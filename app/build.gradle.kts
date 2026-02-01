@@ -1,4 +1,5 @@
 import java.io.FileInputStream
+import java.time.Instant
 import java.util.Properties
 
 plugins {
@@ -31,6 +32,8 @@ android {
 
         buildConfigField("String", "TBA_BASE_URL", "\"https://www.thebluealliance.com/\"")
         buildConfigField("String", "TBA_API_KEY", "\"${localProperties.getProperty("tba.api.key", "")}\"")
+        buildConfigField("String", "BUILD_TIME", "\"${Instant.now()}\"")
+        buildConfigField("String", "GIT_HASH", "\"${providers.exec { commandLine("git", "rev-parse", "--short", "HEAD") }.standardOutput.asText.get().trim()}\"")
 
     }
 

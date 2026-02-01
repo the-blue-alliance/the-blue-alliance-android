@@ -30,6 +30,19 @@ adb shell input tap <x> <y>
 adb shell input keyevent KEYCODE_BACK
 ```
 
+### Tap coordinate tips
+
+The emulator is 1080x2400 device pixels. Screenshots displayed in conversation may show a
+smaller size (e.g. 900x2000) with a note like "Multiply coordinates by 1.20 to map to
+original image." `adb shell input tap` uses the real 1080x2400 device pixel coordinates.
+
+- The status bar is ~50px, the Material 3 top app bar is ~140px, so the first content row
+  starts around **y=300-400** in device pixels.
+- Bottom nav bar centers around **y=2300**.
+- For list rows below the top app bar, first row center ≈ y=350, second ≈ y=450, etc.
+- When taps don't seem to register, the content is probably lower than expected — try
+  increasing y by 100-150px.
+
 ## TODO
 
 - **TBA API key via Firebase Remote Config:** The old app fetched the read API key (`apiv3_auth_key`) at runtime from Firebase Remote Config, keeping it out of the APK. The current rewrite embeds it at build time via `local.properties` → `BuildConfig`. Before production release, restore the Remote Config approach so the key can be rotated without rebuilding.

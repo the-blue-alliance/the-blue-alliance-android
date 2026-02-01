@@ -9,13 +9,14 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Map
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Map
-import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,7 +56,7 @@ val TOP_LEVEL_DESTINATIONS = listOf(
     TopLevelDestination(Route.Events, "Events", Icons.Filled.CalendarMonth, Icons.Outlined.CalendarMonth),
     TopLevelDestination(Route.Teams, "Teams", Icons.Filled.Groups, Icons.Outlined.Groups),
     TopLevelDestination(Route.Districts, "Districts", Icons.Filled.Map, Icons.Outlined.Map),
-    TopLevelDestination(Route.MyTBA, "myTBA", Icons.Filled.Star, Icons.Outlined.StarBorder),
+    TopLevelDestination(Route.More, "More", Icons.Filled.Menu, Icons.Outlined.Menu),
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,18 +78,34 @@ fun TBAApp(activity: MainActivity? = null) {
         var districtsYearDropdownExpanded by remember { mutableStateOf(false) }
         var onDistrictsYearSelected by remember { mutableStateOf<((Int) -> Unit)?>(null) }
 
+        val moreSubScreens = listOf(Screen.MyTBA::class, Screen.Settings::class)
+        val isOnMoreSubScreen = moreSubScreens.any { currentDestination?.hasRoute(it) == true }
         val showBottomBar = TOP_LEVEL_DESTINATIONS.any { dest ->
             currentDestination?.hasRoute(dest.route::class) == true
-        }
+        } || isOnMoreSubScreen
 
         Scaffold(
             topBar = {
                 if (showBottomBar) {
                     TopAppBar(
+                        navigationIcon = {
+                            if (isOnMoreSubScreen) {
+                                IconButton(onClick = { navController.popBackStack() }) {
+                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                                }
+                            }
+                        },
                         title = {
                             val isEvents = currentDestination?.hasRoute(Route.Events::class) == true
                             val isDistricts = currentDestination?.hasRoute(Route.Districts::class) == true
-                            if (isEvents && eventsSelectedYear > 0) {
+                            if (isOnMoreSubScreen) {
+                                val title = when {
+                                    currentDestination?.hasRoute(Screen.MyTBA::class) == true -> "myTBA"
+                                    currentDestination?.hasRoute(Screen.Settings::class) == true -> "Settings"
+                                    else -> "More"
+                                }
+                                Text(title)
+                            } else if (isEvents && eventsSelectedYear > 0) {
                                 Row(
                                     modifier = Modifier.clickable {
                                         eventsYearDropdownExpanded = true
@@ -161,7 +178,8 @@ fun TBAApp(activity: MainActivity? = null) {
                 if (showBottomBar) {
                     NavigationBar {
                         TOP_LEVEL_DESTINATIONS.forEach { dest ->
-                            val selected = currentDestination?.hasRoute(dest.route::class) == true
+                            val selected = currentDestination?.hasRoute(dest.route::class) == true ||
+                                (dest.route is Route.More && isOnMoreSubScreen)
                             NavigationBarItem(
                                 selected = selected,
                                 onClick = {
