@@ -33,7 +33,7 @@ class DistrictRepository @Inject constructor(
     }
 
     suspend fun refreshDistrictRankings(districtKey: String) {
-        val dtos = api.getDistrictRankings(districtKey)
+        val dtos = api.getDistrictRankings(districtKey) ?: return
         districtRankingDao.deleteByDistrict(districtKey)
         districtRankingDao.insertAll(dtos.map { it.toEntity(districtKey) })
     }
