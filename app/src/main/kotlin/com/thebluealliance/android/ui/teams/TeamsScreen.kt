@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -59,10 +60,48 @@ fun TeamsScreen(
             is TeamsUiState.Success -> {
                 if (state.teams.isEmpty()) {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("No teams found")
+                        if (!isRefreshing) {
+                            Text("No teams found")
+                        }
                     }
                 } else {
+                    val favoriteTeams = if (state.favoriteTeamKeys.isNotEmpty()) {
+                        state.teams.filter { it.key in state.favoriteTeamKeys }
+                    } else {
+                        emptyList()
+                    }
+
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        if (favoriteTeams.isNotEmpty()) {
+                            item(key = "favorites_header") {
+                                Text(
+                                    text = "Favorites",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(
+                                        horizontal = 16.dp,
+                                        vertical = 8.dp,
+                                    ),
+                                )
+                            }
+                            items(favoriteTeams, key = { "fav_${it.key}" }) { team ->
+                                TeamItem(team = team, onClick = { onNavigateToTeam(team.key) })
+                            }
+                            item(key = "favorites_divider") {
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                            }
+                            item(key = "all_teams_header") {
+                                Text(
+                                    text = "All Teams",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(
+                                        horizontal = 16.dp,
+                                        vertical = 8.dp,
+                                    ),
+                                )
+                            }
+                        }
                         items(state.teams, key = { it.key }) { team ->
                             TeamItem(team = team, onClick = { onNavigateToTeam(team.key) })
                         }
