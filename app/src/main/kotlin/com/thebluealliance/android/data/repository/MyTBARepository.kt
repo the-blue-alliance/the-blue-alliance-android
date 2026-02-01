@@ -63,6 +63,7 @@ class MyTBARepository @Inject constructor(
     }
 
     suspend fun addFavorite(modelKey: String, modelType: Int) {
+        favoriteDao.insertAll(listOf(FavoriteEntity(modelKey = modelKey, modelType = modelType)))
         try {
             clientApi.updateModelPreferences(
                 ModelPreferenceRequestDto(
@@ -71,11 +72,11 @@ class MyTBARepository @Inject constructor(
                     favorite = true,
                 )
             )
-            favoriteDao.insertAll(listOf(FavoriteEntity(modelKey = modelKey, modelType = modelType)))
         } catch (_: Exception) { }
     }
 
     suspend fun removeFavorite(modelKey: String, modelType: Int) {
+        favoriteDao.delete(modelKey, modelType)
         try {
             clientApi.updateModelPreferences(
                 ModelPreferenceRequestDto(
@@ -84,7 +85,6 @@ class MyTBARepository @Inject constructor(
                     favorite = false,
                 )
             )
-            favoriteDao.delete(modelKey, modelType)
         } catch (_: Exception) { }
     }
 
