@@ -6,11 +6,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.EmojiEvents
+import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.StarBorder
@@ -52,7 +52,7 @@ data class TopLevelDestination(
 )
 
 val TOP_LEVEL_DESTINATIONS = listOf(
-    TopLevelDestination(Route.Events, "Events", Icons.Filled.EmojiEvents, Icons.Outlined.EmojiEvents),
+    TopLevelDestination(Route.Events, "Events", Icons.Filled.CalendarMonth, Icons.Outlined.CalendarMonth),
     TopLevelDestination(Route.Teams, "Teams", Icons.Filled.Groups, Icons.Outlined.Groups),
     TopLevelDestination(Route.Districts, "Districts", Icons.Filled.Map, Icons.Outlined.Map),
     TopLevelDestination(Route.MyTBA, "myTBA", Icons.Filled.Star, Icons.Outlined.StarBorder),
