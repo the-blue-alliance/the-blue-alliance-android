@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -37,8 +37,11 @@ class EventsViewModel @Inject constructor(
     val uiState: StateFlow<EventsUiState> = _selectedYear
         .flatMapLatest { year ->
             _hasLoaded.value = false
-            eventRepository.observeEventsForYear(year).map { events ->
-                if (events.isEmpty() && !_hasLoaded.value) {
+            combine(
+                eventRepository.observeEventsForYear(year),
+                _hasLoaded,
+            ) { events, hasLoaded ->
+                if (events.isEmpty() && !hasLoaded) {
                     EventsUiState.Loading
                 } else {
                     val grouped = events.groupBy { it.week }
