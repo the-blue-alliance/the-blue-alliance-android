@@ -12,7 +12,9 @@ import com.thebluealliance.android.ui.matches.MatchDetailScreen
 import com.thebluealliance.android.ui.search.SearchScreen
 import com.thebluealliance.android.ui.events.EventDetailScreen
 import com.thebluealliance.android.ui.events.EventsScreen
+import com.thebluealliance.android.ui.more.MoreScreen
 import com.thebluealliance.android.ui.mytba.MyTBAScreen
+import com.thebluealliance.android.ui.settings.SettingsScreen
 import com.thebluealliance.android.ui.teams.TeamDetailScreen
 import com.thebluealliance.android.ui.teams.TeamsScreen
 
@@ -56,7 +58,13 @@ fun TBANavHost(
                 onYearState = onDistrictsYearState,
             )
         }
-        composable<Route.MyTBA> {
+        composable<Route.More> {
+            MoreScreen(
+                onNavigateToMyTBA = { navController.navigate(Screen.MyTBA) },
+                onNavigateToSettings = { navController.navigate(Screen.Settings) },
+            )
+        }
+        composable<Screen.MyTBA> {
             MyTBAScreen(
                 onSignIn = onSignIn,
                 onNavigateToTeam = { teamKey ->
@@ -67,6 +75,9 @@ fun TBANavHost(
                 },
                 scrollToTopTrigger = scrollToTopTrigger,
             )
+        }
+        composable<Screen.Settings> {
+            SettingsScreen()
         }
         composable<Screen.Search> {
             SearchScreen(
