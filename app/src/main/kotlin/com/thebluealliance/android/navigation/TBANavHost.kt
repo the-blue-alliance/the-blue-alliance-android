@@ -20,6 +20,7 @@ import com.thebluealliance.android.ui.teams.TeamsScreen
 fun TBANavHost(
     navController: NavHostController,
     onSignIn: () -> Unit,
+    scrollToTopTrigger: Int = 0,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -32,6 +33,7 @@ fun TBANavHost(
                 onNavigateToEvent = { eventKey ->
                     navController.navigate(Screen.EventDetail(eventKey))
                 },
+                scrollToTopTrigger = scrollToTopTrigger,
             )
         }
         composable<Route.Teams> {
@@ -39,6 +41,7 @@ fun TBANavHost(
                 onNavigateToTeam = { teamKey ->
                     navController.navigate(Screen.TeamDetail(teamKey))
                 },
+                scrollToTopTrigger = scrollToTopTrigger,
             )
         }
         composable<Route.Districts> {
@@ -46,6 +49,7 @@ fun TBANavHost(
                 onNavigateToDistrict = { districtKey ->
                     navController.navigate(Screen.DistrictDetail(districtKey))
                 },
+                scrollToTopTrigger = scrollToTopTrigger,
             )
         }
         composable<Route.MyTBA> {
@@ -57,6 +61,7 @@ fun TBANavHost(
                 onNavigateToEvent = { eventKey ->
                     navController.navigate(Screen.EventDetail(eventKey))
                 },
+                scrollToTopTrigger = scrollToTopTrigger,
             )
         }
         composable<Screen.Search> {
