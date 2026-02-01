@@ -21,6 +21,8 @@ fun TBANavHost(
     navController: NavHostController,
     onSignIn: () -> Unit,
     scrollToTopTrigger: Int = 0,
+    onEventsYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
+    onDistrictsYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -34,6 +36,7 @@ fun TBANavHost(
                     navController.navigate(Screen.EventDetail(eventKey))
                 },
                 scrollToTopTrigger = scrollToTopTrigger,
+                onYearState = onEventsYearState,
             )
         }
         composable<Route.Teams> {
@@ -50,6 +53,7 @@ fun TBANavHost(
                     navController.navigate(Screen.DistrictDetail(districtKey))
                 },
                 scrollToTopTrigger = scrollToTopTrigger,
+                onYearState = onDistrictsYearState,
             )
         }
         composable<Route.MyTBA> {
