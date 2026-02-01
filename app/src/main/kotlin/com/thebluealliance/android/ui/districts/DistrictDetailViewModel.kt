@@ -49,9 +49,14 @@ class DistrictDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _isRefreshing.value = true
             try {
-                launch { eventRepository.refreshDistrictEvents(districtKey) }
-                launch { districtRepository.refreshDistrictRankings(districtKey) }
-            } catch (_: Exception) {
+                val eventsJob = launch {
+                    try { eventRepository.refreshDistrictEvents(districtKey) } catch (_: Exception) { }
+                }
+                val rankingsJob = launch {
+                    try { districtRepository.refreshDistrictRankings(districtKey) } catch (_: Exception) { }
+                }
+                eventsJob.join()
+                rankingsJob.join()
             } finally {
                 _isRefreshing.value = false
             }
