@@ -32,4 +32,6 @@ object DatabaseModule {
     @Provides fun provideDistrictRankingDao(db: TBADatabase): DistrictRankingDao = db.districtRankingDao()
     @Provides fun provideMediaDao(db: TBADatabase): MediaDao = db.mediaDao()
     @Provides fun provideEventTeamDao(db: TBADatabase): EventTeamDao = db.eventTeamDao()
+    @Provides fun provideFavoriteDao(db: TBADatabase): FavoriteDao = db.favoriteDao()
+    @Provides fun provideSubscriptionDao(db: TBADatabase): SubscriptionDao = db.subscriptionDao()
 }

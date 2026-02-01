@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "238940779399",
+    "firebase_url": "https://gregmarra-tba-dev.firebaseio.com",
+    "project_id": "gregmarra-tba-dev",
+    "storage_bucket": "gregmarra-tba-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:238940779399:android:placeholder",
+        "android_client_info": {
+          "package_name": "com.thebluealliance.android.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "238940779399-cbcvjid2d98takd5h3gcuksh3ckvkq74.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_Hwpysevu0Qm5ly-VHhu0-rNCAEeUn_o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "238940779399-cbcvjid2d98takd5h3gcuksh3ckvkq74.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

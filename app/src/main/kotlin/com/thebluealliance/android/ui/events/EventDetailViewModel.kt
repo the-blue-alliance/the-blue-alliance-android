@@ -70,13 +70,11 @@ class EventDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _isRefreshing.value = true
             try {
-                launch { teamRepository.refreshEventTeams(eventKey) }
-                launch { matchRepository.refreshEventMatches(eventKey) }
-                launch { eventRepository.refreshEventRankings(eventKey) }
-                launch { eventRepository.refreshEventAlliances(eventKey) }
-                launch { eventRepository.refreshEventAwards(eventKey) }
-            } catch (_: Exception) {
-                // Cached data from Room will still be shown
+                launch { try { teamRepository.refreshEventTeams(eventKey) } catch (_: Exception) {} }
+                launch { try { matchRepository.refreshEventMatches(eventKey) } catch (_: Exception) {} }
+                launch { try { eventRepository.refreshEventRankings(eventKey) } catch (_: Exception) {} }
+                launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
+                launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
             } finally {
                 _isRefreshing.value = false
             }

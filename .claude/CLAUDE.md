@@ -1,5 +1,9 @@
 # Local Development Notes
 
+## Local Backend
+
+The TBA web server (backend + frontend) is checked out at `~/codez/the-blue-alliance-2026` with its Docker container running. When the app targets the local dev server (e.g. `http://10.0.2.2:8080` in the emulator), requests go to that container.
+
 ## Build Commands
 
 ```bash

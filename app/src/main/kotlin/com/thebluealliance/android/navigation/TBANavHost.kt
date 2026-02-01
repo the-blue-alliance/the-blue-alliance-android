@@ -19,6 +19,7 @@ import com.thebluealliance.android.ui.teams.TeamsScreen
 @Composable
 fun TBANavHost(
     navController: NavHostController,
+    onSignIn: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -48,7 +49,15 @@ fun TBANavHost(
             )
         }
         composable<Route.MyTBA> {
-            MyTBAScreen()
+            MyTBAScreen(
+                onSignIn = onSignIn,
+                onNavigateToTeam = { teamKey ->
+                    navController.navigate(Screen.TeamDetail(teamKey))
+                },
+                onNavigateToEvent = { eventKey ->
+                    navController.navigate(Screen.EventDetail(eventKey))
+                },
+            )
         }
         composable<Screen.Search> {
             SearchScreen(

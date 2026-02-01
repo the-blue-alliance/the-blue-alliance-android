@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
-    // alias(libs.plugins.google.services) // Enable when google-services.json is added
+    alias(libs.plugins.google.services)
 }
 
 val localProperties = Properties().apply {
@@ -113,6 +113,15 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+
+    // Credentials (Google Sign-In)
+    implementation(libs.credentials)
+    implementation(libs.credentials.play)
+    implementation(libs.googleid)
 
     // Testing
     testImplementation(libs.junit.api)

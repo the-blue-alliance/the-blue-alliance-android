@@ -51,10 +51,9 @@ class TeamDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _isRefreshing.value = true
             try {
-                launch { teamRepository.refreshTeam(teamKey) }
-                launch { eventRepository.refreshTeamEvents(teamKey, currentYear) }
-                launch { teamRepository.refreshTeamMedia(teamKey, currentYear) }
-            } catch (_: Exception) {
+                launch { try { teamRepository.refreshTeam(teamKey) } catch (_: Exception) {} }
+                launch { try { eventRepository.refreshTeamEvents(teamKey, currentYear) } catch (_: Exception) {} }
+                launch { try { teamRepository.refreshTeamMedia(teamKey, currentYear) } catch (_: Exception) {} }
             } finally {
                 _isRefreshing.value = false
             }

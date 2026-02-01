@@ -109,6 +109,7 @@ fun TBAApp(activity: MainActivity? = null) {
         ) { innerPadding ->
             TBANavHost(
                 navController = navController,
+                onSignIn = { activity?.startGoogleSignIn() },
                 modifier = Modifier.padding(innerPadding),
             )
         }
