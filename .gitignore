@@ -5,6 +5,7 @@
 
 # Keys
 *.jks
+*.keystore
 
 # Local Properties
 android/src/main/assets/tba.properties

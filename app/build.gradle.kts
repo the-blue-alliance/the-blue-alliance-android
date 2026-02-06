@@ -22,7 +22,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.thebluealliance.android"
+        applicationId = "com.thebluealliance.androidclient"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -37,13 +37,23 @@ android {
 
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file(localProperties.getProperty("release.store.file", "release.keystore"))
+            storePassword = localProperties.getProperty("release.store.password", "")
+            keyAlias = localProperties.getProperty("release.key.alias", "")
+            keyPassword = localProperties.getProperty("release.key.password", "")
+        }
+    }
+
     buildTypes {
         debug {
-            applicationIdSuffix = ".dev"
+            applicationIdSuffix = ".development"
             buildConfigField("String", "TBA_BASE_URL", "\"http://10.0.2.2:8080/\"")
             buildConfigField("String", "TBA_API_KEY", "\"${localProperties.getProperty("tba.api.key.debug", localProperties.getProperty("tba.api.key", ""))}\"")
         }
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
