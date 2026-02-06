@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.thebluealliance.android.data.remote.TbaApi
+import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.data.repository.TeamRepository
@@ -12,9 +13,12 @@ import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
@@ -30,6 +34,7 @@ class TeamDetailViewModel @Inject constructor(
     private val teamRepository: TeamRepository,
     private val eventRepository: EventRepository,
     private val myTBARepository: MyTBARepository,
+    private val authRepository: AuthRepository,
     private val tbaApi: TbaApi,
 ) : ViewModel() {
 
@@ -62,6 +67,9 @@ class TeamDetailViewModel @Inject constructor(
 
     val isFavorite: StateFlow<Boolean> = myTBARepository.isFavorite(teamKey, ModelType.TEAM)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    private val _showSignInPrompt = MutableSharedFlow<Unit>()
+    val showSignInPrompt: SharedFlow<Unit> = _showSignInPrompt.asSharedFlow()
 
     init {
         fetchYearsParticipated()
@@ -106,6 +114,10 @@ class TeamDetailViewModel @Inject constructor(
 
     fun toggleFavorite() {
         viewModelScope.launch {
+            if (!authRepository.isSignedIn()) {
+                _showSignInPrompt.emit(Unit)
+                return@launch
+            }
             try {
                 if (isFavorite.value) {
                     myTBARepository.removeFavorite(teamKey, ModelType.TEAM)

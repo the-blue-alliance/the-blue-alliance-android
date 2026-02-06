@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
@@ -11,14 +12,16 @@ import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,6 +34,7 @@ class EventDetailViewModel @Inject constructor(
     private val teamRepository: TeamRepository,
     private val matchRepository: MatchRepository,
     private val myTBARepository: MyTBARepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val eventKey: String = savedStateHandle.toRoute<Screen.EventDetail>().eventKey
@@ -68,12 +72,19 @@ class EventDetailViewModel @Inject constructor(
     val isFavorite: StateFlow<Boolean> = myTBARepository.isFavorite(eventKey, ModelType.EVENT)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
+    private val _showSignInPrompt = MutableSharedFlow<Unit>()
+    val showSignInPrompt: SharedFlow<Unit> = _showSignInPrompt.asSharedFlow()
+
     init {
         refreshAll()
     }
 
     fun toggleFavorite() {
         viewModelScope.launch {
+            if (!authRepository.isSignedIn()) {
+                _showSignInPrompt.emit(Unit)
+                return@launch
+            }
             try {
                 if (isFavorite.value) {
                     myTBARepository.removeFavorite(eventKey, ModelType.EVENT)

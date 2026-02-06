@@ -20,13 +20,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,9 +35,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -61,6 +63,7 @@ private val TABS = listOf("Info", "Events", "Media")
 fun TeamDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToEvent: (String) -> Unit,
+    onNavigateToMyTBA: () -> Unit = {},
     viewModel: TeamDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -70,6 +73,28 @@ fun TeamDetailScreen(
     val yearsParticipated by viewModel.yearsParticipated.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState(pageCount = { TABS.size })
     val coroutineScope = rememberCoroutineScope()
+
+    var showSignInDialog by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        viewModel.showSignInPrompt.collect { showSignInDialog = true }
+    }
+
+    if (showSignInDialog) {
+        AlertDialog(
+            onDismissRequest = { showSignInDialog = false },
+            title = { Text("Sign in required") },
+            text = { Text("Sign in to save your favorite teams and events.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showSignInDialog = false
+                    onNavigateToMyTBA()
+                }) { Text("Sign In") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showSignInDialog = false }) { Text("Cancel") }
+            },
+        )
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
