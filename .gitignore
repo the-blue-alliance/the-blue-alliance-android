@@ -10,7 +10,7 @@
 android/src/main/assets/tba.properties
 
 # Google Secrets
-android/**/google-services.json
+**/google-services.json
 
 # Ignore debug client library
 android/libs/tbaMobile-v9-1.19.0-SNAPSHOT-debug.jar
