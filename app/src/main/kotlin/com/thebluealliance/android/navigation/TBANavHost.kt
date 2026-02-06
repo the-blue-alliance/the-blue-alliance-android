@@ -103,6 +103,7 @@ fun TBANavHost(
                 onNavigateToMatch = { matchKey ->
                     navController.navigate(Screen.MatchDetail(matchKey))
                 },
+                onNavigateToMyTBA = { navController.navigate(Screen.MyTBA) },
             )
         }
         composable<Screen.MatchDetail>(
@@ -132,6 +133,7 @@ fun TBANavHost(
                 onNavigateToEvent = { eventKey ->
                     navController.navigate(Screen.EventDetail(eventKey))
                 },
+                onNavigateToMyTBA = { navController.navigate(Screen.MyTBA) },
             )
         }
     }
