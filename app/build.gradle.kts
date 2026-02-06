@@ -31,7 +31,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "TBA_BASE_URL", "\"https://www.thebluealliance.com/\"")
-        buildConfigField("String", "TBA_API_KEY", "\"${localProperties.getProperty("tba.api.key", "")}\"")
+        buildConfigField("String", "TBA_API_KEY", "\"\"")
         buildConfigField("String", "BUILD_TIME", "\"${Instant.now()}\"")
         buildConfigField("String", "GIT_HASH", "\"${providers.exec { commandLine("git", "rev-parse", "--short", "HEAD") }.standardOutput.asText.get().trim()}\"")
 
@@ -50,7 +50,7 @@ android {
         debug {
             applicationIdSuffix = ".development"
             buildConfigField("String", "TBA_BASE_URL", "\"http://10.0.2.2:8080/\"")
-            buildConfigField("String", "TBA_API_KEY", "\"${localProperties.getProperty("tba.api.key.debug", localProperties.getProperty("tba.api.key", ""))}\"")
+            buildConfigField("String", "TBA_API_KEY", "\"${localProperties.getProperty("tba.api.key.debug", "")}\"")
         }
         release {
             signingConfig = signingConfigs.getByName("release")
@@ -131,6 +131,7 @@ dependencies {
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.config)
 
     // Credentials (Google Sign-In)
     implementation(libs.credentials)

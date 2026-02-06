@@ -31,8 +31,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(TbaApiKeyInterceptor(BuildConfig.TBA_API_KEY))
+    fun provideOkHttpClient(apiKeyInterceptor: TbaApiKeyInterceptor): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(apiKeyInterceptor)
         .addInterceptor(
             HttpLoggingInterceptor().apply {
                 level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BASIC
