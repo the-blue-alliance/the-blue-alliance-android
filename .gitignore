@@ -34,7 +34,6 @@ gen/
 
 # Gradle files
 .gradle/
-gradle/
 build/
 out/
 

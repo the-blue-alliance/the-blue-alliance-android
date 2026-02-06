@@ -43,10 +43,6 @@ original image." `adb shell input tap` uses the real 1080x2400 device pixel coor
 - When taps don't seem to register, the content is probably lower than expected — try
   increasing y by 100-150px.
 
-## TODO
-
-- **TBA API key via Firebase Remote Config:** The old app fetched the read API key (`apiv3_auth_key`) at runtime from Firebase Remote Config, keeping it out of the APK. The current rewrite embeds it at build time via `local.properties` → `BuildConfig`. Before production release, restore the Remote Config approach so the key can be rotated without rebuilding.
-
 ## Architecture
 
 - **UI:** Jetpack Compose with Material 3, MVVM via `@HiltViewModel`
