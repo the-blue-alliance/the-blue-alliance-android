@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
 
         val googleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
-            .setServerClientId(WEB_CLIENT_ID)
+            .setServerClientId(getString(R.string.default_web_client_id))
             .build()
 
         val request = GetCredentialRequest.Builder()
@@ -86,8 +86,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    companion object {
-        // Web client ID from the Firebase project's OAuth config
-        const val WEB_CLIENT_ID = "238940779399-cbcvjid2d98takd5h3gcuksh3ckvkq74.apps.googleusercontent.com"
-    }
 }
