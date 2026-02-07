@@ -173,7 +173,6 @@ private fun EventsList(
                                 listState.animateScrollToItem(info.itemIndex)
                             }
                         },
-                        isFavorites = true,
                     )
                 }
                 items(favoriteEvents, key = { "fav_${it.key}" }) { event ->
@@ -195,7 +194,6 @@ private fun EventsList(
                                 listState.animateScrollToItem(info.itemIndex)
                             }
                         },
-                        isFavorites = false,
                     )
                 }
                 items(events, key = { it.key }) { event ->
@@ -212,7 +210,6 @@ private fun SectionHeader(
     isStuck: Boolean,
     allHeaders: List<SectionHeaderInfo>,
     onHeaderSelected: (SectionHeaderInfo) -> Unit,
-    isFavorites: Boolean,
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -230,12 +227,8 @@ private fun SectionHeader(
         ) {
             Text(
                 text = label,
-                style = if (isFavorites) {
-                    MaterialTheme.typography.titleSmall
-                } else {
-                    MaterialTheme.typography.titleMedium
-                },
-                fontWeight = if (isFavorites) FontWeight.Normal else FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
             )
             if (isStuck) {

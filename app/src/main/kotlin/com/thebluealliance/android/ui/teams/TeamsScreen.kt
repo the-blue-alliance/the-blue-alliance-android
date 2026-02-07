@@ -87,7 +87,8 @@ fun TeamsScreen(
                                 item(key = "favorites_header") {
                                     Text(
                                         text = "Favorites",
-                                        style = MaterialTheme.typography.titleSmall,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.padding(
                                             horizontal = 16.dp,
@@ -104,7 +105,8 @@ fun TeamsScreen(
                                 item(key = "all_teams_header") {
                                     Text(
                                         text = "All Teams",
-                                        style = MaterialTheme.typography.titleSmall,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.padding(
                                             horizontal = 16.dp,
