@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.ui.components.FastScrollbar
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -112,37 +113,39 @@ private fun EventsList(
         emptyList()
     }
 
-    LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-        if (favoriteEvents.isNotEmpty()) {
-            item(key = "favorites_header") {
-                Text(
-                    text = "Favorites",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                )
+    FastScrollbar(listState = listState) {
+        LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+            if (favoriteEvents.isNotEmpty()) {
+                item(key = "favorites_header") {
+                    Text(
+                        text = "Favorites",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                }
+                items(favoriteEvents, key = { "fav_${it.key}" }) { event ->
+                    EventItem(event = event, onClick = { onEventClick(event.key) })
+                }
+                item(key = "favorites_divider") {
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                }
             }
-            items(favoriteEvents, key = { "fav_${it.key}" }) { event ->
-                EventItem(event = event, onClick = { onEventClick(event.key) })
-            }
-            item(key = "favorites_divider") {
-                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-            }
-        }
-        eventsByWeek.forEach { (week, events) ->
-            item(key = "header_$week") {
-                Text(
-                    text = if (week != null) "Week $week" else "Other Events",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
-            items(events, key = { it.key }) { event ->
-                EventItem(event = event, onClick = { onEventClick(event.key) })
+            eventsByWeek.forEach { (week, events) ->
+                item(key = "header_$week") {
+                    Text(
+                        text = if (week != null) "Week $week" else "Other Events",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+                items(events, key = { it.key }) { event ->
+                    EventItem(event = event, onClick = { onEventClick(event.key) })
+                }
             }
         }
     }

@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Team
+import com.thebluealliance.android.ui.components.FastScrollbar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,39 +81,41 @@ fun TeamsScreen(
                         emptyList()
                     }
 
-                    LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-                        if (favoriteTeams.isNotEmpty()) {
-                            item(key = "favorites_header") {
-                                Text(
-                                    text = "Favorites",
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.padding(
-                                        horizontal = 16.dp,
-                                        vertical = 8.dp,
-                                    ),
-                                )
+                    FastScrollbar(listState = listState) {
+                        LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+                            if (favoriteTeams.isNotEmpty()) {
+                                item(key = "favorites_header") {
+                                    Text(
+                                        text = "Favorites",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.padding(
+                                            horizontal = 16.dp,
+                                            vertical = 8.dp,
+                                        ),
+                                    )
+                                }
+                                items(favoriteTeams, key = { "fav_${it.key}" }) { team ->
+                                    TeamItem(team = team, onClick = { onNavigateToTeam(team.key) })
+                                }
+                                item(key = "favorites_divider") {
+                                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                                }
+                                item(key = "all_teams_header") {
+                                    Text(
+                                        text = "All Teams",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.padding(
+                                            horizontal = 16.dp,
+                                            vertical = 8.dp,
+                                        ),
+                                    )
+                                }
                             }
-                            items(favoriteTeams, key = { "fav_${it.key}" }) { team ->
+                            items(state.teams, key = { it.key }) { team ->
                                 TeamItem(team = team, onClick = { onNavigateToTeam(team.key) })
                             }
-                            item(key = "favorites_divider") {
-                                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-                            }
-                            item(key = "all_teams_header") {
-                                Text(
-                                    text = "All Teams",
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.padding(
-                                        horizontal = 16.dp,
-                                        vertical = 8.dp,
-                                    ),
-                                )
-                            }
-                        }
-                        items(state.teams, key = { it.key }) { team ->
-                            TeamItem(team = team, onClick = { onNavigateToTeam(team.key) })
                         }
                     }
                 }
