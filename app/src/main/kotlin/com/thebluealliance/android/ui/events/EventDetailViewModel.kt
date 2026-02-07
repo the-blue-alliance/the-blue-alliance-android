@@ -10,6 +10,7 @@ import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.ModelType
+import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -72,8 +73,15 @@ class EventDetailViewModel @Inject constructor(
     val isFavorite: StateFlow<Boolean> = myTBARepository.isFavorite(eventKey, ModelType.EVENT)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
+    val subscription: StateFlow<Subscription?> = myTBARepository
+        .observeSubscription(eventKey, ModelType.EVENT)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
     private val _showSignInPrompt = MutableSharedFlow<Unit>()
     val showSignInPrompt: SharedFlow<Unit> = _showSignInPrompt.asSharedFlow()
+
+    private val _userMessage = MutableSharedFlow<String>()
+    val userMessage: SharedFlow<String> = _userMessage.asSharedFlow()
 
     init {
         refreshAll()
@@ -94,6 +102,18 @@ class EventDetailViewModel @Inject constructor(
             } catch (_: Exception) {}
         }
     }
+
+    fun updatePreferences(favorite: Boolean, notifications: List<String>) {
+        viewModelScope.launch {
+            try {
+                myTBARepository.updatePreferences(eventKey, ModelType.EVENT, favorite, notifications)
+            } catch (_: Exception) {
+                _userMessage.emit("Failed to save notification preferences")
+            }
+        }
+    }
+
+    fun isSignedIn(): Boolean = authRepository.isSignedIn()
 
     fun refreshAll() {
         viewModelScope.launch {

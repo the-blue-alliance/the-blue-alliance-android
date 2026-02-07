@@ -19,6 +19,7 @@ class MyTBARepository @Inject constructor(
     private val clientApi: ClientApi,
     private val favoriteDao: FavoriteDao,
     private val subscriptionDao: SubscriptionDao,
+    private val deviceRegistrationManager: com.thebluealliance.android.messaging.DeviceRegistrationManager,
 ) {
     fun observeFavorites(): Flow<List<Favorite>> =
         favoriteDao.observeAll().map { list ->
@@ -31,6 +32,17 @@ class MyTBARepository @Inject constructor(
     fun observeSubscriptions(): Flow<List<Subscription>> =
         subscriptionDao.observeAll().map { list ->
             list.map {
+                Subscription(
+                    modelKey = it.modelKey,
+                    modelType = it.modelType,
+                    notifications = it.notifications.split(",").filter { n -> n.isNotEmpty() },
+                )
+            }
+        }
+
+    fun observeSubscription(modelKey: String, modelType: Int): Flow<Subscription?> =
+        subscriptionDao.observe(modelKey, modelType).map { entity ->
+            entity?.let {
                 Subscription(
                     modelKey = it.modelKey,
                     modelType = it.modelType,
@@ -71,6 +83,7 @@ class MyTBARepository @Inject constructor(
             ModelPreferenceRequestDto(
                 modelKey = modelKey,
                 modelType = modelType,
+                deviceKey = deviceRegistrationManager.deviceUuid,
                 favorite = true,
             )
         )
@@ -87,6 +100,7 @@ class MyTBARepository @Inject constructor(
             ModelPreferenceRequestDto(
                 modelKey = modelKey,
                 modelType = modelType,
+                deviceKey = deviceRegistrationManager.deviceUuid,
                 favorite = false,
             )
         )
@@ -95,6 +109,30 @@ class MyTBARepository @Inject constructor(
             throw MyTBAServerException(response.code, response.message)
         }
         favoriteDao.delete(modelKey, modelType)
+    }
+
+    suspend fun updatePreferences(
+        modelKey: String,
+        modelType: Int,
+        favorite: Boolean,
+        notifications: List<String>,
+    ) {
+        val response = clientApi.updateModelPreferences(
+            ModelPreferenceRequestDto(
+                modelKey = modelKey,
+                modelType = modelType,
+                deviceKey = deviceRegistrationManager.deviceUuid,
+                favorite = favorite,
+                notifications = notifications,
+            )
+        )
+        Log.d("MyTBARepository", "updatePreferences: code=${response.code} message=${response.message}")
+        if (response.code != 200) {
+            throw MyTBAServerException(response.code, response.message)
+        }
+        // Refresh both to sync local state with server
+        try { refreshFavorites() } catch (_: Exception) {}
+        try { refreshSubscriptions() } catch (_: Exception) {}
     }
 
     suspend fun clearLocal() {

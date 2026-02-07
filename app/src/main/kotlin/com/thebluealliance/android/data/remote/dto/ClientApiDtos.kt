@@ -47,3 +47,11 @@ data class ModelPreferenceRequestDto(
     val notifications: List<String> = emptyList(),
     val favorite: Boolean = false,
 )
+
+@Serializable
+data class RegisterDeviceRequestDto(
+    @SerialName("mobile_id") val mobileId: String,
+    @SerialName("operating_system") val os: String = "android",
+    val name: String,
+    @SerialName("device_uuid") val deviceUuid: String,
+)
