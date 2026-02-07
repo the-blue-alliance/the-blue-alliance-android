@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.teams
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,7 +25,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -45,6 +48,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -53,7 +57,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Media
+import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Team
+import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Info", "Events", "Media")
@@ -69,14 +75,22 @@ fun TeamDetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()
+    val subscription by viewModel.subscription.collectAsStateWithLifecycle()
     val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
     val yearsParticipated by viewModel.yearsParticipated.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState(pageCount = { TABS.size })
     val coroutineScope = rememberCoroutineScope()
 
     var showSignInDialog by remember { mutableStateOf(false) }
+    var showNotificationSheet by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.showSignInPrompt.collect { showSignInDialog = true }
+    }
+    LaunchedEffect(Unit) {
+        viewModel.userMessage.collect { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     if (showSignInDialog) {
@@ -96,6 +110,21 @@ fun TeamDetailScreen(
         )
     }
 
+    if (showNotificationSheet) {
+        val teamKey = uiState.team?.key ?: ""
+        NotificationPreferencesSheet(
+            modelKey = teamKey,
+            modelType = ModelType.TEAM,
+            isFavorite = isFavorite,
+            currentNotifications = subscription?.notifications ?: emptyList(),
+            onSave = { favorite, notifications ->
+                viewModel.updatePreferences(favorite, notifications)
+                showNotificationSheet = false
+            },
+            onDismiss = { showNotificationSheet = false },
+        )
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
             title = {
@@ -111,6 +140,19 @@ fun TeamDetailScreen(
                 }
             },
             actions = {
+                IconButton(onClick = {
+                    if (!viewModel.isSignedIn()) {
+                        showSignInDialog = true
+                    } else {
+                        showNotificationSheet = true
+                    }
+                }) {
+                    val hasSubscription = subscription?.notifications?.isNotEmpty() == true
+                    Icon(
+                        imageVector = if (hasSubscription) Icons.Filled.Notifications else Icons.Outlined.NotificationsNone,
+                        contentDescription = "Notification preferences",
+                    )
+                }
                 IconButton(onClick = viewModel::toggleFavorite) {
                     Icon(
                         imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,

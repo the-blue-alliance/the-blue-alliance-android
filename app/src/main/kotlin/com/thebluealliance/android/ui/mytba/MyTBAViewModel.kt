@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
+import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class MyTBAViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val myTBARepository: MyTBARepository,
+    private val deviceRegistrationManager: DeviceRegistrationManager,
 ) : ViewModel() {
 
     private val _isRefreshing = MutableStateFlow(false)
@@ -46,7 +48,10 @@ class MyTBAViewModel @Inject constructor(
                 .map { it != null }
                 .distinctUntilChanged()
                 .collect { signedIn ->
-                    if (signedIn) refresh()
+                    if (signedIn) {
+                        launch { try { deviceRegistrationManager.onSignIn() } catch (_: Exception) {} }
+                        refresh()
+                    }
                 }
         }
     }
@@ -66,6 +71,7 @@ class MyTBAViewModel @Inject constructor(
 
     fun signOut() {
         viewModelScope.launch {
+            try { deviceRegistrationManager.onSignOut() } catch (_: Exception) {}
             authRepository.signOut()
             myTBARepository.clearLocal()
         }
