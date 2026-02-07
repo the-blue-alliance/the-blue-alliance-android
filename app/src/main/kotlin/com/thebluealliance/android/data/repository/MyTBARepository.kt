@@ -127,7 +127,7 @@ class MyTBARepository @Inject constructor(
             )
         )
         Log.d("MyTBARepository", "updatePreferences: code=${response.code} message=${response.message}")
-        if (response.code != 200) {
+        if (response.code == 401) {
             throw MyTBAServerException(response.code, response.message)
         }
         // Refresh both to sync local state with server
