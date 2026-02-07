@@ -20,6 +20,8 @@ data class FavoriteDto(
 
 @Serializable
 data class FavoriteCollectionDto(
+    val code: Int = 0,
+    val message: String = "",
     val favorites: List<FavoriteDto> = emptyList(),
 )
 
@@ -32,6 +34,8 @@ data class SubscriptionDto(
 
 @Serializable
 data class SubscriptionCollectionDto(
+    val code: Int = 0,
+    val message: String = "",
     val subscriptions: List<SubscriptionDto> = emptyList(),
 )
 

@@ -8,6 +8,7 @@ import com.thebluealliance.android.data.remote.ClientApi
 import com.thebluealliance.android.data.remote.dto.ModelPreferenceRequestDto
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.Subscription
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -39,53 +40,61 @@ class MyTBARepository @Inject constructor(
         }
 
     suspend fun refreshFavorites() {
-        try {
-            val response = clientApi.listFavorites()
-            favoriteDao.deleteAll()
-            favoriteDao.insertAll(response.favorites.map {
-                FavoriteEntity(modelKey = it.modelKey, modelType = it.modelType)
-            })
-        } catch (_: Exception) { }
+        val response = clientApi.listFavorites()
+        Log.d("MyTBARepository", "refreshFavorites: code=${response.code} message=${response.message} favorites=${response.favorites.size}")
+        if (response.code == 401) {
+            throw MyTBAServerException(response.code, response.message)
+        }
+        favoriteDao.deleteAll()
+        favoriteDao.insertAll(response.favorites.map {
+            FavoriteEntity(modelKey = it.modelKey, modelType = it.modelType)
+        })
     }
 
     suspend fun refreshSubscriptions() {
-        try {
-            val response = clientApi.listSubscriptions()
-            subscriptionDao.deleteAll()
-            subscriptionDao.insertAll(response.subscriptions.map {
-                SubscriptionEntity(
-                    modelKey = it.modelKey,
-                    modelType = it.modelType,
-                    notifications = it.notifications.joinToString(","),
-                )
-            })
-        } catch (_: Exception) { }
+        val response = clientApi.listSubscriptions()
+        if (response.code == 401) {
+            throw MyTBAServerException(response.code, response.message)
+        }
+        subscriptionDao.deleteAll()
+        subscriptionDao.insertAll(response.subscriptions.map {
+            SubscriptionEntity(
+                modelKey = it.modelKey,
+                modelType = it.modelType,
+                notifications = it.notifications.joinToString(","),
+            )
+        })
     }
 
     suspend fun addFavorite(modelKey: String, modelType: Int) {
-        favoriteDao.insertAll(listOf(FavoriteEntity(modelKey = modelKey, modelType = modelType)))
-        try {
-            clientApi.updateModelPreferences(
-                ModelPreferenceRequestDto(
-                    modelKey = modelKey,
-                    modelType = modelType,
-                    favorite = true,
-                )
+        val response = clientApi.updateModelPreferences(
+            ModelPreferenceRequestDto(
+                modelKey = modelKey,
+                modelType = modelType,
+                favorite = true,
             )
-        } catch (_: Exception) { }
+        )
+        Log.d("MyTBARepository", "addFavorite: code=${response.code} message=${response.message}")
+        if (response.code == 401) {
+            try { refreshFavorites() } catch (_: Exception) { }
+            throw MyTBAServerException(response.code, response.message)
+        }
+        favoriteDao.insertAll(listOf(FavoriteEntity(modelKey = modelKey, modelType = modelType)))
     }
 
     suspend fun removeFavorite(modelKey: String, modelType: Int) {
-        favoriteDao.delete(modelKey, modelType)
-        try {
-            clientApi.updateModelPreferences(
-                ModelPreferenceRequestDto(
-                    modelKey = modelKey,
-                    modelType = modelType,
-                    favorite = false,
-                )
+        val response = clientApi.updateModelPreferences(
+            ModelPreferenceRequestDto(
+                modelKey = modelKey,
+                modelType = modelType,
+                favorite = false,
             )
-        } catch (_: Exception) { }
+        )
+        if (response.code == 401) {
+            try { refreshFavorites() } catch (_: Exception) { }
+            throw MyTBAServerException(response.code, response.message)
+        }
+        favoriteDao.delete(modelKey, modelType)
     }
 
     suspend fun clearLocal() {
@@ -93,3 +102,6 @@ class MyTBARepository @Inject constructor(
         subscriptionDao.deleteAll()
     }
 }
+
+class MyTBAServerException(val code: Int, override val message: String) :
+    Exception("MyTBA server error $code: $message")
