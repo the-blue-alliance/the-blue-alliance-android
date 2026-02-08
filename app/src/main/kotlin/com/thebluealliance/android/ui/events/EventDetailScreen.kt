@@ -326,6 +326,8 @@ private fun MatchItem(match: Match, onClick: () -> Unit) {
         "f" -> "F${match.setNumber}-${match.matchNumber}"
         else -> "${match.compLevel}${match.setNumber}-${match.matchNumber}"
     }
+    val isPlayed = match.redScore >= 0
+    val alpha = if (isPlayed) 1f else 0.5f
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -337,18 +339,19 @@ private fun MatchItem(match: Match, onClick: () -> Unit) {
             text = label,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
             modifier = Modifier.weight(0.15f),
         )
         Column(modifier = Modifier.weight(0.35f)) {
             Text(
                 text = match.redTeamKeys.joinToString(", ") { it.removePrefix("frc") },
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error,
+                color = MaterialTheme.colorScheme.error.copy(alpha = alpha),
             )
             Text(
                 text = match.blueTeamKeys.joinToString(", ") { it.removePrefix("frc") },
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = alpha),
             )
         }
         Column(
@@ -359,13 +362,13 @@ private fun MatchItem(match: Match, onClick: () -> Unit) {
                 text = if (match.redScore < 0) "—" else match.redScore.toString(),
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
-                color = MaterialTheme.colorScheme.error,
+                color = MaterialTheme.colorScheme.error.copy(alpha = alpha),
             )
             Text(
                 text = if (match.blueScore < 0) "—" else match.blueScore.toString(),
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = alpha),
             )
         }
     }
