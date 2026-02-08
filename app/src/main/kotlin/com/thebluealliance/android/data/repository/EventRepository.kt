@@ -85,6 +85,11 @@ class EventRepository @Inject constructor(
         } catch (_: Exception) { }
     }
 
+    suspend fun refreshEvent(eventKey: String) {
+        val dto = api.getEvent(eventKey)
+        eventDao.insertAll(listOf(dto.toEntity()))
+    }
+
     suspend fun refreshEventsForYear(year: Int) {
         val dtos = api.getEventsForYear(year)
         db.withTransaction {

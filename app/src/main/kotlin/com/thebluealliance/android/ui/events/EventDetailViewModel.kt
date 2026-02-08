@@ -119,6 +119,7 @@ class EventDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _isRefreshing.value = true
             try {
+                launch { try { eventRepository.refreshEvent(eventKey) } catch (_: Exception) {} }
                 launch { try { teamRepository.refreshEventTeams(eventKey) } catch (_: Exception) {} }
                 launch { try { matchRepository.refreshEventMatches(eventKey) } catch (_: Exception) {} }
                 launch { try { eventRepository.refreshEventRankings(eventKey) } catch (_: Exception) {} }

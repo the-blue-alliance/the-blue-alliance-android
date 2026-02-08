@@ -524,7 +524,7 @@ private fun AwardsTab(awards: List<Award>?) {
         return
     }
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(awards, key = { "${it.eventKey}_${it.awardType}_${it.teamKey}" }) { award ->
+        items(awards, key = { "${it.eventKey}_${it.awardType}_${it.teamKey}_${it.awardee.orEmpty()}" }) { award ->
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -535,11 +535,20 @@ private fun AwardsTab(awards: List<Award>?) {
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
                 )
-                Text(
-                    text = award.teamKey.removePrefix("frc"),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                val recipient = buildString {
+                    if (award.awardee != null) append(award.awardee)
+                    if (award.teamKey.isNotEmpty()) {
+                        if (isNotEmpty()) append(" (${award.teamKey.removePrefix("frc")})")
+                        else append(award.teamKey.removePrefix("frc"))
+                    }
+                }
+                if (recipient.isNotEmpty()) {
+                    Text(
+                        text = recipient,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
     }

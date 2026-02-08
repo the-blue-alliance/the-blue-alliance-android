@@ -121,6 +121,7 @@ fun AwardDto.toEntities(): List<AwardEntity> {
             eventKey = eventKey,
             awardType = awardType,
             teamKey = recipient.teamKey ?: "",
+            awardee = recipient.awardee ?: "",
             name = name,
             year = year,
             recipientList = recipientJson,
@@ -131,6 +132,7 @@ fun AwardDto.toEntities(): List<AwardEntity> {
                 eventKey = eventKey,
                 awardType = awardType,
                 teamKey = "",
+                awardee = "",
                 name = name,
                 year = year,
                 recipientList = recipientJson,
@@ -143,6 +145,7 @@ fun AwardEntity.toDomain() = Award(
     eventKey = eventKey,
     awardType = awardType,
     teamKey = teamKey,
+    awardee = awardee.ifEmpty { null },
     name = name,
     year = year,
 )
