@@ -356,13 +356,13 @@ private fun MatchItem(match: Match, onClick: () -> Unit) {
             horizontalAlignment = Alignment.End,
         ) {
             Text(
-                text = match.redScore.toString(),
+                text = if (match.redScore < 0) "—" else match.redScore.toString(),
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
                 color = MaterialTheme.colorScheme.error,
             )
             Text(
-                text = match.blueScore.toString(),
+                text = if (match.blueScore < 0) "—" else match.blueScore.toString(),
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
                 color = MaterialTheme.colorScheme.primary,
