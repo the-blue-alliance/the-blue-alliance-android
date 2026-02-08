@@ -130,7 +130,7 @@ private fun ScoreSummary(match: Match) {
         ) {
             Text("Red", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.error)
             Text(
-                text = match.redScore.toString(),
+                text = if (match.redScore < 0) "—" else match.redScore.toString(),
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
                 color = MaterialTheme.colorScheme.error,
@@ -147,7 +147,7 @@ private fun ScoreSummary(match: Match) {
         ) {
             Text("Blue", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
             Text(
-                text = match.blueScore.toString(),
+                text = if (match.blueScore < 0) "—" else match.blueScore.toString(),
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
                 color = MaterialTheme.colorScheme.primary,
