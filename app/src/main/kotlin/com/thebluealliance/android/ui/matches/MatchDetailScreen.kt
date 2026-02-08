@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.matches
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,7 @@ import com.thebluealliance.android.domain.model.Match
 @Composable
 fun MatchDetailScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToTeam: (String) -> Unit = {},
     viewModel: MatchDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -79,10 +81,10 @@ fun MatchDetailScreen(
 
                     // Teams
                     item(key = "red_teams") {
-                        AllianceTeams("Red Alliance", match.redTeamKeys, MaterialTheme.colorScheme.error)
+                        AllianceTeams("Red Alliance", match.redTeamKeys, MaterialTheme.colorScheme.error, onNavigateToTeam)
                     }
                     item(key = "blue_teams") {
-                        AllianceTeams("Blue Alliance", match.blueTeamKeys, MaterialTheme.colorScheme.primary)
+                        AllianceTeams("Blue Alliance", match.blueTeamKeys, MaterialTheme.colorScheme.primary, onNavigateToTeam)
                     }
 
                     // Score breakdown
@@ -157,7 +159,12 @@ private fun ScoreSummary(match: Match) {
 }
 
 @Composable
-private fun AllianceTeams(title: String, teamKeys: List<String>, color: androidx.compose.ui.graphics.Color) {
+private fun AllianceTeams(
+    title: String,
+    teamKeys: List<String>,
+    color: androidx.compose.ui.graphics.Color,
+    onTeamClick: (String) -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -173,7 +180,10 @@ private fun AllianceTeams(title: String, teamKeys: List<String>, color: androidx
             Text(
                 text = key.removePrefix("frc"),
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(start = 8.dp, top = 2.dp),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .clickable { onTeamClick(key) }
+                    .padding(start = 8.dp, top = 2.dp),
             )
         }
     }
