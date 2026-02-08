@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.events
 
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -123,7 +125,7 @@ fun EventDetailScreen(
         TopAppBar(
             title = {
                 Text(
-                    text = uiState.event?.name ?: "Event",
+                    text = uiState.event?.let { "${it.year} ${it.name}" } ?: "Event",
                     maxLines = 1,
                 )
             },
@@ -320,15 +322,32 @@ private fun MatchesTab(matches: List<Match>?, onNavigateToMatch: (String) -> Uni
         }
     }
 
+    val headerKeys = remember(grouped) {
+        grouped.keys.map { "match_header_$it" }.toSet()
+    }
+    val stuckHeaderKey by remember {
+        derivedStateOf {
+            listState.layoutInfo.visibleItemsInfo
+                .firstOrNull { item ->
+                    val key = item.key as? String
+                    key != null && key in headerKeys && item.offset <= 0
+                }?.key as? String
+        }
+    }
+
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         grouped.forEach { (level, levelMatches) ->
-            item(key = "match_header_$level") {
+            val headerKey = "match_header_$level"
+            stickyHeader(key = headerKey) {
                 Text(
                     text = compLevelNames[level] ?: level.uppercase(),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surface)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                 )
             }
             items(levelMatches, key = { it.key }) { match ->
@@ -349,7 +368,6 @@ private fun MatchItem(match: Match, onClick: () -> Unit) {
         else -> "${match.compLevel}${match.setNumber}-${match.matchNumber}"
     }
     val isPlayed = match.redScore >= 0
-    val alpha = if (isPlayed) 1f else 0.5f
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -361,39 +379,65 @@ private fun MatchItem(match: Match, onClick: () -> Unit) {
             text = label,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(0.15f),
         )
         Column(modifier = Modifier.weight(0.35f)) {
             Text(
                 text = match.redTeamKeys.joinToString(", ") { it.removePrefix("frc") },
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error.copy(alpha = alpha),
+                fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
+                color = MaterialTheme.colorScheme.error,
             )
             Text(
                 text = match.blueTeamKeys.joinToString(", ") { it.removePrefix("frc") },
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = alpha),
+                fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
+                color = MaterialTheme.colorScheme.primary,
             )
         }
-        Column(
-            modifier = Modifier.weight(0.15f),
-            horizontalAlignment = Alignment.End,
-        ) {
-            Text(
-                text = if (match.redScore < 0) "—" else match.redScore.toString(),
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
-                color = MaterialTheme.colorScheme.error.copy(alpha = alpha),
-            )
-            Text(
-                text = if (match.blueScore < 0) "—" else match.blueScore.toString(),
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = alpha),
-            )
+        if (isPlayed) {
+            Column(
+                modifier = Modifier.weight(0.15f),
+                horizontalAlignment = Alignment.End,
+            ) {
+                Text(
+                    text = match.redScore.toString(),
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.error,
+                )
+                Text(
+                    text = match.blueScore.toString(),
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+        } else {
+            Box(
+                modifier = Modifier.weight(0.15f),
+                contentAlignment = Alignment.CenterEnd,
+            ) {
+                Text(
+                    text = formatMatchTime(match.time),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
+}
+
+private val matchTimeFormat = java.time.format.DateTimeFormatter.ofPattern(
+    "EEE h:mma", java.util.Locale.US,
+)
+
+private fun formatMatchTime(epochSeconds: Long?): String {
+    if (epochSeconds == null) return "—"
+    val instant = java.time.Instant.ofEpochSecond(epochSeconds)
+    return matchTimeFormat.format(instant.atZone(java.time.ZoneId.systemDefault()))
+        .replace("AM", "a").replace("PM", "p")
 }
 
 @Composable
