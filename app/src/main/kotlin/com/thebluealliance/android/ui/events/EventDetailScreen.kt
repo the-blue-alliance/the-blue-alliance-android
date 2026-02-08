@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -298,7 +299,28 @@ private fun MatchesTab(matches: List<Match>?, onNavigateToMatch: (String) -> Uni
     )
     val grouped = sorted.groupBy { it.compLevel }
 
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    // Calculate index of first unplayed match for auto-scroll
+    val firstUnplayedIndex = run {
+        var index = 0
+        for ((_, levelMatches) in grouped) {
+            index++ // group header
+            for (match in levelMatches) {
+                if (match.redScore < 0) return@run index
+                index++
+            }
+        }
+        -1
+    }
+    // Scroll so the last few played matches are visible above the first unplayed
+    val scrollTarget = if (firstUnplayedIndex > 2) firstUnplayedIndex - 2 else 0
+    val listState = rememberLazyListState()
+    LaunchedEffect(scrollTarget) {
+        if (scrollTarget > 0) {
+            listState.scrollToItem(scrollTarget)
+        }
+    }
+
+    LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         grouped.forEach { (level, levelMatches) ->
             item(key = "match_header_$level") {
                 Text(
