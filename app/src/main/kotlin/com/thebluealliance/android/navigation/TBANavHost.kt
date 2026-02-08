@@ -113,6 +113,9 @@ fun TBANavHost(
         ) {
             MatchDetailScreen(
                 onNavigateBack = { navController.popBackStack() },
+                onNavigateToTeam = { teamKey ->
+                    navController.navigate(Screen.TeamDetail(teamKey))
+                },
             )
         }
         composable<Screen.DistrictDetail> {
