@@ -1,5 +1,7 @@
 package com.thebluealliance.android.ui.events
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -7,9 +9,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -19,7 +25,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.NotificationsNone
+import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -57,6 +66,7 @@ import com.thebluealliance.android.domain.model.shortLabel
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.Team
+import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import kotlinx.coroutines.launch
 
@@ -199,6 +209,7 @@ private fun InfoTab(event: Event?) {
         LoadingBox()
         return
     }
+    val context = LocalContext.current
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -237,17 +248,137 @@ private fun InfoTab(event: Event?) {
                 )
             }
         }
-        if (event.website != null) {
+        if (event.week != null) {
             item {
                 Text(
-                    text = event.website,
+                    text = "Week ${event.week}",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = 4.dp),
                 )
             }
         }
+        if (event.district != null) {
+            item {
+                Text(
+                    text = "District: ${event.district}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
+            }
+        }
+
+        // Website (clickable)
+        if (event.website != null) {
+            item {
+                Row(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .clickable {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(event.website)))
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        Icons.Outlined.Language,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = event.website,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+        }
+
+        // Address (tappable → opens Google Maps)
+        if (event.address != null) {
+            item {
+                Row(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .clickable {
+                            val intent = if (event.gmapsUrl != null) {
+                                Intent(Intent.ACTION_VIEW, Uri.parse(event.gmapsUrl))
+                            } else {
+                                Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=${Uri.encode(event.address)}"))
+                            }
+                            context.startActivity(intent)
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        Icons.Outlined.LocationOn,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = event.address,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+        }
+
+        // Webcasts
+        if (event.webcasts.isNotEmpty()) {
+            item {
+                Spacer(Modifier.height(12.dp))
+                Text(
+                    text = "Webcasts",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            items(event.webcasts, key = { "${it.type}_${it.channel}" }) { webcast ->
+                val url = webcastUrl(webcast)
+                val label = webcastLabel(webcast)
+                if (url != null) {
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                            .clickable {
+                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            Icons.Outlined.PlayCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp),
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                }
+            }
+        }
     }
+}
+
+private fun webcastUrl(webcast: Webcast): String? = when (webcast.type) {
+    "twitch" -> "https://twitch.tv/${webcast.channel}"
+    "youtube" -> "https://youtube.com/watch?v=${webcast.channel}"
+    "livestream" -> "https://livestream.com/accounts/${webcast.channel}/events/${webcast.file ?: ""}"
+    else -> null
+}
+
+private fun webcastLabel(webcast: Webcast): String = when (webcast.type) {
+    "twitch" -> "Watch on Twitch"
+    "youtube" -> "Watch on YouTube"
+    "livestream" -> "Watch on Livestream"
+    else -> "Watch (${webcast.type})"
 }
 
 @Composable
