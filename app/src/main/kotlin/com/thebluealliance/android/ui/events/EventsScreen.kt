@@ -99,7 +99,12 @@ fun EventsScreen(
                 is EventsUiState.Success -> {
                     if (state.eventsByWeek.isEmpty()) {
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text("No events found for $selectedYear")
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("No events found for $selectedYear")
+                                Button(onClick = viewModel::refreshEvents) {
+                                    Text("Retry")
+                                }
+                            }
                         }
                     } else {
                         EventsList(

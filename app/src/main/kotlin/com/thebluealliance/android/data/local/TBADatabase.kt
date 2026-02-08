@@ -20,7 +20,7 @@ import com.thebluealliance.android.data.local.entity.*
         FavoriteEntity::class,
         SubscriptionEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = false,
 )
 abstract class TBADatabase : RoomDatabase() {
