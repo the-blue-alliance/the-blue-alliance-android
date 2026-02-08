@@ -18,4 +18,12 @@ data class Event(
     val timezone: String?,
     val locationName: String?,
     val address: String?,
+    val gmapsUrl: String?,
+    val webcasts: List<Webcast>,
+)
+
+data class Webcast(
+    val type: String,
+    val channel: String,
+    val file: String?,
 )

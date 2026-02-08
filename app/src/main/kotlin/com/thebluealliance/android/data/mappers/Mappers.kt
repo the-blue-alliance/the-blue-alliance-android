@@ -74,6 +74,14 @@ fun EventEntity.toDomain() = Event(
     timezone = timezone,
     locationName = locationName,
     address = address,
+    gmapsUrl = gmapsUrl,
+    webcasts = webcasts?.let { raw ->
+        try {
+            json.decodeFromString<List<WebcastDto>>(raw).map {
+                Webcast(type = it.type, channel = it.channel, file = it.file)
+            }
+        } catch (_: Exception) { emptyList() }
+    } ?: emptyList(),
 )
 
 // ── Match ──
