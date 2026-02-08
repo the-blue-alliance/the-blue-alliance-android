@@ -53,6 +53,7 @@ import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Match
+import com.thebluealliance.android.domain.model.shortLabel
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.Team
@@ -360,13 +361,7 @@ private fun MatchesTab(matches: List<Match>?, onNavigateToMatch: (String) -> Uni
 
 @Composable
 private fun MatchItem(match: Match, onClick: () -> Unit) {
-    val label = when (match.compLevel) {
-        "qm" -> "Q${match.matchNumber}"
-        "qf" -> "QF${match.setNumber}-${match.matchNumber}"
-        "sf" -> "SF${match.setNumber}-${match.matchNumber}"
-        "f" -> "F${match.setNumber}-${match.matchNumber}"
-        else -> "${match.compLevel}${match.setNumber}-${match.matchNumber}"
-    }
+    val label = match.shortLabel
     val isPlayed = match.redScore >= 0
     Row(
         modifier = Modifier
