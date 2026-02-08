@@ -1,5 +1,7 @@
 package com.thebluealliance.android.ui.matches
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -24,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,6 +40,7 @@ import com.thebluealliance.android.domain.model.Match
 fun MatchDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToTeam: (String) -> Unit = {},
+    onNavigateToEvent: (String) -> Unit = {},
     viewModel: MatchDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -70,6 +75,16 @@ fun MatchDetailScreen(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                 ) {
+                    // Event name + match time
+                    item(key = "event_info") {
+                        EventInfo(
+                            eventName = uiState.eventName,
+                            eventKey = uiState.eventKey,
+                            formattedTime = uiState.formattedTime,
+                            onNavigateToEvent = onNavigateToEvent,
+                        )
+                    }
+
                     // Score summary
                     item(key = "score_header") {
                         ScoreSummary(match)
@@ -85,6 +100,23 @@ fun MatchDetailScreen(
                     }
                     item(key = "blue_teams") {
                         AllianceTeams("Blue Alliance", match.blueTeamKeys, MaterialTheme.colorScheme.primary, onNavigateToTeam)
+                    }
+
+                    // Videos
+                    val videos = uiState.videos
+                    if (videos.isNotEmpty()) {
+                        item(key = "videos_header") {
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                            Text(
+                                text = "Videos",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                            )
+                        }
+                        items(videos, key = { "video_${it.key}" }) { video ->
+                            VideoRow(video)
+                        }
                     }
 
                     // Score breakdown
@@ -103,6 +135,7 @@ fun MatchDetailScreen(
                         val redBreakdown = breakdown["red"] ?: emptyMap()
                         val blueBreakdown = breakdown["blue"] ?: emptyMap()
                         val allKeys = (redBreakdown.keys + blueBreakdown.keys).distinct()
+                            .filter { it != "totalPoints" }
 
                         items(allKeys, key = { "breakdown_$it" }) { field ->
                             BreakdownRow(
@@ -114,6 +147,38 @@ fun MatchDetailScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun EventInfo(
+    eventName: String?,
+    eventKey: String?,
+    formattedTime: String?,
+    onNavigateToEvent: (String) -> Unit,
+) {
+    if (eventName == null && formattedTime == null) return
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+    ) {
+        if (eventName != null && eventKey != null) {
+            Text(
+                text = eventName,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable { onNavigateToEvent(eventKey) },
+            )
+        }
+        if (formattedTime != null) {
+            Text(
+                text = formattedTime,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 2.dp),
+            )
         }
     }
 }
@@ -190,6 +255,36 @@ private fun AllianceTeams(
 }
 
 @Composable
+private fun VideoRow(video: MatchVideo) {
+    val context = LocalContext.current
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                val url = when (video.type) {
+                    "youtube" -> "https://www.youtube.com/watch?v=${video.key}"
+                    else -> return@clickable
+                }
+                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            }
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = Icons.Default.PlayArrow,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(end = 12.dp),
+        )
+        Text(
+            text = "Watch on YouTube",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.primary,
+        )
+    }
+}
+
+@Composable
 private fun BreakdownRow(label: String, redValue: String, blueValue: String) {
     Row(
         modifier = Modifier
@@ -228,8 +323,40 @@ private fun matchLabel(match: Match): String = when (match.compLevel) {
     else -> "${match.compLevel}${match.setNumber}-${match.matchNumber}"
 }
 
-private fun formatBreakdownKey(key: String): String =
-    key.replace(Regex("([A-Z])"), " $1")
+private fun formatBreakdownKey(key: String): String {
+    // Handle well-known TBA field names
+    val mapped = breakdownKeyNames[key]
+    if (mapped != null) return mapped
+
+    return key.replace(Regex("([A-Z])"), " $1")
         .replace("_", " ")
         .trim()
         .replaceFirstChar { it.uppercase() }
+}
+
+private val breakdownKeyNames = mapOf(
+    "adjustPoints" to "Adjust",
+    "autoPoints" to "Auto",
+    "teleopPoints" to "Teleop",
+    "foulPoints" to "Foul Points",
+    "foulCount" to "Fouls",
+    "techFoulCount" to "Tech Fouls",
+    "rp" to "RP",
+    "autoLineRobot1" to "Auto Line Robot 1",
+    "autoLineRobot2" to "Auto Line Robot 2",
+    "autoLineRobot3" to "Auto Line Robot 3",
+    "endGameRobot1" to "Endgame Robot 1",
+    "endGameRobot2" to "Endgame Robot 2",
+    "endGameRobot3" to "Endgame Robot 3",
+    "autoGamePieceCount" to "Auto Game Pieces",
+    "teleopGamePieceCount" to "Teleop Game Pieces",
+    "autoMobilityPoints" to "Auto Mobility",
+    "autoGamePiecePoints" to "Auto Game Piece Points",
+    "teleopGamePiecePoints" to "Teleop Game Piece Points",
+    "endGameParkPoints" to "Endgame Park Points",
+    "endGameChargeStationPoints" to "Endgame Charge Station",
+    "autoChargeStationPoints" to "Auto Charge Station",
+    "activationBonusAchieved" to "Activation Bonus",
+    "sustainabilityBonusAchieved" to "Sustainability Bonus",
+    "coopertitionCriteriaMet" to "Coopertition",
+)

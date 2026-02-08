@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,18 +12,24 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class MatchDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val matchRepository: MatchRepository,
+    private val eventRepository: EventRepository,
 ) : ViewModel() {
 
     private val matchKey: String = savedStateHandle.toRoute<Screen.MatchDetail>().matchKey
@@ -32,12 +39,26 @@ class MatchDetailViewModel @Inject constructor(
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    val uiState: StateFlow<MatchDetailUiState> = matchRepository.observeMatch(matchKey)
-        .map { match ->
-            val breakdown = match?.scoreBreakdown?.let { parseBreakdown(it) }
-            MatchDetailUiState(match = match, scoreBreakdown = breakdown)
-        }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MatchDetailUiState())
+    private val timeFormatter = DateTimeFormatter.ofPattern(
+        "EEE, MMM d, yyyy 'at' h:mm a", Locale.US
+    )
+
+    val uiState: StateFlow<MatchDetailUiState> = combine(
+        matchRepository.observeMatch(matchKey),
+        eventRepository.observeEvent(matchKey.substringBeforeLast("_")),
+    ) { match, event ->
+        val breakdown = match?.scoreBreakdown?.let { parseBreakdown(it) }
+        val videos = match?.videos?.let { parseVideos(it) } ?: emptyList()
+        val formattedTime = formatMatchTime(match?.actualTime ?: match?.time)
+        MatchDetailUiState(
+            match = match,
+            scoreBreakdown = breakdown,
+            eventName = event?.name,
+            eventKey = event?.key,
+            formattedTime = formattedTime,
+            videos = videos,
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MatchDetailUiState())
 
     init {
         refresh()
@@ -52,6 +73,26 @@ class MatchDetailViewModel @Inject constructor(
             } finally {
                 _isRefreshing.value = false
             }
+        }
+    }
+
+    private fun formatMatchTime(epochSeconds: Long?): String? {
+        if (epochSeconds == null) return null
+        val instant = Instant.ofEpochSecond(epochSeconds)
+        return timeFormatter.format(instant.atZone(ZoneId.systemDefault()))
+    }
+
+    private fun parseVideos(jsonString: String): List<MatchVideo> {
+        return try {
+            val array = json.decodeFromString<JsonArray>(jsonString)
+            array.mapNotNull { element ->
+                val obj = element as? JsonObject ?: return@mapNotNull null
+                val type = obj["type"]?.jsonPrimitive?.content ?: return@mapNotNull null
+                val key = obj["key"]?.jsonPrimitive?.content ?: return@mapNotNull null
+                MatchVideo(type = type, key = key)
+            }
+        } catch (_: Exception) {
+            emptyList()
         }
     }
 
