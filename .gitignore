@@ -61,6 +61,9 @@ scripts/html2text.py
 # Current release shortlog, used in scripts
 RELEASE_SHORTLOG
 
+# Screenshots
+screenshots/
+
 # jars
 libTba/gce/gce2retrofit.jar
 libTba/swagger/swagger-codegen-cli.jar
