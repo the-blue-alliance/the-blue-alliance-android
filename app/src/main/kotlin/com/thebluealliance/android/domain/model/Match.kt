@@ -16,3 +16,21 @@ data class Match(
     val scoreBreakdown: String? = null,
     val videos: String? = null,
 )
+
+/** Short label for list rows, e.g. "Q1", "SF2-1", "F1-1" */
+val Match.shortLabel: String get() = when (compLevel) {
+    "qm" -> "Q$matchNumber"
+    "qf" -> "QF$setNumber-$matchNumber"
+    "sf" -> "SF$setNumber-$matchNumber"
+    "f" -> "F$setNumber-$matchNumber"
+    else -> "$compLevel$setNumber-$matchNumber"
+}
+
+/** Full label for title bars, e.g. "Qual 1", "Final 1-1" */
+val Match.fullLabel: String get() = when (compLevel) {
+    "qm" -> "Qual $matchNumber"
+    "qf" -> "QF$setNumber-$matchNumber"
+    "sf" -> "SF$setNumber-$matchNumber"
+    "f" -> "Final $setNumber-$matchNumber"
+    else -> "$compLevel$setNumber-$matchNumber"
+}

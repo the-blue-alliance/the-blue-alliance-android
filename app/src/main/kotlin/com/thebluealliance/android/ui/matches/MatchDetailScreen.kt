@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Match
+import com.thebluealliance.android.domain.model.fullLabel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,7 +51,7 @@ fun MatchDetailScreen(
         TopAppBar(
             title = {
                 Text(
-                    text = uiState.match?.let { matchLabel(it) } ?: "Match",
+                    text = uiState.match?.fullLabel ?: "Match",
                     maxLines = 1,
                 )
             },
@@ -313,14 +314,6 @@ private fun BreakdownRow(label: String, redValue: String, blueValue: String) {
             textAlign = TextAlign.Center,
         )
     }
-}
-
-private fun matchLabel(match: Match): String = when (match.compLevel) {
-    "qm" -> "Qual ${match.matchNumber}"
-    "qf" -> "QF${match.setNumber}-${match.matchNumber}"
-    "sf" -> "SF${match.setNumber}-${match.matchNumber}"
-    "f" -> "Final ${match.setNumber}-${match.matchNumber}"
-    else -> "${match.compLevel}${match.setNumber}-${match.matchNumber}"
 }
 
 private fun formatBreakdownKey(key: String): String {
