@@ -150,11 +150,13 @@ private fun EventsList(
 
     val stuckHeaderKey by remember {
         derivedStateOf {
-            listState.layoutInfo.visibleItemsInfo
+            val stuck = listState.layoutInfo.visibleItemsInfo
                 .firstOrNull { item ->
                     val key = item.key as? String
                     key != null && key in headerKeys && item.offset <= 0
                 }?.key as? String
+            // At scroll position 0, the first header is always stuck
+            stuck ?: headerInfos.firstOrNull()?.key
         }
     }
 
