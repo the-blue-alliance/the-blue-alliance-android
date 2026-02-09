@@ -8,7 +8,7 @@
         android:scaleX="0.4107"
         android:scaleY="0.4107"
         android:translateX="39.22"
-        android:translateY="34">
+        android:translateY="33">
 
         <!-- Top rectangle (filled) -->
         <path
