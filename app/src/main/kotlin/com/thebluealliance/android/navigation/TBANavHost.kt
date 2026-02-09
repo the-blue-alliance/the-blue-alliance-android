@@ -137,6 +137,9 @@ fun TBANavHost(
                 onNavigateToEvent = { eventKey ->
                     navController.navigate(Screen.EventDetail(eventKey))
                 },
+                onNavigateToTeam = { teamKey ->
+                    navController.navigate(Screen.TeamDetail(teamKey))
+                },
             )
         }
         composable<Screen.TeamDetail>(
