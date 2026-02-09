@@ -68,6 +68,8 @@ import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
+import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.components.formatEventDateRange
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Info", "Teams", "Matches", "Rankings", "Alliances", "Awards")
@@ -393,25 +395,7 @@ private fun TeamsTab(teams: List<Team>?, onNavigateToTeam: (String) -> Unit) {
     }
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(teams, key = { it.key }) { team ->
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onNavigateToTeam(team.key) }
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-            ) {
-                Text(
-                    text = "${team.number} - ${team.nickname ?: team.name ?: ""}",
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                val loc = listOfNotNull(team.city, team.state, team.country).joinToString(", ")
-                if (loc.isNotEmpty()) {
-                    Text(
-                        text = loc,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
+            TeamRow(team = team, onClick = { onNavigateToTeam(team.key) })
         }
     }
 }

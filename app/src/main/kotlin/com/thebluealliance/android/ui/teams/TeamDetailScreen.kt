@@ -1,7 +1,6 @@
 package com.thebluealliance.android.ui.teams
 
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,7 +49,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -59,6 +57,7 @@ import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Team
+import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import kotlinx.coroutines.launch
 
@@ -298,35 +297,7 @@ private fun EventsTab(
         } else {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(events, key = { it.key }) { event ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onNavigateToEvent(event.key) }
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                    ) {
-                        Text(
-                            text = event.name,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Medium,
-                        )
-                        val location = listOfNotNull(event.city, event.state, event.country)
-                            .joinToString(", ")
-                        if (location.isNotEmpty()) {
-                            Text(
-                                text = location,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        val dateRange = listOfNotNull(event.startDate, event.endDate).joinToString(" - ")
-                        if (dateRange.isNotEmpty()) {
-                            Text(
-                                text = dateRange,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
+                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
                 }
             }
         }

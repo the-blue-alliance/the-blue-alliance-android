@@ -34,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.ui.components.EventRow
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Events", "Rankings")
@@ -109,35 +110,7 @@ private fun EventsTab(events: List<Event>?, onNavigateToEvent: (String) -> Unit)
     }
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(events, key = { it.key }) { event ->
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onNavigateToEvent(event.key) }
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-            ) {
-                Text(
-                    text = event.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
-                )
-                val location = listOfNotNull(event.city, event.state, event.country)
-                    .joinToString(", ")
-                if (location.isNotEmpty()) {
-                    Text(
-                        text = location,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                val dateRange = listOfNotNull(event.startDate, event.endDate).joinToString(" - ")
-                if (dateRange.isNotEmpty()) {
-                    Text(
-                        text = dateRange,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
+            EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
         }
     }
 }
