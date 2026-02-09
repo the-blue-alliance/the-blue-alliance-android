@@ -135,13 +135,23 @@ private fun EventsList(
     } else {
         emptyList()
     }
+    val today = remember { LocalDate.now() }
+    val happeningNowEvents = allEvents.filter { event ->
+        val start = event.startDate?.let { LocalDate.parse(it) }
+        val end = event.endDate?.let { LocalDate.parse(it) }
+        start != null && end != null && !today.isBefore(start) && !today.isAfter(end)
+    }
 
-    val headerInfos = remember(eventsByWeek, favoriteEvents) {
+    val headerInfos = remember(eventsByWeek, favoriteEvents, happeningNowEvents) {
         buildList {
             var index = 0
             if (favoriteEvents.isNotEmpty()) {
                 add(SectionHeaderInfo("favorites_header", "Favorites", index))
                 index += 1 + favoriteEvents.size + 1 // header + items + divider
+            }
+            if (happeningNowEvents.isNotEmpty()) {
+                add(SectionHeaderInfo("happening_now_header", "Happening Now", index))
+                index += 1 + happeningNowEvents.size + 1 // header + items + divider
             }
             eventsByWeek.forEach { (week, events) ->
                 val label = if (week != null) "Week $week" else "Other Events"
@@ -186,6 +196,26 @@ private fun EventsList(
                     EventItem(event = event, onClick = { onEventClick(event.key) })
                 }
                 item(key = "favorites_divider") {
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                }
+            }
+            if (happeningNowEvents.isNotEmpty()) {
+                stickyHeader(key = "happening_now_header") {
+                    SectionHeader(
+                        label = "Happening Now",
+                        isStuck = stuckHeaderKey == "happening_now_header",
+                        allHeaders = headerInfos,
+                        onHeaderSelected = { info ->
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(info.itemIndex)
+                            }
+                        },
+                    )
+                }
+                items(happeningNowEvents, key = { "now_${it.key}" }) { event ->
+                    EventItem(event = event, onClick = { onEventClick(event.key) })
+                }
+                item(key = "happening_now_divider") {
                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
                 }
             }
