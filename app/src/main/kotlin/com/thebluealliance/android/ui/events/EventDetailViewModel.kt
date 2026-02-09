@@ -57,9 +57,10 @@ class EventDetailViewModel @Inject constructor(
         combine(
             eventRepository.observeEventAlliances(eventKey),
             eventRepository.observeEventAwards(eventKey),
-        ) { alliances, awards -> alliances to awards },
-    ) { event, teams, matches, rankings, alliancesAndAwards ->
-        val (alliances, awards) = alliancesAndAwards
+            eventRepository.observeEventDistrictPoints(eventKey),
+        ) { alliances, awards, districtPoints -> Triple(alliances, awards, districtPoints) },
+    ) { event, teams, matches, rankings, extras ->
+        val (alliances, awards, districtPoints) = extras
         EventDetailUiState(
             event = event,
             teams = teams,
@@ -67,6 +68,7 @@ class EventDetailViewModel @Inject constructor(
             rankings = rankings,
             alliances = alliances,
             awards = awards,
+            districtPoints = districtPoints,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventDetailUiState())
 
@@ -125,6 +127,7 @@ class EventDetailViewModel @Inject constructor(
                 launch { try { eventRepository.refreshEventRankings(eventKey) } catch (_: Exception) {} }
                 launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
                 launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
+                launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
             } finally {
                 _isRefreshing.value = false
             }

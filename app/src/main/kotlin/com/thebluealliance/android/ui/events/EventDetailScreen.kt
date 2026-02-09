@@ -61,6 +61,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.domain.model.EventDistrictPoints
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.shortLabel
 import com.thebluealliance.android.domain.model.ModelType
@@ -72,7 +73,7 @@ import com.thebluealliance.android.ui.components.TeamRow
 import com.thebluealliance.android.ui.components.formatEventDateRange
 import kotlinx.coroutines.launch
 
-private val TABS = listOf("Info", "Teams", "Matches", "Rankings", "Alliances", "Awards")
+private val TABS = listOf("Info", "Teams", "Matches", "Rankings", "Alliances", "Awards", "District points")
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -199,6 +200,7 @@ fun EventDetailScreen(
                     3 -> RankingsTab(uiState.rankings)
                     4 -> AlliancesTab(uiState.alliances)
                     5 -> AwardsTab(uiState.awards)
+                    6 -> DistrictPointsTab(uiState.districtPoints, uiState.event, uiState.teams)
                 }
             }
         }
@@ -665,6 +667,72 @@ private fun AwardsTab(awards: List<Award>?) {
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun DistrictPointsTab(
+    districtPoints: List<EventDistrictPoints>?,
+    event: Event?,
+    teams: List<Team>?,
+) {
+    if (districtPoints == null) {
+        LoadingBox()
+        return
+    }
+    if (districtPoints.isEmpty()) {
+        EmptyBox("No district points")
+        return
+    }
+    val teamsByKey = remember(teams) { teams?.associateBy { it.key } ?: emptyMap() }
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        if (event?.district == null) {
+            item(key = "district_warning") {
+                Text(
+                    text = "This event is not part of a district \u2014 these points are purely hypothetical.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(16.dp),
+                )
+            }
+        }
+        items(districtPoints, key = { it.teamKey }) { points ->
+            val rank = districtPoints.indexOf(points) + 1
+            val teamName = teamsByKey[points.teamKey]?.nickname
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "#$rank",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.width(48.dp),
+                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = points.teamKey.removePrefix("frc"),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                    if (teamName != null) {
+                        Text(
+                            text = teamName,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                        )
+                    }
+                }
+                Text(
+                    text = "${points.total} pts",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            HorizontalDivider()
         }
     }
 }
