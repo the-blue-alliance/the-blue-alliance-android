@@ -38,3 +38,14 @@ All UI strings use **sentence case**: capitalize only the first word and proper 
 - Proper nouns and brand names (see above)
 - Acronyms (RP, BCVI)
 - Data from the server (event names, team names, etc.)
+
+## Brand colors
+
+These match the TBA web server CSS variables (`tba_variables.less`).
+
+| Name           | Hex       | Usage                                      |
+|----------------|-----------|---------------------------------------------|
+| TBA Blue       | `#3F51B5` | Primary brand color, launcher background    |
+| TBA Blue Dark  | `#303F9F` | Darker variant                              |
+| TBA Red        | `#770000` | Debug/beta builds, launcher background      |
+| TBA Red Dark   | `#440000` | Darker variant                              |
