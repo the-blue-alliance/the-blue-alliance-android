@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
 import java.time.Instant
 import java.time.ZoneId
@@ -33,6 +34,7 @@ class MatchDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val matchKey: String = savedStateHandle.toRoute<Screen.MatchDetail>().matchKey
+    private val year: Int = matchKey.substring(0, 4).toIntOrNull() ?: 0
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
@@ -57,6 +59,7 @@ class MatchDetailViewModel @Inject constructor(
             eventKey = event?.key,
             formattedTime = formattedTime,
             videos = videos,
+            year = year,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MatchDetailUiState())
 
@@ -102,9 +105,9 @@ class MatchDetailViewModel @Inject constructor(
             val result = mutableMapOf<String, Map<String, String>>()
             for (alliance in listOf("red", "blue")) {
                 val allianceObj = obj[alliance] as? JsonObject ?: continue
-                result[alliance] = allianceObj.mapValues { (_, v) ->
-                    v.jsonPrimitive.content
-                }
+                result[alliance] = allianceObj.entries
+                    .filter { (_, v) -> v is JsonPrimitive }
+                    .associate { (k, v) -> k to v.jsonPrimitive.content }
             }
             result.ifEmpty { null }
         } catch (_: Exception) {

@@ -135,14 +135,15 @@ fun MatchDetailScreen(
 
                         val redBreakdown = breakdown["red"] ?: emptyMap()
                         val blueBreakdown = breakdown["blue"] ?: emptyMap()
-                        val allKeys = (redBreakdown.keys + blueBreakdown.keys).distinct()
-                            .filter { it != "totalPoints" }
+                        val orderedFields = getOrderedBreakdownFields(
+                            uiState.year, redBreakdown, blueBreakdown
+                        )
 
-                        items(allKeys, key = { "breakdown_$it" }) { field ->
+                        items(orderedFields, key = { "breakdown_${it.first}" }) { (apiKey, label) ->
                             BreakdownRow(
-                                label = formatBreakdownKey(field),
-                                redValue = redBreakdown[field] ?: "-",
-                                blueValue = blueBreakdown[field] ?: "-",
+                                label = label,
+                                redValue = redBreakdown[apiKey] ?: "-",
+                                blueValue = blueBreakdown[apiKey] ?: "-",
                             )
                         }
                     }
@@ -316,40 +317,129 @@ private fun BreakdownRow(label: String, redValue: String, blueValue: String) {
     }
 }
 
-private fun formatBreakdownKey(key: String): String {
-    // Handle well-known TBA field names
-    val mapped = breakdownKeyNames[key]
-    if (mapped != null) return mapped
-
+private fun camelCaseToLabel(key: String): String {
     return key.replace(Regex("([A-Z])"), " $1")
         .replace("_", " ")
         .trim()
         .replaceFirstChar { it.uppercase() }
 }
 
-private val breakdownKeyNames = mapOf(
-    "adjustPoints" to "Adjust",
-    "autoPoints" to "Auto",
-    "teleopPoints" to "Teleop",
-    "foulPoints" to "Foul points",
+private fun getOrderedBreakdownFields(
+    year: Int,
+    redBreakdown: Map<String, String>,
+    blueBreakdown: Map<String, String>,
+): List<Pair<String, String>> {
+    val yearFields = breakdownFieldsByYear[year]
+    if (yearFields == null) {
+        // Fallback: show all keys with camelCase-to-label conversion
+        val allKeys = (redBreakdown.keys + blueBreakdown.keys).distinct()
+            .filter { it != "totalPoints" }
+        return allKeys.map { it to camelCaseToLabel(it) }
+    }
+
+    val knownKeys = yearFields.map { it.first }.toSet()
+    val result = yearFields.toMutableList()
+
+    // Append any unrecognized keys at the end
+    val allKeys = (redBreakdown.keys + blueBreakdown.keys).distinct()
+    for (key in allKeys) {
+        if (key !in knownKeys) {
+            result.add(key to camelCaseToLabel(key))
+        }
+    }
+    return result
+}
+
+private val breakdownFields2025 = listOf(
+    "autoLineRobot1" to "Auto leave 1",
+    "autoLineRobot2" to "Auto leave 2",
+    "autoLineRobot3" to "Auto leave 3",
+    "autoMobilityPoints" to "Auto mobility",
+    "autoCoralPoints" to "Auto coral",
+    "autoPoints" to "Total auto",
+    "teleopCoralPoints" to "Teleop coral",
+    "wallAlgaeCount" to "Processor algae",
+    "netAlgaeCount" to "Net algae",
+    "algaePoints" to "Algae points",
+    "endGameRobot1" to "Endgame 1",
+    "endGameRobot2" to "Endgame 2",
+    "endGameRobot3" to "Endgame 3",
+    "endGameBargePoints" to "Barge points",
+    "teleopPoints" to "Total teleop",
+    "coopertitionCriteriaMet" to "Coopertition",
+    "autoBonusAchieved" to "Auto bonus",
+    "coralBonusAchieved" to "Coral bonus",
+    "bargeBonusAchieved" to "Barge bonus",
     "foulCount" to "Fouls",
     "techFoulCount" to "Tech fouls",
+    "foulPoints" to "Foul points",
+    "adjustPoints" to "Adjust",
+    "totalPoints" to "Total",
     "rp" to "RP",
-    "autoLineRobot1" to "Auto line robot 1",
-    "autoLineRobot2" to "Auto line robot 2",
-    "autoLineRobot3" to "Auto line robot 3",
-    "endGameRobot1" to "Endgame robot 1",
-    "endGameRobot2" to "Endgame robot 2",
-    "endGameRobot3" to "Endgame robot 3",
-    "autoGamePieceCount" to "Auto game pieces",
-    "teleopGamePieceCount" to "Teleop game pieces",
+)
+
+private val breakdownFields2024 = listOf(
+    "autoLineRobot1" to "Auto leave 1",
+    "autoLineRobot2" to "Auto leave 2",
+    "autoLineRobot3" to "Auto leave 3",
+    "autoLeavePoints" to "Auto leave points",
+    "autoAmpNoteCount" to "Auto amp notes",
+    "autoSpeakerNoteCount" to "Auto speaker notes",
+    "autoTotalNotePoints" to "Auto note points",
+    "autoPoints" to "Total auto",
+    "teleopAmpNoteCount" to "Teleop amp notes",
+    "teleopSpeakerNoteCount" to "Teleop speaker notes",
+    "teleopSpeakerNoteAmplifiedCount" to "Amplified speaker",
+    "teleopTotalNotePoints" to "Teleop note points",
+    "endGameRobot1" to "Endgame 1",
+    "endGameRobot2" to "Endgame 2",
+    "endGameRobot3" to "Endgame 3",
+    "endGameHarmonyPoints" to "Harmony",
+    "endGameNoteInTrapPoints" to "Trap",
+    "endGameOnStagePoints" to "On stage",
+    "endGameParkPoints" to "Park",
+    "teleopPoints" to "Total teleop",
+    "coopertitionBonusAchieved" to "Coopertition",
+    "melodyBonusAchieved" to "Melody bonus",
+    "ensembleBonusAchieved" to "Ensemble bonus",
+    "foulCount" to "Fouls",
+    "techFoulCount" to "Tech fouls",
+    "foulPoints" to "Foul points",
+    "adjustPoints" to "Adjust",
+    "totalPoints" to "Total",
+    "rp" to "RP",
+)
+
+private val breakdownFields2023 = listOf(
+    "autoLineRobot1" to "Auto line 1",
+    "autoLineRobot2" to "Auto line 2",
+    "autoLineRobot3" to "Auto line 3",
     "autoMobilityPoints" to "Auto mobility",
+    "autoGamePieceCount" to "Auto game pieces",
     "autoGamePiecePoints" to "Auto game piece points",
-    "teleopGamePiecePoints" to "Teleop game piece points",
-    "endGameParkPoints" to "Endgame park points",
-    "endGameChargeStationPoints" to "Endgame charge station",
     "autoChargeStationPoints" to "Auto charge station",
+    "autoPoints" to "Total auto",
+    "teleopGamePieceCount" to "Teleop game pieces",
+    "teleopGamePiecePoints" to "Teleop game piece points",
+    "endGameRobot1" to "Endgame 1",
+    "endGameRobot2" to "Endgame 2",
+    "endGameRobot3" to "Endgame 3",
+    "endGameChargeStationPoints" to "Endgame charge station",
+    "endGameParkPoints" to "Endgame park",
+    "teleopPoints" to "Total teleop",
     "activationBonusAchieved" to "Activation bonus",
     "sustainabilityBonusAchieved" to "Sustainability bonus",
     "coopertitionCriteriaMet" to "Coopertition",
+    "foulCount" to "Fouls",
+    "techFoulCount" to "Tech fouls",
+    "foulPoints" to "Foul points",
+    "adjustPoints" to "Adjust",
+    "totalPoints" to "Total",
+    "rp" to "RP",
+)
+
+private val breakdownFieldsByYear = mapOf(
+    2025 to breakdownFields2025,
+    2024 to breakdownFields2024,
+    2023 to breakdownFields2023,
 )

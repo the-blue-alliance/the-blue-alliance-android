@@ -14,4 +14,5 @@ data class MatchDetailUiState(
     val eventKey: String? = null,
     val formattedTime: String? = null,
     val videos: List<MatchVideo> = emptyList(),
+    val year: Int = 0,
 )

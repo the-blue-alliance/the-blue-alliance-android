@@ -43,6 +43,7 @@ private val TABS = listOf("Events", "Rankings")
 fun DistrictDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToEvent: (String) -> Unit,
+    onNavigateToTeam: (String) -> Unit,
     viewModel: DistrictDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -89,7 +90,7 @@ fun DistrictDetailScreen(
             ) { page ->
                 when (page) {
                     0 -> EventsTab(uiState.events, onNavigateToEvent)
-                    1 -> RankingsTab(uiState.rankings)
+                    1 -> RankingsTab(uiState.rankings, onNavigateToTeam)
                 }
             }
         }
@@ -142,7 +143,7 @@ private fun EventsTab(events: List<Event>?, onNavigateToEvent: (String) -> Unit)
 }
 
 @Composable
-private fun RankingsTab(rankings: List<DistrictRanking>?) {
+private fun RankingsTab(rankings: List<DistrictRanking>?, onNavigateToTeam: (String) -> Unit) {
     if (rankings == null) {
         LoadingBox()
         return
@@ -156,6 +157,7 @@ private fun RankingsTab(rankings: List<DistrictRanking>?) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clickable { onNavigateToTeam(ranking.teamKey) }
                     .padding(horizontal = 16.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
