@@ -242,6 +242,27 @@ fun DistrictRankingEntity.toDomain() = DistrictRanking(
     rookieBonus = rookieBonus,
 )
 
+// ── EventDistrictPoints ──
+
+fun EventDistrictPointsEntryDto.toEntity(eventKey: String, teamKey: String) = EventDistrictPointsEntity(
+    eventKey = eventKey,
+    teamKey = teamKey,
+    qualPoints = qualPoints,
+    elimPoints = elimPoints,
+    alliancePoints = alliancePoints,
+    awardPoints = awardPoints,
+    total = total,
+)
+
+fun EventDistrictPointsEntity.toDomain() = EventDistrictPoints(
+    teamKey = teamKey,
+    qualPoints = qualPoints,
+    elimPoints = elimPoints,
+    alliancePoints = alliancePoints,
+    awardPoints = awardPoints,
+    total = total,
+)
+
 // ── Media ──
 
 fun MediaDto.toEntity(teamKey: String, year: Int) = MediaEntity(

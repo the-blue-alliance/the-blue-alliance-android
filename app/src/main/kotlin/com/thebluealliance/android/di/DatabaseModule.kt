@@ -34,4 +34,5 @@ object DatabaseModule {
     @Provides fun provideEventTeamDao(db: TBADatabase): EventTeamDao = db.eventTeamDao()
     @Provides fun provideFavoriteDao(db: TBADatabase): FavoriteDao = db.favoriteDao()
     @Provides fun provideSubscriptionDao(db: TBADatabase): SubscriptionDao = db.subscriptionDao()
+    @Provides fun provideEventDistrictPointsDao(db: TBADatabase): EventDistrictPointsDao = db.eventDistrictPointsDao()
 }

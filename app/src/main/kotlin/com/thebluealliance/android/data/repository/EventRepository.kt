@@ -5,6 +5,7 @@ import com.thebluealliance.android.data.local.TBADatabase
 import com.thebluealliance.android.data.local.dao.AllianceDao
 import com.thebluealliance.android.data.local.dao.AwardDao
 import com.thebluealliance.android.data.local.dao.EventDao
+import com.thebluealliance.android.data.local.dao.EventDistrictPointsDao
 import com.thebluealliance.android.data.local.dao.EventTeamDao
 import com.thebluealliance.android.data.local.dao.RankingDao
 import com.thebluealliance.android.data.local.entity.EventTeamEntity
@@ -13,6 +14,7 @@ import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.domain.model.EventDistrictPoints
 import com.thebluealliance.android.domain.model.Ranking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -31,6 +33,7 @@ class EventRepository @Inject constructor(
     private val rankingDao: RankingDao,
     private val allianceDao: AllianceDao,
     private val eventTeamDao: EventTeamDao,
+    private val eventDistrictPointsDao: EventDistrictPointsDao,
 ) {
     fun searchEvents(query: String): Flow<List<Event>> =
         eventDao.search(query).map { list -> list.map { it.toDomain() } }
@@ -114,6 +117,22 @@ class EventRepository @Inject constructor(
             db.withTransaction {
                 rankingDao.deleteByEvent(eventKey)
                 rankingDao.insertAll(response.rankings.map { it.toEntity(eventKey) })
+            }
+        } catch (_: Exception) { }
+    }
+
+    fun observeEventDistrictPoints(eventKey: String): Flow<List<EventDistrictPoints>> =
+        eventDistrictPointsDao.observeByEvent(eventKey).map { list -> list.map { it.toDomain() } }
+
+    suspend fun refreshEventDistrictPoints(eventKey: String) {
+        try {
+            val response = api.getEventDistrictPoints(eventKey)
+            val entities = response.points.map { (teamKey, entry) ->
+                entry.toEntity(eventKey, teamKey)
+            }
+            db.withTransaction {
+                eventDistrictPointsDao.deleteByEvent(eventKey)
+                eventDistrictPointsDao.insertAll(entities)
             }
         } catch (_: Exception) { }
     }
