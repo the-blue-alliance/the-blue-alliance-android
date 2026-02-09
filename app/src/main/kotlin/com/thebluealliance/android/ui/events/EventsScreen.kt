@@ -97,7 +97,7 @@ fun EventsScreen(
                 }
 
                 is EventsUiState.Success -> {
-                    if (state.eventsByWeek.isEmpty()) {
+                    if (state.sections.isEmpty()) {
                         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("No events found for $selectedYear")
@@ -108,7 +108,7 @@ fun EventsScreen(
                         }
                     } else {
                         EventsList(
-                            eventsByWeek = state.eventsByWeek,
+                            sections = state.sections,
                             favoriteEventKeys = state.favoriteEventKeys,
                             onEventClick = onNavigateToEvent,
                             listState = listState,
@@ -124,12 +124,12 @@ private data class SectionHeaderInfo(val key: String, val label: String, val ite
 
 @Composable
 private fun EventsList(
-    eventsByWeek: Map<Int?, List<Event>>,
+    sections: List<EventSection>,
     favoriteEventKeys: Set<String>,
     onEventClick: (String) -> Unit,
     listState: LazyListState,
 ) {
-    val allEvents = eventsByWeek.values.flatten()
+    val allEvents = sections.flatMap { it.events }
     val favoriteEvents = if (favoriteEventKeys.isNotEmpty()) {
         allEvents.filter { it.key in favoriteEventKeys }
     } else {
@@ -142,7 +142,7 @@ private fun EventsList(
         start != null && end != null && !today.isBefore(start) && !today.isAfter(end)
     }
 
-    val headerInfos = remember(eventsByWeek, favoriteEvents, happeningNowEvents) {
+    val headerInfos = remember(sections, favoriteEvents, happeningNowEvents) {
         buildList {
             var index = 0
             if (favoriteEvents.isNotEmpty()) {
@@ -153,10 +153,10 @@ private fun EventsList(
                 add(SectionHeaderInfo("happening_now_header", "Happening now", index))
                 index += 1 + happeningNowEvents.size + 1 // header + items + divider
             }
-            eventsByWeek.forEach { (week, events) ->
-                val label = if (week != null) "Week $week" else "Other events"
-                add(SectionHeaderInfo("header_$week", label, index))
-                index += 1 + events.size // header + items
+            sections.forEach { section ->
+                val headerKey = "header_${section.label}"
+                add(SectionHeaderInfo(headerKey, section.label, index))
+                index += 1 + section.events.size // header + items
             }
         }
     }
@@ -219,11 +219,11 @@ private fun EventsList(
                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
                 }
             }
-            eventsByWeek.forEach { (week, events) ->
-                val headerKey = "header_$week"
+            sections.forEach { section ->
+                val headerKey = "header_${section.label}"
                 stickyHeader(key = headerKey) {
                     SectionHeader(
-                        label = if (week != null) "Week $week" else "Other events",
+                        label = section.label,
                         isStuck = stuckHeaderKey == headerKey,
                         allHeaders = headerInfos,
                         onHeaderSelected = { info ->
@@ -233,7 +233,7 @@ private fun EventsList(
                         },
                     )
                 }
-                items(events, key = { it.key }) { event ->
+                items(section.events, key = { it.key }) { event ->
                     EventItem(event = event, onClick = { onEventClick(event.key) })
                 }
             }
