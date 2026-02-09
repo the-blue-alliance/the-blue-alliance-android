@@ -150,11 +150,11 @@ private fun EventsList(
                 index += 1 + favoriteEvents.size + 1 // header + items + divider
             }
             if (happeningNowEvents.isNotEmpty()) {
-                add(SectionHeaderInfo("happening_now_header", "Happening Now", index))
+                add(SectionHeaderInfo("happening_now_header", "Happening now", index))
                 index += 1 + happeningNowEvents.size + 1 // header + items + divider
             }
             eventsByWeek.forEach { (week, events) ->
-                val label = if (week != null) "Week $week" else "Other Events"
+                val label = if (week != null) "Week $week" else "Other events"
                 add(SectionHeaderInfo("header_$week", label, index))
                 index += 1 + events.size // header + items
             }
@@ -202,7 +202,7 @@ private fun EventsList(
             if (happeningNowEvents.isNotEmpty()) {
                 stickyHeader(key = "happening_now_header") {
                     SectionHeader(
-                        label = "Happening Now",
+                        label = "Happening now",
                         isStuck = stuckHeaderKey == "happening_now_header",
                         allHeaders = headerInfos,
                         onHeaderSelected = { info ->
@@ -223,7 +223,7 @@ private fun EventsList(
                 val headerKey = "header_$week"
                 stickyHeader(key = headerKey) {
                     SectionHeader(
-                        label = if (week != null) "Week $week" else "Other Events",
+                        label = if (week != null) "Week $week" else "Other events",
                         isStuck = stuckHeaderKey == headerKey,
                         allHeaders = headerInfos,
                         onHeaderSelected = { info ->

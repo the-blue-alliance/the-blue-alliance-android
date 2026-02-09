@@ -97,10 +97,10 @@ fun MatchDetailScreen(
 
                     // Teams
                     item(key = "red_teams") {
-                        AllianceTeams("Red Alliance", match.redTeamKeys, MaterialTheme.colorScheme.error, onNavigateToTeam)
+                        AllianceTeams("Red alliance", match.redTeamKeys, MaterialTheme.colorScheme.error, onNavigateToTeam)
                     }
                     item(key = "blue_teams") {
-                        AllianceTeams("Blue Alliance", match.blueTeamKeys, MaterialTheme.colorScheme.primary, onNavigateToTeam)
+                        AllianceTeams("Blue alliance", match.blueTeamKeys, MaterialTheme.colorScheme.primary, onNavigateToTeam)
                     }
 
                     // Videos
@@ -126,7 +126,7 @@ fun MatchDetailScreen(
                         item(key = "breakdown_header") {
                             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                             Text(
-                                text = "Score Breakdown",
+                                text = "Score breakdown",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -331,25 +331,25 @@ private val breakdownKeyNames = mapOf(
     "adjustPoints" to "Adjust",
     "autoPoints" to "Auto",
     "teleopPoints" to "Teleop",
-    "foulPoints" to "Foul Points",
+    "foulPoints" to "Foul points",
     "foulCount" to "Fouls",
-    "techFoulCount" to "Tech Fouls",
+    "techFoulCount" to "Tech fouls",
     "rp" to "RP",
-    "autoLineRobot1" to "Auto Line Robot 1",
-    "autoLineRobot2" to "Auto Line Robot 2",
-    "autoLineRobot3" to "Auto Line Robot 3",
-    "endGameRobot1" to "Endgame Robot 1",
-    "endGameRobot2" to "Endgame Robot 2",
-    "endGameRobot3" to "Endgame Robot 3",
-    "autoGamePieceCount" to "Auto Game Pieces",
-    "teleopGamePieceCount" to "Teleop Game Pieces",
-    "autoMobilityPoints" to "Auto Mobility",
-    "autoGamePiecePoints" to "Auto Game Piece Points",
-    "teleopGamePiecePoints" to "Teleop Game Piece Points",
-    "endGameParkPoints" to "Endgame Park Points",
-    "endGameChargeStationPoints" to "Endgame Charge Station",
-    "autoChargeStationPoints" to "Auto Charge Station",
-    "activationBonusAchieved" to "Activation Bonus",
-    "sustainabilityBonusAchieved" to "Sustainability Bonus",
+    "autoLineRobot1" to "Auto line robot 1",
+    "autoLineRobot2" to "Auto line robot 2",
+    "autoLineRobot3" to "Auto line robot 3",
+    "endGameRobot1" to "Endgame robot 1",
+    "endGameRobot2" to "Endgame robot 2",
+    "endGameRobot3" to "Endgame robot 3",
+    "autoGamePieceCount" to "Auto game pieces",
+    "teleopGamePieceCount" to "Teleop game pieces",
+    "autoMobilityPoints" to "Auto mobility",
+    "autoGamePiecePoints" to "Auto game piece points",
+    "teleopGamePiecePoints" to "Teleop game piece points",
+    "endGameParkPoints" to "Endgame park points",
+    "endGameChargeStationPoints" to "Endgame charge station",
+    "autoChargeStationPoints" to "Auto charge station",
+    "activationBonusAchieved" to "Activation bonus",
+    "sustainabilityBonusAchieved" to "Sustainability bonus",
     "coopertitionCriteriaMet" to "Coopertition",
 )
