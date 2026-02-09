@@ -3,9 +3,10 @@
 
 *.txtbak
 
-# Keys
+# Keys & signing secrets
 *.jks
 *.keystore
+.signing/
 
 # Local Properties
 android/src/main/assets/tba.properties
