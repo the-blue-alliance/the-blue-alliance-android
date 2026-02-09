@@ -42,7 +42,7 @@ fun SettingsScreen() {
                     .fillMaxWidth()
                     .padding(top = 8.dp),
             ) {
-                Text("Test: Match Score Notification")
+                Text("Test: Match score notification")
             }
 
             Button(
@@ -51,7 +51,7 @@ fun SettingsScreen() {
                     .fillMaxWidth()
                     .padding(top = 8.dp),
             ) {
-                Text("Test: Upcoming Match Notification")
+                Text("Test: Upcoming match notification")
             }
 
             Button(
@@ -60,7 +60,7 @@ fun SettingsScreen() {
                     .fillMaxWidth()
                     .padding(top = 8.dp),
             ) {
-                Text("Test: Event Update Notification")
+                Text("Test: Event update notification")
             }
         }
     }

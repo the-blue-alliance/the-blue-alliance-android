@@ -104,7 +104,7 @@ fun TeamsScreen(
                                 }
                                 item(key = "all_teams_header") {
                                     Text(
-                                        text = "All Teams",
+                                        text = "All teams",
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary,

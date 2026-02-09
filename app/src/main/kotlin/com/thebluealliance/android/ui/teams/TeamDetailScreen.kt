@@ -102,7 +102,7 @@ fun TeamDetailScreen(
                 TextButton(onClick = {
                     showSignInDialog = false
                     onNavigateToMyTBA()
-                }) { Text("Sign In") }
+                }) { Text("Sign in") }
             },
             dismissButton = {
                 TextButton(onClick = { showSignInDialog = false }) { Text("Cancel") }
