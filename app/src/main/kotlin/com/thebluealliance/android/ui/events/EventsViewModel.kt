@@ -6,6 +6,7 @@ import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.domain.model.ModelType
+import com.thebluealliance.android.domain.model.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,6 +16,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -48,13 +51,12 @@ class EventsViewModel @Inject constructor(
                 if (events.isEmpty() && !hasLoaded) {
                     EventsUiState.Loading
                 } else {
-                    val grouped = events.groupBy { it.week }
-                        .toSortedMap(compareBy { it ?: Int.MAX_VALUE })
+                    val sections = buildEventSections(events)
                     val favoriteEventKeys = favorites
                         .filter { it.modelType == ModelType.EVENT }
                         .map { it.modelKey }
                         .toSet()
-                    EventsUiState.Success(grouped, favoriteEventKeys)
+                    EventsUiState.Success(sections, favoriteEventKeys)
                 }
             }
         }
@@ -98,4 +100,34 @@ class EventsViewModel @Inject constructor(
             }
         }
     }
+}
+
+private data class SectionKey(val sortOrder: Int, val label: String)
+
+private fun eventSectionKey(event: Event): SectionKey {
+    return when (event.type) {
+        100 -> SectionKey(-1, "Preseason")
+        0, 1, 2, 5 -> {
+            val week = event.week ?: return SectionKey(9999, "Other events")
+            SectionKey(week, "Week ${week + 1}")
+        }
+        3, 4 -> SectionKey(1000, "Championship")
+        99 -> SectionKey(2000, "Offseason")
+        else -> {
+            // Unknown type but has a week — group with regular weeks
+            if (event.week != null) {
+                SectionKey(event.week, "Week ${event.week + 1}")
+            } else {
+                SectionKey(9999, "Other events")
+            }
+        }
+    }
+}
+
+private fun buildEventSections(events: List<Event>): List<EventSection> {
+    return events
+        .groupBy { eventSectionKey(it) }
+        .entries
+        .sortedBy { it.key.sortOrder }
+        .map { (key, sectionEvents) -> EventSection(key.label, sectionEvents) }
 }
