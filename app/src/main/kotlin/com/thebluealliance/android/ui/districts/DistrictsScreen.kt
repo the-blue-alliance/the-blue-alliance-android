@@ -36,11 +36,12 @@ fun DistrictsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
+    val maxYear by viewModel.maxYear.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
 
-    LaunchedEffect(selectedYear) {
-        onYearState(selectedYear, 2024, viewModel::selectYear)
+    LaunchedEffect(selectedYear, maxYear) {
+        onYearState(selectedYear, maxYear, viewModel::selectYear)
     }
 
     LaunchedEffect(scrollToTopTrigger) {

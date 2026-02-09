@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.districts
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.DistrictRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +20,11 @@ import javax.inject.Inject
 @HiltViewModel
 class DistrictsViewModel @Inject constructor(
     private val districtRepository: DistrictRepository,
+    private val tbaApi: TbaApi,
 ) : ViewModel() {
+
+    private val _maxYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
+    val maxYear: StateFlow<Int> = _maxYear.asStateFlow()
 
     private val _selectedYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
     val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
@@ -37,7 +42,22 @@ class DistrictsViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DistrictsUiState.Loading)
 
     init {
+        fetchMaxYear()
         refreshDistricts()
+    }
+
+    private fun fetchMaxYear() {
+        viewModelScope.launch {
+            try {
+                val status = tbaApi.getStatus()
+                _maxYear.value = status.maxSeason
+                if (_selectedYear.value < status.maxSeason) {
+                    _selectedYear.value = status.maxSeason
+                }
+            } catch (_: Exception) {
+                // Fall back to calendar year (already set)
+            }
+        }
     }
 
     fun selectYear(year: Int) {
