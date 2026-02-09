@@ -56,7 +56,7 @@ android {
                     "http://10.0.2.2:8080/"
                 )
             }\"")
-            buildConfigField("String", "TBA_API_KEY", "\"${localProperties.getProperty("tba.api.key.debug", "")}\"")
+            buildConfigField("String", "TBA_API_KEY", "\"${localProperties.getProperty("tba.api.key.debug", "tba-dev-key")}\"")
         }
         release {
             signingConfig = signingConfigs.getByName("release")
