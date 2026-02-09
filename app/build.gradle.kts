@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.aboutlibraries)
 }
 
 val localProperties = Properties().apply {
@@ -137,6 +138,9 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+
+    // AboutLibraries
+    implementation(libs.aboutlibraries.compose.m3)
 
     // Firebase
     implementation(platform(libs.firebase.bom))

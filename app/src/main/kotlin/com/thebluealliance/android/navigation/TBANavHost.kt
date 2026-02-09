@@ -12,7 +12,9 @@ import com.thebluealliance.android.ui.matches.MatchDetailScreen
 import com.thebluealliance.android.ui.search.SearchScreen
 import com.thebluealliance.android.ui.events.EventDetailScreen
 import com.thebluealliance.android.ui.events.EventsScreen
+import com.thebluealliance.android.ui.more.AboutScreen
 import com.thebluealliance.android.ui.more.MoreScreen
+import com.thebluealliance.android.ui.more.ThanksScreen
 import com.thebluealliance.android.ui.mytba.MyTBAScreen
 import com.thebluealliance.android.ui.settings.SettingsScreen
 import com.thebluealliance.android.ui.teams.TeamDetailScreen
@@ -62,6 +64,8 @@ fun TBANavHost(
             MoreScreen(
                 onNavigateToMyTBA = { navController.navigate(Screen.MyTBA) },
                 onNavigateToSettings = { navController.navigate(Screen.Settings) },
+                onNavigateToAbout = { navController.navigate(Screen.About) },
+                onNavigateToThanks = { navController.navigate(Screen.Thanks) },
             )
         }
         composable<Screen.MyTBA> {
@@ -78,6 +82,12 @@ fun TBANavHost(
         }
         composable<Screen.Settings> {
             SettingsScreen()
+        }
+        composable<Screen.About> {
+            AboutScreen()
+        }
+        composable<Screen.Thanks> {
+            ThanksScreen()
         }
         composable<Screen.Search> {
             SearchScreen(

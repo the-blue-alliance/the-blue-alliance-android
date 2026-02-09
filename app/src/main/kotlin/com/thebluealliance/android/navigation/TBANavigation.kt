@@ -17,4 +17,6 @@ sealed interface Screen {
     @Serializable data object MyTBA : Screen
     @Serializable data object Search : Screen
     @Serializable data object Settings : Screen
+    @Serializable data object About : Screen
+    @Serializable data object Thanks : Screen
 }

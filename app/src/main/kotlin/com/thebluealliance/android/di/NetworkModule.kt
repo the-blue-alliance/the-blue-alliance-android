@@ -4,6 +4,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.data.remote.AuthTokenInterceptor
 import com.thebluealliance.android.data.remote.ClientApi
+import com.thebluealliance.android.data.remote.GitHubApi
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.remote.TbaApiKeyInterceptor
 import javax.inject.Named
@@ -69,6 +70,24 @@ object NetworkModule {
                 }
             )
             .build()
+
+    @Provides
+    @Singleton
+    fun provideGitHubApi(json: Json): GitHubApi = Retrofit.Builder()
+        .baseUrl("https://api.github.com/")
+        .client(
+            OkHttpClient.Builder()
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply {
+                        level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BASIC
+                        else HttpLoggingInterceptor.Level.NONE
+                    }
+                )
+                .build()
+        )
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .build()
+        .create(GitHubApi::class.java)
 
     @Provides
     @Singleton
