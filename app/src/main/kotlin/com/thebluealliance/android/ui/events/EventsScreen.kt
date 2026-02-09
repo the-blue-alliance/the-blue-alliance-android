@@ -42,11 +42,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -193,7 +192,7 @@ private fun EventsList(
                     )
                 }
                 items(favoriteEvents, key = { "fav_${it.key}" }) { event ->
-                    EventItem(event = event, onClick = { onEventClick(event.key) })
+                    EventRow(event = event, onClick = { onEventClick(event.key) })
                 }
                 item(key = "favorites_divider") {
                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
@@ -213,7 +212,7 @@ private fun EventsList(
                     )
                 }
                 items(happeningNowEvents, key = { "now_${it.key}" }) { event ->
-                    EventItem(event = event, onClick = { onEventClick(event.key) })
+                    EventRow(event = event, onClick = { onEventClick(event.key) })
                 }
                 item(key = "happening_now_divider") {
                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
@@ -234,7 +233,7 @@ private fun EventsList(
                     )
                 }
                 items(section.events, key = { it.key }) { event ->
-                    EventItem(event = event, onClick = { onEventClick(event.key) })
+                    EventRow(event = event, onClick = { onEventClick(event.key) })
                 }
             }
         }
@@ -306,53 +305,3 @@ private fun SectionHeader(
     }
 }
 
-@Composable
-private fun EventItem(
-    event: Event,
-    onClick: () -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-    ) {
-        Text(
-            text = event.name,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
-        )
-        val location = listOfNotNull(event.city, event.state, event.country)
-            .joinToString(", ")
-        if (location.isNotEmpty()) {
-            Text(
-                text = location,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        val dateRange = formatEventDateRange(event.startDate, event.endDate)
-        if (dateRange != null) {
-            Text(
-                text = dateRange,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-}
-
-internal val fullFormat = DateTimeFormatter.ofPattern("EEE, MMM d, yyyy", Locale.US)
-internal val noYearFormat = DateTimeFormatter.ofPattern("EEE, MMM d", Locale.US)
-
-internal fun formatEventDateRange(startDate: String?, endDate: String?): String? {
-    if (startDate == null) return null
-    val start = LocalDate.parse(startDate)
-    val end = endDate?.let { LocalDate.parse(it) }
-    if (end == null || start == end) return start.format(fullFormat)
-    return if (start.year == end.year) {
-        "${start.format(noYearFormat)} - ${end.format(fullFormat)}"
-    } else {
-        "${start.format(fullFormat)} - ${end.format(fullFormat)}"
-    }
-}

@@ -1,10 +1,8 @@
 package com.thebluealliance.android.ui.teams
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.components.FastScrollbar
+import com.thebluealliance.android.ui.components.TeamRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,7 +96,7 @@ fun TeamsScreen(
                                     )
                                 }
                                 items(favoriteTeams, key = { "fav_${it.key}" }) { team ->
-                                    TeamItem(team = team, onClick = { onNavigateToTeam(team.key) })
+                                    TeamRow(team = team, onClick = { onNavigateToTeam(team.key) })
                                 }
                                 item(key = "favorites_divider") {
                                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
@@ -116,7 +115,7 @@ fun TeamsScreen(
                                 }
                             }
                             items(state.teams, key = { it.key }) { team ->
-                                TeamItem(team = team, onClick = { onNavigateToTeam(team.key) })
+                                TeamRow(team = team, onClick = { onNavigateToTeam(team.key) })
                             }
                         }
                     }
@@ -126,29 +125,3 @@ fun TeamsScreen(
     }
 }
 
-@Composable
-private fun TeamItem(
-    team: Team,
-    onClick: () -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-    ) {
-        Text(
-            text = "${team.number} - ${team.nickname ?: team.name ?: ""}",
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
-        )
-        val location = listOfNotNull(team.city, team.state, team.country).joinToString(", ")
-        if (location.isNotEmpty()) {
-            Text(
-                text = location,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-}

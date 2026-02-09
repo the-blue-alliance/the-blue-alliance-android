@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.search
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,8 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.thebluealliance.android.domain.model.Event
-import com.thebluealliance.android.domain.model.Team
+import com.thebluealliance.android.ui.components.EventRow
+import com.thebluealliance.android.ui.components.TeamRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,7 +84,7 @@ fun SearchScreen(
                     )
                 }
                 items(uiState.teams, key = { "team_${it.key}" }) { team ->
-                    TeamResultItem(team, onClick = { onNavigateToTeam(team.key) })
+                    TeamRow(team = team, onClick = { onNavigateToTeam(team.key) })
                 }
             }
             if (uiState.events.isNotEmpty()) {
@@ -99,60 +98,10 @@ fun SearchScreen(
                     )
                 }
                 items(uiState.events, key = { "event_${it.key}" }) { event ->
-                    EventResultItem(event, onClick = { onNavigateToEvent(event.key) })
+                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) }, showYear = true)
                 }
             }
         }
     }
 }
 
-@Composable
-private fun TeamResultItem(team: Team, onClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 10.dp),
-    ) {
-        Text(
-            text = "${team.number} - ${team.nickname ?: team.name ?: ""}",
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
-        )
-        val location = listOfNotNull(team.city, team.state, team.country).joinToString(", ")
-        if (location.isNotEmpty()) {
-            Text(
-                text = location,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-}
-
-@Composable
-private fun EventResultItem(event: Event, onClick: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 10.dp),
-    ) {
-        Text(
-            text = event.name,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
-        )
-        val subtitle = listOfNotNull(
-            event.year.toString(),
-            listOfNotNull(event.city, event.state, event.country).joinToString(", ").ifEmpty { null },
-        ).joinToString(" · ")
-        if (subtitle.isNotEmpty()) {
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-}
