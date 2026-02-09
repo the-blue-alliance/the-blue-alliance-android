@@ -78,7 +78,7 @@ fun TBAApp(activity: MainActivity? = null) {
         var districtsYearDropdownExpanded by remember { mutableStateOf(false) }
         var onDistrictsYearSelected by remember { mutableStateOf<((Int) -> Unit)?>(null) }
 
-        val moreSubScreens = listOf(Screen.MyTBA::class, Screen.Settings::class)
+        val moreSubScreens = listOf(Screen.MyTBA::class, Screen.Settings::class, Screen.About::class, Screen.Thanks::class)
         val isOnMoreSubScreen = moreSubScreens.any { currentDestination?.hasRoute(it) == true }
         val showBottomBar = TOP_LEVEL_DESTINATIONS.any { dest ->
             currentDestination?.hasRoute(dest.route::class) == true
@@ -102,6 +102,8 @@ fun TBAApp(activity: MainActivity? = null) {
                                 val title = when {
                                     currentDestination?.hasRoute(Screen.MyTBA::class) == true -> "myTBA"
                                     currentDestination?.hasRoute(Screen.Settings::class) == true -> "Settings"
+                                    currentDestination?.hasRoute(Screen.About::class) == true -> "About"
+                                    currentDestination?.hasRoute(Screen.Thanks::class) == true -> "Thanks"
                                     else -> "More"
                                 }
                                 Text(title)

@@ -21,6 +21,7 @@ room = "2.8.4"
 datastore = "1.1.1"
 
 coil = "2.7.0"
+aboutlibraries = "14.0.0-b02"
 
 firebase-bom = "33.7.0"
 google-services = "4.4.2"
@@ -77,6 +78,9 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 # Coil
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
+# AboutLibraries
+aboutlibraries-compose-m3 = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
+
 # Firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
@@ -116,3 +120,4 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 room = { id = "androidx.room", version.ref = "room" }
+aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }

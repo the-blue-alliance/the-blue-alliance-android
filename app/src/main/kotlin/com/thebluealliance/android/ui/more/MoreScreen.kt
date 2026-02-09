@@ -27,6 +27,8 @@ import com.thebluealliance.android.BuildConfig
 fun MoreScreen(
     onNavigateToMyTBA: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    onNavigateToAbout: () -> Unit,
+    onNavigateToThanks: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         MoreItem(icon = Icons.Filled.Star, label = "myTBA", onClick = onNavigateToMyTBA)
@@ -36,11 +38,31 @@ fun MoreScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
+        Row(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
+            Text(
+                text = "About",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable(onClick = onNavigateToAbout),
+            )
+            Text(
+                text = " · ",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                text = "Thanks",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable(onClick = onNavigateToThanks),
+            )
+        }
+
         Text(
             text = "v${BuildConfig.VERSION_NAME} (${BuildConfig.GIT_HASH})\nBuilt ${BuildConfig.BUILD_TIME}",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 4.dp),
         )
     }
 }
