@@ -3,6 +3,7 @@ package com.thebluealliance.android.ui.teams
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -128,6 +129,7 @@ fun TeamDetailScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
+            windowInsets = WindowInsets(0),
             title = {
                 val team = uiState.team
                 Text(
