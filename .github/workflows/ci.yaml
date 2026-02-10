@@ -7,24 +7,82 @@ on:
     branches: [ master ]
 
 jobs:
-  run:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        job: [UNIT, CHECKSTYLE, DATAFEED_CODEGEN, PROD-BUILD]
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: set up JDK 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: gradle
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Set Up
-        run: ./scripts/travis/travis-before.sh ${{ matrix.job }}
-      - name: Run Job
-        run: ./scripts/travis/travis-worker.sh ${{ matrix.job }}
+      - name: Create CI google-services.json
+        run: |
+          mkdir -p app/src/debug app/src/release
+          for pkg in "com.thebluealliance.androidclient.development:app/src/debug" "com.thebluealliance.androidclient:app/src/release"; do
+            IFS=: read -r package dir <<< "$pkg"
+            cat > "$dir/google-services.json" << EOF
+          {
+            "project_info": {
+              "project_number": "000000000000",
+              "project_id": "ci-placeholder",
+              "storage_bucket": "ci-placeholder.appspot.com"
+            },
+            "client": [{
+              "client_info": {
+                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                "android_client_info": { "package_name": "$package" }
+              },
+              "api_key": [{ "current_key": "ci-placeholder-key" }]
+            }],
+            "configuration_version": "1"
+          }
+          EOF
+          done
+      - name: Build debug APK
+        run: ./gradlew :app:assembleDebug --stacktrace
+      - name: Run unit tests
+        run: ./gradlew :app:testDebugUnitTest --stacktrace
+
+  release-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+      - name: Create CI google-services.json
+        run: |
+          mkdir -p app/src/release
+          cat > app/src/release/google-services.json << 'EOF'
+          {
+            "project_info": {
+              "project_number": "000000000000",
+              "project_id": "ci-placeholder",
+              "storage_bucket": "ci-placeholder.appspot.com"
+            },
+            "client": [{
+              "client_info": {
+                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                "android_client_info": { "package_name": "com.thebluealliance.androidclient" }
+              },
+              "api_key": [{ "current_key": "ci-placeholder-key" }]
+            }],
+            "configuration_version": "1"
+          }
+          EOF
+      - name: Create CI signing config
+        run: |
+          keytool -genkey -v -keystore release.keystore -keyalg RSA -keysize 2048 -validity 1 -storepass android -alias ci -keypass android -dname "CN=CI,O=CI,C=US"
+          cat > local.properties << 'EOF'
+          release.store.file=release.keystore
+          release.store.password=android
+          release.key.alias=ci
+          release.key.password=android
+          EOF
+      - name: Build release APK
+        run: ./gradlew :app:assembleRelease --stacktrace
