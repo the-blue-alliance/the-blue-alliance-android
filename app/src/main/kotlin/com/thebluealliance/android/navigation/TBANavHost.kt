@@ -17,6 +17,7 @@ import com.thebluealliance.android.ui.more.MoreScreen
 import com.thebluealliance.android.ui.more.ThanksScreen
 import com.thebluealliance.android.ui.mytba.MyTBAScreen
 import com.thebluealliance.android.ui.settings.SettingsScreen
+import com.thebluealliance.android.ui.teamevent.TeamEventDetailScreen
 import com.thebluealliance.android.ui.teams.TeamDetailScreen
 import com.thebluealliance.android.ui.teams.TeamsScreen
 
@@ -114,6 +115,9 @@ fun TBANavHost(
                     navController.navigate(Screen.MatchDetail(matchKey))
                 },
                 onNavigateToMyTBA = { navController.navigate(Screen.MyTBA) },
+                onNavigateToTeamEvent = { teamKey, eventKey ->
+                    navController.navigate(Screen.TeamEventDetail(teamKey, eventKey))
+                },
             )
         }
         composable<Screen.MatchDetail>(
@@ -153,6 +157,23 @@ fun TBANavHost(
                     navController.navigate(Screen.EventDetail(eventKey))
                 },
                 onNavigateToMyTBA = { navController.navigate(Screen.MyTBA) },
+                onNavigateToTeamEvent = { teamKey, eventKey ->
+                    navController.navigate(Screen.TeamEventDetail(teamKey, eventKey))
+                },
+            )
+        }
+        composable<Screen.TeamEventDetail> {
+            TeamEventDetailScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToMatch = { matchKey ->
+                    navController.navigate(Screen.MatchDetail(matchKey))
+                },
+                onNavigateToTeam = { teamKey ->
+                    navController.navigate(Screen.TeamDetail(teamKey))
+                },
+                onNavigateToEvent = { eventKey ->
+                    navController.navigate(Screen.EventDetail(eventKey))
+                },
             )
         }
     }
