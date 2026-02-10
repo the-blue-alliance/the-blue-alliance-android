@@ -18,6 +18,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.mutableStateOf
@@ -57,6 +58,7 @@ import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Team
+import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import kotlinx.coroutines.launch
@@ -157,6 +159,16 @@ fun TeamDetailScreen(
                         imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
                         contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
                     )
+                }
+                uiState.team?.let { team ->
+                    IconButton(onClick = {
+                        context.shareTbaUrl(
+                            title = "Team ${team.number} - ${team.nickname ?: ""}",
+                            url = "https://www.thebluealliance.com/team/${team.number}",
+                        )
+                    }) {
+                        Icon(Icons.Filled.Share, contentDescription = "Share")
+                    }
                 }
             },
         )

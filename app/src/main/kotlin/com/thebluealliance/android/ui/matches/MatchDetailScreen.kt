@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -35,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.fullLabel
+import com.thebluealliance.android.ui.common.shareTbaUrl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,6 +48,7 @@ fun MatchDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
@@ -58,6 +61,19 @@ fun MatchDetailScreen(
             navigationIcon = {
                 IconButton(onClick = onNavigateBack) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                }
+            },
+            actions = {
+                uiState.match?.let { match ->
+                    IconButton(onClick = {
+                        val eventLabel = uiState.eventName?.let { "${uiState.year} $it - " } ?: ""
+                        context.shareTbaUrl(
+                            title = "$eventLabel${match.fullLabel}",
+                            url = "https://www.thebluealliance.com/match/${match.key}",
+                        )
+                    }) {
+                        Icon(Icons.Filled.Share, contentDescription = "Share")
+                    }
                 }
             },
         )
