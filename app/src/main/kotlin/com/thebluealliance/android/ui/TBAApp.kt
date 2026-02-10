@@ -27,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -36,10 +37,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.thebluealliance.android.MainActivity
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
+import com.google.firebase.analytics.logEvent
+import com.google.firebase.Firebase
 import com.thebluealliance.android.navigation.Route
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.navigation.TBANavHost
@@ -65,6 +71,35 @@ fun TBAApp(activity: MainActivity? = null) {
     TBATheme {
         val navController = rememberNavController()
         activity?.setNavController(navController)
+
+        val firebaseAnalytics = remember { Firebase.analytics }
+        DisposableEffect(navController) {
+            val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+                val screenName = when {
+                    destination.hasRoute(Route.Events::class) -> "Events"
+                    destination.hasRoute(Route.Teams::class) -> "Teams"
+                    destination.hasRoute(Route.Districts::class) -> "Districts"
+                    destination.hasRoute(Route.More::class) -> "More"
+                    destination.hasRoute(Screen.EventDetail::class) -> "EventDetail"
+                    destination.hasRoute(Screen.TeamDetail::class) -> "TeamDetail"
+                    destination.hasRoute(Screen.MatchDetail::class) -> "MatchDetail"
+                    destination.hasRoute(Screen.DistrictDetail::class) -> "DistrictDetail"
+                    destination.hasRoute(Screen.MyTBA::class) -> "MyTBA"
+                    destination.hasRoute(Screen.Search::class) -> "Search"
+                    destination.hasRoute(Screen.Settings::class) -> "Settings"
+                    destination.hasRoute(Screen.About::class) -> "About"
+                    destination.hasRoute(Screen.Thanks::class) -> "Thanks"
+                    else -> return@OnDestinationChangedListener
+                }
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+                    param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
+                    param(FirebaseAnalytics.Param.SCREEN_CLASS, "MainActivity")
+                }
+            }
+            navController.addOnDestinationChangedListener(listener)
+            onDispose { navController.removeOnDestinationChangedListener(listener) }
+        }
+
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 

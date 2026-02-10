@@ -43,6 +43,10 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="general" />
 
+        <meta-data
+            android:name="google_analytics_automatic_screen_reporting_enabled"
+            android:value="false" />
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
