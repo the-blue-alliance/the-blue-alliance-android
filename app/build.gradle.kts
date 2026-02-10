@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.aboutlibraries)
+    alias(libs.plugins.play.publisher)
 }
 
 val localProperties = Properties().apply {
@@ -113,6 +114,12 @@ android {
             it.useJUnitPlatform()
         }
     }
+}
+
+play {
+    serviceAccountCredentials.set(rootProject.file(localProperties.getProperty("play.service.account.key", "play-service-account.json")))
+    track.set("alpha")
+    defaultToAppBundles.set(true)
 }
 
 room {

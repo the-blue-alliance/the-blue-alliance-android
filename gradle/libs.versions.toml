@@ -35,6 +35,7 @@ junit = "5.11.4"
 turbine = "1.2.0"
 robolectric = "4.14.1"
 mockk = "1.13.13"
+play-publisher = "4.0.0"
 
 [libraries]
 # Compose
@@ -123,3 +124,4 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 room = { id = "androidx.room", version.ref = "room" }
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }
+play-publisher = { id = "com.github.triplet.play", version.ref = "play-publisher" }
