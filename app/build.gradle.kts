@@ -23,9 +23,13 @@ val localProperties = Properties().apply {
 // Tags must be in the format "vMAJOR.MINOR.PATCH" (e.g., v10.9.0)
 // versionCode formula: MAJOR * 1_000_000 + MINOR * 10_000 + PATCH * 100
 // This matches the legacy app's formula and leaves room for hotfix candidates.
-val gitDescribe = providers.exec {
+val gitDescribeResult = providers.exec {
     commandLine("git", "describe", "--tags", "--long", "--match", "v[0-9]*")
-}.standardOutput.asText.get().trim()
+    isIgnoreExitValue = true
+}
+val gitDescribe = gitDescribeResult.result.get().exitValue.let { exitCode ->
+    if (exitCode == 0) gitDescribeResult.standardOutput.asText.get().trim() else ""
+}
 
 val versionPattern = Regex("""^v(\d+)\.(\d+)\.(\d+)-(\d+)-g[0-9a-f]+$""")
 val versionMatch = versionPattern.matchEntire(gitDescribe)
