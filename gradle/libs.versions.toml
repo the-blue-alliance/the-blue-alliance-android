@@ -25,6 +25,7 @@ aboutlibraries = "14.0.0-b02"
 
 firebase-bom = "33.7.0"
 google-services = "4.4.2"
+firebase-crashlytics-plugin = "3.0.3"
 credentials = "1.5.0"
 googleid = "1.1.1"
 
@@ -121,3 +122,4 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 room = { id = "androidx.room", version.ref = "room" }
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }
