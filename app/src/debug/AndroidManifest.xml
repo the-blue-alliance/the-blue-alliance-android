@@ -4,6 +4,11 @@
 
     <application
         android:networkSecurityConfig="@xml/network_security_config"
-        tools:replace="android:networkSecurityConfig" />
+        tools:replace="android:networkSecurityConfig">
+
+        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
+        <meta-data android:name="firebase_crashlytics_auto_collection_enabled" android:value="false" />
+
+    </application>
 
 </manifest>

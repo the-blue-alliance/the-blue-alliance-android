@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.aboutlibraries)
 }
 
@@ -147,6 +148,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.config)
     implementation(libs.firebase.messaging)
+    implementation(libs.firebase.crashlytics)
 
     // Credentials (Google Sign-In)
     implementation(libs.credentials)
