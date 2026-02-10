@@ -24,6 +24,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.LocationOn
@@ -68,6 +69,7 @@ import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.domain.model.Webcast
+import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TeamRow
 import com.thebluealliance.android.ui.components.formatEventDateRange
@@ -167,6 +169,16 @@ fun EventDetailScreen(
                         imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
                         contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
                     )
+                }
+                uiState.event?.let { event ->
+                    IconButton(onClick = {
+                        context.shareTbaUrl(
+                            title = "${event.year} ${event.name}",
+                            url = "https://www.thebluealliance.com/event/${event.key}",
+                        )
+                    }) {
+                        Icon(Icons.Filled.Share, contentDescription = "Share")
+                    }
                 }
             },
         )
