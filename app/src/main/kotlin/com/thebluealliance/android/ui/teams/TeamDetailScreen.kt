@@ -1,6 +1,10 @@
 package com.thebluealliance.android.ui.teams
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +12,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -16,9 +21,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +55,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -326,6 +334,7 @@ private fun MediaTab(media: List<Media>?) {
         EmptyBox("No media")
         return
     }
+    val context = LocalContext.current
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -336,16 +345,46 @@ private fun MediaTab(media: List<Media>?) {
     ) {
         items(media, key = { "${it.type}_${it.foreignKey}" }) { item ->
             val url = mediaUrl(item)
+            val linkUrl = mediaLinkUrl(item)
             if (url != null) {
-                AsyncImage(
-                    model = url,
-                    contentDescription = "Team media",
-                    contentScale = ContentScale.Crop,
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1f)
-                        .clip(MaterialTheme.shapes.medium),
-                )
+                        .clip(MaterialTheme.shapes.medium)
+                        .then(
+                            if (linkUrl != null) {
+                                Modifier.clickable {
+                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(linkUrl)))
+                                }
+                            } else {
+                                Modifier
+                            }
+                        ),
+                ) {
+                    AsyncImage(
+                        model = url,
+                        contentDescription = "Team media",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                    if (item.type == "youtube") {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .size(48.dp)
+                                .background(Color.Black.copy(alpha = 0.5f), CircleShape),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                Icons.Outlined.PlayCircle,
+                                contentDescription = "Play video",
+                                tint = Color.White,
+                                modifier = Modifier.size(48.dp),
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -358,6 +397,14 @@ private fun mediaUrl(media: Media): String? = when (media.type) {
     "youtube" -> "https://img.youtube.com/vi/${media.foreignKey}/hqdefault.jpg"
     "grabcad" -> null // no direct image URL
     "onshape" -> null
+    else -> null
+}
+
+private fun mediaLinkUrl(media: Media): String? = when (media.type) {
+    "imgur" -> "https://imgur.com/${media.foreignKey}"
+    "cdphotothread" -> "https://www.chiefdelphi.com/media/img/${media.foreignKey}"
+    "instagram-image" -> "https://www.instagram.com/p/${media.foreignKey}/"
+    "youtube" -> "https://www.youtube.com/watch?v=${media.foreignKey}"
     else -> null
 }
 
