@@ -19,6 +19,29 @@ val localProperties = Properties().apply {
     if (file.exists()) load(FileInputStream(file))
 }
 
+// --- Git tag-based versioning ---
+// Tags must be in the format "vMAJOR.MINOR.PATCH" (e.g., v10.9.0)
+// versionCode formula: MAJOR * 1_000_000 + MINOR * 10_000 + PATCH * 100
+// This matches the legacy app's formula and leaves room for hotfix candidates.
+val gitDescribe = providers.exec {
+    commandLine("git", "describe", "--tags", "--long", "--match", "v[0-9]*")
+}.standardOutput.asText.get().trim()
+
+val versionPattern = Regex("""^v(\d+)\.(\d+)\.(\d+)-(\d+)-g[0-9a-f]+$""")
+val versionMatch = versionPattern.matchEntire(gitDescribe)
+
+val vMajor = versionMatch?.groupValues?.get(1)?.toInt() ?: 0
+val vMinor = versionMatch?.groupValues?.get(2)?.toInt() ?: 0
+val vPatch = versionMatch?.groupValues?.get(3)?.toInt() ?: 0
+val commitDistance = versionMatch?.groupValues?.get(4)?.toInt() ?: 0
+
+val computedVersionCode = vMajor * 1_000_000 + vMinor * 10_000 + vPatch * 100 + commitDistance
+val computedVersionName = if (commitDistance == 0) {
+    "$vMajor.$vMinor.$vPatch"
+} else {
+    "$vMajor.$vMinor.$vPatch-dev.$commitDistance"
+}
+
 android {
     namespace = "com.thebluealliance.android"
     compileSdk = 36
@@ -27,8 +50,8 @@ android {
         applicationId = "com.thebluealliance.androidclient"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = computedVersionCode
+        versionName = computedVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
