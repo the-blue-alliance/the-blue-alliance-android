@@ -3,8 +3,6 @@ package com.thebluealliance.android.ui.events
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -19,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -47,7 +44,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,12 +61,12 @@ import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventDistrictPoints
 import com.thebluealliance.android.domain.model.Match
-import com.thebluealliance.android.domain.model.shortLabel
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.ui.common.shareTbaUrl
+import com.thebluealliance.android.ui.components.MatchList
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TeamRow
 import com.thebluealliance.android.ui.components.formatEventDateRange
@@ -78,13 +74,14 @@ import kotlinx.coroutines.launch
 
 private val TABS = listOf("Info", "Teams", "Matches", "Rankings", "Alliances", "Awards", "District points")
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToTeam: (String) -> Unit = {},
     onNavigateToMatch: (String) -> Unit = {},
     onNavigateToMyTBA: () -> Unit = {},
+    onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
     viewModel: EventDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -209,9 +206,16 @@ fun EventDetailScreen(
             ) { page ->
                 when (page) {
                     0 -> InfoTab(uiState.event)
-                    1 -> TeamsTab(uiState.teams, onNavigateToTeam)
+                    1 -> TeamsTab(uiState.teams) { teamKey ->
+                        val eventKey = uiState.event?.key
+                        if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
+                        else onNavigateToTeam(teamKey)
+                    }
                     2 -> MatchesTab(uiState.matches, onNavigateToMatch)
-                    3 -> RankingsTab(uiState.rankings)
+                    3 -> RankingsTab(uiState.rankings) { teamKey ->
+                        val eventKey = uiState.event?.key
+                        if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
+                    }
                     4 -> AlliancesTab(uiState.alliances)
                     5 -> AwardsTab(uiState.awards)
                     6 -> DistrictPointsTab(uiState.districtPoints, uiState.event, uiState.teams)
@@ -418,156 +422,11 @@ private fun TeamsTab(teams: List<Team>?, onNavigateToTeam: (String) -> Unit) {
 
 @Composable
 private fun MatchesTab(matches: List<Match>?, onNavigateToMatch: (String) -> Unit) {
-    if (matches == null) {
-        LoadingBox()
-        return
-    }
-    if (matches.isEmpty()) {
-        EmptyBox("No matches")
-        return
-    }
-    val compLevelOrder = mapOf("qm" to 0, "ef" to 1, "qf" to 2, "sf" to 3, "f" to 4)
-    val compLevelNames = mapOf("qm" to "Quals", "ef" to "Eighths", "qf" to "Quarters", "sf" to "Semis", "f" to "Finals")
-    val sorted = matches.sortedWith(
-        compareBy({ compLevelOrder[it.compLevel] ?: 99 }, { it.setNumber }, { it.matchNumber })
-    )
-    val grouped = sorted.groupBy { it.compLevel }
-
-    // Calculate index of first unplayed match for auto-scroll
-    val firstUnplayedIndex = run {
-        var index = 0
-        for ((_, levelMatches) in grouped) {
-            index++ // group header
-            for (match in levelMatches) {
-                if (match.redScore < 0) return@run index
-                index++
-            }
-        }
-        -1
-    }
-    // Scroll so the last few played matches are visible above the first unplayed
-    val scrollTarget = if (firstUnplayedIndex > 2) firstUnplayedIndex - 2 else 0
-    val listState = rememberLazyListState()
-    LaunchedEffect(scrollTarget) {
-        if (scrollTarget > 0) {
-            listState.scrollToItem(scrollTarget)
-        }
-    }
-
-    val headerKeys = remember(grouped) {
-        grouped.keys.map { "match_header_$it" }.toSet()
-    }
-    val stuckHeaderKey by remember {
-        derivedStateOf {
-            listState.layoutInfo.visibleItemsInfo
-                .firstOrNull { item ->
-                    val key = item.key as? String
-                    key != null && key in headerKeys && item.offset <= 0
-                }?.key as? String
-        }
-    }
-
-    LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-        grouped.forEach { (level, levelMatches) ->
-            val headerKey = "match_header_$level"
-            stickyHeader(key = headerKey) {
-                Text(
-                    text = compLevelNames[level] ?: level.uppercase(),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                )
-            }
-            items(levelMatches, key = { it.key }) { match ->
-                MatchItem(match, onClick = { onNavigateToMatch(match.key) })
-                HorizontalDivider()
-            }
-        }
-    }
+    MatchList(matches = matches, onNavigateToMatch = onNavigateToMatch)
 }
 
 @Composable
-private fun MatchItem(match: Match, onClick: () -> Unit) {
-    val label = match.shortLabel
-    val isPlayed = match.redScore >= 0
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.weight(0.15f),
-        )
-        Column(modifier = Modifier.weight(0.35f)) {
-            Text(
-                text = match.redTeamKeys.joinToString(", ") { it.removePrefix("frc") },
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
-                color = MaterialTheme.colorScheme.error,
-            )
-            Text(
-                text = match.blueTeamKeys.joinToString(", ") { it.removePrefix("frc") },
-                style = MaterialTheme.typography.bodySmall,
-                fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
-                color = MaterialTheme.colorScheme.primary,
-            )
-        }
-        if (isPlayed) {
-            Column(
-                modifier = Modifier.weight(0.15f),
-                horizontalAlignment = Alignment.End,
-            ) {
-                Text(
-                    text = match.redScore.toString(),
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.error,
-                )
-                Text(
-                    text = match.blueScore.toString(),
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
-        } else {
-            Box(
-                modifier = Modifier.weight(0.15f),
-                contentAlignment = Alignment.CenterEnd,
-            ) {
-                Text(
-                    text = formatMatchTime(match.time),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-    }
-}
-
-private val matchTimeFormat = java.time.format.DateTimeFormatter.ofPattern(
-    "EEE h:mma", java.util.Locale.US,
-)
-
-private fun formatMatchTime(epochSeconds: Long?): String {
-    if (epochSeconds == null) return "—"
-    val instant = java.time.Instant.ofEpochSecond(epochSeconds)
-    return matchTimeFormat.format(instant.atZone(java.time.ZoneId.systemDefault()))
-        .replace("AM", "a").replace("PM", "p")
-}
-
-@Composable
-private fun RankingsTab(rankings: List<Ranking>?) {
+private fun RankingsTab(rankings: List<Ranking>?, onTeamClick: (String) -> Unit = {}) {
     if (rankings == null) {
         LoadingBox()
         return
@@ -582,6 +441,7 @@ private fun RankingsTab(rankings: List<Ranking>?) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clickable { onTeamClick(ranking.teamKey) }
                     .padding(horizontal = 16.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {

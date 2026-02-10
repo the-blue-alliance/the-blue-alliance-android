@@ -83,6 +83,7 @@ fun TBAApp(activity: MainActivity? = null) {
                     destination.hasRoute(Screen.EventDetail::class) -> "EventDetail"
                     destination.hasRoute(Screen.TeamDetail::class) -> "TeamDetail"
                     destination.hasRoute(Screen.MatchDetail::class) -> "MatchDetail"
+                    destination.hasRoute(Screen.TeamEventDetail::class) -> "TeamEventDetail"
                     destination.hasRoute(Screen.DistrictDetail::class) -> "DistrictDetail"
                     destination.hasRoute(Screen.MyTBA::class) -> "MyTBA"
                     destination.hasRoute(Screen.Search::class) -> "Search"

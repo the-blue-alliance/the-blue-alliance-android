@@ -80,6 +80,7 @@ fun TeamDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToEvent: (String) -> Unit,
     onNavigateToMyTBA: () -> Unit = {},
+    onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
     viewModel: TeamDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -212,7 +213,11 @@ fun TeamDetailScreen(
                         selectedYear = selectedYear,
                         yearsParticipated = yearsParticipated,
                         onYearSelected = viewModel::selectYear,
-                        onNavigateToEvent = onNavigateToEvent,
+                        onNavigateToEvent = { eventKey ->
+                            val teamKey = uiState.team?.key
+                            if (teamKey != null) onNavigateToTeamEvent(teamKey, eventKey)
+                            else onNavigateToEvent(eventKey)
+                        },
                     )
                     2 -> MediaTab(uiState.media)
                 }
