@@ -149,6 +149,7 @@ dependencies {
     implementation(libs.firebase.config)
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
 
     // Credentials (Google Sign-In)
     implementation(libs.credentials)
