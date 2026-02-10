@@ -7,6 +7,7 @@
 *.jks
 *.keystore
 .signing/
+play-service-account.json
 
 # Local Properties
 android/src/main/assets/tba.properties
