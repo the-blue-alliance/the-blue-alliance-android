@@ -86,6 +86,10 @@ If you want to test against the production API with real Google Sign-In or push 
 ./gradlew :app:installDebug
 ```
 
+## Alpha Testing
+
+We publish pre-release builds to a closed alpha track on Google Play. To join, request access to the [thebluealliance-android-alpha](https://groups.google.com/g/thebluealliance-android-alpha) Google Group, then opt in to the alpha on the [Play Store listing](https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient).
+
 ## Testing
 
 ```bash
