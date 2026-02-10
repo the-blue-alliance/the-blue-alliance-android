@@ -34,21 +34,53 @@ The Blue Alliance is built by volunteers. We'd love your help!
 
 ## Development Setup
 
+### Prerequisites
+
 1. Install [Android Studio](https://developer.android.com/studio) and a JDK (17+).
-2. Fork and clone this repository.
-3. Set up a Firebase project for development:
-   1. Create a project in the [Firebase console](https://console.firebase.google.com/) (e.g. `yourname-tba-dev`).
-   2. Add an Android app with package name `com.thebluealliance.androidclient.development`.
-   3. Add your debug signing SHA-1 fingerprint ([instructions](https://developers.google.com/android/guides/client-auth)).
-   4. Download `google-services.json` and place it in `app/src/debug/`.
-4. Get a TBA API key from the [TBA Account page](https://www.thebluealliance.com/account) and add it to `local.properties`:
-   ```
-   tba.api.key.debug=YOUR_KEY_HERE
-   ```
-5. Build and run:
-   ```bash
-   ./gradlew :app:installDebug
-   ```
+2. Install [Docker](https://www.docker.com/products/docker-desktop/) (includes Docker Compose).
+3. Fork and clone this repository.
+
+### Local backend server
+
+The app's debug build connects to a local TBA server at `http://10.0.2.2:8080/` (the emulator's alias for `localhost`). Use Docker Compose to run the backend locally:
+
+```bash
+# Clone the backend repo (if you haven't already)
+git clone https://github.com/the-blue-alliance/the-blue-alliance.git
+
+# Start all services (TBA server, Datastore emulator, Firebase emulator)
+cd the-blue-alliance
+docker compose up
+```
+
+This starts:
+- **TBA server** at `http://localhost:8080` -- the API the Android app talks to
+- **Datastore emulator** at `http://localhost:8089`
+- **Firebase emulator** at `http://localhost:4000` (admin UI)
+
+To import data into your local server, visit `http://localhost:8080/local/bootstrap` in a browser.
+
+> **Tip:** If you'd rather skip running the backend locally, you can point the app at the production API by adding this to `local.properties`:
+> ```
+> tba.url.debug=https://www.thebluealliance.com/
+> tba.api.key.debug=YOUR_KEY_HERE
+> ```
+> Get an API key from the [TBA Account page](https://www.thebluealliance.com/account).
+
+### Firebase project
+
+Set up a Firebase project for Google Sign-In and push notifications:
+
+1. Create a project in the [Firebase console](https://console.firebase.google.com/) (e.g. `yourname-tba-dev`).
+2. Add an Android app with package name `com.thebluealliance.androidclient.development`.
+3. Add your debug signing SHA-1 fingerprint ([instructions](https://developers.google.com/android/guides/client-auth)).
+4. Download `google-services.json` and place it in `app/src/debug/`.
+
+### Build and run
+
+```bash
+./gradlew :app:installDebug
+```
 
 ## Testing
 
