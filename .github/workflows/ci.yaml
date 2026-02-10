@@ -34,6 +34,7 @@ jobs:
                 "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
                 "android_client_info": { "package_name": "$package" }
               },
+              "oauth_client": [{ "client_id": "000000000000-ci.apps.googleusercontent.com", "client_type": 3 }],
               "api_key": [{ "current_key": "ci-placeholder-key" }]
             }],
             "configuration_version": "1"
@@ -70,6 +71,7 @@ jobs:
                 "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
                 "android_client_info": { "package_name": "com.thebluealliance.androidclient" }
               },
+              "oauth_client": [{ "client_id": "000000000000-ci.apps.googleusercontent.com", "client_type": 3 }],
               "api_key": [{ "current_key": "ci-placeholder-key" }]
             }],
             "configuration_version": "1"
