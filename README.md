@@ -60,6 +60,8 @@ This starts:
 
 To import data into your local server, visit `http://localhost:8080/local/bootstrap` in a browser.
 
+Running the local backend is the easiest way to test logged-in features like myTBA favorites and subscriptions, since the Docker Compose setup includes a Firebase Auth emulator that handles sign-in without any additional configuration.
+
 > **Tip:** If you'd rather skip running the backend locally, you can point the app at the production API by adding this to `local.properties`:
 > ```
 > tba.url.debug=https://www.thebluealliance.com/
@@ -67,9 +69,11 @@ To import data into your local server, visit `http://localhost:8080/local/bootst
 > ```
 > Get an API key from the [TBA Account page](https://www.thebluealliance.com/account).
 
-### Firebase project
+### Firebase project (optional)
 
-Set up a Firebase project for Google Sign-In and push notifications:
+A Firebase project is **not required** if you're using the local Docker Compose backend -- the Firebase Auth emulator handles authentication automatically.
+
+If you want to test against the production API with real Google Sign-In or push notifications, set up a Firebase project:
 
 1. Create a project in the [Firebase console](https://console.firebase.google.com/) (e.g. `yourname-tba-dev`).
 2. Add an Android app with package name `com.thebluealliance.androidclient.development`.
