@@ -122,9 +122,8 @@ fun TeamDetailScreen(
     }
 
     if (showNotificationSheet) {
-        val teamKey = uiState.team?.key ?: ""
         NotificationPreferencesSheet(
-            modelKey = teamKey,
+            displayName = uiState.team?.let { "Team ${it.number}" + (it.nickname?.let { n -> " - $n" } ?: "") } ?: "Team",
             modelType = ModelType.TEAM,
             isFavorite = isFavorite,
             currentNotifications = subscription?.notifications ?: emptyList(),
