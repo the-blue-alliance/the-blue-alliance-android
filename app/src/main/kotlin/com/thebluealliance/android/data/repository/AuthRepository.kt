@@ -17,7 +17,9 @@ class AuthRepository @Inject constructor(
     val currentUser: Flow<FirebaseUser?> = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener { auth ->
             val user = auth.currentUser
-            FirebaseCrashlytics.getInstance().setUserId(user?.uid.orEmpty())
+            try {
+                FirebaseCrashlytics.getInstance().setUserId(user?.uid.orEmpty())
+            } catch (_: Exception) { }
             trySend(user)
         }
         firebaseAuth.addAuthStateListener(listener)
