@@ -23,7 +23,7 @@ import com.thebluealliance.android.domain.model.NotificationType
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationPreferencesSheet(
-    modelKey: String,
+    displayName: String,
     modelType: Int,
     isFavorite: Boolean,
     currentNotifications: List<String>,
@@ -43,7 +43,7 @@ fun NotificationPreferencesSheet(
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
             Text(
-                text = "Notifications for $modelKey",
+                text = "Notifications for $displayName",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(bottom = 16.dp),
             )

@@ -121,9 +121,8 @@ fun EventDetailScreen(
     }
 
     if (showNotificationSheet) {
-        val eventKey = uiState.event?.key ?: ""
         NotificationPreferencesSheet(
-            modelKey = eventKey,
+            displayName = uiState.event?.let { "${it.year} ${it.name}" } ?: "Event",
             modelType = ModelType.EVENT,
             isFavorite = isFavorite,
             currentNotifications = subscription?.notifications ?: emptyList(),
