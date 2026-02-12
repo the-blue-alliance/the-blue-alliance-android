@@ -51,7 +51,7 @@ data class ModelPreferenceRequestDto(
 @Serializable
 data class RegisterDeviceRequestDto(
     @SerialName("mobile_id") val mobileId: String,
-    @SerialName("operating_system") val os: String = "android",
+    @SerialName("operating_system") val os: String = "android-fcm",
     val name: String,
     @SerialName("device_uuid") val deviceUuid: String,
 )
