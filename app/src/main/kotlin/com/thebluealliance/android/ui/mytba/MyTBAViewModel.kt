@@ -36,6 +36,7 @@ class MyTBAViewModel @Inject constructor(
             isSignedIn = user != null,
             userName = user?.displayName,
             userEmail = user?.email,
+            userPhotoUrl = user?.photoUrl?.toString(),
             favorites = favorites,
             subscriptions = subscriptions,
         )
