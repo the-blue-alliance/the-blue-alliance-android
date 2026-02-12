@@ -25,8 +25,6 @@ fun SettingsScreen() {
             .fillMaxSize()
             .padding(16.dp),
     ) {
-        Text("Settings", style = MaterialTheme.typography.headlineSmall)
-
         if (BuildConfig.DEBUG) {
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
             Text(
