@@ -87,7 +87,7 @@ fun TeamEventDetailScreen(
         }
 
         PullToRefreshBox(
-            isRefreshing = isRefreshing,
+            isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
             onRefresh = viewModel::refreshAll,
             modifier = Modifier.fillMaxSize(),
         ) {

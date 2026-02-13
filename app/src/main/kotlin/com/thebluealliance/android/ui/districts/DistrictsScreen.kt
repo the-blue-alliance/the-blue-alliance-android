@@ -52,7 +52,7 @@ fun DistrictsScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         PullToRefreshBox(
-            isRefreshing = isRefreshing,
+            isRefreshing = isRefreshing && uiState !is DistrictsUiState.Loading,
             onRefresh = viewModel::refreshDistricts,
             modifier = Modifier.fillMaxSize(),
         ) {

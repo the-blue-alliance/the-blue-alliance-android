@@ -199,7 +199,7 @@ fun TeamDetailScreen(
         }
 
         PullToRefreshBox(
-            isRefreshing = isRefreshing,
+            isRefreshing = isRefreshing && uiState.team != null,
             onRefresh = viewModel::refreshAll,
             modifier = Modifier.fillMaxSize(),
         ) {
