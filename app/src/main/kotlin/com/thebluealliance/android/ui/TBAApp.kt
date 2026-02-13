@@ -7,10 +7,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Menu
@@ -62,6 +64,7 @@ val TOP_LEVEL_DESTINATIONS = listOf(
     TopLevelDestination(Route.Events, "Events", Icons.Filled.CalendarMonth, Icons.Outlined.CalendarMonth),
     TopLevelDestination(Route.Teams, "Teams", Icons.Filled.Groups, Icons.Outlined.Groups),
     TopLevelDestination(Route.Districts, "Districts", Icons.Filled.Map, Icons.Outlined.Map),
+    TopLevelDestination(Route.RegionalAdvancement, "Regional", Icons.Filled.EmojiEvents, Icons.Outlined.EmojiEvents),
     TopLevelDestination(Route.More, "More", Icons.Filled.Menu, Icons.Outlined.Menu),
 )
 
@@ -79,6 +82,7 @@ fun TBAApp(activity: MainActivity? = null) {
                     destination.hasRoute(Route.Events::class) -> "Events"
                     destination.hasRoute(Route.Teams::class) -> "Teams"
                     destination.hasRoute(Route.Districts::class) -> "Districts"
+                    destination.hasRoute(Route.RegionalAdvancement::class) -> "RegionalAdvancement"
                     destination.hasRoute(Route.More::class) -> "More"
                     destination.hasRoute(Screen.EventDetail::class) -> "EventDetail"
                     destination.hasRoute(Screen.TeamDetail::class) -> "TeamDetail"
@@ -113,6 +117,10 @@ fun TBAApp(activity: MainActivity? = null) {
         var districtsMaxYear by remember { mutableIntStateOf(0) }
         var districtsYearDropdownExpanded by remember { mutableStateOf(false) }
         var onDistrictsYearSelected by remember { mutableStateOf<((Int) -> Unit)?>(null) }
+        var regionalAdvancementSelectedYear by remember { mutableIntStateOf(0) }
+        var regionalAdvancementMaxYear by remember { mutableIntStateOf(0) }
+        var regionalAdvancementYearDropdownExpanded by remember { mutableStateOf(false) }
+        var onRegionalAdvancementYearSelected by remember { mutableStateOf<((Int) -> Unit)?>(null) }
 
         val moreSubScreens = listOf(Screen.MyTBA::class, Screen.Settings::class, Screen.About::class, Screen.Thanks::class)
         val isOnMoreSubScreen = moreSubScreens.any { currentDestination?.hasRoute(it) == true }
@@ -134,6 +142,7 @@ fun TBAApp(activity: MainActivity? = null) {
                         title = {
                             val isEvents = currentDestination?.hasRoute(Route.Events::class) == true
                             val isDistricts = currentDestination?.hasRoute(Route.Districts::class) == true
+                            val isRegionalAdvancement = currentDestination?.hasRoute(Route.RegionalAdvancement::class) == true
                             if (isOnMoreSubScreen) {
                                 val title = when {
                                     currentDestination?.hasRoute(Screen.MyTBA::class) == true -> "myTBA"
@@ -192,6 +201,33 @@ fun TBAApp(activity: MainActivity? = null) {
                                                 onClick = {
                                                     onDistrictsYearSelected?.invoke(year)
                                                     districtsYearDropdownExpanded = false
+                                                },
+                                            )
+                                        }
+                                    }
+                                }
+                            } else if (isRegionalAdvancement && regionalAdvancementSelectedYear > 0) {
+                                Row(
+                                    modifier = Modifier.clickable {
+                                        regionalAdvancementYearDropdownExpanded = true
+                                    },
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Text("$regionalAdvancementSelectedYear Regional")
+                                    Icon(
+                                        Icons.Default.ArrowDropDown,
+                                        contentDescription = "Select year",
+                                    )
+                                    DropdownMenu(
+                                        expanded = regionalAdvancementYearDropdownExpanded,
+                                        onDismissRequest = { regionalAdvancementYearDropdownExpanded = false },
+                                    ) {
+                                        (regionalAdvancementMaxYear downTo 1992).forEach { year ->
+                                            DropdownMenuItem(
+                                                text = { Text(year.toString()) },
+                                                onClick = {
+                                                    onRegionalAdvancementYearSelected?.invoke(year)
+                                                    regionalAdvancementYearDropdownExpanded = false
                                                 },
                                             )
                                         }
@@ -259,6 +295,11 @@ fun TBAApp(activity: MainActivity? = null) {
                     districtsSelectedYear = selectedYear
                     districtsMaxYear = maxYear
                     onDistrictsYearSelected = onYearSelected
+                },
+                onRegionalAdvancementYearState = { selectedYear, maxYear, onYearSelected ->
+                    regionalAdvancementSelectedYear = selectedYear
+                    regionalAdvancementMaxYear = maxYear
+                    onRegionalAdvancementYearSelected = onYearSelected
                 },
                 modifier = Modifier.padding(innerPadding),
             )

@@ -9,6 +9,7 @@ import androidx.navigation.navDeepLink
 import com.thebluealliance.android.ui.districts.DistrictDetailScreen
 import com.thebluealliance.android.ui.districts.DistrictsScreen
 import com.thebluealliance.android.ui.matches.MatchDetailScreen
+import com.thebluealliance.android.ui.regionaladvancement.RegionalAdvancementScreen
 import com.thebluealliance.android.ui.search.SearchScreen
 import com.thebluealliance.android.ui.events.detail.EventDetailScreen
 import com.thebluealliance.android.ui.events.EventsScreen
@@ -28,6 +29,7 @@ fun TBANavHost(
     scrollToTopTrigger: Int = 0,
     onEventsYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
     onDistrictsYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
+    onRegionalAdvancementYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -59,6 +61,15 @@ fun TBANavHost(
                 },
                 scrollToTopTrigger = scrollToTopTrigger,
                 onYearState = onDistrictsYearState,
+            )
+        }
+        composable<Route.RegionalAdvancement> {
+            RegionalAdvancementScreen(
+                onNavigateToTeam = { teamKey ->
+                    navController.navigate(Screen.TeamDetail(teamKey))
+                },
+                scrollToTopTrigger = scrollToTopTrigger,
+                onYearState = onRegionalAdvancementYearState,
             )
         }
         composable<Route.More> {
