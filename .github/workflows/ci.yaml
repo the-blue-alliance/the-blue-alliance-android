@@ -51,14 +51,14 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: ci-test-results
           path: app/build/test-results/testDebugUnitTest/
           retention-days: 30
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports
+          name: ci-test-reports
           path: app/build/reports/tests/testDebugUnitTest/
           retention-days: 30
 
