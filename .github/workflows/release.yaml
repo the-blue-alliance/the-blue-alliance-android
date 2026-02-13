@@ -1,0 +1,105 @@
+name: Release
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Get version info
+        id: version
+        run: |
+          # Get version from git describe
+          GIT_DESCRIBE=$(git describe --tags --long --match 'v[0-9]*' 2>/dev/null || echo "v0.0.0-0-g$(git rev-parse --short HEAD)")
+          echo "git_describe=$GIT_DESCRIBE" >> $GITHUB_OUTPUT
+          
+          # Parse version components
+          if [[ $GIT_DESCRIBE =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)-([0-9]+)-g([0-9a-f]+)$ ]]; then
+            MAJOR="${BASH_REMATCH[1]}"
+            MINOR="${BASH_REMATCH[2]}"
+            PATCH="${BASH_REMATCH[3]}"
+            DISTANCE="${BASH_REMATCH[4]}"
+            
+            if [ "$DISTANCE" -eq 0 ]; then
+              VERSION_NAME="${MAJOR}.${MINOR}.${PATCH}"
+            else
+              VERSION_NAME="${MAJOR}.${MINOR}.${PATCH}-dev.${DISTANCE}"
+            fi
+          else
+            VERSION_NAME="0.0.0-dev"
+          fi
+          
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION_NAME"
+
+      - name: Create CI google-services.json
+        run: |
+          mkdir -p app/src/release
+          cat > app/src/release/google-services.json << 'EOF'
+          {
+            "project_info": {
+              "project_number": "000000000000",
+              "project_id": "ci-placeholder",
+              "storage_bucket": "ci-placeholder.appspot.com"
+            },
+            "client": [{
+              "client_info": {
+                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                "android_client_info": { "package_name": "com.thebluealliance.androidclient" }
+              },
+              "oauth_client": [{ "client_id": "000000000000-ci.apps.googleusercontent.com", "client_type": 3 }],
+              "api_key": [{ "current_key": "ci-placeholder-key" }]
+            }],
+            "configuration_version": "1"
+          }
+          EOF
+
+      - name: Create CI signing config
+        run: |
+          keytool -genkey -v -keystore release.keystore -keyalg RSA -keysize 2048 -validity 1 -storepass android -alias ci -keypass android -dname "CN=CI,O=CI,C=US"
+          cat > local.properties << 'EOF'
+          release.store.file=release.keystore
+          release.store.password=android
+          release.key.alias=ci
+          release.key.password=android
+          EOF
+
+      - name: Build release APK
+        run: ./gradlew :app:assembleRelease --stacktrace
+
+      - name: Rename APK
+        run: |
+          mkdir -p artifacts
+          cp app/build/outputs/apk/release/app-release.apk artifacts/tba-android-${{ steps.version.outputs.version_name }}.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Build ${{ steps.version.outputs.version_name }} (#${{ github.run_number }})
+          body: |
+            Automated build from commit ${{ github.sha }}
+            
+            **Version:** ${{ steps.version.outputs.version_name }}
+            **Commit:** [`${{ github.sha }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
+            **Branch:** `main`
+            
+            > ⚠️ This is an automated CI build signed with a temporary key. For production releases, use officially signed builds.
+          files: artifacts/tba-android-${{ steps.version.outputs.version_name }}.apk
+          prerelease: true
+          generate_release_notes: true
