@@ -23,7 +23,7 @@ datastore = "1.1.1"
 coil = "2.7.0"
 aboutlibraries = "14.0.0-b02"
 
-firebase-bom = "33.7.0"
+firebase-bom = "34.9.0"
 google-services = "4.4.2"
 firebase-crashlytics-plugin = "3.0.3"
 credentials = "1.5.0"
@@ -85,11 +85,11 @@ aboutlibraries-compose-m3 = { group = "com.mikepenz", name = "aboutlibraries-com
 
 # Firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
-firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
-firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
-firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
-firebase-config = { group = "com.google.firebase", name = "firebase-config-ktx" }
-firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-config = { group = "com.google.firebase", name = "firebase-config" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 
 # Credentials
 credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
