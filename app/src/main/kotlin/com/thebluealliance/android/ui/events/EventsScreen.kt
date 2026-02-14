@@ -73,7 +73,7 @@ fun EventsScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         PullToRefreshBox(
-            isRefreshing = isRefreshing,
+            isRefreshing = isRefreshing && uiState !is EventsUiState.Loading,
             onRefresh = viewModel::refreshEvents,
             modifier = Modifier.fillMaxSize(),
         ) {

@@ -44,7 +44,7 @@ fun TeamsScreen(
     }
 
     PullToRefreshBox(
-        isRefreshing = isRefreshing,
+        isRefreshing = isRefreshing && uiState !is TeamsUiState.Loading,
         onRefresh = viewModel::refreshTeams,
         modifier = Modifier.fillMaxSize(),
     ) {
