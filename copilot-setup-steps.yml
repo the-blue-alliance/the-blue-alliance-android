@@ -1,0 +1,65 @@
+name: Setup Steps for The Blue Alliance Android
+
+steps:
+  - name: Fetch full git history and tags
+    run: |
+      # Fetch full git history (including all tags) needed for versioning
+      git fetch --unshallow || true
+      git fetch --tags
+    description: Fetch complete git history and tags for version calculation
+
+  - name: Set up JDK 17
+    run: |
+      # Install JDK 17 on Linux CI environment
+      sudo apt-get update
+      sudo apt-get install -y openjdk-17-jdk
+    description: Install and configure JDK 17
+
+  - name: Create google-services.json files
+    run: |
+      # Create debug google-services.json
+      mkdir -p app/src/debug
+      cat > app/src/debug/google-services.json << 'EOF'
+      {
+        "project_info": {
+          "project_number": "000000000000",
+          "project_id": "ci-placeholder",
+          "storage_bucket": "ci-placeholder.appspot.com"
+        },
+        "client": [{
+          "client_info": {
+            "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+            "android_client_info": { "package_name": "com.thebluealliance.androidclient.development" }
+          },
+          "oauth_client": [{ "client_id": "000000000000-ci.apps.googleusercontent.com", "client_type": 3 }],
+          "api_key": [{ "current_key": "ci-placeholder-key" }]
+        }],
+        "configuration_version": "1"
+      }
+      EOF
+
+      # Create release google-services.json
+      mkdir -p app/src/release
+      cat > app/src/release/google-services.json << 'EOF'
+      {
+        "project_info": {
+          "project_number": "000000000000",
+          "project_id": "ci-placeholder",
+          "storage_bucket": "ci-placeholder.appspot.com"
+        },
+        "client": [{
+          "client_info": {
+            "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+            "android_client_info": { "package_name": "com.thebluealliance.androidclient" }
+          },
+          "oauth_client": [{ "client_id": "000000000000-ci.apps.googleusercontent.com", "client_type": 3 }],
+          "api_key": [{ "current_key": "ci-placeholder-key" }]
+        }],
+        "configuration_version": "1"
+      }
+      EOF
+    description: Create placeholder google-services.json files for Firebase
+
+  - name: Build the app
+    run: ./gradlew :app:assembleDebug --stacktrace
+    description: Build the debug variant of the Android app
