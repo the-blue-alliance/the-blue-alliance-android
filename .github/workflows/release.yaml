@@ -21,20 +21,6 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Get version info
-        id: version
-        run: |
-          # Get versionName from Gradle to ensure consistency with build.gradle.kts
-          VERSION_NAME=$(./gradlew -q :app:properties | awk -F ': ' '/^versionName:/ { print $2; exit }')
-
-          if [ -z "$VERSION_NAME" ]; then
-            echo "Failed to determine versionName from Gradle properties." >&2
-            exit 1
-          fi
-
-          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
-          echo "Version: $VERSION_NAME"
-
       - name: Create CI google-services.json
         run: |
           mkdir -p app/src/release
