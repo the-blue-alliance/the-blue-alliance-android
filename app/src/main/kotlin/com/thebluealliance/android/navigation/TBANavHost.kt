@@ -27,7 +27,7 @@ fun TBANavHost(
     onSignIn: () -> Unit,
     scrollToTopTrigger: Int = 0,
     onEventsYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
-    onDistrictsYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
+    onAdvancementYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -52,13 +52,16 @@ fun TBANavHost(
                 scrollToTopTrigger = scrollToTopTrigger,
             )
         }
-        composable<Route.Districts> {
+        composable<Route.Advancement> {
             DistrictsScreen(
                 onNavigateToDistrict = { districtKey ->
                     navController.navigate(Screen.DistrictDetail(districtKey))
                 },
+                onNavigateToTeam = { teamKey ->
+                    navController.navigate(Screen.TeamDetail(teamKey))
+                },
                 scrollToTopTrigger = scrollToTopTrigger,
-                onYearState = onDistrictsYearState,
+                onYearState = onAdvancementYearState,
             )
         }
         composable<Route.More> {
