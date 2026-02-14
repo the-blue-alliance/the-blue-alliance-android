@@ -26,12 +26,12 @@ jobs:
         run: |
           # Get versionName from Gradle to ensure consistency with build.gradle.kts
           VERSION_NAME=$(./gradlew -q :app:properties | awk -F ': ' '/^versionName:/ { print $2; exit }')
-          
+
           if [ -z "$VERSION_NAME" ]; then
             echo "Failed to determine versionName from Gradle properties." >&2
             exit 1
           fi
-          
+
           echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
           echo "Version: $VERSION_NAME"
 
@@ -95,11 +95,11 @@ jobs:
           name: Build ${{ steps.apk_version.outputs.version_name }} (#${{ github.run_number }})
           body: |
             Automated build from commit ${{ github.sha }}
-            
+
             **Version:** ${{ steps.apk_version.outputs.version_name }}
             **Commit:** [`${{ github.sha }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
             **Branch:** `main`
-            
+
             > ⚠️ This is an automated CI build signed with a temporary key. For production releases, use officially signed builds.
           files: artifacts/tba-android-${{ steps.apk_version.outputs.version_name }}.apk
           prerelease: true
