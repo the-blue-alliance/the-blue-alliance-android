@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'java-kotlin' ]
+        language: [ 'actions', 'java-kotlin', 'python' ]
 
     steps:
       - name: Checkout repository
