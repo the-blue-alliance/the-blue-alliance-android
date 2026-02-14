@@ -70,24 +70,37 @@ jobs:
       - name: Build release APK
         run: ./gradlew :app:assembleRelease --stacktrace
 
+      - name: Extract APK version
+        id: apk_version
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y aapt
+          VERSION_NAME=$(aapt dump badging app/build/outputs/apk/release/app-release.apk | sed -n "s/.*versionName='\([^']*\)'.*/\1/p")
+          if [ -z "$VERSION_NAME" ]; then
+            echo "Failed to extract versionName from APK"
+            exit 1
+          fi
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "APK Version: $VERSION_NAME"
+
       - name: Rename APK
         run: |
           mkdir -p artifacts
-          cp app/build/outputs/apk/release/app-release.apk artifacts/tba-android-${{ steps.version.outputs.version_name }}.apk
+          cp app/build/outputs/apk/release/app-release.apk artifacts/tba-android-${{ steps.apk_version.outputs.version_name }}.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ci-${{ steps.version.outputs.version_name }}
-          name: Build ${{ steps.version.outputs.version_name }} (#${{ github.run_number }})
+          tag_name: build-${{ github.run_number }}
+          name: Build ${{ steps.apk_version.outputs.version_name }} (#${{ github.run_number }})
           body: |
             Automated build from commit ${{ github.sha }}
             
-            **Version:** ${{ steps.version.outputs.version_name }}
+            **Version:** ${{ steps.apk_version.outputs.version_name }}
             **Commit:** [`${{ github.sha }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
             **Branch:** `main`
             
             > ⚠️ This is an automated CI build signed with a temporary key. For production releases, use officially signed builds.
-          files: artifacts/tba-android-${{ steps.version.outputs.version_name }}.apk
+          files: artifacts/tba-android-${{ steps.apk_version.outputs.version_name }}.apk
           prerelease: true
           generate_release_notes: true
