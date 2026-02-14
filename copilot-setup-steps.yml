@@ -14,10 +14,20 @@ steps:
       # This step assumes you're using a system with apt package manager
       # For macOS, use: brew install openjdk@17
       # For other systems, download from https://adoptium.net/
-      sudo apt-get update
-      sudo apt-get install -y openjdk-17-jdk
-      export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-      export PATH=$JAVA_HOME/bin:$PATH
+      if command -v apt-get &> /dev/null; then
+        sudo apt-get update
+        sudo apt-get install -y openjdk-17-jdk
+        # Find the JDK path dynamically
+        export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+        export PATH=$JAVA_HOME/bin:$PATH
+      elif command -v brew &> /dev/null; then
+        brew install openjdk@17
+        export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+        export PATH=$JAVA_HOME/bin:$PATH
+      else
+        echo "Please install JDK 17 manually from https://adoptium.net/"
+        exit 1
+      fi
     description: Install and configure JDK 17
 
   - name: Create google-services.json files
