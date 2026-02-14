@@ -10,7 +10,7 @@ import com.thebluealliance.android.ui.districts.DistrictDetailScreen
 import com.thebluealliance.android.ui.districts.DistrictsScreen
 import com.thebluealliance.android.ui.matches.MatchDetailScreen
 import com.thebluealliance.android.ui.search.SearchScreen
-import com.thebluealliance.android.ui.events.EventDetailScreen
+import com.thebluealliance.android.ui.events.detail.EventDetailScreen
 import com.thebluealliance.android.ui.events.EventsScreen
 import com.thebluealliance.android.ui.more.AboutScreen
 import com.thebluealliance.android.ui.more.MoreScreen

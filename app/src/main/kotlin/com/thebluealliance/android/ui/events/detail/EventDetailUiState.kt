@@ -1,4 +1,4 @@
-package com.thebluealliance.android.ui.events
+package com.thebluealliance.android.ui.events.detail
 
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
