@@ -54,6 +54,7 @@ fun EventDto.toEntity() = EventEntity(
     locationName = locationName,
     address = address,
     gmapsUrl = gmapsUrl,
+    playoffType = playoffType ?: PlayoffType.OTHER.typeInt,
 )
 
 fun EventEntity.toDomain() = Event(
@@ -75,6 +76,7 @@ fun EventEntity.toDomain() = Event(
     locationName = locationName,
     address = address,
     gmapsUrl = gmapsUrl,
+    playoffType = PlayoffType.fromInt(playoffType),
     webcasts = webcasts?.let { raw ->
         try {
             json.decodeFromString<List<WebcastDto>>(raw).map {
@@ -106,7 +108,7 @@ fun MatchDto.toEntity() = MatchEntity(
 fun MatchEntity.toDomain() = Match(
     key = key,
     eventKey = eventKey,
-    compLevel = compLevel,
+    compLevel = CompLevel.fromCode(compLevel),
     matchNumber = matchNumber,
     setNumber = setNumber,
     time = time,

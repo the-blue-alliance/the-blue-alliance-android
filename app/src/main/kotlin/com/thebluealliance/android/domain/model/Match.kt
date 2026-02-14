@@ -3,7 +3,7 @@ package com.thebluealliance.android.domain.model
 data class Match(
     val key: String,
     val eventKey: String,
-    val compLevel: String,
+    val compLevel: CompLevel,
     val matchNumber: Int,
     val setNumber: Int,
     val time: Long?,
@@ -17,20 +17,17 @@ data class Match(
     val videos: String? = null,
 )
 
-/** Short label for list rows, e.g. "Q1", "SF2-1", "F1-1" */
-val Match.shortLabel: String get() = when (compLevel) {
-    "qm" -> "Q$matchNumber"
-    "qf" -> "QF$setNumber-$matchNumber"
-    "sf" -> "SF$setNumber-$matchNumber"
-    "f" -> "F$setNumber-$matchNumber"
-    else -> "$compLevel$setNumber-$matchNumber"
-}
+enum class CompLevel(val code: String) {
+    QUAL("qm"),
+    OCTOFINAL("ef"),
+    QUARTERFINAL("qf"),
+    SEMIFINAL("sf"),
+    FINAL("f"),
+    PRACTICE("pr"),
+    OTHER("");
 
-/** Full label for title bars, e.g. "Qual 1", "Final 1-1" */
-val Match.fullLabel: String get() = when (compLevel) {
-    "qm" -> "Qual $matchNumber"
-    "qf" -> "QF$setNumber-$matchNumber"
-    "sf" -> "SF$setNumber-$matchNumber"
-    "f" -> "Final $setNumber-$matchNumber"
-    else -> "$compLevel$setNumber-$matchNumber"
+    companion object {
+        private val codeMap = entries.associateBy(CompLevel::code)
+        fun fromCode(code: String) = codeMap[code] ?: OTHER
+    }
 }
