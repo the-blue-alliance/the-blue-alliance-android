@@ -64,6 +64,9 @@ jobs:
         uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
+          # Nightly is required for now to support Kotlin 2.3.10. Once CodeQL stable supports it, we can remove this.
+          # See: https://github.com/github/codeql/pull/21286
+          tools: nightly
 
       - name: Build with Gradle
         run: ./gradlew :app:assembleDebug --stacktrace
