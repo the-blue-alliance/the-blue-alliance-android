@@ -36,11 +36,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.domain.model.RegionalRanking
 import com.thebluealliance.android.ui.components.EventRow
-import com.thebluealliance.android.ui.teams.TeamsUiState
 import kotlinx.coroutines.launch
 
-private val TABS = listOf("Events", "Rankings")
+private val TABS = listOf("Events", "Advancement")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -96,7 +96,12 @@ fun DistrictDetailScreen(
             ) { page ->
                 when (page) {
                     0 -> EventsTab(uiState.events, onNavigateToEvent)
-                    1 -> RankingsTab(uiState.rankings, onNavigateToTeam)
+                    1 -> AdvancementTab(
+                        uiState.rankings,
+                        uiState.regionalRankings,
+                        uiState.district?.year ?: 0,
+                        onNavigateToTeam
+                    )
                 }
             }
         }
@@ -121,50 +126,105 @@ private fun EventsTab(events: List<Event>?, onNavigateToEvent: (String) -> Unit)
 }
 
 @Composable
-private fun RankingsTab(rankings: List<DistrictRanking>?, onNavigateToTeam: (String) -> Unit) {
+private fun AdvancementTab(
+    rankings: List<DistrictRanking>?,
+    regionalRankings: List<RegionalRanking>?,
+    year: Int,
+    onNavigateToTeam: (String) -> Unit,
+) {
     if (rankings == null) {
         LoadingBox()
         return
     }
-    if (rankings.isEmpty()) {
+    if (rankings.isEmpty() && (year < 2025 || regionalRankings?.isEmpty() != false)) {
         EmptyBox("No rankings")
         return
     }
+
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(rankings, key = { "${it.districtKey}_${it.teamKey}" }) { ranking ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onNavigateToTeam(ranking.teamKey) }
-                    .padding(horizontal = 16.dp, vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+        // Show Regional Advancement section for years 2025+
+        if (year >= 2025 && !regionalRankings.isNullOrEmpty()) {
+            item {
                 Text(
-                    text = "#${ranking.rank}",
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = "Regional Advancement",
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(0.15f),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
                 )
+            }
+            items(regionalRankings, key = { "${it.year}_${it.teamKey}" }) { ranking ->
+                RegionalRankingRow(ranking = ranking, onClick = { onNavigateToTeam(ranking.teamKey) })
+            }
+            item {
                 Text(
-                    text = ranking.teamKey.removePrefix("frc"),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(0.35f),
+                    text = "District Rankings",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 12.dp),
                 )
-                Text(
-                    text = "${ranking.pointTotal.toInt()} pts",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(0.25f),
-                )
-                if (ranking.rookieBonus > 0) {
-                    Text(
-                        text = "+${ranking.rookieBonus.toInt()} rookie",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.weight(0.25f),
-                    )
-                }
             }
         }
+
+        // Show District Rankings
+        items(rankings, key = { "${it.districtKey}_${it.teamKey}" }) { ranking ->
+            DistrictRankingRow(ranking = ranking, onClick = { onNavigateToTeam(ranking.teamKey) })
+        }
+    }
+}
+
+@Composable
+private fun RegionalRankingRow(ranking: RegionalRanking, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "#${ranking.rank}",
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(0.15f),
+        )
+        Text(
+            text = ranking.teamKey.removePrefix("frc"),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(0.5f),
+        )
+        Text(
+            text = "${ranking.pointTotal} pts",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(0.35f),
+        )
+    }
+}
+
+@Composable
+private fun DistrictRankingRow(ranking: DistrictRanking, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "#${ranking.rank}",
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.weight(0.15f),
+        )
+        Text(
+            text = ranking.teamKey.removePrefix("frc"),
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(0.5f),
+        )
+        Text(
+            text = "${ranking.pointTotal.toInt()} pts",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(0.35f),
+        )
     }
 }
 

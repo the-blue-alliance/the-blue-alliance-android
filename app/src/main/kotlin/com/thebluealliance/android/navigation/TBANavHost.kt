@@ -9,7 +9,6 @@ import androidx.navigation.navDeepLink
 import com.thebluealliance.android.ui.districts.DistrictDetailScreen
 import com.thebluealliance.android.ui.districts.DistrictsScreen
 import com.thebluealliance.android.ui.matches.MatchDetailScreen
-import com.thebluealliance.android.ui.regionaladvancement.RegionalAdvancementScreen
 import com.thebluealliance.android.ui.search.SearchScreen
 import com.thebluealliance.android.ui.events.detail.EventDetailScreen
 import com.thebluealliance.android.ui.events.EventsScreen
@@ -28,8 +27,7 @@ fun TBANavHost(
     onSignIn: () -> Unit,
     scrollToTopTrigger: Int = 0,
     onEventsYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
-    onDistrictsYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
-    onRegionalAdvancementYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
+    onAdvancementYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -54,22 +52,16 @@ fun TBANavHost(
                 scrollToTopTrigger = scrollToTopTrigger,
             )
         }
-        composable<Route.Districts> {
+        composable<Route.Advancement> {
             DistrictsScreen(
                 onNavigateToDistrict = { districtKey ->
                     navController.navigate(Screen.DistrictDetail(districtKey))
                 },
-                scrollToTopTrigger = scrollToTopTrigger,
-                onYearState = onDistrictsYearState,
-            )
-        }
-        composable<Route.RegionalAdvancement> {
-            RegionalAdvancementScreen(
                 onNavigateToTeam = { teamKey ->
                     navController.navigate(Screen.TeamDetail(teamKey))
                 },
                 scrollToTopTrigger = scrollToTopTrigger,
-                onYearState = onRegionalAdvancementYearState,
+                onYearState = onAdvancementYearState,
             )
         }
         composable<Route.More> {

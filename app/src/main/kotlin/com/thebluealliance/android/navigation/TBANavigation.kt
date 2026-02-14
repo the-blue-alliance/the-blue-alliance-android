@@ -5,8 +5,7 @@ import kotlinx.serialization.Serializable
 sealed interface Route {
     @Serializable data object Events : Route
     @Serializable data object Teams : Route
-    @Serializable data object Districts : Route
-    @Serializable data object RegionalAdvancement : Route
+    @Serializable data object Advancement : Route
     @Serializable data object More : Route
 }
 
