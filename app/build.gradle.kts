@@ -40,14 +40,8 @@ val vMinor = versionMatch?.groupValues?.get(2)?.toInt() ?: 0
 val vPatch = versionMatch?.groupValues?.get(3)?.toInt() ?: 0
 val commitDistance = versionMatch?.groupValues?.get(4)?.toInt() ?: 0
 
-val computedVersionCode = if (vMajor == 0 && vMinor == 0 && vPatch == 0) {
-    1  // Default version code when no tags exist
-} else {
-    vMajor * 1_000_000 + vMinor * 10_000 + vPatch * 100 + commitDistance
-}
-val computedVersionName = if (vMajor == 0 && vMinor == 0 && vPatch == 0) {
-    "0.0.1-dev"  // Default version name when no tags exist
-} else if (commitDistance == 0) {
+val computedVersionCode = vMajor * 1_000_000 + vMinor * 10_000 + vPatch * 100 + commitDistance
+val computedVersionName = if (commitDistance == 0) {
     "$vMajor.$vMinor.$vPatch"
 } else {
     "$vMajor.$vMinor.$vPatch-dev.$commitDistance"
@@ -114,12 +108,6 @@ android {
         buildConfig = true
     }
 
-    packaging {
-        resources {
-            excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
-        }
-    }
-
     @Suppress("UnstableApiUsage")
     testOptions {
         unitTests.all {
@@ -136,13 +124,6 @@ play {
 
 room {
     schemaDirectory("$projectDir/schemas")
-}
-
-configurations.all {
-    resolutionStrategy {
-        force("androidx.core:core-ktx:1.15.0")
-        force("androidx.core:core:1.15.0")
-    }
 }
 
 dependencies {
