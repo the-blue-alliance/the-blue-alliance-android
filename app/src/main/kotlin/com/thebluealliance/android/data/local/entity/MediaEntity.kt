@@ -10,4 +10,5 @@ data class MediaEntity(
     val year: Int,
     val preferred: Boolean,
     val details: String?,
+    val base64Image: String? = null,
 )
