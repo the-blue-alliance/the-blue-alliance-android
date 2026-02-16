@@ -29,5 +29,5 @@ jobs:
 
       - name: Generate and submit dependency graph
         uses: gradle/actions/dependency-submission@v5
-        with:
-          build-root-directory: 'app'
+        # with:
+        #   build-root-directory: 'app'
