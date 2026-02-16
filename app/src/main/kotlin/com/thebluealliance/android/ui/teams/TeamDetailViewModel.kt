@@ -1,9 +1,7 @@
 package com.thebluealliance.android.ui.teams
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.EventRepository
@@ -12,6 +10,9 @@ import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.navigation.Screen
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,12 +27,11 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@HiltViewModel
-class TeamDetailViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = TeamDetailViewModel.Factory::class)
+class TeamDetailViewModel @AssistedInject constructor(
+    @Assisted val navKey: Screen.TeamDetail,
     private val teamRepository: TeamRepository,
     private val eventRepository: EventRepository,
     private val myTBARepository: MyTBARepository,
@@ -39,7 +39,7 @@ class TeamDetailViewModel @Inject constructor(
     private val tbaApi: TbaApi,
 ) : ViewModel() {
 
-    private val teamKey: String = savedStateHandle.toRoute<Screen.TeamDetail>().teamKey.let { key ->
+    private val teamKey: String = navKey.teamKey.let { key ->
         // Deep links from thebluealliance.com use /team/177 (number only),
         // but the API/DB key format is "frc177".
         if (key.all { it.isDigit() }) "frc$key" else key
@@ -170,5 +170,10 @@ class TeamDetailViewModel @Inject constructor(
             launch { try { eventRepository.refreshTeamEvents(teamKey, year) } catch (_: Exception) {} }
             launch { try { teamRepository.refreshTeamMedia(teamKey, year) } catch (_: Exception) {} }
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(navKey: Screen.TeamDetail): TeamDetailViewModel
     }
 }

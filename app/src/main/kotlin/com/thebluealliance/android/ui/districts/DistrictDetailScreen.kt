@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.domain.model.Event
@@ -48,7 +47,7 @@ fun DistrictDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToEvent: (String) -> Unit,
     onNavigateToTeam: (String) -> Unit,
-    viewModel: DistrictDetailViewModel = hiltViewModel(),
+    viewModel: DistrictDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()

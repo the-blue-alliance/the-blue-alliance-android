@@ -1,13 +1,14 @@
 package com.thebluealliance.android.ui.teamevent
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.navigation.Screen
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,19 +18,17 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class TeamEventDetailViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = TeamEventDetailViewModel.Factory::class)
+class TeamEventDetailViewModel @AssistedInject constructor(
+    @Assisted val navKey: Screen.TeamEventDetail,
     private val teamRepository: TeamRepository,
     private val eventRepository: EventRepository,
     private val matchRepository: MatchRepository,
 ) : ViewModel() {
 
-    private val route = savedStateHandle.toRoute<Screen.TeamEventDetail>()
-    val teamKey: String = route.teamKey
-    val eventKey: String = route.eventKey
+    val teamKey: String = navKey.teamKey
+    val eventKey: String = navKey.eventKey
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
@@ -73,5 +72,10 @@ class TeamEventDetailViewModel @Inject constructor(
                 _isRefreshing.value = false
             }
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(navKey: Screen.TeamEventDetail): TeamEventDetailViewModel
     }
 }

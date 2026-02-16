@@ -1,12 +1,13 @@
 package com.thebluealliance.android.ui.matches
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.navigation.Screen
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,16 +25,15 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import javax.inject.Inject
 
-@HiltViewModel
-class MatchDetailViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = MatchDetailViewModel.Factory::class)
+class MatchDetailViewModel @AssistedInject constructor(
+    @Assisted val navKey: Screen.MatchDetail,
     private val matchRepository: MatchRepository,
     private val eventRepository: EventRepository,
 ) : ViewModel() {
 
-    private val matchKey: String = savedStateHandle.toRoute<Screen.MatchDetail>().matchKey
+    private val matchKey: String = navKey.matchKey
     private val year: Int = matchKey.substring(0, 4).toIntOrNull() ?: 0
 
     private val _isRefreshing = MutableStateFlow(false)
@@ -113,5 +113,10 @@ class MatchDetailViewModel @Inject constructor(
         } catch (_: Exception) {
             null
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(navKey: Screen.MatchDetail): MatchDetailViewModel
     }
 }

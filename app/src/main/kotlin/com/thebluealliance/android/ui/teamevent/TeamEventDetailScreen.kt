@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.ui.components.EventRow
@@ -47,7 +46,7 @@ fun TeamEventDetailScreen(
     onNavigateToMatch: (String) -> Unit,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
-    viewModel: TeamEventDetailViewModel = hiltViewModel(),
+    viewModel: TeamEventDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
