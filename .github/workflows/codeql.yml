@@ -71,8 +71,14 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew :app:assembleDebug --stacktrace
+        working-directory: app
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{ matrix.language }}"
+
+      - name: Submit Gradle dependencies
+        uses: gradle/actions/dependency-submission@v4
+        with:
+          build-root-directory: "app"
