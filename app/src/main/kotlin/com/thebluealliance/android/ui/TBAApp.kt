@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui
 
+import android.R.attr.top
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -46,8 +47,11 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.analytics.logEvent
 import com.thebluealliance.android.MainActivity
+import com.thebluealliance.android.navigation.NavigationState
+import com.thebluealliance.android.navigation.Navigator
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.navigation.TBANavigation
+import com.thebluealliance.android.navigation.rememberNavigationState
 import com.thebluealliance.android.ui.theme.TBATheme
 import kotlinx.coroutines.flow.collectLatest
 
@@ -70,40 +74,15 @@ val TOP_LEVEL_DESTINATIONS = listOf(
 fun TBAApp(
     initalScreen: NavKey
 ) {
+    val navState = rememberNavigationState(
+        startRoute = initalScreen,
+        topLevelRoutes = TOP_LEVEL_DESTINATIONS.map { it.key },
+    )
+    val navigator = remember { Navigator(navState) }
+    FirebaseAnalyticsEffect(navState)
+
     TBATheme {
-        val backStack = rememberNavBackStack(initalScreen)
-
-        val firebaseAnalytics = remember { Firebase.analytics }
-        LaunchedEffect(backStack) {
-            snapshotFlow { backStack.lastOrNull() }
-                .collectLatest { currentRoute ->
-                    val screenName = when (currentRoute) {
-                        Screen.Events -> "Events"
-                        Screen.Teams -> "Teams"
-                        Screen.Districts -> "Districts"
-                        Screen.More -> "More"
-                        is Screen.EventDetail -> "EventDetail"
-                        is Screen.TeamDetail -> "TeamDetail"
-                        is Screen.MatchDetail -> "MatchDetail"
-                        is Screen.TeamEventDetail -> "TeamEventDetail"
-                        is Screen.DistrictDetail -> "DistrictDetail"
-                        Screen.MyTBA -> "MyTBA"
-                        Screen.Search -> "Search"
-                        Screen.Settings -> "Settings"
-                        Screen.About -> "About"
-                        Screen.Thanks -> "Thanks"
-                        else -> null
-                    }
-                    if (screenName != null) {
-                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-                            param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
-                            param(FirebaseAnalytics.Param.SCREEN_CLASS, "MainActivity")
-                        }
-                    }
-                }
-        }
-
-        val currentRoute = backStack.lastOrNull()
+        val currentRoute = navState.currentRoute
 
         var scrollToTopTrigger by remember { mutableIntStateOf(0) }
         var eventsSelectedYear by remember { mutableIntStateOf(0) }
@@ -125,7 +104,7 @@ fun TBAApp(
                     TopAppBar(
                         navigationIcon = {
                             if (isOnMoreSubScreen) {
-                                IconButton(onClick = { backStack.removeLastOrNull() }) {
+                                IconButton(onClick = { navigator.goBack() }) {
                                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                                 }
                             }
@@ -204,7 +183,7 @@ fun TBAApp(
                             }
                         },
                         actions = {
-                            IconButton(onClick = { backStack.add(Screen.Search) }) {
+                            IconButton(onClick = { navigator.navigate(Screen.Search) }) {
                                 Icon(Icons.Default.Search, contentDescription = "Search")
                             }
                         },
@@ -222,7 +201,7 @@ fun TBAApp(
                                     if (selected) {
                                         scrollToTopTrigger++
                                     } else {
-                                        backStack.navigateToTab(dest.key)
+                                        navigator.navigate(dest.key)
                                     }
                                 },
                                 icon = {
@@ -240,7 +219,8 @@ fun TBAApp(
         ) { innerPadding ->
             val activity = LocalActivity.current as MainActivity
             TBANavigation(
-                backStack = backStack,
+                navState = navState,
+                navigator = navigator,
                 onSignIn = { activity.startGoogleSignIn() },
                 scrollToTopTrigger = scrollToTopTrigger,
                 onEventsYearState = { selectedYear, maxYear, onYearSelected ->
@@ -259,12 +239,37 @@ fun TBAApp(
     }
 }
 
-private fun NavBackStack<NavKey>.navigateToTab(key: NavKey) {
-    val root = firstOrNull()
-    if (root != null) {
-        removeIf { it != root }
-    }
-    if (lastOrNull() != key) {
-        add(key)
+@Composable
+private fun FirebaseAnalyticsEffect(
+    navState: NavigationState
+) {
+    val firebaseAnalytics = remember { Firebase.analytics }
+    LaunchedEffect(navState) {
+        snapshotFlow { navState.currentRoute }
+            .collectLatest { currentRoute ->
+                val screenName = when (currentRoute) {
+                    Screen.Events -> "Events"
+                    Screen.Teams -> "Teams"
+                    Screen.Districts -> "Districts"
+                    Screen.More -> "More"
+                    is Screen.EventDetail -> "EventDetail"
+                    is Screen.TeamDetail -> "TeamDetail"
+                    is Screen.MatchDetail -> "MatchDetail"
+                    is Screen.TeamEventDetail -> "TeamEventDetail"
+                    is Screen.DistrictDetail -> "DistrictDetail"
+                    Screen.MyTBA -> "MyTBA"
+                    Screen.Search -> "Search"
+                    Screen.Settings -> "Settings"
+                    Screen.About -> "About"
+                    Screen.Thanks -> "Thanks"
+                    else -> null
+                }
+                if (screenName != null) {
+                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+                        param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
+                        param(FirebaseAnalytics.Param.SCREEN_CLASS, "MainActivity")
+                    }
+                }
+            }
     }
 }
