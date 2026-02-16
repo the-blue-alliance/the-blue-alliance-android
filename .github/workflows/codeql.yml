@@ -71,7 +71,6 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew :app:assembleDebug --stacktrace
-        working-directory: app
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
