@@ -10,13 +10,12 @@ on:
 
 permissions:
   contents: write
-  id-token: write
-  actions: read
-  security-events: write
 
 jobs:
   dependency-submission:
     runs-on: ubuntu-latest
+    # Skip fork PRs (they don't have permission to submit dependency snapshots)
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.fork == false }}
 
     steps:
       - name: Checkout repository
