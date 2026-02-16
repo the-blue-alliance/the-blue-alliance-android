@@ -32,8 +32,6 @@ val gitDescribe = gitDescribeResult.result.get().exitValue.let { exitCode ->
     if (exitCode == 0) gitDescribeResult.standardOutput.asText.get().trim() else ""
 }
 
-print("Git describe: $gitDescribe")
-
 val versionPattern = Regex("""^v(\d+)\.(\d+)\.(\d+)-(\d+)-g[0-9a-f]+$""")
 val versionMatch = versionPattern.matchEntire(gitDescribe)
 
@@ -43,7 +41,6 @@ val vPatch = versionMatch?.groupValues?.get(3)?.toInt() ?: 0
 val commitDistance = versionMatch?.groupValues?.get(4)?.toInt() ?: 0
 
 val computedVersionCode = vMajor * 1_000_000 + vMinor * 10_000 + vPatch * 100 + commitDistance
-print("Computed versionCode: $computedVersionCode")
 val computedVersionName = if (commitDistance == 0) {
     "$vMajor.$vMinor.$vPatch"
 } else {
