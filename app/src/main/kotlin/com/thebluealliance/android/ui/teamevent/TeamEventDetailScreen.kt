@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.PlayoffType
@@ -88,7 +88,7 @@ fun TeamEventDetailScreen(
         }
 
         PullToRefreshBox(
-            isRefreshing = isRefreshing,
+            isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
             onRefresh = viewModel::refreshAll,
             modifier = Modifier.fillMaxSize(),
         ) {
