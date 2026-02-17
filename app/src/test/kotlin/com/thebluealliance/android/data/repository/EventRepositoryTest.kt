@@ -92,6 +92,7 @@ class EventRepositoryTest {
             locationName = null,
             address = null,
             gmapsUrl = null,
+            playoffType = 8,
         )
         every { eventDao.observeByYear(2024) } returns flowOf(listOf(entity))
 

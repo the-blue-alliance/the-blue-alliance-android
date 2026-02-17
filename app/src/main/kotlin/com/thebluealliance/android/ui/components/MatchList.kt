@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.components
 
+import android.R.attr.level
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,16 +27,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.google.common.graph.ElementOrder.sorted
+import com.thebluealliance.android.domain.getGroup
+import com.thebluealliance.android.domain.getShortLabel
 import com.thebluealliance.android.domain.model.Match
-import com.thebluealliance.android.domain.model.shortLabel
-
-private val compLevelOrder = mapOf("qm" to 0, "ef" to 1, "qf" to 2, "sf" to 3, "f" to 4)
-private val compLevelNames = mapOf("qm" to "Quals", "ef" to "Eighths", "qf" to "Quarters", "sf" to "Semis", "f" to "Finals")
+import com.thebluealliance.android.domain.model.PlayoffType
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MatchList(
     matches: List<Match>?,
+    playoffType: PlayoffType,
     onNavigateToMatch: (String) -> Unit,
     headerContent: (LazyListScope.() -> Unit)? = null,
 ) {
@@ -52,10 +54,12 @@ fun MatchList(
         return
     }
 
-    val sorted = matches.sortedWith(
-        compareBy({ compLevelOrder[it.compLevel] ?: 99 }, { it.setNumber }, { it.matchNumber })
-    )
-    val grouped = sorted.groupBy { it.compLevel }
+    val grouped = remember(matches) {
+        val sorted = matches.sortedWith(
+            compareBy({ it.compLevel.order }, { it.setNumber }, { it.matchNumber })
+        )
+        sorted.groupBy { it.getGroup(playoffType) }
+    }
 
     // Calculate index of first unplayed match for auto-scroll
     // When headerContent is present, it adds items before the match groups
@@ -98,11 +102,11 @@ fun MatchList(
         if (headerContent != null) {
             headerContent()
         }
-        grouped.forEach { (level, levelMatches) ->
-            val headerKey = "match_header_$level"
+        grouped.forEach { (group, levelMatches) ->
+            val headerKey = "match_header ${group.label}"
             stickyHeader(key = headerKey) {
                 Text(
-                    text = compLevelNames[level] ?: level.uppercase(),
+                    text = group.label,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -113,7 +117,11 @@ fun MatchList(
                 )
             }
             items(levelMatches, key = { it.key }) { match ->
-                MatchItem(match, onClick = { onNavigateToMatch(match.key) })
+                MatchItem(
+                    match = match,
+                    playoffType = playoffType,
+                    onClick = { onNavigateToMatch(match.key) }
+                )
                 HorizontalDivider()
             }
         }
@@ -121,8 +129,12 @@ fun MatchList(
 }
 
 @Composable
-fun MatchItem(match: Match, onClick: () -> Unit) {
-    val label = match.shortLabel
+fun MatchItem(
+    match: Match,
+    playoffType: PlayoffType,
+    onClick: () -> Unit
+) {
+    val label = match.getShortLabel(playoffType)
     val isPlayed = match.redScore >= 0
     Row(
         modifier = Modifier

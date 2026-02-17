@@ -63,6 +63,7 @@ import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventDistrictPoints
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.ModelType
+import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.domain.model.Webcast
@@ -212,7 +213,11 @@ fun EventDetailScreen(
                         if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                         else onNavigateToTeam(teamKey)
                     }
-                    2 -> MatchesTab(uiState.matches, onNavigateToMatch)
+                    2 -> MatchesTab(
+                        matches = uiState.matches,
+                        playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
+                        onNavigateToMatch = onNavigateToMatch
+                    )
                     3 -> RankingsTab(uiState.rankings) { teamKey ->
                         val eventKey = uiState.event?.key
                         if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
@@ -422,8 +427,16 @@ private fun TeamsTab(teams: List<Team>?, onNavigateToTeam: (String) -> Unit) {
 }
 
 @Composable
-private fun MatchesTab(matches: List<Match>?, onNavigateToMatch: (String) -> Unit) {
-    MatchList(matches = matches, onNavigateToMatch = onNavigateToMatch)
+private fun MatchesTab(
+    matches: List<Match>?,
+    playoffType: PlayoffType,
+    onNavigateToMatch: (String) -> Unit
+) {
+    MatchList(
+        matches = matches,
+        playoffType = playoffType,
+        onNavigateToMatch = onNavigateToMatch
+    )
 }
 
 @Composable
