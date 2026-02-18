@@ -68,6 +68,7 @@ import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Team
+import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
@@ -104,6 +105,7 @@ fun TeamDetailScreen(
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
     }
+    ReportShortcutVisitEffect(uiState.team?.key)
 
     if (showSignInDialog) {
         AlertDialog(

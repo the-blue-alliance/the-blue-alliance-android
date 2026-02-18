@@ -142,6 +142,8 @@ dependencies {
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.navigation.compose)
+    implementation(libs.androidx.shortcuts)
+    implementation(libs.androidx.lifecycle.process)
 
     // Hilt
     implementation(libs.hilt.android)
