@@ -81,6 +81,10 @@ interface TbaApi {
     @GET("api/v3/district/{district_key}/rankings")
     suspend fun getDistrictRankings(@Path("district_key") districtKey: String): List<DistrictRankingDto>?
 
+    // Regional Advancement Rankings
+    @GET("api/v3/regional_advancement/{year}/rankings")
+    suspend fun getRegionalRankings(@Path("year") year: Int): List<RegionalRankingDto>
+
     // Event District Points
     @GET("api/v3/event/{event_key}/district_points")
     suspend fun getEventDistrictPoints(@Path("event_key") eventKey: String): EventDistrictPointsResponseDto
