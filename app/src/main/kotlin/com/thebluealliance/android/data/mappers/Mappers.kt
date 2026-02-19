@@ -274,6 +274,10 @@ fun MediaDto.toEntity(teamKey: String, year: Int) = MediaEntity(
     year = year,
     preferred = preferred,
     details = details?.toString(),
+    base64Image = base64Image
+        ?: details?.get("base64Image")?.let {
+            (it as? kotlinx.serialization.json.JsonPrimitive)?.content
+        },
 )
 
 fun MediaEntity.toDomain() = Media(
@@ -283,4 +287,5 @@ fun MediaEntity.toDomain() = Media(
     year = year,
     preferred = preferred,
     details = details,
+    base64Image = base64Image,
 )
