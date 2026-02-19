@@ -1,19 +1,24 @@
 package com.thebluealliance.android.ui.teams
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Base64
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -23,6 +28,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Share
@@ -57,6 +63,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
@@ -210,7 +217,7 @@ fun TeamDetailScreen(
                 modifier = Modifier.fillMaxSize(),
             ) { page ->
                 when (page) {
-                    0 -> InfoTab(uiState.team)
+                    0 -> InfoTab(uiState.team, uiState.media)
                     1 -> EventsTab(
                         events = uiState.events,
                         selectedYear = selectedYear,
@@ -230,29 +237,62 @@ fun TeamDetailScreen(
 }
 
 @Composable
-private fun InfoTab(team: Team?) {
+private fun InfoTab(team: Team?, media: List<Media>?) {
     if (team == null) {
         LoadingBox()
         return
     }
+    val avatar = media?.firstOrNull { it.type == "avatar" && it.base64Image != null }
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
     ) {
         item {
-            Text(
-                text = "Team ${team.number}",
-                style = MaterialTheme.typography.headlineSmall,
-            )
-        }
-        if (team.nickname != null) {
-            item {
-                Text(
-                    text = team.nickname,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(top = 4.dp),
-                )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (avatar != null) {
+                    val bitmap = remember(avatar.base64Image) {
+                        try {
+                            val bytes = Base64.decode(avatar.base64Image, Base64.DEFAULT)
+                            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                        } catch (_: Exception) {
+                            null
+                        }
+                    }
+                    if (bitmap != null) {
+                        var showRed by remember { mutableStateOf(false) }
+                        val bgColor = if (showRed) FrcRed else FrcBlue
+                        Box(
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(bgColor)
+                                .clickable { showRed = !showRed },
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Image(
+                                bitmap = bitmap.asImageBitmap(),
+                                contentDescription = "Team avatar",
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier.size(64.dp),
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
+                }
+                Column {
+                    Text(
+                        text = "Team ${team.number}",
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                    if (team.nickname != null) {
+                        Text(
+                            text = team.nickname,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 4.dp),
+                        )
+                    }
+                }
             }
         }
         if (team.name != null) {
@@ -340,7 +380,8 @@ private fun MediaTab(media: List<Media>?) {
         LoadingBox()
         return
     }
-    if (media.isEmpty()) {
+    val filtered = media.filter { it.type != "avatar" }
+    if (filtered.isEmpty()) {
         EmptyBox("No media")
         return
     }
@@ -353,7 +394,7 @@ private fun MediaTab(media: List<Media>?) {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(media, key = { "${it.type}_${it.foreignKey}" }) { item ->
+        items(filtered, key = { "${it.type}_${it.foreignKey}" }) { item ->
             val url = mediaUrl(item)
             val linkUrl = mediaLinkUrl(item)
             if (url != null) {
@@ -399,6 +440,9 @@ private fun MediaTab(media: List<Media>?) {
         }
     }
 }
+
+private val FrcBlue = Color(0xFF0066B3)
+private val FrcRed = Color(0xFFED1C24)
 
 private fun mediaUrl(media: Media): String? = when (media.type) {
     "imgur" -> "https://i.imgur.com/${media.foreignKey}.png"

@@ -25,6 +25,7 @@ data class EventDto(
     val week: Int? = null,
     @SerialName("start_date") val startDate: String? = null,
     @SerialName("end_date") val endDate: String? = null,
+    @SerialName("playoff_type") val playoffType: Int? = null,
 )
 
 @Serializable

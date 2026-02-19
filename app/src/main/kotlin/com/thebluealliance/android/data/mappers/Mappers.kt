@@ -54,6 +54,7 @@ fun EventDto.toEntity() = EventEntity(
     locationName = locationName,
     address = address,
     gmapsUrl = gmapsUrl,
+    playoffType = playoffType ?: PlayoffType.OTHER.typeInt,
 )
 
 fun EventEntity.toDomain() = Event(
@@ -75,6 +76,7 @@ fun EventEntity.toDomain() = Event(
     locationName = locationName,
     address = address,
     gmapsUrl = gmapsUrl,
+    playoffType = PlayoffType.fromInt(playoffType),
     webcasts = webcasts?.let { raw ->
         try {
             json.decodeFromString<List<WebcastDto>>(raw).map {
@@ -106,7 +108,7 @@ fun MatchDto.toEntity() = MatchEntity(
 fun MatchEntity.toDomain() = Match(
     key = key,
     eventKey = eventKey,
-    compLevel = compLevel,
+    compLevel = CompLevel.fromCode(compLevel),
     matchNumber = matchNumber,
     setNumber = setNumber,
     time = time,
@@ -272,6 +274,10 @@ fun MediaDto.toEntity(teamKey: String, year: Int) = MediaEntity(
     year = year,
     preferred = preferred,
     details = details?.toString(),
+    base64Image = base64Image
+        ?: details?.get("base64Image")?.let {
+            (it as? kotlinx.serialization.json.JsonPrimitive)?.content
+        },
 )
 
 fun MediaEntity.toDomain() = Media(
@@ -281,4 +287,5 @@ fun MediaEntity.toDomain() = Media(
     year = year,
     preferred = preferred,
     details = details,
+    base64Image = base64Image,
 )
