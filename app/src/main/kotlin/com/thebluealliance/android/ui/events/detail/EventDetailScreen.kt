@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.ModelType
+import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.events.detail.tabs.EventAlliancesTab
@@ -187,7 +188,11 @@ fun EventDetailScreen(
                         if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                         else onNavigateToTeam(teamKey)
                     }
-                    2 -> EventMatchesTab(uiState.matches, onNavigateToMatch)
+                    2 -> EventMatchesTab(
+                        matches = uiState.matches,
+                        playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
+                        onNavigateToMatch = onNavigateToMatch
+                    )
                     3 -> EventRankingsTab(uiState.rankings) { teamKey ->
                         val eventKey = uiState.event?.key
                         if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)

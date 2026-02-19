@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
+import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,6 +58,7 @@ class MatchDetailViewModel @Inject constructor(
             scoreBreakdown = breakdown,
             eventName = event?.name,
             eventKey = event?.key,
+            playoffType = event?.playoffType ?: PlayoffType.OTHER,
             formattedTime = formattedTime,
             videos = videos,
             year = year,
