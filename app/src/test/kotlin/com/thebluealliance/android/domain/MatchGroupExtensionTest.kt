@@ -645,17 +645,3 @@ class MatchGroupExtensionTest {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
