@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui
 
-import android.R.attr.top
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -39,9 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.compose.dropUnlessResumed
-import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.rememberNavBackStack
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
@@ -72,10 +69,10 @@ val TOP_LEVEL_DESTINATIONS = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TBAApp(
-    initalScreen: NavKey
+    startRoute: NavKey
 ) {
     val navState = rememberNavigationState(
-        startRoute = initalScreen,
+        startRoute = startRoute,
         topLevelRoutes = TOP_LEVEL_DESTINATIONS.map { it.key },
     )
     val navigator = remember { Navigator(navState) }

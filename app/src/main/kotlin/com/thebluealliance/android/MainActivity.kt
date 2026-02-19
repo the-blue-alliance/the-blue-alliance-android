@@ -46,19 +46,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val initalScreen = getNotificationDestination()
+            val startRoute = getNotificationDestination()
                 ?: getDeeplinkDestination()
                 ?: Screen.Events
-            TBAApp(initalScreen = initalScreen)
+            TBAApp(startRoute = startRoute)
         }
 
         // Register device if already signed in
         lifecycleScope.launch { deviceRegistrationManager.registerIfNeeded() }
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        this.intent = intent
     }
 
     private fun getNotificationDestination(): NavKey? {

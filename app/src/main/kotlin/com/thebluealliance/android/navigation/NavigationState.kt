@@ -18,8 +18,6 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.runtime.serialization.NavKeySerializer
 import androidx.savedstate.compose.serialization.serializers.MutableStateSerializer
-import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
-import kotlin.collections.last
 
 @Composable
 fun rememberNavigationState(
@@ -43,7 +41,6 @@ fun rememberNavigationState(
         )
     }
 }
-
 
 class NavigationState(
     val startRoute: NavKey,
@@ -72,6 +69,7 @@ fun NavigationState.toEntries(
     val decoratedEntries = backStacks.mapValues { (_, stack) ->
         val decorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
+            rememberViewModelStoreNavEntryDecorator<NavKey>(),
         )
         rememberDecoratedNavEntries(
             backStack = stack,
