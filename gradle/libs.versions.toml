@@ -1,7 +1,7 @@
 [versions]
-agp = "9.0.0"
+agp = "9.0.1"
 kotlin = "2.3.10"
-ksp = "2.3.5"
+ksp = "2.3.6"
 
 compose-bom = "2026.02.00"
 activity = "1.12.4"
@@ -31,7 +31,7 @@ googleid = "1.2.0"
 
 work = "2.11.1"
 
-junit = "6.0.2"
+junit = "6.0.3"
 turbine = "1.2.1"
 robolectric = "4.16.1"
 mockk = "1.14.9"
