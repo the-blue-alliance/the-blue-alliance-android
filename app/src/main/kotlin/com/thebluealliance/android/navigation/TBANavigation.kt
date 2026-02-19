@@ -1,17 +1,10 @@
 package com.thebluealliance.android.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberDecoratedNavEntries
-import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
 import com.thebluealliance.android.ui.districts.DistrictDetailScreen
 import com.thebluealliance.android.ui.districts.DistrictDetailViewModel
 import com.thebluealliance.android.ui.districts.DistrictsScreen
@@ -104,7 +97,7 @@ fun TBANavigation(
                 }
                 entry<Screen.Search> {
                     SearchScreen(
-                        onNavigateBack = { navigator.goBack() },
+                        onNavigateUp = { navigator.navigateUp() },
                         onNavigateToTeam = { teamKey ->
                             navigator.navigate(Screen.TeamDetail(teamKey))
                         },
@@ -120,7 +113,7 @@ fun TBANavigation(
                         )
                     EventDetailScreen(
                         viewModel = viewModel,
-                        onNavigateBack = { navigator.goBack() },
+                        onNavigateUp = { navigator.navigateUp() },
                         onNavigateToTeam = { teamKey ->
                             navigator.navigate(Screen.TeamDetail(teamKey))
                         },
@@ -140,7 +133,7 @@ fun TBANavigation(
                         )
                     MatchDetailScreen(
                         viewModel = viewModel,
-                        onNavigateBack = { navigator.goBack() },
+                        onNavigateUp = { navigator.navigateUp() },
                         onNavigateToTeam = { teamKey ->
                             navigator.navigate(Screen.TeamDetail(teamKey))
                         },
@@ -156,7 +149,7 @@ fun TBANavigation(
                         )
                     DistrictDetailScreen(
                         viewModel = viewModel,
-                        onNavigateBack = { navigator.goBack() },
+                        onNavigateUp = { navigator.navigateUp() },
                         onNavigateToEvent = { eventKey ->
                             navigator.navigate(Screen.EventDetail(eventKey))
                         },
@@ -171,7 +164,7 @@ fun TBANavigation(
                     )
                     TeamDetailScreen(
                         viewModel = viewModel,
-                        onNavigateBack = { navigator.goBack() },
+                        onNavigateUp = { navigator.navigateUp() },
                         onNavigateToEvent = { eventKey ->
                             navigator.navigate(Screen.EventDetail(eventKey))
                         },
@@ -188,7 +181,7 @@ fun TBANavigation(
                         )
                     TeamEventDetailScreen(
                         viewModel = viewModel,
-                        onNavigateBack = { navigator.goBack() },
+                        onNavigateUp = { navigator.navigateUp() },
                         onNavigateToMatch = { matchKey ->
                             navigator.navigate(Screen.MatchDetail(matchKey))
                         },

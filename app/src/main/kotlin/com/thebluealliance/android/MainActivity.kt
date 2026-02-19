@@ -1,6 +1,7 @@
 package com.thebluealliance.android
 
 import android.Manifest
+import android.app.ComponentCaller
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -45,11 +46,20 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val flags = intent.flags
+        val isNewTask = flags and Intent.FLAG_ACTIVITY_NEW_TASK != 0 &&
+                flags and Intent.FLAG_ACTIVITY_CLEAR_TASK != 0
+
+        val startRoute = getNotificationDestination()
+            ?: getDeeplinkDestination()
+            ?: Screen.Events
+
         setContent {
-            val startRoute = getNotificationDestination()
-                ?: getDeeplinkDestination()
-                ?: Screen.Events
-            TBAApp(startRoute = startRoute)
+            TBAApp(
+                startRoute = startRoute,
+                isNewTask = isNewTask,
+            )
         }
 
         // Register device if already signed in
@@ -74,6 +84,11 @@ class MainActivity : ComponentActivity() {
     private fun getDeeplinkDestination(): NavKey? {
         val data = intent.data ?: return null
         return deepLinkHandler.match(data)
+    }
+
+    override fun onNewIntent(intent: Intent, caller: ComponentCaller) {
+        super.onNewIntent(intent, caller)
+        Log.d("MainActivity", "Received new intent: $intent")
     }
 
     fun requestNotificationPermission() {

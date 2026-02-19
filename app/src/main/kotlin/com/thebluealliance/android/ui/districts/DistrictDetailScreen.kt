@@ -36,7 +36,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.ui.components.EventRow
-import com.thebluealliance.android.ui.teams.TeamsUiState
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Events", "Rankings")
@@ -44,7 +43,7 @@ private val TABS = listOf("Events", "Rankings")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DistrictDetailScreen(
-    onNavigateBack: () -> Unit,
+    onNavigateUp: () -> Unit,
     onNavigateToEvent: (String) -> Unit,
     onNavigateToTeam: (String) -> Unit,
     viewModel: DistrictDetailViewModel,
@@ -65,7 +64,7 @@ fun DistrictDetailScreen(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = onNavigateBack) {
+                IconButton(onClick = onNavigateUp) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             },

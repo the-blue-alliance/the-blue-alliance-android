@@ -69,13 +69,17 @@ val TOP_LEVEL_DESTINATIONS = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TBAApp(
-    startRoute: NavKey
+    startRoute: NavKey,
+    isNewTask: Boolean,
 ) {
     val navState = rememberNavigationState(
         startRoute = startRoute,
         topLevelRoutes = TOP_LEVEL_DESTINATIONS.map { it.key },
+        startTopLevelRoute = TOP_LEVEL_DESTINATIONS.first().key,
+        isNewTask = isNewTask,
     )
-    val navigator = remember { Navigator(navState) }
+    val activity = LocalActivity.current as MainActivity
+    val navigator = remember { Navigator(navState, activity) }
     FirebaseAnalyticsEffect(navState)
 
     TBATheme {

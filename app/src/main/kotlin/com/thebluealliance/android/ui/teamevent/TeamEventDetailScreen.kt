@@ -42,7 +42,7 @@ private val TABS = listOf("Matches", "Awards")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamEventDetailScreen(
-    onNavigateBack: () -> Unit,
+    onNavigateUp: () -> Unit,
     onNavigateToMatch: (String) -> Unit,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
@@ -66,7 +66,7 @@ fun TeamEventDetailScreen(
             windowInsets = WindowInsets(0),
             title = { Text(text = titleText, maxLines = 1, overflow = TextOverflow.Ellipsis) },
             navigationIcon = {
-                IconButton(onClick = onNavigateBack) {
+                IconButton(onClick = onNavigateUp) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             },
