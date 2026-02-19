@@ -242,7 +242,7 @@ private fun InfoTab(team: Team?, media: List<Media>?) {
         LoadingBox()
         return
     }
-    val avatar = media?.firstOrNull { it.type == "avatar" && it.base64Image != null }
+    val avatar = media?.firstOrNull { it.isAvatar }
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
