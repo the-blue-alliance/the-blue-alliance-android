@@ -26,6 +26,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -35,8 +36,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.thebluealliance.android.MainActivity
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.config.ThemePreferences
+import com.thebluealliance.android.MainActivity
+import com.thebluealliance.android.ui.theme.ThemeMode
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -67,8 +71,17 @@ val TOP_LEVEL_DESTINATIONS = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TBAApp(activity: MainActivity? = null) {
-    TBATheme {
+fun TBAApp(activity: MainActivity? = null, themePreferences: ThemePreferences? = null) {
+    val themeMode by (themePreferences?.themeModeFlow
+        ?.collectAsStateWithLifecycle(ThemeMode.AUTO)
+        ?: remember { mutableStateOf(ThemeMode.AUTO) })
+    val darkTheme = when (themeMode) {
+        ThemeMode.AUTO -> isSystemInDarkTheme()
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+    }
+
+    TBATheme(darkTheme = darkTheme) {
         val navController = rememberNavController()
         activity?.setNavController(navController)
 
