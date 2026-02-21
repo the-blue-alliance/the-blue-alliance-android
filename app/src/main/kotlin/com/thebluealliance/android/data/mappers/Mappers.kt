@@ -80,7 +80,7 @@ fun EventEntity.toDomain() = Event(
     webcasts = webcasts?.let { raw ->
         try {
             json.decodeFromString<List<WebcastDto>>(raw).map {
-                Webcast(type = it.type, channel = it.channel, file = it.file)
+                Webcast(type = it.type, channel = it.channel, file = it.file, date = it.date)
             }
         } catch (_: Exception) { emptyList() }
     } ?: emptyList(),
