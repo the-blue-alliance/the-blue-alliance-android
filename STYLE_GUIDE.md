@@ -39,6 +39,12 @@ All UI strings use **sentence case**: capitalize only the first word and proper 
 - Acronyms (RP, BCVI)
 - Data from the server (event names, team names, etc.)
 
+## Terminology
+
+| Preferred (user-facing)  | Avoid (user-facing)      | Notes                                                |
+|--------------------------|--------------------------|------------------------------------------------------|
+| Notifications            | Subscriptions            | Users configure what they get *notified* about. The internal code still uses `Subscription` as a domain/data model name — this guideline only applies to UI strings. |
+
 ## Brand colors
 
 These match the TBA web server CSS variables (`tba_variables.less`).
