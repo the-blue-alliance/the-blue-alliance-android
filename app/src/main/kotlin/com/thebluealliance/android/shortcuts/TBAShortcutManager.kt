@@ -1,6 +1,5 @@
 package com.thebluealliance.android.shortcuts
 
-import android.R.attr.label
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -14,7 +13,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.thebluealliance.android.R
-import com.thebluealliance.android.data.remote.ClientApi
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
@@ -22,11 +20,8 @@ import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
+import com.thebluealliance.android.util.addRoundedCorners
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -119,7 +114,9 @@ class TBAShortcutManager @Inject constructor(
             try {
                 val bytes = Base64.decode(avatar.base64Image, Base64.DEFAULT)
                 val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                return IconCompat.createWithBitmap(bitmap)
+                val density = context.resources.displayMetrics.density
+                val roundedBitmap = bitmap.addRoundedCorners(4f * density)
+                return IconCompat.createWithBitmap(roundedBitmap)
             } catch (_: Exception) {}
         }
 
