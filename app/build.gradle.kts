@@ -141,14 +141,15 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel.compose)
-    implementation(libs.navigation.compose)
+    implementation(libs.lifecycle.viewmodel.navigation3)
+    implementation(libs.navigation3.runtime)
+    implementation(libs.navigation3.ui)
     implementation(libs.androidx.shortcuts)
     implementation(libs.androidx.lifecycle.process)
 
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.lifecycle.viewmodel.compose)
 
     // WorkManager

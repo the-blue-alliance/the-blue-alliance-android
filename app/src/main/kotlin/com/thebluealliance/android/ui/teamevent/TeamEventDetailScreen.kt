@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.PlayoffType
@@ -44,11 +43,11 @@ private val TABS = listOf("Matches", "Awards")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamEventDetailScreen(
-    onNavigateBack: () -> Unit,
+    onNavigateUp: () -> Unit,
     onNavigateToMatch: (String) -> Unit,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
-    viewModel: TeamEventDetailViewModel = hiltViewModel(),
+    viewModel: TeamEventDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
@@ -68,7 +67,7 @@ fun TeamEventDetailScreen(
             windowInsets = WindowInsets(0),
             title = { Text(text = titleText, maxLines = 1, overflow = TextOverflow.Ellipsis) },
             navigationIcon = {
-                IconButton(onClick = onNavigateBack) {
+                IconButton(onClick = onNavigateUp) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             },

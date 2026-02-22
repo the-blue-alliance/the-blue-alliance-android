@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +27,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -68,7 +68,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.thebluealliance.android.domain.model.Event
@@ -86,11 +85,11 @@ private val TABS = listOf("Info", "Events", "Media")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamDetailScreen(
-    onNavigateBack: () -> Unit,
+    onNavigateUp: () -> Unit,
     onNavigateToEvent: (String) -> Unit,
     onNavigateToMyTBA: () -> Unit = {},
     onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
-    viewModel: TeamDetailViewModel = hiltViewModel(),
+    viewModel: TeamDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
@@ -157,7 +156,7 @@ fun TeamDetailScreen(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = onNavigateBack) {
+                IconButton(onClick = onNavigateUp) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             },
