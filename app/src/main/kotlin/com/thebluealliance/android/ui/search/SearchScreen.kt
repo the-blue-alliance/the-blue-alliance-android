@@ -34,7 +34,7 @@ import com.thebluealliance.android.ui.components.TeamRow
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
-    onNavigateBack: () -> Unit,
+    onNavigateUp: () -> Unit,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
     viewModel: SearchViewModel = hiltViewModel(),
@@ -68,7 +68,7 @@ fun SearchScreen(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = onNavigateBack) {
+                IconButton(onClick = onNavigateUp) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             },

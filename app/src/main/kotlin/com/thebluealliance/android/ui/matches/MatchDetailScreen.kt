@@ -34,20 +34,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.getFullLabel
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.ui.common.shareTbaUrl
-import com.thebluealliance.android.ui.teams.TeamsUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MatchDetailScreen(
-    onNavigateBack: () -> Unit,
+    onNavigateUp: () -> Unit,
     onNavigateToTeam: (String) -> Unit = {},
     onNavigateToEvent: (String) -> Unit = {},
-    viewModel: MatchDetailViewModel = hiltViewModel(),
+    viewModel: MatchDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
@@ -64,7 +62,7 @@ fun MatchDetailScreen(
                 )
             },
             navigationIcon = {
-                IconButton(onClick = onNavigateBack) {
+                IconButton(onClick = onNavigateUp) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             },
