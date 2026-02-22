@@ -97,13 +97,13 @@ class TBAShortcutManager @Inject constructor(
             teamRepository.refreshTeam(teamKey)
             teamRepository.refreshTeamMedia(teamKey, currentSeason)
         } catch (_: Exception) {
-            Log.w("TBAShortcutManager", "Failed to refresh team ${teamKey} data")
+            Log.w("TBAShortcutManager", "Failed to refresh team $teamKey")
         }
 
         val team = teamRepository.observeTeam(teamKey).first() ?: return null
         val media = teamRepository.observeTeamMedia(teamKey, currentSeason).first()
 
-        val label = "${team.number} — ${team.nickname}"
+        val label = "${team.number} ${team.nickname}"
         val uri = "https://www.thebluealliance.com/team/${team.number}".toUri()
         val avatar = media.firstOrNull { it.isAvatar }
 
@@ -131,7 +131,7 @@ class TBAShortcutManager @Inject constructor(
         try {
             eventRepository.refreshEvent(eventKey)
         } catch (_: Exception) {
-            Log.w("TBAShortcutManager", "Failed to refresh event ${eventKey} data")
+            Log.w("TBAShortcutManager", "Failed to refresh event $eventKey")
         }
 
         val event = eventRepository.observeEvent(eventKey).first() ?: return null
