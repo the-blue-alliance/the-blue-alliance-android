@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Award
+import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.MatchList
 import com.thebluealliance.android.ui.components.TeamRow
@@ -94,12 +95,13 @@ fun TeamEventDetailScreen(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize(),
             ) { page ->
+                val evt = uiState.event
                 when (page) {
                     0 -> MatchList(
                         matches = uiState.matches,
+                        playoffType = evt?.playoffType ?: PlayoffType.OTHER,
                         onNavigateToMatch = onNavigateToMatch,
                         headerContent = {
-                            val evt = uiState.event
                             if (evt != null) {
                                 item(key = "header_event") {
                                     EventRow(

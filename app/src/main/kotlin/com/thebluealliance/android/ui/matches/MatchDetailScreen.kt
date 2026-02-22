@@ -35,8 +35,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.domain.getFullLabel
 import com.thebluealliance.android.domain.model.Match
-import com.thebluealliance.android.domain.model.fullLabel
 import com.thebluealliance.android.ui.common.shareTbaUrl
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +56,7 @@ fun MatchDetailScreen(
             windowInsets = WindowInsets(0),
             title = {
                 Text(
-                    text = uiState.match?.fullLabel ?: "Match",
+                    text = uiState.match?.getFullLabel(uiState.playoffType) ?: "Match",
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -71,7 +71,7 @@ fun MatchDetailScreen(
                     IconButton(onClick = {
                         val eventLabel = uiState.eventName?.let { "${uiState.year} $it - " } ?: ""
                         context.shareTbaUrl(
-                            title = "$eventLabel${match.fullLabel}",
+                            title = "$eventLabel${match.getFullLabel(uiState.playoffType)}",
                             url = "https://www.thebluealliance.com/match/${match.key}",
                         )
                     }) {

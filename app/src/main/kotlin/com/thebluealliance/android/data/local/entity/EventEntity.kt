@@ -24,4 +24,5 @@ data class EventEntity(
     val locationName: String?,
     val address: String?,
     val gmapsUrl: String?,
+    val playoffType: Int,
 )

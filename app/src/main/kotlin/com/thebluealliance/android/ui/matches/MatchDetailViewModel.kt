@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
+import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.navigation.Screen
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -57,6 +58,7 @@ class MatchDetailViewModel @AssistedInject constructor(
             scoreBreakdown = breakdown,
             eventName = event?.name,
             eventKey = event?.key,
+            playoffType = event?.playoffType ?: PlayoffType.OTHER,
             formattedTime = formattedTime,
             videos = videos,
             year = year,
