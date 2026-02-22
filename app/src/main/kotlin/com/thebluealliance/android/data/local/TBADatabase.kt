@@ -21,7 +21,7 @@ import com.thebluealliance.android.data.local.entity.*
         SubscriptionEntity::class,
         EventDistrictPointsEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = false,
 )
 abstract class TBADatabase : RoomDatabase() {

@@ -188,7 +188,7 @@ fun MatchItem(
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 Text(
-                    text = formatMatchTime(match.time),
+                    text = formatMatchTime(match.predictedTime ?: match.time),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

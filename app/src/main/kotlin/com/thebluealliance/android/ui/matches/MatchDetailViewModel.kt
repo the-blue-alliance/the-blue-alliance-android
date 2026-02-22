@@ -52,7 +52,7 @@ class MatchDetailViewModel @AssistedInject constructor(
     ) { match, event ->
         val breakdown = match?.scoreBreakdown?.let { parseBreakdown(it) }
         val videos = match?.videos?.let { parseVideos(it) } ?: emptyList()
-        val formattedTime = formatMatchTime(match?.actualTime ?: match?.time)
+        val formattedTime = formatMatchTime(match?.actualTime ?: match?.predictedTime ?: match?.time)
         MatchDetailUiState(
             match = match,
             scoreBreakdown = breakdown,
