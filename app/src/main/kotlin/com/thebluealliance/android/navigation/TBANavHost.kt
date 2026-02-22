@@ -35,7 +35,12 @@ fun TBANavHost(
         startDestination = Route.Events,
         modifier = modifier,
     ) {
-        composable<Route.Events> {
+        composable<Route.Events>(
+            deepLinks = listOf(
+                navDeepLink { uriPattern = "https://www.thebluealliance.com/events" },
+                navDeepLink { uriPattern = "https://www.thebluealliance.com/events/{year}" },
+            ),
+        ) {
             EventsScreen(
                 onNavigateToEvent = { eventKey ->
                     navController.navigate(Screen.EventDetail(eventKey))
@@ -44,7 +49,12 @@ fun TBANavHost(
                 onYearState = onEventsYearState,
             )
         }
-        composable<Route.Teams> {
+        composable<Route.Teams>(
+            deepLinks = listOf(
+                navDeepLink { uriPattern = "https://www.thebluealliance.com/teams" },
+                navDeepLink { uriPattern = "https://www.thebluealliance.com/teams/{page}" },
+            ),
+        ) {
             TeamsScreen(
                 onNavigateToTeam = { teamKey ->
                     navController.navigate(Screen.TeamDetail(teamKey))
