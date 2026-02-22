@@ -1,6 +1,8 @@
 package com.thebluealliance.android.ui.more
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
@@ -8,5 +10,8 @@ import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 @Composable
 fun AboutScreen() {
     @Suppress("DEPRECATION")
-    LibrariesContainer(modifier = Modifier.fillMaxSize())
+    LibrariesContainer(
+        modifier = Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    )
 }

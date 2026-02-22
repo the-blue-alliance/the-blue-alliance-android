@@ -71,7 +71,10 @@ fun EventsScreen(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         PullToRefreshBox(
             isRefreshing = isRefreshing && uiState !is EventsUiState.Loading,
             onRefresh = viewModel::refreshEvents,
