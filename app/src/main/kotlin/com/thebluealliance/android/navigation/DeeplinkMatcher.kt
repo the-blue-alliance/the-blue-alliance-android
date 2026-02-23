@@ -23,6 +23,16 @@ class DeeplinkMatcher {
             return Screen.MatchDetail(segments[1])
         }
 
+        // https://www.thebluealliance.com/events or /events/{year}
+        if (segments[0] == "events") {
+            return Screen.Events
+        }
+
+        // https://www.thebluealliance.com/teams or /teams/{page}
+        if (segments[0] == "teams") {
+            return Screen.Teams
+        }
+
         return null
     }
 }
