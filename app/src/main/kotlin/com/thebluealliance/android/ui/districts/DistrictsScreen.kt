@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.districts
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,7 +51,10 @@ fun DistrictsScreen(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         PullToRefreshBox(
             isRefreshing = isRefreshing && uiState !is DistrictsUiState.Loading,
             onRefresh = viewModel::refreshDistricts,

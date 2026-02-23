@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.search
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,7 +47,10 @@ fun SearchScreen(
         focusRequester.requestFocus()
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         TopAppBar(
             windowInsets = WindowInsets(0),
             title = {

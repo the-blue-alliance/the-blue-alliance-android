@@ -243,8 +243,8 @@ private fun InfoTab(team: Team?, media: List<Media>?) {
     }
     val avatar = media?.firstOrNull { it.isAvatar }
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
     ) {
         item {

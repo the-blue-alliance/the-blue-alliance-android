@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.more
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,7 +31,10 @@ fun MoreScreen(
     onNavigateToAbout: () -> Unit,
     onNavigateToThanks: () -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         MoreItem(icon = Icons.Filled.Star, label = "myTBA", onClick = onNavigateToMyTBA)
         HorizontalDivider()
         MoreItem(icon = Icons.Filled.Settings, label = "Settings", onClick = onNavigateToSettings)
