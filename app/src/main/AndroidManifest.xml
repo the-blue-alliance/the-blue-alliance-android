@@ -43,6 +43,14 @@
                     android:pathPrefix="/teams" />
             </intent-filter>
         </activity>
+
+        <!-- This alias insulates our shortcuts (which maintain the same Intent data through app updates)
+            from potential future changes to our main launcher activity -->
+        <activity-alias
+            android:name="com.thebluealliance.android.LaunchShortcutActivity"
+            android:exported="true"
+            android:targetActivity=".MainActivity" />
+
         <service
             android:name=".messaging.TBAFirebaseMessagingService"
             android:exported="false">
