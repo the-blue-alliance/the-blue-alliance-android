@@ -270,7 +270,7 @@ private fun AllianceTeams(
             Text(
                 text = key.removePrefix("frc"),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary,
+                color = color,
                 modifier = Modifier
                     .clickable { onTeamClick(key) }
                     .padding(start = 8.dp, top = 2.dp),
