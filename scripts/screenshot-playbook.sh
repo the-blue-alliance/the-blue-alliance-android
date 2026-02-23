@@ -10,6 +10,13 @@
 #   - emu tool available at ~/codez/gsm-android-automator/emu
 #   - Release build installed: ./gradlew :app:installRelease
 #   - App has data loaded (events, teams, districts for current year)
+#   - Emulator DNS must work: if Private DNS is enabled, disable it with:
+#       adb shell settings put global private_dns_mode off
+#   - Release signing must use tba-keys (the SHA-1 registered in Firebase):
+#       In local.properties, uncomment the "tba-keys" signing block and
+#       comment out the "Google Play upload key" block. The upload key SHA-1
+#       is not registered in the Firebase/GCP project, so Remote Config and
+#       Auth will fail if the upload key is used on the emulator.
 #
 # Usage:
 #   bash scripts/screenshot-playbook.sh
@@ -47,7 +54,9 @@ echo "==> Screenshot 1: Events list"
 $EMU screenshot "$RAW_DIR/01-events-list.png"
 wait_for_ui
 
-# 2. Event detail — Matches tab (San Francisco Regional, 2026casnf)
+# 2. Event detail — Matches tab
+# Using 2025casf (San Francisco Regional) which has full score breakdowns.
+# Switch to a 2026 week 1+ event once one has been played.
 echo "==> Screenshot 2: Event matches"
 deeplink "/event/2025casf"
 wait_for_ui
@@ -55,14 +64,13 @@ $EMU tap "Matches"
 wait_for_ui
 $EMU screenshot "$RAW_DIR/02-event-matches.png"
 
-# 3. Match detail — tap a completed match
+# 3. Match detail — tap a completed qual match
 echo "==> Screenshot 3: Match detail"
-# Tap the first match row with a score visible
 $EMU tap "Q10"
 wait_for_ui
 $EMU screenshot "$RAW_DIR/03-match-detail.png"
 
-# 4. Team detail (Team 177 — Bobcat Robotics)
+# 4. Team detail — Info tab (Team 177 — Bobcat Robotics)
 echo "==> Screenshot 4: Team detail"
 deeplink "/team/177"
 wait_for_ui
@@ -70,7 +78,7 @@ $EMU screenshot "$RAW_DIR/04-team-detail.png"
 
 # 5. Team notification preferences — all toggles ON
 echo "==> Screenshot 5: Team notification preferences"
-$EMU tap-xy 754 147  # Bell icon in top bar
+$EMU tap "Notification preferences"
 wait_for_ui
 $EMU screenshot "$RAW_DIR/05-notification-prefs.png"
 
@@ -78,7 +86,7 @@ $EMU screenshot "$RAW_DIR/05-notification-prefs.png"
 echo "==> Screenshot 6: District detail"
 $EMU launch "$PKG/$MAIN_ACTIVITY" # Back to Main
 wait_for_ui
-$EMU tap-xy 677 2274  # Bottom nav: Districts
+$EMU tap "Districts"
 wait_for_ui
 scroll_down
 wait_for_ui
