@@ -33,13 +33,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.getGroup
 import com.thebluealliance.android.domain.getShortLabel
-import com.thebluealliance.android.domain.model.CompLevel
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.PlayoffType
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.jsonPrimitive
+import com.thebluealliance.android.domain.rpBonuses
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -144,12 +140,8 @@ fun MatchItem(
 ) {
     val label = match.getShortLabel(playoffType)
     val isPlayed = match.redScore >= 0
-    val showDots = isPlayed && match.compLevel == CompLevel.QUAL
 
-    val rpBonuses = remember(match.scoreBreakdown) {
-        if (!showDots) null
-        else parseRpBonuses(match.scoreBreakdown, match.eventKey.substring(0, 4).toIntOrNull() ?: 0)
-    }
+    val rpBonuses = remember(match.scoreBreakdown) { match.rpBonuses() }
 
     Row(
         modifier = Modifier
@@ -181,13 +173,12 @@ fun MatchItem(
         }
         if (isPlayed) {
             if (rpBonuses != null) {
-                val (red, blue) = rpBonuses
                 Column(
                     horizontalAlignment = Alignment.End,
                     verticalArrangement = Arrangement.spacedBy(3.dp),
                 ) {
-                    RpDots(red, MaterialTheme.colorScheme.error)
-                    RpDots(blue, MaterialTheme.colorScheme.primary)
+                    RpDots(rpBonuses.red, MaterialTheme.colorScheme.error)
+                    RpDots(rpBonuses.blue, MaterialTheme.colorScheme.primary)
                 }
             }
             Column(
@@ -259,36 +250,3 @@ private fun RpDots(bonuses: List<Boolean>, achievedColor: Color) {
     }
 }
 
-private val rpBonusFieldsByYear = mapOf(
-    2026 to listOf("energizedAchieved", "superchargedAchieved", "traversalAchieved"),
-    2025 to listOf("autoBonusAchieved", "coralBonusAchieved", "bargeBonusAchieved"),
-    2024 to listOf("coopertitionBonusAchieved", "melodyBonusAchieved", "ensembleBonusAchieved"),
-    2023 to listOf("activationBonusAchieved", "sustainabilityBonusAchieved"),
-)
-
-private val rpJson = Json { ignoreUnknownKeys = true }
-
-/**
- * Parses RP bonus achievement booleans from the match score breakdown JSON.
- * Returns a pair of (redBonuses, blueBonuses) lists, or null if not applicable.
- */
-private fun parseRpBonuses(
-    scoreBreakdown: String?,
-    year: Int,
-): Pair<List<Boolean>, List<Boolean>>? {
-    val fields = rpBonusFieldsByYear[year] ?: return null
-    if (scoreBreakdown == null) return null
-    return try {
-        val obj = rpJson.parseToJsonElement(scoreBreakdown) as? JsonObject ?: return null
-        fun allianceBonuses(alliance: String): List<Boolean> {
-            val allianceObj = obj[alliance] as? JsonObject ?: return fields.map { false }
-            return fields.map { field ->
-                val value = allianceObj[field]
-                value is JsonPrimitive && value.jsonPrimitive.content == "true"
-            }
-        }
-        allianceBonuses("red") to allianceBonuses("blue")
-    } catch (_: Exception) {
-        null
-    }
-}

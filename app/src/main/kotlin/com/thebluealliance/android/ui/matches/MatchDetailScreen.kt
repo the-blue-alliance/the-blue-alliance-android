@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.domain.formatBreakdownValue
 import com.thebluealliance.android.domain.getFullLabel
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.ui.common.shareTbaUrl
@@ -338,28 +339,6 @@ private fun BreakdownRow(label: String, redValue: String, blueValue: String) {
     }
 }
 
-private val rpBonusFields = setOf(
-    // 2026
-    "energizedAchieved", "superchargedAchieved", "traversalAchieved",
-    // 2025
-    "autoBonusAchieved", "coralBonusAchieved", "bargeBonusAchieved",
-    // 2024
-    "coopertitionBonusAchieved", "melodyBonusAchieved", "ensembleBonusAchieved",
-    // 2023
-    "activationBonusAchieved", "sustainabilityBonusAchieved",
-)
-
-private val booleanDisplayFields = rpBonusFields + setOf("coopertitionCriteriaMet", "g206Penalty")
-
-private fun formatBreakdownValue(apiKey: String, value: String): String {
-    if (value == "-") return value
-    return when {
-        apiKey == "rp" -> "+$value RP"
-        apiKey in rpBonusFields -> if (value == "true") "✓ (+1 RP)" else "✗"
-        apiKey in booleanDisplayFields -> if (value == "true") "✓" else "✗"
-        else -> value
-    }
-}
 
 private fun camelCaseToLabel(key: String): String {
     return key.replace(Regex("([A-Z])"), " $1")
