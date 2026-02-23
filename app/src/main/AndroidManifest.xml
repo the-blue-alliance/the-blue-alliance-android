@@ -26,9 +26,21 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:scheme="https"
-                    android:host="www.thebluealliance.com" />
+                <data android:scheme="https"
+                    android:host="www.thebluealliance.com"
+                    android:pathPrefix="/event/" />
+                <data android:scheme="https"
+                    android:host="www.thebluealliance.com"
+                    android:pathPrefix="/events" />
+                <data android:scheme="https"
+                    android:host="www.thebluealliance.com"
+                    android:pathPrefix="/match/" />
+                <data android:scheme="https"
+                    android:host="www.thebluealliance.com"
+                    android:pathPrefix="/team/" />
+                <data android:scheme="https"
+                    android:host="www.thebluealliance.com"
+                    android:pathPrefix="/teams" />
             </intent-filter>
         </activity>
         <service
