@@ -15,6 +15,7 @@ data class MatchDto(
     @SerialName("score_breakdown") val scoreBreakdown: JsonObject? = null,
     val videos: List<MatchVideoDto>? = null,
     val time: Long? = null,
+    @SerialName("predicted_time") val predictedTime: Long? = null,
     @SerialName("actual_time") val actualTime: Long? = null,
     @SerialName("winning_alliance") val winningAlliance: String? = null,
 )

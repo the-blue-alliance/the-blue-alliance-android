@@ -7,6 +7,7 @@ data class Match(
     val matchNumber: Int,
     val setNumber: Int,
     val time: Long?,
+    val predictedTime: Long?,
     val actualTime: Long?,
     val redTeamKeys: List<String>,
     val redScore: Int,

@@ -24,6 +24,7 @@ class MatchGroupExtensionTest {
         setNumber = setNumber,
         time = null,
         actualTime = null,
+        predictedTime = null,
         redTeamKeys = listOf("frc1", "frc2", "frc3"),
         redScore = 100,
         blueTeamKeys = listOf("frc4", "frc5", "frc6"),
