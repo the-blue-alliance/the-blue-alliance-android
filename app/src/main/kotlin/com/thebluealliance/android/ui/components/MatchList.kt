@@ -2,7 +2,6 @@ package com.thebluealliance.android.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +36,7 @@ import com.thebluealliance.android.domain.getShortLabel
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.rpBonuses
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -88,36 +89,48 @@ fun MatchList(
         }
     }
 
-    val headerKeys = remember(grouped) {
-        grouped.keys.map { "match_header_$it" }.toSet()
+    val headerInfos = remember(grouped, headerOffset) {
+        buildList {
+            var index = headerOffset
+            grouped.forEach { (group, levelMatches) ->
+                val headerKey = "match_header_${group.label}"
+                add(SectionHeaderInfo(headerKey, group.label, index))
+                index += 1 + levelMatches.size // header + items
+            }
+        }
     }
-    @Suppress("UNUSED_VARIABLE")
+
+    val headerKeys = remember(headerInfos) { headerInfos.map { it.key }.toSet() }
+
     val stuckHeaderKey by remember {
         derivedStateOf {
-            listState.layoutInfo.visibleItemsInfo
+            val stuck = listState.layoutInfo.visibleItemsInfo
                 .firstOrNull { item ->
                     val key = item.key as? String
                     key != null && key in headerKeys && item.offset <= 0
                 }?.key as? String
+            stuck ?: headerInfos.firstOrNull()?.key
         }
     }
+
+    val coroutineScope = rememberCoroutineScope()
 
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         if (headerContent != null) {
             headerContent()
         }
         grouped.forEach { (group, levelMatches) ->
-            val headerKey = "match_header ${group.label}"
+            val headerKey = "match_header_${group.label}"
             stickyHeader(key = headerKey) {
-                Text(
-                    text = group.label,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                SectionHeader(
+                    label = group.label,
+                    isStuck = stuckHeaderKey == headerKey,
+                    allHeaders = headerInfos,
+                    onHeaderSelected = { info ->
+                        coroutineScope.launch {
+                            listState.animateScrollToItem(info.itemIndex)
+                        }
+                    },
                 )
             }
             items(levelMatches, key = { it.key }) { match ->
@@ -204,7 +217,7 @@ fun MatchItem(
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 Text(
-                    text = formatMatchTime(match.time),
+                    text = formatMatchTime(match.predictedTime ?: match.time),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

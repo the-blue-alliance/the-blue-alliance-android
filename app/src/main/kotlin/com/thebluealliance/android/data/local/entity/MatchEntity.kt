@@ -12,6 +12,7 @@ data class MatchEntity(
     val setNumber: Int,
     val time: Long?,
     val actualTime: Long?,
+    val predictedTime: Long?,
     val redTeamKeys: String,
     val redScore: Int,
     val blueTeamKeys: String,

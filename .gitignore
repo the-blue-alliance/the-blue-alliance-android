@@ -56,6 +56,9 @@ Thumbs.db
 # Logs captured from Device Monitor
 captures/
 
+# Firebase
+firebase-debug.log
+
 # User Github token for releases
 scripts/github_token
 scripts/html2text.py

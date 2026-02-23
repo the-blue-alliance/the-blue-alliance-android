@@ -141,12 +141,13 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel.compose)
-    implementation(libs.navigation.compose)
+    implementation(libs.lifecycle.viewmodel.navigation3)
+    implementation(libs.navigation3.runtime)
+    implementation(libs.navigation3.ui)
 
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.lifecycle.viewmodel.compose)
 
     // WorkManager
@@ -171,6 +172,9 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+
+    // DataStore
+    implementation(libs.datastore.preferences)
 
     // Coil
     implementation(libs.coil.compose)

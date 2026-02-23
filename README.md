@@ -18,7 +18,7 @@ The Blue Alliance is built by volunteers. We'd love your help!
 - **Teams** -- Browse teams, view team details with year-by-year event participation and media
 - **Districts** -- Browse district listings and rankings
 - **Search** -- Find teams and events across all of TBA
-- **myTBA** -- Sign in with Google to save favorite teams and events, and subscribe to push notifications for match scores, upcoming matches, schedule changes, and more
+- **myTBA** -- Sign in with Google to save favorite teams and events, and set up push notifications for match scores, upcoming matches, schedule changes, and more
 - **Deep linking** -- Open thebluealliance.com links directly in the app
 - **Push notifications** -- Receive alerts for match scores, upcoming matches, event updates, and more via Firebase Cloud Messaging
 
@@ -60,7 +60,7 @@ This starts:
 
 To import data into your local server, visit `http://localhost:8080/local/bootstrap` in a browser.
 
-Running the local backend is the easiest way to test logged-in features like myTBA favorites and subscriptions, since the Docker Compose setup includes a Firebase Auth emulator that handles sign-in without any additional configuration.
+Running the local backend is the easiest way to test logged-in features like myTBA favorites and notifications, since the Docker Compose setup includes a Firebase Auth emulator that handles sign-in without any additional configuration.
 
 > **Tip:** If you'd rather skip running the backend locally, you can point the app at the production API by adding this to `local.properties`:
 > ```

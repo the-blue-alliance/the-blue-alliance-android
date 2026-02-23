@@ -1,6 +1,7 @@
 package com.thebluealliance.android
 
 import android.Manifest
+import android.app.ComponentCaller
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -13,13 +14,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavHostController
+import androidx.navigation3.runtime.NavKey
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.thebluealliance.android.config.ThemePreferences
 import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import com.thebluealliance.android.messaging.NotificationBuilder
+import com.thebluealliance.android.navigation.DeeplinkMatcher
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.TBAApp
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,8 +35,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject lateinit var firebaseAuth: FirebaseAuth
     @Inject lateinit var deviceRegistrationManager: DeviceRegistrationManager
+    @Inject lateinit var themePreferences: ThemePreferences
 
-    private var navController: NavHostController? = null
+    private val deepLinkHandler = DeeplinkMatcher()
 
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -41,29 +45,31 @@ class MainActivity : ComponentActivity() {
         Log.d("MainActivity", "Notification permission granted: $granted")
     }
 
-    fun setNavController(controller: NavHostController) {
-        navController = controller
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val flags = intent.flags
+        val isNewTask = flags and Intent.FLAG_ACTIVITY_NEW_TASK != 0 &&
+                flags and Intent.FLAG_ACTIVITY_CLEAR_TASK != 0
+
+        val startRoute = getNotificationDestination()
+            ?: getDeeplinkDestination()
+            ?: Screen.Events
+
         setContent {
-            TBAApp(activity = this)
+            TBAApp(
+                startRoute = startRoute,
+                isNewTask = isNewTask,
+                themePreferences = themePreferences,
+            )
         }
-        handleNotificationIntent(intent)
 
         // Register device if already signed in
         lifecycleScope.launch { deviceRegistrationManager.registerIfNeeded() }
     }
 
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        handleNotificationIntent(intent)
-        navController?.handleDeepLink(intent)
-    }
-
-    private fun handleNotificationIntent(intent: Intent) {
+    private fun getNotificationDestination(): NavKey? {
         val matchKey = intent.getStringExtra(NotificationBuilder.EXTRA_MATCH_KEY)
         val eventKey = intent.getStringExtra(NotificationBuilder.EXTRA_EVENT_KEY)
         val teamKey = intent.getStringExtra(NotificationBuilder.EXTRA_TEAM_KEY)
@@ -75,12 +81,17 @@ class MainActivity : ComponentActivity() {
             else -> null
         }
 
-        if (destination != null) {
-            // Post to ensure navController is ready
-            window?.decorView?.post {
-                navController?.navigate(destination)
-            }
-        }
+        return destination
+    }
+
+    private fun getDeeplinkDestination(): NavKey? {
+        val data = intent.data ?: return null
+        return deepLinkHandler.match(data)
+    }
+
+    override fun onNewIntent(intent: Intent, caller: ComponentCaller) {
+        super.onNewIntent(intent, caller)
+        Log.d("MainActivity", "Received new intent: $intent")
     }
 
     fun requestNotificationPermission() {
