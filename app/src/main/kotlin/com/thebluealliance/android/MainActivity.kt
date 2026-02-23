@@ -19,6 +19,7 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.thebluealliance.android.config.ThemePreferences
 import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import com.thebluealliance.android.messaging.NotificationBuilder
 import com.thebluealliance.android.navigation.DeeplinkMatcher
@@ -34,6 +35,7 @@ class MainActivity : ComponentActivity() {
 
     @Inject lateinit var firebaseAuth: FirebaseAuth
     @Inject lateinit var deviceRegistrationManager: DeviceRegistrationManager
+    @Inject lateinit var themePreferences: ThemePreferences
 
     private val deepLinkHandler = DeeplinkMatcher()
 
@@ -59,6 +61,7 @@ class MainActivity : ComponentActivity() {
             TBAApp(
                 startRoute = startRoute,
                 isNewTask = isNewTask,
+                themePreferences = themePreferences,
             )
         }
 

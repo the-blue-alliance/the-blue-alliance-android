@@ -26,6 +26,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,9 +38,12 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation3.runtime.NavKey
 import com.google.firebase.Firebase
+import com.thebluealliance.android.config.ThemePreferences
+import com.thebluealliance.android.ui.theme.ThemeMode
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.analytics.logEvent
@@ -71,6 +75,7 @@ val TOP_LEVEL_DESTINATIONS = listOf(
 fun TBAApp(
     startRoute: NavKey,
     isNewTask: Boolean,
+    themePreferences: ThemePreferences? = null,
 ) {
     val navState = rememberNavigationState(
         startRoute = startRoute,
@@ -82,7 +87,16 @@ fun TBAApp(
     val navigator = remember { Navigator(navState, activity) }
     FirebaseAnalyticsEffect(navState)
 
-    TBATheme {
+    val themeMode by (themePreferences?.themeModeFlow
+        ?.collectAsStateWithLifecycle(ThemeMode.AUTO)
+        ?: remember { mutableStateOf(ThemeMode.AUTO) })
+    val darkTheme = when (themeMode) {
+        ThemeMode.AUTO -> isSystemInDarkTheme()
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+    }
+
+    TBATheme(darkTheme = darkTheme) {
         val currentRoute = navState.currentRoute
 
         var scrollToTopTrigger by remember { mutableIntStateOf(0) }

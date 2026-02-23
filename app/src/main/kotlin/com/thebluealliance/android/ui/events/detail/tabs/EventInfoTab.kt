@@ -55,16 +55,6 @@ fun EventInfoTab(event: Event?) {
                 )
             }
         }
-        if (event.locationName != null) {
-            item {
-                Text(
-                    text = event.locationName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
         val dateRange = formatEventDateRange(event.startDate, event.endDate)
         if (dateRange != null) {
             item {
@@ -94,30 +84,14 @@ fun EventInfoTab(event: Event?) {
             }
         }
 
-        // Website (clickable)
-        if (event.website != null) {
+        if (event.locationName != null) {
             item {
-                Row(
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .clickable {
-                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(event.website)))
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        Icons.Outlined.Language,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(18.dp),
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = event.website,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
+                Text(
+                    text = event.locationName,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 4.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
 
@@ -146,6 +120,33 @@ fun EventInfoTab(event: Event?) {
                     Spacer(Modifier.width(8.dp))
                     Text(
                         text = event.address,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+        }
+
+        // Website (clickable)
+        if (event.website != null) {
+            item {
+                Row(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .clickable {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(event.website)))
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        Icons.Outlined.Language,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = event.website,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                     )
@@ -201,10 +202,24 @@ private fun webcastUrl(webcast: Webcast): String? = when (webcast.type) {
     else -> null
 }
 
-private fun webcastLabel(webcast: Webcast): String = when (webcast.type) {
-    "twitch" -> "Watch on Twitch"
-    "youtube" -> "Watch on YouTube"
-    "livestream" -> "Watch on Livestream"
-    else -> "Watch (${webcast.type})"
+private fun webcastLabel(webcast: Webcast): String {
+    val base = when (webcast.type) {
+        "twitch" -> "Watch on Twitch"
+        "youtube" -> "Watch on YouTube"
+        "livestream" -> "Watch on Livestream"
+        else -> "Watch (${webcast.type})"
+    }
+    val dateSuffix = webcast.date?.let { formatWebcastDate(it) } ?: ""
+    return if (dateSuffix.isNotEmpty()) "$base $dateSuffix" else base
+}
+
+private fun formatWebcastDate(dateStr: String): String {
+    return try {
+        val date = java.time.LocalDate.parse(dateStr)
+        val formatter = java.time.format.DateTimeFormatter.ofPattern("(EEE, MMM d)", java.util.Locale.US)
+        date.format(formatter)
+    } catch (_: Exception) {
+        ""
+    }
 }
 

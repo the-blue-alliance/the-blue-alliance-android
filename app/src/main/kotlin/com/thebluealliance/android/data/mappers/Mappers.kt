@@ -80,7 +80,7 @@ fun EventEntity.toDomain() = Event(
     webcasts = webcasts?.let { raw ->
         try {
             json.decodeFromString<List<WebcastDto>>(raw).map {
-                Webcast(type = it.type, channel = it.channel, file = it.file)
+                Webcast(type = it.type, channel = it.channel, file = it.file, date = it.date)
             }
         } catch (_: Exception) { emptyList() }
     } ?: emptyList(),
@@ -95,6 +95,7 @@ fun MatchDto.toEntity() = MatchEntity(
     matchNumber = matchNumber,
     setNumber = setNumber,
     time = time,
+    predictedTime = predictedTime,
     actualTime = actualTime,
     redTeamKeys = alliances?.red?.teamKeys?.joinToString(",") ?: "",
     redScore = alliances?.red?.score ?: -1,
@@ -112,6 +113,7 @@ fun MatchEntity.toDomain() = Match(
     matchNumber = matchNumber,
     setNumber = setNumber,
     time = time,
+    predictedTime = predictedTime,
     actualTime = actualTime,
     redTeamKeys = redTeamKeys.split(",").filter { it.isNotEmpty() },
     redScore = redScore,
