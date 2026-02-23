@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.domain.formatBreakdownValue
 import com.thebluealliance.android.domain.getFullLabel
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.ui.common.shareTbaUrl
@@ -165,8 +166,8 @@ fun MatchDetailScreen(
                         items(orderedFields, key = { "breakdown_${it.first}" }) { (apiKey, label) ->
                             BreakdownRow(
                                 label = label,
-                                redValue = redBreakdown[apiKey] ?: "-",
-                                blueValue = blueBreakdown[apiKey] ?: "-",
+                                redValue = formatBreakdownValue(apiKey, redBreakdown[apiKey] ?: "-"),
+                                blueValue = formatBreakdownValue(apiKey, blueBreakdown[apiKey] ?: "-"),
                             )
                         }
                     }
@@ -340,6 +341,7 @@ private fun BreakdownRow(label: String, redValue: String, blueValue: String) {
     }
 }
 
+
 private fun camelCaseToLabel(key: String): String {
     return key.replace(Regex("([A-Z])"), " $1")
         .replace("_", " ")
@@ -372,6 +374,30 @@ private fun getOrderedBreakdownFields(
     }
     return result
 }
+
+private val breakdownFields2026 = listOf(
+    "autoTowerRobot1" to "Auto tower 1",
+    "autoTowerRobot2" to "Auto tower 2",
+    "autoTowerRobot3" to "Auto tower 3",
+    "autoTowerPoints" to "Auto tower",
+    "totalAutoPoints" to "Total auto",
+    "totalTeleopPoints" to "Total teleop",
+    "endGameTowerRobot1" to "Endgame 1",
+    "endGameTowerRobot2" to "Endgame 2",
+    "endGameTowerRobot3" to "Endgame 3",
+    "endGameTowerPoints" to "Endgame tower",
+    "totalTowerPoints" to "Total tower",
+    "energizedAchieved" to "Energized bonus",
+    "superchargedAchieved" to "Supercharged bonus",
+    "traversalAchieved" to "Traversal bonus",
+    "minorFoulCount" to "Minor fouls",
+    "majorFoulCount" to "Major fouls",
+    "g206Penalty" to "G206 penalty",
+    "foulPoints" to "Foul points",
+    "adjustPoints" to "Adjust",
+    "totalPoints" to "Total",
+    "rp" to "RP",
+)
 
 private val breakdownFields2025 = listOf(
     "autoLineRobot1" to "Auto leave 1",
@@ -462,6 +488,7 @@ private val breakdownFields2023 = listOf(
 )
 
 private val breakdownFieldsByYear = mapOf(
+    2026 to breakdownFields2026,
     2025 to breakdownFields2025,
     2024 to breakdownFields2024,
     2023 to breakdownFields2023,
