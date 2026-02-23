@@ -1,0 +1,787 @@
+[debug] [2026-02-15T01:06:19.514Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T01:06:19.516Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T01:06:19.516Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T01:06:19.516Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T01:06:19.516Z] Checked if tokens are valid: false, expires at: 1770947329799
+[debug] [2026-02-15T01:06:19.516Z] Checked if tokens are valid: false, expires at: 1770947329799
+[debug] [2026-02-15T01:06:19.517Z] > refreshing access token with scopes: []
+[debug] [2026-02-15T01:06:19.517Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-15T01:06:19.517Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T01:06:19.518Z] Checked if tokens are valid: false, expires at: 1770947329799
+[debug] [2026-02-15T01:06:19.518Z] Checked if tokens are valid: false, expires at: 1770947329799
+[debug] [2026-02-15T01:06:19.518Z] > refreshing access token with scopes: []
+[debug] [2026-02-15T01:06:19.518Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-15T01:06:19.518Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T01:06:19.519Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T01:06:19.519Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T01:06:19.519Z] Checked if tokens are valid: false, expires at: 1770947329799
+[debug] [2026-02-15T01:06:19.519Z] Checked if tokens are valid: false, expires at: 1770947329799
+[debug] [2026-02-15T01:06:19.519Z] > refreshing access token with scopes: []
+[debug] [2026-02-15T01:06:19.519Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-15T01:06:19.519Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T01:06:19.675Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-15T01:06:19.675Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T01:06:19.697Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T01:06:19.699Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-15T01:06:19.699Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T01:06:19.730Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T01:06:19.731Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-15T01:06:19.731Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T01:06:19.742Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T01:06:19.900Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T01:06:19.900Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T01:06:19.905Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.905Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.905Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.905Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.905Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.905Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.905Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.905Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.909Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.909Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.909Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.909Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.909Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-15T01:06:19.909Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:19.910Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [none]
+[debug] [2026-02-15T01:06:19.910Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:19.911Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-15T01:06:19.911Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:19.911Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-15T01:06:19.911Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:19.911Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-15T01:06:19.911Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:19.912Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-15T01:06:19.912Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:19.990Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T01:06:19.990Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T01:06:19.991Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.991Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.991Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.991Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.991Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.991Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.991Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.991Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.992Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.992Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.992Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.992Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:19.992Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-15T01:06:19.992Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:19.993Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [none]
+[debug] [2026-02-15T01:06:19.993Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:19.993Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-15T01:06:19.993Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:19.993Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-15T01:06:19.994Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:19.994Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-15T01:06:19.994Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:19.994Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-15T01:06:19.994Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:20.052Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T01:06:20.052Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T01:06:20.053Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.053Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.053Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.053Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.053Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.053Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.053Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.053Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.054Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.055Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.055Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.055Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.055Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-15T01:06:20.055Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:20.056Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [none]
+[debug] [2026-02-15T01:06:20.056Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:20.056Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-15T01:06:20.056Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:20.057Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-15T01:06:20.057Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:20.057Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-15T01:06:20.057Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:20.057Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-15T01:06:20.057Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T01:06:20.376Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-15T01:06:20.376Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-15T01:06:20.377Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-15T01:06:20.377Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-15T01:06:20.377Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-15T01:06:20.377Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.378Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com 200
+[debug] [2026-02-15T01:06:20.378Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.378Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-15T01:06:20.378Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.378Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-15T01:06:20.378Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.378Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-15T01:06:20.378Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.379Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-15T01:06:20.379Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-15T01:06:20.412Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T01:06:20.413Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T01:06:20.413Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.413Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.413Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T01:06:20.493Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-15T01:06:20.493Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.498Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-15T01:06:20.498Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.502Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com 200
+[debug] [2026-02-15T01:06:20.502Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.518Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T01:06:20.518Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T01:06:20.530Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T01:06:20.530Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T01:06:20.541Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-15T01:06:20.541Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.541Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-15T01:06:20.541Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.541Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-15T01:06:20.541Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.541Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-15T01:06:20.541Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.543Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-15T01:06:20.543Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.553Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com 200
+[debug] [2026-02-15T01:06:20.553Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.588Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T01:06:20.588Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T01:06:20.588Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.588Z] Checked if tokens are valid: true, expires at: 1771121178731
+[debug] [2026-02-15T01:06:20.588Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T01:06:20.590Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-15T01:06:20.590Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-15T01:06:20.694Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T01:06:20.694Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T01:06:20.790Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T01:06:20.790Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T17:05:58.705Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T17:05:58.709Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T17:05:58.709Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T17:05:58.709Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T17:05:58.710Z] Checked if tokens are valid: false, expires at: 1771121178731
+[debug] [2026-02-15T17:05:58.710Z] Checked if tokens are valid: false, expires at: 1771121178731
+[debug] [2026-02-15T17:05:58.710Z] > refreshing access token with scopes: []
+[debug] [2026-02-15T17:05:58.712Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-15T17:05:58.712Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T17:05:58.715Z] Checked if tokens are valid: false, expires at: 1771121178731
+[debug] [2026-02-15T17:05:58.715Z] Checked if tokens are valid: false, expires at: 1771121178731
+[debug] [2026-02-15T17:05:58.715Z] > refreshing access token with scopes: []
+[debug] [2026-02-15T17:05:58.715Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-15T17:05:58.715Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T17:05:58.716Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T17:05:58.716Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T17:05:58.716Z] Checked if tokens are valid: false, expires at: 1771121178731
+[debug] [2026-02-15T17:05:58.716Z] Checked if tokens are valid: false, expires at: 1771121178731
+[debug] [2026-02-15T17:05:58.716Z] > refreshing access token with scopes: []
+[debug] [2026-02-15T17:05:58.717Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-15T17:05:58.717Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T17:06:00.721Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-15T17:06:00.721Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T17:06:00.750Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T17:06:00.752Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-15T17:06:00.752Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T17:06:00.768Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T17:06:00.814Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-15T17:06:00.814Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T17:06:00.858Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T17:06:03.298Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T17:06:03.299Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T17:06:03.309Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.310Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.310Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.310Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.311Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.311Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.311Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.311Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.325Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.326Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.326Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.326Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.326Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.326Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.327Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.327Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.328Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.328Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.329Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.329Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.329Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.329Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.329Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-15T17:06:03.329Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.499Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T17:06:03.499Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T17:06:03.499Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.499Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.499Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.499Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.500Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.500Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.500Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.500Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.501Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.501Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.501Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.501Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.501Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.501Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.502Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.502Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.502Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.502Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.503Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.503Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.504Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.504Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.504Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-15T17:06:03.504Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.517Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T17:06:03.517Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T17:06:03.518Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.518Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.518Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.518Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.518Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.518Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.518Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.518Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.520Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.520Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.520Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.520Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:03.520Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.520Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.520Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.520Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.521Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.521Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.522Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.522Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.522Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-15T17:06:03.522Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:03.523Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-15T17:06:03.523Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T17:06:05.888Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-15T17:06:05.888Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:05.911Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-15T17:06:05.911Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:05.912Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-15T17:06:05.912Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-15T17:06:05.966Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-15T17:06:05.966Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:05.973Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com 200
+[debug] [2026-02-15T17:06:05.973Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:05.986Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-15T17:06:05.986Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:06.166Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-15T17:06:06.166Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:06.167Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-15T17:06:06.167Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:06.175Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-15T17:06:06.175Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:06.176Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-15T17:06:06.176Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:06.229Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-15T17:06:06.229Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:06.230Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-15T17:06:06.230Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:06.230Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-15T17:06:06.230Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:06.230Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com 200
+[debug] [2026-02-15T17:06:06.230Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:06.247Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-15T17:06:06.247Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-15T17:06:06.250Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-15T17:06:06.250Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-15T17:06:06.609Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-15T17:06:06.609Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:06.609Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com 200
+[debug] [2026-02-15T17:06:06.609Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [omitted]
+[debug] [2026-02-15T17:06:08.131Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T17:06:08.132Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T17:06:08.132Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:08.132Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:08.132Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T17:06:08.953Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T17:06:08.953Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T17:06:08.953Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:08.953Z] Checked if tokens are valid: true, expires at: 1771178759814
+[debug] [2026-02-15T17:06:08.953Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T17:06:09.166Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T17:06:09.166Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T17:06:09.181Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T17:06:09.181Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T17:06:10.475Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T17:06:10.476Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T17:06:10.634Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T17:06:10.634Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T23:17:57.559Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T23:17:57.561Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T23:17:57.561Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T23:17:57.562Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T23:17:57.562Z] Checked if tokens are valid: false, expires at: 1771178759814
+[debug] [2026-02-15T23:17:57.562Z] Checked if tokens are valid: false, expires at: 1771178759814
+[debug] [2026-02-15T23:17:57.562Z] > refreshing access token with scopes: []
+[debug] [2026-02-15T23:17:57.563Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-15T23:17:57.563Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T23:17:57.564Z] Checked if tokens are valid: false, expires at: 1771178759814
+[debug] [2026-02-15T23:17:57.564Z] Checked if tokens are valid: false, expires at: 1771178759814
+[debug] [2026-02-15T23:17:57.564Z] > refreshing access token with scopes: []
+[debug] [2026-02-15T23:17:57.565Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-15T23:17:57.565Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T23:17:57.565Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T23:17:57.565Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T23:17:57.565Z] Checked if tokens are valid: false, expires at: 1771178759814
+[debug] [2026-02-15T23:17:57.565Z] Checked if tokens are valid: false, expires at: 1771178759814
+[debug] [2026-02-15T23:17:57.565Z] > refreshing access token with scopes: []
+[debug] [2026-02-15T23:17:57.565Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-15T23:17:57.566Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T23:17:57.824Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-15T23:17:57.824Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T23:17:57.848Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T23:17:58.021Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-15T23:17:58.021Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T23:17:58.037Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T23:17:58.231Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T23:17:58.231Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T23:17:58.237Z] Checked if tokens are valid: true, expires at: 1771201077021
+[debug] [2026-02-15T23:17:58.237Z] Checked if tokens are valid: true, expires at: 1771201077021
+[debug] [2026-02-15T23:17:58.237Z] Checked if tokens are valid: true, expires at: 1771201077021
+[debug] [2026-02-15T23:17:58.237Z] Checked if tokens are valid: true, expires at: 1771201077021
+[debug] [2026-02-15T23:17:58.237Z] Checked if tokens are valid: true, expires at: 1771201077021
+[debug] [2026-02-15T23:17:58.237Z] Checked if tokens are valid: true, expires at: 1771201077021
+[debug] [2026-02-15T23:17:58.238Z] Checked if tokens are valid: true, expires at: 1771201077021
+[debug] [2026-02-15T23:17:58.238Z] Checked if tokens are valid: true, expires at: 1771201077021
+[debug] [2026-02-15T23:17:58.247Z] Checked if tokens are valid: true, expires at: 1771201077021
+[debug] [2026-02-15T23:17:58.247Z] Checked if tokens are valid: true, expires at: 1771201077021
+[debug] [2026-02-15T23:17:58.247Z] Checked if tokens are valid: true, expires at: 1771201077021
+[debug] [2026-02-15T23:17:58.247Z] Checked if tokens are valid: true, expires at: 1771201077021
+[debug] [2026-02-15T23:17:58.247Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.247Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.248Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.248Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.249Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.249Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.250Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.250Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.250Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.250Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.251Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-15T23:17:58.251Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.274Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-15T23:17:58.274Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-15T23:17:58.286Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T23:17:58.346Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T23:17:58.346Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T23:17:58.346Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.346Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.346Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.346Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.347Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.347Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.347Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.347Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.348Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.348Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.348Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.348Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.348Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.348Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.349Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.349Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.349Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.349Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.349Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.349Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.350Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.350Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.350Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-15T23:17:58.350Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.444Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T23:17:58.444Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T23:17:58.445Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.445Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.445Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.445Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.445Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.445Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.445Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.445Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.446Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.446Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.446Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.446Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:58.446Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.446Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.447Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.447Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.447Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.447Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.447Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.447Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.448Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-15T23:17:58.448Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.448Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-15T23:17:58.448Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:17:58.685Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-15T23:17:58.685Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-15T23:17:58.726Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-15T23:17:58.727Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:58.731Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-15T23:17:58.731Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:58.735Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-15T23:17:58.735Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:58.735Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com 200
+[debug] [2026-02-15T23:17:58.735Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:58.748Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-15T23:17:58.748Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:58.880Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-15T23:17:58.880Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-15T23:17:58.946Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-15T23:17:58.946Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-15T23:17:59.041Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-15T23:17:59.041Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:59.041Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-15T23:17:59.041Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:59.043Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-15T23:17:59.044Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:59.049Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-15T23:17:59.049Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:59.052Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com 200
+[debug] [2026-02-15T23:17:59.053Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:59.057Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com 200
+[debug] [2026-02-15T23:17:59.057Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:59.075Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-15T23:17:59.075Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:59.075Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-15T23:17:59.075Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:59.083Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-15T23:17:59.083Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:59.086Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-15T23:17:59.086Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-15T23:17:59.208Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T23:17:59.209Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T23:17:59.209Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:59.209Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:59.209Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T23:17:59.214Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T23:17:59.214Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T23:17:59.214Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:59.214Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:17:59.214Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T23:17:59.396Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T23:17:59.396Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T23:17:59.606Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T23:17:59.606Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T23:17:59.607Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T23:17:59.607Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T23:17:59.618Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T23:17:59.618Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T23:19:15.283Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T23:19:15.284Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T23:19:15.284Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T23:19:15.284Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T23:19:15.285Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:15.285Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:15.285Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:15.285Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:15.285Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T23:19:15.285Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T23:19:15.285Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:15.285Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:15.286Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T23:19:15.286Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T23:19:15.287Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T23:19:16.574Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T23:19:16.574Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T23:19:16.576Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.576Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.577Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.577Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.577Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.577Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.577Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.577Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.581Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.581Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.581Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.581Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.581Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-15T23:19:16.581Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.582Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [none]
+[debug] [2026-02-15T23:19:16.582Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.582Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-15T23:19:16.582Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.583Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-15T23:19:16.583Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.583Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-15T23:19:16.583Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.584Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-15T23:19:16.584Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.869Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com 200
+[debug] [2026-02-15T23:19:16.869Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [omitted]
+[debug] [2026-02-15T23:19:16.874Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T23:19:16.874Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T23:19:16.874Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.874Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.874Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.874Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.874Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.874Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.876Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.876Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.876Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.876Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.876Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-15T23:19:16.876Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.876Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-15T23:19:16.876Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.877Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-15T23:19:16.877Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.878Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-15T23:19:16.878Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.878Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-15T23:19:16.878Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.903Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T23:19:16.903Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T23:19:16.904Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.904Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.904Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.904Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.904Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.904Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.905Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.905Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.905Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.905Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:16.905Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-15T23:19:16.905Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.906Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-15T23:19:16.906Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.906Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-15T23:19:16.906Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.906Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-15T23:19:16.906Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.907Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-15T23:19:16.907Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-15T23:19:16.937Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-15T23:19:16.938Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-15T23:19:16.984Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-15T23:19:16.984Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-15T23:19:16.989Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-15T23:19:16.989Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-15T23:19:17.002Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-15T23:19:17.002Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-15T23:19:17.226Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-15T23:19:17.226Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-15T23:19:17.244Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-15T23:19:17.244Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-15T23:19:17.245Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-15T23:19:17.245Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-15T23:19:17.263Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-15T23:19:17.263Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-15T23:19:17.275Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-15T23:19:17.275Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-15T23:19:17.279Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-15T23:19:17.279Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-15T23:19:17.288Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-15T23:19:17.288Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-15T23:19:17.346Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-15T23:19:17.346Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-15T23:19:17.468Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-15T23:19:17.468Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-15T23:19:17.499Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T23:19:17.499Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T23:19:17.499Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:17.499Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:17.499Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T23:19:17.518Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-15T23:19:17.518Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-15T23:19:17.518Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-15T23:19:17.518Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-15T23:19:17.558Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T23:19:17.558Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T23:19:17.558Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:17.558Z] Checked if tokens are valid: true, expires at: 1771201077274
+[debug] [2026-02-15T23:19:17.558Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-15T23:19:17.663Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T23:19:17.663Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T23:19:17.681Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T23:19:17.681Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-15T23:19:17.767Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-15T23:19:17.767Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-15T23:19:17.863Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-15T23:19:17.863Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-21T22:10:35.810Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-21T22:10:35.812Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-21T22:10:35.812Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-21T22:10:35.812Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-21T22:10:35.813Z] Checked if tokens are valid: false, expires at: 1771390251794
+[debug] [2026-02-21T22:10:35.813Z] Checked if tokens are valid: false, expires at: 1771390251794
+[debug] [2026-02-21T22:10:35.813Z] > refreshing access token with scopes: []
+[debug] [2026-02-21T22:10:35.814Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-21T22:10:35.814Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-21T22:10:35.815Z] Checked if tokens are valid: false, expires at: 1771390251794
+[debug] [2026-02-21T22:10:35.815Z] Checked if tokens are valid: false, expires at: 1771390251794
+[debug] [2026-02-21T22:10:35.815Z] > refreshing access token with scopes: []
+[debug] [2026-02-21T22:10:35.815Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-21T22:10:35.815Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-21T22:10:35.815Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-21T22:10:35.815Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-21T22:10:35.815Z] Checked if tokens are valid: false, expires at: 1771390251794
+[debug] [2026-02-21T22:10:35.815Z] Checked if tokens are valid: false, expires at: 1771390251794
+[debug] [2026-02-21T22:10:35.815Z] > refreshing access token with scopes: []
+[debug] [2026-02-21T22:10:35.816Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-02-21T22:10:35.816Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-21T22:10:35.955Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-21T22:10:35.955Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-21T22:10:35.970Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-21T22:10:35.972Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-21T22:10:35.972Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-21T22:10:35.982Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-21T22:10:35.983Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-02-21T22:10:35.983Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-02-21T22:10:35.995Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-21T22:10:36.375Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-21T22:10:36.375Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-21T22:10:36.379Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.379Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.379Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.379Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.379Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.379Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.380Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.380Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.387Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.387Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.387Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.387Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.387Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.387Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.388Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.388Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.389Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.389Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.390Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.390Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.390Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.390Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.391Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-21T22:10:36.391Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.469Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-21T22:10:36.469Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-21T22:10:36.469Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.469Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.469Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.469Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.470Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.470Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.470Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.470Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.471Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.471Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.471Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.471Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.471Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.471Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.471Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.471Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.472Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.472Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.472Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.472Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.472Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.472Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.473Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-21T22:10:36.473Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.634Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-21T22:10:36.634Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-21T22:10:36.635Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.635Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.635Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.635Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.635Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.635Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.635Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.635Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.637Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.637Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.637Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.637Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:36.637Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.637Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.638Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.638Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.638Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.638Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.639Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.639Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.639Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [none]
+[debug] [2026-02-21T22:10:36.639Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.640Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [none]
+[debug] [2026-02-21T22:10:36.640Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com  x-goog-user-project=gregmarra-tba-dev
+[debug] [2026-02-21T22:10:36.858Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-21T22:10:36.858Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-21T22:10:36.895Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com 200
+[debug] [2026-02-21T22:10:36.895Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:36.904Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-21T22:10:36.904Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:36.907Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-21T22:10:36.907Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:36.908Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-21T22:10:36.908Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:36.917Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-21T22:10:36.917Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:37.129Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-21T22:10:37.129Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:37.137Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-21T22:10:37.137Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-21T22:10:37.158Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com 403
+[debug] [2026-02-21T22:10:37.158Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseio.com [omitted]
+[debug] [2026-02-21T22:10:37.238Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-21T22:10:37.238Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:37.238Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-21T22:10:37.238Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:37.239Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com 200
+[debug] [2026-02-21T22:10:37.239Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/cloudfunctions.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:37.252Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com 200
+[debug] [2026-02-21T22:10:37.252Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:37.253Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com 200
+[debug] [2026-02-21T22:10:37.253Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/storage.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:37.260Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com 200
+[debug] [2026-02-21T22:10:37.260Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebasedataconnect.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:37.280Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-21T22:10:37.280Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:37.281Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com 200
+[debug] [2026-02-21T22:10:37.281Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firebaseapphosting.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:37.304Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com 200
+[debug] [2026-02-21T22:10:37.304Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gregmarra-tba-dev/services/firestore.googleapis.com [omitted]
+[debug] [2026-02-21T22:10:37.306Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-21T22:10:37.306Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-21T22:10:37.306Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:37.306Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:37.306Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-21T22:10:37.332Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-21T22:10:37.333Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-21T22:10:37.333Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:37.333Z] Checked if tokens are valid: true, expires at: 1771715434983
+[debug] [2026-02-21T22:10:37.333Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo [none]
+[debug] [2026-02-21T22:10:37.440Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-21T22:10:37.440Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-21T22:10:37.458Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-21T22:10:37.458Z] > authorizing via signed-in user (greg.marra@gmail.com)
+[debug] [2026-02-21T22:10:37.615Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo 200
+[debug] [2026-02-21T22:10:37.615Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/gregmarra-tba-dev/billingInfo {"name":"projects/gregmarra-tba-dev/billingInfo","projectId":"gregmarra-tba-dev","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-21T22:10:37.616Z] >>> [apiv2][query] POST https://developerknowledge.googleapis.com/mcp [none]
+[debug] [2026-02-21T22:10:37.616Z] >>> [apiv2][body] POST https://developerknowledge.googleapis.com/mcp {"method":"tools/list","jsonrpc":"2.0","id":1}
+[debug] [2026-02-21T22:10:37.762Z] <<< [apiv2][status] POST https://developerknowledge.googleapis.com/mcp 200
+[debug] [2026-02-21T22:10:37.762Z] <<< [apiv2][body] POST https://developerknowledge.googleapis.com/mcp {"id":1,"jsonrpc":"2.0","result":{"tools":[{"annotations":{"destructiveHint":false,"idempotentHint":true,"openWorldHint":false,"readOnlyHint":true},"description":"Use this tool to find documentation about Google developer products.\nThe documents contain official APIs, code snippets, release notes, best\npractices, guides, debugging info, and more. It covers the following\nproducts and domains:\n\n* Android: developer.android.com\n* Apigee: docs.apigee.com\n* Chrome: developer.chrome.com\n* Firebase: firebase.google.com\n* Fuchsia: fuchsia.dev\n* Google AI: ai.google.dev\n* Google Cloud: docs.cloud.google.com\n* Google Developers, Ads, Search, Google Maps, Youtube: developers.google.com\n* Google Home: developers.home.google.com\n* TensorFlow: www.tensorflow.org\n* Web: web.dev\n\nThis tool returns chunks of text, names, and URLs for matching documents.\nIf the returned chunks are not detailed enough to answer the\nuser's question, use `get_document` or `batch_get_documents` with the\n`parent` from this tool's output to retrieve the full document\ncontent.","inputSchema":{"description":"Request schema for search_documents. Use the query field to search for related Google developer documentation.","properties":{"query":{"description":"Required. The raw query string provided by the user, such as \"How to create a Cloud Storage bucket?\".","type":"string"}},"required":["query"],"type":"object"},"name":"search_documents","outputSchema":{"$defs":{"DocumentChunk":{"description":"A DocumentChunk represents a piece of content from a Document in the DeveloperKnowledge corpus. To fetch the entire document content, pass the `parent` to get_document or batch_get_documents.","properties":{"content":{"description":"Output only. The content of the document chunk.","readOnly":true,"type":"string"},"id":{"description":"Output only. The ID of this chunk within the document. The chunk ID is unique within a document, but not globally unique across documents. The chunk ID is not stable and may change over time.","readOnly":true,"type":"string"},"parent":{"description":"Output only. The resource name of the document this chunk is from. Format: `documents/{uri_without_scheme}` Example: `documents/docs.cloud.google.com/storage/docs/creating-buckets`","readOnly":true,"type":"string"}},"type":"object"}},"description":"Response schema for search_documents.","properties":{"results":{"description":"The search results for the given query. Each Document in this list contains a snippet of content relevant to the search query. Use the Document.name field of each result with get_document or batch_get_documents to retrieve the full document content.","items":{"$ref":"#/$defs/DocumentChunk"},"type":"array"}},"type":"object"}},{"annotations":{"destructiveHint":false,"idempotentHint":true,"openWorldHint":false,"readOnlyHint":true},"description":"Use this tool to retrieve the full content of a single document. The\ndocument name should be obtained from the `parent` field of results from a\ncall to the `search_documents` tool. If you need to retrieve multiple\ndocuments, use `batch_get_documents` instead.","inputSchema":{"description":"Request schema for get_document.","properties":{"name":{"description":"Required. The name of the document to retrieve. Format: `documents/{uri_without_scheme}` Example: `documents/docs.cloud.google.com/storage/docs/creating-buckets`","type":"string"}},"required":["name"],"type":"object"},"name":"get_document","outputSchema":{"description":"A Document represents a piece of content from the Developer Knowledge corpus.","properties":{"content":{"description":"Output only. The content of the document in Markdown format. If this document is returned by search_documents, this field contains a snippet of text relevant to the search query. If this document is returned by get_document or batch_get_documents, this field contains the full document content.","readOnly":true,"type":"string"},"description":{"description":"Output only. A description of the document.","readOnly":true,"type":"string"},"name":{"description":"Identifier. The resource name of the document. Format: `documents/{uri_without_scheme}` Example: `documents/docs.cloud.google.com/storage/docs/creating-buckets`","type":"string","x-google-identifier":true},"uri":{"description":"Output only. The URI of the content, such as `https://cloud.google.com/storage/docs/creating-buckets`.","readOnly":true,"type":"string"}},"type":"object"}},{"annotations":{"destructiveHint":false,"idempotentHint":true,"openWorldHint":false,"readOnlyHint":true},"description":"Use this tool to retrieve the full content of up to 20 documents in a\nsingle call. The document names should be obtained from the `parent` field\nof results from a call to the `search_documents` tool. Use this tool\ninstead of calling `get_document` multiple times to fetch multiple\ndocuments.","inputSchema":{"description":"Request schema for batch_get_documents.","properties":{"names":{"description":"Required. The names of the documents to retrieve, as returned by search_documents. A maximum of 20 documents can be retrieved in a batch. The documents are returned in the same order as the `names` in the request. Format: `documents/{uri_without_scheme}` Example: `documents/docs.cloud.google.com/storage/docs/creating-buckets`","items":{"type":"string"},"type":"array"}},"required":["names"],"type":"object"},"name":"batch_get_documents","outputSchema":{"$defs":{"Document":{"description":"A Document represents a piece of content from the Developer Knowledge corpus.","properties":{"content":{"description":"Output only. The content of the document in Markdown format. If this document is returned by search_documents, this field contains a snippet of text relevant to the search query. If this document is returned by get_document or batch_get_documents, this field contains the full document content.","readOnly":true,"type":"string"},"description":{"description":"Output only. A description of the document.","readOnly":true,"type":"string"},"name":{"description":"Identifier. The resource name of the document. Format: `documents/{uri_without_scheme}` Example: `documents/docs.cloud.google.com/storage/docs/creating-buckets`","type":"string","x-google-identifier":true},"uri":{"description":"Output only. The URI of the content, such as `https://cloud.google.com/storage/docs/creating-buckets`.","readOnly":true,"type":"string"}},"type":"object"}},"description":"Response schema for batch_get_documents.","properties":{"documents":{"description":"Documents requested.","items":{"$ref":"#/$defs/Document"},"type":"array"}},"type":"object"}}]}}
+[debug] [2026-02-21T22:10:37.901Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-02-21T22:10:37.901Z] > authorizing via signed-in user (greg.marra@gmail.com)

@@ -1,9 +1,8 @@
 package com.thebluealliance.android.ui.events.detail
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
@@ -11,7 +10,9 @@ import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
-import com.thebluealliance.android.navigation.Screen
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,12 +27,11 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@HiltViewModel
-class EventDetailViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = EventDetailViewModel.Factory::class)
+class EventDetailViewModel @AssistedInject constructor(
+    @Assisted val navKey: Screen.EventDetail,
     private val eventRepository: EventRepository,
     private val teamRepository: TeamRepository,
     private val matchRepository: MatchRepository,
@@ -39,7 +39,7 @@ class EventDetailViewModel @Inject constructor(
     private val authRepository: AuthRepository,
 ) : ViewModel() {
 
-    private val eventKey: String = savedStateHandle.toRoute<Screen.EventDetail>().eventKey
+    private val eventKey: String = navKey.eventKey
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
@@ -133,5 +133,10 @@ class EventDetailViewModel @Inject constructor(
                 _isRefreshing.value = false
             }
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(navKey: Screen.EventDetail): EventDetailViewModel
     }
 }
