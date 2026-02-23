@@ -30,6 +30,7 @@ data class Webcast(
     val type: String,
     val channel: String,
     val file: String?,
+    val date: String?,
 )
 
 enum class PlayoffType(
