@@ -45,9 +45,21 @@ scroll_down() {
   adb shell input swipe 540 1600 540 600 300
 }
 
+# Enable demo mode for a clean status bar.
+# Demo mode is set BEFORE launching the app so that enableEdgeToEdge() in
+# MainActivity properly sets dark status bar icons on top of demo mode.
+echo "==> Enabling demo mode..."
+adb shell settings put global sysui_demo_allowed 1
+adb shell am broadcast -a com.android.systemui.demo -e command enter
+adb shell am broadcast -a com.android.systemui.demo -e command clock -e hhmm 0254
+adb shell am broadcast -a com.android.systemui.demo -e command battery -e level 100 -e plugged false
+adb shell am broadcast -a com.android.systemui.demo -e command network -e wifi show -e level 4 -e fully true
+adb shell am broadcast -a com.android.systemui.demo -e command network -e mobile show -e level 4
+adb shell am broadcast -a com.android.systemui.demo -e command notifications -e visible false
+
 echo "==> Launching app..."
 $EMU launch "$PKG/$MAIN_ACTIVITY"
-wait_for_ui
+wait_for_ui 5
 
 # 1. Events list (home screen)
 echo "==> Screenshot 1: Events list"
@@ -102,6 +114,10 @@ cp "$RAW_DIR/03-match-detail.png"       "$DEST_DIR/3-match-detail.png"
 cp "$RAW_DIR/04-team-detail.png"        "$DEST_DIR/4-team-detail.png"
 cp "$RAW_DIR/05-notification-prefs.png" "$DEST_DIR/5-notification-prefs.png"
 cp "$RAW_DIR/06-district-detail.png"    "$DEST_DIR/6-district-detail.png"
+
+# Disable demo mode to restore normal status bar
+echo "==> Disabling demo mode..."
+adb shell am broadcast -a com.android.systemui.demo -e command exit
 
 echo "==> Done! Screenshots saved to $DEST_DIR"
 ls -la "$DEST_DIR"
