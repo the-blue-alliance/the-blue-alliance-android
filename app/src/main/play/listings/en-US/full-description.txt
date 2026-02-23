@@ -1,0 +1,10 @@
+Event schedules, match results, team information, and notifications about the FIRST Robotics Competition (FRC).
+
+🔔 Notifications for upcoming matches and results
+🗓️ Event schedules of when your favorite teams play
+✅ Match results with score breakdowns and videos
+👥 Team photos, videos, and stats
+🗺️ District rankings and results
+
+Are you a developer? Check out the source on GitHub and start contributing today!
+https://github.com/the-blue-alliance/the-blue-alliance-android
