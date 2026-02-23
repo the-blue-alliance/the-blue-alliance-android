@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.teams
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -81,7 +82,11 @@ fun TeamsScreen(
                     }
 
                     FastScrollbar(listState = listState) {
-                        LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier.fillMaxSize()
+                                .background(MaterialTheme.colorScheme.background)
+                        ) {
                             if (favoriteTeams.isNotEmpty()) {
                                 item(key = "favorites_header") {
                                     Text(

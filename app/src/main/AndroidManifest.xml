@@ -26,23 +26,27 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https"
-                    android:host="www.thebluealliance.com"
-                    android:pathPrefix="/event/" />
-                <data android:scheme="https"
-                    android:host="www.thebluealliance.com"
-                    android:pathPrefix="/events" />
-                <data android:scheme="https"
-                    android:host="www.thebluealliance.com"
-                    android:pathPrefix="/match/" />
-                <data android:scheme="https"
-                    android:host="www.thebluealliance.com"
-                    android:pathPrefix="/team/" />
-                <data android:scheme="https"
-                    android:host="www.thebluealliance.com"
-                    android:pathPrefix="/teams" />
+
+
+                <data android:scheme="https" />
+                <data android:host="www.thebluealliance.com" />
+                <data android:host="thebluealliance.com" />
+
+                <data android:pathPrefix="/event/" />
+                <data android:pathPrefix="/events" />
+                <data android:pathPrefix="/match/" />
+                <data android:pathPrefix="/team/" />
+                <data android:pathPrefix="/teams" />
             </intent-filter>
         </activity>
+
+        <!-- This alias insulates our shortcuts (which maintain the same Intent data through app updates)
+            from potential future changes to our main launcher activity -->
+        <activity-alias
+            android:name="com.thebluealliance.android.LaunchShortcutActivity"
+            android:exported="true"
+            android:targetActivity=".MainActivity" />
+
         <service
             android:name=".messaging.TBAFirebaseMessagingService"
             android:exported="false">

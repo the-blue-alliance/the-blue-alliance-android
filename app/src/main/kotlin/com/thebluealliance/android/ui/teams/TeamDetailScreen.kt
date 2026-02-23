@@ -74,6 +74,7 @@ import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Team
+import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
@@ -110,6 +111,7 @@ fun TeamDetailScreen(
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
     }
+    ReportShortcutVisitEffect(uiState.team?.key)
 
     if (showSignInDialog) {
         AlertDialog(
@@ -239,10 +241,10 @@ private fun InfoTab(team: Team?, media: List<Media>?) {
         LoadingBox()
         return
     }
-    val avatar = media?.firstOrNull { it.type == "avatar" && it.base64Image != null }
+    val avatar = media?.firstOrNull { it.isAvatar }
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
     ) {
         item {

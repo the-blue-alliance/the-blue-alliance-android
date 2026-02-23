@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.events
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -59,7 +60,10 @@ fun EventsScreen(
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         PullToRefreshBox(
             isRefreshing = isRefreshing && uiState !is EventsUiState.Loading,
             onRefresh = viewModel::refreshEvents,

@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.teamevent
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -62,7 +63,10 @@ fun TeamEventDetailScreen(
         "Team @ Event"
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
         TopAppBar(
             windowInsets = WindowInsets(0),
             title = { Text(text = titleText, maxLines = 1, overflow = TextOverflow.Ellipsis) },
