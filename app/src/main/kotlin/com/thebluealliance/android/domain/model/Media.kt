@@ -8,4 +8,6 @@ data class Media(
     val preferred: Boolean,
     val details: String?,
     val base64Image: String? = null,
-)
+) {
+    val isAvatar: Boolean = type == "avatar" && base64Image != null
+}

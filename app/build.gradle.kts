@@ -144,6 +144,8 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.navigation3)
     implementation(libs.navigation3.runtime)
     implementation(libs.navigation3.ui)
+    implementation(libs.androidx.shortcuts)
+    implementation(libs.androidx.lifecycle.process)
 
     // Hilt
     implementation(libs.hilt.android)
@@ -172,6 +174,9 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
+
+    // DataStore
+    implementation(libs.datastore.preferences)
 
     // Coil
     implementation(libs.coil.compose)

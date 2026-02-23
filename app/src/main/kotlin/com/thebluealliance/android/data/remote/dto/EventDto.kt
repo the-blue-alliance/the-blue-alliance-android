@@ -33,4 +33,5 @@ data class WebcastDto(
     val type: String,
     val channel: String,
     val file: String? = null,
+    val date: String? = null,
 )

@@ -56,7 +56,7 @@ import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
 import kotlinx.coroutines.launch
 
-private val TABS = listOf("Favorites", "Subscriptions")
+private val TABS = listOf("Favorites", "Notifications")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,13 +78,13 @@ fun MyTBAScreen(
     val pagerState = rememberPagerState(pageCount = { TABS.size })
     val coroutineScope = rememberCoroutineScope()
     val favoritesListState = rememberLazyListState()
-    val subscriptionsListState = rememberLazyListState()
+    val notificationsListState = rememberLazyListState()
 
     LaunchedEffect(scrollToTopTrigger) {
         if (scrollToTopTrigger > 0) {
             when (pagerState.currentPage) {
                 0 -> favoritesListState.animateScrollToItem(0)
-                1 -> subscriptionsListState.animateScrollToItem(0)
+                1 -> notificationsListState.animateScrollToItem(0)
             }
         }
     }
@@ -96,7 +96,7 @@ fun MyTBAScreen(
         AlertDialog(
             onDismissRequest = { showSignOutDialog = false },
             title = { Text("Sign out?") },
-            text = { Text("You will no longer receive notifications for your favorites and subscriptions.") },
+            text = { Text("Your favorites and notifications won't apply to the app anymore.") },
             confirmButton = {
                 TextButton(onClick = {
                     showSignOutDialog = false
@@ -188,7 +188,7 @@ fun MyTBAScreen(
             ) { page ->
                 when (page) {
                     0 -> FavoritesTab(uiState.favorites, onNavigateToTeam, onNavigateToEvent, favoritesListState)
-                    1 -> SubscriptionsTab(uiState.subscriptions, onNavigateToTeam, onNavigateToEvent, subscriptionsListState)
+                    1 -> NotificationsTab(uiState.subscriptions, onNavigateToTeam, onNavigateToEvent, notificationsListState)
                 }
             }
         }
@@ -277,7 +277,7 @@ private fun FavoriteItem(favorite: Favorite, onClick: () -> Unit) {
 }
 
 @Composable
-private fun SubscriptionsTab(
+private fun NotificationsTab(
     subscriptions: List<Subscription>,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
@@ -285,7 +285,7 @@ private fun SubscriptionsTab(
 ) {
     if (subscriptions.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No subscriptions yet", style = MaterialTheme.typography.bodyLarge)
+            Text("No notifications yet", style = MaterialTheme.typography.bodyLarge)
         }
         return
     }
