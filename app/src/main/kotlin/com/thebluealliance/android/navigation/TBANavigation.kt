@@ -71,8 +71,6 @@ fun TBANavigation(
     Column(
         modifier = modifier
             .fillMaxSize()
-            // Avoid double-applying bottom insets; bottom bar handles it.
-            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal))
     ) {
         NavDisplay(
             modifier = Modifier
@@ -264,9 +262,6 @@ fun TBANavigation(
 
         if (showBottomBar) {
             TBABottomBar(
-                modifier = Modifier
-                    // Bottom inset applied here so content above doesn't shift with nav bar.
-                    .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)),
                 currentRoute = navState.currentRoute,
                 onNavigate = { navigator.navigate(it) },
                 onReselect = {
