@@ -212,15 +212,25 @@ fun MatchItem(
                 )
             }
         } else {
-            Box(
+            Column(
                 modifier = Modifier.weight(0.15f),
-                contentAlignment = Alignment.CenterEnd,
+                horizontalAlignment = Alignment.End,
             ) {
+                val displayTime = match.predictedTime ?: match.time
+                val isEstimate = match.predictedTime != null && match.time != null &&
+                    kotlin.math.abs(match.predictedTime - match.time) > 60
                 Text(
-                    text = formatMatchTime(match.predictedTime ?: match.time),
+                    text = formatMatchTime(displayTime),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                if (isEstimate) {
+                    Text(
+                        text = "(est.)",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
         }
     }

@@ -52,7 +52,12 @@ class MatchDetailViewModel @AssistedInject constructor(
     ) { match, event ->
         val breakdown = match?.scoreBreakdown?.let { parseBreakdown(it) }
         val videos = match?.videos?.let { parseVideos(it) } ?: emptyList()
-        val formattedTime = formatMatchTime(match?.actualTime ?: match?.predictedTime ?: match?.time)
+        val timeToDisplay = match?.actualTime ?: match?.predictedTime ?: match?.time
+        val isEstimate = match?.actualTime == null && match?.predictedTime != null &&
+            match.time != null && kotlin.math.abs(match.predictedTime - match.time) > 60
+        val formattedTime = formatMatchTime(timeToDisplay)?.let {
+            if (isEstimate) "$it (est.)" else it
+        }
         MatchDetailUiState(
             match = match,
             scoreBreakdown = breakdown,
