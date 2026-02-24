@@ -1,1 +1,1 @@
-FIRST Robotics event schedules, match results, team info, and notifications.
+FRC event schedules, match results, team info, and notifications.
