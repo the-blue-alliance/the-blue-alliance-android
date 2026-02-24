@@ -195,6 +195,7 @@ fun MyTBAScreen(
                         onNavigateToTeam = onNavigateToTeam,
                         onNavigateToEvent = onNavigateToEvent,
                         listState = favoritesListState,
+                        canPinShortcuts = uiState.canPinShortcuts,
                         onAddShortcut = viewModel::requestPinShortcut,
                     )
                     1 -> NotificationsTab(uiState.subscriptions, onNavigateToTeam, onNavigateToEvent, notificationsListState)
@@ -236,6 +237,7 @@ private fun FavoritesTab(
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
     listState: LazyListState,
+    canPinShortcuts: Boolean,
     onAddShortcut: (Favorite) -> Unit,
 ) {
     if (favorites.isEmpty()) {
@@ -254,6 +256,7 @@ private fun FavoritesTab(
                         ModelType.EVENT -> onNavigateToEvent(favorite.modelKey)
                     }
                 },
+                showMenu = canPinShortcuts,
                 onAddShortcut = { onAddShortcut(favorite) },
             )
         }
@@ -264,6 +267,7 @@ private fun FavoritesTab(
 private fun FavoriteItem(
     favorite: Favorite,
     onClick: () -> Unit,
+    showMenu: Boolean,
     onAddShortcut: () -> Unit,
 ) {
     val typeLabel = when (favorite.modelType) {
@@ -278,7 +282,12 @@ private fun FavoriteItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 4.dp),
+            .padding(
+                start = 16.dp,
+                top = if (showMenu) 8.dp else 12.dp,
+                bottom = if (showMenu) 8.dp else 12.dp,
+                end = if (showMenu) 4.dp else 16.dp,
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -295,30 +304,32 @@ private fun FavoriteItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        Box {
-            IconButton(onClick = { menuExpanded = true }) {
-                Icon(
-                    imageVector = Icons.Default.MoreVert,
-                    contentDescription = "More options",
-                )
-            }
-            DropdownMenu(
-                expanded = menuExpanded,
-                onDismissRequest = { menuExpanded = false },
-            ) {
-                DropdownMenuItem(
-                    text = { Text("Add shortcut to home screen") },
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_add_to_home_screen),
-                            contentDescription = null,
-                        )
-                    },
-                    onClick = {
-                        menuExpanded = false
-                        onAddShortcut()
-                    },
-                )
+        if (showMenu) {
+            Box {
+                IconButton(onClick = { menuExpanded = true }) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "More options",
+                    )
+                }
+                DropdownMenu(
+                    expanded = menuExpanded,
+                    onDismissRequest = { menuExpanded = false },
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Add shortcut to home screen") },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_add_to_home_screen),
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = {
+                            menuExpanded = false
+                            onAddShortcut()
+                        },
+                    )
+                }
             }
         }
     }

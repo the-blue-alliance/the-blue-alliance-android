@@ -42,6 +42,7 @@ class MyTBAViewModel @Inject constructor(
             userPhotoUrl = user?.photoUrl?.toString(),
             favorites = favorites,
             subscriptions = subscriptions,
+            canPinShortcuts = shortcutManager.canPinShortcuts(),
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MyTBAUiState())
 

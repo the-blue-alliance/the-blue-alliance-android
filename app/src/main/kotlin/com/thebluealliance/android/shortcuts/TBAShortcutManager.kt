@@ -49,7 +49,7 @@ class TBAShortcutManager @Inject constructor(
 ) {
 
     /**
-     * Start watching the favorites repository for changes, syncing favories to Android's shortcuts
+     * Start watching the favorites repository for changes, syncing favorites to Android's shortcuts
      * system.
      */
     fun beginSyncingShortcuts() {
@@ -155,19 +155,17 @@ class TBAShortcutManager @Inject constructor(
     }
 
     /**
+     * Returns whether the device supports pinning shortcuts to the home screen.
+     */
+    fun canPinShortcuts(): Boolean {
+        return ShortcutManagerCompat.isRequestPinShortcutSupported(context)
+    }
+
+    /**
      * Request to pin a shortcut for the given favorite to the user's home screen.
      * This will prompt the user with the system's pinned shortcut dialog.
      */
     fun requestPinShortcut(favorite: Favorite) {
-        if (!ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {
-            Toast.makeText(
-                context,
-                "Home screen shortcuts are not supported on this device",
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
-
         CoroutineScope(Dispatchers.IO).launch {
             val shortcutInfo = favorite.getShortcutInfo()
             if (shortcutInfo == null) {
