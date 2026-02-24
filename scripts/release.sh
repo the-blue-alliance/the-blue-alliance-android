@@ -204,6 +204,9 @@ cmd_production() {
 
     run ./gradlew promoteReleaseArtifact --from-track beta --promote-track production
 
+    info "Publishing store listing..."
+    run ./gradlew publishListing
+
     echo ""
     echo -e "${GREEN}✓ Promoted beta → production${NC}"
 }

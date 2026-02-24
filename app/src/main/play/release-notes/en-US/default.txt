@@ -1,0 +1,7 @@
+Version 11.0.0:
+ - We have completely REBUILT (ha!) the app for 2026.
+ - Notifications work again. Use the bell icon on teams or events to stay on top of the latest.
+ - Dark mode.
+
+View the full changelog on GitHub:
+https://github.com/the-blue-alliance/the-blue-alliance-android/releases
