@@ -165,7 +165,7 @@ class TBAShortcutManager @Inject constructor(
      * Request to pin a shortcut for the given favorite to the user's home screen.
      * This will prompt the user with the system's pinned shortcut dialog.
      */
-    fun requestPinShortcut(favorite: Favorite) {
+    suspend fun requestPinShortcut(favorite: Favorite) {
         CoroutineScope(Dispatchers.IO).launch {
             val shortcutInfo = favorite.getShortcutInfo()
             if (shortcutInfo == null) {
