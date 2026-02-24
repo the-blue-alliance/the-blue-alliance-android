@@ -61,6 +61,12 @@ class MyTBAViewModel @Inject constructor(
         }
     }
 
+    fun requestPinShortcut(favorite: Favorite) {
+        viewModelScope.launch {
+            shortcutManager.requestPinShortcut(favorite)
+        }
+    }
+
     fun refresh() {
         viewModelScope.launch {
             if (!authRepository.isSignedIn()) return@launch
@@ -80,9 +86,5 @@ class MyTBAViewModel @Inject constructor(
             authRepository.signOut()
             myTBARepository.clearLocal()
         }
-    }
-
-    fun requestPinShortcut(favorite: Favorite) {
-        shortcutManager.requestPinShortcut(favorite)
     }
 }

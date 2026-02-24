@@ -179,7 +179,9 @@ class TBAShortcutManager @Inject constructor(
                 return@launch
             }
 
-            val success = ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
+            val success = withContext(Dispatchers.Main) {
+                ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
+            }
             if (!success) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(
