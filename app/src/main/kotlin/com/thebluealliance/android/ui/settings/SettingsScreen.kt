@@ -6,6 +6,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,26 +32,23 @@ import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.messaging.NotificationBuilder
 import com.thebluealliance.android.messaging.NotificationChannelManager
 import com.thebluealliance.android.ui.theme.ThemeMode
-import androidx.navigation3.runtime.NavKey
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import com.thebluealliance.android.ui.components.TBABottomBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     onNavigateUp: () -> Unit,
     onNavigateToSearch: () -> Unit,
-    onNavigateToTopLevel: (NavKey) -> Unit,
-    currentRoute: NavKey,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
 
     Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TopAppBar(
                 title = { Text("Settings") },
@@ -61,13 +62,6 @@ fun SettingsScreen(
                         Icon(Icons.Default.Search, contentDescription = "Search")
                     }
                 },
-            )
-        },
-        bottomBar = {
-            TBABottomBar(
-                currentRoute = currentRoute,
-                onNavigate = onNavigateToTopLevel,
-                onReselect = { /* no-op */ },
             )
         },
     ) { innerPadding ->

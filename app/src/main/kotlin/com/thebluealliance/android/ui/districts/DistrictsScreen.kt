@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,7 +30,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,21 +38,20 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.District
-import com.thebluealliance.android.ui.components.TBABottomBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.navigation3.runtime.NavKey
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DistrictsScreen(
     onNavigateToDistrict: (String) -> Unit = {},
     onNavigateToSearch: () -> Unit,
-    onNavigateToTopLevel: (NavKey) -> Unit,
-    currentRoute: NavKey,
+    reselectFlow: Flow<Unit>,
     viewModel: DistrictsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -58,16 +60,16 @@ fun DistrictsScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
 
-    var scrollToTopTrigger by remember { mutableIntStateOf(0) }
     var yearDropdownExpanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(scrollToTopTrigger) {
-        if (scrollToTopTrigger > 0) {
+    LaunchedEffect(reselectFlow) {
+        reselectFlow.collect {
             listState.animateScrollToItem(0)
         }
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TopAppBar(
                 title = {
@@ -102,13 +104,6 @@ fun DistrictsScreen(
                         Icon(Icons.Default.Search, contentDescription = "Search")
                     }
                 },
-            )
-        },
-        bottomBar = {
-            TBABottomBar(
-                currentRoute = currentRoute,
-                onNavigate = onNavigateToTopLevel,
-                onReselect = { scrollToTopTrigger++ },
             )
         },
     ) { innerPadding ->

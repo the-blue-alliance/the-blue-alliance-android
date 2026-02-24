@@ -11,6 +11,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,26 +39,23 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.thebluealliance.android.data.remote.dto.GitHubContributorDto
-import androidx.navigation3.runtime.NavKey
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import com.thebluealliance.android.ui.components.TBABottomBar
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ThanksScreen(
     onNavigateUp: () -> Unit,
     onNavigateToSearch: () -> Unit,
-    onNavigateToTopLevel: (NavKey) -> Unit,
-    currentRoute: NavKey,
     viewModel: ThanksViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TopAppBar(
                 title = { Text("Thanks") },
@@ -68,13 +69,6 @@ fun ThanksScreen(
                         Icon(Icons.Default.Search, contentDescription = "Search")
                     }
                 },
-            )
-        },
-        bottomBar = {
-            TBABottomBar(
-                currentRoute = currentRoute,
-                onNavigate = onNavigateToTopLevel,
-                onReselect = { /* no-op */ },
             )
         },
     ) { innerPadding ->

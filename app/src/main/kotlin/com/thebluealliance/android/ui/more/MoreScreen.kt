@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -25,8 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.BuildConfig
-import com.thebluealliance.android.ui.components.TBABottomBar
-import androidx.navigation3.runtime.NavKey
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 
@@ -38,10 +40,9 @@ fun MoreScreen(
     onNavigateToAbout: () -> Unit,
     onNavigateToThanks: () -> Unit,
     onNavigateToSearch: () -> Unit,
-    onNavigateToTopLevel: (NavKey) -> Unit,
-    currentRoute: NavKey,
 ) {
     Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TopAppBar(
                 title = { Text("More") },
@@ -50,13 +51,6 @@ fun MoreScreen(
                         Icon(Icons.Default.Search, contentDescription = "Search")
                     }
                 },
-            )
-        },
-        bottomBar = {
-            TBABottomBar(
-                currentRoute = currentRoute,
-                onNavigate = onNavigateToTopLevel,
-                onReselect = { /* no-op */ },
             )
         },
     ) { innerPadding ->

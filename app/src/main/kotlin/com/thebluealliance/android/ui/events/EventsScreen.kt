@@ -12,6 +12,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -29,7 +33,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,21 +47,19 @@ import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
-import com.thebluealliance.android.ui.components.TBABottomBar
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
-import androidx.navigation3.runtime.NavKey
+import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventsScreen(
     onNavigateToEvent: (String) -> Unit,
     onNavigateToSearch: () -> Unit,
-    onNavigateToTopLevel: (NavKey) -> Unit,
-    currentRoute: NavKey,
+    reselectFlow: Flow<Unit>,
     viewModel: EventsViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -67,16 +68,16 @@ fun EventsScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
 
-    var scrollToTopTrigger by remember { mutableIntStateOf(0) }
     var yearDropdownExpanded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(scrollToTopTrigger) {
-        if (scrollToTopTrigger > 0) {
+    LaunchedEffect(reselectFlow) {
+        reselectFlow.collect {
             listState.animateScrollToItem(0)
         }
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TopAppBar(
                 title = {
@@ -111,13 +112,6 @@ fun EventsScreen(
                         Icon(Icons.Default.Search, contentDescription = "Search")
                     }
                 },
-            )
-        },
-        bottomBar = {
-            TBABottomBar(
-                currentRoute = currentRoute,
-                onNavigate = onNavigateToTopLevel,
-                onReselect = { scrollToTopTrigger++ },
             )
         },
     ) { innerPadding ->

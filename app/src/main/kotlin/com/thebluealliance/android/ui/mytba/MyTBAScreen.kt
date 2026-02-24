@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -56,12 +60,12 @@ import coil.compose.AsyncImage
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
-import com.thebluealliance.android.ui.components.TBABottomBar
 import kotlinx.coroutines.launch
-import androidx.navigation3.runtime.NavKey
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.runtime.DisposableEffect
+import kotlinx.coroutines.flow.Flow
 
 private val TABS = listOf("Favorites", "Notifications")
 
@@ -73,8 +77,7 @@ fun MyTBAScreen(
     onNavigateToEvent: (String) -> Unit = {},
     onNavigateUp: (() -> Unit)? = null,
     onNavigateToSearch: () -> Unit,
-    onNavigateToTopLevel: (NavKey) -> Unit,
-    currentRoute: NavKey,
+    reselectFlow: Flow<Unit>,
     viewModel: MyTBAViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -84,10 +87,8 @@ fun MyTBAScreen(
     val coroutineScope = rememberCoroutineScope()
     val favoritesListState = rememberLazyListState()
     val notificationsListState = rememberLazyListState()
-    var scrollToTopTrigger by remember { mutableIntStateOf(0) }
-
-    LaunchedEffect(scrollToTopTrigger) {
-        if (scrollToTopTrigger > 0) {
+    LaunchedEffect(reselectFlow) {
+        reselectFlow.collect {
             when (pagerState.currentPage) {
                 0 -> favoritesListState.animateScrollToItem(0)
                 1 -> notificationsListState.animateScrollToItem(0)
@@ -116,6 +117,7 @@ fun MyTBAScreen(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TopAppBar(
                 title = { Text("myTBA") },
@@ -131,13 +133,6 @@ fun MyTBAScreen(
                         Icon(Icons.Default.Search, contentDescription = "Search")
                     }
                 },
-            )
-        },
-        bottomBar = {
-            TBABottomBar(
-                currentRoute = currentRoute,
-                onNavigate = onNavigateToTopLevel,
-                onReselect = { scrollToTopTrigger++ },
             )
         },
     ) { innerPadding ->
