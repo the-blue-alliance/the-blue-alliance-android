@@ -23,12 +23,9 @@ import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.util.addRoundedCorners
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -166,31 +163,23 @@ class TBAShortcutManager @Inject constructor(
      * This will prompt the user with the system's pinned shortcut dialog.
      */
     suspend fun requestPinShortcut(favorite: Favorite) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val shortcutInfo = favorite.getShortcutInfo()
-            if (shortcutInfo == null) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        context,
-                        "Failed to create shortcut",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                return@launch
-            }
+        val shortcutInfo = favorite.getShortcutInfo()
+        if (shortcutInfo == null) {
+            Toast.makeText(
+                context,
+                "Failed to create shortcut",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
 
-            val success = withContext(Dispatchers.Main) {
-                ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
-            }
-            if (!success) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        context,
-                        "Failed to add shortcut to home screen",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
+        val success = ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
+        if (!success) {
+            Toast.makeText(
+                context,
+                "Failed to add shortcut to home screen",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 }
