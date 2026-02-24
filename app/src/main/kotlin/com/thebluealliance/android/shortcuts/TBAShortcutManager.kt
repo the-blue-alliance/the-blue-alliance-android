@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
+import android.widget.Toast
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
@@ -22,10 +23,14 @@ import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.util.addRoundedCorners
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Manages shortcuts for The Blue Alliance.
@@ -34,6 +39,7 @@ import javax.inject.Inject
  *
  * See https://developer.android.com/develop/ui/views/launch/shortcuts
  */
+@Singleton
 class TBAShortcutManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val tbaRepository: MyTBARepository,
@@ -145,6 +151,46 @@ class TBAShortcutManager @Inject constructor(
     private fun generateIntent(uri: Uri): Intent {
         return Intent(Intent.ACTION_VIEW, uri).apply {
             setClassName(context, "com.thebluealliance.android.LaunchShortcutActivity")
+        }
+    }
+
+    /**
+     * Request to pin a shortcut for the given favorite to the user's home screen.
+     * This will prompt the user with the system's pinned shortcut dialog.
+     */
+    fun requestPinShortcut(favorite: Favorite) {
+        if (!ShortcutManagerCompat.isRequestPinShortcutSupported(context)) {
+            Toast.makeText(
+                context,
+                "Home screen shortcuts are not supported on this device",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val shortcutInfo = favorite.getShortcutInfo()
+            if (shortcutInfo == null) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "Failed to create shortcut",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                return@launch
+            }
+
+            val success = ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
+            if (!success) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "Failed to add shortcut to home screen",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
     }
 }
