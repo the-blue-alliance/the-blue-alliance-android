@@ -1,1 +1,1 @@
-Event schedules, match results, team information, and notifications about the FIRST Robotics Competition (FRC).
+FIRST Robotics event schedules, match results, team info, and notifications.
