@@ -46,15 +46,18 @@ fun MatchList(
     onNavigateToMatch: (String) -> Unit,
     headerContent: (LazyListScope.() -> Unit)? = null,
 ) {
-    if (matches == null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
-        return
-    }
-    if (matches.isEmpty()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No matches", style = MaterialTheme.typography.bodyLarge)
+    if (matches == null || matches.isEmpty()) {
+        LazyColumn(Modifier.fillMaxSize()) {
+            headerContent?.invoke(this)
+            item {
+                Box(
+                    Modifier.fillMaxWidth().padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (matches == null) CircularProgressIndicator()
+                    else Text("No matches", style = MaterialTheme.typography.bodyLarge)
+                }
+            }
         }
         return
     }
