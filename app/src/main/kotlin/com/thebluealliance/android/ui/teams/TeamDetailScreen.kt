@@ -41,15 +41,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -78,6 +79,7 @@ import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
+import androidx.compose.material3.ExperimentalMaterial3Api
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Info", "Events", "Media")
@@ -89,6 +91,7 @@ fun TeamDetailScreen(
     onNavigateToEvent: (String) -> Unit,
     onNavigateToMyTBA: () -> Unit = {},
     onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
+    onNavigateToSearch: () -> Unit,
     viewModel: TeamDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -144,91 +147,102 @@ fun TeamDetailScreen(
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopAppBar(
-            windowInsets = WindowInsets(0),
-            title = {
-                val team = uiState.team
-                Text(
-                    text = if (team != null) "${team.number} - ${team.nickname ?: ""}" else "Team",
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            },
-            navigationIcon = {
-                IconButton(onClick = onNavigateUp) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                }
-            },
-            actions = {
-                IconButton(onClick = {
-                    if (!viewModel.isSignedIn()) {
-                        showSignInDialog = true
-                    } else {
-                        showNotificationSheet = true
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    val team = uiState.team
+                    Text(
+                        text = if (team != null) "${team.number} - ${team.nickname ?: ""}" else "Team",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                }) {
-                    val hasSubscription = subscription?.notifications?.isNotEmpty() == true
-                    Icon(
-                        imageVector = if (hasSubscription) Icons.Filled.Notifications else Icons.Outlined.NotificationsNone,
-                        contentDescription = "Notification preferences",
-                    )
-                }
-                IconButton(onClick = viewModel::toggleFavorite) {
-                    Icon(
-                        imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
-                        contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
-                    )
-                }
-                uiState.team?.let { team ->
+                },
+                actions = {
+                    IconButton(onClick = onNavigateToSearch) {
+                        Icon(Icons.Default.Search, contentDescription = "Search")
+                    }
+
                     IconButton(onClick = {
-                        context.shareTbaUrl(
-                            title = "Team ${team.number} - ${team.nickname ?: ""}",
-                            url = "https://www.thebluealliance.com/team/${team.number}",
-                        )
+                        if (!viewModel.isSignedIn()) {
+                            showSignInDialog = true
+                        } else {
+                            showNotificationSheet = true
+                        }
                     }) {
-                        Icon(Icons.Filled.Share, contentDescription = "Share")
+                        val hasSubscription = subscription?.notifications?.isNotEmpty() == true
+                        Icon(
+                            imageVector = if (hasSubscription) Icons.Filled.Notifications else Icons.Outlined.NotificationsNone,
+                            contentDescription = "Notification preferences",
+                        )
                     }
-                }
-            },
-        )
-
-        PrimaryScrollableTabRow(
-            selectedTabIndex = pagerState.currentPage,
-            edgePadding = 0.dp,
+                    IconButton(onClick = viewModel::toggleFavorite) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                            contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                        )
+                    }
+                    uiState.team?.let { team ->
+                        IconButton(onClick = {
+                            context.shareTbaUrl(
+                                title = "Team ${team.number} - ${team.nickname ?: ""}",
+                                url = "https://www.thebluealliance.com/team/${team.number}",
+                            )
+                        }) {
+                            Icon(Icons.Filled.Share, contentDescription = "Share")
+                        }
+                    }
+                },
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
         ) {
-            TABS.forEachIndexed { index, title ->
-                Tab(
-                    selected = pagerState.currentPage == index,
-                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                    text = { Text(title) },
-                )
-            }
-        }
-
-        PullToRefreshBox(
-            isRefreshing = isRefreshing && uiState.team != null,
-            onRefresh = viewModel::refreshAll,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxSize(),
-            ) { page ->
-                when (page) {
-                    0 -> InfoTab(uiState.team, uiState.media)
-                    1 -> EventsTab(
-                        events = uiState.events,
-                        selectedYear = selectedYear,
-                        yearsParticipated = yearsParticipated,
-                        onYearSelected = viewModel::selectYear,
-                        onNavigateToEvent = { eventKey ->
-                            val teamKey = uiState.team?.key
-                            if (teamKey != null) onNavigateToTeamEvent(teamKey, eventKey)
-                            else onNavigateToEvent(eventKey)
-                        },
+            PrimaryScrollableTabRow(
+                selectedTabIndex = pagerState.currentPage,
+                edgePadding = 0.dp,
+            ) {
+                TABS.forEachIndexed { index, title ->
+                    Tab(
+                        selected = pagerState.currentPage == index,
+                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                        text = { Text(title) },
                     )
-                    2 -> MediaTab(uiState.media)
+                }
+            }
+
+            PullToRefreshBox(
+                isRefreshing = isRefreshing && uiState.team != null,
+                onRefresh = viewModel::refreshAll,
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize(),
+                ) { page ->
+                    when (page) {
+                        0 -> InfoTab(uiState.team, uiState.media)
+                        1 -> EventsTab(
+                            events = uiState.events,
+                            selectedYear = selectedYear,
+                            yearsParticipated = yearsParticipated,
+                            onYearSelected = viewModel::selectYear,
+                            onNavigateToEvent = { eventKey ->
+                                val teamKey = uiState.team?.key
+                                if (teamKey != null) onNavigateToTeamEvent(teamKey, eventKey)
+                                else onNavigateToEvent(eventKey)
+                            },
+                        )
+                        2 -> MediaTab(uiState.media)
+                    }
                 }
             }
         }

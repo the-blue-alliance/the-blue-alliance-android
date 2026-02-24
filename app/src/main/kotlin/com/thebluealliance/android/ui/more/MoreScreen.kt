@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -15,59 +14,92 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.BuildConfig
+import com.thebluealliance.android.ui.components.TBABottomBar
+import androidx.navigation3.runtime.NavKey
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun MoreScreen(
     onNavigateToMyTBA: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToAbout: () -> Unit,
     onNavigateToThanks: () -> Unit,
+    onNavigateToSearch: () -> Unit,
+    onNavigateToTopLevel: (NavKey) -> Unit,
+    currentRoute: NavKey,
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        MoreItem(icon = Icons.Filled.Star, label = "myTBA", onClick = onNavigateToMyTBA)
-        HorizontalDivider()
-        MoreItem(icon = Icons.Filled.Settings, label = "Settings", onClick = onNavigateToSettings)
-        HorizontalDivider()
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Row(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
-            Text(
-                text = "About",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable(onClick = onNavigateToAbout),
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("More") },
+                actions = {
+                    IconButton(onClick = onNavigateToSearch) {
+                        Icon(Icons.Default.Search, contentDescription = "Search")
+                    }
+                },
             )
+        },
+        bottomBar = {
+            TBABottomBar(
+                currentRoute = currentRoute,
+                onNavigate = onNavigateToTopLevel,
+                onReselect = { /* no-op */ },
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            MoreItem(icon = Icons.Filled.Star, label = "myTBA", onClick = onNavigateToMyTBA)
+            HorizontalDivider()
+            MoreItem(icon = Icons.Filled.Settings, label = "Settings", onClick = onNavigateToSettings)
+            HorizontalDivider()
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Row(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
+                Text(
+                    text = "About",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable(onClick = onNavigateToAbout),
+                )
+                Text(
+                    text = " · ",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    text = "Thanks",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable(onClick = onNavigateToThanks),
+                )
+            }
+
             Text(
-                text = " · ",
+                text = "v${BuildConfig.VERSION_NAME} (${BuildConfig.GIT_HASH})\nBuilt ${BuildConfig.BUILD_TIME}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Text(
-                text = "Thanks",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable(onClick = onNavigateToThanks),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 4.dp),
             )
         }
-
-        Text(
-            text = "v${BuildConfig.VERSION_NAME} (${BuildConfig.GIT_HASH})\nBuilt ${BuildConfig.BUILD_TIME}",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 4.dp),
-        )
     }
 }
 

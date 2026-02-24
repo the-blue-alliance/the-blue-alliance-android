@@ -13,12 +13,14 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -48,6 +50,7 @@ fun TeamEventDetailScreen(
     onNavigateToMatch: (String) -> Unit,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
+    onNavigateToSearch: () -> Unit,
     viewModel: TeamEventDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -63,70 +66,80 @@ fun TeamEventDetailScreen(
         "Team @ Event"
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        TopAppBar(
-            windowInsets = WindowInsets(0),
-            title = { Text(text = titleText, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-            navigationIcon = {
-                IconButton(onClick = onNavigateUp) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                }
-            },
-        )
-
-        PrimaryScrollableTabRow(
-            selectedTabIndex = pagerState.currentPage,
-            edgePadding = 0.dp,
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = titleText, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onNavigateToSearch) {
+                        Icon(Icons.Default.Search, contentDescription = "Search")
+                    }
+                },
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            TABS.forEachIndexed { index, title ->
-                Tab(
-                    selected = pagerState.currentPage == index,
-                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                    text = { Text(title) },
-                )
-            }
-        }
-
-        PullToRefreshBox(
-            isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
-            onRefresh = viewModel::refreshAll,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.fillMaxSize(),
-            ) { page ->
-                val evt = uiState.event
-                when (page) {
-                    0 -> MatchList(
-                        matches = uiState.matches,
-                        playoffType = evt?.playoffType ?: PlayoffType.OTHER,
-                        onNavigateToMatch = onNavigateToMatch,
-                        headerContent = {
-                            if (evt != null) {
-                                item(key = "header_event") {
-                                    EventRow(
-                                        event = evt,
-                                        onClick = { onNavigateToEvent(evt.key) },
-                                        showYear = true,
-                                    )
-                                }
-                            }
-                            val tm = uiState.team
-                            if (tm != null) {
-                                item(key = "header_team") {
-                                    TeamRow(
-                                        team = tm,
-                                        onClick = { onNavigateToTeam(tm.key) },
-                                    )
-                                }
-                            }
-                        },
+            PrimaryScrollableTabRow(
+                selectedTabIndex = pagerState.currentPage,
+                edgePadding = 0.dp,
+            ) {
+                TABS.forEachIndexed { index, title ->
+                    Tab(
+                        selected = pagerState.currentPage == index,
+                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                        text = { Text(title) },
                     )
-                    1 -> AwardsTab(uiState.awards)
+                }
+            }
+
+            PullToRefreshBox(
+                isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
+                onRefresh = viewModel::refreshAll,
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize(),
+                ) { page ->
+                    val evt = uiState.event
+                    when (page) {
+                        0 -> MatchList(
+                            matches = uiState.matches,
+                            playoffType = evt?.playoffType ?: PlayoffType.OTHER,
+                            onNavigateToMatch = onNavigateToMatch,
+                            headerContent = {
+                                if (evt != null) {
+                                    item(key = "header_event") {
+                                        EventRow(
+                                            event = evt,
+                                            onClick = { onNavigateToEvent(evt.key) },
+                                            showYear = true,
+                                        )
+                                    }
+                                }
+                                val tm = uiState.team
+                                if (tm != null) {
+                                    item(key = "header_team") {
+                                        TeamRow(
+                                            team = tm,
+                                            onClick = { onNavigateToTeam(tm.key) },
+                                        )
+                                    }
+                                }
+                            },
+                        )
+                        1 -> AwardsTab(uiState.awards)
+                    }
                 }
             }
         }

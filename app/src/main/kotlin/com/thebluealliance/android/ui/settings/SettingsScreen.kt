@@ -11,10 +11,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -26,86 +28,124 @@ import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.messaging.NotificationBuilder
 import com.thebluealliance.android.messaging.NotificationChannelManager
 import com.thebluealliance.android.ui.theme.ThemeMode
+import androidx.navigation3.runtime.NavKey
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import com.thebluealliance.android.ui.components.TBABottomBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
+    onNavigateUp: () -> Unit,
+    onNavigateToSearch: () -> Unit,
+    onNavigateToTopLevel: (NavKey) -> Unit,
+    currentRoute: NavKey,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
-    ) {
-        Text(
-            text = "Appearance",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.primary,
-        )
-
-        Text(
-            text = "Theme",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
-        )
-
-        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-            ThemeMode.entries.forEachIndexed { index, mode ->
-                SegmentedButton(
-                    selected = themeMode == mode,
-                    onClick = { viewModel.setThemeMode(mode) },
-                    shape = SegmentedButtonDefaults.itemShape(
-                        index = index,
-                        count = ThemeMode.entries.size,
-                    ),
-                ) {
-                    Text(
-                        when (mode) {
-                            ThemeMode.AUTO -> "Auto"
-                            ThemeMode.LIGHT -> "Light"
-                            ThemeMode.DARK -> "Dark"
-                        }
-                    )
-                }
-            }
-        }
-
-        if (BuildConfig.DEBUG) {
-            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Settings") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onNavigateToSearch) {
+                        Icon(Icons.Default.Search, contentDescription = "Search")
+                    }
+                },
+            )
+        },
+        bottomBar = {
+            TBABottomBar(
+                currentRoute = currentRoute,
+                onNavigate = onNavigateToTopLevel,
+                onReselect = { /* no-op */ },
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp),
+        ) {
             Text(
-                text = "Debug",
+                text = "Appearance",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary,
             )
 
-            val context = LocalContext.current
-            Button(
-                onClick = { sendTestMatchScore(context) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-            ) {
-                Text("Test: Match score notification")
+            Text(
+                text = "Theme",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
+            )
+
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+                ThemeMode.entries.forEachIndexed { index, mode ->
+                    SegmentedButton(
+                        selected = themeMode == mode,
+                        onClick = { viewModel.setThemeMode(mode) },
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = index,
+                            count = ThemeMode.entries.size,
+                        ),
+                    ) {
+                        Text(
+                            when (mode) {
+                                ThemeMode.AUTO -> "Auto"
+                                ThemeMode.LIGHT -> "Light"
+                                ThemeMode.DARK -> "Dark"
+                            }
+                        )
+                    }
+                }
             }
 
-            Button(
-                onClick = { sendTestUpcomingMatch(context) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-            ) {
-                Text("Test: Upcoming match notification")
-            }
+            if (BuildConfig.DEBUG) {
+                HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+                Text(
+                    text = "Debug",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
 
-            Button(
-                onClick = { sendTestEventUpdate(context) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-            ) {
-                Text("Test: Event update notification")
+                val context = LocalContext.current
+                Button(
+                    onClick = { sendTestMatchScore(context) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                ) {
+                    Text("Test: Match score notification")
+                }
+
+                Button(
+                    onClick = { sendTestUpcomingMatch(context) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                ) {
+                    Text("Test: Upcoming match notification")
+                }
+
+                Button(
+                    onClick = { sendTestEventUpdate(context) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                ) {
+                    Text("Test: Event update notification")
+                }
             }
         }
     }

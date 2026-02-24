@@ -1,10 +1,13 @@
 package com.thebluealliance.android.navigation
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.thebluealliance.android.MainActivity
 import com.thebluealliance.android.ui.districts.DistrictDetailScreen
 import com.thebluealliance.android.ui.districts.DistrictDetailViewModel
 import com.thebluealliance.android.ui.districts.DistrictsScreen
@@ -28,13 +31,11 @@ import com.thebluealliance.android.ui.teams.TeamsScreen
 @Composable
 fun TBANavigation(
     navState: NavigationState,
-    navigator: Navigator,
-    onSignIn: () -> Unit,
     modifier: Modifier = Modifier,
-    scrollToTopTrigger: Int = 0,
-    onEventsYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
-    onDistrictsYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
 ) {
+    val activity = LocalActivity.current as MainActivity
+    val navigator = remember { Navigator(navState, activity) }
+
     NavDisplay(
         modifier = modifier,
         onBack = { navigator.goBack() },
@@ -45,8 +46,9 @@ fun TBANavigation(
                         onNavigateToEvent = { eventKey ->
                             navigator.navigate(Screen.EventDetail(eventKey))
                         },
-                        scrollToTopTrigger = scrollToTopTrigger,
-                        onYearState = onEventsYearState,
+                        onNavigateToSearch = { navigator.navigate(Screen.Search) },
+                        onNavigateToTopLevel = { navigator.navigate(it) },
+                        currentRoute = navState.currentRoute,
                     )
                 }
                 entry<Screen.Teams> {
@@ -54,7 +56,9 @@ fun TBANavigation(
                         onNavigateToTeam = { teamKey ->
                             navigator.navigate(Screen.TeamDetail(teamKey))
                         },
-                        scrollToTopTrigger = scrollToTopTrigger,
+                        onNavigateToSearch = { navigator.navigate(Screen.Search) },
+                        onNavigateToTopLevel = { navigator.navigate(it) },
+                        currentRoute = navState.currentRoute,
                     )
                 }
                 entry<Screen.Districts> {
@@ -62,8 +66,9 @@ fun TBANavigation(
                         onNavigateToDistrict = { districtKey ->
                             navigator.navigate(Screen.DistrictDetail(districtKey))
                         },
-                        scrollToTopTrigger = scrollToTopTrigger,
-                        onYearState = onDistrictsYearState,
+                        onNavigateToSearch = { navigator.navigate(Screen.Search) },
+                        onNavigateToTopLevel = { navigator.navigate(it) },
+                        currentRoute = navState.currentRoute,
                     )
                 }
                 entry<Screen.More> {
@@ -72,28 +77,49 @@ fun TBANavigation(
                         onNavigateToSettings = { navigator.navigate(Screen.Settings) },
                         onNavigateToAbout = { navigator.navigate(Screen.About) },
                         onNavigateToThanks = { navigator.navigate(Screen.Thanks) },
+                        onNavigateToSearch = { navigator.navigate(Screen.Search) },
+                        onNavigateToTopLevel = { navigator.navigate(it) },
+                        currentRoute = navState.currentRoute,
                     )
                 }
                 entry<Screen.MyTBA> {
                     MyTBAScreen(
-                        onSignIn = onSignIn,
+                        onSignIn = { activity.startGoogleSignIn() },
                         onNavigateToTeam = { teamKey ->
                             navigator.navigate(Screen.TeamDetail(teamKey))
                         },
                         onNavigateToEvent = { eventKey ->
                             navigator.navigate(Screen.EventDetail(eventKey))
                         },
-                        scrollToTopTrigger = scrollToTopTrigger,
+                        onNavigateToSearch = { navigator.navigate(Screen.Search) },
+                        onNavigateToTopLevel = { navigator.navigate(it) },
+                        currentRoute = navState.currentRoute,
+                        onNavigateUp = { navigator.navigateUp() },
                     )
                 }
                 entry<Screen.Settings> {
-                    SettingsScreen()
+                    SettingsScreen(
+                        onNavigateUp = { navigator.navigateUp() },
+                        onNavigateToSearch = { navigator.navigate(Screen.Search) },
+                        onNavigateToTopLevel = { navigator.navigate(it) },
+                        currentRoute = navState.currentRoute,
+                    )
                 }
                 entry<Screen.About> {
-                    AboutScreen()
+                    AboutScreen(
+                        onNavigateUp = { navigator.navigateUp() },
+                        onNavigateToSearch = { navigator.navigate(Screen.Search) },
+                        onNavigateToTopLevel = { navigator.navigate(it) },
+                        currentRoute = navState.currentRoute,
+                    )
                 }
                 entry<Screen.Thanks> {
-                    ThanksScreen()
+                    ThanksScreen(
+                        onNavigateUp = { navigator.navigateUp() },
+                        onNavigateToSearch = { navigator.navigate(Screen.Search) },
+                        onNavigateToTopLevel = { navigator.navigate(it) },
+                        currentRoute = navState.currentRoute,
+                    )
                 }
                 entry<Screen.Search> {
                     SearchScreen(
@@ -124,6 +150,7 @@ fun TBANavigation(
                         onNavigateToTeamEvent = { teamKey, eventKey ->
                             navigator.navigate(Screen.TeamEventDetail(teamKey, eventKey))
                         },
+                        onNavigateToSearch = { navigator.navigate(Screen.Search) },
                     )
                 }
                 entry<Screen.MatchDetail> { matchDetail ->
@@ -140,6 +167,7 @@ fun TBANavigation(
                         onNavigateToEvent = { eventKey ->
                             navigator.navigate(Screen.EventDetail(eventKey))
                         },
+                        onNavigateToSearch = { navigator.navigate(Screen.Search) },
                     )
                 }
                 entry<Screen.DistrictDetail> { districtDetail ->
@@ -156,6 +184,7 @@ fun TBANavigation(
                         onNavigateToTeam = { teamKey ->
                             navigator.navigate(Screen.TeamDetail(teamKey))
                         },
+                        onNavigateToSearch = { navigator.navigate(Screen.Search) },
                     )
                 }
                 entry<Screen.TeamDetail> { teamDetail ->
@@ -172,6 +201,7 @@ fun TBANavigation(
                         onNavigateToTeamEvent = { teamKey, eventKey ->
                             navigator.navigate(Screen.TeamEventDetail(teamKey, eventKey))
                         },
+                        onNavigateToSearch = { navigator.navigate(Screen.Search) },
                     )
                 }
                 entry<Screen.TeamEventDetail> { teamEventDetail ->
@@ -191,10 +221,10 @@ fun TBANavigation(
                         onNavigateToEvent = { eventKey ->
                             navigator.navigate(Screen.EventDetail(eventKey))
                         },
+                        onNavigateToSearch = { navigator.navigate(Screen.Search) },
                     )
                 }
             },
         ),
     )
 }
-

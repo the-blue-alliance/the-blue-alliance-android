@@ -31,9 +31,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,7 +56,12 @@ import coil.compose.AsyncImage
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
+import com.thebluealliance.android.ui.components.TBABottomBar
 import kotlinx.coroutines.launch
+import androidx.navigation3.runtime.NavKey
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 
 private val TABS = listOf("Favorites", "Notifications")
 
@@ -64,21 +71,20 @@ fun MyTBAScreen(
     onSignIn: () -> Unit = {},
     onNavigateToTeam: (String) -> Unit = {},
     onNavigateToEvent: (String) -> Unit = {},
-    scrollToTopTrigger: Int = 0,
+    onNavigateUp: (() -> Unit)? = null,
+    onNavigateToSearch: () -> Unit,
+    onNavigateToTopLevel: (NavKey) -> Unit,
+    currentRoute: NavKey,
     viewModel: MyTBAViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
-    if (!uiState.isSignedIn) {
-        SignInPrompt(onSignIn = onSignIn)
-        return
-    }
-
     val pagerState = rememberPagerState(pageCount = { TABS.size })
     val coroutineScope = rememberCoroutineScope()
     val favoritesListState = rememberLazyListState()
     val notificationsListState = rememberLazyListState()
+    var scrollToTopTrigger by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(scrollToTopTrigger) {
         if (scrollToTopTrigger > 0) {
@@ -109,86 +115,127 @@ fun MyTBAScreen(
         )
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            val personIcon = rememberVectorPainter(Icons.Default.Person)
-            AsyncImage(
-                model = uiState.userPhotoUrl,
-                contentDescription = "Profile photo",
-                modifier = Modifier.size(40.dp).clip(CircleShape),
-                placeholder = personIcon,
-                error = personIcon,
-                fallback = personIcon,
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("myTBA") },
+                navigationIcon = {
+                    if (onNavigateUp != null) {
+                        IconButton(onClick = onNavigateUp) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        }
+                    }
+                },
+                actions = {
+                    IconButton(onClick = onNavigateToSearch) {
+                        Icon(Icons.Default.Search, contentDescription = "Search")
+                    }
+                },
             )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = uiState.userName ?: "Signed in",
-                    style = MaterialTheme.typography.bodyLarge,
+        },
+        bottomBar = {
+            TBABottomBar(
+                currentRoute = currentRoute,
+                onNavigate = onNavigateToTopLevel,
+                onReselect = { scrollToTopTrigger++ },
+            )
+        },
+    ) { innerPadding ->
+        if (!uiState.isSignedIn) {
+            Box(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
+            ) {
+                SignInPrompt(onSignIn = onSignIn)
+            }
+            return@Scaffold
+        }
+
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                val personIcon = rememberVectorPainter(Icons.Default.Person)
+                AsyncImage(
+                    model = uiState.userPhotoUrl,
+                    contentDescription = "Profile photo",
+                    modifier = Modifier.size(40.dp).clip(CircleShape),
+                    placeholder = personIcon,
+                    error = personIcon,
+                    fallback = personIcon,
                 )
-                if (uiState.userEmail != null) {
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = uiState.userEmail!!,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        text = uiState.userName ?: "Signed in",
+                        style = MaterialTheme.typography.bodyLarge,
                     )
+                    if (uiState.userEmail != null) {
+                        Text(
+                            text = uiState.userEmail!!,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+                Box {
+                    IconButton(onClick = { menuExpanded = true }) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "More options",
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = menuExpanded,
+                        onDismissRequest = { menuExpanded = false },
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Sign out") },
+                            onClick = {
+                                menuExpanded = false
+                                showSignOutDialog = true
+                            },
+                        )
+                    }
                 }
             }
-            Box {
-                IconButton(onClick = { menuExpanded = true }) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "More options",
-                    )
-                }
-                DropdownMenu(
-                    expanded = menuExpanded,
-                    onDismissRequest = { menuExpanded = false },
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Sign out") },
-                        onClick = {
-                            menuExpanded = false
-                            showSignOutDialog = true
-                        },
-                    )
-                }
-            }
-        }
 
-        PrimaryScrollableTabRow(
-            selectedTabIndex = pagerState.currentPage,
-            edgePadding = 0.dp,
-        ) {
-            TABS.forEachIndexed { index, title ->
-                Tab(
-                    selected = pagerState.currentPage == index,
-                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                    text = { Text(title) },
-                )
+            PrimaryScrollableTabRow(
+                selectedTabIndex = pagerState.currentPage,
+                edgePadding = 0.dp,
+            ) {
+                TABS.forEachIndexed { index, title ->
+                    Tab(
+                        selected = pagerState.currentPage == index,
+                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                        text = { Text(title) },
+                    )
+                }
             }
-        }
 
-        PullToRefreshBox(
-            isRefreshing = isRefreshing,
-            onRefresh = viewModel::refresh,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            HorizontalPager(
-                state = pagerState,
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = viewModel::refresh,
                 modifier = Modifier.fillMaxSize(),
-            ) { page ->
-                when (page) {
-                    0 -> FavoritesTab(uiState.favorites, onNavigateToTeam, onNavigateToEvent, favoritesListState)
-                    1 -> NotificationsTab(uiState.subscriptions, onNavigateToTeam, onNavigateToEvent, notificationsListState)
+            ) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize(),
+                ) { page ->
+                    when (page) {
+                        0 -> FavoritesTab(uiState.favorites, onNavigateToTeam, onNavigateToEvent, favoritesListState)
+                        1 -> NotificationsTab(uiState.subscriptions, onNavigateToTeam, onNavigateToEvent, notificationsListState)
+                    }
                 }
             }
         }
