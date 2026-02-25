@@ -52,11 +52,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
@@ -228,8 +230,21 @@ fun MyTBAScreen(
                     modifier = Modifier.fillMaxSize(),
                 ) { page ->
                     when (page) {
-                        0 -> FavoritesTab(uiState.favorites, onNavigateToTeam, onNavigateToEvent, favoritesListState)
-                        1 -> NotificationsTab(uiState.subscriptions, onNavigateToTeam, onNavigateToEvent, notificationsListState)
+                        0 -> FavoritesTab(
+                            favorites = uiState.favorites,
+                            onNavigateToTeam = onNavigateToTeam,
+                            onNavigateToEvent = onNavigateToEvent,
+                            listState = favoritesListState,
+                            canPinShortcuts = uiState.canPinShortcuts,
+                            onAddShortcut = viewModel::requestPinShortcut,
+                        )
+
+                        1 -> NotificationsTab(
+                            uiState.subscriptions,
+                            onNavigateToTeam,
+                            onNavigateToEvent,
+                            notificationsListState
+                        )
                     }
                 }
             }
@@ -269,6 +284,8 @@ private fun FavoritesTab(
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
     listState: LazyListState,
+    canPinShortcuts: Boolean,
+    onAddShortcut: (Favorite) -> Unit,
 ) {
     if (favorites.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -286,35 +303,82 @@ private fun FavoritesTab(
                         ModelType.EVENT -> onNavigateToEvent(favorite.modelKey)
                     }
                 },
+                showMenu = canPinShortcuts,
+                onAddShortcut = { onAddShortcut(favorite) },
             )
         }
     }
 }
 
 @Composable
-private fun FavoriteItem(favorite: Favorite, onClick: () -> Unit) {
+private fun FavoriteItem(
+    favorite: Favorite,
+    onClick: () -> Unit,
+    showMenu: Boolean,
+    onAddShortcut: () -> Unit,
+) {
     val typeLabel = when (favorite.modelType) {
         ModelType.EVENT -> "Event"
         ModelType.TEAM -> "Team"
         ModelType.MATCH -> "Match"
         else -> "Other"
     }
-    Column(
+    var menuExpanded by remember { mutableStateOf(false) }
+
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(
+                start = 16.dp,
+                top = if (showMenu) 8.dp else 12.dp,
+                bottom = if (showMenu) 8.dp else 12.dp,
+                end = if (showMenu) 4.dp else 16.dp,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = favorite.modelKey,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
-        )
-        Text(
-            text = typeLabel,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        Column(
+            modifier = Modifier.weight(1f),
+        ) {
+            Text(
+                text = favorite.modelKey,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+            )
+            Text(
+                text = typeLabel,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (showMenu) {
+            Box {
+                IconButton(onClick = { menuExpanded = true }) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "More options",
+                    )
+                }
+                DropdownMenu(
+                    expanded = menuExpanded,
+                    onDismissRequest = { menuExpanded = false },
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Add shortcut to home screen") },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_add_to_home_screen),
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = {
+                            menuExpanded = false
+                            onAddShortcut()
+                        },
+                    )
+                }
+            }
+        }
     }
 }
 
