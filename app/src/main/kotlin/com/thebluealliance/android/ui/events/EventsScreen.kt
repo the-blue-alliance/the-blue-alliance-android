@@ -40,6 +40,7 @@ import java.time.LocalDate
 @Composable
 fun EventsScreen(
     onNavigateToEvent: (String) -> Unit,
+    initialYear: Int? = null,
     scrollToTopTrigger: Int = 0,
     onYearState: (selectedYear: Int, maxYear: Int, onYearSelected: (Int) -> Unit) -> Unit = { _, _, _ -> },
     viewModel: EventsViewModel = hiltViewModel(),
@@ -49,6 +50,10 @@ fun EventsScreen(
     val maxYear by viewModel.maxYear.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
+
+    LaunchedEffect(Unit) {
+        initialYear?.let { viewModel.setInitialYear(it) }
+    }
 
     LaunchedEffect(selectedYear, maxYear) {
         onYearState(selectedYear, maxYear, viewModel::selectYear)
@@ -229,5 +234,3 @@ private fun EventsList(
         }
     }
 }
-
-

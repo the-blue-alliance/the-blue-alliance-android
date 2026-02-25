@@ -35,15 +35,24 @@ fun rememberNavigationState(
         startRoute, topLevelRoutes,
         serializer = MutableStateSerializer(NavKeySerializer())
     ) {
-        val startTopLevel = when (startRoute) {
-            in topLevelRoutes -> startRoute
+        val startTopLevel = when {
+            startRoute in topLevelRoutes -> startRoute
+            // Match parameterized top-level routes by type (e.g. Screen.Events(year=2026))
+            topLevelRoutes.any { it::class == startRoute::class } ->
+                topLevelRoutes.first { it::class == startRoute::class }
             else -> startTopLevelRoute
         }
         mutableStateOf(startTopLevel)
     }
 
+    val matchingTopLevelKey = topLevelRoutes.firstOrNull { it::class == startRoute::class }
+    val isParameterizedTopLevel = matchingTopLevelKey != null && startRoute != matchingTopLevelKey
+
     val backStacks = topLevelRoutes.associateWith { key ->
-        if (key == startTopLevelRoute && startRoute != startTopLevelRoute) {
+        if (isParameterizedTopLevel && key == matchingTopLevelKey) {
+            // Use the parameterized route (e.g. Events(year=2026)) as the tab's initial entry
+            rememberNavBackStack(startRoute)
+        } else if (key == startTopLevelRoute && startRoute != startTopLevelRoute && !isParameterizedTopLevel) {
             val syntheticStack = buildBackStack(
                 startKey = startRoute,
                 parentRoute = startTopLevelRoute,

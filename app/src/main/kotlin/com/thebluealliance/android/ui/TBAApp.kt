@@ -64,7 +64,7 @@ data class TopLevelDestination(
 )
 
 val TOP_LEVEL_DESTINATIONS = listOf(
-    TopLevelDestination(Screen.Events, "Events", Icons.Filled.CalendarMonth, Icons.Outlined.CalendarMonth),
+    TopLevelDestination(Screen.Events(), "Events", Icons.Filled.CalendarMonth, Icons.Outlined.CalendarMonth),
     TopLevelDestination(Screen.Teams, "Teams", Icons.Filled.Groups, Icons.Outlined.Groups),
     TopLevelDestination(Screen.Districts, "Districts", Icons.Filled.Map, Icons.Outlined.Map),
     TopLevelDestination(Screen.More, "More", Icons.Filled.Menu, Icons.Outlined.Menu),
@@ -111,7 +111,7 @@ fun TBAApp(
 
         val moreSubScreens = listOf(Screen.MyTBA, Screen.Settings, Screen.About, Screen.Thanks)
         val isOnMoreSubScreen = moreSubScreens.any { it == currentRoute }
-        val showBottomBar = TOP_LEVEL_DESTINATIONS.any { dest -> currentRoute == dest.key } || isOnMoreSubScreen
+        val showBottomBar = TOP_LEVEL_DESTINATIONS.any { dest -> currentRoute::class == dest.key::class } || isOnMoreSubScreen
 
         Scaffold(
             topBar = {
@@ -125,7 +125,7 @@ fun TBAApp(
                             }
                         },
                         title = {
-                            val isEvents = currentRoute == Screen.Events
+                            val isEvents = currentRoute is Screen.Events
                             val isDistricts = currentRoute == Screen.Districts
                             if (isOnMoreSubScreen) {
                                 val title = when (currentRoute) {
@@ -209,7 +209,7 @@ fun TBAApp(
                 if (showBottomBar) {
                     NavigationBar {
                         TOP_LEVEL_DESTINATIONS.forEach { dest ->
-                            val selected = currentRoute == dest.key || (dest.key == Screen.More && isOnMoreSubScreen)
+                            val selected = currentRoute::class == dest.key::class || (dest.key is Screen.More && isOnMoreSubScreen)
                             NavigationBarItem(
                                 selected = selected,
                                 onClick = dropUnlessResumed {
@@ -263,7 +263,7 @@ private fun FirebaseAnalyticsEffect(
         snapshotFlow { navState.currentRoute }
             .collectLatest { currentRoute ->
                 val screenName = when (currentRoute) {
-                    Screen.Events -> "Events"
+                    is Screen.Events -> "Events"
                     Screen.Teams -> "Teams"
                     Screen.Districts -> "Districts"
                     Screen.More -> "More"

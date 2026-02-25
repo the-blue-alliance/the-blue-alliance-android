@@ -4,7 +4,7 @@ import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
 sealed interface Screen : NavKey {
-    @Serializable data object Events : Screen
+    @Serializable data class Events(val year: Int? = null) : Screen
     @Serializable data object Teams : Screen
     @Serializable data object Districts : Screen
     @Serializable data object More : Screen
@@ -19,4 +19,3 @@ sealed interface Screen : NavKey {
     @Serializable data object About : Screen
     @Serializable data object Thanks : Screen
 }
-

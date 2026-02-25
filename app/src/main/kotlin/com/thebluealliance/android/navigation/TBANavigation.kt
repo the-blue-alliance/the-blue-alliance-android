@@ -40,11 +40,12 @@ fun TBANavigation(
         onBack = { navigator.goBack() },
         entries = navState.toEntries(
             entryProvider = entryProvider {
-                entry<Screen.Events> {
+                entry<Screen.Events> { events ->
                     EventsScreen(
                         onNavigateToEvent = { eventKey ->
                             navigator.navigate(Screen.EventDetail(eventKey))
                         },
+                        initialYear = events.year,
                         scrollToTopTrigger = scrollToTopTrigger,
                         onYearState = onEventsYearState,
                     )
@@ -197,4 +198,3 @@ fun TBANavigation(
         ),
     )
 }
-

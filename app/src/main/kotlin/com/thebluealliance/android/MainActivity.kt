@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
 
         val startRoute = getNotificationDestination()
             ?: getDeeplinkDestination()
-            ?: Screen.Events
+            ?: Screen.Events()
 
         setContent {
             TBAApp(
