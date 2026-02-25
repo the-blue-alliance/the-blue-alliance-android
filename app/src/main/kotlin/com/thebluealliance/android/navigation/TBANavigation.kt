@@ -79,7 +79,9 @@ fun TBANavigation(
             onBack = { navigator.goBack() },
             entries = navState.toEntries(
                 entryProvider = entryProvider {
-                entry<Screen.Events> {
+                entry<Screen.Events>(
+                    metadata = Transitions.topLevelTransitionSpec
+                ) {
                     EventsScreen(
                         onNavigateToEvent = { eventKey ->
                             navigator.navigate(Screen.EventDetail(eventKey))
