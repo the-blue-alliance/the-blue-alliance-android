@@ -4,16 +4,15 @@ import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
 import com.thebluealliance.android.MainActivity
+import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
+import com.thebluealliance.android.ui.components.TBABottomBar
 import com.thebluealliance.android.ui.districts.DistrictDetailScreen
 import com.thebluealliance.android.ui.districts.DistrictDetailViewModel
 import com.thebluealliance.android.ui.districts.DistrictsScreen
@@ -33,22 +32,8 @@ import com.thebluealliance.android.ui.teamevent.TeamEventDetailViewModel
 import com.thebluealliance.android.ui.teams.TeamDetailScreen
 import com.thebluealliance.android.ui.teams.TeamDetailViewModel
 import com.thebluealliance.android.ui.teams.TeamsScreen
-import com.thebluealliance.android.ui.components.TBABottomBar
-import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 @Composable
