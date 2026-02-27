@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
+import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.messaging.DeviceRegistrationManager
+import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,6 +24,7 @@ class MyTBAViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val myTBARepository: MyTBARepository,
     private val deviceRegistrationManager: DeviceRegistrationManager,
+    private val shortcutManager: TBAShortcutManager,
 ) : ViewModel() {
 
     private val _isRefreshing = MutableStateFlow(false)
@@ -39,6 +42,7 @@ class MyTBAViewModel @Inject constructor(
             userPhotoUrl = user?.photoUrl?.toString(),
             favorites = favorites,
             subscriptions = subscriptions,
+            canPinShortcuts = shortcutManager.canPinShortcuts(),
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MyTBAUiState())
 
@@ -54,6 +58,12 @@ class MyTBAViewModel @Inject constructor(
                         refresh()
                     }
                 }
+        }
+    }
+
+    fun requestPinShortcut(favorite: Favorite) {
+        viewModelScope.launch {
+            shortcutManager.requestPinShortcut(favorite)
         }
     }
 

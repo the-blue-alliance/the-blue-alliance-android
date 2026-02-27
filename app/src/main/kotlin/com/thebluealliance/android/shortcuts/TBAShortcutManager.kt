@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
+import android.widget.Toast
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Manages shortcuts for The Blue Alliance.
@@ -34,6 +36,7 @@ import javax.inject.Inject
  *
  * See https://developer.android.com/develop/ui/views/launch/shortcuts
  */
+@Singleton
 class TBAShortcutManager @Inject constructor(
     @ApplicationContext private val context: Context,
     private val tbaRepository: MyTBARepository,
@@ -43,7 +46,7 @@ class TBAShortcutManager @Inject constructor(
 ) {
 
     /**
-     * Start watching the favorites repository for changes, syncing favories to Android's shortcuts
+     * Start watching the favorites repository for changes, syncing favorites to Android's shortcuts
      * system.
      */
     fun beginSyncingShortcuts() {
@@ -145,6 +148,38 @@ class TBAShortcutManager @Inject constructor(
     private fun generateIntent(uri: Uri): Intent {
         return Intent(Intent.ACTION_VIEW, uri).apply {
             setClassName(context, "com.thebluealliance.android.LaunchShortcutActivity")
+        }
+    }
+
+    /**
+     * Returns whether the device supports pinning shortcuts to the home screen.
+     */
+    fun canPinShortcuts(): Boolean {
+        return ShortcutManagerCompat.isRequestPinShortcutSupported(context)
+    }
+
+    /**
+     * Request to pin a shortcut for the given favorite to the user's home screen.
+     * This will prompt the user with the system's pinned shortcut dialog.
+     */
+    suspend fun requestPinShortcut(favorite: Favorite) {
+        val shortcutInfo = favorite.getShortcutInfo()
+        if (shortcutInfo == null) {
+            Toast.makeText(
+                context,
+                "Failed to create shortcut",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        val success = ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
+        if (!success) {
+            Toast.makeText(
+                context,
+                "Failed to add shortcut to home screen",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 }
