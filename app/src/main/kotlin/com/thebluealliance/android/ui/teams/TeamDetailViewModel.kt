@@ -15,6 +15,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -121,7 +122,7 @@ class TeamDetailViewModel @AssistedInject constructor(
 
     fun selectYear(year: Int) {
         _selectedYear.value = year
-        refreshYearData()
+        viewModelScope.launch { refreshYearData() }
     }
 
     fun toggleFavorite() {
@@ -156,17 +157,19 @@ class TeamDetailViewModel @AssistedInject constructor(
         viewModelScope.launch {
             _isRefreshing.value = true
             try {
-                launch { try { teamRepository.refreshTeam(teamKey) } catch (_: Exception) {} }
-                refreshYearData()
+                coroutineScope {
+                    launch { try { teamRepository.refreshTeam(teamKey) } catch (_: Exception) {} }
+                    launch { refreshYearData() }
+                }
             } finally {
                 _isRefreshing.value = false
             }
         }
     }
 
-    private fun refreshYearData() {
+    private suspend fun refreshYearData() {
         val year = _selectedYear.value
-        viewModelScope.launch {
+        coroutineScope {
             launch { try { eventRepository.refreshTeamEvents(teamKey, year) } catch (_: Exception) {} }
             launch { try { teamRepository.refreshTeamMedia(teamKey, year) } catch (_: Exception) {} }
         }

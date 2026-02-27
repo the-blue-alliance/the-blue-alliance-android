@@ -69,7 +69,7 @@ class EventRepository @Inject constructor(
             val dtos = api.getTeamEvents(teamKey, year)
             db.withTransaction {
                 eventDao.insertAll(dtos.map { it.toEntity() })
-                eventTeamDao.deleteByTeam(teamKey)
+                eventTeamDao.deleteByTeamAndYear(teamKey, year.toString())
                 eventTeamDao.insertAll(dtos.map { EventTeamEntity(eventKey = it.key, teamKey = teamKey) })
             }
         } catch (_: Exception) { }

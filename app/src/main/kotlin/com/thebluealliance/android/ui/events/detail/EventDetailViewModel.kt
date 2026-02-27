@@ -15,6 +15,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -122,13 +123,15 @@ class EventDetailViewModel @AssistedInject constructor(
         viewModelScope.launch {
             _isRefreshing.value = true
             try {
-                launch { try { eventRepository.refreshEvent(eventKey) } catch (_: Exception) {} }
-                launch { try { teamRepository.refreshEventTeams(eventKey) } catch (_: Exception) {} }
-                launch { try { matchRepository.refreshEventMatches(eventKey) } catch (_: Exception) {} }
-                launch { try { eventRepository.refreshEventRankings(eventKey) } catch (_: Exception) {} }
-                launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
-                launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
-                launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
+                coroutineScope {
+                    launch { try { eventRepository.refreshEvent(eventKey) } catch (_: Exception) {} }
+                    launch { try { teamRepository.refreshEventTeams(eventKey) } catch (_: Exception) {} }
+                    launch { try { matchRepository.refreshEventMatches(eventKey) } catch (_: Exception) {} }
+                    launch { try { eventRepository.refreshEventRankings(eventKey) } catch (_: Exception) {} }
+                    launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
+                    launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
+                    launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
+                }
             } finally {
                 _isRefreshing.value = false
             }

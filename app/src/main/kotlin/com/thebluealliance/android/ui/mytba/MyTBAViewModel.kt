@@ -8,6 +8,7 @@ import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -72,8 +73,10 @@ class MyTBAViewModel @Inject constructor(
             if (!authRepository.isSignedIn()) return@launch
             _isRefreshing.value = true
             try {
-                launch { try { myTBARepository.refreshFavorites() } catch (_: Exception) {} }
-                launch { try { myTBARepository.refreshSubscriptions() } catch (_: Exception) {} }
+                coroutineScope {
+                    launch { try { myTBARepository.refreshFavorites() } catch (_: Exception) {} }
+                    launch { try { myTBARepository.refreshSubscriptions() } catch (_: Exception) {} }
+                }
             } finally {
                 _isRefreshing.value = false
             }

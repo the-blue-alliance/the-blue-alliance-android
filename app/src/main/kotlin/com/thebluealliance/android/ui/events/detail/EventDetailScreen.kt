@@ -5,10 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
@@ -20,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -61,6 +64,7 @@ fun EventDetailScreen(
     onNavigateToMatch: (String) -> Unit = {},
     onNavigateToMyTBA: () -> Unit = {},
     onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
+    onNavigateToSearch: () -> Unit,
     viewModel: EventDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -114,102 +118,110 @@ fun EventDetailScreen(
         )
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        TopAppBar(
-            windowInsets = WindowInsets(0),
-            title = {
-                Text(
-                    text = uiState.event?.let { "${it.year} ${it.name}" } ?: "Event",
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            },
-            navigationIcon = {
-                IconButton(onClick = onNavigateUp) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                }
-            },
-            actions = {
-                IconButton(onClick = {
-                    if (!viewModel.isSignedIn()) {
-                        showSignInDialog = true
-                    } else {
-                        showNotificationSheet = true
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = uiState.event?.let { "${it.year} ${it.name}" } ?: "Event",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                }) {
-                    val hasSubscription = subscription?.notifications?.isNotEmpty() == true
-                    Icon(
-                        imageVector = if (hasSubscription) Icons.Filled.Notifications else Icons.Outlined.NotificationsNone,
-                        contentDescription = "Notification preferences",
-                    )
-                }
-                IconButton(onClick = viewModel::toggleFavorite) {
-                    Icon(
-                        imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
-                        contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
-                    )
-                }
-                uiState.event?.let { event ->
+                },
+                actions = {
+                    IconButton(onClick = onNavigateToSearch) {
+                        Icon(Icons.Default.Search, contentDescription = "Search")
+                    }
                     IconButton(onClick = {
-                        context.shareTbaUrl(
-                            title = "${event.year} ${event.name}",
-                            url = "https://www.thebluealliance.com/event/${event.key}",
-                        )
+                        if (!viewModel.isSignedIn()) {
+                            showSignInDialog = true
+                        } else {
+                            showNotificationSheet = true
+                        }
                     }) {
-                        Icon(Icons.Filled.Share, contentDescription = "Share")
+                        val hasSubscription = subscription?.notifications?.isNotEmpty() == true
+                        Icon(
+                            imageVector = if (hasSubscription) Icons.Filled.Notifications else Icons.Outlined.NotificationsNone,
+                            contentDescription = "Notification preferences",
+                        )
                     }
+                    IconButton(onClick = viewModel::toggleFavorite) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                            contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                        )
+                    }
+                    uiState.event?.let { event ->
+                        IconButton(onClick = {
+                            context.shareTbaUrl(
+                                title = "${event.year} ${event.name}",
+                                url = "https://www.thebluealliance.com/event/${event.key}",
+                            )
+                        }) {
+                            Icon(Icons.Filled.Share, contentDescription = "Share")
+                        }
+                    }
+                },
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            PrimaryScrollableTabRow(
+                selectedTabIndex = pagerState.currentPage,
+                edgePadding = 0.dp,
+            ) {
+                TABS.forEachIndexed { index, title ->
+                    Tab(
+                        selected = pagerState.currentPage == index,
+                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                        text = { Text(title) },
+                    )
                 }
-            },
-        )
-
-        PrimaryScrollableTabRow(
-            selectedTabIndex = pagerState.currentPage,
-            edgePadding = 0.dp,
-        ) {
-            TABS.forEachIndexed { index, title ->
-                Tab(
-                    selected = pagerState.currentPage == index,
-                    onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                    text = { Text(title) },
-                )
             }
-        }
 
-        PullToRefreshBox(
-            isRefreshing = isRefreshing,
-            onRefresh = viewModel::refreshAll,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            HorizontalPager(
-                state = pagerState,
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = viewModel::refreshAll,
                 modifier = Modifier.fillMaxSize(),
-            ) { page ->
-                when (page) {
-                    0 -> EventInfoTab(uiState.event)
-                    1 -> EventTeamsTab(uiState.teams) { teamKey ->
-                        val eventKey = uiState.event?.key
-                        if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
-                        else onNavigateToTeam(teamKey)
+            ) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize(),
+                ) { page ->
+                    when (page) {
+                        0 -> EventInfoTab(uiState.event)
+                        1 -> EventTeamsTab(uiState.teams) { teamKey ->
+                            val eventKey = uiState.event?.key
+                            if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
+                            else onNavigateToTeam(teamKey)
+                        }
+                        2 -> EventMatchesTab(
+                            matches = uiState.matches,
+                            playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
+                            onNavigateToMatch = onNavigateToMatch
+                        )
+                        3 -> EventRankingsTab(uiState.rankings) { teamKey ->
+                            val eventKey = uiState.event?.key
+                            if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
+                        }
+                        4 -> EventAlliancesTab(uiState.alliances)
+                        5 -> EventAwardsTab(uiState.awards)
+                        6 -> EventDistrictPointsTab(
+                            uiState.districtPoints,
+                            uiState.event,
+                            uiState.teams
+                        )
                     }
-                    2 -> EventMatchesTab(
-                        matches = uiState.matches,
-                        playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
-                        onNavigateToMatch = onNavigateToMatch
-                    )
-                    3 -> EventRankingsTab(uiState.rankings) { teamKey ->
-                        val eventKey = uiState.event?.key
-                        if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
-                    }
-                    4 -> EventAlliancesTab(uiState.alliances)
-                    5 -> EventAwardsTab(uiState.awards)
-                    6 -> EventDistrictPointsTab(
-                        uiState.districtPoints,
-                        uiState.event,
-                        uiState.teams
-                    )
                 }
             }
         }

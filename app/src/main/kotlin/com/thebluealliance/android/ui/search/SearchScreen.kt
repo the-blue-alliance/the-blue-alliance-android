@@ -16,6 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -53,70 +54,74 @@ fun SearchScreen(
         lazyListState.scrollToItem(0)
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        TopAppBar(
-            windowInsets = WindowInsets(0),
-            title = {
-                TextField(
-                    value = uiState.query,
-                    onValueChange = viewModel::onQueryChanged,
-                    placeholder = { Text("Search teams & events") },
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester),
-                    trailingIcon = {
-                        if (uiState.query.isNotEmpty()) {
-                            IconButton(onClick = { viewModel.onQueryChanged("") }) {
-                                Icon(Icons.Default.Clear, contentDescription = "Clear")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    TextField(
+                        value = uiState.query,
+                        onValueChange = viewModel::onQueryChanged,
+                        placeholder = { Text("Search teams & events") },
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(focusRequester),
+                        trailingIcon = {
+                            if (uiState.query.isNotEmpty()) {
+                                IconButton(onClick = { viewModel.onQueryChanged("") }) {
+                                    Icon(Icons.Default.Clear, contentDescription = "Clear")
+                                }
                             }
-                        }
-                    },
-                )
-            },
-            navigationIcon = {
-                IconButton(onClick = onNavigateUp) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                }
-            },
-        )
-
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            state = lazyListState,
+                        },
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            if (uiState.teams.isNotEmpty()) {
-                item(key = "teams_header") {
-                    Text(
-                        text = "Teams",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                state = lazyListState,
+            ) {
+                if (uiState.teams.isNotEmpty()) {
+                    item(key = "teams_header") {
+                        Text(
+                            text = "Teams",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        )
+                    }
+                    items(uiState.teams, key = { "team_${it.key}" }) { team ->
+                        TeamRow(team = team, onClick = { onNavigateToTeam(team.key) })
+                    }
                 }
-                items(uiState.teams, key = { "team_${it.key}" }) { team ->
-                    TeamRow(team = team, onClick = { onNavigateToTeam(team.key) })
-                }
-            }
-            if (uiState.events.isNotEmpty()) {
-                item(key = "events_header") {
-                    Text(
-                        text = "Events",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
-                }
-                items(uiState.events, key = { "event_${it.key}" }) { event ->
-                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) }, showYear = true)
+                if (uiState.events.isNotEmpty()) {
+                    item(key = "events_header") {
+                        Text(
+                            text = "Events",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        )
+                    }
+                    items(uiState.events, key = { "event_${it.key}" }) { event ->
+                        EventRow(event = event, onClick = { onNavigateToEvent(event.key) }, showYear = true)
+                    }
                 }
             }
         }
     }
 }
-
