@@ -54,13 +54,13 @@ fun computeThisWeekEvents(
         }
 
         events = (weekEvents + championshipEvents).distinctBy { it.key }
-        label = "Happening This Week \u2014 Week ${currentWeek + 1}"
+        label = "Upcoming This Week \u2014 Week ${currentWeek + 1}"
     } else {
         // Offseason fallback: calendar week overlap (Monday-Sunday)
         val monday = today.with(DayOfWeek.MONDAY)
         val sunday = monday.plusDays(6)
         events = allEvents.filter { datesOverlap(it, monday, sunday) }
-        label = "Happening This Week"
+        label = "Upcoming This Week"
     }
 
     // Remove events that have already ended

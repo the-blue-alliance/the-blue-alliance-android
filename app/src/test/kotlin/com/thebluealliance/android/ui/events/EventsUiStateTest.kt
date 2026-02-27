@@ -55,7 +55,7 @@ class EventsUiStateTest {
         val result = computeThisWeekEvents(events, today, selectedYear = 2026)
 
         assertNotNull(result)
-        assertEquals("Happening This Week \u2014 Week 3", result!!.label) // week=2 → display "Week 3"
+        assertEquals("Upcoming This Week \u2014 Week 3", result!!.label) // week=2 → display "Week 3"
         assertEquals(2, result.events.size)
         assertEquals(setOf("2026abc", "2026def"), result.events.map { it.key }.toSet())
     }
@@ -74,7 +74,7 @@ class EventsUiStateTest {
         val result = computeThisWeekEvents(events, today, selectedYear = 2026)
 
         assertNotNull(result)
-        assertEquals("Happening This Week \u2014 Week 4", result!!.label) // week=3 → display "Week 4"
+        assertEquals("Upcoming This Week \u2014 Week 4", result!!.label) // week=3 → display "Week 4"
         assertEquals(1, result.events.size)
         assertEquals("2026def", result.events[0].key)
     }
@@ -112,7 +112,7 @@ class EventsUiStateTest {
 
         // Should use calendar-week fallback showing preseason, NOT jump to Week 1
         assertNotNull(result)
-        assertEquals("Happening This Week", result!!.label)
+        assertEquals("Upcoming This Week", result!!.label)
         assertEquals(1, result.events.size)
         assertEquals("2026pre1", result.events[0].key)
     }
@@ -153,7 +153,7 @@ class EventsUiStateTest {
         val result = computeThisWeekEvents(events, today, selectedYear = 2026)
 
         assertNotNull(result)
-        assertEquals("Happening This Week", result!!.label)
+        assertEquals("Upcoming This Week", result!!.label)
         assertEquals(1, result.events.size)
         assertEquals("2026off1", result.events[0].key)
     }
@@ -192,7 +192,7 @@ class EventsUiStateTest {
         val result = computeThisWeekEvents(events, today, selectedYear = 2026)
 
         assertNotNull(result)
-        assertEquals("Happening This Week \u2014 Week 7", result!!.label) // week=6 → "Week 7"
+        assertEquals("Upcoming This Week \u2014 Week 7", result!!.label) // week=6 → "Week 7"
         assertEquals(setOf("2026reg", "2026cmp"), result.events.map { it.key }.toSet())
         // cmp2 does NOT overlap the week's date range, so excluded
     }
