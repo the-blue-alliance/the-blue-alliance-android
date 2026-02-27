@@ -40,6 +40,20 @@ class EventsViewModel @Inject constructor(
 
     private val _hasLoaded = MutableStateFlow(false)
 
+    private var _hasExplicitYear = false
+
+    /**
+     * Set the initial year from a deep link. This prevents [fetchMaxYear] from overriding
+     * the user's intended year. Only takes effect on the first call.
+     */
+    fun setInitialYear(year: Int) {
+        if (!_hasExplicitYear) {
+            _hasExplicitYear = true
+            _selectedYear.value = year
+            refreshEvents()
+        }
+    }
+
     val uiState: StateFlow<EventsUiState> = _selectedYear
         .flatMapLatest { year ->
             _hasLoaded.value = false
@@ -72,8 +86,8 @@ class EventsViewModel @Inject constructor(
             try {
                 val status = tbaApi.getStatus()
                 _maxYear.value = status.maxSeason
-                // If current selection is below max, update to max
-                if (_selectedYear.value < status.maxSeason) {
+                // If current selection is below max, update to max (unless year was set explicitly)
+                if (!_hasExplicitYear && _selectedYear.value < status.maxSeason) {
                     _selectedYear.value = status.maxSeason
                 }
             } catch (_: Exception) {

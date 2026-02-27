@@ -44,8 +44,8 @@ class Navigator(
      * See https://developer.android.com/guide/navigation/principles
      */
     fun goBack() {
-        // If we're at the base of the current route, go back to the start route stack.
-        if (state.currentRoute == state.topLevelRoute) {
+        // If we're at the base of the current tab, go back to the start route tab.
+        if (state.currentStack.size == 1) {
             state.topLevelRoute = state.startRoute
         } else {
             state.currentStack.removeLastOrNull()
@@ -76,7 +76,7 @@ class Navigator(
          */
         if (size == 1) {
             // All deeplinks currently use Screen.Events as their parent
-            val deeplinkKey = Screen.Events
+            val deeplinkKey = Screen.Events()
 
             /**
              * create a [androidx.core.app.TaskStackBuilder] that will restart the

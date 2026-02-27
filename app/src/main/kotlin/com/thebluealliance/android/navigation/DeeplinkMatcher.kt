@@ -25,7 +25,7 @@ class DeeplinkMatcher {
 
         // https://www.thebluealliance.com/events or /events/{year}
         if (segments[0] == "events") {
-            return Screen.Events
+            return Screen.Events(year = segments.getOrNull(1)?.toIntOrNull())
         }
 
         // https://www.thebluealliance.com/teams or /teams/{page}
@@ -36,4 +36,3 @@ class DeeplinkMatcher {
         return null
     }
 }
-
