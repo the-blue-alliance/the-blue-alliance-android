@@ -1,16 +1,18 @@
 package com.thebluealliance.android.ui.districts
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -28,7 +30,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,8 +41,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.DistrictRanking
-import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.ui.components.EventRow
+import com.thebluealliance.android.ui.components.SectionHeader
+import com.thebluealliance.android.ui.components.SectionHeaderInfo
+import com.thebluealliance.android.ui.events.EventSection
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Events", "Rankings")
@@ -100,7 +106,7 @@ fun DistrictDetailScreen(
             }
 
             PullToRefreshBox(
-                isRefreshing = isRefreshing && uiState.events != null && uiState.rankings != null,
+                isRefreshing = isRefreshing && uiState.eventSections != null && uiState.rankings != null,
                 onRefresh = viewModel::refreshAll,
                 modifier = Modifier.fillMaxSize(),
             ) {
@@ -109,7 +115,7 @@ fun DistrictDetailScreen(
                     modifier = Modifier.fillMaxSize(),
                 ) { page ->
                     when (page) {
-                        0 -> EventsTab(uiState.events, onNavigateToEvent)
+                        0 -> EventsTab(uiState.eventSections, onNavigateToEvent)
                         1 -> RankingsTab(uiState.rankings, onNavigateToTeam)
                     }
                 }
@@ -118,19 +124,63 @@ fun DistrictDetailScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun EventsTab(events: List<Event>?, onNavigateToEvent: (String) -> Unit) {
-    if (events == null) {
+private fun EventsTab(sections: List<EventSection>?, onNavigateToEvent: (String) -> Unit) {
+    if (sections == null) {
         LoadingBox()
         return
     }
-    if (events.isEmpty()) {
+    if (sections.isEmpty()) {
         EmptyBox("No events")
         return
     }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(events, key = { it.key }) { event ->
-            EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    val headerInfos = remember(sections) {
+        buildList {
+            var index = 0
+            sections.forEach { section ->
+                val headerKey = "header_${section.label}"
+                add(SectionHeaderInfo(headerKey, section.label, index))
+                index += 1 + section.events.size // header + items
+            }
+        }
+    }
+
+    val headerKeys = remember(headerInfos) { headerInfos.map { it.key }.toSet() }
+
+    val stuckHeaderKey by remember {
+        derivedStateOf {
+            val stuck = listState.layoutInfo.visibleItemsInfo
+                .firstOrNull { item ->
+                    val key = item.key as? String
+                    key != null && key in headerKeys && item.offset <= 0
+                }?.key as? String
+            stuck ?: headerInfos.firstOrNull()?.key
+        }
+    }
+
+    LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+        sections.forEach { section ->
+            val headerKey = "header_${section.label}"
+            stickyHeader(key = headerKey) {
+                SectionHeader(
+                    label = section.label,
+                    isStuck = stuckHeaderKey == headerKey,
+                    allHeaders = headerInfos,
+                    onHeaderSelected = { info ->
+                        coroutineScope.launch {
+                            listState.animateScrollToItem(info.itemIndex)
+                        }
+                    },
+                )
+            }
+            items(section.events, key = { it.key }) { event ->
+                EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+            }
         }
     }
 }
