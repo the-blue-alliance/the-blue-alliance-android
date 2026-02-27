@@ -1,5 +1,8 @@
 package com.thebluealliance.android.data.repository
 
+import android.util.Log
+import androidx.room.withTransaction
+import com.thebluealliance.android.data.local.TBADatabase
 import com.thebluealliance.android.data.local.dao.FavoriteDao
 import com.thebluealliance.android.data.local.dao.SubscriptionDao
 import com.thebluealliance.android.data.local.entity.FavoriteEntity
@@ -8,7 +11,6 @@ import com.thebluealliance.android.data.remote.ClientApi
 import com.thebluealliance.android.data.remote.dto.ModelPreferenceRequestDto
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.Subscription
-import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -16,6 +18,7 @@ import javax.inject.Singleton
 
 @Singleton
 class MyTBARepository @Inject constructor(
+    private val db: TBADatabase,
     private val clientApi: ClientApi,
     private val favoriteDao: FavoriteDao,
     private val subscriptionDao: SubscriptionDao,
@@ -57,10 +60,12 @@ class MyTBARepository @Inject constructor(
         if (response.code == 401) {
             throw MyTBAServerException(response.code, response.message)
         }
-        favoriteDao.deleteAll()
-        favoriteDao.insertAll(response.favorites.map {
-            FavoriteEntity(modelKey = it.modelKey, modelType = it.modelType)
-        })
+        db.withTransaction {
+            favoriteDao.deleteAll()
+            favoriteDao.insertAll(response.favorites.map {
+                FavoriteEntity(modelKey = it.modelKey, modelType = it.modelType)
+            })
+        }
     }
 
     suspend fun refreshSubscriptions() {
@@ -68,14 +73,16 @@ class MyTBARepository @Inject constructor(
         if (response.code == 401) {
             throw MyTBAServerException(response.code, response.message)
         }
-        subscriptionDao.deleteAll()
-        subscriptionDao.insertAll(response.subscriptions.map {
-            SubscriptionEntity(
-                modelKey = it.modelKey,
-                modelType = it.modelType,
-                notifications = it.notifications.joinToString(","),
-            )
-        })
+        db.withTransaction {
+            subscriptionDao.deleteAll()
+            subscriptionDao.insertAll(response.subscriptions.map {
+                SubscriptionEntity(
+                    modelKey = it.modelKey,
+                    modelType = it.modelType,
+                    notifications = it.notifications.joinToString(","),
+                )
+            })
+        }
     }
 
     suspend fun addFavorite(modelKey: String, modelType: Int) {
