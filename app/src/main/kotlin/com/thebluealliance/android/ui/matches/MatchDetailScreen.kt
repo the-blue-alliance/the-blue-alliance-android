@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,6 +24,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -47,128 +49,139 @@ fun MatchDetailScreen(
     onNavigateUp: () -> Unit,
     onNavigateToTeam: (String) -> Unit = {},
     onNavigateToEvent: (String) -> Unit = {},
+    onNavigateToSearch: () -> Unit,
     viewModel: MatchDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        TopAppBar(
-            windowInsets = WindowInsets(0),
-            title = {
-                Text(
-                    text = uiState.match?.getFullLabel(uiState.playoffType) ?: "Match",
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            },
-            navigationIcon = {
-                IconButton(onClick = onNavigateUp) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                }
-            },
-            actions = {
-                uiState.match?.let { match ->
-                    IconButton(onClick = {
-                        val eventLabel = uiState.eventName?.let { "${uiState.year} $it - " } ?: ""
-                        context.shareTbaUrl(
-                            title = "$eventLabel${match.getFullLabel(uiState.playoffType)}",
-                            url = "https://www.thebluealliance.com/match/${match.key}",
-                        )
-                    }) {
-                        Icon(Icons.Filled.Share, contentDescription = "Share")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = uiState.match?.getFullLabel(uiState.playoffType) ?: "Match",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                }
-            },
-        )
-
-        PullToRefreshBox(
-            isRefreshing = isRefreshing,
-            onRefresh = viewModel::refresh,
-            modifier = Modifier.fillMaxSize(),
+                },
+                actions = {
+                    IconButton(onClick = onNavigateToSearch) {
+                        Icon(Icons.Default.Search, contentDescription = "Search")
+                    }
+                    uiState.match?.let { match ->
+                        IconButton(onClick = {
+                            val eventLabel = uiState.eventName?.let { "${uiState.year} $it - " } ?: ""
+                            context.shareTbaUrl(
+                                title = "$eventLabel${match.getFullLabel(uiState.playoffType)}",
+                                url = "https://www.thebluealliance.com/match/${match.key}",
+                            )
+                        }) {
+                            Icon(Icons.Filled.Share, contentDescription = "Share")
+                        }
+                    }
+                },
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            val match = uiState.match
-            if (match == null) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                ) {
-                    // Event name + match time
-                    item(key = "event_info") {
-                        EventInfo(
-                            eventName = uiState.eventName,
-                            eventKey = uiState.eventKey,
-                            formattedTime = uiState.formattedTime,
-                            onNavigateToEvent = onNavigateToEvent,
-                        )
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = viewModel::refresh,
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                val match = uiState.match
+                if (match == null) {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
                     }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                    ) {
+                        // Event name + match time
+                        item(key = "event_info") {
+                            EventInfo(
+                                eventName = uiState.eventName,
+                                eventKey = uiState.eventKey,
+                                formattedTime = uiState.formattedTime,
+                                onNavigateToEvent = onNavigateToEvent,
+                            )
+                        }
 
-                    // Score summary
-                    item(key = "score_header") {
-                        ScoreSummary(match)
-                    }
+                        // Score summary
+                        item(key = "score_header") {
+                            ScoreSummary(match)
+                        }
 
-                    item(key = "divider_teams") {
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                    }
-
-                    // Teams
-                    item(key = "red_teams") {
-                        AllianceTeams("Red alliance", match.redTeamKeys, MaterialTheme.colorScheme.error, onNavigateToTeam)
-                    }
-                    item(key = "blue_teams") {
-                        AllianceTeams("Blue alliance", match.blueTeamKeys, MaterialTheme.colorScheme.primary, onNavigateToTeam)
-                    }
-
-                    // Videos
-                    val videos = uiState.videos
-                    if (videos.isNotEmpty()) {
-                        item(key = "videos_header") {
+                        item(key = "divider_teams") {
                             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                            Text(
-                                text = "Videos",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            )
-                        }
-                        items(videos, key = { "video_${it.key}" }) { video ->
-                            VideoRow(video)
-                        }
-                    }
-
-                    // Score breakdown
-                    val breakdown = uiState.scoreBreakdown
-                    if (breakdown != null) {
-                        item(key = "breakdown_header") {
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                            Text(
-                                text = "Score breakdown",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            )
                         }
 
-                        val redBreakdown = breakdown["red"] ?: emptyMap()
-                        val blueBreakdown = breakdown["blue"] ?: emptyMap()
-                        val orderedFields = getOrderedBreakdownFields(
-                            uiState.year, redBreakdown, blueBreakdown
-                        )
+                        // Teams
+                        item(key = "red_teams") {
+                            AllianceTeams("Red alliance", match.redTeamKeys, MaterialTheme.colorScheme.error, onNavigateToTeam)
+                        }
+                        item(key = "blue_teams") {
+                            AllianceTeams("Blue alliance", match.blueTeamKeys, MaterialTheme.colorScheme.primary, onNavigateToTeam)
+                        }
 
-                        items(orderedFields, key = { "breakdown_${it.first}" }) { (apiKey, label) ->
-                            BreakdownRow(
-                                label = label,
-                                redValue = formatBreakdownValue(apiKey, redBreakdown[apiKey] ?: "-"),
-                                blueValue = formatBreakdownValue(apiKey, blueBreakdown[apiKey] ?: "-"),
+                        // Videos
+                        val videos = uiState.videos
+                        if (videos.isNotEmpty()) {
+                            item(key = "videos_header") {
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                                Text(
+                                    text = "Videos",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                )
+                            }
+                            items(videos, key = { "video_${it.key}" }) { video ->
+                                VideoRow(video)
+                            }
+                        }
+
+                        // Score breakdown
+                        val breakdown = uiState.scoreBreakdown
+                        if (breakdown != null) {
+                            item(key = "breakdown_header") {
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                                Text(
+                                    text = "Score breakdown",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                )
+                            }
+
+                            val redBreakdown = breakdown["red"] ?: emptyMap()
+                            val blueBreakdown = breakdown["blue"] ?: emptyMap()
+                            val orderedFields = getOrderedBreakdownFields(
+                                year = uiState.year,
+                                redBreakdown = redBreakdown,
+                                blueBreakdown = blueBreakdown,
                             )
+
+                            items(orderedFields, key = { "breakdown_${it.first}" }) { (apiKey, label) ->
+                                BreakdownRow(
+                                    label = label,
+                                    redValue = formatBreakdownValue(apiKey, redBreakdown[apiKey] ?: "-"),
+                                    blueValue = formatBreakdownValue(apiKey, blueBreakdown[apiKey] ?: "-"),
+                                )
+                            }
                         }
                     }
                 }
