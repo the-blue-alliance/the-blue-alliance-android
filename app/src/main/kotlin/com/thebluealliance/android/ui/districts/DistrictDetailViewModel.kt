@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.DistrictRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.ui.events.buildEventSections
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -36,7 +37,7 @@ class DistrictDetailViewModel @AssistedInject constructor(
     ) { district, events, rankings ->
         DistrictDetailUiState(
             district = district,
-            events = events,
+            eventSections = if (events.isEmpty()) null else buildEventSections(events),
             rankings = rankings,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DistrictDetailUiState())

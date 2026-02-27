@@ -16,6 +16,36 @@ sealed interface EventsUiState {
     data class Error(val message: String) : EventsUiState
 }
 
+private data class SectionKey(val sortOrder: Int, val label: String)
+
+private fun eventSectionKey(event: Event): SectionKey {
+    return when (event.type) {
+        100 -> SectionKey(-1, "Preseason")
+        0, 1, 2, 5 -> {
+            val week = event.week ?: return SectionKey(9999, "Other events")
+            SectionKey(week, "Week ${week + 1}")
+        }
+        3, 4 -> SectionKey(1000, "Championship")
+        99 -> SectionKey(2000, "Offseason")
+        else -> {
+            // Unknown type but has a week — group with regular weeks
+            if (event.week != null) {
+                SectionKey(event.week, "Week ${event.week + 1}")
+            } else {
+                SectionKey(9999, "Other events")
+            }
+        }
+    }
+}
+
+fun buildEventSections(events: List<Event>): List<EventSection> {
+    return events
+        .groupBy { eventSectionKey(it) }
+        .entries
+        .sortedBy { it.key.sortOrder }
+        .map { (key, sectionEvents) -> EventSection(key.label, sectionEvents) }
+}
+
 data class ThisWeekResult(val label: String, val events: List<Event>)
 
 /**
