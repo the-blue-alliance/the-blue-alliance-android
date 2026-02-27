@@ -54,16 +54,22 @@ fun computeThisWeekEvents(
         }
 
         events = (weekEvents + championshipEvents).distinctBy { it.key }
-        label = "This Week \u2014 Week ${currentWeek + 1}"
+        label = "Happening This Week \u2014 Week ${currentWeek + 1}"
     } else {
         // Offseason fallback: calendar week overlap (Monday-Sunday)
         val monday = today.with(DayOfWeek.MONDAY)
         val sunday = monday.plusDays(6)
         events = allEvents.filter { datesOverlap(it, monday, sunday) }
-        label = "This Week"
+        label = "Happening This Week"
     }
 
-    return if (events.isEmpty()) null else ThisWeekResult(label, events)
+    // Remove events that have already ended
+    val activeEvents = events.filter { event ->
+        val end = parseDate(event.endDate)
+        end == null || !end.isBefore(today)
+    }
+
+    return if (activeEvents.isEmpty()) null else ThisWeekResult(label, activeEvents)
 }
 
 internal fun findCurrentCompetitionWeek(allEvents: List<Event>, today: LocalDate): Int? {
