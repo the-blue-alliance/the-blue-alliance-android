@@ -45,6 +45,7 @@ fun MatchList(
     playoffType: PlayoffType,
     onNavigateToMatch: (String) -> Unit,
     headerContent: (LazyListScope.() -> Unit)? = null,
+    headerItemCount: Int = 0,
 ) {
     if (matches == null || matches.isEmpty()) {
         LazyColumn(Modifier.fillMaxSize()) {
@@ -70,8 +71,7 @@ fun MatchList(
     }
 
     // Calculate index of first unplayed match for auto-scroll
-    // When headerContent is present, it adds items before the match groups
-    val headerOffset = if (headerContent != null) 2 else 0
+    val headerOffset = headerItemCount
     val firstUnplayedIndex = run {
         var index = headerOffset
         for ((_, levelMatches) in grouped) {
