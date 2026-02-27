@@ -113,31 +113,35 @@ fun TeamEventDetailScreen(
                 ) { page ->
                     val evt = uiState.event
                     when (page) {
-                        0 -> MatchList(
-                            matches = uiState.matches,
-                            playoffType = evt?.playoffType ?: PlayoffType.OTHER,
-                            onNavigateToMatch = onNavigateToMatch,
-                            headerContent = {
-                                if (evt != null) {
-                                    item(key = "header_event") {
-                                        EventRow(
-                                            event = evt,
-                                            onClick = { onNavigateToEvent(evt.key) },
-                                            showYear = true,
-                                        )
+                        0 -> {
+                            val tm = uiState.team
+                            val headerCount = (if (evt != null) 1 else 0) + (if (tm != null) 1 else 0)
+                            MatchList(
+                                matches = uiState.matches,
+                                playoffType = evt?.playoffType ?: PlayoffType.OTHER,
+                                onNavigateToMatch = onNavigateToMatch,
+                                headerItemCount = headerCount,
+                                headerContent = {
+                                    if (evt != null) {
+                                        item(key = "header_event") {
+                                            EventRow(
+                                                event = evt,
+                                                onClick = { onNavigateToEvent(evt.key) },
+                                                showYear = true,
+                                            )
+                                        }
                                     }
-                                }
-                                val tm = uiState.team
-                                if (tm != null) {
-                                    item(key = "header_team") {
-                                        TeamRow(
-                                            team = tm,
-                                            onClick = { onNavigateToTeam(tm.key) },
-                                        )
+                                    if (tm != null) {
+                                        item(key = "header_team") {
+                                            TeamRow(
+                                                team = tm,
+                                                onClick = { onNavigateToTeam(tm.key) },
+                                            )
+                                        }
                                     }
-                                }
-                            },
-                        )
+                                },
+                            )
+                        }
                         1 -> AwardsTab(uiState.awards)
                     }
                 }
