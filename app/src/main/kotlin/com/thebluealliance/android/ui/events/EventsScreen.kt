@@ -158,6 +158,7 @@ fun EventsScreen(
                             EventsList(
                                 sections = state.sections,
                                 favoriteEventKeys = state.favoriteEventKeys,
+                                selectedYear = selectedYear,
                                 onEventClick = onNavigateToEvent,
                                 listState = listState,
                             )
@@ -173,6 +174,7 @@ fun EventsScreen(
 private fun EventsList(
     sections: List<EventSection>,
     favoriteEventKeys: Set<String>,
+    selectedYear: Int,
     onEventClick: (String) -> Unit,
     listState: LazyListState,
 ) {
@@ -183,22 +185,20 @@ private fun EventsList(
         emptyList()
     }
     val today = remember { LocalDate.now() }
-    val happeningNowEvents = allEvents.filter { event ->
-        val start = event.startDate?.let { LocalDate.parse(it) }
-        val end = event.endDate?.let { LocalDate.parse(it) }
-        start != null && end != null && !today.isBefore(start) && !today.isAfter(end)
+    val thisWeekResult = remember(allEvents, today, selectedYear) {
+        computeThisWeekEvents(allEvents, today, selectedYear)
     }
 
-    val headerInfos = remember(sections, favoriteEvents, happeningNowEvents) {
+    val headerInfos = remember(sections, favoriteEvents, thisWeekResult) {
         buildList {
             var index = 0
             if (favoriteEvents.isNotEmpty()) {
                 add(SectionHeaderInfo("favorites_header", "Favorites", index))
                 index += 1 + favoriteEvents.size + 1 // header + items + divider
             }
-            if (happeningNowEvents.isNotEmpty()) {
-                add(SectionHeaderInfo("happening_now_header", "Happening now", index))
-                index += 1 + happeningNowEvents.size + 1 // header + items + divider
+            if (thisWeekResult != null) {
+                add(SectionHeaderInfo("this_week_header", thisWeekResult.label, index))
+                index += 1 + thisWeekResult.events.size + 1 // header + items + divider
             }
             sections.forEach { section ->
                 val headerKey = "header_${section.label}"
@@ -246,11 +246,11 @@ private fun EventsList(
                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
                 }
             }
-            if (happeningNowEvents.isNotEmpty()) {
-                stickyHeader(key = "happening_now_header") {
+            if (thisWeekResult != null) {
+                stickyHeader(key = "this_week_header") {
                     SectionHeader(
-                        label = "Happening now",
-                        isStuck = stuckHeaderKey == "happening_now_header",
+                        label = thisWeekResult.label,
+                        isStuck = stuckHeaderKey == "this_week_header",
                         allHeaders = headerInfos,
                         onHeaderSelected = { info ->
                             coroutineScope.launch {
@@ -259,10 +259,10 @@ private fun EventsList(
                         },
                     )
                 }
-                items(happeningNowEvents, key = { "now_${it.key}" }) { event ->
+                items(thisWeekResult.events, key = { "thisweek_${it.key}" }) { event ->
                     EventRow(event = event, onClick = { onEventClick(event.key) })
                 }
-                item(key = "happening_now_divider") {
+                item(key = "this_week_divider") {
                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
                 }
             }
