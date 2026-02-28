@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.WindowInsets
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -34,10 +37,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.District
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -75,35 +80,44 @@ fun DistrictsScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    if (selectedYear > 0) {
-                        Row(
-                            modifier = Modifier.clickable { yearDropdownExpanded = true },
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text("$selectedYear Districts")
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Select year")
-                            DropdownMenu(
-                                expanded = yearDropdownExpanded,
-                                onDismissRequest = { yearDropdownExpanded = false },
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.tba_lamp),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp),
+                            tint = Color.White
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        if (selectedYear > 0) {
+                            Row(
+                                modifier = Modifier.clickable { yearDropdownExpanded = true },
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                (maxYear downTo 2009).forEach { year ->
-                                    DropdownMenuItem(
-                                        text = { Text(year.toString()) },
-                                        onClick = {
-                                            viewModel.selectYear(year)
-                                            yearDropdownExpanded = false
-                                        },
-                                    )
+                                Text("$selectedYear Districts")
+                                Icon(Icons.Default.ArrowDropDown, contentDescription = "Select year")
+                                DropdownMenu(
+                                    expanded = yearDropdownExpanded,
+                                    onDismissRequest = { yearDropdownExpanded = false },
+                                ) {
+                                    (maxYear downTo 2009).forEach { year ->
+                                        DropdownMenuItem(
+                                            text = { Text(year.toString()) },
+                                            onClick = {
+                                                viewModel.selectYear(year)
+                                                yearDropdownExpanded = false
+                                            },
+                                        )
+                                    }
                                 }
                             }
+                        } else {
+                            Text("Districts")
                         }
-                    } else {
-                        Text("Districts")
                     }
                 },
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {
-                        Icon(Icons.Default.Search, contentDescription = "Search")
+                        Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
