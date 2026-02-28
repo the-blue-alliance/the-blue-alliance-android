@@ -30,6 +30,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,6 +59,7 @@ import com.thebluealliance.android.ui.events.detail.tabs.EventInfoTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventMatchesTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventRankingsTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventTeamsTab
+import com.thebluealliance.android.ui.theme.TBABlue
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Info", "Teams", "Matches", "Rankings", "Alliances", "Awards", "District points")
@@ -197,6 +200,12 @@ fun EventDetailScreen(
                         }
                     }
                 },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = TBABlue,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White,
+                    actionIconContentColor = Color.White
+                )
             )
         },
     ) { innerPadding ->
@@ -209,12 +218,19 @@ fun EventDetailScreen(
             PrimaryScrollableTabRow(
                 selectedTabIndex = pagerState.currentPage,
                 edgePadding = 0.dp,
+                containerColor = TBABlue,
+                contentColor = Color.White,
             ) {
                 TABS.forEachIndexed { index, title ->
                     Tab(
                         selected = pagerState.currentPage == index,
                         onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                        text = { Text(title) },
+                        text = {
+                            Text(
+                                text = title,
+                                color = Color.White
+                            )
+                        },
                     )
                 }
             }

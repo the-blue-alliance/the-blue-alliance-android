@@ -55,6 +55,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -82,6 +83,7 @@ import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import androidx.compose.material3.ExperimentalMaterial3Api
+import com.thebluealliance.android.ui.theme.TBABlue
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Info", "Events", "Media")
@@ -225,6 +227,12 @@ fun TeamDetailScreen(
                         }
                     }
                 },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = TBABlue,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White,
+                    actionIconContentColor = Color.White
+                )
             )
         },
     ) { innerPadding ->
@@ -236,12 +244,19 @@ fun TeamDetailScreen(
             PrimaryScrollableTabRow(
                 selectedTabIndex = pagerState.currentPage,
                 edgePadding = 0.dp,
+                containerColor = TBABlue,
+                contentColor = Color.White,
             ) {
                 TABS.forEachIndexed { index, title ->
                     Tab(
                         selected = pagerState.currentPage == index,
                         onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                        text = { Text(title) },
+                        text = {
+                            Text(
+                                text = title,
+                                color = Color.White
+                            )
+                        },
                     )
                 }
             }
