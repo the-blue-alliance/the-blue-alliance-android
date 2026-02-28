@@ -20,6 +20,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.thebluealliance.android.config.ThemePreferences
+import com.thebluealliance.android.data.sync.DataSyncManager
 import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import com.thebluealliance.android.messaging.NotificationBuilder
 import com.thebluealliance.android.navigation.DeeplinkMatcher
@@ -34,6 +35,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject lateinit var firebaseAuth: FirebaseAuth
+    @Inject lateinit var dataSyncManager: DataSyncManager
     @Inject lateinit var deviceRegistrationManager: DeviceRegistrationManager
     @Inject lateinit var themePreferences: ThemePreferences
 
@@ -67,6 +69,9 @@ class MainActivity : ComponentActivity() {
 
         // Register device if already signed in
         lifecycleScope.launch { deviceRegistrationManager.registerIfNeeded() }
+
+        // Sync missing event years and team pages for comprehensive search
+        lifecycleScope.launch { dataSyncManager.syncIfNeeded() }
     }
 
     private fun getNotificationDestination(): NavKey? {
