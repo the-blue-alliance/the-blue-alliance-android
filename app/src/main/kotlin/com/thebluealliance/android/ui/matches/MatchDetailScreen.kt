@@ -1,12 +1,9 @@
 package com.thebluealliance.android.ui.matches
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CircularProgressIndicator
@@ -42,6 +38,9 @@ import com.thebluealliance.android.domain.formatBreakdownValue
 import com.thebluealliance.android.domain.getFullLabel
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.ui.common.shareTbaUrl
+import com.thebluealliance.android.ui.components.MediaGridItem
+import com.thebluealliance.android.ui.components.MediaGridRow
+import com.thebluealliance.android.ui.components.mediaUrl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -137,20 +136,25 @@ fun MatchDetailScreen(
                             AllianceTeams("Blue alliance", match.blueTeamKeys, MaterialTheme.colorScheme.primary, onNavigateToTeam)
                         }
 
-                        // Videos
-                        val videos = uiState.videos
-                        if (videos.isNotEmpty()) {
-                            item(key = "videos_header") {
+                        // Media
+                        val mediaItems = uiState.videos
+                            .filter { mediaUrl(it.type, it.key) != null }
+                            .map { MediaGridItem(type = it.type, foreignKey = it.key) }
+                        if (mediaItems.isNotEmpty()) {
+                            item(key = "media_header") {
                                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                                 Text(
-                                    text = "Videos",
+                                    text = "Video",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                                 )
                             }
-                            items(videos, key = { "video_${it.key}" }) { video ->
-                                VideoRow(video)
+                            item(key = "media_grid") {
+                                MediaGridRow(
+                                    items = mediaItems,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                )
                             }
                         }
 
@@ -290,36 +294,6 @@ private fun AllianceTeams(
                     .padding(start = 8.dp, top = 2.dp),
             )
         }
-    }
-}
-
-@Composable
-private fun VideoRow(video: MatchVideo) {
-    val context = LocalContext.current
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                val url = when (video.type) {
-                    "youtube" -> "https://www.youtube.com/watch?v=${video.key}"
-                    else -> return@clickable
-                }
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-            }
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            imageVector = Icons.Default.PlayArrow,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(end = 12.dp),
-        )
-        Text(
-            text = "Watch on YouTube",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.primary,
-        )
     }
 }
 

@@ -1,8 +1,6 @@
 package com.thebluealliance.android.ui.teams
 
-import android.content.Intent
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.util.Base64
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -10,11 +8,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,12 +23,10 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.runtime.mutableStateOf
@@ -70,7 +64,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
@@ -78,7 +71,10 @@ import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
+import com.thebluealliance.android.ui.components.MediaGridItem
+import com.thebluealliance.android.ui.components.MediaItem
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
+import com.thebluealliance.android.ui.components.mediaUrl
 import androidx.compose.material3.ExperimentalMaterial3Api
 import kotlinx.coroutines.launch
 
@@ -398,7 +394,11 @@ private fun MediaTab(media: List<Media>?) {
         EmptyBox("No media")
         return
     }
-    val context = LocalContext.current
+    val gridItems = filtered.mapNotNull { item ->
+        if (mediaUrl(item.type, item.foreignKey) != null) {
+            MediaGridItem(type = item.type, foreignKey = item.foreignKey)
+        } else null
+    }
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -407,49 +407,12 @@ private fun MediaTab(media: List<Media>?) {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(filtered, key = { "${it.type}_${it.foreignKey}" }) { item ->
-            val url = mediaUrl(item)
-            val linkUrl = mediaLinkUrl(item)
-            if (url != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .clip(MaterialTheme.shapes.medium)
-                        .then(
-                            if (linkUrl != null) {
-                                Modifier.clickable {
-                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(linkUrl)))
-                                }
-                            } else {
-                                Modifier
-                            }
-                        ),
-                ) {
-                    AsyncImage(
-                        model = url,
-                        contentDescription = "Team media",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                    if (item.type == "youtube") {
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .size(48.dp)
-                                .background(Color.Black.copy(alpha = 0.5f), CircleShape),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Icon(
-                                Icons.Outlined.PlayCircle,
-                                contentDescription = "Play video",
-                                tint = Color.White,
-                                modifier = Modifier.size(48.dp),
-                            )
-                        }
-                    }
-                }
-            }
+        items(gridItems, key = { "${it.type}_${it.foreignKey}" }) { item ->
+            MediaItem(
+                type = item.type,
+                foreignKey = item.foreignKey,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }
@@ -457,23 +420,6 @@ private fun MediaTab(media: List<Media>?) {
 private val FrcBlue = Color(0xFF0066B3)
 private val FrcRed = Color(0xFFED1C24)
 
-private fun mediaUrl(media: Media): String? = when (media.type) {
-    "imgur" -> "https://i.imgur.com/${media.foreignKey}.png"
-    "cdphotothread" -> "https://www.chiefdelphi.com/media/img/${media.foreignKey}"
-    "instagram-image" -> "https://www.instagram.com/p/${media.foreignKey}/media/"
-    "youtube" -> "https://img.youtube.com/vi/${media.foreignKey}/hqdefault.jpg"
-    "grabcad" -> null // no direct image URL
-    "onshape" -> null
-    else -> null
-}
-
-private fun mediaLinkUrl(media: Media): String? = when (media.type) {
-    "imgur" -> "https://imgur.com/${media.foreignKey}"
-    "cdphotothread" -> "https://www.chiefdelphi.com/media/img/${media.foreignKey}"
-    "instagram-image" -> "https://www.instagram.com/p/${media.foreignKey}/"
-    "youtube" -> "https://www.youtube.com/watch?v=${media.foreignKey}"
-    else -> null
-}
 
 @Composable
 private fun LoadingBox() {
