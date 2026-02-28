@@ -30,27 +30,28 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.outlined.PlayCircle
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.NotificationsNone
+import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -59,14 +60,17 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -83,7 +87,6 @@ import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
-import androidx.compose.material3.ExperimentalMaterial3Api
 import com.thebluealliance.android.ui.theme.TBABlue
 import kotlinx.coroutines.launch
 
@@ -165,7 +168,11 @@ fun TeamDetailScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
+                        )
                     }
                 },
                 actions = {
@@ -180,18 +187,24 @@ fun TeamDetailScreen(
                         Icon(
                             imageVector = if (hasSubscription) Icons.Filled.Notifications else Icons.Outlined.NotificationsNone,
                             contentDescription = "Notification preferences",
+                            tint = Color.White
                         )
                     }
                     IconButton(onClick = viewModel::toggleFavorite) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
                             contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                            tint = Color.White
                         )
                     }
                     var menuExpanded by remember { mutableStateOf(false) }
                     Box {
                         IconButton(onClick = { menuExpanded = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "More options",
+                                tint = Color.White
+                            )
                         }
                         DropdownMenu(
                             expanded = menuExpanded,
@@ -247,6 +260,16 @@ fun TeamDetailScreen(
                 edgePadding = 0.dp,
                 containerColor = TBABlue,
                 contentColor = Color.White,
+                divider = {
+                    HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
+                },
+                indicator = {
+                    SecondaryIndicator(
+                        modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
+                        height = 3.dp,
+                        color = Color.White
+                    )
+                }
             ) {
                 TABS.forEachIndexed { index, title ->
                     Tab(
