@@ -10,7 +10,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
@@ -64,7 +63,6 @@ fun EventDetailScreen(
     onNavigateToMatch: (String) -> Unit = {},
     onNavigateToMyTBA: () -> Unit = {},
     onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
-    onNavigateToSearch: () -> Unit,
     viewModel: EventDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -134,9 +132,6 @@ fun EventDetailScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = onNavigateToSearch) {
-                        Icon(Icons.Default.Search, contentDescription = "Search")
-                    }
                     IconButton(onClick = {
                         if (!viewModel.isSignedIn()) {
                             showSignInDialog = true
