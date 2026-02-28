@@ -23,14 +23,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.BuildConfig
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import com.thebluealliance.android.ui.theme.TBABlue
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,6 +54,12 @@ fun MoreScreen(
                         Icon(Icons.Default.Search, contentDescription = "Search")
                     }
                 },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = TBABlue,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White,
+                    actionIconContentColor = Color.White
+                )
             )
         },
     ) { innerPadding ->
