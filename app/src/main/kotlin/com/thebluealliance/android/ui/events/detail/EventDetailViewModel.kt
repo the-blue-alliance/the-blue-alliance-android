@@ -8,8 +8,10 @@ import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.data.repository.TeamRepository
+import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
+import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -38,6 +40,7 @@ class EventDetailViewModel @AssistedInject constructor(
     private val matchRepository: MatchRepository,
     private val myTBARepository: MyTBARepository,
     private val authRepository: AuthRepository,
+    private val shortcutManager: TBAShortcutManager,
 ) : ViewModel() {
 
     private val eventKey: String = navKey.eventKey
@@ -114,6 +117,16 @@ class EventDetailViewModel @AssistedInject constructor(
             } catch (_: Exception) {
                 _userMessage.emit("Failed to save notification preferences")
             }
+        }
+    }
+
+    val canPinShortcuts: Boolean = shortcutManager.canPinShortcuts()
+
+    fun requestPinShortcut() {
+        viewModelScope.launch {
+            shortcutManager.requestPinShortcut(
+                Favorite(modelKey = eventKey, modelType = ModelType.EVENT)
+            )
         }
     }
 

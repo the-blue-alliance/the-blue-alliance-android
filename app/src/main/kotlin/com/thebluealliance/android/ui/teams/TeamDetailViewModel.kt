@@ -7,8 +7,10 @@ import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.data.repository.TeamRepository
+import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
+import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import com.thebluealliance.android.navigation.Screen
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -38,6 +40,7 @@ class TeamDetailViewModel @AssistedInject constructor(
     private val myTBARepository: MyTBARepository,
     private val authRepository: AuthRepository,
     private val tbaApi: TbaApi,
+    private val shortcutManager: TBAShortcutManager,
 ) : ViewModel() {
 
     private val teamKey: String = navKey.teamKey.let { key ->
@@ -148,6 +151,16 @@ class TeamDetailViewModel @AssistedInject constructor(
             } catch (_: Exception) {
                 _userMessage.emit("Failed to save notification preferences")
             }
+        }
+    }
+
+    val canPinShortcuts: Boolean = shortcutManager.canPinShortcuts()
+
+    fun requestPinShortcut() {
+        viewModelScope.launch {
+            shortcutManager.requestPinShortcut(
+                Favorite(modelKey = teamKey, modelType = ModelType.TEAM)
+            )
         }
     }
 

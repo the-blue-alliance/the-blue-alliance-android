@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.events.detail
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,11 +12,14 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,9 +40,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
@@ -151,14 +157,43 @@ fun EventDetailScreen(
                             contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
                         )
                     }
-                    uiState.event?.let { event ->
-                        IconButton(onClick = {
-                            context.shareTbaUrl(
-                                title = "${event.year} ${event.name}",
-                                url = "https://www.thebluealliance.com/event/${event.key}",
-                            )
-                        }) {
-                            Icon(Icons.Filled.Share, contentDescription = "Share")
+                    var menuExpanded by remember { mutableStateOf(false) }
+                    Box {
+                        IconButton(onClick = { menuExpanded = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                        }
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = { menuExpanded = false },
+                        ) {
+                            uiState.event?.let { event ->
+                                DropdownMenuItem(
+                                    text = { Text("Share") },
+                                    leadingIcon = { Icon(Icons.Filled.Share, contentDescription = null) },
+                                    onClick = {
+                                        menuExpanded = false
+                                        context.shareTbaUrl(
+                                            title = "${event.year} ${event.name}",
+                                            url = "https://www.thebluealliance.com/event/${event.key}",
+                                        )
+                                    },
+                                )
+                            }
+                            if (viewModel.canPinShortcuts) {
+                                DropdownMenuItem(
+                                    text = { Text("Add to home screen") },
+                                    leadingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_add_to_home_screen),
+                                            contentDescription = null,
+                                        )
+                                    },
+                                    onClick = {
+                                        menuExpanded = false
+                                        viewModel.requestPinShortcut()
+                                    },
+                                )
+                            }
                         }
                     }
                 },

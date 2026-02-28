@@ -31,6 +31,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material3.DropdownMenu
@@ -41,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AlertDialog
@@ -67,10 +67,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
@@ -164,10 +166,6 @@ fun TeamDetailScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = onNavigateToSearch) {
-                        Icon(Icons.Default.Search, contentDescription = "Search")
-                    }
-
                     IconButton(onClick = {
                         if (!viewModel.isSignedIn()) {
                             showSignInDialog = true
@@ -187,14 +185,43 @@ fun TeamDetailScreen(
                             contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
                         )
                     }
-                    uiState.team?.let { team ->
-                        IconButton(onClick = {
-                            context.shareTbaUrl(
-                                title = "Team ${team.number} - ${team.nickname ?: ""}",
-                                url = "https://www.thebluealliance.com/team/${team.number}",
-                            )
-                        }) {
-                            Icon(Icons.Filled.Share, contentDescription = "Share")
+                    var menuExpanded by remember { mutableStateOf(false) }
+                    Box {
+                        IconButton(onClick = { menuExpanded = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                        }
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = { menuExpanded = false },
+                        ) {
+                            uiState.team?.let { team ->
+                                DropdownMenuItem(
+                                    text = { Text("Share") },
+                                    leadingIcon = { Icon(Icons.Filled.Share, contentDescription = null) },
+                                    onClick = {
+                                        menuExpanded = false
+                                        context.shareTbaUrl(
+                                            title = "Team ${team.number} - ${team.nickname ?: ""}",
+                                            url = "https://www.thebluealliance.com/team/${team.number}",
+                                        )
+                                    },
+                                )
+                            }
+                            if (viewModel.canPinShortcuts) {
+                                DropdownMenuItem(
+                                    text = { Text("Add to home screen") },
+                                    leadingIcon = {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_add_to_home_screen),
+                                            contentDescription = null,
+                                        )
+                                    },
+                                    onClick = {
+                                        menuExpanded = false
+                                        viewModel.requestPinShortcut()
+                                    },
+                                )
+                            }
                         }
                     }
                 },
