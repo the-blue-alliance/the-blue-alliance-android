@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -35,6 +36,7 @@ class MatchDetailViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     private val matchKey: String = navKey.matchKey
+    private val eventKey: String = matchKey.substringBeforeLast("_")
     private val year: Int = matchKey.substring(0, 4).toIntOrNull() ?: 0
 
     private val _isRefreshing = MutableStateFlow(false)
@@ -48,7 +50,7 @@ class MatchDetailViewModel @AssistedInject constructor(
 
     val uiState: StateFlow<MatchDetailUiState> = combine(
         matchRepository.observeMatch(matchKey),
-        eventRepository.observeEvent(matchKey.substringBeforeLast("_")),
+        eventRepository.observeEvent(eventKey),
     ) { match, event ->
         val breakdown = match?.scoreBreakdown?.let { parseBreakdown(it) }
         val videos = match?.videos?.let { parseVideos(it) } ?: emptyList()
@@ -72,6 +74,15 @@ class MatchDetailViewModel @AssistedInject constructor(
 
     init {
         refresh()
+        viewModelScope.launch {
+            // Fetch event only if not already cached (e.g. deep-linked to match)
+            val cached = eventRepository.observeEvent(eventKey).first()
+            if (cached == null) {
+                try {
+                    eventRepository.refreshEvent(eventKey)
+                } catch (_: Exception) {}
+            }
+        }
     }
 
     fun refresh() {
