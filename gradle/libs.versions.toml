@@ -35,7 +35,6 @@ work = "2.11.1"
 
 junit = "6.0.3"
 turbine = "1.2.1"
-robolectric = "4.16.1"
 mockk = "1.14.9"
 play-publisher = "4.0.0"
 lifecycle-process = "2.10.0"
@@ -117,7 +116,6 @@ datastore-preferences = { group = "androidx.datastore", name = "datastore-prefer
 junit-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
 junit-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
-robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
