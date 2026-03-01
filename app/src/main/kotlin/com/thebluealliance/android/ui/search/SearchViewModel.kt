@@ -28,12 +28,12 @@ class SearchViewModel @Inject constructor(
     private val debouncedQuery = _query.debounce(300)
 
     private val teamsFlow = debouncedQuery.flatMapLatest { query ->
-        if (query.length < 2) flowOf(emptyList())
+        if (query.length  == 0) flowOf(emptyList())
         else teamRepository.searchTeams(query)
     }
 
     private val eventsFlow = debouncedQuery.flatMapLatest { query ->
-        if (query.length < 2) flowOf(emptyList())
+        if (query.length  == 0) flowOf(emptyList())
         else eventRepository.searchEvents(query)
     }
 
