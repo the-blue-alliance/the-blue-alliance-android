@@ -21,7 +21,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -194,11 +193,11 @@ private fun EventsList(
             var index = 0
             if (favoriteEvents.isNotEmpty()) {
                 add(SectionHeaderInfo("favorites_header", "Favorites", index))
-                index += 1 + favoriteEvents.size + 1 // header + items + divider
+                index += 1 + favoriteEvents.size // header + items
             }
             if (thisWeekResult != null) {
                 add(SectionHeaderInfo("this_week_header", thisWeekResult.label, index))
-                index += 1 + thisWeekResult.events.size + 1 // header + items + divider
+                index += 1 + thisWeekResult.events.size // header + items
             }
             sections.forEach { section ->
                 val headerKey = "header_${section.label}"
@@ -242,9 +241,6 @@ private fun EventsList(
                 items(favoriteEvents, key = { "fav_${it.key}" }) { event ->
                     EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
                 }
-                item(key = "favorites_divider") {
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-                }
             }
             if (thisWeekResult != null) {
                 stickyHeader(key = "this_week_header") {
@@ -261,9 +257,6 @@ private fun EventsList(
                 }
                 items(thisWeekResult.events, key = { "thisweek_${it.key}" }) { event ->
                     EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
-                }
-                item(key = "this_week_divider") {
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
                 }
             }
             sections.forEach { section ->
