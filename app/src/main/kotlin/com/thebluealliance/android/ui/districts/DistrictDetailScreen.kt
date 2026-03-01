@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +48,9 @@ import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.events.EventSection
+import com.thebluealliance.android.ui.events.computeThisWeekEvents
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 private val TABS = listOf("Events", "Rankings")
 
@@ -140,12 +143,22 @@ private fun EventsTab(sections: List<EventSection>?, onNavigateToEvent: (String)
         return
     }
 
+    val allEvents = sections.flatMap { it.events }
+    val today = remember { LocalDate.now() }
+    val thisWeekResult = remember(allEvents, today) {
+        computeThisWeekEvents(allEvents, today, today.year)
+    }
+
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    val headerInfos = remember(sections) {
+    val headerInfos = remember(sections, thisWeekResult) {
         buildList {
             var index = 0
+            if (thisWeekResult != null) {
+                add(SectionHeaderInfo("this_week_header", thisWeekResult.label, index))
+                index += 1 + thisWeekResult.events.size + 1 // header + items + divider
+            }
             sections.forEach { section ->
                 val headerKey = "header_${section.label}"
                 add(SectionHeaderInfo(headerKey, section.label, index))
@@ -168,6 +181,26 @@ private fun EventsTab(sections: List<EventSection>?, onNavigateToEvent: (String)
     }
 
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+        if (thisWeekResult != null) {
+            stickyHeader(key = "this_week_header") {
+                SectionHeader(
+                    label = thisWeekResult.label,
+                    isStuck = stuckHeaderKey == "this_week_header",
+                    allHeaders = headerInfos,
+                    onHeaderSelected = { info ->
+                        coroutineScope.launch {
+                            listState.animateScrollToItem(info.itemIndex)
+                        }
+                    },
+                )
+            }
+            items(thisWeekResult.events, key = { "thisweek_${it.key}" }) { event ->
+                EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+            }
+            item(key = "this_week_divider") {
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+            }
+        }
         sections.forEach { section ->
             val headerKey = "header_${section.label}"
             stickyHeader(key = headerKey) {
