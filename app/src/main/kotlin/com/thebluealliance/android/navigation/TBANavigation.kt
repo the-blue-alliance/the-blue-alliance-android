@@ -1,11 +1,13 @@
 package com.thebluealliance.android.navigation
 
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.entryProvider
@@ -60,7 +62,8 @@ fun TBANavigation(
         NavDisplay(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
             onBack = { navigator.goBack() },
             entries = navState.toEntries(
                 entryProvider = entryProvider {
