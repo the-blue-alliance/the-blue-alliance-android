@@ -7,7 +7,6 @@ import androidx.core.app.TaskStackBuilder
 import androidx.core.net.toUri
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import com.google.android.play.integrity.internal.ac
 
 class Navigator(
     val state: NavigationState,

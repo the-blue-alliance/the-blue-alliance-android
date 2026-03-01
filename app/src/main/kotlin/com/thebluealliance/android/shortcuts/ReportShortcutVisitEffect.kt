@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.pm.ShortcutManagerCompat
-import androidx.lifecycle.ReportFragment
 import com.thebluealliance.android.domain.model.ModelType
 
 /**

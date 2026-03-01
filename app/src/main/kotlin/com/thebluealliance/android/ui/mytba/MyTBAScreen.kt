@@ -66,7 +66,6 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.DisposableEffect
 import kotlinx.coroutines.flow.Flow
 
 private val TABS = listOf("Favorites", "Notifications")
