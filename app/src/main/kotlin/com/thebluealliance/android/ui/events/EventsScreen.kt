@@ -27,7 +27,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,11 +41,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
+import com.thebluealliance.android.ui.components.TBATopAppBar
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import androidx.compose.material.icons.Icons
@@ -79,7 +78,7 @@ fun EventsScreen(
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
-            TopAppBar(
+            TBATopAppBar(
                 title = {
                     if (selectedYear > 0) {
                         Row(
@@ -112,6 +111,7 @@ fun EventsScreen(
                         Icon(Icons.Default.Search, contentDescription = "Search")
                     }
                 },
+                showLamp = true
             )
         },
     ) { innerPadding ->
@@ -159,7 +159,7 @@ fun EventsScreen(
                                 sections = state.sections,
                                 favoriteEventKeys = state.favoriteEventKeys,
                                 selectedYear = selectedYear,
-                                onEventClick = onNavigateToEvent,
+                                onNavigateToEvent = onNavigateToEvent,
                                 listState = listState,
                             )
                         }
@@ -175,7 +175,7 @@ private fun EventsList(
     sections: List<EventSection>,
     favoriteEventKeys: Set<String>,
     selectedYear: Int,
-    onEventClick: (String) -> Unit,
+    onNavigateToEvent: (String) -> Unit,
     listState: LazyListState,
 ) {
     val allEvents = sections.flatMap { it.events }
@@ -240,7 +240,7 @@ private fun EventsList(
                     )
                 }
                 items(favoriteEvents, key = { "fav_${it.key}" }) { event ->
-                    EventRow(event = event, onClick = { onEventClick(event.key) })
+                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
                 }
                 item(key = "favorites_divider") {
                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
@@ -260,7 +260,7 @@ private fun EventsList(
                     )
                 }
                 items(thisWeekResult.events, key = { "thisweek_${it.key}" }) { event ->
-                    EventRow(event = event, onClick = { onEventClick(event.key) })
+                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
                 }
                 item(key = "this_week_divider") {
                     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
@@ -281,7 +281,7 @@ private fun EventsList(
                     )
                 }
                 items(section.events, key = { it.key }) { event ->
-                    EventRow(event = event, onClick = { onEventClick(event.key) })
+                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
                 }
             }
         }

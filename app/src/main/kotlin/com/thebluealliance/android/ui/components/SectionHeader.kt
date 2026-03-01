@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -40,7 +41,7 @@ fun SectionHeader(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
+            .background(Color(0xFF3F51B5))
             .clickable(enabled = isStuck) { menuExpanded = true },
     ) {
         Row(
@@ -53,14 +54,14 @@ fun SectionHeader(
                 text = label,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
+                color = Color.White,
             )
             if (isStuck) {
                 Spacer(modifier = Modifier.width(4.dp))
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = "Jump to section",
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = Color.White,
                     modifier = Modifier.size(20.dp),
                 )
             }
@@ -77,7 +78,7 @@ fun SectionHeader(
                             text = info.label,
                             fontWeight = if (info.label == label) FontWeight.Bold else FontWeight.Normal,
                             color = if (info.label == label) {
-                                MaterialTheme.colorScheme.primary
+                                Color(0xFF3F51B5)
                             } else {
                                 MaterialTheme.colorScheme.onSurface
                             },

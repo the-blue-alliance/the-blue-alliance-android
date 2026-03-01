@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val TBABlue = Color(0xFF3F51B5)
+val TBABlue = Color(0xFF3F51B5)
 private val TBABlueLight = Color(0xFF757DE8)
 private val TBABlueDark = Color(0xFF002984)
 
@@ -34,7 +34,7 @@ private val DarkColorScheme = darkColorScheme(
 @Composable
 fun TBATheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
