@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,8 +16,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -30,8 +27,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,18 +38,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.thebluealliance.android.R
-import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
-import com.thebluealliance.android.ui.theme.TBABlue
+import com.thebluealliance.android.ui.components.TBATopAppBar
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import androidx.compose.material.icons.Icons
@@ -87,41 +78,32 @@ fun EventsScreen(
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
-            TopAppBar(
+            TBATopAppBar(
                 title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.tba_lamp),
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = Color.White
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        if (selectedYear > 0) {
-                            Row(
-                                modifier = Modifier.clickable { yearDropdownExpanded = true },
-                                verticalAlignment = Alignment.CenterVertically,
+                    if (selectedYear > 0) {
+                        Row(
+                            modifier = Modifier.clickable { yearDropdownExpanded = true },
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text("$selectedYear Events")
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Select year")
+                            DropdownMenu(
+                                expanded = yearDropdownExpanded,
+                                onDismissRequest = { yearDropdownExpanded = false },
                             ) {
-                                Text("$selectedYear Events")
-                                Icon(Icons.Default.ArrowDropDown, contentDescription = "Select year")
-                                DropdownMenu(
-                                    expanded = yearDropdownExpanded,
-                                    onDismissRequest = { yearDropdownExpanded = false },
-                                ) {
-                                    (maxYear downTo 1992).forEach { year ->
-                                        DropdownMenuItem(
-                                            text = { Text(year.toString()) },
-                                            onClick = {
-                                                viewModel.selectYear(year)
-                                                yearDropdownExpanded = false
-                                            },
-                                        )
-                                    }
+                                (maxYear downTo 1992).forEach { year ->
+                                    DropdownMenuItem(
+                                        text = { Text(year.toString()) },
+                                        onClick = {
+                                            viewModel.selectYear(year)
+                                            yearDropdownExpanded = false
+                                        },
+                                    )
                                 }
                             }
-                        } else {
-                            Text("Events")
                         }
+                    } else {
+                        Text("Events")
                     }
                 },
                 actions = {
@@ -129,12 +111,7 @@ fun EventsScreen(
                         Icon(Icons.Default.Search, contentDescription = "Search")
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = TBABlue,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White,
-                    actionIconContentColor = Color.White
-                )
+                showLamp = true
             )
         },
     ) { innerPadding ->
