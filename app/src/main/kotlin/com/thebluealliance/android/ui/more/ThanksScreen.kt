@@ -44,6 +44,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import com.thebluealliance.android.ui.components.TBATopAppBar
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,7 +58,7 @@ fun ThanksScreen(
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
-            TopAppBar(
+            TBATopAppBar(
                 title = { Text("Thanks") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
