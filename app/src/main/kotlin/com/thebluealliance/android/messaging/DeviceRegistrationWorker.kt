@@ -24,7 +24,6 @@ class DeviceRegistrationWorker @AssistedInject constructor(
         const val KEY_FCM_TOKEN = "fcm_token"
         const val KEY_DEVICE_UUID = "device_uuid"
         private const val TAG = "DeviceRegWorker"
-        private const val PREF_REGISTERED_TOKEN = "registered_fcm_token"
     }
 
     override suspend fun doWork(): Result {
@@ -39,7 +38,7 @@ class DeviceRegistrationWorker @AssistedInject constructor(
                     deviceUuid = deviceUuid,
                 )
             )
-            sharedPreferences.edit().putString(PREF_REGISTERED_TOKEN, token).apply()
+            sharedPreferences.edit().putString(DeviceRegistrationManager.PREF_REGISTERED_TOKEN, token).apply()
             Log.d(TAG, "Registered device with token ${token.take(10)}...")
             Result.success()
         } catch (e: Exception) {

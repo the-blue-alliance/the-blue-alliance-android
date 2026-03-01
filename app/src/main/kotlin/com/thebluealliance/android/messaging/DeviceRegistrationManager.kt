@@ -29,7 +29,7 @@ class DeviceRegistrationManager @Inject constructor(
     companion object {
         private const val TAG = "DeviceRegistration"
         private const val PREF_DEVICE_UUID = "device_uuid"
-        private const val PREF_REGISTERED_TOKEN = "registered_fcm_token"
+        internal const val PREF_REGISTERED_TOKEN = "registered_fcm_token"
     }
 
     val deviceUuid: String
