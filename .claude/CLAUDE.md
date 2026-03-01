@@ -19,29 +19,20 @@ adb shell am force-stop com.thebluealliance.android.dev && adb shell am start -n
 
 ## Emulator Interaction
 
+Use `scripts/emu` (a Python CLI included in the repo) instead of raw `adb` commands. It provides text-based UI element matching which is far more reliable than guessing pixel coordinates.
+
 ```bash
-# Take a screenshot
-adb shell screencap -p /sdcard/screen.png && adb pull /sdcard/screen.png screenshot.png
-
-# Tap (uses device pixel coordinates, e.g. 1080x2400)
-adb shell input tap <x> <y>
-
-# Press back
-adb shell input keyevent KEYCODE_BACK
+scripts/emu screenshot screenshots/<name>.png   # capture screenshot
+scripts/emu find "text"                          # find UI elements by text
+scripts/emu tap "text"                           # tap element by text (must match exactly one)
+scripts/emu tap-xy <x> <y>                       # tap at exact device pixel coordinates
+scripts/emu back                                 # press BACK key
+scripts/emu list                                 # dump full UI hierarchy as readable tree
+scripts/emu logcat --tag <tag> --grep <pattern> -n <count>  # filtered logcat
+scripts/emu launch <package/activity>            # force-stop and start activity
 ```
 
-### Tap coordinate tips
-
-The emulator is 1080x2400 device pixels. Screenshots displayed in conversation may show a
-smaller size (e.g. 900x2000) with a note like "Multiply coordinates by 1.20 to map to
-original image." `adb shell input tap` uses the real 1080x2400 device pixel coordinates.
-
-- The status bar is ~50px, the Material 3 top app bar is ~140px, so the first content row
-  starts around **y=300-400** in device pixels.
-- Bottom nav bar centers around **y=2300**.
-- For list rows below the top app bar, first row center ≈ y=350, second ≈ y=450, etc.
-- When taps don't seem to register, the content is probably lower than expected — try
-  increasing y by 100-150px.
+Use `find` before `tap` to verify unique matching; use `list` to explore the UI hierarchy.
 
 ## Architecture
 

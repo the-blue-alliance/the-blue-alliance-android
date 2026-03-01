@@ -7,7 +7,7 @@
 #
 # Prerequisites:
 #   - Android emulator running (1080x2400 device)
-#   - emu tool available at ~/codez/gsm-android-automator/emu
+#   - emu tool available at scripts/emu (included in repo)
 #   - Release build installed: ./gradlew :app:installRelease
 #   - App has data loaded (events, teams, districts for current year)
 #   - Emulator DNS must work: if Private DNS is enabled, disable it with:
@@ -24,7 +24,7 @@
 
 set -euo pipefail
 
-EMU=~/codez/gsm-android-automator/emu
+EMU="$(dirname "$0")/emu"
 PKG="com.thebluealliance.androidclient"
 MAIN_ACTIVITY="com.thebluealliance.android.MainActivity"
 RAW_DIR="screenshots/play-store/phone"
