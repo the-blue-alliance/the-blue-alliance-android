@@ -27,7 +27,7 @@ import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import com.thebluealliance.android.ui.components.TBATopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -65,7 +65,7 @@ fun DistrictDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            TBATopAppBar(
                 title = {
                     Text(
                         text = uiState.district?.displayName ?: "District",

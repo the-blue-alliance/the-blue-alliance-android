@@ -23,7 +23,7 @@ import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import com.thebluealliance.android.ui.components.TBATopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -68,7 +68,7 @@ fun TeamEventDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            TBATopAppBar(
                 title = { Text(text = titleText, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
