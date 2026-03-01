@@ -19,6 +19,16 @@ NC='\033[0m'
 
 DRY_RUN=false
 
+# Load git remote from local.properties (default: origin)
+GIT_REMOTE="origin"
+if [[ -f local.properties ]]; then
+    local configured
+    configured=$(grep 'release.git.remote' local.properties 2>/dev/null | cut -d= -f2- || true)
+    if [[ -n "$configured" ]]; then
+        GIT_REMOTE="$configured"
+    fi
+fi
+
 # ── Helpers ──────────────────────────────────────────────────────────────
 
 die()  { echo -e "${RED}ERROR:${NC} $*" >&2; exit 1; }
@@ -138,7 +148,7 @@ maybe_create_tag() {
     fi
 
     run git tag "$new_tag"
-    run git push origin "$new_tag"
+    run git push "$GIT_REMOTE" "$new_tag"
     info "Created and pushed tag ${new_tag}"
 
     # Re-read version info with new tag
