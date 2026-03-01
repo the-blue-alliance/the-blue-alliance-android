@@ -18,7 +18,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,6 +43,8 @@ import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
+import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.events.EventSection
 import kotlinx.coroutines.launch
 
@@ -233,16 +234,3 @@ private fun RankingsTab(rankings: List<DistrictRanking>?, onNavigateToTeam: (Str
     }
 }
 
-@Composable
-private fun LoadingBox() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
-private fun EmptyBox(message: String) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(message, style = MaterialTheme.typography.bodyLarge)
-    }
-}
