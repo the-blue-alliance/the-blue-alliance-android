@@ -45,7 +45,6 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -78,6 +77,8 @@ import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
+import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
@@ -500,18 +501,4 @@ private fun mediaLinkUrl(media: Media): String? = when (media.type) {
     "instagram-image" -> "https://www.instagram.com/p/${media.foreignKey}/"
     "youtube" -> "https://www.youtube.com/watch?v=${media.foreignKey}"
     else -> null
-}
-
-@Composable
-private fun LoadingBox() {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
-    }
-}
-
-@Composable
-private fun EmptyBox(message: String) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(message, style = MaterialTheme.typography.bodyLarge)
-    }
 }
