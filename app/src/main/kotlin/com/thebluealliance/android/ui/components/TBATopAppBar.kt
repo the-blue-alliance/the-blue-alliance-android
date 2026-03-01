@@ -1,16 +1,15 @@
 package com.thebluealliance.android.ui.components
 
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,24 +37,24 @@ fun TBATopAppBar(
     showLamp: Boolean = false,
 ) {
     TopAppBar(
-        title = {
-            if (showLamp) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+        title = title,
+        modifier = modifier,
+        navigationIcon = if (showLamp) {
+            {
+                // Use IconButton container (48dp) to match back button width in detail views,
+                // so title text shares a consistent left edge across all screens.
+                IconButton(onClick = {}, enabled = false) {
                     Icon(
                         painter = painterResource(id = R.drawable.tba_lamp),
                         contentDescription = null,
                         modifier = Modifier.size(24.dp),
                         tint = Color.White,
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    title()
                 }
-            } else {
-                title()
             }
+        } else {
+            navigationIcon
         },
-        modifier = modifier,
-        navigationIcon = navigationIcon,
         actions = actions,
         windowInsets = windowInsets,
         colors = colors,
