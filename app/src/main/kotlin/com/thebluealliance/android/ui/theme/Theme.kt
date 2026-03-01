@@ -11,24 +11,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-val TBABlue = Color(0xFF3F51B5)
-private val TBABlueLight = Color(0xFF757DE8)
-private val TBABlueDark = Color(0xFF002984)
+// Indigo tonal scale — TBA brand palette
+val TBABlue = Color(0xFF3F51B5)           // Indigo 500 — canonical TBA brand color
+private val TBABlueDark = Color(0xFF303F9F)    // Indigo 700 — dark-mode container
+private val TBABlueLight = Color(0xFF9FA8DA)   // Indigo 200 — dark-mode primary
+private val TBAPastelBlue = Color(0xFFC5CAE9)  // Indigo 100 — light-mode primaryContainer
+private val TBAIndigo900 = Color(0xFF1A237E)   // Indigo 900 — onPrimaryContainer
 
 private val LightColorScheme = lightColorScheme(
     primary = TBABlue,
     onPrimary = Color.White,
-    primaryContainer = TBABlueLight,
-    secondary = Color(0xFF625B71),
-    tertiary = Color(0xFF7D5260),
+    primaryContainer = TBAPastelBlue,
+    onPrimaryContainer = TBAIndigo900,
+    surfaceTint = TBABlue,
 )
 
 private val DarkColorScheme = darkColorScheme(
     primary = TBABlueLight,
     onPrimary = Color(0xFF00174D),
     primaryContainer = TBABlueDark,
-    secondary = Color(0xFFCCC2DC),
-    tertiary = Color(0xFFEFB8C8),
+    onPrimaryContainer = TBAPastelBlue,
+    surfaceTint = TBABlueLight,
 )
 
 @Composable
