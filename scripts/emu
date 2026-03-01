@@ -1,0 +1,255 @@
+#!/usr/bin/env python3
+"""emu — Android emulator automation CLI for use with Claude Code.
+
+Subcommands:
+  screenshot [path]          Capture screenshot (default: screenshot.png)
+  find <text>                Find UI elements matching text/content-desc
+  tap <text>                 Tap element matching text/content-desc (must be unique)
+  tap-xy <x> <y>            Tap at exact device pixel coordinates
+  logcat [options]           Show recent logcat lines
+  back                       Press BACK key
+  launch <package/activity>  Force-stop + start activity
+  list                       Dump UI hierarchy as readable tree
+"""
+
+import argparse
+import os
+import re
+import subprocess
+import sys
+import tempfile
+import xml.etree.ElementTree as ET
+
+BOUNDS_RE = re.compile(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]")
+
+
+def adb(*args):
+    """Run an adb command and return CompletedProcess."""
+    cmd = ["adb"] + list(args)
+    return subprocess.run(cmd, capture_output=True, text=True)
+
+
+def adb_check(*args):
+    """Run an adb command; exit on failure."""
+    result = adb(*args)
+    if result.returncode != 0:
+        print(f"adb error: {result.stderr.strip()}", file=sys.stderr)
+        sys.exit(1)
+    return result
+
+
+def parse_bounds(bounds_str):
+    """Parse '[x1,y1][x2,y2]' → (x1, y1, x2, y2, cx, cy)."""
+    m = BOUNDS_RE.match(bounds_str)
+    if not m:
+        return None
+    x1, y1, x2, y2 = int(m.group(1)), int(m.group(2)), int(m.group(3)), int(m.group(4))
+    cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
+    return x1, y1, x2, y2, cx, cy
+
+
+def dump_ui_tree():
+    """Dump UI hierarchy XML from device and return parsed ElementTree root."""
+    device_path = "/sdcard/window_dump.xml"
+    adb_check("shell", "uiautomator", "dump", device_path)
+
+    tmpdir = tempfile.mkdtemp()
+    local_path = os.path.join(tmpdir, "window_dump.xml")
+    adb_check("pull", device_path, local_path)
+
+    tree = ET.parse(local_path)
+    os.unlink(local_path)
+    os.rmdir(tmpdir)
+    return tree.getroot()
+
+
+def find_elements(root, query):
+    """Find elements whose text or content-desc contains query (case-insensitive)."""
+    query_lower = query.lower()
+    matches = []
+    for elem in root.iter():
+        text = elem.get("text", "")
+        desc = elem.get("content-desc", "")
+        if query_lower in text.lower() or query_lower in desc.lower():
+            bounds_str = elem.get("bounds", "")
+            bounds = parse_bounds(bounds_str)
+            matches.append({
+                "text": text,
+                "content-desc": desc,
+                "class": elem.get("class", ""),
+                "resource-id": elem.get("resource-id", ""),
+                "bounds": bounds_str,
+                "center": (bounds[4], bounds[5]) if bounds else None,
+            })
+    return matches
+
+
+def print_match(m, idx=None):
+    """Print a single match result."""
+    prefix = f"  [{idx}] " if idx is not None else "  "
+    parts = []
+    if m["text"]:
+        parts.append(f'text="{m["text"]}"')
+    if m["content-desc"]:
+        parts.append(f'desc="{m["content-desc"]}"')
+    if m["resource-id"]:
+        parts.append(f'id="{m["resource-id"]}"')
+    parts.append(f'class={m["class"]}')
+    parts.append(f'bounds={m["bounds"]}')
+    if m["center"]:
+        parts.append(f"center=({m['center'][0]}, {m['center'][1]})")
+    print(prefix + "  ".join(parts))
+
+
+# ── Subcommand handlers ──────────────────────────────────────────────
+
+
+def cmd_screenshot(args):
+    device_path = "/sdcard/screen.png"
+    out_path = args.path
+    adb_check("shell", "screencap", "-p", device_path)
+    adb_check("pull", device_path, out_path)
+    print(f"Screenshot saved to {out_path}")
+
+
+def cmd_find(args):
+    root = dump_ui_tree()
+    matches = find_elements(root, args.text)
+    if not matches:
+        print(f"No elements matching \"{args.text}\"")
+        sys.exit(1)
+    print(f"Found {len(matches)} match(es) for \"{args.text}\":")
+    for i, m in enumerate(matches):
+        print_match(m, i)
+
+
+def cmd_tap(args):
+    root = dump_ui_tree()
+    matches = find_elements(root, args.text)
+    if len(matches) == 0:
+        print(f"No elements matching \"{args.text}\"", file=sys.stderr)
+        sys.exit(1)
+    if len(matches) > 1:
+        print(f"Ambiguous: {len(matches)} elements match \"{args.text}\". Refine your query:", file=sys.stderr)
+        for i, m in enumerate(matches):
+            print_match(m, i)
+        sys.exit(1)
+    m = matches[0]
+    if not m["center"]:
+        print("Matched element has no parseable bounds", file=sys.stderr)
+        sys.exit(1)
+    cx, cy = m["center"]
+    adb_check("shell", "input", "tap", str(cx), str(cy))
+    print(f"Tapped ({cx}, {cy})")
+    print_match(m)
+
+
+def cmd_tap_xy(args):
+    adb_check("shell", "input", "tap", str(args.x), str(args.y))
+    print(f"Tapped ({args.x}, {args.y})")
+
+
+def cmd_logcat(args):
+    cmd = ["adb", "logcat", "-d"]
+    if args.tag:
+        cmd += ["-s", args.tag]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    lines = result.stdout.splitlines()
+    if args.grep:
+        pattern = args.grep.lower()
+        lines = [l for l in lines if pattern in l.lower()]
+    lines = lines[-args.n:]
+    print("\n".join(lines))
+
+
+def cmd_back(args):
+    adb_check("shell", "input", "keyevent", "KEYCODE_BACK")
+    print("Pressed BACK")
+
+
+def cmd_launch(args):
+    pkg = args.component.split("/")[0]
+    adb("shell", "am", "force-stop", pkg)
+    adb_check("shell", "am", "start", "-n", args.component)
+    print(f"Launched {args.component}")
+
+
+def cmd_list(args):
+    root = dump_ui_tree()
+    def walk(elem, depth=0):
+        indent = "  " * depth
+        text = elem.get("text", "")
+        desc = elem.get("content-desc", "")
+        cls = elem.get("class", "")
+        res_id = elem.get("resource-id", "")
+        bounds = elem.get("bounds", "")
+
+        parts = [cls.split(".")[-1] if cls else "?"]
+        if text:
+            parts.append(f'text="{text}"')
+        if desc:
+            parts.append(f'desc="{desc}"')
+        if res_id:
+            parts.append(f'id="{res_id}"')
+        if bounds:
+            b = parse_bounds(bounds)
+            if b:
+                parts.append(f"center=({b[4]},{b[5]})")
+        print(f"{indent}{' '.join(parts)}")
+        for child in elem:
+            walk(child, depth + 1)
+    walk(root)
+
+
+# ── Argument parsing ─────────────────────────────────────────────────
+
+
+def main():
+    parser = argparse.ArgumentParser(prog="emu", description="Android emulator automation CLI")
+    sub = parser.add_subparsers(dest="command")
+
+    p = sub.add_parser("screenshot", help="Capture screenshot")
+    p.add_argument("path", nargs="?", default="screenshot.png")
+
+    p = sub.add_parser("find", help="Find UI elements by text/desc")
+    p.add_argument("text", help="Substring to match (case-insensitive)")
+
+    p = sub.add_parser("tap", help="Tap UI element by text/desc")
+    p.add_argument("text", help="Substring to match (must be unique)")
+
+    p = sub.add_parser("tap-xy", help="Tap at coordinates")
+    p.add_argument("x", type=int)
+    p.add_argument("y", type=int)
+
+    p = sub.add_parser("logcat", help="Show recent logcat")
+    p.add_argument("--tag", "-t", help="Filter by tag")
+    p.add_argument("--grep", "-g", help="Filter lines by substring")
+    p.add_argument("-n", type=int, default=50, help="Number of lines (default 50)")
+
+    p = sub.add_parser("back", help="Press BACK key")
+
+    p = sub.add_parser("launch", help="Force-stop + start activity")
+    p.add_argument("component", help="package/activity")
+
+    p = sub.add_parser("list", help="Dump UI hierarchy tree")
+
+    args = parser.parse_args()
+    if not args.command:
+        parser.print_help()
+        sys.exit(1)
+
+    handlers = {
+        "screenshot": cmd_screenshot,
+        "find": cmd_find,
+        "tap": cmd_tap,
+        "tap-xy": cmd_tap_xy,
+        "logcat": cmd_logcat,
+        "back": cmd_back,
+        "launch": cmd_launch,
+        "list": cmd_list,
+    }
+    handlers[args.command](args)
+
+
+if __name__ == "__main__":
+    main()
