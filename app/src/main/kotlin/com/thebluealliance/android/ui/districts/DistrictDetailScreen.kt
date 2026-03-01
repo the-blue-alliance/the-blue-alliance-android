@@ -19,18 +19,12 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -49,8 +43,9 @@ import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
+import com.thebluealliance.android.ui.components.TBATabRow
+import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.events.EventSection
-import com.thebluealliance.android.ui.theme.TBABlue
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Events", "Rankings")
@@ -71,7 +66,7 @@ fun DistrictDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            TBATopAppBar(
                 title = {
                     Text(
                         text = uiState.district?.displayName ?: "District",
@@ -81,28 +76,14 @@ fun DistrictDetailScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = Color.White
-                        )
+                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = TBABlue,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White,
-                    actionIconContentColor = Color.White
-                )
             )
         },
     ) { innerPadding ->
@@ -112,22 +93,7 @@ fun DistrictDetailScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            PrimaryScrollableTabRow(
-                selectedTabIndex = pagerState.currentPage,
-                edgePadding = 0.dp,
-                containerColor = TBABlue,
-                contentColor = Color.White,
-                divider = {
-                    HorizontalDivider(color = Color.White)
-                },
-                indicator = {
-                    TabRowDefaults.SecondaryIndicator(
-                        modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
-                        height = 3.dp,
-                        color = Color.White
-                    )
-                }
-            ) {
+            TBATabRow(selectedTabIndex = pagerState.currentPage) {
                 TABS.forEachIndexed { index, title ->
                     Tab(
                         selected = pagerState.currentPage == index,
@@ -135,7 +101,7 @@ fun DistrictDetailScreen(
                         text = {
                             Text(
                                 text = title,
-                                color = Color.White
+                                color = if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.7f)
                             )
                         },
                     )

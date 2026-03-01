@@ -10,7 +10,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,7 +32,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.NotificationsNone
@@ -44,20 +42,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -87,7 +78,8 @@ import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
-import com.thebluealliance.android.ui.theme.TBABlue
+import com.thebluealliance.android.ui.components.TBATabRow
+import com.thebluealliance.android.ui.components.TBATopAppBar
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Info", "Events", "Media")
@@ -157,7 +149,7 @@ fun TeamDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            TBATopAppBar(
                 title = {
                     val team = uiState.team
                     Text(
@@ -168,11 +160,7 @@ fun TeamDetailScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color.White
-                        )
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
@@ -184,27 +172,28 @@ fun TeamDetailScreen(
                         }
                     }) {
                         val hasSubscription = subscription?.notifications?.isNotEmpty() == true
-                        Icon(
-                            imageVector = if (hasSubscription) Icons.Filled.Notifications else Icons.Outlined.NotificationsNone,
-                            contentDescription = "Notification preferences",
-                            tint = Color.White
-                        )
+                        if (hasSubscription) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_notification),
+                                contentDescription = "Notification preferences",
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Outlined.NotificationsNone,
+                                contentDescription = "Notification preferences",
+                            )
+                        }
                     }
                     IconButton(onClick = viewModel::toggleFavorite) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
                             contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
-                            tint = Color.White
                         )
                     }
                     var menuExpanded by remember { mutableStateOf(false) }
                     Box {
                         IconButton(onClick = { menuExpanded = true }) {
-                            Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = "More options",
-                                tint = Color.White
-                            )
+                            Icon(Icons.Default.MoreVert, contentDescription = "More options")
                         }
                         DropdownMenu(
                             expanded = menuExpanded,
@@ -241,12 +230,6 @@ fun TeamDetailScreen(
                         }
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = TBABlue,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White,
-                    actionIconContentColor = Color.White
-                )
             )
         },
     ) { innerPadding ->
@@ -255,22 +238,7 @@ fun TeamDetailScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            PrimaryScrollableTabRow(
-                selectedTabIndex = pagerState.currentPage,
-                edgePadding = 0.dp,
-                containerColor = TBABlue,
-                contentColor = Color.White,
-                divider = {
-                    HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
-                },
-                indicator = {
-                    SecondaryIndicator(
-                        modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
-                        height = 3.dp,
-                        color = Color.White
-                    )
-                }
-            ) {
+            TBATabRow(selectedTabIndex = pagerState.currentPage) {
                 TABS.forEachIndexed { index, title ->
                     Tab(
                         selected = pagerState.currentPage == index,
@@ -278,7 +246,7 @@ fun TeamDetailScreen(
                         text = {
                             Text(
                                 text = title,
-                                color = Color.White
+                                color = if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.7f)
                             )
                         },
                     )
