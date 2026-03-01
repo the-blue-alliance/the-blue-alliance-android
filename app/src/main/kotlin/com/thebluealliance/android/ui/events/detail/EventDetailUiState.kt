@@ -16,6 +16,4 @@ data class EventDetailUiState(
     val alliances: List<Alliance>? = null,
     val awards: List<Award>? = null,
     val districtPoints: List<EventDistrictPoints>? = null,
-    val isRefreshing: Boolean = false,
-    val error: String? = null,
 )

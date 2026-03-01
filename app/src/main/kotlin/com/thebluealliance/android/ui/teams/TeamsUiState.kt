@@ -8,5 +8,4 @@ sealed interface TeamsUiState {
         val teams: List<Team>,
         val favoriteTeamKeys: Set<String> = emptySet(),
     ) : TeamsUiState
-    data class Error(val message: String) : TeamsUiState
 }
