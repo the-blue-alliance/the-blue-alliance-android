@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,13 +47,17 @@ fun MatchList(
     onNavigateToMatch: (String) -> Unit,
     headerContent: (LazyListScope.() -> Unit)? = null,
     headerItemCount: Int = 0,
+    innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     if (matches == null || matches.isEmpty()) {
-        LazyColumn(Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = innerPadding,
+        ) {
             headerContent?.invoke(this)
             item {
                 Box(
-                    Modifier.fillMaxWidth().padding(32.dp),
+                    Modifier.fillMaxSize().padding(32.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     if (matches == null) CircularProgressIndicator()
@@ -118,7 +123,11 @@ fun MatchList(
 
     val coroutineScope = rememberCoroutineScope()
 
-    LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = innerPadding,
+    ) {
         if (headerContent != null) {
             headerContent()
         }

@@ -1,6 +1,7 @@
 package com.thebluealliance.android.ui.events.detail.tabs
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,17 +29,26 @@ fun EventDistrictPointsTab(
     districtPoints: List<EventDistrictPoints>?,
     event: Event?,
     teams: List<Team>?,
+    innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     if (districtPoints == null) {
-        LoadingBox()
+        LoadingBox(
+            modifier = Modifier.padding(innerPadding)
+        )
         return
     }
     if (districtPoints.isEmpty()) {
-        EmptyBox("No district points")
+        EmptyBox(
+            modifier = Modifier.padding(innerPadding),
+            message = "No district points"
+        )
         return
     }
     val teamsByKey = remember(teams) { teams?.associateBy { it.key } ?: emptyMap() }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = innerPadding,
+    ) {
         if (event?.district == null) {
             item(key = "district_warning") {
                 Text(

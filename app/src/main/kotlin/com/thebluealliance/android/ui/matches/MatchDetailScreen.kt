@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.formatBreakdownValue
 import com.thebluealliance.android.domain.getFullLabel
 import com.thebluealliance.android.domain.model.Match
+import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.TBATopAppBar
 
@@ -101,98 +102,93 @@ fun MatchDetailScreen(
             )
         },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = viewModel::refresh,
+            modifier = Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
         ) {
-            PullToRefreshBox(
-                isRefreshing = isRefreshing,
-                onRefresh = viewModel::refresh,
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                val match = uiState.match
-                if (match == null) {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+            val match = uiState.match
+            if (match == null) {
+                LoadingBox(
+                    modifier = Modifier.padding(innerPadding)
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = innerPadding,
+                ) {
+                    // Event name + match time
+                    item(key = "event_info") {
+                        EventInfo(
+                            eventName = uiState.eventName,
+                            eventKey = uiState.eventKey,
+                            formattedTime = uiState.formattedTime,
+                            onNavigateToEvent = onNavigateToEvent,
+                        )
                     }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        // Event name + match time
-                        item(key = "event_info") {
-                            EventInfo(
-                                eventName = uiState.eventName,
-                                eventKey = uiState.eventKey,
-                                formattedTime = uiState.formattedTime,
-                                onNavigateToEvent = onNavigateToEvent,
-                            )
-                        }
 
-                        // Score summary
-                        item(key = "score_header") {
-                            ScoreSummary(match)
-                        }
+                    // Score summary
+                    item(key = "score_header") {
+                        ScoreSummary(match)
+                    }
 
-                        item(key = "divider_teams") {
+                    item(key = "divider_teams") {
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    }
+
+                    // Teams
+                    item(key = "red_teams") {
+                        AllianceTeams("Red alliance", match.redTeamKeys, MaterialTheme.colorScheme.error, onNavigateToTeam)
+                    }
+                    item(key = "blue_teams") {
+                        AllianceTeams("Blue alliance", match.blueTeamKeys, MaterialTheme.colorScheme.primary, onNavigateToTeam)
+                    }
+
+                    // Videos
+                    val videos = uiState.videos
+                    if (videos.isNotEmpty()) {
+                        item(key = "videos_header") {
                             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                        }
-
-                        // Teams
-                        item(key = "red_teams") {
-                            AllianceTeams("Red alliance", match.redTeamKeys, MaterialTheme.colorScheme.error, onNavigateToTeam)
-                        }
-                        item(key = "blue_teams") {
-                            AllianceTeams("Blue alliance", match.blueTeamKeys, MaterialTheme.colorScheme.primary, onNavigateToTeam)
-                        }
-
-                        // Videos
-                        val videos = uiState.videos
-                        if (videos.isNotEmpty()) {
-                            item(key = "videos_header") {
-                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                                Text(
-                                    text = "Videos",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                                )
-                            }
-                            items(videos, key = { "video_${it.key}" }) { video ->
-                                VideoRow(video)
-                            }
-                        }
-
-                        // Score breakdown
-                        val breakdown = uiState.scoreBreakdown
-                        if (breakdown != null) {
-                            item(key = "breakdown_header") {
-                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                                Text(
-                                    text = "Score breakdown",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                                )
-                            }
-
-                            val redBreakdown = breakdown["red"] ?: emptyMap()
-                            val blueBreakdown = breakdown["blue"] ?: emptyMap()
-                            val orderedFields = getOrderedBreakdownFields(
-                                year = uiState.year,
-                                redBreakdown = redBreakdown,
-                                blueBreakdown = blueBreakdown,
+                            Text(
+                                text = "Videos",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                             )
+                        }
+                        items(videos, key = { "video_${it.key}" }) { video ->
+                            VideoRow(video)
+                        }
+                    }
 
-                            items(orderedFields, key = { "breakdown_${it.first}" }) { (apiKey, label) ->
-                                BreakdownRow(
-                                    label = label,
-                                    redValue = formatBreakdownValue(apiKey, redBreakdown[apiKey] ?: "-"),
-                                    blueValue = formatBreakdownValue(apiKey, blueBreakdown[apiKey] ?: "-"),
-                                )
-                            }
+                    // Score breakdown
+                    val breakdown = uiState.scoreBreakdown
+                    if (breakdown != null) {
+                        item(key = "breakdown_header") {
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                            Text(
+                                text = "Score breakdown",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                            )
+                        }
+
+                        val redBreakdown = breakdown["red"] ?: emptyMap()
+                        val blueBreakdown = breakdown["blue"] ?: emptyMap()
+                        val orderedFields = getOrderedBreakdownFields(
+                            year = uiState.year,
+                            redBreakdown = redBreakdown,
+                            blueBreakdown = blueBreakdown,
+                        )
+
+                        items(orderedFields, key = { "breakdown_${it.first}" }) { (apiKey, label) ->
+                            BreakdownRow(
+                                label = label,
+                                redValue = formatBreakdownValue(apiKey, redBreakdown[apiKey] ?: "-"),
+                                blueValue = formatBreakdownValue(apiKey, blueBreakdown[apiKey] ?: "-"),
+                            )
                         }
                     }
                 }
