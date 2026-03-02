@@ -21,7 +21,6 @@ class DataSyncManager @Inject constructor(
         private const val TAG = "DataSyncManager"
         private const val FIRST_EVENT_YEAR = 1992
         private const val TEAM_COUNT_THRESHOLD = 500
-        private const val TEAM_PAGES = 20
     }
 
     suspend fun syncIfNeeded() {
@@ -63,12 +62,16 @@ class DataSyncManager @Inject constructor(
         }
 
         Log.d(TAG, "Syncing teams ($teamCount below threshold)")
-        for (page in 0 until TEAM_PAGES) {
+        var page = 0
+        while (true) {
             try {
-                teamRepository.refreshTeamsPage(page)
-                Log.d(TAG, "Synced teams page $page")
+                val count = teamRepository.refreshTeamsPage(page)
+                Log.d(TAG, "Synced teams page $page ($count teams)")
+                if (count == 0) break
+                page++
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to sync teams page $page", e)
+                break
             }
         }
     }

@@ -39,9 +39,11 @@ class TeamRepository @Inject constructor(
     fun observeTeamMedia(teamKey: String, year: Int): Flow<List<Media>> =
         mediaDao.observeByTeamYear(teamKey, year).map { list -> list.map { it.toDomain() } }
 
-    suspend fun refreshTeamsPage(page: Int) {
+    /** @return number of teams fetched */
+    suspend fun refreshTeamsPage(page: Int): Int {
         val dtos = api.getTeams(page)
         teamDao.insertAll(dtos.map { it.toEntity() })
+        return dtos.size
     }
 
     fun observeEventTeamKeys(eventKey: String): Flow<List<String>> =
