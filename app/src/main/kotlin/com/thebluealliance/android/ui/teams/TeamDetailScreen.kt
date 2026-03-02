@@ -31,6 +31,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
@@ -214,17 +215,10 @@ fun TeamDetailScreen(
                         }
                     }) {
                         val hasSubscription = subscription?.notifications?.isNotEmpty() == true
-                        if (hasSubscription) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_notification),
-                                contentDescription = "Notification preferences",
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Outlined.NotificationsNone,
-                                contentDescription = "Notification preferences",
-                            )
-                        }
+                        Icon(
+                            imageVector = if (hasSubscription) Icons.Filled.Notifications else Icons.Outlined.NotificationsNone,
+                            contentDescription = "Notification preferences",
+                        )
                     }
                     IconButton(onClick = viewModel::toggleFavorite) {
                         Icon(

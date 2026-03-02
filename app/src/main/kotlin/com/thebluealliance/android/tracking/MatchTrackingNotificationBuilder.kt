@@ -78,8 +78,8 @@ object MatchTrackingNotificationBuilder {
     private fun buildBody(state: TrackedTeamState): String {
         val lines = mutableListOf<String>()
 
-        // Next match (most important)
-        if (state.nextMatch != null) {
+        // Next match — skip if the team is in the NOW match (NOW already conveys "what's next")
+        if (state.nextMatch != null && !state.isTeamPlaying) {
             val timeStr = formatMatchTime(state.nextMatch)
             val teams = formatTeams(state.nextMatch, state.teamKey)
             lines.add("Next: ${state.nextMatch.shortName()}${timeStr}\n\u21B3 $teams")
