@@ -14,6 +14,12 @@ class Navigator(
 ) {
     fun navigate(route: NavKey) {
         if (route in state.topLevelRoutes) {
+            if (route == state.topLevelRoute) {
+                // Already on this tab — pop back to root
+                while (state.currentStack.size > 1) {
+                    state.currentStack.removeLastOrNull()
+                }
+            }
             state.topLevelRoute = route
         } else {
             state.backStacks[state.topLevelRoute]?.add(route)

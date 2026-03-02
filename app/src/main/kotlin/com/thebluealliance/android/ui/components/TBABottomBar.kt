@@ -29,7 +29,7 @@ fun TBABottomBar(
             NavigationBarItem(
                 selected = selected,
                 onClick = dropUnlessResumed {
-                    if (selected) {
+                    if (currentRoute == dest.key) {
                         onReselect()
                     } else {
                         onNavigate(dest.key)

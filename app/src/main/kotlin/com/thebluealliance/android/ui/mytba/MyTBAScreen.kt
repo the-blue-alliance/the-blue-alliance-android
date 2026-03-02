@@ -41,8 +41,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -71,6 +69,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.DisposableEffect
+import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.theme.TBABlue
 import kotlinx.coroutines.flow.Flow
 
@@ -126,7 +125,7 @@ fun MyTBAScreen(
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
-            TopAppBar(
+            TBATopAppBar(
                 title = { Text("myTBA") },
                 navigationIcon = {
                     if (onNavigateUp != null) {
@@ -134,7 +133,6 @@ fun MyTBAScreen(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
-                                tint = Color.White
                             )
                         }
                     }
@@ -144,16 +142,9 @@ fun MyTBAScreen(
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search",
-                            tint = Color.White
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = TBABlue,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White,
-                    actionIconContentColor = Color.White
-                )
             )
         },
     ) { innerPadding ->

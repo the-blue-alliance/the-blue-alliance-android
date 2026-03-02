@@ -111,7 +111,9 @@ fun TBANavigation(
                             onNavigateToSearch = { navigator.navigate(Screen.Search) },
                         )
                     }
-                entry<Screen.MyTBA> {
+                entry<Screen.MyTBA>(
+                    metadata = Transitions.topLevelTransitionSpec
+                ) {
                     MyTBAScreen(
                         onSignIn = { activity.startGoogleSignIn() },
                         onNavigateToTeam = { teamKey ->
@@ -125,19 +127,25 @@ fun TBANavigation(
                         reselectFlow = tabReselectFlows[Screen.MyTBA] ?: emptyFlow(),
                     )
                 }
-                    entry<Screen.Settings> {
+                    entry<Screen.Settings>(
+                        metadata = Transitions.topLevelTransitionSpec
+                    ) {
                         SettingsScreen(
                             onNavigateUp = { navigator.navigateUp() },
                             onNavigateToSearch = { navigator.navigate(Screen.Search) },
                         )
                     }
-                    entry<Screen.About> {
+                    entry<Screen.About>(
+                        metadata = Transitions.topLevelTransitionSpec
+                    ) {
                         AboutScreen(
                             onNavigateUp = { navigator.navigateUp() },
                             onNavigateToSearch = { navigator.navigate(Screen.Search) },
                         )
                     }
-                    entry<Screen.Thanks> {
+                    entry<Screen.Thanks>(
+                        metadata = Transitions.topLevelTransitionSpec
+                    ) {
                         ThanksScreen(
                             onNavigateUp = { navigator.navigateUp() },
                             onNavigateToSearch = { navigator.navigate(Screen.Search) },
