@@ -41,6 +41,38 @@ class EventsUiStateTest {
         playoffType = PlayoffType.BRACKET_8_TEAM,
     )
 
+    // --- buildEventSections: preseason ordering ---
+
+    @Test
+    fun `preseason appears first when today is before preseason ends`() {
+        val today = LocalDate.of(2026, 2, 20) // During preseason
+        val events = listOf(
+            makeEvent(key = "2026pre1", type = 100, startDate = "2026-02-14", endDate = "2026-02-21"),
+            makeEvent(key = "2026wk1", type = 0, week = 0, startDate = "2026-03-04", endDate = "2026-03-07"),
+            makeEvent(key = "2026cmp", type = 3, startDate = "2026-04-15", endDate = "2026-04-18"),
+        )
+
+        val sections = buildEventSections(events, today)
+
+        assertEquals("Preseason", sections.first().label)
+        assertEquals(listOf("Preseason", "Week 1", "Championship"), sections.map { it.label })
+    }
+
+    @Test
+    fun `preseason appears after championship when today is after last preseason event`() {
+        val today = LocalDate.of(2026, 3, 10) // After preseason ended
+        val events = listOf(
+            makeEvent(key = "2026pre1", type = 100, startDate = "2026-02-14", endDate = "2026-02-21"),
+            makeEvent(key = "2026wk1", type = 0, week = 0, startDate = "2026-03-04", endDate = "2026-03-07"),
+            makeEvent(key = "2026cmp", type = 3, startDate = "2026-04-15", endDate = "2026-04-18"),
+            makeEvent(key = "2026off1", type = 99, startDate = "2026-07-15", endDate = "2026-07-17"),
+        )
+
+        val sections = buildEventSections(events, today)
+
+        assertEquals(listOf("Week 1", "Championship", "Preseason", "Offseason"), sections.map { it.label })
+    }
+
     // --- Regular season: event happening today ---
 
     @Test

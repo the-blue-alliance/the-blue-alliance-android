@@ -18,9 +18,9 @@ sealed interface EventsUiState {
 
 private data class SectionKey(val sortOrder: Int, val label: String)
 
-private fun eventSectionKey(event: Event): SectionKey {
+private fun eventSectionKey(event: Event, preseasonOver: Boolean): SectionKey {
     return when (event.type) {
-        100 -> SectionKey(-1, "Preseason")
+        100 -> if (preseasonOver) SectionKey(1500, "Preseason") else SectionKey(-1, "Preseason")
         0, 1, 2, 5 -> {
             val week = event.week ?: return SectionKey(9999, "Other events")
             SectionKey(week, "Week ${week + 1}")
@@ -38,9 +38,15 @@ private fun eventSectionKey(event: Event): SectionKey {
     }
 }
 
-fun buildEventSections(events: List<Event>): List<EventSection> {
+fun buildEventSections(events: List<Event>, today: LocalDate = LocalDate.now()): List<EventSection> {
+    val lastPreseasonEnd = events
+        .filter { it.type == 100 }
+        .mapNotNull { it.endDate?.let { d -> runCatching { LocalDate.parse(d) }.getOrNull() } }
+        .maxOrNull()
+    val preseasonOver = lastPreseasonEnd != null && today.isAfter(lastPreseasonEnd)
+
     return events
-        .groupBy { eventSectionKey(it) }
+        .groupBy { eventSectionKey(it, preseasonOver) }
         .entries
         .sortedBy { it.key.sortOrder }
         .map { (key, sectionEvents) -> EventSection(key.label, sectionEvents) }
