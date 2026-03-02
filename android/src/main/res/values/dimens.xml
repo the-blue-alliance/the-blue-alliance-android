@@ -1,8 +1,0 @@
-<resources>
-    <dimen name="border_stroke">2dip</dimen>
-    <dimen name="toolbar_elevation">4dp</dimen>
-
-    <dimen name="fab_margin">16dp</dimen>
-    <dimen name="fab_list_padding">88dp</dimen>
-
-</resources>

@@ -1,9 +1,0 @@
-{
-  "allProperties": {
-    "lastModified": {
-      "type": "integer",
-      "format": "int64",
-      "description": "Timestamp this model was last modified"
-    }
-  }
-}
