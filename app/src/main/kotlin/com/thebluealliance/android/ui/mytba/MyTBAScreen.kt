@@ -176,7 +176,10 @@ fun MyTBAScreen(
                 AsyncImage(
                     model = uiState.userPhotoUrl,
                     contentDescription = "Profile photo",
-                    modifier = Modifier.size(40.dp).clip(CircleShape),
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
                     placeholder = personIcon,
                     error = personIcon,
                     fallback = personIcon,
@@ -220,7 +223,7 @@ fun MyTBAScreen(
             PrimaryScrollableTabRow(
                 selectedTabIndex = pagerState.currentPage,
                 edgePadding = 0.dp,
-                containerColor = TBABlue,
+                containerColor = Color(0xFF5C6BC0),
                 contentColor = Color.White,
                 divider = {
                     HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
@@ -240,7 +243,8 @@ fun MyTBAScreen(
                         text = {
                             Text(
                                 text = title,
-                                color = Color.White
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
                             )
                         },
                     )
