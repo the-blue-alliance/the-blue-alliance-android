@@ -3,7 +3,7 @@ agp = "9.0.1"
 kotlin = "2.3.10"
 ksp = "2.3.6"
 
-compose-bom = "2026.02.00"
+compose-bom = "2026.02.01"
 activity = "1.12.4"
 navigation3-runtime = "1.0.1"
 navigation3-ui = "1.0.1"
