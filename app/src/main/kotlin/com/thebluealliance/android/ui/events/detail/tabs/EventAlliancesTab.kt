@@ -1,6 +1,7 @@
 package com.thebluealliance.android.ui.events.detail.tabs
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,16 +18,27 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 
 @Composable
-fun EventAlliancesTab(alliances: List<Alliance>?) {
+fun EventAlliancesTab(
+    alliances: List<Alliance>?,
+    innerPadding: PaddingValues = PaddingValues.Zero,
+) {
     if (alliances == null) {
-        LoadingBox()
+        LoadingBox(
+            modifier = Modifier.padding(innerPadding)
+        )
         return
     }
     if (alliances.isEmpty()) {
-        EmptyBox("No alliances")
+        EmptyBox(
+            modifier = Modifier.padding(innerPadding),
+            message = "No alliances",
+        )
         return
     }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = innerPadding,
+    ) {
         items(alliances, key = { "${it.eventKey}_${it.number}" }) { alliance ->
             Column(
                 modifier = Modifier

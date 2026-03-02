@@ -11,9 +11,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -65,6 +68,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -152,134 +156,146 @@ fun TeamDetailScreen(
 
     Scaffold(
         topBar = {
-            TBATopAppBar(
-                title = {
-                    val team = uiState.team
-                    Text(
-                        text = if (team != null) "${team.number} - ${team.nickname ?: ""}" else "Team",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        if (!viewModel.isSignedIn()) {
-                            showSignInDialog = true
-                        } else {
-                            showNotificationSheet = true
-                        }
-                    }) {
-                        val hasSubscription = subscription?.notifications?.isNotEmpty() == true
-                        if (hasSubscription) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_notification),
-                                contentDescription = "Notification preferences",
-                            )
-                        } else {
-                            Icon(
-                                imageVector = Icons.Outlined.NotificationsNone,
-                                contentDescription = "Notification preferences",
-                            )
-                        }
-                    }
-                    IconButton(onClick = viewModel::toggleFavorite) {
-                        Icon(
-                            imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
-                            contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+            Column {
+                TBATopAppBar(
+                    title = {
+                        val team = uiState.team
+                        Text(
+                            text = if (team != null) "${team.number} - ${team.nickname ?: ""}" else "Team",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
-                    }
-                    var menuExpanded by remember { mutableStateOf(false) }
-                    Box {
-                        IconButton(onClick = { menuExpanded = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "More options")
-                        }
-                        DropdownMenu(
-                            expanded = menuExpanded,
-                            onDismissRequest = { menuExpanded = false },
-                        ) {
-                            uiState.team?.let { team ->
-                                DropdownMenuItem(
-                                    text = { Text("Share") },
-                                    leadingIcon = { Icon(Icons.Filled.Share, contentDescription = null) },
-                                    onClick = {
-                                        menuExpanded = false
-                                        context.shareTbaUrl(
-                                            title = "Team ${team.number} - ${team.nickname ?: ""}",
-                                            url = "https://www.thebluealliance.com/team/${team.number}",
-                                        )
-                                    },
-                                )
-                            }
-                            if (viewModel.canPinShortcuts) {
-                                DropdownMenuItem(
-                                    text = { Text("Add to home screen") },
-                                    leadingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.ic_add_to_home_screen),
-                                            contentDescription = null,
-                                        )
-                                    },
-                                    onClick = {
-                                        menuExpanded = false
-                                        viewModel.requestPinShortcut()
-                                    },
-                                )
-                            }
-                        }
-                    }
-                },
-            )
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-            TBATabRow(selectedTabIndex = pagerState.currentPage) {
-                TABS.forEachIndexed { index, title ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                        text = {
-                            Text(
-                                text = title,
-                                color = if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.7f)
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateUp) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back"
                             )
-                        },
-                    )
-                }
-            }
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = {
+                            if (!viewModel.isSignedIn()) {
+                                showSignInDialog = true
+                            } else {
+                                showNotificationSheet = true
+                            }
+                        }) {
+                            val hasSubscription = subscription?.notifications?.isNotEmpty() == true
+                            if (hasSubscription) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_notification),
+                                    contentDescription = "Notification preferences",
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Outlined.NotificationsNone,
+                                    contentDescription = "Notification preferences",
+                                )
+                            }
+                        }
+                        IconButton(onClick = viewModel::toggleFavorite) {
+                            Icon(
+                                imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                                contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                            )
+                        }
+                        var menuExpanded by remember { mutableStateOf(false) }
+                        Box {
+                            IconButton(onClick = { menuExpanded = true }) {
+                                Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                            }
+                            DropdownMenu(
+                                expanded = menuExpanded,
+                                onDismissRequest = { menuExpanded = false },
+                            ) {
+                                uiState.team?.let { team ->
+                                    DropdownMenuItem(
+                                        text = { Text("Share") },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Filled.Share,
+                                                contentDescription = null
+                                            )
+                                        },
+                                        onClick = {
+                                            menuExpanded = false
+                                            context.shareTbaUrl(
+                                                title = "Team ${team.number} - ${team.nickname ?: ""}",
+                                                url = "https://www.thebluealliance.com/team/${team.number}",
+                                            )
+                                        },
+                                    )
+                                }
+                                if (viewModel.canPinShortcuts) {
+                                    DropdownMenuItem(
+                                        text = { Text("Add to home screen") },
+                                        leadingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.ic_add_to_home_screen),
+                                                contentDescription = null,
+                                            )
+                                        },
+                                        onClick = {
+                                            menuExpanded = false
+                                            viewModel.requestPinShortcut()
+                                        },
+                                    )
+                                }
+                            }
+                        }
+                    },
+                )
 
-            PullToRefreshBox(
-                isRefreshing = isRefreshing && uiState.team != null,
-                onRefresh = viewModel::refreshAll,
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxSize(),
-                ) { page ->
-                    when (page) {
-                        0 -> InfoTab(uiState.team, uiState.media)
-                        1 -> EventsTab(
-                            events = uiState.events,
-                            selectedYear = selectedYear,
-                            yearsParticipated = yearsParticipated,
-                            onYearSelected = viewModel::selectYear,
-                            onNavigateToEvent = { eventKey ->
-                                val teamKey = uiState.team?.key
-                                if (teamKey != null) onNavigateToTeamEvent(teamKey, eventKey)
-                                else onNavigateToEvent(eventKey)
+                TBATabRow(selectedTabIndex = pagerState.currentPage) {
+                    TABS.forEachIndexed { index, title ->
+                        Tab(
+                            selected = pagerState.currentPage == index,
+                            onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                            text = {
+                                Text(
+                                    text = title,
+                                    color = if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.7f)
+                                )
                             },
                         )
-                        2 -> MediaTab(uiState.media)
                     }
+                }
+            }
+        },
+    ) { innerPadding ->
+        PullToRefreshBox(
+            isRefreshing = isRefreshing && uiState.team != null,
+            onRefresh = viewModel::refreshAll,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize(),
+            ) { page ->
+                when (page) {
+                    0 -> InfoTab(
+                        team = uiState.team,
+                        media = uiState.media,
+                        innerPadding = innerPadding,
+                    )
+                    1 -> EventsTab(
+                        events = uiState.events,
+                        selectedYear = selectedYear,
+                        yearsParticipated = yearsParticipated,
+                        onYearSelected = viewModel::selectYear,
+                        onNavigateToEvent = { eventKey ->
+                            val teamKey = uiState.team?.key
+                            if (teamKey != null) onNavigateToTeamEvent(teamKey, eventKey)
+                            else onNavigateToEvent(eventKey)
+                        },
+                        innerPadding = innerPadding,
+                    )
+                    2 -> MediaTab(
+                        media = uiState.media,
+                        innerPadding = innerPadding,
+                    )
                 }
             }
         }
@@ -287,9 +303,15 @@ fun TeamDetailScreen(
 }
 
 @Composable
-private fun InfoTab(team: Team?, media: List<Media>?) {
+private fun InfoTab(
+    team: Team?,
+    media: List<Media>?,
+    innerPadding: PaddingValues = PaddingValues.Zero,
+) {
     if (team == null) {
-        LoadingBox()
+        LoadingBox(
+            modifier = Modifier.padding(innerPadding),
+        )
         return
     }
     val avatar = media?.firstOrNull { it.isAvatar }
@@ -297,6 +319,7 @@ private fun InfoTab(team: Team?, media: List<Media>?) {
         modifier = Modifier.fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
+        contentPadding = innerPadding,
     ) {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -384,8 +407,21 @@ private fun EventsTab(
     yearsParticipated: List<Int>,
     onYearSelected: (Int) -> Unit,
     onNavigateToEvent: (String) -> Unit,
+    innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .padding(top = innerPadding.calculateTopPadding())
+    ) {
+        // To allow content to show up above the LazyColumn we need to put the top innerPadding on
+        // the parent column. Take all reamining padding and apply them to the rest of the content
+        val layoutDirection = LocalLayoutDirection.current
+        val remainingContentPadding = PaddingValues(
+            start = innerPadding.calculateStartPadding(layoutDirection),
+            end = innerPadding.calculateEndPadding(layoutDirection),
+            bottom = innerPadding.calculateBottomPadding(),
+        )
+
         if (yearsParticipated.isNotEmpty()) {
             var expanded by remember { mutableStateOf(false) }
             Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
@@ -411,11 +447,19 @@ private fun EventsTab(
         }
 
         if (events == null) {
-            LoadingBox()
+            LoadingBox(
+                modifier = Modifier.padding(remainingContentPadding)
+            )
         } else if (events.isEmpty()) {
-            EmptyBox("No events for $selectedYear")
+            EmptyBox(
+                modifier = Modifier.padding(remainingContentPadding),
+                message = "No events for $selectedYear"
+            )
         } else {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = remainingContentPadding,
+            ) {
                 items(events, key = { it.key }) { event ->
                     EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
                 }
@@ -425,14 +469,22 @@ private fun EventsTab(
 }
 
 @Composable
-private fun MediaTab(media: List<Media>?) {
+private fun MediaTab(
+    media: List<Media>?,
+    innerPadding: PaddingValues = PaddingValues.Zero,
+) {
     if (media == null) {
-        LoadingBox()
+        LoadingBox(
+            modifier = Modifier.padding(innerPadding)
+        )
         return
     }
     val filtered = media.filter { it.type != "avatar" }
     if (filtered.isEmpty()) {
-        EmptyBox("No media")
+        EmptyBox(
+            modifier = Modifier.padding(innerPadding),
+            message = "No media"
+        )
         return
     }
     val context = LocalContext.current
@@ -443,6 +495,7 @@ private fun MediaTab(media: List<Media>?) {
             .padding(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = innerPadding,
     ) {
         items(filtered, key = { "${it.type}_${it.foreignKey}" }) { item ->
             val url = mediaUrl(item)

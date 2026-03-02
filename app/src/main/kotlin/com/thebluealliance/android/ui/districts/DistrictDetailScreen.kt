@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -70,61 +71,68 @@ fun DistrictDetailScreen(
 
     Scaffold(
         topBar = {
-            TBATopAppBar(
-                title = {
-                    Text(
-                        text = uiState.district?.displayName ?: "District",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onNavigateToSearch) {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
-                    }
-                },
-            )
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            TBATabRow(selectedTabIndex = pagerState.currentPage) {
-                TABS.forEachIndexed { index, title ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                        text = {
-                            Text(
-                                text = title,
-                                color = if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.7f)
+            Column {
+                TBATopAppBar(
+                    title = {
+                        Text(
+                            text = uiState.district?.displayName ?: "District",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateUp) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back"
                             )
-                        },
-                    )
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = onNavigateToSearch) {
+                            Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                        }
+                    },
+                )
+
+                TBATabRow(selectedTabIndex = pagerState.currentPage) {
+                    TABS.forEachIndexed { index, title ->
+                        Tab(
+                            selected = pagerState.currentPage == index,
+                            onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                            text = {
+                                Text(
+                                    text = title,
+                                    color = if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.7f)
+                                )
+                            },
+                        )
+                    }
                 }
             }
-
-            PullToRefreshBox(
-                isRefreshing = isRefreshing && uiState.eventSections != null && uiState.rankings != null,
-                onRefresh = viewModel::refreshAll,
+        },
+    ) { innerPadding ->
+        PullToRefreshBox(
+            isRefreshing = isRefreshing && uiState.eventSections != null && uiState.rankings != null,
+            onRefresh = viewModel::refreshAll,
+            modifier = Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+        ) {
+            HorizontalPager(
+                state = pagerState,
                 modifier = Modifier.fillMaxSize(),
-            ) {
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxSize(),
-                ) { page ->
-                    when (page) {
-                        0 -> EventsTab(uiState.eventSections, onNavigateToEvent)
-                        1 -> RankingsTab(uiState.rankings, onNavigateToTeam)
-                    }
+            ) { page ->
+                when (page) {
+                    0 -> EventsTab(
+                        sections = uiState.eventSections,
+                        onNavigateToEvent = onNavigateToEvent,
+                        innerPadding = innerPadding,
+                    )
+                    1 -> RankingsTab(
+                        rankings = uiState.rankings,
+                        onNavigateToTeam = onNavigateToTeam,
+                        innerPadding = innerPadding,
+                    )
                 }
             }
         }
@@ -133,7 +141,11 @@ fun DistrictDetailScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun EventsTab(sections: List<EventSection>?, onNavigateToEvent: (String) -> Unit) {
+private fun EventsTab(
+    sections: List<EventSection>?,
+    onNavigateToEvent: (String) -> Unit,
+    innerPadding: PaddingValues = PaddingValues.Zero,
+) {
     if (sections == null) {
         LoadingBox()
         return
@@ -180,7 +192,11 @@ private fun EventsTab(sections: List<EventSection>?, onNavigateToEvent: (String)
         }
     }
 
-    LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        state = listState,
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = innerPadding,
+    ) {
         if (thisWeekResult != null) {
             stickyHeader(key = "this_week_header") {
                 SectionHeader(
@@ -223,16 +239,28 @@ private fun EventsTab(sections: List<EventSection>?, onNavigateToEvent: (String)
 }
 
 @Composable
-private fun RankingsTab(rankings: List<DistrictRanking>?, onNavigateToTeam: (String) -> Unit) {
+private fun RankingsTab(
+    rankings: List<DistrictRanking>?,
+    onNavigateToTeam: (String) -> Unit,
+    innerPadding: PaddingValues = PaddingValues.Zero,
+) {
     if (rankings == null) {
-        LoadingBox()
+        LoadingBox(
+            modifier = Modifier.padding(innerPadding)
+        )
         return
     }
     if (rankings.isEmpty()) {
-        EmptyBox("No rankings")
+        EmptyBox(
+            modifier = Modifier.padding(innerPadding),
+            message = "No rankings"
+        )
         return
     }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = innerPadding,
+    ) {
         items(rankings, key = { "${it.districtKey}_${it.teamKey}" }) { ranking ->
             Row(
                 modifier = Modifier

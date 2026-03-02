@@ -1,6 +1,7 @@
 package com.thebluealliance.android.ui.events.detail.tabs
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,17 +20,29 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 
 @Composable
-fun EventRankingsTab(rankings: List<Ranking>?, onTeamClick: (String) -> Unit = {}) {
+fun EventRankingsTab(
+    rankings: List<Ranking>?,
+    onTeamClick: (String) -> Unit = {},
+    innerPadding: PaddingValues = PaddingValues.Zero,
+) {
     if (rankings == null) {
-        LoadingBox()
+        LoadingBox(
+            modifier = Modifier.padding(innerPadding)
+        )
         return
     }
     if (rankings.isEmpty()) {
-        EmptyBox("No rankings")
+        EmptyBox(
+            modifier = Modifier.padding(innerPadding),
+            message = "No rankings",
+        )
         return
     }
     val sorted = rankings.sortedBy { it.rank }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = innerPadding,
+    ) {
         items(sorted, key = { "${it.eventKey}_${it.teamKey}" }) { ranking ->
             Row(
                 modifier = Modifier

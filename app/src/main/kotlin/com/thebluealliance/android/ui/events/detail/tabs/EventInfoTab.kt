@@ -3,6 +3,7 @@ package com.thebluealliance.android.ui.events.detail.tabs
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,9 +32,14 @@ import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.formatEventDateRange
 
 @Composable
-fun EventInfoTab(event: Event?) {
+fun EventInfoTab(
+    event: Event?,
+    innerPadding: PaddingValues = PaddingValues.Zero,
+) {
     if (event == null) {
-        LoadingBox()
+        LoadingBox(
+            modifier = Modifier.padding(innerPadding)
+        )
         return
     }
     val context = LocalContext.current
@@ -41,6 +47,7 @@ fun EventInfoTab(event: Event?) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
+        contentPadding = innerPadding,
     ) {
         item {
             Text(event.name, style = MaterialTheme.typography.headlineSmall)
