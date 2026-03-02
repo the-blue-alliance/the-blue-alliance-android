@@ -414,7 +414,7 @@ private fun EventsTab(
             .padding(top = innerPadding.calculateTopPadding())
     ) {
         // To allow content to show up above the LazyColumn we need to put the top innerPadding on
-        // the parent column. Take all reamining padding and apply them to the rest of the content
+        // the parent column. Take all remaining padding and apply them to the rest of the content
         val layoutDirection = LocalLayoutDirection.current
         val remainingContentPadding = PaddingValues(
             start = innerPadding.calculateStartPadding(layoutDirection),
