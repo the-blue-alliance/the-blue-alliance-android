@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-    <Preference
-        app:key="dev_settings"
-        app:selectable="true"
-        app:title="@string/dev_settings"
-        app:iconSpaceReserved="false"/>
-</PreferenceScreen>
