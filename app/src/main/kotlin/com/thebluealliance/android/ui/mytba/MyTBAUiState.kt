@@ -11,4 +11,5 @@ data class MyTBAUiState(
     val favorites: List<Favorite> = emptyList(),
     val subscriptions: List<Subscription> = emptyList(),
     val canPinShortcuts: Boolean = false,
+    val trackedTeamKey: String? = null,
 )

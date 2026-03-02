@@ -1,10 +1,12 @@
 package com.thebluealliance.android.ui.teams
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.EventRepository
+import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.Favorite
@@ -12,10 +14,12 @@ import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.tracking.MatchTrackingService
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,17 +30,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.util.Calendar
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel(assistedFactory = TeamDetailViewModel.Factory::class)
 class TeamDetailViewModel @AssistedInject constructor(
     @Assisted val navKey: Screen.TeamDetail,
+    @ApplicationContext private val appContext: Context,
     private val teamRepository: TeamRepository,
     private val eventRepository: EventRepository,
+    private val matchRepository: MatchRepository,
     private val myTBARepository: MyTBARepository,
     private val authRepository: AuthRepository,
     private val tbaApi: TbaApi,
@@ -165,6 +173,50 @@ class TeamDetailViewModel @AssistedInject constructor(
     }
 
     fun isSignedIn(): Boolean = authRepository.isSignedIn()
+
+    fun startTracking() {
+        viewModelScope.launch {
+            try {
+                val year = LocalDate.now().year
+                eventRepository.refreshTeamEvents(teamKey, year)
+
+                val today = LocalDate.now()
+                val events = eventRepository.observeTeamEvents(teamKey, year).first()
+                val currentEvents = events.filter { event ->
+                    val start = event.startDate?.let { LocalDate.parse(it) }
+                    val end = event.endDate?.let { LocalDate.parse(it) }
+                    if (start != null && end != null) {
+                        !today.isBefore(start) && !today.isAfter(end.plusDays(1))
+                    } else false
+                }
+
+                when {
+                    currentEvents.isEmpty() -> {
+                        val teamNumber = teamKey.removePrefix("frc")
+                        _userMessage.emit("Team $teamNumber isn't competing right now")
+                    }
+                    currentEvents.size == 1 -> {
+                        val event = currentEvents.first()
+                        matchRepository.refreshEventMatches(event.key)
+                        MatchTrackingService.start(appContext, teamKey, event.key)
+                    }
+                    else -> {
+                        // Multiple events — for now, pick the first one
+                        // TODO: Show picker dialog for multiple events
+                        val event = currentEvents.first()
+                        matchRepository.refreshEventMatches(event.key)
+                        MatchTrackingService.start(appContext, teamKey, event.key)
+                    }
+                }
+            } catch (e: Exception) {
+                _userMessage.emit("Couldn't start tracking: ${e.message}")
+            }
+        }
+    }
+
+    fun stopTracking() {
+        MatchTrackingService.stop(appContext)
+    }
 
     fun refreshAll() {
         viewModelScope.launch {

@@ -15,6 +15,7 @@ class NotificationChannelManager @Inject constructor(
         const val CHANNEL_MATCH = "match_alerts"
         const val CHANNEL_EVENT = "event_updates"
         const val CHANNEL_GENERAL = "general"
+        const val CHANNEL_TRACKING = "match_tracking"
     }
 
     fun createChannels() {
@@ -41,6 +42,13 @@ class NotificationChannelManager @Inject constructor(
                     NotificationManager.IMPORTANCE_DEFAULT,
                 ).apply {
                     description = "Test notifications and broadcasts"
+                },
+                NotificationChannel(
+                    CHANNEL_TRACKING,
+                    "Match Tracking",
+                    NotificationManager.IMPORTANCE_DEFAULT,
+                ).apply {
+                    description = "Live match tracking for your favorite team at an event"
                 },
             )
         )
