@@ -21,6 +21,9 @@ interface TeamDao {
     @Query("SELECT * FROM teams WHERE nickname LIKE '%' || :query || '%' OR name LIKE '%' || :query || '%' OR key LIKE '%' || :query || '%' OR CAST(number AS TEXT) = :query ORDER BY number ASC LIMIT 50")
     fun search(query: String): Flow<List<TeamEntity>>
 
+    @Query("SELECT COUNT(*) FROM teams")
+    suspend fun getCount(): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(teams: List<TeamEntity>)
 }

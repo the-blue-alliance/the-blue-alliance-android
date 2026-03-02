@@ -30,6 +30,9 @@ interface EventDao {
     @Query("DELETE FROM events WHERE district = :districtKey")
     suspend fun deleteByDistrict(districtKey: String)
 
+    @Query("SELECT DISTINCT year FROM events")
+    suspend fun getLoadedYears(): List<Int>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(events: List<EventEntity>)
 }
