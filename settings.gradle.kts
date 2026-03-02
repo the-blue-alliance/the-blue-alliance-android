@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "the-blue-alliance-android"
 include(":app")
+include(":baselineprofile")
