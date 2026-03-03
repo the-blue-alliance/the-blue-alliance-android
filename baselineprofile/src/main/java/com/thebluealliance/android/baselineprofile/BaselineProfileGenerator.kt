@@ -1,4 +1,4 @@
-package com.example.baselineprofile
+package com.thebluealliance.android.baseline
 
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -28,7 +28,7 @@ import org.junit.runner.RunWith
  * Check [documentation](https://d.android.com/topic/performance/benchmarking/macrobenchmark-instrumentation-args)
  * for more information about available instrumentation arguments.
  *
- * After you run the generator, you can verify the improvements running the [StartupBenchmarks] benchmark.
+ * After you run the generator, you can verify the improvements running the [com.example.baselineprofile.StartupBenchmarks] benchmark.
  *
  * When using this class to generate a baseline profile, only API 33+ or rooted API 28+ are supported.
  *
