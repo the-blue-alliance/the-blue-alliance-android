@@ -10,12 +10,14 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ServiceCompat
 import com.thebluealliance.android.data.repository.MatchRepository
+import com.thebluealliance.android.domain.model.Match
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,6 +29,11 @@ class MatchTrackingService : Service() {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var observeJob: Job? = null
+    private var tickerJob: Job? = null
+    private var refreshJob: Job? = null
+
+    /** Latest matches from Room, used by the ticker to re-evaluate state. */
+    private var latestMatches: List<Match> = emptyList()
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -75,38 +82,62 @@ class MatchTrackingService : Service() {
             startForeground(MatchTrackingNotificationBuilder.NOTIFICATION_ID, notification)
         }
 
-        // Start observing match data
+        // Start observing match data from Room
         observeJob?.cancel()
         observeJob = scope.launch {
             matchRepository.observeEventMatches(eventKey).collectLatest { matches ->
-                val now = System.currentTimeMillis()
-                val state = computeTrackedTeamState(
-                    matches = matches,
-                    teamKey = teamKey,
-                    eventKey = eventKey,
-                    currentTimeMillis = now,
-                )
+                latestMatches = matches
+                updateNotification(teamKey, eventKey)
+            }
+        }
 
-                // Auto-dismiss if 2h past the last match time
-                if (state.autoDismissAfter != null && now >= state.autoDismissAfter) {
-                    Log.d(TAG, "Auto-dismissing: 2h past last match")
-                    stopTracking()
-                    return@collectLatest
-                }
+        // Re-evaluate state every 60s with fresh time (handles "Now" transitions)
+        tickerJob?.cancel()
+        tickerJob = scope.launch {
+            while (true) {
+                delay(TICKER_INTERVAL_MS)
+                updateNotification(teamKey, eventKey)
+            }
+        }
 
-                val updatedNotification = MatchTrackingNotificationBuilder.build(
-                    this@MatchTrackingService, state,
-                )
-                val nm = getSystemService(NotificationManager::class.java)
-                nm.notify(MatchTrackingNotificationBuilder.NOTIFICATION_ID, updatedNotification)
+        // Poll API every 5 min as a safety net for missed FCM pushes
+        refreshJob?.cancel()
+        refreshJob = scope.launch {
+            while (true) {
+                delay(API_REFRESH_INTERVAL_MS)
+                Log.d(TAG, "Periodic API refresh for $eventKey")
+                matchRepository.refreshEventMatches(eventKey)
             }
         }
 
         return START_STICKY
     }
 
+    private fun updateNotification(teamKey: String, eventKey: String) {
+        val now = System.currentTimeMillis()
+        val state = computeTrackedTeamState(
+            matches = latestMatches,
+            teamKey = teamKey,
+            eventKey = eventKey,
+            currentTimeMillis = now,
+        )
+
+        // Auto-dismiss if 2h past the last match time
+        if (state.autoDismissAfter != null && now >= state.autoDismissAfter) {
+            Log.d(TAG, "Auto-dismissing: 2h past last match")
+            stopTracking()
+            return
+        }
+
+        val notification = MatchTrackingNotificationBuilder.build(this, state)
+        val nm = getSystemService(NotificationManager::class.java)
+        nm.notify(MatchTrackingNotificationBuilder.NOTIFICATION_ID, notification)
+    }
+
     private fun stopTracking() {
         observeJob?.cancel()
+        tickerJob?.cancel()
+        refreshJob?.cancel()
         activeTeamKey = null
         activeEventKey = null
         stopForeground(STOP_FOREGROUND_REMOVE)
@@ -122,6 +153,9 @@ class MatchTrackingService : Service() {
 
     companion object {
         private const val TAG = "MatchTracking"
+        private const val TICKER_INTERVAL_MS = 60_000L
+        private const val API_REFRESH_INTERVAL_MS = 5 * 60_000L
+
         const val EXTRA_TEAM_KEY = "team_key"
         const val EXTRA_EVENT_KEY = "event_key"
         const val ACTION_STOP = "com.thebluealliance.android.tracking.STOP"
