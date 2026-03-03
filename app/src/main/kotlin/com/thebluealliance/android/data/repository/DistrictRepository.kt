@@ -45,4 +45,7 @@ class DistrictRepository @Inject constructor(
             districtRankingDao.insertAll(dtos.map { it.toEntity(districtKey) })
         }
     }
+
+    suspend fun getDistrictHistory(districtAbbreviation: String): List<Int> =
+        api.getDistrictHistory(districtAbbreviation).map { it.year }.sortedDescending()
 }

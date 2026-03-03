@@ -18,6 +18,9 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -26,10 +29,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -66,6 +71,8 @@ fun DistrictDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
+    val availableYears by viewModel.availableYears.collectAsStateWithLifecycle()
     val pagerState = rememberPagerState(pageCount = { TABS.size })
     val coroutineScope = rememberCoroutineScope()
 
@@ -89,6 +96,37 @@ fun DistrictDetailScreen(
                         }
                     },
                     actions = {
+                        if (availableYears.isNotEmpty()) {
+                            var yearMenuExpanded by remember { mutableStateOf(false) }
+                            Box {
+                                TextButton(onClick = { yearMenuExpanded = true }) {
+                                    Text(
+                                        text = selectedYear.toString(),
+                                        color = Color.White,
+                                        style = MaterialTheme.typography.titleMedium,
+                                    )
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowDropDown,
+                                        contentDescription = "Select year",
+                                        tint = Color.White,
+                                    )
+                                }
+                                DropdownMenu(
+                                    expanded = yearMenuExpanded,
+                                    onDismissRequest = { yearMenuExpanded = false },
+                                ) {
+                                    availableYears.forEach { year ->
+                                        DropdownMenuItem(
+                                            text = { Text(year.toString()) },
+                                            onClick = {
+                                                viewModel.selectYear(year)
+                                                yearMenuExpanded = false
+                                            },
+                                        )
+                                    }
+                                }
+                            }
+                        }
                         IconButton(onClick = onNavigateToSearch) {
                             Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
                         }

@@ -77,6 +77,9 @@ interface TbaApi {
     @GET("api/v3/districts/{year}")
     suspend fun getDistrictsForYear(@Path("year") year: Int): List<DistrictDto>
 
+    @GET("api/v3/district/{district_abbreviation}/history")
+    suspend fun getDistrictHistory(@Path("district_abbreviation") districtAbbreviation: String): List<DistrictDto>
+
     // District Rankings
     @GET("api/v3/district/{district_key}/rankings")
     suspend fun getDistrictRankings(@Path("district_key") districtKey: String): List<DistrictRankingDto>?
