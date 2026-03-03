@@ -22,7 +22,6 @@ DRY_RUN=false
 # Load git remote from local.properties (default: origin)
 GIT_REMOTE="origin"
 if [[ -f local.properties ]]; then
-    local configured
     configured=$(grep 'release.git.remote' local.properties 2>/dev/null | cut -d= -f2- || true)
     if [[ -n "$configured" ]]; then
         GIT_REMOTE="$configured"
