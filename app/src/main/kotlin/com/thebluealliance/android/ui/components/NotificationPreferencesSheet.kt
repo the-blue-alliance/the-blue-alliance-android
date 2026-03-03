@@ -78,6 +78,8 @@ fun NotificationPreferencesSheet(
             )
 
             if (onStartTracking != null) {
+                val isTrackingThisTeam = trackedTeamKey != null && trackedTeamKey == teamKey
+                val isTrackingOther = trackedTeamKey != null && trackedTeamKey != teamKey
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -87,7 +89,6 @@ fun NotificationPreferencesSheet(
                             text = "Live updates",
                             style = MaterialTheme.typography.bodyMedium,
                         )
-                        val isTrackingOther = trackedTeamKey != null && trackedTeamKey != teamKey
                         if (isTrackingOther) {
                             val trackedNumber = trackedTeamKey.removePrefix("frc")
                             Text(
@@ -98,8 +99,6 @@ fun NotificationPreferencesSheet(
                         }
                     }
 
-                    val isTrackingThisTeam = trackedTeamKey != null && trackedTeamKey == teamKey
-                    val isTrackingOther = trackedTeamKey != null && trackedTeamKey != teamKey
                     when {
                         isTrackingThisTeam -> {
                             OutlinedButton(onClick = { onStopTracking?.invoke() }) {

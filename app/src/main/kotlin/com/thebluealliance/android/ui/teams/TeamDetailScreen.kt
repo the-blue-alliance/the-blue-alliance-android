@@ -108,6 +108,7 @@ fun TeamDetailScreen(
     val pagerState = rememberPagerState(pageCount = { TABS.size })
     val coroutineScope = rememberCoroutineScope()
 
+    val currentTrackedTeamKey by MatchTrackingService.activeTeamKey.collectAsStateWithLifecycle()
     var showSignInDialog by remember { mutableStateOf(false) }
     var showNotificationSheet by remember { mutableStateOf(false) }
     var showSwitchDialog by remember { mutableStateOf(false) }
@@ -140,10 +141,6 @@ fun TeamDetailScreen(
     }
 
     if (showNotificationSheet) {
-        val thisTeamKey = viewModel.navKey.teamKey.let { key ->
-            if (key.all { it.isDigit() }) "frc$key" else key
-        }
-        val currentTrackedTeamKey = MatchTrackingService.activeTeamKey
         NotificationPreferencesSheet(
             displayName = uiState.team?.let { "Team ${it.number}" + (it.nickname?.let { n -> " - $n" } ?: "") } ?: "Team",
             modelType = ModelType.TEAM,
@@ -154,10 +151,10 @@ fun TeamDetailScreen(
                 showNotificationSheet = false
             },
             onDismiss = { showNotificationSheet = false },
-            teamKey = thisTeamKey,
+            teamKey = viewModel.teamKey,
             trackedTeamKey = currentTrackedTeamKey,
             onStartTracking = {
-                if (currentTrackedTeamKey != null && currentTrackedTeamKey != thisTeamKey) {
+                if (currentTrackedTeamKey != null && currentTrackedTeamKey != viewModel.teamKey) {
                     showNotificationSheet = false
                     showSwitchDialog = true
                 } else {

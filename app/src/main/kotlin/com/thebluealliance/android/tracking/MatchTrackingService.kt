@@ -20,6 +20,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -61,7 +64,7 @@ class MatchTrackingService : Service() {
         }
 
         Log.d(TAG, "Starting tracking: team=$teamKey event=$eventKey")
-        activeTeamKey = teamKey
+        _activeTeamKey.value = teamKey
         activeEventKey = eventKey
 
         // Post an initial notification to start foreground immediately
@@ -151,7 +154,7 @@ class MatchTrackingService : Service() {
         observeJob?.cancel()
         tickerJob?.cancel()
         refreshJob?.cancel()
-        activeTeamKey = null
+        _activeTeamKey.value = null
         activeEventKey = null
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
@@ -159,7 +162,7 @@ class MatchTrackingService : Service() {
 
     override fun onDestroy() {
         scope.cancel()
-        activeTeamKey = null
+        _activeTeamKey.value = null
         activeEventKey = null
         super.onDestroy()
     }
@@ -174,12 +177,13 @@ class MatchTrackingService : Service() {
         const val ACTION_STOP = "com.thebluealliance.android.tracking.STOP"
 
         // Simple static tracking state — one tracker at a time
-        var activeTeamKey: String? = null
-            private set
+        private val _activeTeamKey = MutableStateFlow<String?>(null)
+        val activeTeamKey: StateFlow<String?> = _activeTeamKey.asStateFlow()
+
         var activeEventKey: String? = null
             private set
 
-        val isTracking: Boolean get() = activeTeamKey != null
+        val isTracking: Boolean get() = _activeTeamKey.value != null
 
         fun start(context: Context, teamKey: String, eventKey: String) {
             val intent = Intent(context, MatchTrackingService::class.java).apply {

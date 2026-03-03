@@ -35,8 +35,6 @@ class MyTBAViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
-    private val _trackedTeamKey = MutableStateFlow(MatchTrackingService.activeTeamKey)
-
     private val _trackingMessage = MutableStateFlow<String?>(null)
     val trackingMessage: StateFlow<String?> = _trackingMessage.asStateFlow()
 
@@ -44,7 +42,7 @@ class MyTBAViewModel @Inject constructor(
         authRepository.currentUser,
         myTBARepository.observeFavorites(),
         myTBARepository.observeSubscriptions(),
-        _trackedTeamKey,
+        MatchTrackingService.activeTeamKey,
     ) { user, favorites, subscriptions, trackedTeamKey ->
         MyTBAUiState(
             isSignedIn = user != null,
@@ -76,7 +74,7 @@ class MyTBAViewModel @Inject constructor(
     fun startTracking(teamKey: String) {
         viewModelScope.launch {
             when (val result = matchTrackingManager.startTracking(teamKey)) {
-                is TrackingResult.Started -> _trackedTeamKey.value = teamKey
+                is TrackingResult.Started -> { /* service updates activeTeamKey flow */ }
                 is TrackingResult.NotCompeting ->
                     _trackingMessage.value = "Team ${result.teamNumber} isn't competing right now"
                 is TrackingResult.Error ->
@@ -87,7 +85,6 @@ class MyTBAViewModel @Inject constructor(
 
     fun stopTracking() {
         matchTrackingManager.stopTracking()
-        _trackedTeamKey.value = null
     }
 
     fun clearTrackingMessage() {

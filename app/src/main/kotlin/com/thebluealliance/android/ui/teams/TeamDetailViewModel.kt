@@ -46,7 +46,7 @@ class TeamDetailViewModel @AssistedInject constructor(
     private val matchTrackingManager: MatchTrackingManager,
 ) : ViewModel() {
 
-    private val teamKey: String = navKey.teamKey.let { key ->
+    val teamKey: String = navKey.teamKey.let { key ->
         // Deep links from thebluealliance.com use /team/177 (number only),
         // but the API/DB key format is "frc177".
         if (key.all { it.isDigit() }) "frc$key" else key
