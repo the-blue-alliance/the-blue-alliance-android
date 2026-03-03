@@ -1,8 +1,6 @@
 package com.thebluealliance.android.ui.teams
 
-import android.content.Intent
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.util.Base64
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -29,7 +27,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -84,9 +81,12 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
+import com.thebluealliance.android.ui.components.MediaGridItem
+import com.thebluealliance.android.ui.components.MediaItem
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.mediaUrl
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Info", "Events", "Media")
@@ -487,7 +487,11 @@ private fun MediaTab(
         )
         return
     }
-    val context = LocalContext.current
+    val gridItems = filtered.mapNotNull { item ->
+        if (mediaUrl(item.type, item.foreignKey) != null) {
+            MediaGridItem(type = item.type, foreignKey = item.foreignKey)
+        } else null
+    }
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -497,49 +501,12 @@ private fun MediaTab(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = innerPadding,
     ) {
-        items(filtered, key = { "${it.type}_${it.foreignKey}" }) { item ->
-            val url = mediaUrl(item)
-            val linkUrl = mediaLinkUrl(item)
-            if (url != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .clip(MaterialTheme.shapes.medium)
-                        .then(
-                            if (linkUrl != null) {
-                                Modifier.clickable {
-                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(linkUrl)))
-                                }
-                            } else {
-                                Modifier
-                            }
-                        ),
-                ) {
-                    AsyncImage(
-                        model = url,
-                        contentDescription = "Team media",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                    if (item.type == "youtube") {
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .size(48.dp)
-                                .background(Color.Black.copy(alpha = 0.5f), CircleShape),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Icon(
-                                Icons.Outlined.PlayCircle,
-                                contentDescription = "Play video",
-                                tint = Color.White,
-                                modifier = Modifier.size(48.dp),
-                            )
-                        }
-                    }
-                }
-            }
+        items(gridItems, key = { "${it.type}_${it.foreignKey}" }) { item ->
+            MediaItem(
+                type = item.type,
+                foreignKey = item.foreignKey,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }
@@ -547,20 +514,3 @@ private fun MediaTab(
 private val FrcBlue = Color(0xFF0066B3)
 private val FrcRed = Color(0xFFED1C24)
 
-private fun mediaUrl(media: Media): String? = when (media.type) {
-    "imgur" -> "https://i.imgur.com/${media.foreignKey}.png"
-    "cdphotothread" -> "https://www.chiefdelphi.com/media/img/${media.foreignKey}"
-    "instagram-image" -> "https://www.instagram.com/p/${media.foreignKey}/media/"
-    "youtube" -> "https://img.youtube.com/vi/${media.foreignKey}/hqdefault.jpg"
-    "grabcad" -> null // no direct image URL
-    "onshape" -> null
-    else -> null
-}
-
-private fun mediaLinkUrl(media: Media): String? = when (media.type) {
-    "imgur" -> "https://imgur.com/${media.foreignKey}"
-    "cdphotothread" -> "https://www.chiefdelphi.com/media/img/${media.foreignKey}"
-    "instagram-image" -> "https://www.instagram.com/p/${media.foreignKey}/"
-    "youtube" -> "https://www.youtube.com/watch?v=${media.foreignKey}"
-    else -> null
-}
