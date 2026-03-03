@@ -19,13 +19,23 @@ NC='\033[0m'
 
 DRY_RUN=false
 
+read_local_property() {
+    local key="$1"
+    [[ -f local.properties ]] || return 0
+    awk -v key="$key" 'index($0, key "=") == 1 { print substr($0, length(key) + 2); exit }' local.properties
+}
+
 # Load git remote from local.properties (default: origin)
 GIT_REMOTE="origin"
-if [[ -f local.properties ]]; then
-    configured=$(grep 'release.git.remote' local.properties 2>/dev/null | cut -d= -f2- || true)
-    if [[ -n "$configured" ]]; then
-        GIT_REMOTE="$configured"
-    fi
+configured_remote=$(read_local_property "release.git.remote" || true)
+if [[ -n "$configured_remote" ]]; then
+    GIT_REMOTE="$configured_remote"
+fi
+
+SLACK_WEBHOOK_URL=""
+configured_slack_webhook=$(read_local_property "release.slack.webhook" || true)
+if [[ -n "$configured_slack_webhook" ]]; then
+    SLACK_WEBHOOK_URL="$configured_slack_webhook"
 fi
 
 # ── Helpers ──────────────────────────────────────────────────────────────
@@ -40,6 +50,88 @@ run() {
     else
         "$@"
     fi
+}
+
+build_commitlog() {
+    local base_tag=""
+    base_tag=$(git describe HEAD~1 --tags --abbrev=0 2>/dev/null || true)
+
+    if [[ -n "$base_tag" ]]; then
+        git shortlog "${base_tag}..HEAD" --oneline --no-merges 2>/dev/null || true
+    else
+        git shortlog HEAD --oneline --no-merges 2>/dev/null || true
+    fi
+}
+
+post_to_slack() {
+    local message_body="$1"
+
+    if [[ -z "$SLACK_WEBHOOK_URL" ]]; then
+        warn "Slack webhook is not configured (set release.slack.webhook in local.properties)"
+        return 0
+    fi
+
+    local payload
+    payload=$(SLACK_TEXT="$message_body" python3 - <<'PY'
+import json
+import os
+
+print(json.dumps({
+    "text": os.environ["SLACK_TEXT"],
+    "username": "release-bot",
+    "icon_emoji": ":tba:",
+}))
+PY
+)
+
+    if $DRY_RUN; then
+        echo "Would have posted ${payload} to slack"
+        return 0
+    fi
+
+    local response_file
+    response_file=$(mktemp)
+    local status_code=""
+    if ! status_code=$(curl -sS -o "$response_file" -w "%{http_code}" \
+        -H 'Content-Type: application/json' \
+        -X POST \
+        --data "$payload" \
+        "$SLACK_WEBHOOK_URL"); then
+        warn "Failed to post Slack announcement"
+        rm -f "$response_file"
+        return 0
+    fi
+
+    if [[ "$status_code" != "200" ]]; then
+        warn "Slack webhook returned HTTP ${status_code}: $(cat "$response_file")"
+    fi
+    rm -f "$response_file"
+}
+
+announce_release_action() {
+    local action="$1"
+    local release_link="https://github.com/the-blue-alliance/the-blue-alliance-android/releases"
+    if [[ "$VERSION_NAME" != *"-dev."* ]]; then
+        release_link="https://github.com/the-blue-alliance/the-blue-alliance-android/releases/tag/v${VERSION_NAME}"
+    fi
+
+    local commitlog
+    commitlog=$(build_commitlog)
+    if [[ -z "$commitlog" ]]; then
+        commitlog="(no non-merge commits found)"
+    fi
+
+    local message_body
+    message_body=$(cat <<EOF
+${action} android v${VERSION_NAME} (${VERSION_CODE}).
+\`\`\`
+${commitlog}
+\`\`\`
+${release_link}
+EOF
+)
+
+    post_to_slack "$message_body"
 }
 
 # ── Preflight checks ────────────────────────────────────────────────────
@@ -59,12 +151,9 @@ preflight() {
 
     # Resolve service account path from local.properties or default
     local sa_path="play-service-account.json"
-    if [[ -f local.properties ]]; then
-        local configured
-        configured=$(grep 'play.service.account.key' local.properties 2>/dev/null | cut -d= -f2- || true)
-        if [[ -n "$configured" ]]; then
-            sa_path="$configured"
-        fi
+    configured=$(read_local_property "play.service.account.key" || true)
+    if [[ -n "$configured" ]]; then
+        sa_path="$configured"
     fi
     if [[ ! -f "$sa_path" ]]; then
         echo -e "${RED}✗${NC} Play service account not found at ${sa_path}"
@@ -189,16 +278,21 @@ cmd_alpha() {
     echo -e "${GREEN}✓ Published to alpha${NC}"
     echo -e "  Version: ${VERSION_NAME} (${VERSION_CODE})"
     echo -e "  Track:   alpha"
+
+    announce_release_action "Published to alpha"
 }
 
 cmd_beta() {
     info "Promoting alpha → beta"
     echo ""
 
+    get_version_info
     run ./gradlew promoteReleaseArtifact --from-track alpha --promote-track beta
 
     echo ""
     echo -e "${GREEN}✓ Promoted alpha → beta${NC}"
+
+    announce_release_action "Promoted alpha to beta"
 }
 
 cmd_production() {
@@ -218,6 +312,9 @@ cmd_production() {
 
     echo ""
     echo -e "${GREEN}✓ Promoted beta → production${NC}"
+
+    get_version_info
+    announce_release_action "Promoted beta to production"
 }
 
 # ── Main ─────────────────────────────────────────────────────────────────
