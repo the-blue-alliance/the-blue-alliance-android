@@ -1,7 +1,9 @@
 package com.thebluealliance.android.tracking
 
+import com.thebluealliance.android.domain.getShortLabel
 import com.thebluealliance.android.domain.model.CompLevel
 import com.thebluealliance.android.domain.model.Match
+import com.thebluealliance.android.domain.model.PlayoffType
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -262,10 +264,11 @@ class MatchTrackingStateTest {
     }
 
     @Test
-    fun `shortName formats correctly`() {
-        assertEquals("Q42", match(42, compLevel = CompLevel.QUAL).shortName())
-        assertEquals("SF2-1", match(1, compLevel = CompLevel.SEMIFINAL, setNumber = 2).shortName())
-        assertEquals("F1", match(1, compLevel = CompLevel.FINAL).shortName())
+    fun `getShortLabel formats correctly for double elim`() {
+        val doubleElim = PlayoffType.DOUBLE_ELIM_8_TEAM
+        assertEquals("Q42", match(42, compLevel = CompLevel.QUAL).getShortLabel(doubleElim))
+        assertEquals("R1-2", match(1, compLevel = CompLevel.SEMIFINAL, setNumber = 2).getShortLabel(doubleElim))
+        assertEquals("F-1", match(1, compLevel = CompLevel.FINAL).getShortLabel(doubleElim))
     }
 
     @Test

@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.thebluealliance.android.R
+import com.thebluealliance.android.domain.getShortLabel
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.messaging.NotificationChannelManager
 import java.text.SimpleDateFormat
@@ -64,10 +65,10 @@ object MatchTrackingNotificationBuilder {
 
     private fun buildTitle(teamNumber: String, state: TrackedTeamState): String {
         return if (state.isTeamPlaying && state.currentMatch != null) {
-            "$teamNumber — NOW PLAYING ${state.currentMatch.shortName()}"
+            "$teamNumber — NOW PLAYING ${state.currentMatch.getShortLabel(state.playoffType)}"
         } else if (state.nextMatch != null) {
             val timeStr = formatMatchTime(state.nextMatch)
-            "$teamNumber — Next: ${state.nextMatch.shortName()}${timeStr}"
+            "$teamNumber — Next: ${state.nextMatch.getShortLabel(state.playoffType)}${timeStr}"
         } else if (state.record != null) {
             "$teamNumber — Quals complete (${state.record})"
         } else {
@@ -82,20 +83,20 @@ object MatchTrackingNotificationBuilder {
         if (state.nextMatch != null && !state.isTeamPlaying) {
             val timeStr = formatMatchTime(state.nextMatch)
             val teams = formatTeams(state.nextMatch, state.teamKey)
-            lines.add("Next: ${state.nextMatch.shortName()}${timeStr}\n\u21B3 $teams")
+            lines.add("Next: ${state.nextMatch.getShortLabel(state.playoffType)}${timeStr}\n\u21B3 $teams")
         }
 
         // Current match at event
         if (state.currentMatch != null) {
             val teams = formatTeams(state.currentMatch, state.teamKey)
-            lines.add("Now: ${state.currentMatch.shortName()}\n\u21B3 $teams")
+            lines.add("Now: ${state.currentMatch.getShortLabel(state.playoffType)}\n\u21B3 $teams")
         }
 
         // Last completed match for this team
         if (state.lastMatch != null) {
             val teams = formatTeams(state.lastMatch, state.teamKey)
             val score = "${state.lastMatch.redScore}-${state.lastMatch.blueScore}"
-            lines.add("Last: ${state.lastMatch.shortName()} - Score $score\n\u21B3 $teams")
+            lines.add("Last: ${state.lastMatch.getShortLabel(state.playoffType)} - Score $score\n\u21B3 $teams")
         }
 
         return lines.joinToString("\n").ifEmpty { "Waiting for match data..." }
@@ -103,10 +104,10 @@ object MatchTrackingNotificationBuilder {
 
     private fun buildChipText(state: TrackedTeamState): String? {
         if (state.isTeamPlaying && state.currentMatch != null) {
-            return state.currentMatch.shortName()
+            return state.currentMatch.getShortLabel(state.playoffType)
         }
         if (state.nextMatch != null) {
-            val name = state.nextMatch.shortName()
+            val name = state.nextMatch.getShortLabel(state.playoffType)
             val time = state.nextMatch.predictedTime ?: state.nextMatch.time
             if (time != null) {
                 val fmt = SimpleDateFormat("h:mm", Locale.US)

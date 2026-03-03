@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.domain.model.CompLevel
 import com.thebluealliance.android.domain.model.Match
+import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.messaging.NotificationBuilder
 import com.thebluealliance.android.messaging.NotificationChannelManager
 import com.thebluealliance.android.tracking.MatchTrackingNotificationBuilder
@@ -302,6 +303,7 @@ private fun sendTrackerNextOnly(context: Context) {
     val state = TrackedTeamState(
         teamKey = "frc175",
         eventKey = "2026bcvi",
+        playoffType = PlayoffType.OTHER,
         nextMatch = fakeMatch("2026bcvi_qm31", matchNumber = 31, predictedTime = nextTime),
         currentMatch = null,
         lastMatch = null,
@@ -317,6 +319,7 @@ private fun sendTrackerNextAndNowOther(context: Context) {
     val state = TrackedTeamState(
         teamKey = "frc175",
         eventKey = "2026bcvi",
+        playoffType = PlayoffType.OTHER,
         nextMatch = fakeMatch("2026bcvi_qm31", matchNumber = 31, predictedTime = nextTime),
         currentMatch = fakeMatch(
             "2026bcvi_qm23", matchNumber = 23,
@@ -336,6 +339,7 @@ private fun sendTrackerNowPlaying(context: Context) {
     val state = TrackedTeamState(
         teamKey = "frc175",
         eventKey = "2026bcvi",
+        playoffType = PlayoffType.OTHER,
         nextMatch = fakeMatch("2026bcvi_qm31", matchNumber = 31, predictedTime = nextTime),
         currentMatch = fakeMatch("2026bcvi_qm23", matchNumber = 23),
         lastMatch = null,
@@ -351,6 +355,7 @@ private fun sendTrackerAllThree(context: Context) {
     val state = TrackedTeamState(
         teamKey = "frc175",
         eventKey = "2026bcvi",
+        playoffType = PlayoffType.OTHER,
         nextMatch = fakeMatch("2026bcvi_qm31", matchNumber = 31, predictedTime = nextTime),
         currentMatch = fakeMatch(
             "2026bcvi_qm23", matchNumber = 23,
@@ -374,6 +379,7 @@ private fun sendTrackerQualsDoneWaiting(context: Context) {
     val state = TrackedTeamState(
         teamKey = "frc175",
         eventKey = "2026bcvi",
+        playoffType = PlayoffType.OTHER,
         nextMatch = null,
         currentMatch = null,
         lastMatch = fakeMatch(
@@ -393,6 +399,7 @@ private fun sendTrackerAllDone(context: Context) {
     val state = TrackedTeamState(
         teamKey = "frc175",
         eventKey = "2026bcvi",
+        playoffType = PlayoffType.OTHER,
         nextMatch = null,
         currentMatch = null,
         lastMatch = fakeMatch(

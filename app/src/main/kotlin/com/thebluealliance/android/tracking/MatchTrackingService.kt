@@ -9,8 +9,10 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ServiceCompat
+import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.domain.model.Match
+import com.thebluealliance.android.domain.model.PlayoffType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +21,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,6 +29,7 @@ import javax.inject.Inject
 class MatchTrackingService : Service() {
 
     @Inject lateinit var matchRepository: MatchRepository
+    @Inject lateinit var eventRepository: EventRepository
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var observeJob: Job? = null
@@ -34,6 +38,7 @@ class MatchTrackingService : Service() {
 
     /** Latest matches from Room, used by the ticker to re-evaluate state. */
     private var latestMatches: List<Match> = emptyList()
+    private var latestPlayoffType: PlayoffType = PlayoffType.OTHER
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -63,6 +68,7 @@ class MatchTrackingService : Service() {
         val initialState = TrackedTeamState(
             teamKey = teamKey,
             eventKey = eventKey,
+            playoffType = PlayoffType.OTHER,
             nextMatch = null,
             currentMatch = null,
             lastMatch = null,
@@ -82,11 +88,17 @@ class MatchTrackingService : Service() {
             startForeground(MatchTrackingNotificationBuilder.NOTIFICATION_ID, notification)
         }
 
-        // Start observing match data from Room
+        // Start observing match data + event playoff type from Room
         observeJob?.cancel()
         observeJob = scope.launch {
-            matchRepository.observeEventMatches(eventKey).collectLatest { matches ->
+            combine(
+                matchRepository.observeEventMatches(eventKey),
+                eventRepository.observeEvent(eventKey),
+            ) { matches, event ->
+                matches to (event?.playoffType ?: PlayoffType.OTHER)
+            }.collectLatest { (matches, playoffType) ->
                 latestMatches = matches
+                latestPlayoffType = playoffType
                 updateNotification(teamKey, eventKey)
             }
         }
@@ -119,6 +131,7 @@ class MatchTrackingService : Service() {
             matches = latestMatches,
             teamKey = teamKey,
             eventKey = eventKey,
+            playoffType = latestPlayoffType,
             currentTimeMillis = now,
         )
 

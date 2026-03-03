@@ -2,10 +2,12 @@ package com.thebluealliance.android.tracking
 
 import com.thebluealliance.android.domain.model.CompLevel
 import com.thebluealliance.android.domain.model.Match
+import com.thebluealliance.android.domain.model.PlayoffType
 
 data class TrackedTeamState(
     val teamKey: String,
     val eventKey: String,
+    val playoffType: PlayoffType,
     val nextMatch: Match?,
     val currentMatch: Match?,
     val lastMatch: Match?,
@@ -36,6 +38,7 @@ fun computeTrackedTeamState(
     matches: List<Match>,
     teamKey: String,
     eventKey: String,
+    playoffType: PlayoffType = PlayoffType.OTHER,
     currentTimeMillis: Long,
     currentMatchKey: String? = null,
 ): TrackedTeamState {
@@ -88,6 +91,7 @@ fun computeTrackedTeamState(
     return TrackedTeamState(
         teamKey = teamKey,
         eventKey = eventKey,
+        playoffType = playoffType,
         nextMatch = nextMatch,
         currentMatch = currentMatch,
         lastMatch = lastMatch,
@@ -135,15 +139,6 @@ fun Match.containsTeam(teamKey: String): Boolean =
 
 fun Match.hasBeenPlayed(): Boolean =
     winningAlliance != null || (redScore >= 0 && blueScore >= 0 && (redScore > 0 || blueScore > 0))
-
-fun Match.shortName(): String = when (compLevel) {
-    CompLevel.QUAL -> "Q$matchNumber"
-    CompLevel.OCTOFINAL -> "EF${setNumber}-$matchNumber"
-    CompLevel.QUARTERFINAL -> "QF${setNumber}-$matchNumber"
-    CompLevel.SEMIFINAL -> "SF${setNumber}-$matchNumber"
-    CompLevel.FINAL -> "F$matchNumber"
-    CompLevel.OTHER -> "${compLevel.code}$matchNumber"
-}
 
 /** Auto-dismiss delay: 2 hours after the last match time. */
 private const val AUTO_DISMISS_DELAY_MS = 2 * 60 * 60 * 1000L
