@@ -11,9 +11,8 @@ import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.getShortLabel
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.messaging.NotificationChannelManager
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
+import java.text.DateFormat
 
 object MatchTrackingNotificationBuilder {
 
@@ -110,7 +109,7 @@ object MatchTrackingNotificationBuilder {
             val name = state.nextMatch.getShortLabel(state.playoffType)
             val time = state.nextMatch.predictedTime ?: state.nextMatch.time
             if (time != null) {
-                val fmt = SimpleDateFormat("h:mm", Locale.US)
+                val fmt = DateFormat.getTimeInstance(DateFormat.SHORT)
                 val timeStr = fmt.format(Date(time * 1000))
                 return "$name $timeStr"
             }
@@ -124,11 +123,11 @@ object MatchTrackingNotificationBuilder {
         val scheduled = match.time
         return when {
             predicted != null -> {
-                val fmt = SimpleDateFormat("h:mm a", Locale.US)
+                val fmt = DateFormat.getTimeInstance(DateFormat.SHORT)
                 " est. ${fmt.format(Date(predicted * 1000))}"
             }
             scheduled != null -> {
-                val fmt = SimpleDateFormat("h:mm a", Locale.US)
+                val fmt = DateFormat.getTimeInstance(DateFormat.SHORT)
                 " ${fmt.format(Date(scheduled * 1000))}"
             }
             else -> ""
