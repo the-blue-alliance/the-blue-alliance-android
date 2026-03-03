@@ -81,7 +81,6 @@ fun EventsScreen(
         uiState !is EventsUiState.Loading
     }
 
-
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
