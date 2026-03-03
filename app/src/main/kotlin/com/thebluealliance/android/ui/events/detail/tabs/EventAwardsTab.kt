@@ -1,6 +1,7 @@
 package com.thebluealliance.android.ui.events.detail.tabs
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,16 +18,27 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 
 @Composable
-fun EventAwardsTab(awards: List<Award>?) {
+fun EventAwardsTab(
+    awards: List<Award>?,
+    innerPadding: PaddingValues = PaddingValues.Zero,
+) {
     if (awards == null) {
-        LoadingBox()
+        LoadingBox(
+            modifier = Modifier.padding(innerPadding)
+        )
         return
     }
     if (awards.isEmpty()) {
-        EmptyBox("No awards")
+        EmptyBox(
+            modifier = Modifier.padding(innerPadding),
+            message = "No awards",
+        )
         return
     }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = innerPadding,
+    ) {
         items(awards, key = { "${it.eventKey}_${it.awardType}_${it.teamKey}_${it.awardee.orEmpty()}" }) { award ->
             Column(
                 modifier = Modifier

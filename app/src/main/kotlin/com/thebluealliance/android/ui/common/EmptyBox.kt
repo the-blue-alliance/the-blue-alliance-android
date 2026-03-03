@@ -9,8 +9,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun EmptyBox(message: String) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+fun EmptyBox(
+    message: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(message, style = MaterialTheme.typography.bodyLarge)
     }
 }

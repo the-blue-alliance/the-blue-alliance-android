@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -130,157 +131,178 @@ fun EventDetailScreen(
 
     Scaffold(
         topBar = {
-            TBATopAppBar(
-                title = {
-                    Text(
-                        text = uiState.event?.let { "${it.year} ${it.name}" } ?: "Event",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+            Column {
+                TBATopAppBar(
+                    title = {
+                        Text(
+                            text = uiState.event?.let { "${it.year} ${it.name}" } ?: "Event",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        if (!viewModel.isSignedIn()) {
-                            showSignInDialog = true
-                        } else {
-                            showNotificationSheet = true
-                        }
-                    }) {
-                        val hasSubscription = subscription?.notifications?.isNotEmpty() == true
-                        Icon(
-                            imageVector = if (hasSubscription) Icons.Filled.Notifications else Icons.Outlined.NotificationsNone,
-                            contentDescription = "Notification preferences",
-                        )
-                    }
-                    IconButton(onClick = viewModel::toggleFavorite) {
-                        Icon(
-                            imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
-                            contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
-                        )
-                    }
-                    var menuExpanded by remember { mutableStateOf(false) }
-                    Box {
-                        IconButton(onClick = { menuExpanded = true }) {
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateUp) {
                             Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = "More options",
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
                             )
                         }
-                        DropdownMenu(
-                            expanded = menuExpanded,
-                            onDismissRequest = { menuExpanded = false },
-                        ) {
-                            uiState.event?.let { event ->
-                                DropdownMenuItem(
-                                    text = { Text("Share") },
-                                    leadingIcon = { Icon(Icons.Filled.Share, contentDescription = null) },
-                                    onClick = {
-                                        menuExpanded = false
-                                        context.shareTbaUrl(
-                                            title = "${event.year} ${event.name}",
-                                            url = "https://www.thebluealliance.com/event/${event.key}",
-                                        )
-                                    },
+                    },
+                    actions = {
+                        IconButton(onClick = {
+                            if (!viewModel.isSignedIn()) {
+                                showSignInDialog = true
+                            } else {
+                                showNotificationSheet = true
+                            }
+                        }) {
+                            val hasSubscription = subscription?.notifications?.isNotEmpty() == true
+                            Icon(
+                                imageVector = if (hasSubscription) Icons.Filled.Notifications else Icons.Outlined.NotificationsNone,
+                                contentDescription = "Notification preferences",
+                            )
+                        }
+                        IconButton(onClick = viewModel::toggleFavorite) {
+                            Icon(
+                                imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                                contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                            )
+                        }
+                        var menuExpanded by remember { mutableStateOf(false) }
+                        Box {
+                            IconButton(onClick = { menuExpanded = true }) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = "More options",
                                 )
                             }
-                            if (viewModel.canPinShortcuts) {
-                                DropdownMenuItem(
-                                    text = { Text("Add to home screen") },
-                                    leadingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.ic_add_to_home_screen),
-                                            contentDescription = null,
-                                        )
-                                    },
-                                    onClick = {
-                                        menuExpanded = false
-                                        viewModel.requestPinShortcut()
-                                    },
-                                )
+                            DropdownMenu(
+                                expanded = menuExpanded,
+                                onDismissRequest = { menuExpanded = false },
+                            ) {
+                                uiState.event?.let { event ->
+                                    DropdownMenuItem(
+                                        text = { Text("Share") },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Filled.Share,
+                                                contentDescription = null
+                                            )
+                                        },
+                                        onClick = {
+                                            menuExpanded = false
+                                            context.shareTbaUrl(
+                                                title = "${event.year} ${event.name}",
+                                                url = "https://www.thebluealliance.com/event/${event.key}",
+                                            )
+                                        },
+                                    )
+                                }
+                                if (viewModel.canPinShortcuts) {
+                                    DropdownMenuItem(
+                                        text = { Text("Add to home screen") },
+                                        leadingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.ic_add_to_home_screen),
+                                                contentDescription = null,
+                                            )
+                                        },
+                                        onClick = {
+                                            menuExpanded = false
+                                            viewModel.requestPinShortcut()
+                                        },
+                                    )
+                                }
                             }
                         }
+                    },
+                )
+
+                PrimaryScrollableTabRow(
+                    selectedTabIndex = pagerState.currentPage,
+                    edgePadding = 0.dp,
+                    containerColor = TBABlue,
+                    contentColor = Color.White,
+                    divider = {
+                        HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
+                    },
+                    indicator = {
+                        SecondaryIndicator(
+                            modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
+                            height = 3.dp,
+                            color = Color.White
+                        )
                     }
-                },
-            )
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            PrimaryScrollableTabRow(
-                selectedTabIndex = pagerState.currentPage,
-                edgePadding = 0.dp,
-                containerColor = TBABlue,
-                contentColor = Color.White,
-                divider = {
-                    HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
-                },
-                indicator = {
-                    SecondaryIndicator(
-                        modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
-                        height = 3.dp,
-                        color = Color.White
-                    )
-                }
-            ) {
-                TABS.forEachIndexed { index, title ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                        text = {
-                            Text(
-                                text = title,
-                                color = Color.White
-                            )
-                        },
-                    )
+                ) {
+                    TABS.forEachIndexed { index, title ->
+                        Tab(
+                            selected = pagerState.currentPage == index,
+                            onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                            text = {
+                                Text(
+                                    text = title,
+                                    color = Color.White
+                                )
+                            },
+                        )
+                    }
                 }
             }
-
-            PullToRefreshBox(
-                isRefreshing = isRefreshing,
-                onRefresh = viewModel::refreshAll,
+        },
+    ) { innerPadding ->
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = viewModel::refreshAll,
+            modifier = Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+        ) {
+            HorizontalPager(
+                state = pagerState,
                 modifier = Modifier.fillMaxSize(),
-            ) {
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxSize(),
-                ) { page ->
-                    when (page) {
-                        0 -> EventInfoTab(uiState.event)
-                        1 -> EventTeamsTab(uiState.teams) { teamKey ->
+            ) { page ->
+                when (page) {
+                    0 -> EventInfoTab(
+                        event = uiState.event,
+                        innerPadding = innerPadding,
+                    )
+                    1 -> EventTeamsTab(
+                        teams = uiState.teams,
+                        innerPadding = innerPadding,
+                        onNavigateToTeam = { teamKey ->
                             val eventKey = uiState.event?.key
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                             else onNavigateToTeam(teamKey)
-                        }
-                        2 -> EventMatchesTab(
-                            matches = uiState.matches,
-                            playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
-                            onNavigateToMatch = onNavigateToMatch
-                        )
-                        3 -> EventRankingsTab(uiState.rankings) { teamKey ->
+                        },
+                    )
+                    2 -> EventMatchesTab(
+                        matches = uiState.matches,
+                        playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
+                        onNavigateToMatch = onNavigateToMatch,
+                        innerPadding = innerPadding,
+                    )
+                    3 -> EventRankingsTab(
+                        rankings = uiState.rankings,
+                        onTeamClick = { teamKey ->
                             val eventKey = uiState.event?.key
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
-                        }
-                        4 -> EventAlliancesTab(uiState.alliances)
-                        5 -> EventAwardsTab(uiState.awards)
-                        6 -> EventDistrictPointsTab(
-                            uiState.districtPoints,
-                            uiState.event,
-                            uiState.teams
-                        )
-                    }
+                        },
+                        innerPadding = innerPadding,
+                    )
+
+                    4 -> EventAlliancesTab(
+                        alliances = uiState.alliances,
+                        innerPadding = innerPadding,
+                    )
+                    5 -> EventAwardsTab(
+                        awards = uiState.awards,
+                        innerPadding = innerPadding,
+                    )
+                    6 -> EventDistrictPointsTab(
+                        uiState.districtPoints,
+                        uiState.event,
+                        uiState.teams,
+                        innerPadding = innerPadding,
+                    )
                 }
             }
         }

@@ -1,8 +1,6 @@
 package com.thebluealliance.android.ui.teams
 
-import android.content.Intent
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.util.Base64
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -11,9 +9,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,12 +27,10 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
@@ -66,6 +65,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -77,14 +77,17 @@ import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
+import com.thebluealliance.android.tracking.MatchTrackingService
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
+import com.thebluealliance.android.ui.components.MediaGridItem
+import com.thebluealliance.android.ui.components.MediaItem
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
-import com.thebluealliance.android.tracking.MatchTrackingService
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.mediaUrl
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Info", "Events", "Media")
@@ -189,127 +192,146 @@ fun TeamDetailScreen(
 
     Scaffold(
         topBar = {
-            TBATopAppBar(
-                title = {
-                    val team = uiState.team
-                    Text(
-                        text = if (team != null) "${team.number} - ${team.nickname ?: ""}" else "Team",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        if (!viewModel.isSignedIn()) {
-                            showSignInDialog = true
-                        } else {
-                            showNotificationSheet = true
-                        }
-                    }) {
-                        val hasSubscription = subscription?.notifications?.isNotEmpty() == true
-                        Icon(
-                            imageVector = if (hasSubscription) Icons.Filled.Notifications else Icons.Outlined.NotificationsNone,
-                            contentDescription = "Notification preferences",
+            Column {
+                TBATopAppBar(
+                    title = {
+                        val team = uiState.team
+                        Text(
+                            text = if (team != null) "${team.number} - ${team.nickname ?: ""}" else "Team",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
-                    }
-                    IconButton(onClick = viewModel::toggleFavorite) {
-                        Icon(
-                            imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
-                            contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
-                        )
-                    }
-                    var menuExpanded by remember { mutableStateOf(false) }
-                    Box {
-                        IconButton(onClick = { menuExpanded = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "More options")
-                        }
-                        DropdownMenu(
-                            expanded = menuExpanded,
-                            onDismissRequest = { menuExpanded = false },
-                        ) {
-                            uiState.team?.let { team ->
-                                DropdownMenuItem(
-                                    text = { Text("Share") },
-                                    leadingIcon = { Icon(Icons.Filled.Share, contentDescription = null) },
-                                    onClick = {
-                                        menuExpanded = false
-                                        context.shareTbaUrl(
-                                            title = "Team ${team.number} - ${team.nickname ?: ""}",
-                                            url = "https://www.thebluealliance.com/team/${team.number}",
-                                        )
-                                    },
-                                )
-                            }
-                            if (viewModel.canPinShortcuts) {
-                                DropdownMenuItem(
-                                    text = { Text("Add to home screen") },
-                                    leadingIcon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.ic_add_to_home_screen),
-                                            contentDescription = null,
-                                        )
-                                    },
-                                    onClick = {
-                                        menuExpanded = false
-                                        viewModel.requestPinShortcut()
-                                    },
-                                )
-                            }
-                        }
-                    }
-                },
-            )
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-            TBATabRow(selectedTabIndex = pagerState.currentPage) {
-                TABS.forEachIndexed { index, title ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                        text = {
-                            Text(
-                                text = title,
-                                color = if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.7f)
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateUp) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back"
                             )
-                        },
-                    )
-                }
-            }
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = {
+                            if (!viewModel.isSignedIn()) {
+                                showSignInDialog = true
+                            } else {
+                                showNotificationSheet = true
+                            }
+                        }) {
+                            val hasSubscription = subscription?.notifications?.isNotEmpty() == true
+                            if (hasSubscription) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_notification),
+                                    contentDescription = "Notification preferences",
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Outlined.NotificationsNone,
+                                    contentDescription = "Notification preferences",
+                                )
+                            }
+                        }
+                        IconButton(onClick = viewModel::toggleFavorite) {
+                            Icon(
+                                imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                                contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                            )
+                        }
+                        var menuExpanded by remember { mutableStateOf(false) }
+                        Box {
+                            IconButton(onClick = { menuExpanded = true }) {
+                                Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                            }
+                            DropdownMenu(
+                                expanded = menuExpanded,
+                                onDismissRequest = { menuExpanded = false },
+                            ) {
+                                uiState.team?.let { team ->
+                                    DropdownMenuItem(
+                                        text = { Text("Share") },
+                                        leadingIcon = {
+                                            Icon(
+                                                Icons.Filled.Share,
+                                                contentDescription = null
+                                            )
+                                        },
+                                        onClick = {
+                                            menuExpanded = false
+                                            context.shareTbaUrl(
+                                                title = "Team ${team.number} - ${team.nickname ?: ""}",
+                                                url = "https://www.thebluealliance.com/team/${team.number}",
+                                            )
+                                        },
+                                    )
+                                }
+                                if (viewModel.canPinShortcuts) {
+                                    DropdownMenuItem(
+                                        text = { Text("Add to home screen") },
+                                        leadingIcon = {
+                                            Icon(
+                                                painter = painterResource(R.drawable.ic_add_to_home_screen),
+                                                contentDescription = null,
+                                            )
+                                        },
+                                        onClick = {
+                                            menuExpanded = false
+                                            viewModel.requestPinShortcut()
+                                        },
+                                    )
+                                }
+                            }
+                        }
+                    },
+                )
 
-            PullToRefreshBox(
-                isRefreshing = isRefreshing && uiState.team != null,
-                onRefresh = viewModel::refreshAll,
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxSize(),
-                ) { page ->
-                    when (page) {
-                        0 -> InfoTab(uiState.team, uiState.media)
-                        1 -> EventsTab(
-                            events = uiState.events,
-                            selectedYear = selectedYear,
-                            yearsParticipated = yearsParticipated,
-                            onYearSelected = viewModel::selectYear,
-                            onNavigateToEvent = { eventKey ->
-                                val teamKey = uiState.team?.key
-                                if (teamKey != null) onNavigateToTeamEvent(teamKey, eventKey)
-                                else onNavigateToEvent(eventKey)
+                TBATabRow(selectedTabIndex = pagerState.currentPage) {
+                    TABS.forEachIndexed { index, title ->
+                        Tab(
+                            selected = pagerState.currentPage == index,
+                            onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                            text = {
+                                Text(
+                                    text = title,
+                                    color = if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.7f)
+                                )
                             },
                         )
-                        2 -> MediaTab(uiState.media)
                     }
+                }
+            }
+        },
+    ) { innerPadding ->
+        PullToRefreshBox(
+            isRefreshing = isRefreshing && uiState.team != null,
+            onRefresh = viewModel::refreshAll,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize(),
+            ) { page ->
+                when (page) {
+                    0 -> InfoTab(
+                        team = uiState.team,
+                        media = uiState.media,
+                        innerPadding = innerPadding,
+                    )
+                    1 -> EventsTab(
+                        events = uiState.events,
+                        selectedYear = selectedYear,
+                        yearsParticipated = yearsParticipated,
+                        onYearSelected = viewModel::selectYear,
+                        onNavigateToEvent = { eventKey ->
+                            val teamKey = uiState.team?.key
+                            if (teamKey != null) onNavigateToTeamEvent(teamKey, eventKey)
+                            else onNavigateToEvent(eventKey)
+                        },
+                        innerPadding = innerPadding,
+                    )
+                    2 -> MediaTab(
+                        media = uiState.media,
+                        innerPadding = innerPadding,
+                    )
                 }
             }
         }
@@ -317,9 +339,15 @@ fun TeamDetailScreen(
 }
 
 @Composable
-private fun InfoTab(team: Team?, media: List<Media>?) {
+private fun InfoTab(
+    team: Team?,
+    media: List<Media>?,
+    innerPadding: PaddingValues = PaddingValues.Zero,
+) {
     if (team == null) {
-        LoadingBox()
+        LoadingBox(
+            modifier = Modifier.padding(innerPadding),
+        )
         return
     }
     val avatar = media?.firstOrNull { it.isAvatar }
@@ -327,6 +355,7 @@ private fun InfoTab(team: Team?, media: List<Media>?) {
         modifier = Modifier.fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp),
+        contentPadding = innerPadding,
     ) {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -414,8 +443,21 @@ private fun EventsTab(
     yearsParticipated: List<Int>,
     onYearSelected: (Int) -> Unit,
     onNavigateToEvent: (String) -> Unit,
+    innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+            .padding(top = innerPadding.calculateTopPadding())
+    ) {
+        // To allow content to show up above the LazyColumn we need to put the top innerPadding on
+        // the parent column. Take all remaining padding and apply them to the rest of the content
+        val layoutDirection = LocalLayoutDirection.current
+        val remainingContentPadding = PaddingValues(
+            start = innerPadding.calculateStartPadding(layoutDirection),
+            end = innerPadding.calculateEndPadding(layoutDirection),
+            bottom = innerPadding.calculateBottomPadding(),
+        )
+
         if (yearsParticipated.isNotEmpty()) {
             var expanded by remember { mutableStateOf(false) }
             Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
@@ -441,11 +483,19 @@ private fun EventsTab(
         }
 
         if (events == null) {
-            LoadingBox()
+            LoadingBox(
+                modifier = Modifier.padding(remainingContentPadding)
+            )
         } else if (events.isEmpty()) {
-            EmptyBox("No events for $selectedYear")
+            EmptyBox(
+                modifier = Modifier.padding(remainingContentPadding),
+                message = "No events for $selectedYear"
+            )
         } else {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = remainingContentPadding,
+            ) {
                 items(events, key = { it.key }) { event ->
                     EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
                 }
@@ -455,17 +505,29 @@ private fun EventsTab(
 }
 
 @Composable
-private fun MediaTab(media: List<Media>?) {
+private fun MediaTab(
+    media: List<Media>?,
+    innerPadding: PaddingValues = PaddingValues.Zero,
+) {
     if (media == null) {
-        LoadingBox()
+        LoadingBox(
+            modifier = Modifier.padding(innerPadding)
+        )
         return
     }
     val filtered = media.filter { it.type != "avatar" }
     if (filtered.isEmpty()) {
-        EmptyBox("No media")
+        EmptyBox(
+            modifier = Modifier.padding(innerPadding),
+            message = "No media"
+        )
         return
     }
-    val context = LocalContext.current
+    val gridItems = filtered.mapNotNull { item ->
+        if (mediaUrl(item.type, item.foreignKey) != null) {
+            MediaGridItem(type = item.type, foreignKey = item.foreignKey)
+        } else null
+    }
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -473,71 +535,17 @@ private fun MediaTab(media: List<Media>?) {
             .padding(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = innerPadding,
     ) {
-        items(filtered, key = { "${it.type}_${it.foreignKey}" }) { item ->
-            val url = mediaUrl(item)
-            val linkUrl = mediaLinkUrl(item)
-            if (url != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .clip(MaterialTheme.shapes.medium)
-                        .then(
-                            if (linkUrl != null) {
-                                Modifier.clickable {
-                                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(linkUrl)))
-                                }
-                            } else {
-                                Modifier
-                            }
-                        ),
-                ) {
-                    AsyncImage(
-                        model = url,
-                        contentDescription = "Team media",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                    if (item.type == "youtube") {
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .size(48.dp)
-                                .background(Color.Black.copy(alpha = 0.5f), CircleShape),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Icon(
-                                Icons.Outlined.PlayCircle,
-                                contentDescription = "Play video",
-                                tint = Color.White,
-                                modifier = Modifier.size(48.dp),
-                            )
-                        }
-                    }
-                }
-            }
+        items(gridItems, key = { "${it.type}_${it.foreignKey}" }) { item ->
+            MediaItem(
+                type = item.type,
+                foreignKey = item.foreignKey,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }
 
 private val FrcBlue = Color(0xFF0066B3)
 private val FrcRed = Color(0xFFED1C24)
-
-private fun mediaUrl(media: Media): String? = when (media.type) {
-    "imgur" -> "https://i.imgur.com/${media.foreignKey}.png"
-    "cdphotothread" -> "https://www.chiefdelphi.com/media/img/${media.foreignKey}"
-    "instagram-image" -> "https://www.instagram.com/p/${media.foreignKey}/media/"
-    "youtube" -> "https://img.youtube.com/vi/${media.foreignKey}/hqdefault.jpg"
-    "grabcad" -> null // no direct image URL
-    "onshape" -> null
-    else -> null
-}
-
-private fun mediaLinkUrl(media: Media): String? = when (media.type) {
-    "imgur" -> "https://imgur.com/${media.foreignKey}"
-    "cdphotothread" -> "https://www.chiefdelphi.com/media/img/${media.foreignKey}"
-    "instagram-image" -> "https://www.instagram.com/p/${media.foreignKey}/"
-    "youtube" -> "https://www.youtube.com/watch?v=${media.foreignKey}"
-    else -> null
-}

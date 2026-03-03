@@ -3,6 +3,7 @@ package com.thebluealliance.android.ui.teamevent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.PlayoffType
+import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.MatchList
 import com.thebluealliance.android.ui.components.TBATabRow
@@ -68,84 +71,93 @@ fun TeamEventDetailScreen(
 
     Scaffold(
         topBar = {
-            TBATopAppBar(
-                title = { Text(text = titleText, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onNavigateToSearch) {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
-                    }
-                },
-            )
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            TBATabRow(selectedTabIndex = pagerState.currentPage) {
-                TABS.forEachIndexed { index, title ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                        text = {
-                            Text(
-                                text = title,
-                                color = if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.7f)
-                            )
-                        },
-                    )
-                }
-            }
-
-            PullToRefreshBox(
-                isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
-                onRefresh = viewModel::refreshAll,
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier.fillMaxSize(),
-                ) { page ->
-                    val evt = uiState.event
-                    when (page) {
-                        0 -> {
-                            val tm = uiState.team
-                            val headerCount = (if (evt != null) 1 else 0) + (if (tm != null) 1 else 0)
-                            MatchList(
-                                matches = uiState.matches,
-                                playoffType = evt?.playoffType ?: PlayoffType.OTHER,
-                                onNavigateToMatch = onNavigateToMatch,
-                                headerItemCount = headerCount,
-                                headerContent = {
-                                    if (evt != null) {
-                                        item(key = "header_event") {
-                                            EventRow(
-                                                event = evt,
-                                                onClick = { onNavigateToEvent(evt.key) },
-                                                showYear = true,
-                                            )
-                                        }
-                                    }
-                                    if (tm != null) {
-                                        item(key = "header_team") {
-                                            TeamRow(
-                                                team = tm,
-                                                onClick = { onNavigateToTeam(tm.key) },
-                                            )
-                                        }
-                                    }
-                                },
+            Column {
+                TBATopAppBar(
+                    title = {
+                        Text(
+                            text = titleText,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateUp) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back"
                             )
                         }
-                        1 -> AwardsTab(uiState.awards)
+                    },
+                    actions = {
+                        IconButton(onClick = onNavigateToSearch) {
+                            Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                        }
+                    },
+                )
+
+                TBATabRow(selectedTabIndex = pagerState.currentPage) {
+                    TABS.forEachIndexed { index, title ->
+                        Tab(
+                            selected = pagerState.currentPage == index,
+                            onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                            text = {
+                                Text(
+                                    text = title,
+                                    color = if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.7f)
+                                )
+                            },
+                        )
                     }
+                }
+            }
+        },
+    ) { innerPadding ->
+        PullToRefreshBox(
+            isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
+            onRefresh = viewModel::refreshAll,
+            modifier = Modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize(),
+            ) { page ->
+                val evt = uiState.event
+                when (page) {
+                    0 -> {
+                        val tm = uiState.team
+                        val headerCount = (if (evt != null) 1 else 0) + (if (tm != null) 1 else 0)
+                        MatchList(
+                            matches = uiState.matches,
+                            playoffType = evt?.playoffType ?: PlayoffType.OTHER,
+                            onNavigateToMatch = onNavigateToMatch,
+                            headerItemCount = headerCount,
+                            headerContent = {
+                                if (evt != null) {
+                                    item(key = "header_event") {
+                                        EventRow(
+                                            event = evt,
+                                            onClick = { onNavigateToEvent(evt.key) },
+                                            showYear = true,
+                                        )
+                                    }
+                                }
+                                if (tm != null) {
+                                    item(key = "header_team") {
+                                        TeamRow(
+                                            team = tm,
+                                            onClick = { onNavigateToTeam(tm.key) },
+                                        )
+                                    }
+                                }
+                            },
+                            innerPadding = innerPadding,
+                        )
+                    }
+                    1 -> AwardsTab(
+                        awards = uiState.awards,
+                        innerPadding = innerPadding,
+                    )
                 }
             }
         }
@@ -153,20 +165,27 @@ fun TeamEventDetailScreen(
 }
 
 @Composable
-private fun AwardsTab(awards: List<Award>?) {
+private fun AwardsTab(
+    awards: List<Award>?,
+    innerPadding: PaddingValues = PaddingValues.Zero,
+) {
     if (awards == null) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
+        LoadingBox(
+            modifier = Modifier.padding(innerPadding)
+        )
         return
     }
     if (awards.isEmpty()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No awards", style = MaterialTheme.typography.bodyLarge)
-        }
+        EmptyBox(
+            modifier = Modifier.padding(innerPadding),
+            message = "No awards"
+        )
         return
     }
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = innerPadding,
+    ) {
         items(awards, key = { "${it.awardType}_${it.awardee.orEmpty()}" }) { award ->
             Column(
                 modifier = Modifier
