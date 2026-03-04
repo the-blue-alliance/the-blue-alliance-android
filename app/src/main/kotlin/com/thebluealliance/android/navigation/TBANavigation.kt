@@ -48,7 +48,7 @@ fun TBANavigation(
     val navigator = remember { Navigator(navState, activity) }
 
     val showBottomBar = navState.currentRoute in TOP_LEVEL_DESTINATIONS.map { it.key }.toSet() ||
-            navState.currentRoute in setOf(Screen.MyTBA, Screen.Settings, Screen.About, Screen.Thanks)
+            navState.currentRoute in setOf(Screen.MyTBA, Screen.Settings, Screen.About, Screen.Thanks, Screen.RegionalAdvancement)
 
     val coroutineScope = rememberCoroutineScope()
     val tabReselectFlows = remember {
@@ -111,6 +111,7 @@ fun TBANavigation(
                         onNavigateToEvent = { eventKey ->
                             navigator.navigate(Screen.EventDetail(eventKey))
                         },
+                        onNavigateUp = { navigator.navigateUp() },
                         onNavigateToSearch = { navigator.navigate(Screen.Search) },
                         reselectFlow = tabReselectFlows[Screen.RegionalAdvancement] ?: emptyFlow(),
                     )
