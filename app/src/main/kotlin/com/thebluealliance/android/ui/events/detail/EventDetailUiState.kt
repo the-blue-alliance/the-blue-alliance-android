@@ -7,6 +7,7 @@ import com.thebluealliance.android.domain.model.EventDistrictPoints
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.Team
+import com.thebluealliance.android.domain.model.TeamStats
 
 data class EventDetailUiState(
     val event: Event? = null,
@@ -16,4 +17,5 @@ data class EventDetailUiState(
     val alliances: List<Alliance>? = null,
     val awards: List<Award>? = null,
     val districtPoints: List<EventDistrictPoints>? = null,
+    val stats: List<TeamStats>? = null,
 )

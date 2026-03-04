@@ -16,8 +16,10 @@ import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventDistrictPoints
 import com.thebluealliance.android.domain.model.Ranking
+import com.thebluealliance.android.domain.model.TeamStats
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -144,6 +146,22 @@ class EventRepository @Inject constructor(
                 allianceDao.deleteByEvent(eventKey)
                 allianceDao.insertAll(dtos.mapIndexed { index, dto -> dto.toEntity(eventKey, index + 1) })
             }
+        } catch (_: Exception) { }
+    }
+
+    fun observeEventStats(eventKey: String): Flow<List<TeamStats>> = flow {
+        try {
+            val response = api.getEventStats(eventKey)
+            emit(response.toDomain())
+        } catch (_: Exception) {
+            emit(emptyList())
+        }
+    }
+
+    suspend fun refreshEventStats(eventKey: String) {
+        try {
+            val response = api.getEventStats(eventKey)
+            // Stats are not persisted, just used in UI
         } catch (_: Exception) { }
     }
 }

@@ -309,3 +309,20 @@ fun MediaEntity.toDomain() = Media(
     details = details,
     base64Image = base64Image,
 )
+
+// ── EventStats ──
+
+fun EventStatsResponseDto.toDomain(): List<TeamStats> {
+    val stats = mutableListOf<TeamStats>()
+    for ((teamKey, opr) in oprs) {
+        val dpr = dprs[teamKey] ?: 0.0
+        val ccwm = ccwms[teamKey] ?: 0.0
+        stats.add(TeamStats(
+            teamKey = teamKey,
+            opr = opr,
+            dpr = dpr,
+            ccwm = ccwm,
+        ))
+    }
+    return stats
+}

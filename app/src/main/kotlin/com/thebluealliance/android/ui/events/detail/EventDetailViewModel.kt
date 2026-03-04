@@ -63,9 +63,10 @@ class EventDetailViewModel @AssistedInject constructor(
             eventRepository.observeEventAlliances(eventKey),
             eventRepository.observeEventAwards(eventKey),
             eventRepository.observeEventDistrictPoints(eventKey),
-        ) { alliances, awards, districtPoints -> Triple(alliances, awards, districtPoints) },
+            eventRepository.observeEventStats(eventKey),
+        ) { alliances, awards, districtPoints, stats -> Quad(alliances, awards, districtPoints, stats) },
     ) { event, teams, matches, rankings, extras ->
-        val (alliances, awards, districtPoints) = extras
+        val (alliances, awards, districtPoints, stats) = extras
         EventDetailUiState(
             event = event,
             teams = teams,
@@ -74,6 +75,7 @@ class EventDetailViewModel @AssistedInject constructor(
             alliances = alliances,
             awards = awards,
             districtPoints = districtPoints,
+            stats = stats,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventDetailUiState())
 
@@ -144,6 +146,7 @@ class EventDetailViewModel @AssistedInject constructor(
                     launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
+                    launch { try { eventRepository.refreshEventStats(eventKey) } catch (_: Exception) {} }
                 }
             } finally {
                 _isRefreshing.value = false
@@ -156,3 +159,6 @@ class EventDetailViewModel @AssistedInject constructor(
         fun create(navKey: Screen.EventDetail): EventDetailViewModel
     }
 }
+
+// Helper data class for combining 4 flows
+private data class Quad<A, B, C, D>(val a: A, val b: B, val c: C, val d: D)
