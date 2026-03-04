@@ -16,6 +16,7 @@ data class RegionalRanking(
     val rookieBonus: Double,
     val singleEventBonus: Double,
     val eventPoints: List<RegionalEventPoints>,
+    val advancementMethod: String? = null,
 )
 
 data class RegionalEventPoints(

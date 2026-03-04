@@ -12,7 +12,12 @@ class RegionalAdvancementRepository @Inject constructor(
 ) {
     suspend fun getRegionalRankings(year: Int): List<RegionalRanking> {
         val rankings = api.getRegionalAdvancementRankings(year).orEmpty()
-        return rankings.map { it.toDomain(year) }.sortedBy { it.rank }
+        val advancements = api.getRegionalAdvancement(year).orEmpty()
+
+        return rankings.map { ranking ->
+            val advancement = advancements[ranking.teamKey]
+            ranking.toDomain(year, advancement?.cmpStatus)
+        }.sortedBy { it.rank }
     }
 }
 

@@ -248,7 +248,7 @@ fun DistrictRankingEntity.toDomain() = DistrictRanking(
 
 // ── RegionalRanking ──
 
-fun RegionalRankingDto.toDomain(year: Int) = RegionalRanking(
+fun RegionalRankingDto.toDomain(year: Int, advancementMethod: String? = null) = RegionalRanking(
     year = year,
     teamKey = teamKey,
     rank = rank,
@@ -261,6 +261,7 @@ fun RegionalRankingDto.toDomain(year: Int) = RegionalRanking(
             total = point.total,
         )
     },
+    advancementMethod = advancementMethod,
 )
 
 // ── EventDistrictPoints ──

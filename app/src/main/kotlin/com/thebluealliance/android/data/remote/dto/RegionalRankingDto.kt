@@ -23,3 +23,10 @@ data class RegionalEventPointsDto(
     val total: Double = 0.0,
 )
 
+@Serializable
+data class RegionalAdvancementDto(
+    val cmp: Boolean = false,
+    @SerialName("cmp_status") val cmpStatus: String? = null,
+    @SerialName("qualifying_pool_week") val qualifyingPoolWeek: Int? = null,
+)
+
