@@ -38,6 +38,12 @@ if [[ -n "$configured_slack_webhook" ]]; then
     SLACK_WEBHOOK_URL="$configured_slack_webhook"
 fi
 
+GITHUB_TOKEN=""
+configured_github_token=$(read_local_property "release.github.token" || true)
+if [[ -n "$configured_github_token" ]]; then
+    GITHUB_TOKEN="$configured_github_token"
+fi
+
 # ── Helpers ──────────────────────────────────────────────────────────────
 
 die()  { echo -e "${RED}ERROR:${NC} $*" >&2; exit 1; }
@@ -132,6 +138,97 @@ EOF
 )
 
     post_to_slack "$message_body"
+}
+
+create_github_release() {
+    local apk_path="app/build/outputs/apk/release/app-release.apk"
+
+    if [[ -z "$GITHUB_TOKEN" ]]; then
+        warn "GitHub token not configured (set release.github.token in local.properties), skipping GitHub release"
+        return 0
+    fi
+
+    if [[ ! -f "$apk_path" ]]; then
+        warn "Release APK not found at ${apk_path}, skipping GitHub release"
+        return 0
+    fi
+
+    local tag="v${VERSION_NAME}"
+
+    local commitlog
+    commitlog=$(build_commitlog)
+    if [[ -z "$commitlog" ]]; then
+        commitlog="(no non-merge commits found)"
+    fi
+
+    local is_prerelease="false"
+    if [[ "$VERSION_NAME" == *"-dev."* ]]; then
+        is_prerelease="true"
+    fi
+
+    local create_payload
+    create_payload=$(RELEASE_TAG="$tag" RELEASE_NAME="Android v${VERSION_NAME}" RELEASE_BODY="$commitlog" IS_PRERELEASE="$is_prerelease" python3 - <<'PY'
+import json, os
+print(json.dumps({
+    "tag_name": os.environ["RELEASE_TAG"],
+    "name": os.environ["RELEASE_NAME"],
+    "body": os.environ["RELEASE_BODY"],
+    "draft": False,
+    "prerelease": os.environ["IS_PRERELEASE"] == "true",
+}))
+PY
+)
+
+    if $DRY_RUN; then
+        echo "Would create GitHub release for ${tag} and upload ${apk_path}"
+        return 0
+    fi
+
+    info "Creating GitHub release for ${tag}..."
+    local response_file
+    response_file=$(mktemp)
+    local status_code
+    status_code=$(curl -sS -o "$response_file" -w "%{http_code}" \
+        -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+        -H "Content-Type: application/json" \
+        -X POST \
+        --data "$create_payload" \
+        "https://api.github.com/repos/the-blue-alliance/the-blue-alliance-android/releases")
+
+    if [[ "$status_code" != "201" ]]; then
+        warn "GitHub release creation returned HTTP ${status_code}: $(cat "$response_file")"
+        rm -f "$response_file"
+        return 0
+    fi
+
+    local upload_url
+    upload_url=$(python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+if 'upload_url' not in data:
+    raise SystemExit('upload_url missing from GitHub API response')
+print(data['upload_url'].split('{')[0])
+" < "$response_file")
+    rm -f "$response_file"
+
+    info "Uploading APK to GitHub release..."
+    local apk_name="the-blue-alliance-android-v${VERSION_NAME}.apk"
+    local upload_response_file
+    upload_response_file=$(mktemp)
+    local upload_status
+    upload_status=$(curl -sS -o "$upload_response_file" -w "%{http_code}" \
+        -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+        -H "Content-Type: application/vnd.android.package-archive" \
+        -X POST \
+        --data-binary "@${apk_path}" \
+        "${upload_url}?name=${apk_name}")
+
+    if [[ "$upload_status" != "201" ]]; then
+        warn "APK upload returned HTTP ${upload_status}: $(cat "$upload_response_file")"
+    else
+        info "APK uploaded to GitHub release"
+    fi
+    rm -f "$upload_response_file"
 }
 
 # ── Preflight checks ────────────────────────────────────────────────────
@@ -269,7 +366,7 @@ cmd_alpha() {
     print_version
 
     info "Building release bundle..."
-    run ./gradlew :app:bundleRelease
+    run ./gradlew :app:bundleRelease :app:assembleRelease
 
     info "Publishing to alpha..."
     run ./gradlew publishReleaseBundle
@@ -279,6 +376,7 @@ cmd_alpha() {
     echo -e "  Version: ${VERSION_NAME} (${VERSION_CODE})"
     echo -e "  Track:   alpha"
 
+    create_github_release
     announce_release_action "Published to alpha"
 }
 
