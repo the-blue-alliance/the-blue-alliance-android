@@ -6,7 +6,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
@@ -65,6 +64,7 @@ private fun FirebaseAnalyticsEffect(
                     Screen.Events -> "Events"
                     Screen.Teams -> "Teams"
                     Screen.Districts -> "Districts"
+                    Screen.RegionalAdvancement -> "RegionalAdvancement"
                     Screen.More -> "More"
                     is Screen.EventDetail -> "EventDetail"
                     is Screen.TeamDetail -> "TeamDetail"

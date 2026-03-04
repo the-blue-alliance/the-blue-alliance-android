@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +37,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 @OptIn(ExperimentalMaterial3Api::class)
 fun MoreScreen(
     onNavigateToMyTBA: () -> Unit,
+    onNavigateToRegionalAdvancement: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToAbout: () -> Unit,
     onNavigateToThanks: () -> Unit,
@@ -62,6 +64,8 @@ fun MoreScreen(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             MoreItem(icon = Icons.Filled.Star, label = "myTBA", onClick = onNavigateToMyTBA)
+            HorizontalDivider()
+            MoreItem(icon = Icons.Filled.EmojiEvents, label = "Regional Advancement", onClick = onNavigateToRegionalAdvancement)
             HorizontalDivider()
             MoreItem(icon = Icons.Filled.Settings, label = "Settings", onClick = onNavigateToSettings)
             HorizontalDivider()

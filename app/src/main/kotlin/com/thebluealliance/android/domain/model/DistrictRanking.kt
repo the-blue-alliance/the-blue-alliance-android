@@ -7,3 +7,19 @@ data class DistrictRanking(
     val pointTotal: Double,
     val rookieBonus: Double,
 )
+
+data class RegionalRanking(
+    val year: Int,
+    val teamKey: String,
+    val rank: Int,
+    val pointTotal: Double,
+    val rookieBonus: Double,
+    val singleEventBonus: Double,
+    val eventPoints: List<RegionalEventPoints>,
+    val advancementMethod: String? = null,
+)
+
+data class RegionalEventPoints(
+    val eventKey: String,
+    val total: Double,
+)
