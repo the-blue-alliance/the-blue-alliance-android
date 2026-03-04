@@ -58,7 +58,7 @@ class TBAShortcutManager @Inject constructor(
                     val shortcuts = favorites
                         .take(ShortcutManagerCompat.getMaxShortcutCountPerActivity(context))
                         .mapNotNull { it.getShortcutInfo() }
-                    ShortcutManagerCompat.addDynamicShortcuts(context, shortcuts)
+                    ShortcutManagerCompat.setDynamicShortcuts(context, shortcuts)
                 }
         }
     }
