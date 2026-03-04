@@ -3,9 +3,12 @@ package com.thebluealliance.android.ui.events.detail.tabs
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.EventOPRs
@@ -69,107 +73,119 @@ fun EventInsightsTab(
         }
     }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = innerPadding,
+    val layoutDirection = LocalLayoutDirection.current
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                top = innerPadding.calculateTopPadding(),
+                start = innerPadding.calculateStartPadding(layoutDirection),
+                end = innerPadding.calculateEndPadding(layoutDirection)
+            )
     ) {
-        stickyHeader {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFF5C6BC0))
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                HeaderItem(
-                    text = "Team",
-                    modifier = Modifier.weight(1.2f),
-                    sortColumn = OprSortColumn.TEAM,
-                    currentSort = sortColumn,
-                    ascending = sortAscending,
-                    onSortClick = {
-                        if (sortColumn == OprSortColumn.TEAM) sortAscending = !sortAscending
-                        else {
-                            sortColumn = OprSortColumn.TEAM
-                            sortAscending = true
-                        }
-                    }
-                )
-                HeaderItem(
-                    text = "OPR",
-                    modifier = Modifier.weight(1f),
-                    sortColumn = OprSortColumn.OPR,
-                    currentSort = sortColumn,
-                    ascending = sortAscending,
-                    onSortClick = {
-                        if (sortColumn == OprSortColumn.OPR) sortAscending = !sortAscending
-                        else {
-                            sortColumn = OprSortColumn.OPR
-                            sortAscending = false
-                        }
-                    }
-                )
-                HeaderItem(
-                    text = "DPR",
-                    modifier = Modifier.weight(1f),
-                    sortColumn = OprSortColumn.DPR,
-                    currentSort = sortColumn,
-                    ascending = sortAscending,
-                    onSortClick = {
-                        if (sortColumn == OprSortColumn.DPR) sortAscending = !sortAscending
-                        else {
-                            sortColumn = OprSortColumn.DPR
-                            sortAscending = false
-                        }
-                    }
-                )
-                HeaderItem(
-                    text = "CCWM",
-                    modifier = Modifier.weight(1f),
-                    sortColumn = OprSortColumn.CCWM,
-                    currentSort = sortColumn,
-                    ascending = sortAscending,
-                    onSortClick = {
-                        if (sortColumn == OprSortColumn.CCWM) sortAscending = !sortAscending
-                        else {
-                            sortColumn = OprSortColumn.CCWM
-                            sortAscending = false
-                        }
-                    }
-                )
-            }
-        }
-
-        items(sortedTeams) { teamKey ->
-            Column {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            // We handle top padding manually so stickyHeader is at the top of the viewport
+            contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
+        ) {
+            stickyHeader {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .background(Color(0xFF5C6BC0))
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = teamKey.substring(3),
+                    HeaderItem(
+                        text = "Team",
                         modifier = Modifier.weight(1.2f),
-                        style = MaterialTheme.typography.bodyLarge
+                        sortColumn = OprSortColumn.TEAM,
+                        currentSort = sortColumn,
+                        ascending = sortAscending,
+                        onSortClick = {
+                            if (sortColumn == OprSortColumn.TEAM) sortAscending = !sortAscending
+                            else {
+                                sortColumn = OprSortColumn.TEAM
+                                sortAscending = true
+                            }
+                        }
                     )
-                    Text(
-                        text = "%.2f".format(oprs.oprs[teamKey] ?: 0.0),
+                    HeaderItem(
+                        text = "OPR",
                         modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.bodyLarge
+                        sortColumn = OprSortColumn.OPR,
+                        currentSort = sortColumn,
+                        ascending = sortAscending,
+                        onSortClick = {
+                            if (sortColumn == OprSortColumn.OPR) sortAscending = !sortAscending
+                            else {
+                                sortColumn = OprSortColumn.OPR
+                                sortAscending = false
+                            }
+                        }
                     )
-                    Text(
-                        text = "%.2f".format(oprs.dprs[teamKey] ?: 0.0),
+                    HeaderItem(
+                        text = "DPR",
                         modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.bodyLarge
+                        sortColumn = OprSortColumn.DPR,
+                        currentSort = sortColumn,
+                        ascending = sortAscending,
+                        onSortClick = {
+                            if (sortColumn == OprSortColumn.DPR) sortAscending = !sortAscending
+                            else {
+                                sortColumn = OprSortColumn.DPR
+                                sortAscending = false
+                            }
+                        }
                     )
-                    Text(
-                        text = "%.2f".format(oprs.ccwms[teamKey] ?: 0.0),
+                    HeaderItem(
+                        text = "CCWM",
                         modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.bodyLarge
+                        sortColumn = OprSortColumn.CCWM,
+                        currentSort = sortColumn,
+                        ascending = sortAscending,
+                        onSortClick = {
+                            if (sortColumn == OprSortColumn.CCWM) sortAscending = !sortAscending
+                            else {
+                                sortColumn = OprSortColumn.CCWM
+                                sortAscending = false
+                            }
+                        }
                     )
                 }
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            }
+
+            items(sortedTeams) { teamKey ->
+                Column {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = teamKey.substring(3),
+                            modifier = Modifier.weight(1.2f),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = "%.2f".format(oprs.oprs[teamKey] ?: 0.0),
+                            modifier = Modifier.weight(1f),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = "%.2f".format(oprs.dprs[teamKey] ?: 0.0),
+                            modifier = Modifier.weight(1f),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            text = "%.2f".format(oprs.ccwms[teamKey] ?: 0.0),
+                            modifier = Modifier.weight(1f),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                }
             }
         }
     }
