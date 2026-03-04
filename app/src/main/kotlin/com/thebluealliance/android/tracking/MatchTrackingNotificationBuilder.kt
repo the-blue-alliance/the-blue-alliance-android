@@ -18,6 +18,16 @@ object MatchTrackingNotificationBuilder {
 
     const val NOTIFICATION_ID = 7175 // "TBA Team 175" :)
 
+    private fun stopPendingIntent(context: Context): PendingIntent {
+        val stopIntent = Intent(context, MatchTrackingService::class.java).apply {
+            action = MatchTrackingService.ACTION_STOP
+        }
+        return PendingIntent.getService(
+            context, 0, stopIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+    }
+
     fun build(
         context: Context,
         state: TrackedTeamState,
@@ -28,14 +38,6 @@ object MatchTrackingNotificationBuilder {
         val body = buildBody(state)
         val chipText = buildChipText(state)
 
-        val stopIntent = Intent(context, MatchTrackingService::class.java).apply {
-            action = MatchTrackingService.ACTION_STOP
-        }
-        val stopPendingIntent = PendingIntent.getService(
-            context, 0, stopIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-        )
-
         val builder = NotificationCompat.Builder(context, NotificationChannelManager.CHANNEL_TRACKING)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
@@ -43,7 +45,7 @@ object MatchTrackingNotificationBuilder {
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setOngoing(true)
             .setOnlyAlertOnce(true)
-            .addAction(R.drawable.ic_notification, "Stop tracking", stopPendingIntent)
+            .addAction(R.drawable.ic_notification, "Stop tracking", stopPendingIntent(context))
 
         if (teamAvatar != null) {
             builder.setLargeIcon(teamAvatar)
@@ -116,6 +118,20 @@ object MatchTrackingNotificationBuilder {
             return name
         }
         return null
+    }
+
+    fun buildDormant(context: Context, teamKey: String): Notification {
+        val teamNumber = teamKey.removePrefix("frc")
+
+        return NotificationCompat.Builder(context, NotificationChannelManager.CHANNEL_TRACKING)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle("$teamNumber — Tracking paused")
+            .setContentText("Will resume when matches are scheduled")
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .addAction(R.drawable.ic_notification, "Stop tracking", stopPendingIntent(context))
+            .build()
     }
 
     private fun formatMatchTime(match: Match): String {
