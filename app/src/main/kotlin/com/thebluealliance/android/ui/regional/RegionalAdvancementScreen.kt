@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
@@ -51,6 +52,7 @@ import kotlinx.coroutines.flow.Flow
 fun RegionalAdvancementScreen(
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
+    onNavigateUp: (() -> Unit)? = null,
     onNavigateToSearch: () -> Unit,
     reselectFlow: Flow<Unit>,
     viewModel: RegionalAdvancementViewModel = hiltViewModel(),
@@ -82,8 +84,17 @@ fun RegionalAdvancementScreen(
                         }
                     }
                 },
+                navigationIcon = {
+                    if (onNavigateUp != null) {
+                        IconButton(onClick = onNavigateUp) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                            )
+                        }
+                    }
+                },
                 actions = { IconButton(onClick = onNavigateToSearch) { Icon(Icons.Default.Search, contentDescription = "Search") } },
-                showLamp = true,
             )
         },
     ) { innerPadding ->
