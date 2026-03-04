@@ -1,7 +1,5 @@
 package com.thebluealliance.android.ui.more
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +43,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.util.openUrl
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -127,7 +126,7 @@ private fun ContributorRow(contributor: GitHubContributorDto) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(contributor.htmlUrl)))
+                context.openUrl(contributor.htmlUrl)
             }
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,

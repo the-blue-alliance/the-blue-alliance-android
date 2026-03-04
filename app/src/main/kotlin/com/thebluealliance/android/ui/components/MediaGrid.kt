@@ -1,7 +1,5 @@
 package com.thebluealliance.android.ui.components
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.thebluealliance.android.util.openUrl
 
 /**
  * Data class for a media item to display in a media grid.
@@ -79,7 +78,7 @@ fun MediaItem(
             .then(
                 if (linkUrl != null) {
                     Modifier.clickable {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(linkUrl)))
+                        context.openUrl(linkUrl)
                     }
                 } else {
                     Modifier

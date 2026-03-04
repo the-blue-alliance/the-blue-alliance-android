@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.events.detail.tabs
 
-import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.util.openUrl
 import com.thebluealliance.android.ui.components.formatEventDateRange
 
 @Composable
@@ -109,12 +109,8 @@ fun EventInfoTab(
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .clickable {
-                            val intent = if (event.gmapsUrl != null) {
-                                Intent(Intent.ACTION_VIEW, Uri.parse(event.gmapsUrl))
-                            } else {
-                                Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=${Uri.encode(event.address)}"))
-                            }
-                            context.startActivity(intent)
+                            val url = event.gmapsUrl ?: "geo:0,0?q=${Uri.encode(event.address)}"
+                            context.openUrl(url)
                         },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -141,7 +137,7 @@ fun EventInfoTab(
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .clickable {
-                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(event.website)))
+                            context.openUrl(event.website)
                         },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -179,7 +175,7 @@ fun EventInfoTab(
                         modifier = Modifier
                             .padding(top = 4.dp)
                             .clickable {
-                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                                context.openUrl(url)
                             },
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
