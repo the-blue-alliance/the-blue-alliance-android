@@ -51,6 +51,7 @@ import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.events.EventSection
@@ -153,7 +154,9 @@ fun DistrictDetailScreen(
         PullToRefreshBox(
             isRefreshing = isRefreshing && uiState.eventSections != null && uiState.rankings != null,
             onRefresh = viewModel::refreshAll,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
         ) {
             HorizontalPager(
@@ -163,13 +166,12 @@ fun DistrictDetailScreen(
                 when (page) {
                     0 -> EventsTab(
                         sections = uiState.eventSections,
+                        selectedYear = selectedYear,
                         onNavigateToEvent = onNavigateToEvent,
-                        innerPadding = innerPadding,
                     )
                     1 -> RankingsTab(
                         rankings = uiState.rankings,
                         onNavigateToTeam = onNavigateToTeam,
-                        innerPadding = innerPadding,
                     )
                 }
             }
@@ -181,8 +183,8 @@ fun DistrictDetailScreen(
 @Composable
 private fun EventsTab(
     sections: List<EventSection>?,
+    selectedYear: Int,
     onNavigateToEvent: (String) -> Unit,
-    innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     if (sections == null) {
         LoadingBox()
@@ -195,8 +197,8 @@ private fun EventsTab(
 
     val allEvents = sections.flatMap { it.events }
     val today = remember { LocalDate.now() }
-    val thisWeekResult = remember(allEvents, today) {
-        computeThisWeekEvents(allEvents, today, today.year)
+    val thisWeekResult = remember(allEvents, today, selectedYear) {
+        computeThisWeekEvents(allEvents, today, selectedYear)
     }
 
     val listState = rememberLazyListState()
@@ -226,51 +228,53 @@ private fun EventsTab(
                     val key = item.key as? String
                     key != null && key in headerKeys && item.offset <= 0
                 }?.key as? String
+            // At scroll position 0, the first header is always stuck
             stuck ?: headerInfos.firstOrNull()?.key
         }
     }
 
-    LazyColumn(
-        state = listState,
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = innerPadding,
-    ) {
-        if (thisWeekResult != null) {
-            stickyHeader(key = "this_week_header") {
-                SectionHeader(
-                    label = thisWeekResult.label,
-                    isStuck = stuckHeaderKey == "this_week_header",
-                    allHeaders = headerInfos,
-                    onHeaderSelected = { info ->
-                        coroutineScope.launch {
-                            listState.animateScrollToItem(info.itemIndex)
-                        }
-                    },
-                )
+    FastScrollbar(listState = listState) {
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            if (thisWeekResult != null) {
+                stickyHeader(key = "this_week_header") {
+                    SectionHeader(
+                        label = thisWeekResult.label,
+                        isStuck = stuckHeaderKey == "this_week_header",
+                        allHeaders = headerInfos,
+                        onHeaderSelected = { info ->
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(info.itemIndex)
+                            }
+                        },
+                    )
+                }
+                items(thisWeekResult.events, key = { "thisweek_${it.key}" }) { event ->
+                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                }
+                item(key = "this_week_divider") {
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                }
             }
-            items(thisWeekResult.events, key = { "thisweek_${it.key}" }) { event ->
-                EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
-            }
-            item(key = "this_week_divider") {
-                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-            }
-        }
-        sections.forEach { section ->
-            val headerKey = "header_${section.label}"
-            stickyHeader(key = headerKey) {
-                SectionHeader(
-                    label = section.label,
-                    isStuck = stuckHeaderKey == headerKey,
-                    allHeaders = headerInfos,
-                    onHeaderSelected = { info ->
-                        coroutineScope.launch {
-                            listState.animateScrollToItem(info.itemIndex)
-                        }
-                    },
-                )
-            }
-            items(section.events, key = { it.key }) { event ->
-                EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+            sections.forEach { section ->
+                val headerKey = "header_${section.label}"
+                stickyHeader(key = headerKey) {
+                    SectionHeader(
+                        label = section.label,
+                        isStuck = stuckHeaderKey == headerKey,
+                        allHeaders = headerInfos,
+                        onHeaderSelected = { info ->
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(info.itemIndex)
+                            }
+                        },
+                    )
+                }
+                items(section.events, key = { it.key }) { event ->
+                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                }
             }
         }
     }
@@ -280,59 +284,57 @@ private fun EventsTab(
 private fun RankingsTab(
     rankings: List<DistrictRanking>?,
     onNavigateToTeam: (String) -> Unit,
-    innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     if (rankings == null) {
-        LoadingBox(
-            modifier = Modifier.padding(innerPadding)
-        )
+        LoadingBox()
         return
     }
     if (rankings.isEmpty()) {
-        EmptyBox(
-            modifier = Modifier.padding(innerPadding),
-            message = "No rankings"
-        )
+        EmptyBox(message = "No rankings")
         return
     }
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = innerPadding,
-    ) {
-        items(rankings, key = { "${it.districtKey}_${it.teamKey}" }) { ranking ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onNavigateToTeam(ranking.teamKey) }
-                    .padding(horizontal = 16.dp, vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "#${ranking.rank}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(0.15f),
-                )
-                Text(
-                    text = ranking.teamKey.removePrefix("frc"),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(0.35f),
-                )
-                Text(
-                    text = "${ranking.pointTotal.toInt()} pts",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(0.25f),
-                )
-                if (ranking.rookieBonus > 0) {
+
+    val listState = rememberLazyListState()
+
+    FastScrollbar(listState = listState) {
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            items(rankings, key = { "${it.districtKey}_${it.teamKey}" }) { ranking ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onNavigateToTeam(ranking.teamKey) }
+                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Text(
-                        text = "+${ranking.rookieBonus.toInt()} rookie",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        text = "#${ranking.rank}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(0.15f),
+                    )
+                    Text(
+                        text = ranking.teamKey.removePrefix("frc"),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(0.35f),
+                    )
+                    Text(
+                        text = "${ranking.pointTotal.toInt()} pts",
+                        style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(0.25f),
                     )
+                    if (ranking.rookieBonus > 0) {
+                        Text(
+                            text = "+${ranking.rookieBonus.toInt()} rookie",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.weight(0.25f),
+                        )
+                    }
                 }
             }
         }
     }
 }
-
