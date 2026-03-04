@@ -34,6 +34,7 @@ import com.thebluealliance.android.ui.teamevent.TeamEventDetailViewModel
 import com.thebluealliance.android.ui.teams.TeamDetailScreen
 import com.thebluealliance.android.ui.teams.TeamDetailViewModel
 import com.thebluealliance.android.ui.teams.TeamsScreen
+import com.thebluealliance.android.ui.regional.RegionalAdvancementScreen
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
@@ -47,7 +48,7 @@ fun TBANavigation(
     val navigator = remember { Navigator(navState, activity) }
 
     val showBottomBar = navState.currentRoute in TOP_LEVEL_DESTINATIONS.map { it.key }.toSet() ||
-            navState.currentRoute in setOf(Screen.MyTBA, Screen.Settings, Screen.About, Screen.Thanks)
+            navState.currentRoute in setOf(Screen.MyTBA, Screen.Settings, Screen.About, Screen.Thanks, Screen.RegionalAdvancement)
 
     val coroutineScope = rememberCoroutineScope()
     val tabReselectFlows = remember {
@@ -100,11 +101,27 @@ fun TBANavigation(
                         reselectFlow = tabReselectFlows[Screen.Districts] ?: emptyFlow(),
                     )
                 }
+                entry<Screen.RegionalAdvancement>(
+                    metadata = Transitions.topLevelTransitionSpec
+                ) {
+                    RegionalAdvancementScreen(
+                        onNavigateToTeam = { teamKey ->
+                            navigator.navigate(Screen.TeamDetail(teamKey))
+                        },
+                        onNavigateToEvent = { eventKey ->
+                            navigator.navigate(Screen.EventDetail(eventKey))
+                        },
+                        onNavigateUp = { navigator.navigateUp() },
+                        onNavigateToSearch = { navigator.navigate(Screen.Search) },
+                        reselectFlow = tabReselectFlows[Screen.RegionalAdvancement] ?: emptyFlow(),
+                    )
+                }
                     entry<Screen.More>(
                         metadata = Transitions.topLevelTransitionSpec
                     ) {
                         MoreScreen(
                             onNavigateToMyTBA = { navigator.navigate(Screen.MyTBA) },
+                            onNavigateToRegionalAdvancement = { navigator.navigate(Screen.RegionalAdvancement) },
                             onNavigateToSettings = { navigator.navigate(Screen.Settings) },
                             onNavigateToAbout = { navigator.navigate(Screen.About) },
                             onNavigateToThanks = { navigator.navigate(Screen.Thanks) },

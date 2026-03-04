@@ -37,6 +37,7 @@
                 <data android:pathPrefix="/match/" />
                 <data android:pathPrefix="/team/" />
                 <data android:pathPrefix="/teams" />
+                <data android:pathPrefix="/regional_advancement" />
             </intent-filter>
         </activity>
 
