@@ -246,6 +246,23 @@ fun DistrictRankingEntity.toDomain() = DistrictRanking(
     rookieBonus = rookieBonus,
 )
 
+// ── RegionalRanking ──
+
+fun RegionalRankingDto.toDomain(year: Int) = RegionalRanking(
+    year = year,
+    teamKey = teamKey,
+    rank = rank,
+    pointTotal = pointTotal,
+    rookieBonus = rookieBonus,
+    singleEventBonus = singleEventBonus,
+    eventPoints = eventPoints.map { point ->
+        RegionalEventPoints(
+            eventKey = point.eventKey,
+            total = point.total,
+        )
+    },
+)
+
 // ── EventDistrictPoints ──
 
 fun EventDistrictPointsEntryDto.toEntity(eventKey: String, teamKey: String) = EventDistrictPointsEntity(

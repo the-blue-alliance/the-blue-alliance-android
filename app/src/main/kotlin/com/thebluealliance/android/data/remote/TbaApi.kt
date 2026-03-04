@@ -88,6 +88,10 @@ interface TbaApi {
     @GET("api/v3/event/{event_key}/district_points")
     suspend fun getEventDistrictPoints(@Path("event_key") eventKey: String): EventDistrictPointsResponseDto
 
+    // Regional Advancement
+    @GET("api/v3/regional_advancement/{year}/rankings")
+    suspend fun getRegionalAdvancementRankings(@Path("year") year: Int): List<RegionalRankingDto>?
+
     // Media
     @GET("api/v3/team/{team_key}/media/{year}")
     suspend fun getTeamMedia(

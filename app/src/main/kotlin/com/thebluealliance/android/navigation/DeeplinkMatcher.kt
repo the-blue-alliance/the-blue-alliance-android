@@ -33,7 +33,11 @@ class DeeplinkMatcher {
             return Screen.Teams
         }
 
+        // https://www.thebluealliance.com/regional_advancement or /regional_advancement/{year}/rankings
+        if (segments[0] == "regional_advancement") {
+            return Screen.RegionalAdvancement
+        }
+
         return null
     }
 }
-
