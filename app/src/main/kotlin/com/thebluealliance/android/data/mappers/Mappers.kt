@@ -309,3 +309,18 @@ fun MediaEntity.toDomain() = Media(
     details = details,
     base64Image = base64Image,
 )
+
+// ── OPRs ──
+
+fun EventOPRsDto.toEntity(eventKey: String) = EventOPRsEntity(
+    eventKey = eventKey,
+    oprs = json.encodeToString(oprs),
+    dprs = json.encodeToString(dprs),
+    ccwms = json.encodeToString(ccwms),
+)
+
+fun EventOPRsEntity.toDomain() = EventOPRs(
+    oprs = json.decodeFromString(oprs),
+    dprs = json.decodeFromString(dprs),
+    ccwms = json.decodeFromString(ccwms),
+)

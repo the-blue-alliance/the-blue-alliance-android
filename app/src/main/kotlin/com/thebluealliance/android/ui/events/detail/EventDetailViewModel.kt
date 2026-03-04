@@ -63,9 +63,12 @@ class EventDetailViewModel @AssistedInject constructor(
             eventRepository.observeEventAlliances(eventKey),
             eventRepository.observeEventAwards(eventKey),
             eventRepository.observeEventDistrictPoints(eventKey),
-        ) { alliances, awards, districtPoints -> Triple(alliances, awards, districtPoints) },
+            eventRepository.observeEventOPRs(eventKey),
+        ) { alliances, awards, districtPoints, oprs ->
+            Quadruple(alliances, awards, districtPoints, oprs)
+        },
     ) { event, teams, matches, rankings, extras ->
-        val (alliances, awards, districtPoints) = extras
+        val (alliances, awards, districtPoints, oprs) = extras
         EventDetailUiState(
             event = event,
             teams = teams,
@@ -74,6 +77,7 @@ class EventDetailViewModel @AssistedInject constructor(
             alliances = alliances,
             awards = awards,
             districtPoints = districtPoints,
+            oprs = oprs,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventDetailUiState())
 
@@ -144,6 +148,7 @@ class EventDetailViewModel @AssistedInject constructor(
                     launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
+                    launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
                 }
             } finally {
                 _isRefreshing.value = false
@@ -156,3 +161,10 @@ class EventDetailViewModel @AssistedInject constructor(
         fun create(navKey: Screen.EventDetail): EventDetailViewModel
     }
 }
+
+data class Quadruple<out A, out B, out C, out D>(
+    val first: A,
+    val second: B,
+    val third: C,
+    val fourth: D
+)

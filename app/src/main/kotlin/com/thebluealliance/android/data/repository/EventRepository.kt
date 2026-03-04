@@ -6,6 +6,7 @@ import com.thebluealliance.android.data.local.dao.AllianceDao
 import com.thebluealliance.android.data.local.dao.AwardDao
 import com.thebluealliance.android.data.local.dao.EventDao
 import com.thebluealliance.android.data.local.dao.EventDistrictPointsDao
+import com.thebluealliance.android.data.local.dao.EventOPRsDao
 import com.thebluealliance.android.data.local.dao.EventTeamDao
 import com.thebluealliance.android.data.local.dao.RankingDao
 import com.thebluealliance.android.data.local.entity.EventTeamEntity
@@ -15,6 +16,7 @@ import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventDistrictPoints
+import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.Ranking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -34,6 +36,7 @@ class EventRepository @Inject constructor(
     private val allianceDao: AllianceDao,
     private val eventTeamDao: EventTeamDao,
     private val eventDistrictPointsDao: EventDistrictPointsDao,
+    private val eventOPRsDao: EventOPRsDao,
 ) {
     fun searchEvents(query: String): Flow<List<Event>> =
         eventDao.search(query).map { list -> list.map { it.toDomain() } }
@@ -143,6 +146,19 @@ class EventRepository @Inject constructor(
             db.withTransaction {
                 allianceDao.deleteByEvent(eventKey)
                 allianceDao.insertAll(dtos.mapIndexed { index, dto -> dto.toEntity(eventKey, index + 1) })
+            }
+        } catch (_: Exception) { }
+    }
+
+    fun observeEventOPRs(eventKey: String): Flow<EventOPRs?> =
+        eventOPRsDao.observe(eventKey).map { it?.toDomain() }
+
+    suspend fun refreshEventOPRs(eventKey: String) {
+        try {
+            val dto = api.getEventOPRs(eventKey)
+            db.withTransaction {
+                eventOPRsDao.delete(eventKey)
+                eventOPRsDao.insert(dto.toEntity(eventKey))
             }
         } catch (_: Exception) { }
     }
