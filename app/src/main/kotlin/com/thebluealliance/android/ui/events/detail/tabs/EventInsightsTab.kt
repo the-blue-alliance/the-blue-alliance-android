@@ -1,5 +1,7 @@
 package com.thebluealliance.android.ui.events.detail.tabs
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.EventOPRs
@@ -32,6 +35,7 @@ enum class OprSortColumn {
     TEAM, OPR, DPR, CCWM
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EventInsightsTab(
     oprs: EventOPRs?,
@@ -69,10 +73,11 @@ fun EventInsightsTab(
         modifier = Modifier.fillMaxSize(),
         contentPadding = innerPadding,
     ) {
-        item {
+        stickyHeader {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(Color(0xFF5C6BC0))
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -133,7 +138,6 @@ fun EventInsightsTab(
                     }
                 )
             }
-            HorizontalDivider()
         }
 
         items(sortedTeams) { teamKey ->
@@ -187,12 +191,14 @@ private fun HeaderItem(
         Text(
             text = text,
             style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.White
         )
         if (currentSort == sortColumn) {
             Icon(
                 imageVector = if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
-                contentDescription = if (ascending) "Sorted Ascending" else "Sorted Descending"
+                contentDescription = if (ascending) "Sorted Ascending" else "Sorted Descending",
+                tint = Color.White
             )
         }
     }
