@@ -1,4 +1,4 @@
-package com.thebluealliance.android.baseline
+package com.thebluealliance.android.baselineprofile
 
 import androidx.benchmark.macro.BaselineProfileMode
 import androidx.benchmark.macro.CompilationMode
