@@ -61,6 +61,7 @@ private fun FirebaseAnalyticsEffect(
     LaunchedEffect(navState) {
         snapshotFlow { navState.currentRoute }
             .collectLatest { currentRoute ->
+                if (currentRoute == null) return@collectLatest
                 val screenName = when (currentRoute) {
                     Screen.Events -> "Events"
                     Screen.Teams -> "Teams"

@@ -118,8 +118,8 @@ class NavigationState(
 
     val currentStack: NavBackStack<NavKey>
         get() = backStacks[topLevelRoute] ?: error("Stack for $topLevelRoute not found")
-    val currentRoute: NavKey
-        get() = currentStack.last()
+    val currentRoute: NavKey?
+        get() = currentStack.lastOrNull()
 }
 
 @Composable

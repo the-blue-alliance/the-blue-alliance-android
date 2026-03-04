@@ -257,13 +257,14 @@ fun TBANavigation(
             ),
         )
 
-        if (showBottomBar) {
+        val currentRoute = navState.currentRoute
+        if (showBottomBar && currentRoute != null) {
             TBABottomBar(
-                currentRoute = navState.currentRoute,
+                currentRoute = currentRoute,
                 onNavigate = { navigator.navigate(it) },
                 onReselect = {
                     coroutineScope.launch {
-                        tabReselectFlows[navState.currentRoute]?.emit(Unit)
+                        tabReselectFlows[currentRoute]?.emit(Unit)
                     }
                 },
             )
