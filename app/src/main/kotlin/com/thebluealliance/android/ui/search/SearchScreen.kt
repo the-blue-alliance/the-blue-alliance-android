@@ -22,17 +22,21 @@ import androidx.compose.material3.TextFieldDefaults
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.components.EventRow
+import com.thebluealliance.android.ui.components.SectionHeader
+import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TeamRow
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,6 +49,7 @@ fun SearchScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusRequester = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -52,6 +57,34 @@ fun SearchScreen(
 
     LaunchedEffect(uiState.teams, uiState.events) {
         lazyListState.scrollToItem(0)
+    }
+
+    val headerInfos = remember(uiState.teams.size, uiState.events.size) {
+        buildList {
+            var index = 0
+            if (uiState.teams.isNotEmpty()) {
+                add(SectionHeaderInfo("teams_header", "Teams", index))
+                index += 1 + uiState.teams.size
+            }
+            if (uiState.events.isNotEmpty()) {
+                add(SectionHeaderInfo("events_header", "Events", index))
+            }
+        }
+    }
+
+    val headerKeys = remember(headerInfos) {
+        headerInfos.map { it.key }.toSet()
+    }
+
+    val stuckHeaderKey by remember(headerKeys) {
+        derivedStateOf {
+            val stuck = lazyListState.layoutInfo.visibleItemsInfo
+                .firstOrNull { item ->
+                    val key = item.key as? String
+                    key != null && key in headerKeys && item.offset <= 0
+                }?.key as? String
+            stuck ?: headerInfos.firstOrNull()?.key
+        }
     }
 
     Scaffold(
@@ -107,13 +140,16 @@ fun SearchScreen(
                 state = lazyListState,
             ) {
                 if (uiState.teams.isNotEmpty()) {
-                    item(key = "teams_header") {
-                        Text(
-                            text = "Teams",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    stickyHeader(key = "teams_header") {
+                        SectionHeader(
+                            label = "Teams",
+                            isStuck = stuckHeaderKey == "teams_header",
+                            allHeaders = headerInfos,
+                            onHeaderSelected = { info ->
+                                coroutineScope.launch {
+                                    lazyListState.animateScrollToItem(info.itemIndex)
+                                }
+                            },
                         )
                     }
                     items(uiState.teams, key = { "team_${it.key}" }) { team ->
@@ -121,13 +157,16 @@ fun SearchScreen(
                     }
                 }
                 if (uiState.events.isNotEmpty()) {
-                    item(key = "events_header") {
-                        Text(
-                            text = "Events",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    stickyHeader(key = "events_header") {
+                        SectionHeader(
+                            label = "Events",
+                            isStuck = stuckHeaderKey == "events_header",
+                            allHeaders = headerInfos,
+                            onHeaderSelected = { info ->
+                                coroutineScope.launch {
+                                    lazyListState.animateScrollToItem(info.itemIndex)
+                                }
+                            },
                         )
                     }
                     items(uiState.events, key = { "event_${it.key}" }) { event ->
