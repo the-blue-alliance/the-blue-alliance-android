@@ -2,11 +2,16 @@ package com.thebluealliance.android.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -20,34 +25,45 @@ fun EventRow(
     event: Event,
     onClick: () -> Unit,
     showYear: Boolean = false,
+    showChevron: Boolean = false,
 ) {
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        val name = if (showYear) "${event.year} ${event.name}" else event.name
-        Text(
-            text = name,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
-        )
-        val location = listOfNotNull(event.city, event.state, event.country)
-            .joinToString(", ")
-        if (location.isNotEmpty()) {
+        Column(modifier = Modifier.weight(1f)) {
+            val name = if (showYear) "${event.year} ${event.name}" else event.name
             Text(
-                text = location,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text = name,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
             )
+            val location = listOfNotNull(event.city, event.state, event.country)
+                .joinToString(", ")
+            if (location.isNotEmpty()) {
+                Text(
+                    text = location,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            val dateRange = formatEventDateRange(event.startDate, event.endDate)
+            if (dateRange != null) {
+                Text(
+                    text = dateRange,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
-        val dateRange = formatEventDateRange(event.startDate, event.endDate)
-        if (dateRange != null) {
-            Text(
-                text = dateRange,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+        if (showChevron) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }

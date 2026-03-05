@@ -1,7 +1,9 @@
 package com.thebluealliance.android.ui.teamevent
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,7 +37,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Award
+import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.PlayoffType
+import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.EventRow
@@ -63,22 +68,43 @@ fun TeamEventDetailScreen(
 
     val team = uiState.team
     val event = uiState.event
-    val titleText = if (team != null && event != null) {
-        "${team.number} @ ${event.shortName ?: event.name}"
-    } else {
-        "Team @ Event"
-    }
 
     Scaffold(
         topBar = {
             Column {
                 TBATopAppBar(
                     title = {
-                        Text(
-                            text = titleText,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        if (team != null && event != null) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = "${team.number}",
+                                    maxLines = 1,
+                                    modifier = Modifier.clickable { onNavigateToTeam(team.key) },
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+                                Text(
+                                    text = " @ ",
+                                    maxLines = 1,
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+                                Text(
+                                    text = event.shortName ?: event.name,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.weight(1f).clickable { onNavigateToEvent(event.key) },
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+                            }
+                        } else {
+                            Text(
+                                text = "Team @ Event",
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
                     },
                     navigationIcon = {
                         IconButton(onClick = onNavigateUp) {
@@ -126,7 +152,8 @@ fun TeamEventDetailScreen(
                 when (page) {
                     0 -> {
                         val tm = uiState.team
-                        val headerCount = (if (evt != null) 1 else 0) + (if (tm != null) 1 else 0)
+                        val hasBoth = evt != null && tm != null
+                        val headerCount = (if (evt != null) 1 else 0) + (if (hasBoth) 1 else 0) + (if (tm != null) 1 else 0)
                         MatchList(
                             matches = uiState.matches,
                             playoffType = evt?.playoffType ?: PlayoffType.OTHER,
@@ -139,14 +166,19 @@ fun TeamEventDetailScreen(
                                             event = evt,
                                             onClick = { onNavigateToEvent(evt.key) },
                                             showYear = true,
+                                            showChevron = true,
                                         )
                                     }
+                                }
+                                if (evt != null && tm != null) {
+                                    item(key = "header_divider") { HorizontalDivider() }
                                 }
                                 if (tm != null) {
                                     item(key = "header_team") {
                                         TeamRow(
                                             team = tm,
                                             onClick = { onNavigateToTeam(tm.key) },
+                                            showChevron = true,
                                         )
                                     }
                                 }
@@ -154,10 +186,17 @@ fun TeamEventDetailScreen(
                             innerPadding = innerPadding,
                         )
                     }
-                    1 -> AwardsTab(
-                        awards = uiState.awards,
-                        innerPadding = innerPadding,
-                    )
+                    1 -> {
+                        val tm = uiState.team
+                        AwardsTab(
+                            awards = uiState.awards,
+                            event = evt,
+                            team = tm,
+                            onNavigateToEvent = onNavigateToEvent,
+                            onNavigateToTeam = onNavigateToTeam,
+                            innerPadding = innerPadding,
+                        )
+                    }
                 }
             }
         }
@@ -167,6 +206,10 @@ fun TeamEventDetailScreen(
 @Composable
 private fun AwardsTab(
     awards: List<Award>?,
+    event: Event?,
+    team: Team?,
+    onNavigateToEvent: (String) -> Unit,
+    onNavigateToTeam: (String) -> Unit,
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     if (awards == null) {
@@ -175,17 +218,40 @@ private fun AwardsTab(
         )
         return
     }
-    if (awards.isEmpty()) {
-        EmptyBox(
-            modifier = Modifier.padding(innerPadding),
-            message = "No awards"
-        )
-        return
-    }
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = innerPadding,
     ) {
+        if (event != null) {
+            item(key = "header_event") {
+                EventRow(
+                    event = event,
+                    onClick = { onNavigateToEvent(event.key) },
+                    showYear = true,
+                    showChevron = true,
+                )
+            }
+        }
+        if (event != null && team != null) {
+            item(key = "header_divider") { HorizontalDivider() }
+        }
+        if (team != null) {
+            item(key = "header_team") {
+                TeamRow(
+                    team = team,
+                    onClick = { onNavigateToTeam(team.key) },
+                    showChevron = true,
+                )
+            }
+        }
+        if (awards.isEmpty()) {
+            item {
+                EmptyBox(
+                    message = "No awards",
+                    modifier = Modifier.padding(top = 24.dp),
+                )
+            }
+        }
         items(awards, key = { "${it.awardType}_${it.awardee.orEmpty()}" }) { award ->
             Column(
                 modifier = Modifier
