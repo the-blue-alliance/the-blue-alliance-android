@@ -52,7 +52,7 @@ class Navigator(
         // If we're at the base of the current route, go back to the start route stack.
         if (state.currentRoute == state.topLevelRoute) {
             state.topLevelRoute = state.startRoute
-        } else {
+        } else if (state.currentStack.size > 1){
             state.currentStack.removeLastOrNull()
         }
     }
@@ -92,7 +92,7 @@ class Navigator(
             activity.finish()
             // trigger restart
             builder.startActivities()
-        } else {
+        } else if (size > 1) {
             removeLastOrNull()
         }
     }
