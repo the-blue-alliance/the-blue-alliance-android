@@ -43,16 +43,21 @@ class TeamEventDetailViewModel @AssistedInject constructor(
         matchRepository.observeEventMatches(eventKey).map { matches ->
             matches.filter { m -> teamKey in m.redTeamKeys || teamKey in m.blueTeamKeys }
         },
-        eventRepository.observeEventAwards(eventKey).map { awards ->
-            awards.filter { it.teamKey == teamKey }
-        },
-    ) { team, event, ranking, matches, awards ->
+        combine(
+            eventRepository.observeEventAwards(eventKey).map { awards ->
+                awards.filter { it.teamKey == teamKey }
+            },
+            eventRepository.observeEventOPRs(eventKey),
+        ) { awards, oprs -> awards to oprs },
+    ) { team, event, ranking, matches, awardsAndOprs ->
+        val (awards, oprs) = awardsAndOprs
         TeamEventDetailUiState(
             team = team,
             event = event,
             ranking = ranking,
             matches = matches,
             awards = awards,
+            oprs = oprs,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TeamEventDetailUiState())
 
@@ -70,6 +75,7 @@ class TeamEventDetailViewModel @AssistedInject constructor(
                     launch { try { matchRepository.refreshEventMatches(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventRankings(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
+                    launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
                 }
             } finally {
                 _isRefreshing.value = false

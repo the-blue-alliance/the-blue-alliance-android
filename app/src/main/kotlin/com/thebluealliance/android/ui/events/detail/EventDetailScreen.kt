@@ -67,7 +67,7 @@ import com.thebluealliance.android.ui.events.detail.tabs.EventTeamsTab
 import com.thebluealliance.android.ui.theme.TBABlue
 import kotlinx.coroutines.launch
 
-private val TABS = listOf("Info", "Teams", "Matches", "Rankings", "Alliances", "Awards", "District points", "Insights")
+private val TABS = listOf("Info", "Teams", "Rankings", "Matches", "Alliances", "Insights", "District points", "Awards")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -275,13 +275,7 @@ fun EventDetailScreen(
                             else onNavigateToTeam(teamKey)
                         },
                     )
-                    2 -> EventMatchesTab(
-                        matches = uiState.matches,
-                        playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
-                        onNavigateToMatch = onNavigateToMatch,
-                        innerPadding = innerPadding,
-                    )
-                    3 -> EventRankingsTab(
+                    2 -> EventRankingsTab(
                         rankings = uiState.rankings,
                         onTeamClick = { teamKey ->
                             val eventKey = uiState.event?.key
@@ -289,13 +283,18 @@ fun EventDetailScreen(
                         },
                         innerPadding = innerPadding,
                     )
-
+                    3 -> EventMatchesTab(
+                        matches = uiState.matches,
+                        playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
+                        onNavigateToMatch = onNavigateToMatch,
+                        innerPadding = innerPadding,
+                    )
                     4 -> EventAlliancesTab(
                         alliances = uiState.alliances,
                         innerPadding = innerPadding,
                     )
-                    5 -> EventAwardsTab(
-                        awards = uiState.awards,
+                    5 -> EventInsightsTab(
+                        oprs = uiState.oprs,
                         innerPadding = innerPadding,
                     )
                     6 -> EventDistrictPointsTab(
@@ -304,8 +303,8 @@ fun EventDetailScreen(
                         uiState.teams,
                         innerPadding = innerPadding,
                     )
-                    7 -> EventInsightsTab(
-                        oprs = uiState.oprs,
+                    7 -> EventAwardsTab(
+                        awards = uiState.awards,
                         innerPadding = innerPadding,
                     )
                 }
