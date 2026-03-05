@@ -79,6 +79,11 @@ fun EventInfoTab(
         event.webcasts.filter { it.type == "youtube" && it.date == today }
     }
 
+    // Optimization: Sort all webcasts chronologically by date
+    val sortedWebcasts = remember(event.webcasts) {
+        event.webcasts.sortedBy { it.date ?: "" }
+    }
+
     val context = LocalContext.current
     LazyColumn(
         modifier = Modifier
@@ -195,7 +200,7 @@ fun EventInfoTab(
         }
 
         // Webcasts
-        if (event.webcasts.isNotEmpty()) {
+        if (sortedWebcasts.isNotEmpty()) {
             item {
                 Spacer(Modifier.height(12.dp))
                 Text(
@@ -204,7 +209,7 @@ fun EventInfoTab(
                     fontWeight = FontWeight.Bold,
                 )
             }
-            items(event.webcasts, key = { "${it.type}_${it.channel}" }) { webcast ->
+            items(sortedWebcasts, key = { "${it.type}_${it.channel}_${it.date ?: ""}" }) { webcast ->
                 val url = webcastUrl(webcast)
                 val label = webcastLabel(webcast)
                 if (url != null) {
