@@ -60,13 +60,14 @@ import com.thebluealliance.android.ui.events.detail.tabs.EventAlliancesTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAwardsTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventDistrictPointsTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventInfoTab
+import com.thebluealliance.android.ui.events.detail.tabs.EventInsightsTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventMatchesTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventRankingsTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventTeamsTab
 import com.thebluealliance.android.ui.theme.TBABlue
 import kotlinx.coroutines.launch
 
-private val TABS = listOf("Info", "Teams", "Matches", "Rankings", "Alliances", "Awards", "District points")
+private val TABS = listOf("Info", "Teams", "Matches", "Rankings", "Alliances", "Awards", "District points", "Insights")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -301,6 +302,10 @@ fun EventDetailScreen(
                         uiState.districtPoints,
                         uiState.event,
                         uiState.teams,
+                        innerPadding = innerPadding,
+                    )
+                    7 -> EventInsightsTab(
+                        oprs = uiState.oprs,
                         innerPadding = innerPadding,
                     )
                 }
