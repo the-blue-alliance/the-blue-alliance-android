@@ -73,10 +73,10 @@ fun EventInfoTab(
         return
     }
 
-    // Optimization: Calculate today's YouTube webcast outside the LazyColumn
-    val todayYouTubeWebcast = remember(event.webcasts) {
+    // Optimization: Calculate today's YouTube webcasts outside the LazyColumn
+    val todayYouTubeWebcasts = remember(event.webcasts) {
         val today = LocalDate.now().toString()
-        event.webcasts.find { it.type == "youtube" && it.date == today }
+        event.webcasts.filter { it.type == "youtube" && it.date == today }
     }
 
     val context = LocalContext.current
@@ -232,8 +232,8 @@ fun EventInfoTab(
                 }
             }
 
-            // Embedded YouTube player if there's a matching webcast for today
-            if (todayYouTubeWebcast != null) {
+            // Embedded YouTube players if there are matching webcasts for today
+            if (todayYouTubeWebcasts.isNotEmpty()) {
                 item {
                     Spacer(Modifier.height(24.dp))
                     Text(
@@ -241,8 +241,10 @@ fun EventInfoTab(
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                     )
+                }
+                items(todayYouTubeWebcasts, key = { "preview_${it.channel}" }) { webcast ->
                     Spacer(Modifier.height(8.dp))
-                    YouTubeEmbed(videoId = todayYouTubeWebcast.channel)
+                    YouTubeEmbed(videoId = webcast.channel)
                 }
             }
         }
@@ -251,7 +253,7 @@ fun EventInfoTab(
 
 @Composable
 private fun YouTubeEmbed(videoId: String, modifier: Modifier = Modifier) {
-    var showPlayer by rememberSaveable { mutableStateOf(false) }
+    var showPlayer by rememberSaveable(videoId) { mutableStateOf(false) }
     var customView by remember { mutableStateOf<View?>(null) }
     var customViewCallback by remember { mutableStateOf<WebChromeClient.CustomViewCallback?>(null) }
 
