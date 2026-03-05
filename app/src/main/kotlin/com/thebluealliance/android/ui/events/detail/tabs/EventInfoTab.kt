@@ -80,8 +80,15 @@ fun EventInfoTab(
     }
 
     // Optimization: Sort all webcasts chronologically by date
-    val sortedWebcasts = remember(event.webcasts) {
-        event.webcasts.sortedBy { it.date ?: "" }
+    // Hide Twitch webcasts for events not in the current year
+    val filteredAndSortedWebcasts = remember(event.webcasts, event.year) {
+        val currentYear = LocalDate.now().year
+        event.webcasts
+            .filter { webcast ->
+                // Keep if it's the current year OR not a twitch stream
+                event.year == currentYear || webcast.type != "twitch"
+            }
+            .sortedBy { it.date ?: "" }
     }
 
     val context = LocalContext.current
@@ -200,7 +207,7 @@ fun EventInfoTab(
         }
 
         // Webcasts
-        if (sortedWebcasts.isNotEmpty()) {
+        if (filteredAndSortedWebcasts.isNotEmpty()) {
             item {
                 Spacer(Modifier.height(12.dp))
                 Text(
@@ -209,7 +216,7 @@ fun EventInfoTab(
                     fontWeight = FontWeight.Bold,
                 )
             }
-            items(sortedWebcasts, key = { "${it.type}_${it.channel}_${it.date ?: ""}" }) { webcast ->
+            items(filteredAndSortedWebcasts, key = { "${it.type}_${it.channel}_${it.date ?: ""}" }) { webcast ->
                 val url = webcastUrl(webcast)
                 val label = webcastLabel(webcast)
                 if (url != null) {
