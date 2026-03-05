@@ -2,10 +2,12 @@ package com.thebluealliance.android.ui.teamevent
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,11 +35,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
@@ -49,7 +53,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
 import kotlinx.coroutines.launch
 
-private val TABS = listOf("Matches", "Awards")
+private val TABS = listOf("Matches", "Stats", "Awards")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -186,7 +190,12 @@ fun TeamEventDetailScreen(
                             innerPadding = innerPadding,
                         )
                     }
-                    1 -> {
+                    1 -> StatsTab(
+                        teamKey = viewModel.teamKey,
+                        oprs = uiState.oprs,
+                        innerPadding = innerPadding,
+                    )
+                    2 -> {
                         val tm = uiState.team
                         AwardsTab(
                             awards = uiState.awards,
@@ -200,6 +209,65 @@ fun TeamEventDetailScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun StatsTab(
+    teamKey: String,
+    oprs: EventOPRs?,
+    innerPadding: PaddingValues = PaddingValues.Zero,
+) {
+    if (oprs == null) {
+        LoadingBox(modifier = Modifier.padding(innerPadding))
+        return
+    }
+    val opr = oprs.oprs[teamKey]
+    val dpr = oprs.dprs[teamKey]
+    val ccwm = oprs.ccwms[teamKey]
+    if (opr == null && dpr == null && ccwm == null) {
+        EmptyBox(
+            modifier = Modifier.padding(innerPadding),
+            message = "No stats available"
+        )
+        return
+    }
+    val uriHandler = LocalUriHandler.current
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        if (opr != null) StatRow("OPR", opr)
+        if (dpr != null) StatRow("DPR", dpr)
+        if (ccwm != null) StatRow("CCWM", ccwm)
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = "Learn more about OPR",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.clickable { uriHandler.openUri("https://www.thebluealliance.com/opr") },
+        )
+    }
+}
+
+@Composable
+private fun StatRow(label: String, value: Double) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Text(
+            text = "%.2f".format(value),
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold,
+        )
     }
 }
 

@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.EventOPRs
@@ -52,6 +53,7 @@ fun EventInsightsTab(
         return
     }
 
+    val uriHandler = LocalUriHandler.current
     var sortColumn by remember { mutableStateOf(OprSortColumn.OPR) }
     var sortAscending by remember { mutableStateOf(false) }
 
@@ -186,6 +188,17 @@ fun EventInsightsTab(
                     }
                     HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                 }
+            }
+
+            item {
+                Text(
+                    text = "Learn more about OPR",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .clickable { uriHandler.openUri("https://www.thebluealliance.com/opr") }
+                        .padding(16.dp),
+                )
             }
         }
     }
