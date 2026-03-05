@@ -365,9 +365,6 @@ cmd_alpha() {
     get_version_info
     print_version
 
-    info "Generating baseline profiles..."
-    run ./gradlew :baselineprofile:pixel6Api34NonMinifiedReleaseAndroidTest
-
     info "Building release bundle..."
     run ./gradlew :app:bundleRelease :app:assembleRelease
 
