@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.events
 
-import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -73,12 +72,6 @@ fun EventsScreen(
         reselectFlow.collect {
             listState.animateScrollToItem(0)
         }
-    }
-
-    // Report fully drawn once we have data
-    // https://developer.android.com/topic/performance/vitals/launch-time#startup-accuracy
-    ReportDrawnWhen {
-        uiState !is EventsUiState.Loading
     }
 
     Scaffold(

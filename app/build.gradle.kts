@@ -13,7 +13,6 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.play.publisher)
-    alias(libs.plugins.baselineprofile)
 }
 
 val localProperties = Properties().apply {
@@ -135,7 +134,6 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons)
-    implementation(libs.androidx.profileinstaller)
     debugImplementation(libs.compose.ui.tooling)
 
     // AndroidX
@@ -198,9 +196,6 @@ dependencies {
     implementation(libs.credentials)
     implementation(libs.credentials.play)
     implementation(libs.googleid)
-
-    // Baseline Profile
-    "baselineProfile"(project(":baselineprofile"))
 
     // Testing
     testImplementation(libs.junit.api)
