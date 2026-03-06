@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.LocationOn
@@ -167,7 +168,7 @@ fun EventInfoTab(
                     fontWeight = FontWeight.Bold,
                 )
             }
-            items(event.webcasts, key = { "${it.type}_${it.channel}" }) { webcast ->
+            itemsIndexed(event.webcasts, key = { index, it -> "${it.type}_${it.channel}_$index" }) { _, webcast ->
                 val url = webcastUrl(webcast)
                 val label = webcastLabel(webcast)
                 if (url != null) {
