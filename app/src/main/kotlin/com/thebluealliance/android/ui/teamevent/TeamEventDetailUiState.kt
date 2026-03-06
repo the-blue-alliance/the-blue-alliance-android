@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.teamevent
 
+import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventOPRs
@@ -14,4 +15,5 @@ data class TeamEventDetailUiState(
     val matches: List<Match>? = null,
     val awards: List<Award>? = null,
     val oprs: EventOPRs? = null,
+    val alliances: List<Alliance>? = null,
 )

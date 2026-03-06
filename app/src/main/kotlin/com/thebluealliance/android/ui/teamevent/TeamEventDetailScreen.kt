@@ -39,21 +39,26 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventOPRs
+import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.PlayoffType
+import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.events.detail.EventDetailTabs
 import com.thebluealliance.android.ui.components.EventRow
+import com.thebluealliance.android.ui.components.MatchItem
 import com.thebluealliance.android.ui.components.MatchList
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
 import kotlinx.coroutines.launch
 
-private val TABS = listOf("Matches", "Stats", "Awards")
+private val TABS = listOf("Summary", "Matches", "Stats", "Awards")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +66,7 @@ fun TeamEventDetailScreen(
     onNavigateUp: () -> Unit,
     onNavigateToMatch: (String) -> Unit,
     onNavigateToTeam: (String) -> Unit,
-    onNavigateToEvent: (String) -> Unit,
+    onNavigateToEvent: (eventKey: String, initialTab: Int) -> Unit,
     onNavigateToSearch: () -> Unit,
     viewModel: TeamEventDetailViewModel,
 ) {
@@ -98,7 +103,7 @@ fun TeamEventDetailScreen(
                                     text = event.shortName ?: event.name,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.weight(1f).clickable { onNavigateToEvent(event.key) },
+                                    modifier = Modifier.weight(1f).clickable { onNavigateToEvent(event.key, 0) },
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                             }
@@ -154,7 +159,20 @@ fun TeamEventDetailScreen(
             ) { page ->
                 val evt = uiState.event
                 when (page) {
-                    0 -> {
+                    0 -> SummaryTab(
+                        teamKey = viewModel.teamKey,
+                        event = evt,
+                        team = uiState.team,
+                        ranking = uiState.ranking,
+                        alliances = uiState.alliances,
+                        awards = uiState.awards,
+                        matches = uiState.matches,
+                        onNavigateToEvent = onNavigateToEvent,
+                        onNavigateToTeam = onNavigateToTeam,
+                        onNavigateToMatch = onNavigateToMatch,
+                        innerPadding = innerPadding,
+                    )
+                    1 -> {
                         val tm = uiState.team
                         val hasBoth = evt != null && tm != null
                         val headerCount = (if (evt != null) 1 else 0) + (if (hasBoth) 1 else 0) + (if (tm != null) 1 else 0)
@@ -168,7 +186,7 @@ fun TeamEventDetailScreen(
                                     item(key = "header_event") {
                                         EventRow(
                                             event = evt,
-                                            onClick = { onNavigateToEvent(evt.key) },
+                                            onClick = { onNavigateToEvent(evt.key, 0) },
                                             showYear = true,
                                             showChevron = true,
                                         )
@@ -190,12 +208,12 @@ fun TeamEventDetailScreen(
                             innerPadding = innerPadding,
                         )
                     }
-                    1 -> StatsTab(
+                    2 -> StatsTab(
                         teamKey = viewModel.teamKey,
                         oprs = uiState.oprs,
                         innerPadding = innerPadding,
                     )
-                    2 -> {
+                    3 -> {
                         val tm = uiState.team
                         AwardsTab(
                             awards = uiState.awards,
@@ -209,6 +227,215 @@ fun TeamEventDetailScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SummaryTab(
+    teamKey: String,
+    event: Event?,
+    team: Team?,
+    ranking: Ranking?,
+    alliances: List<Alliance>?,
+    awards: List<Award>?,
+    matches: List<Match>?,
+    onNavigateToEvent: (eventKey: String, initialTab: Int) -> Unit,
+    onNavigateToTeam: (String) -> Unit,
+    onNavigateToMatch: (String) -> Unit,
+    innerPadding: PaddingValues = PaddingValues.Zero,
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = innerPadding,
+    ) {
+        // Event header
+        if (event != null) {
+            item(key = "header_event") {
+                EventRow(
+                    event = event,
+                    onClick = { onNavigateToEvent(event.key, 0) },
+                    showYear = true,
+                    showChevron = true,
+                )
+            }
+        }
+        if (event != null && team != null) {
+            item(key = "header_divider") { HorizontalDivider() }
+        }
+        if (team != null) {
+            item(key = "header_team") {
+                TeamRow(
+                    team = team,
+                    onClick = { onNavigateToTeam(team.key) },
+                    showChevron = true,
+                )
+            }
+        }
+
+        // Ranking header
+        val teamAlliance = alliances?.firstOrNull { alliance ->
+            teamKey in alliance.picks || teamKey == alliance.backupIn
+        }
+        if (ranking != null || teamAlliance != null) {
+            item(key = "summary_ranking_header") {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFF5C6BC0))
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                ) {
+                    Text(
+                        text = "Ranking",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                    )
+                }
+            }
+        }
+
+        // Ranking
+        if (ranking != null) {
+            item(key = "summary_ranking") {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { event?.let { onNavigateToEvent(it.key, EventDetailTabs.RANKINGS) } }
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = "Rank ${ranking.rank}",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+
+        // Alliance
+        if (teamAlliance != null) {
+            if (ranking != null) {
+                item(key = "summary_alliance_divider") { HorizontalDivider() }
+            }
+            item(key = "summary_alliance") {
+                val role = when {
+                    teamKey == teamAlliance.backupIn -> "Backup"
+                    teamAlliance.picks.indexOf(teamKey) == 0 -> "Captain"
+                    else -> "Pick ${teamAlliance.picks.indexOf(teamKey)}"
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { event?.let { onNavigateToEvent(it.key, EventDetailTabs.ALLIANCES) } }
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = "Alliance ${teamAlliance.number}",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = role,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+
+        // Awards
+        val teamAwards = awards
+        if (teamAwards != null && teamAwards.isNotEmpty()) {
+            item(key = "summary_awards") {
+                SummarySection(label = "Awards") {
+                    teamAwards.forEach { award ->
+                        Text(
+                            text = award.name,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                }
+            }
+        }
+
+        // Last Match / Next Match
+        if (matches != null) {
+            val sortedMatches = matches.sortedWith(
+                compareBy({ it.compLevel.order }, { it.setNumber }, { it.matchNumber })
+            )
+            val lastPlayed = sortedMatches.lastOrNull { it.redScore >= 0 }
+            val nextUnplayed = sortedMatches.firstOrNull { it.redScore < 0 }
+            val playoffType = event?.playoffType ?: PlayoffType.OTHER
+
+            if (lastPlayed != null || nextUnplayed != null) {
+                item(key = "summary_match_header") {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFF5C6BC0))
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                    ) {
+                        Text(
+                            text = "Recent Matches",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                        )
+                    }
+                }
+            }
+
+            if (lastPlayed != null) {
+                item(key = "summary_last_match") {
+                    SummarySection(label = "Last Match") {
+                        MatchItem(
+                            match = lastPlayed,
+                            playoffType = playoffType,
+                            onClick = { onNavigateToMatch(lastPlayed.key) },
+                        )
+                    }
+                }
+            }
+
+            if (nextUnplayed != null) {
+                item(key = "summary_next_match") {
+                    SummarySection(label = "Next Match") {
+                        MatchItem(
+                            match = nextUnplayed,
+                            playoffType = playoffType,
+                            onClick = { onNavigateToMatch(nextUnplayed.key) },
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SummarySection(
+    label: String,
+    content: @Composable () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 4.dp),
+        )
+        content()
     }
 }
 
@@ -276,7 +503,7 @@ private fun AwardsTab(
     awards: List<Award>?,
     event: Event?,
     team: Team?,
-    onNavigateToEvent: (String) -> Unit,
+    onNavigateToEvent: (eventKey: String, initialTab: Int) -> Unit,
     onNavigateToTeam: (String) -> Unit,
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
@@ -294,7 +521,7 @@ private fun AwardsTab(
             item(key = "header_event") {
                 EventRow(
                     event = event,
-                    onClick = { onNavigateToEvent(event.key) },
+                    onClick = { onNavigateToEvent(event.key, 0) },
                     showYear = true,
                     showChevron = true,
                 )

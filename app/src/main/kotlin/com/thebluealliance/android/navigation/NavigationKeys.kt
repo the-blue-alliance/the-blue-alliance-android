@@ -9,7 +9,7 @@ sealed interface Screen : NavKey {
     @Serializable data object Districts : Screen
     @Serializable data object RegionalAdvancement : Screen
     @Serializable data object More : Screen
-    @Serializable data class EventDetail(val eventKey: String) : Screen
+    @Serializable data class EventDetail(val eventKey: String, val initialTab: Int = 0) : Screen
     @Serializable data class TeamDetail(val teamKey: String) : Screen
     @Serializable data class MatchDetail(val matchKey: String) : Screen
     @Serializable data class TeamEventDetail(val teamKey: String, val eventKey: String) : Screen
