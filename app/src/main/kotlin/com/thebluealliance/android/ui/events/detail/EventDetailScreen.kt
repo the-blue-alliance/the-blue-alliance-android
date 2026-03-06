@@ -296,6 +296,7 @@ fun EventDetailScreen(
                     5 -> EventInsightsTab(
                         oprs = uiState.oprs,
                         coprs = uiState.coprs,
+                        insights = uiState.insights,
                         innerPadding = innerPadding,
                     )
                     6 -> EventDistrictPointsTab(

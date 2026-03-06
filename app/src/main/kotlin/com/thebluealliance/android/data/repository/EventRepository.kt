@@ -7,17 +7,20 @@ import com.thebluealliance.android.data.local.dao.AwardDao
 import com.thebluealliance.android.data.local.dao.EventCOPRsDao
 import com.thebluealliance.android.data.local.dao.EventDao
 import com.thebluealliance.android.data.local.dao.EventDistrictPointsDao
+import com.thebluealliance.android.data.local.dao.EventInsightsDao
 import com.thebluealliance.android.data.local.dao.EventOPRsDao
 import com.thebluealliance.android.data.local.dao.EventTeamDao
 import com.thebluealliance.android.data.local.dao.RankingDao
 import com.thebluealliance.android.data.local.entity.EventTeamEntity
 import com.thebluealliance.android.data.mappers.*
 import com.thebluealliance.android.data.remote.TbaApi
+import com.thebluealliance.android.data.remote.dto.EventInsightsDto
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventCOPRs
 import com.thebluealliance.android.domain.model.EventDistrictPoints
+import com.thebluealliance.android.domain.model.EventInsights
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.Ranking
 import kotlinx.coroutines.flow.Flow
@@ -40,6 +43,7 @@ class EventRepository @Inject constructor(
     private val eventDistrictPointsDao: EventDistrictPointsDao,
     private val eventOPRsDao: EventOPRsDao,
     private val eventCOPRsDao: EventCOPRsDao,
+    private val eventInsightsDao: EventInsightsDao,
 ) {
     fun searchEvents(query: String): Flow<List<Event>> =
         eventDao.search(query).map { list -> list.map { it.toDomain() } }
@@ -175,6 +179,23 @@ class EventRepository @Inject constructor(
             db.withTransaction {
                 eventCOPRsDao.delete(eventKey)
                 eventCOPRsDao.insert(dto.toEntity(eventKey))
+            }
+        } catch (_: Exception) { }
+    }
+
+    fun observeEventInsights(eventKey: String): Flow<EventInsights?> =
+        eventInsightsDao.observe(eventKey).map { it?.toDomain() }
+
+    suspend fun refreshEventInsights(eventKey: String) {
+        try {
+            val insights = api.getEventInsights(eventKey)
+            val dto = EventInsightsDto(
+                qual = insights["qual"]?.toString(),
+                playoff = insights["playoff"]?.toString(),
+            )
+            db.withTransaction {
+                eventInsightsDao.delete(eventKey)
+                eventInsightsDao.insert(dto.toEntity(eventKey))
             }
         } catch (_: Exception) { }
     }

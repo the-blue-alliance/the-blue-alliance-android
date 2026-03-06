@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -54,34 +55,42 @@ class EventDetailViewModel @AssistedInject constructor(
         if (keys.isEmpty()) flowOf(emptyList()) else teamRepository.observeTeams(keys)
     }
 
-    val uiState: StateFlow<EventDetailUiState> = combine(
-        eventRepository.observeEvent(eventKey),
-        teamsFlow,
-        matchRepository.observeEventMatches(eventKey),
-        eventRepository.observeEventRankings(eventKey),
-        combine(
-            eventRepository.observeEventAlliances(eventKey),
-            eventRepository.observeEventAwards(eventKey),
-            eventRepository.observeEventDistrictPoints(eventKey),
-            eventRepository.observeEventOPRs(eventKey),
-            eventRepository.observeEventCOPRs(eventKey),
-        ) { alliances, awards, districtPoints, oprs, coprs ->
-            Quintuple(alliances, awards, districtPoints, oprs, coprs)
-        },
-    ) { event, teams, matches, rankings, extras ->
-        val (alliances, awards, districtPoints, oprs, coprs) = extras
-        EventDetailUiState(
-            event = event,
-            teams = teams,
-            matches = matches,
-            rankings = rankings,
-            alliances = alliances,
-            awards = awards,
-            districtPoints = districtPoints,
-            oprs = oprs,
-            coprs = coprs,
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventDetailUiState())
+    val uiState: StateFlow<EventDetailUiState> = eventRepository.observeEvent(eventKey)
+        .flatMapLatest { event ->
+            combine(
+                flowOf(event),
+                teamsFlow,
+                matchRepository.observeEventMatches(eventKey),
+                eventRepository.observeEventRankings(eventKey),
+                combine(
+                    eventRepository.observeEventAlliances(eventKey),
+                    eventRepository.observeEventAwards(eventKey),
+                    eventRepository.observeEventDistrictPoints(eventKey),
+                    eventRepository.observeEventOPRs(eventKey),
+                    eventRepository.observeEventCOPRs(eventKey),
+                ) { alliances, awards, districtPoints, oprs, coprs ->
+                    FiveTuple(alliances, awards, districtPoints, oprs, coprs)
+                },
+            ) { _, teams, matches, rankings, extras ->
+                val (alliances, awards, districtPoints, oprs, coprs) = extras
+                EventDetailUiState(
+                    event = event,
+                    teams = teams,
+                    matches = matches,
+                    rankings = rankings,
+                    alliances = alliances,
+                    awards = awards,
+                    districtPoints = districtPoints,
+                    oprs = oprs,
+                    coprs = coprs,
+                    insights = null,
+                )
+            }
+        }.flatMapLatest { baseState ->
+            eventRepository.observeEventInsights(eventKey).map { insights ->
+                baseState.copy(insights = insights)
+            }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventDetailUiState())
 
     val isFavorite: StateFlow<Boolean> = myTBARepository.isFavorite(eventKey, ModelType.EVENT)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
@@ -152,6 +161,7 @@ class EventDetailViewModel @AssistedInject constructor(
                     launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventCOPRs(eventKey) } catch (_: Exception) {} }
+                    launch { try { eventRepository.refreshEventInsights(eventKey) } catch (_: Exception) {} }
                 }
             } finally {
                 _isRefreshing.value = false
@@ -165,10 +175,15 @@ class EventDetailViewModel @AssistedInject constructor(
     }
 }
 
-data class Quintuple<out A, out B, out C, out D, out E>(
+data class FiveTuple<out A, out B, out C, out D, out E>(
     val first: A,
     val second: B,
     val third: C,
     val fourth: D,
     val fifth: E
 )
+
+
+
+
+

@@ -22,8 +22,9 @@ import com.thebluealliance.android.data.local.entity.*
         EventDistrictPointsEntity::class,
         EventOPRsEntity::class,
         EventCOPRsEntity::class,
+        EventInsightsEntity::class,
     ],
-    version = 9,
+    version = 10,
     exportSchema = false,
 )
 abstract class TBADatabase : RoomDatabase() {
@@ -42,4 +43,5 @@ abstract class TBADatabase : RoomDatabase() {
     abstract fun eventDistrictPointsDao(): EventDistrictPointsDao
     abstract fun eventOPRsDao(): EventOPRsDao
     abstract fun eventCOPRsDao(): EventCOPRsDao
+    abstract fun eventInsightsDao(): EventInsightsDao
 }
