@@ -324,3 +324,15 @@ fun EventOPRsEntity.toDomain() = EventOPRs(
     dprs = json.decodeFromString(dprs),
     ccwms = json.decodeFromString(ccwms),
 )
+
+// ── COPRs ──
+
+fun EventCOPRsDto.toEntity(eventKey: String) = EventCOPRsEntity(
+    eventKey = eventKey,
+    coprs = json.encodeToString(coprs),
+)
+
+fun EventCOPRsEntity.toDomain() = EventCOPRs(
+    coprs = json.decodeFromString(coprs),
+)
+

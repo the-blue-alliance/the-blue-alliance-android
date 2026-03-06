@@ -64,11 +64,12 @@ class EventDetailViewModel @AssistedInject constructor(
             eventRepository.observeEventAwards(eventKey),
             eventRepository.observeEventDistrictPoints(eventKey),
             eventRepository.observeEventOPRs(eventKey),
-        ) { alliances, awards, districtPoints, oprs ->
-            Quadruple(alliances, awards, districtPoints, oprs)
+            eventRepository.observeEventCOPRs(eventKey),
+        ) { alliances, awards, districtPoints, oprs, coprs ->
+            Quintuple(alliances, awards, districtPoints, oprs, coprs)
         },
     ) { event, teams, matches, rankings, extras ->
-        val (alliances, awards, districtPoints, oprs) = extras
+        val (alliances, awards, districtPoints, oprs, coprs) = extras
         EventDetailUiState(
             event = event,
             teams = teams,
@@ -78,6 +79,7 @@ class EventDetailViewModel @AssistedInject constructor(
             awards = awards,
             districtPoints = districtPoints,
             oprs = oprs,
+            coprs = coprs,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventDetailUiState())
 
@@ -149,6 +151,7 @@ class EventDetailViewModel @AssistedInject constructor(
                     launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
+                    launch { try { eventRepository.refreshEventCOPRs(eventKey) } catch (_: Exception) {} }
                 }
             } finally {
                 _isRefreshing.value = false
@@ -162,9 +165,10 @@ class EventDetailViewModel @AssistedInject constructor(
     }
 }
 
-data class Quadruple<out A, out B, out C, out D>(
+data class Quintuple<out A, out B, out C, out D, out E>(
     val first: A,
     val second: B,
     val third: C,
-    val fourth: D
+    val fourth: D,
+    val fifth: E
 )
