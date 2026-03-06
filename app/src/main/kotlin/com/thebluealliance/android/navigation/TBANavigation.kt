@@ -35,6 +35,12 @@ import com.thebluealliance.android.ui.teams.TeamDetailScreen
 import com.thebluealliance.android.ui.teams.TeamDetailViewModel
 import com.thebluealliance.android.ui.teams.TeamsScreen
 import com.thebluealliance.android.ui.regional.RegionalAdvancementScreen
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
@@ -65,6 +71,18 @@ fun TBANavigation(
                 .weight(1f)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
+            transitionSpec = {
+                slideInHorizontally(initialOffsetX = { it }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popTransitionSpec = {
+                slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { it })
+            },
+            predictivePopTransitionSpec = {
+                slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { it })
+            },
             onBack = { navigator.goBack() },
             entries = navState.toEntries(
                 entryProvider = entryProvider {
@@ -274,7 +292,11 @@ fun TBANavigation(
             ),
         )
 
-        if (showBottomBar) {
+        AnimatedVisibility(
+            visible = showBottomBar,
+            enter = slideInVertically(initialOffsetY = { it }),
+            exit = slideOutVertically(targetOffsetY = { it }),
+        ) {
             TBABottomBar(
                 currentRoute = navState.currentRoute,
                 onNavigate = { navigator.navigate(it) },
