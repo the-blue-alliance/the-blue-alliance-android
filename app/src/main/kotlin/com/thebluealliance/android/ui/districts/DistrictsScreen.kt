@@ -151,21 +151,13 @@ private fun DistrictItem(
     district: District,
     onClick: () -> Unit,
 ) {
-    Column(
+    Text(
+        text = district.displayName,
+        style = MaterialTheme.typography.bodyLarge,
+        fontWeight = FontWeight.Medium,
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 12.dp),
-    ) {
-        Text(
-            text = district.displayName,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
-        )
-        Text(
-            text = district.abbreviation.uppercase(),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
+    )
 }
