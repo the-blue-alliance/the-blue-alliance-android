@@ -21,8 +21,9 @@ import com.thebluealliance.android.data.local.entity.*
         SubscriptionEntity::class,
         EventDistrictPointsEntity::class,
         EventOPRsEntity::class,
+        EventCOPRsEntity::class,
     ],
-    version = 8,
+    version = 9,
     exportSchema = false,
 )
 abstract class TBADatabase : RoomDatabase() {
@@ -40,4 +41,5 @@ abstract class TBADatabase : RoomDatabase() {
     abstract fun subscriptionDao(): SubscriptionDao
     abstract fun eventDistrictPointsDao(): EventDistrictPointsDao
     abstract fun eventOPRsDao(): EventOPRsDao
+    abstract fun eventCOPRsDao(): EventCOPRsDao
 }

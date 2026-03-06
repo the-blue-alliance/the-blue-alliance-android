@@ -4,6 +4,7 @@ import androidx.room.withTransaction
 import com.thebluealliance.android.data.local.TBADatabase
 import com.thebluealliance.android.data.local.dao.AllianceDao
 import com.thebluealliance.android.data.local.dao.AwardDao
+import com.thebluealliance.android.data.local.dao.EventCOPRsDao
 import com.thebluealliance.android.data.local.dao.EventDao
 import com.thebluealliance.android.data.local.dao.EventDistrictPointsDao
 import com.thebluealliance.android.data.local.dao.EventOPRsDao
@@ -15,6 +16,7 @@ import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.domain.model.EventCOPRs
 import com.thebluealliance.android.domain.model.EventDistrictPoints
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.Ranking
@@ -37,6 +39,7 @@ class EventRepository @Inject constructor(
     private val eventTeamDao: EventTeamDao,
     private val eventDistrictPointsDao: EventDistrictPointsDao,
     private val eventOPRsDao: EventOPRsDao,
+    private val eventCOPRsDao: EventCOPRsDao,
 ) {
     fun searchEvents(query: String): Flow<List<Event>> =
         eventDao.search(query).map { list -> list.map { it.toDomain() } }
@@ -159,6 +162,19 @@ class EventRepository @Inject constructor(
             db.withTransaction {
                 eventOPRsDao.delete(eventKey)
                 eventOPRsDao.insert(dto.toEntity(eventKey))
+            }
+        } catch (_: Exception) { }
+    }
+
+    fun observeEventCOPRs(eventKey: String): Flow<EventCOPRs?> =
+        eventCOPRsDao.observe(eventKey).map { it?.toDomain() }
+
+    suspend fun refreshEventCOPRs(eventKey: String) {
+        try {
+            val dto = api.getEventCOPRs(eventKey)
+            db.withTransaction {
+                eventCOPRsDao.delete(eventKey)
+                eventCOPRsDao.insert(dto.toEntity(eventKey))
             }
         } catch (_: Exception) { }
     }

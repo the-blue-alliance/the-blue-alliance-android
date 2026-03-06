@@ -77,6 +77,10 @@ interface TbaApi {
     @GET("api/v3/event/{event_key}/oprs")
     suspend fun getEventOPRs(@Path("event_key") eventKey: String): EventOPRsDto
 
+    // COPRs
+    @GET("api/v3/event/{event_key}/coprs")
+    suspend fun getEventCOPRs(@Path("event_key") eventKey: String): EventCOPRsDto
+
     // Districts
     @GET("api/v3/districts/{year}")
     suspend fun getDistrictsForYear(@Path("year") year: Int): List<DistrictDto>
