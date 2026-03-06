@@ -48,9 +48,10 @@ class TeamEventDetailViewModel @AssistedInject constructor(
                 awards.filter { it.teamKey == teamKey }
             },
             eventRepository.observeEventOPRs(eventKey),
-        ) { awards, oprs -> awards to oprs },
-    ) { team, event, ranking, matches, awardsAndOprs ->
-        val (awards, oprs) = awardsAndOprs
+            eventRepository.observeEventAlliances(eventKey),
+        ) { awards, oprs, alliances -> Triple(awards, oprs, alliances) },
+    ) { team, event, ranking, matches, extras ->
+        val (awards, oprs, alliances) = extras
         TeamEventDetailUiState(
             team = team,
             event = event,
@@ -58,6 +59,7 @@ class TeamEventDetailViewModel @AssistedInject constructor(
             matches = matches,
             awards = awards,
             oprs = oprs,
+            alliances = alliances,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TeamEventDetailUiState())
 
@@ -76,6 +78,7 @@ class TeamEventDetailViewModel @AssistedInject constructor(
                     launch { try { eventRepository.refreshEventRankings(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
+                    launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
                 }
             } finally {
                 _isRefreshing.value = false

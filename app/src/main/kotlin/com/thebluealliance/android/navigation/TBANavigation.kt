@@ -197,6 +197,7 @@ fun TBANavigation(
                             onNavigateToTeamEvent = { teamKey, eventKey ->
                                 navigator.navigate(Screen.TeamEventDetail(teamKey, eventKey))
                             },
+                            initialTab = eventDetail.initialTab,
                         )
                     }
                     entry<Screen.MatchDetail> { matchDetail ->
@@ -264,8 +265,8 @@ fun TBANavigation(
                             onNavigateToTeam = { teamKey ->
                                 navigator.navigate(Screen.TeamDetail(teamKey))
                             },
-                            onNavigateToEvent = { eventKey ->
-                                navigator.navigate(Screen.EventDetail(eventKey))
+                            onNavigateToEvent = { eventKey, initialTab ->
+                                navigator.navigate(Screen.EventDetail(eventKey, initialTab))
                             },
                             onNavigateToSearch = { navigator.navigate(Screen.Search) },
                         )

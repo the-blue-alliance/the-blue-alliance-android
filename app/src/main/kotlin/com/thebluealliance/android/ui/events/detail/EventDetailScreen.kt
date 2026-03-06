@@ -69,6 +69,17 @@ import kotlinx.coroutines.launch
 
 private val TABS = listOf("Info", "Teams", "Rankings", "Matches", "Alliances", "Insights", "District points", "Awards")
 
+object EventDetailTabs {
+    const val INFO = 0
+    const val TEAMS = 1
+    const val RANKINGS = 2
+    const val MATCHES = 3
+    const val ALLIANCES = 4
+    const val INSIGHTS = 5
+    const val DISTRICT_POINTS = 6
+    const val AWARDS = 7
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventDetailScreen(
@@ -77,13 +88,14 @@ fun EventDetailScreen(
     onNavigateToMatch: (String) -> Unit = {},
     onNavigateToMyTBA: () -> Unit = {},
     onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
+    initialTab: Int = 0,
     viewModel: EventDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()
     val subscription by viewModel.subscription.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState(pageCount = { TABS.size })
+    val pagerState = rememberPagerState(initialPage = initialTab, pageCount = { TABS.size })
     val coroutineScope = rememberCoroutineScope()
 
     var showSignInDialog by remember { mutableStateOf(false) }
