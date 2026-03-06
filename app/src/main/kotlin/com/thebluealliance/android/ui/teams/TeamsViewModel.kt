@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.teams
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.ModelType
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class TeamsViewModel @Inject constructor(
     private val teamRepository: TeamRepository,
     private val myTBARepository: MyTBARepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _isRefreshing = MutableStateFlow(false)
@@ -37,6 +39,14 @@ class TeamsViewModel @Inject constructor(
 
     init {
         refreshTeams()
+        refreshFavorites()
+    }
+
+    private fun refreshFavorites() {
+        viewModelScope.launch {
+            if (!authRepository.isSignedIn()) return@launch
+            try { myTBARepository.refreshFavorites() } catch (_: Exception) {}
+        }
     }
 
     fun refreshTeams() {
