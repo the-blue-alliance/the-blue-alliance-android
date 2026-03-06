@@ -3,6 +3,7 @@ package com.thebluealliance.android.ui.events
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.remote.TbaApi
+import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.domain.model.ModelType
@@ -27,6 +28,7 @@ class EventsViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val tbaApi: TbaApi,
     private val myTBARepository: MyTBARepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     private val _maxYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
@@ -65,6 +67,14 @@ class EventsViewModel @Inject constructor(
     init {
         fetchMaxYear()
         refreshEvents()
+        refreshFavorites()
+    }
+
+    private fun refreshFavorites() {
+        viewModelScope.launch {
+            if (!authRepository.isSignedIn()) return@launch
+            try { myTBARepository.refreshFavorites() } catch (_: Exception) {}
+        }
     }
 
     private fun fetchMaxYear() {
