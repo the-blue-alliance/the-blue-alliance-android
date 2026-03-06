@@ -21,9 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -81,12 +78,10 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
-import com.thebluealliance.android.ui.components.MediaGridItem
-import com.thebluealliance.android.ui.components.MediaItem
+import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
-import com.thebluealliance.android.ui.components.mediaUrl
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Info", "Events", "Media")
@@ -464,49 +459,6 @@ private fun EventsTab(
                     EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun MediaTab(
-    media: List<Media>?,
-    innerPadding: PaddingValues = PaddingValues.Zero,
-) {
-    if (media == null) {
-        LoadingBox(
-            modifier = Modifier.padding(innerPadding)
-        )
-        return
-    }
-    val filtered = media.filter { it.type != "avatar" }
-    if (filtered.isEmpty()) {
-        EmptyBox(
-            modifier = Modifier.padding(innerPadding),
-            message = "No media"
-        )
-        return
-    }
-    val gridItems = filtered.mapNotNull { item ->
-        if (mediaUrl(item.type, item.foreignKey) != null) {
-            MediaGridItem(type = item.type, foreignKey = item.foreignKey)
-        } else null
-    }
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = innerPadding,
-    ) {
-        items(gridItems, key = { "${it.type}_${it.foreignKey}" }) { item ->
-            MediaItem(
-                type = item.type,
-                foreignKey = item.foreignKey,
-                modifier = Modifier.fillMaxWidth(),
-            )
         }
     }
 }
