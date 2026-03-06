@@ -1,17 +1,32 @@
 package com.thebluealliance.android.ui.events.detail.tabs
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.pm.ActivityInfo
 import android.net.Uri
+import android.view.View
+import android.view.ViewGroup
+import android.webkit.WebChromeClient
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.LocationOn
@@ -20,16 +35,31 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import coil.compose.AsyncImage
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.util.openUrl
 import com.thebluealliance.android.ui.components.formatEventDateRange
+import java.time.LocalDate
 
 @Composable
 fun EventInfoTab(
@@ -42,6 +72,25 @@ fun EventInfoTab(
         )
         return
     }
+
+    // Optimization: Calculate today's YouTube webcasts outside the LazyColumn
+    val todayYouTubeWebcasts = remember(event.webcasts) {
+        val today = LocalDate.now().toString()
+        event.webcasts.filter { it.type == "youtube" && it.date == today }
+    }
+
+    // Optimization: Sort all webcasts chronologically by date
+    // Hide Twitch webcasts for events not in the current year
+    val filteredAndSortedWebcasts = remember(event.webcasts, event.year) {
+        val currentYear = LocalDate.now().year
+        event.webcasts
+            .filter { webcast ->
+                // Keep if it's the current year OR not a twitch stream
+                event.year == currentYear || webcast.type != "twitch"
+            }
+            .sortedBy { it.date ?: "" }
+    }
+
     val context = LocalContext.current
     LazyColumn(
         modifier = Modifier
@@ -158,7 +207,7 @@ fun EventInfoTab(
         }
 
         // Webcasts
-        if (event.webcasts.isNotEmpty()) {
+        if (filteredAndSortedWebcasts.isNotEmpty()) {
             item {
                 Spacer(Modifier.height(12.dp))
                 Text(
@@ -167,7 +216,7 @@ fun EventInfoTab(
                     fontWeight = FontWeight.Bold,
                 )
             }
-            items(event.webcasts, key = { "${it.type}_${it.channel}" }) { webcast ->
+            items(filteredAndSortedWebcasts, key = { "${it.type}_${it.channel}_${it.date ?: ""}" }) { webcast ->
                 val url = webcastUrl(webcast)
                 val label = webcastLabel(webcast)
                 if (url != null) {
@@ -194,8 +243,150 @@ fun EventInfoTab(
                     }
                 }
             }
+
+            // Embedded YouTube players if there are matching webcasts for today
+            if (todayYouTubeWebcasts.isNotEmpty()) {
+                item {
+                    Spacer(Modifier.height(24.dp))
+                    Text(
+                        text = "Today's Webcast",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+                items(todayYouTubeWebcasts, key = { "preview_${it.channel}" }) { webcast ->
+                    Spacer(Modifier.height(8.dp))
+                    YouTubeEmbed(videoId = webcast.channel)
+                }
+            }
         }
     }
+}
+
+@Composable
+private fun YouTubeEmbed(videoId: String, modifier: Modifier = Modifier) {
+    var showPlayer by rememberSaveable(videoId) { mutableStateOf(false) }
+    var customView by remember { mutableStateOf<View?>(null) }
+    var customViewCallback by remember { mutableStateOf<WebChromeClient.CustomViewCallback?>(null) }
+
+    val context = LocalContext.current
+    val activity = remember(context) { context.findActivity() }
+
+    val thumbnailUrl = remember(videoId) { "https://img.youtube.com/vi/$videoId/hqdefault.jpg" }
+
+    // Fullscreen handling
+    if (customView != null) {
+        BackHandler {
+            customViewCallback?.onCustomViewHidden()
+        }
+
+        DisposableEffect(customView) {
+            val window = activity?.window
+            val decorView = window?.decorView as? ViewGroup
+            val originalOrientation = activity?.requestedOrientation ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
+            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+
+            if (window != null) {
+                val controller = WindowCompat.getInsetsController(window, window.decorView)
+                controller.hide(WindowInsetsCompat.Type.systemBars())
+                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+
+            val view = customView!!
+            view.layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            view.setBackgroundColor(android.graphics.Color.BLACK)
+            decorView?.addView(view)
+
+            onDispose {
+                decorView?.removeView(view)
+                activity?.requestedOrientation = originalOrientation
+                if (window != null) {
+                    val controller = WindowCompat.getInsetsController(window, window.decorView)
+                    controller.show(WindowInsetsCompat.Type.systemBars())
+                }
+            }
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .aspectRatio(16f / 9f)
+            .clip(MaterialTheme.shapes.medium)
+            .background(Color.Black),
+        contentAlignment = Alignment.Center
+    ) {
+        if (showPlayer) {
+            AndroidView(
+                factory = { ctx ->
+                    WebView(ctx).apply {
+                        layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                        settings.javaScriptEnabled = true
+                        settings.domStorageEnabled = true
+                        settings.loadWithOverviewMode = true
+                        settings.useWideViewPort = true
+                        settings.mediaPlaybackRequiresUserGesture = false
+                        webViewClient = WebViewClient()
+                        webChromeClient = object : WebChromeClient() {
+                            override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
+                                customView = view
+                                customViewCallback = callback
+                            }
+
+                            override fun onHideCustomView() {
+                                customView = null
+                                customViewCallback = null
+                            }
+                        }
+
+                        // Error 153 is often fixed by providing a valid Referer and origin
+                        val headers = mapOf("Referer" to "https://www.thebluealliance.com")
+                        loadUrl("https://www.youtube.com/embed/$videoId?autoplay=1&origin=https://www.thebluealliance.com", headers)
+                    }
+                },
+                onRelease = { webView ->
+                    webView.destroy()
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            // Placeholder/Thumbnail
+            AsyncImage(
+                model = thumbnailUrl,
+                contentDescription = "YouTube Thumbnail",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+            // Play button overlay
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .background(Color.Black.copy(alpha = 0.6f), CircleShape)
+                    .clickable { showPlayer = true },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    Icons.Outlined.PlayCircle,
+                    contentDescription = "Play",
+                    tint = Color.White,
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+        }
+    }
+}
+
+private fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }
 
 private fun webcastUrl(webcast: Webcast): String? = when (webcast.type) {
@@ -218,11 +409,10 @@ private fun webcastLabel(webcast: Webcast): String {
 
 private fun formatWebcastDate(dateStr: String): String {
     return try {
-        val date = java.time.LocalDate.parse(dateStr)
+        val date = LocalDate.parse(dateStr)
         val formatter = java.time.format.DateTimeFormatter.ofPattern("(EEE, MMM d)", java.util.Locale.US)
         date.format(formatter)
     } catch (_: Exception) {
         ""
     }
 }
-
