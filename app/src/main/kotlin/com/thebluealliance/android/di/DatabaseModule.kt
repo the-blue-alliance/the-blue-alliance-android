@@ -37,4 +37,5 @@ object DatabaseModule {
     @Provides fun provideEventDistrictPointsDao(db: TBADatabase): EventDistrictPointsDao = db.eventDistrictPointsDao()
     @Provides fun provideEventOPRsDao(db: TBADatabase): EventOPRsDao = db.eventOPRsDao()
     @Provides fun provideEventCOPRsDao(db: TBADatabase): EventCOPRsDao = db.eventCOPRsDao()
+    @Provides fun provideEventInsightsDao(db: TBADatabase): EventInsightsDao = db.eventInsightsDao()
 }

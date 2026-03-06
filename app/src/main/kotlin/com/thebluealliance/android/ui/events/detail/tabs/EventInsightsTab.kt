@@ -39,11 +39,20 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.EventCOPRs
+import com.thebluealliance.android.domain.model.EventInsights
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.ui.common.LoadingBox
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.doubleOrNull
+import kotlinx.serialization.json.int
 
 sealed class StatType {
     object StandardOPRs : StatType()
+    object QualInsights : StatType()
+    object PlayoffInsights : StatType()
     data class COPR(val statName: String) : StatType()
 }
 
@@ -60,6 +69,7 @@ enum class CoprSortColumn {
 fun EventInsightsTab(
     oprs: EventOPRs?,
     coprs: EventCOPRs?,
+    insights: EventInsights?,
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     if (oprs == null) {
@@ -123,6 +133,24 @@ fun EventInsightsTab(
                     uriHandler = uriHandler,
                 )
             }
+            is StatType.QualInsights -> {
+                InsightsView(
+                    title = "Qual Insights",
+                    insightsData = insights?.qual,
+                    onShowStatSelector = { showStatSelector = true },
+                    innerPadding = innerPadding,
+                    uriHandler = uriHandler,
+                )
+            }
+            is StatType.PlayoffInsights -> {
+                InsightsView(
+                    title = "Playoff Insights",
+                    insightsData = insights?.playoff,
+                    onShowStatSelector = { showStatSelector = true },
+                    innerPadding = innerPadding,
+                    uriHandler = uriHandler,
+                )
+            }
             is StatType.COPR -> {
                 val coprData = coprs?.coprs?.get(statType.statName) ?: emptyMap()
                 COPRView(
@@ -174,6 +202,44 @@ private fun StatSelectorDialog(
                     }
                 }
 
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onSelect(StatType.QualInsights) }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = currentSelection is StatType.QualInsights,
+                            onClick = { onSelect(StatType.QualInsights) }
+                        )
+                        Text(
+                            text = "Qual Insights",
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onSelect(StatType.PlayoffInsights) }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = currentSelection is StatType.PlayoffInsights,
+                            onClick = { onSelect(StatType.PlayoffInsights) }
+                        )
+                        Text(
+                            text = "Playoff Insights",
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                }
+
                 if (availableCoprStats.isNotEmpty()) {
                     item {
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
@@ -211,6 +277,172 @@ private fun StatSelectorDialog(
             }
         },
     )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun InsightsView(
+    title: String,
+    insightsData: String?,
+    onShowStatSelector: () -> Unit,
+    innerPadding: PaddingValues,
+    uriHandler: androidx.compose.ui.platform.UriHandler,
+) {
+    val insightHeader = when (title) {
+        "Qual Insights" -> "Qual Insight"
+        "Playoff Insights" -> "Playoff Insight"
+        else -> "Insight"
+    }
+
+    if (insightsData == null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("No $title data available")
+        }
+        return
+    }
+
+    val insightsList = remember(insightsData) {
+        try {
+            val jsonElement = Json.parseToJsonElement(insightsData)
+            val jsonObject = jsonElement as? JsonObject ?: return@remember emptyList()
+            parseInsightsData(jsonObject)
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
+    ) {
+        stickyHeader {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF5C6BC0))
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = insightHeader,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.weight(1.5f)
+                )
+                Text(
+                    text = "Value",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.weight(1f)
+                )
+                IconButton(
+                    onClick = onShowStatSelector,
+                    modifier = Modifier.padding(0.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "Select stat type",
+                        tint = Color.White
+                    )
+                }
+            }
+        }
+
+        items(insightsList) { insight ->
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = insight.name,
+                        modifier = Modifier.weight(1.5f),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        text = insight.value,
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Box(modifier = Modifier.weight(0.4f))
+                }
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+            }
+        }
+
+        item {
+            Text(
+                text = "Learn more about OPR",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .clickable { uriHandler.openUri("https://www.thebluealliance.com/opr") }
+                    .padding(16.dp),
+            )
+        }
+    }
+}
+
+data class InsightItem(val name: String, val value: String)
+
+private fun parseInsightsData(jsonObject: JsonObject): List<InsightItem> {
+    val items = mutableListOf<InsightItem>()
+
+    for ((key, value) in jsonObject) {
+        val formattedName = formatStatName(key)
+
+        when (value) {
+            is JsonArray -> {
+                if (key.endsWith("_count") && value.size >= 3) {
+                    // Format as: success / opportunities (percentage%)
+                    val success = (value[0] as? JsonPrimitive)?.int ?: 0
+                    val opportunities = (value[1] as? JsonPrimitive)?.int ?: 0
+                    val percentage = (value[2] as? JsonPrimitive)?.doubleOrNull ?: 0.0
+                    items.add(InsightItem(formattedName, "$success / $opportunities (%.1f%%)".format(percentage)))
+                } else if (key == "high_score" && value.size >= 3) {
+                    // Format as: score (match)
+                    val score = (value[0] as? JsonPrimitive)?.int ?: 0
+                    val matchName = (value[2] as? JsonPrimitive)?.content ?: ""
+                    items.add(InsightItem(formattedName, "$score ($matchName)"))
+                } else {
+                    // Generic array formatting
+                    items.add(InsightItem(formattedName, value.toString()))
+                }
+            }
+            is JsonPrimitive -> {
+                val formattedValue = when {
+                    value.isString -> value.content
+                    else -> {
+                        val num = value.doubleOrNull ?: 0.0
+                        if (num % 1.0 == 0.0) num.toInt().toString()
+                        else "%.2f".format(num)
+                    }
+                }
+                items.add(InsightItem(formattedName, formattedValue))
+            }
+            else -> {
+                // Skip JsonObject and other types
+            }
+        }
+    }
+
+    return items
+}
+
+private fun formatStatName(key: String): String {
+    return key
+        .replace("_", " ")
+        .split(" ")
+        .joinToString(" ") { word ->
+            word.replaceFirstChar { it.uppercase() }
+        }
 }
 
 @OptIn(ExperimentalFoundationApi::class)

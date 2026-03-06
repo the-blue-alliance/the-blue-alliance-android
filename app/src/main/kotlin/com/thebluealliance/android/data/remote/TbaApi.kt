@@ -3,6 +3,7 @@ package com.thebluealliance.android.data.remote
 import com.thebluealliance.android.data.remote.dto.*
 import retrofit2.http.GET
 import retrofit2.http.Path
+import kotlinx.serialization.json.JsonObject
 
 interface TbaApi {
 
@@ -80,6 +81,10 @@ interface TbaApi {
     // COPRs
     @GET("api/v3/event/{event_key}/coprs")
     suspend fun getEventCOPRs(@Path("event_key") eventKey: String): EventCOPRsDto
+
+    // Insights
+    @GET("api/v3/event/{event_key}/insights")
+    suspend fun getEventInsights(@Path("event_key") eventKey: String): JsonObject
 
     // Districts
     @GET("api/v3/districts/{year}")

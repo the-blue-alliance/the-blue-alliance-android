@@ -336,3 +336,15 @@ fun EventCOPRsEntity.toDomain() = EventCOPRs(
     coprs = json.decodeFromString(coprs),
 )
 
+// ── Insights ──
+
+fun EventInsightsDto.toEntity(eventKey: String) = EventInsightsEntity(
+    eventKey = eventKey,
+    qualInsights = qual,
+    playoffInsights = playoff,
+)
+
+fun EventInsightsEntity.toDomain() = EventInsights(
+    qual = qualInsights,
+    playoff = playoffInsights,
+)
