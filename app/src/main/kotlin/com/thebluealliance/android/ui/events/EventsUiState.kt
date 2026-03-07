@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.events
 
+import com.thebluealliance.android.domain.model.District
 import com.thebluealliance.android.domain.model.Event
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -7,11 +8,20 @@ import java.time.temporal.ChronoUnit
 
 data class EventSection(val label: String, val events: List<Event>)
 
+sealed interface EventsFilter {
+    data object All : EventsFilter
+    data object Regionals : EventsFilter
+    data object Offseasons : EventsFilter
+    data class District(val districtKey: String) : EventsFilter
+}
+
 sealed interface EventsUiState {
     data object Loading : EventsUiState
     data class Success(
         val sections: List<EventSection>,
         val favoriteEventKeys: Set<String> = emptySet(),
+        val selectedFilter: EventsFilter = EventsFilter.All,
+        val availableDistricts: List<District> = emptyList(),
     ) : EventsUiState
     data class Error(val message: String) : EventsUiState
 }
@@ -161,4 +171,13 @@ private fun datesOverlap(event: Event, rangeStart: LocalDate, rangeEnd: LocalDat
     val eventStart = parseDate(event.startDate) ?: return false
     val eventEnd = parseDate(event.endDate) ?: return false
     return !eventEnd.isBefore(rangeStart) && !eventStart.isAfter(rangeEnd)
+}
+
+fun filterEvents(events: List<Event>, filter: EventsFilter): List<Event> {
+    return when (filter) {
+        EventsFilter.All -> events
+        EventsFilter.Regionals -> events.filter { it.type == 0 }
+        EventsFilter.Offseasons -> events.filter { it.type == 99 }
+        is EventsFilter.District -> events.filter { it.district == filter.districtKey }
+    }
 }
