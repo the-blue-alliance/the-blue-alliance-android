@@ -45,6 +45,55 @@ enum class RankingSortColumn {
     TEAM, PRIMARY, SECONDARY
 }
 
+internal data class RankingSortState(
+    val column: RankingSortColumn = RankingSortColumn.PRIMARY,
+    val ascending: Boolean = false,
+)
+
+internal fun rankingHeaderLabels(rankingSortOrders: List<RankingSortOrder>?): Pair<String, String> {
+    val primaryLabel = rankingSortOrders?.getOrNull(0)?.name?.takeIf { it.isNotBlank() } ?: "RS"
+    val secondaryLabel = rankingSortOrders?.getOrNull(1)?.name?.takeIf { it.isNotBlank() } ?: "Sort 2"
+    return primaryLabel to secondaryLabel
+}
+
+internal fun nextRankingSortState(
+    current: RankingSortState,
+    selectedColumn: RankingSortColumn,
+): RankingSortState {
+    if (current.column == selectedColumn) {
+        return current.copy(ascending = !current.ascending)
+    }
+    val ascending = when (selectedColumn) {
+        RankingSortColumn.TEAM -> true
+        RankingSortColumn.PRIMARY, RankingSortColumn.SECONDARY -> false
+    }
+    return RankingSortState(column = selectedColumn, ascending = ascending)
+}
+
+internal fun sortRankings(
+    rankings: List<Ranking>,
+    sortState: RankingSortState,
+): List<Ranking> = rankings.sortedWith { a, b ->
+    val result = when (sortState.column) {
+        RankingSortColumn.TEAM -> {
+            val teamA = a.teamKey.removePrefix("frc").toIntOrNull() ?: 0
+            val teamB = b.teamKey.removePrefix("frc").toIntOrNull() ?: 0
+            teamA.compareTo(teamB)
+        }
+        RankingSortColumn.PRIMARY -> {
+            val valA = a.sortOrders.getOrNull(0) ?: 0.0
+            val valB = b.sortOrders.getOrNull(0) ?: 0.0
+            valA.compareTo(valB)
+        }
+        RankingSortColumn.SECONDARY -> {
+            val valA = a.sortOrders.getOrNull(1) ?: 0.0
+            val valB = b.sortOrders.getOrNull(1) ?: 0.0
+            valA.compareTo(valB)
+        }
+    }
+    if (sortState.ascending) result else -result
+}
+
 @Composable
 fun EventRankingsTab(
     rankings: List<Ranking>?,
@@ -67,34 +116,12 @@ fun EventRankingsTab(
         return
     }
 
-    // Extract header labels from metadata
-    val primaryLabel = rankingSortOrders?.getOrNull(0)?.name?.takeIf { it.isNotBlank() } ?: "RS"
-    val secondaryLabel = rankingSortOrders?.getOrNull(1)?.name?.takeIf { it.isNotBlank() } ?: "Sort 2"
+    val (primaryLabel, secondaryLabel) = rankingHeaderLabels(rankingSortOrders)
 
-    var sortColumn by remember { mutableStateOf(RankingSortColumn.PRIMARY) }
-    var sortAscending by remember { mutableStateOf(false) }
+    var sortState by remember { mutableStateOf(RankingSortState()) }
 
-    val sortedRankings = remember(rankings, sortColumn, sortAscending) {
-        rankings.sortedWith { a, b ->
-            val result = when (sortColumn) {
-                RankingSortColumn.TEAM -> {
-                    val teamA = a.teamKey.removePrefix("frc").toIntOrNull() ?: 0
-                    val teamB = b.teamKey.removePrefix("frc").toIntOrNull() ?: 0
-                    teamA.compareTo(teamB)
-                }
-                RankingSortColumn.PRIMARY -> {
-                    val valA = a.sortOrders.getOrNull(0) ?: 0.0
-                    val valB = b.sortOrders.getOrNull(0) ?: 0.0
-                    valA.compareTo(valB)
-                }
-                RankingSortColumn.SECONDARY -> {
-                    val valA = a.sortOrders.getOrNull(1) ?: 0.0
-                    val valB = b.sortOrders.getOrNull(1) ?: 0.0
-                    valA.compareTo(valB)
-                }
-            }
-            if (sortAscending) result else -result
-        }
+    val sortedRankings = remember(rankings, sortState) {
+        sortRankings(rankings, sortState)
     }
 
     LazyColumn(
@@ -105,15 +132,9 @@ fun EventRankingsTab(
             RankingHeaderRow(
                 primaryLabel = primaryLabel,
                 secondaryLabel = secondaryLabel,
-                sortColumn = sortColumn,
-                sortAscending = sortAscending,
-                onSortChange = { column, ascending ->
-                    if (sortColumn == column) {
-                        sortAscending = !sortAscending
-                    } else {
-                        sortColumn = column
-                        sortAscending = ascending
-                    }
+                sortState = sortState,
+                onSortSelected = { selectedColumn ->
+                    sortState = nextRankingSortState(sortState, selectedColumn)
                 },
             )
         }
@@ -132,9 +153,8 @@ fun EventRankingsTab(
 private fun RankingHeaderRow(
     primaryLabel: String,
     secondaryLabel: String,
-    sortColumn: RankingSortColumn,
-    sortAscending: Boolean,
-    onSortChange: (RankingSortColumn, Boolean) -> Unit,
+    sortState: RankingSortState,
+    onSortSelected: (RankingSortColumn) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -154,15 +174,9 @@ private fun RankingHeaderRow(
             text = "Team",
             modifier = Modifier.weight(0.22f),
             sortColumn = RankingSortColumn.TEAM,
-            currentSort = sortColumn,
-            ascending = sortAscending,
-            onSortClick = {
-                if (sortColumn == RankingSortColumn.TEAM) {
-                    onSortChange(RankingSortColumn.TEAM, !sortAscending)
-                } else {
-                    onSortChange(RankingSortColumn.TEAM, true)
-                }
-            }
+            currentSort = sortState.column,
+            ascending = sortState.ascending,
+            onSortClick = { onSortSelected(RankingSortColumn.TEAM) },
         )
         Text(
             text = "Record",
@@ -175,29 +189,17 @@ private fun RankingHeaderRow(
             text = primaryLabel,
             modifier = Modifier.weight(0.18f),
             sortColumn = RankingSortColumn.PRIMARY,
-            currentSort = sortColumn,
-            ascending = sortAscending,
-            onSortClick = {
-                if (sortColumn == RankingSortColumn.PRIMARY) {
-                    onSortChange(RankingSortColumn.PRIMARY, !sortAscending)
-                } else {
-                    onSortChange(RankingSortColumn.PRIMARY, false)
-                }
-            }
+            currentSort = sortState.column,
+            ascending = sortState.ascending,
+            onSortClick = { onSortSelected(RankingSortColumn.PRIMARY) },
         )
         RankingHeaderItem(
             text = secondaryLabel,
             modifier = Modifier.weight(0.14f),
             sortColumn = RankingSortColumn.SECONDARY,
-            currentSort = sortColumn,
-            ascending = sortAscending,
-            onSortClick = {
-                if (sortColumn == RankingSortColumn.SECONDARY) {
-                    onSortChange(RankingSortColumn.SECONDARY, !sortAscending)
-                } else {
-                    onSortChange(RankingSortColumn.SECONDARY, false)
-                }
-            }
+            currentSort = sortState.column,
+            ascending = sortState.ascending,
+            onSortClick = { onSortSelected(RankingSortColumn.SECONDARY) },
         )
         // Spacer for chevron alignment
         Spacer(modifier = Modifier.weight(0.12f))
