@@ -27,6 +27,7 @@ import com.thebluealliance.android.messaging.NotificationBuilder
 import com.thebluealliance.android.navigation.DeeplinkMatcher
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.TBAApp
+import com.thebluealliance.android.widget.TeamTrackingWidgetOpenAction
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -84,8 +85,12 @@ class MainActivity : ComponentActivity() {
 
         val destination = when {
             matchKey != null -> Screen.MatchDetail(matchKey)
+            teamKey != null && eventKey != null -> Screen.TeamEventDetail(teamKey, eventKey)
             eventKey != null -> Screen.EventDetail(eventKey)
-            teamKey != null -> Screen.TeamDetail(teamKey)
+            teamKey != null -> {
+                val initialTab = intent.getIntExtra(TeamTrackingWidgetOpenAction.EXTRA_INITIAL_TAB, 0)
+                Screen.TeamDetail(teamKey, initialTab)
+            }
             else -> null
         }
 

@@ -94,6 +94,7 @@ fun TeamDetailScreen(
     onNavigateToMyTBA: () -> Unit = {},
     onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
     onNavigateToSearch: () -> Unit,
+    initialTab: Int = 0,
     viewModel: TeamDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -102,7 +103,7 @@ fun TeamDetailScreen(
     val subscription by viewModel.subscription.collectAsStateWithLifecycle()
     val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
     val yearsParticipated by viewModel.yearsParticipated.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState(pageCount = { TABS.size })
+    val pagerState = rememberPagerState(initialPage = initialTab, pageCount = { TABS.size })
     val coroutineScope = rememberCoroutineScope()
 
     var showSignInDialog by remember { mutableStateOf(false) }
