@@ -15,6 +15,7 @@ class EventsUiStateTest {
         name: String = "Test Event",
         year: Int = 2026,
         type: Int? = 0,
+        district: String? = null,
         week: Int? = null,
         startDate: String? = null,
         endDate: String? = null,
@@ -24,7 +25,7 @@ class EventsUiStateTest {
         eventCode = key.removePrefix("${year}"),
         year = year,
         type = type,
-        district = null,
+        district = district,
         city = null,
         state = null,
         country = null,
@@ -294,5 +295,59 @@ class EventsUiStateTest {
         val week = findCurrentCompetitionWeek(events, today)
 
         assertNull(week)
+    }
+
+    // --- Events filtering ---
+
+    @Test
+    fun `regionals filter keeps only regional event types`() {
+        val events = listOf(
+            makeEvent(key = "2026reg", type = 0),
+            makeEvent(key = "2026district", type = 1, district = "2026ne"),
+            makeEvent(key = "2026cmp", type = 3),
+        )
+
+        val filtered = filterEvents(events, EventsFilter.Regionals)
+
+        assertEquals(listOf("2026reg"), filtered.map { it.key })
+    }
+
+    @Test
+    fun `district filter keeps only selected district events`() {
+        val events = listOf(
+            makeEvent(key = "2026ne1", district = "2026ne"),
+            makeEvent(key = "2026ne2", district = "2026ne"),
+            makeEvent(key = "2026fim1", district = "2026fim"),
+            makeEvent(key = "2026reg", district = null),
+        )
+
+        val filtered = filterEvents(events, EventsFilter.District("2026ne"))
+
+        assertEquals(listOf("2026ne1", "2026ne2"), filtered.map { it.key })
+    }
+
+    @Test
+    fun `all filter keeps all events`() {
+        val events = listOf(
+            makeEvent(key = "2026reg", type = 0),
+            makeEvent(key = "2026district", type = 1, district = "2026ne"),
+        )
+
+        val filtered = filterEvents(events, EventsFilter.All)
+
+        assertEquals(events.map { it.key }, filtered.map { it.key })
+    }
+
+    @Test
+    fun `offseasons filter keeps only offseason events`() {
+        val events = listOf(
+            makeEvent(key = "2026off", type = 99),
+            makeEvent(key = "2026pre", type = 100),
+            makeEvent(key = "2026reg", type = 0),
+        )
+
+        val filtered = filterEvents(events, EventsFilter.Offseasons)
+
+        assertEquals(listOf("2026off"), filtered.map { it.key })
     }
 }

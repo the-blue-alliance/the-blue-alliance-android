@@ -8,24 +8,32 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,17 +48,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.domain.model.District
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Search
-import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,10 +69,41 @@ fun EventsScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
     val maxYear by viewModel.maxYear.collectAsStateWithLifecycle()
+    val selectedFilter by viewModel.selectedFilter.collectAsStateWithLifecycle()
+    val availableDistricts by viewModel.availableDistricts.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
 
     var yearDropdownExpanded by remember { mutableStateOf(false) }
+    var showFilterDialog by remember { mutableStateOf(false) }
+
+    val selectedFilterSubtitle = remember(selectedFilter, availableDistricts) {
+        filterSubtitle(selectedFilter, availableDistricts)
+    }
+
+    if (showFilterDialog) {
+        EventFilterDialog(
+            selectedFilter = selectedFilter,
+            availableDistricts = availableDistricts,
+            onDismiss = { showFilterDialog = false },
+            onSelectAll = {
+                viewModel.selectAllFilter()
+                showFilterDialog = false
+            },
+            onSelectRegionals = {
+                viewModel.selectRegionalsFilter()
+                showFilterDialog = false
+            },
+            onSelectOffseasons = {
+                viewModel.selectOffseasonsFilter()
+                showFilterDialog = false
+            },
+            onSelectDistrict = { districtKey ->
+                viewModel.selectDistrictFilter(districtKey)
+                showFilterDialog = false
+            },
+        )
+    }
 
     LaunchedEffect(reselectFlow) {
         reselectFlow.collect {
@@ -80,32 +117,41 @@ fun EventsScreen(
             TBATopAppBar(
                 title = {
                     if (selectedYear > 0) {
-                        Row(
-                            modifier = Modifier.clickable { yearDropdownExpanded = true },
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text("$selectedYear Events")
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Select year")
-                            DropdownMenu(
-                                expanded = yearDropdownExpanded,
-                                onDismissRequest = { yearDropdownExpanded = false },
+                        Column {
+                            Row(
+                                modifier = Modifier.clickable { yearDropdownExpanded = true },
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                (maxYear downTo 1992).forEach { year ->
-                                    DropdownMenuItem(
-                                        text = { Text(year.toString()) },
-                                        onClick = {
-                                            viewModel.selectYear(year)
-                                            yearDropdownExpanded = false
-                                        },
-                                    )
+                                Text("$selectedYear Events")
+                                Icon(Icons.Default.ArrowDropDown, contentDescription = "Select year")
+                                DropdownMenu(
+                                    expanded = yearDropdownExpanded,
+                                    onDismissRequest = { yearDropdownExpanded = false },
+                                ) {
+                                    (maxYear downTo 1992).forEach { year ->
+                                        DropdownMenuItem(
+                                            text = { Text(year.toString()) },
+                                            onClick = {
+                                                viewModel.selectYear(year)
+                                                yearDropdownExpanded = false
+                                            },
+                                        )
+                                    }
                                 }
                             }
+                            Text(
+                                text = selectedFilterSubtitle,
+                                style = MaterialTheme.typography.bodySmall,
+                            )
                         }
                     } else {
                         Text("Events")
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showFilterDialog = true }) {
+                        Icon(Icons.Default.FilterList, contentDescription = "Filter events")
+                    }
                     IconButton(onClick = onNavigateToSearch) {
                         Icon(Icons.Default.Search, contentDescription = "Search")
                     }
@@ -277,6 +323,110 @@ private fun EventsList(
                     EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun EventFilterDialog(
+    selectedFilter: EventsFilter,
+    availableDistricts: List<District>,
+    onDismiss: () -> Unit,
+    onSelectAll: () -> Unit,
+    onSelectRegionals: () -> Unit,
+    onSelectOffseasons: () -> Unit,
+    onSelectDistrict: (String) -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Filter Events") },
+        text = {
+            LazyColumn {
+                item {
+                    FilterDialogRow(
+                        label = "All",
+                        selected = selectedFilter == EventsFilter.All,
+                        onClick = onSelectAll,
+                    )
+                }
+                item {
+                    FilterDialogRow(
+                        label = "Regionals",
+                        selected = selectedFilter == EventsFilter.Regionals,
+                        onClick = onSelectRegionals,
+                    )
+                }
+                item {
+                    FilterDialogRow(
+                        label = "Offseasons",
+                        selected = selectedFilter == EventsFilter.Offseasons,
+                        onClick = onSelectOffseasons,
+                    )
+                }
+
+                if (availableDistricts.isNotEmpty()) {
+                    item {
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                        Text(
+                            text = "Districts",
+                            style = MaterialTheme.typography.titleSmall,
+                            modifier = Modifier.padding(vertical = 8.dp),
+                        )
+                    }
+                    items(availableDistricts, key = { it.key }) { district ->
+                        FilterDialogRow(
+                            label = district.displayName,
+                            selected = selectedFilter is EventsFilter.District &&
+                                selectedFilter.districtKey == district.key,
+                            onClick = { onSelectDistrict(district.key) },
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Close")
+            }
+        },
+    )
+}
+
+@Composable
+private fun FilterDialogRow(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RadioButton(
+            selected = selected,
+            onClick = onClick,
+        )
+        Text(
+            text = label,
+            modifier = Modifier.padding(start = 8.dp),
+        )
+    }
+}
+
+private fun filterSubtitle(
+    selectedFilter: EventsFilter,
+    availableDistricts: List<District>,
+): String {
+    return when (selectedFilter) {
+        EventsFilter.All -> "All"
+        EventsFilter.Regionals -> "Regionals"
+        EventsFilter.Offseasons -> "Offseasons"
+        is EventsFilter.District -> {
+            availableDistricts.firstOrNull { it.key == selectedFilter.districtKey }?.displayName
+                ?: selectedFilter.districtKey
         }
     }
 }
