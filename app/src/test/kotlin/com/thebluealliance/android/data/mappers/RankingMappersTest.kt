@@ -29,12 +29,15 @@ class RankingMappersTest {
 
     @Test
     fun `getSortOrderInfo decodes metadata names and precision`() {
-        val entity = EventRankingSortOrderEntity(
-            eventKey = "2026test",
-            sortOrderInfo =
-                """[{\"name\":\"Ranking Score\",\"precision\":2},{\"name\":\"Auto\",\"precision\":0}]""",
-            extraStatsInfo = "[]",
+        val response = RankingResponseDto(
+            sortOrderInfo = listOf(
+                RankingSortOrderDto(name = "Ranking Score", precision = 2),
+                RankingSortOrderDto(name = "Auto", precision = 0),
+            ),
+            extraStatsInfo = emptyList(),
         )
+        val entity = response.toSortOrderEntity("2026test")
+        assertEquals(true, entity.sortOrderInfo.startsWith("["))
 
         val sortOrders = entity.getSortOrderInfo()
 
