@@ -23,8 +23,9 @@ import com.thebluealliance.android.data.local.entity.*
         EventOPRsEntity::class,
         EventCOPRsEntity::class,
         EventInsightsEntity::class,
+        EventRankingSortOrderEntity::class,
     ],
-    version = 10,
+    version = 11,
     exportSchema = false,
 )
 abstract class TBADatabase : RoomDatabase() {
@@ -44,4 +45,5 @@ abstract class TBADatabase : RoomDatabase() {
     abstract fun eventOPRsDao(): EventOPRsDao
     abstract fun eventCOPRsDao(): EventCOPRsDao
     abstract fun eventInsightsDao(): EventInsightsDao
+    abstract fun eventRankingSortOrderDao(): EventRankingSortOrderDao
 }

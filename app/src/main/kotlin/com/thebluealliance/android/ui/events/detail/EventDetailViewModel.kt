@@ -57,32 +57,68 @@ class EventDetailViewModel @AssistedInject constructor(
 
     val uiState: StateFlow<EventDetailUiState> = eventRepository.observeEvent(eventKey)
         .flatMapLatest { event ->
-            combine(
+            val coreBaseFlow = combine(
                 flowOf(event),
                 teamsFlow,
                 matchRepository.observeEventMatches(eventKey),
                 eventRepository.observeEventRankings(eventKey),
-                combine(
-                    eventRepository.observeEventAlliances(eventKey),
-                    eventRepository.observeEventAwards(eventKey),
-                    eventRepository.observeEventDistrictPoints(eventKey),
-                    eventRepository.observeEventOPRs(eventKey),
-                    eventRepository.observeEventCOPRs(eventKey),
-                ) { alliances, awards, districtPoints, oprs, coprs ->
-                    FiveTuple(alliances, awards, districtPoints, oprs, coprs)
-                },
-            ) { _, teams, matches, rankings, extras ->
-                val (alliances, awards, districtPoints, oprs, coprs) = extras
+            ) { currentEvent, teams, matches, rankings ->
+                EventCoreBaseState(currentEvent, teams, matches, rankings)
+            }
+
+            val coreFlow = combine(
+                coreBaseFlow,
+                eventRepository.observeEventRankingSortOrders(eventKey),
+                eventRepository.observeEventRankingExtraStatsInfo(eventKey),
+            ) { coreBase, rankingSortOrders, rankingExtraStatsInfo ->
+                EventCoreState(
+                    event = coreBase.event,
+                    teams = coreBase.teams,
+                    matches = coreBase.matches,
+                    rankings = coreBase.rankings,
+                    rankingSortOrders = rankingSortOrders,
+                    rankingExtraStatsInfo = rankingExtraStatsInfo,
+                )
+            }
+
+            val extrasLeftFlow = combine(
+                eventRepository.observeEventAlliances(eventKey),
+                eventRepository.observeEventAwards(eventKey),
+            ) { alliances, awards ->
+                Pair(alliances, awards)
+            }
+
+            val extrasRightFlow = combine(
+                eventRepository.observeEventDistrictPoints(eventKey),
+                eventRepository.observeEventOPRs(eventKey),
+                eventRepository.observeEventCOPRs(eventKey),
+            ) { districtPoints, oprs, coprs ->
+                Triple(districtPoints, oprs, coprs)
+            }
+
+            val extrasFlow = combine(extrasLeftFlow, extrasRightFlow) { left, right ->
+                EventExtrasState(
+                    alliances = left.first,
+                    awards = left.second,
+                    districtPoints = right.first,
+                    oprs = right.second,
+                    coprs = right.third,
+                )
+            }
+
+            combine(coreFlow, extrasFlow) { core, extras ->
                 EventDetailUiState(
-                    event = event,
-                    teams = teams,
-                    matches = matches,
-                    rankings = rankings,
-                    alliances = alliances,
-                    awards = awards,
-                    districtPoints = districtPoints,
-                    oprs = oprs,
-                    coprs = coprs,
+                    event = core.event,
+                    teams = core.teams,
+                    matches = core.matches,
+                    rankings = core.rankings,
+                    rankingSortOrders = core.rankingSortOrders,
+                    rankingExtraStatsInfo = core.rankingExtraStatsInfo,
+                    alliances = extras.alliances,
+                    awards = extras.awards,
+                    districtPoints = extras.districtPoints,
+                    oprs = extras.oprs,
+                    coprs = extras.coprs,
                     insights = null,
                 )
             }
@@ -175,15 +211,26 @@ class EventDetailViewModel @AssistedInject constructor(
     }
 }
 
-data class FiveTuple<out A, out B, out C, out D, out E>(
-    val first: A,
-    val second: B,
-    val third: C,
-    val fourth: D,
-    val fifth: E
+private data class EventCoreBaseState(
+    val event: com.thebluealliance.android.domain.model.Event?,
+    val teams: List<com.thebluealliance.android.domain.model.Team>,
+    val matches: List<com.thebluealliance.android.domain.model.Match>,
+    val rankings: List<com.thebluealliance.android.domain.model.Ranking>,
 )
 
+private data class EventCoreState(
+    val event: com.thebluealliance.android.domain.model.Event?,
+    val teams: List<com.thebluealliance.android.domain.model.Team>,
+    val matches: List<com.thebluealliance.android.domain.model.Match>,
+    val rankings: List<com.thebluealliance.android.domain.model.Ranking>,
+    val rankingSortOrders: List<com.thebluealliance.android.domain.model.RankingSortOrder>,
+    val rankingExtraStatsInfo: List<com.thebluealliance.android.domain.model.RankingSortOrder>,
+)
 
-
-
-
+private data class EventExtrasState(
+    val alliances: List<com.thebluealliance.android.domain.model.Alliance>,
+    val awards: List<com.thebluealliance.android.domain.model.Award>,
+    val districtPoints: List<com.thebluealliance.android.domain.model.EventDistrictPoints>,
+    val oprs: com.thebluealliance.android.domain.model.EventOPRs?,
+    val coprs: com.thebluealliance.android.domain.model.EventCOPRs?,
+)

@@ -13,5 +13,6 @@ data class RankingEntity(
     val losses: Int,
     val ties: Int,
     val sortOrders: String,
+    val extraStats: String = "[]",
     val qualAverage: Double?,
 )
