@@ -10,4 +10,6 @@ data class Ranking(
     val losses: Int,
     val ties: Int,
     val qualAverage: Double?,
+    val sortOrders: List<Double> = emptyList(),
+    val extraStats: List<Double> = emptyList(),
 )

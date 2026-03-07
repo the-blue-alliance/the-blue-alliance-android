@@ -9,11 +9,17 @@ import com.thebluealliance.android.data.local.dao.EventDao
 import com.thebluealliance.android.data.local.dao.EventDistrictPointsDao
 import com.thebluealliance.android.data.local.dao.EventInsightsDao
 import com.thebluealliance.android.data.local.dao.EventOPRsDao
+import com.thebluealliance.android.data.local.dao.EventRankingSortOrderDao
 import com.thebluealliance.android.data.local.dao.EventTeamDao
 import com.thebluealliance.android.data.local.dao.RankingDao
 import com.thebluealliance.android.data.local.entity.EventEntity
+import com.thebluealliance.android.data.local.entity.EventRankingSortOrderEntity
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.remote.dto.EventDto
+import com.thebluealliance.android.data.remote.dto.RankingItemDto
+import com.thebluealliance.android.data.remote.dto.RankingResponseDto
+import com.thebluealliance.android.data.remote.dto.RankingSortOrderDto
+import com.thebluealliance.android.data.remote.dto.TeamRecordDto
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -25,7 +31,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class EventRepositoryTest {
-
     private val api: TbaApi = mockk()
     private val db: TBADatabase = mockk(relaxed = true) {
         val executor = java.util.concurrent.Executors.newSingleThreadExecutor()
@@ -41,8 +46,22 @@ class EventRepositoryTest {
     private val eventOPRsDao: EventOPRsDao = mockk(relaxUnitFun = true)
     private val eventCOPRsDao: EventCOPRsDao = mockk(relaxUnitFun = true)
     private val eventInsightsDao: EventInsightsDao = mockk(relaxUnitFun = true)
+    private val eventRankingSortOrderDao: EventRankingSortOrderDao = mockk(relaxUnitFun = true)
 
-    private val repo = EventRepository(api, db, eventDao, awardDao, rankingDao, allianceDao, eventTeamDao, eventDistrictPointsDao, eventOPRsDao, eventCOPRsDao, eventInsightsDao)
+    private val repo = EventRepository(
+        api,
+        db,
+        eventDao,
+        awardDao,
+        rankingDao,
+        allianceDao,
+        eventTeamDao,
+        eventDistrictPointsDao,
+        eventOPRsDao,
+        eventCOPRsDao,
+        eventInsightsDao,
+        eventRankingSortOrderDao,
+    )
 
     @Test
     fun `refreshEventsForYear fetches from API and inserts into DAO`() = runTest {
@@ -110,5 +129,46 @@ class EventRepositoryTest {
             assertEquals("CA", events[0].state)
             awaitComplete()
         }
+    }
+
+    @Test
+    fun `refreshEventRankings persists rankings and sort order metadata`() = runTest {
+        val eventKey = "2026test"
+        val response = RankingResponseDto(
+            rankings = listOf(
+                RankingItemDto(
+                    teamKey = "frc254",
+                    rank = 1,
+                    matchesPlayed = 12,
+                    record = TeamRecordDto(wins = 10, losses = 2, ties = 0),
+                    sortOrders = listOf(2.5, 1.0),
+                    extraStats = listOf(120.0),
+                ),
+            ),
+            sortOrderInfo = listOf(
+                RankingSortOrderDto(name = "Ranking Score", precision = 2),
+                RankingSortOrderDto(name = "Auto Points", precision = 0),
+            ),
+            extraStatsInfo = listOf(
+                RankingSortOrderDto(name = "Cargo Scored", precision = 0),
+            ),
+        )
+        coEvery { api.getEventRankings(eventKey) } returns response
+
+        val sortOrderEntitySlot = slot<EventRankingSortOrderEntity>()
+        coEvery { eventRankingSortOrderDao.insert(capture(sortOrderEntitySlot)) } returns Unit
+
+        repo.refreshEventRankings(eventKey)
+
+        coVerify(exactly = 1) { api.getEventRankings(eventKey) }
+        coVerify(exactly = 1) { rankingDao.deleteByEvent(eventKey) }
+        coVerify(exactly = 1) { rankingDao.insertAll(any()) }
+        coVerify(exactly = 1) { eventRankingSortOrderDao.delete(eventKey) }
+        coVerify(exactly = 1) { eventRankingSortOrderDao.insert(any()) }
+
+        val entity = sortOrderEntitySlot.captured
+        assertEquals(eventKey, entity.eventKey)
+        assertEquals(true, entity.sortOrderInfo.contains("Ranking Score"))
+        assertEquals(true, entity.extraStatsInfo?.contains("Cargo Scored") == true)
     }
 }

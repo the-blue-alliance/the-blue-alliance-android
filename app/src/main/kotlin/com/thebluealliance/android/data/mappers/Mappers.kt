@@ -174,6 +174,7 @@ fun RankingItemDto.toEntity(eventKey: String) = RankingEntity(
     losses = record?.losses ?: 0,
     ties = record?.ties ?: 0,
     sortOrders = json.encodeToString(sortOrders),
+    extraStats = json.encodeToString(extraStats),
     qualAverage = qualAverage,
 )
 
@@ -187,7 +188,36 @@ fun RankingEntity.toDomain() = Ranking(
     losses = losses,
     ties = ties,
     qualAverage = qualAverage,
+    sortOrders = try { json.decodeFromString(sortOrders) } catch (_: Exception) { emptyList() },
+    extraStats = try { json.decodeFromString(extraStats) } catch (_: Exception) { emptyList() },
 )
+
+fun RankingSortOrderDto.toDomain() = RankingSortOrder(
+    name = name,
+    precision = precision,
+)
+
+fun RankingResponseDto.toSortOrderEntity(eventKey: String) = EventRankingSortOrderEntity(
+    eventKey = eventKey,
+    sortOrderInfo = json.encodeToString(sortOrderInfo ?: emptyList()),
+    extraStatsInfo = json.encodeToString(extraStatsInfo ?: emptyList()),
+)
+
+fun EventRankingSortOrderEntity.getSortOrderInfo(): List<RankingSortOrder> =
+    try {
+        json.decodeFromString<List<RankingSortOrderDto>>(sortOrderInfo).map { it.toDomain() }
+    } catch (_: Exception) {
+        emptyList()
+    }
+
+fun EventRankingSortOrderEntity.getExtraStatsInfo(): List<RankingSortOrder> =
+    try {
+        if (extraStatsInfo != null) {
+            json.decodeFromString<List<RankingSortOrderDto>>(extraStatsInfo).map { it.toDomain() }
+        } else emptyList()
+    } catch (_: Exception) {
+        emptyList()
+    }
 
 // ── Alliance ──
 

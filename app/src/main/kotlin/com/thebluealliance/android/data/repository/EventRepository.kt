@@ -9,6 +9,7 @@ import com.thebluealliance.android.data.local.dao.EventDao
 import com.thebluealliance.android.data.local.dao.EventDistrictPointsDao
 import com.thebluealliance.android.data.local.dao.EventInsightsDao
 import com.thebluealliance.android.data.local.dao.EventOPRsDao
+import com.thebluealliance.android.data.local.dao.EventRankingSortOrderDao
 import com.thebluealliance.android.data.local.dao.EventTeamDao
 import com.thebluealliance.android.data.local.dao.RankingDao
 import com.thebluealliance.android.data.local.entity.EventTeamEntity
@@ -22,7 +23,9 @@ import com.thebluealliance.android.domain.model.EventCOPRs
 import com.thebluealliance.android.domain.model.EventDistrictPoints
 import com.thebluealliance.android.domain.model.EventInsights
 import com.thebluealliance.android.domain.model.EventOPRs
+import com.thebluealliance.android.domain.model.EventRankings
 import com.thebluealliance.android.domain.model.Ranking
+import com.thebluealliance.android.domain.model.RankingSortOrder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -44,6 +47,7 @@ class EventRepository @Inject constructor(
     private val eventOPRsDao: EventOPRsDao,
     private val eventCOPRsDao: EventCOPRsDao,
     private val eventInsightsDao: EventInsightsDao,
+    private val eventRankingSortOrderDao: EventRankingSortOrderDao,
 ) {
     fun searchEvents(query: String): Flow<List<Event>> =
         eventDao.search(query).map { list -> list.map { it.toDomain() } }
@@ -59,6 +63,31 @@ class EventRepository @Inject constructor(
 
     fun observeEventRankings(eventKey: String): Flow<List<Ranking>> =
         rankingDao.observeByEvent(eventKey).map { list -> list.map { it.toDomain() } }
+
+    fun observeEventRankingSortOrders(eventKey: String): Flow<List<RankingSortOrder>> =
+        eventRankingSortOrderDao.observe(eventKey).map { entity ->
+            entity?.getSortOrderInfo() ?: emptyList()
+        }
+
+    fun observeEventRankingExtraStatsInfo(eventKey: String): Flow<List<RankingSortOrder>> =
+        eventRankingSortOrderDao.observe(eventKey).map { entity ->
+            entity?.getExtraStatsInfo() ?: emptyList()
+        }
+
+    fun observeEventRankingsWithSortOrders(eventKey: String): Flow<EventRankings?> =
+        rankingDao.observeByEvent(eventKey).flatMapLatest { rankingEntities ->
+            eventRankingSortOrderDao.observe(eventKey).map { sortOrderEntity ->
+                if (rankingEntities.isEmpty() || sortOrderEntity == null) {
+                    null
+                } else {
+                    EventRankings(
+                        rankings = rankingEntities.map { it.toDomain() },
+                        sortOrderInfo = sortOrderEntity.getSortOrderInfo(),
+                        extraStatsInfo = sortOrderEntity.getExtraStatsInfo(),
+                    )
+                }
+            }
+        }
 
     fun observeEventAlliances(eventKey: String): Flow<List<Alliance>> =
         allianceDao.observeByEvent(eventKey).map { list -> list.map { it.toDomain() } }
@@ -127,6 +156,8 @@ class EventRepository @Inject constructor(
             db.withTransaction {
                 rankingDao.deleteByEvent(eventKey)
                 rankingDao.insertAll(response.rankings.map { it.toEntity(eventKey) })
+                eventRankingSortOrderDao.delete(eventKey)
+                eventRankingSortOrderDao.insert(response.toSortOrderEntity(eventKey))
             }
         } catch (_: Exception) { }
     }

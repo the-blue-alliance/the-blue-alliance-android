@@ -289,6 +289,8 @@ fun EventDetailScreen(
                     )
                     2 -> EventRankingsTab(
                         rankings = uiState.rankings,
+                        rankingSortOrders = uiState.rankingSortOrders,
+                        rankingExtraStatsInfo = uiState.rankingExtraStatsInfo,
                         onTeamClick = { teamKey ->
                             val eventKey = uiState.event?.key
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)

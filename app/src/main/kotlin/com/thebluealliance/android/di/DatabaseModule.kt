@@ -27,6 +27,7 @@ object DatabaseModule {
     @Provides fun provideMatchDao(db: TBADatabase): MatchDao = db.matchDao()
     @Provides fun provideAwardDao(db: TBADatabase): AwardDao = db.awardDao()
     @Provides fun provideRankingDao(db: TBADatabase): RankingDao = db.rankingDao()
+    @Provides fun provideEventRankingSortOrderDao(db: TBADatabase): EventRankingSortOrderDao = db.eventRankingSortOrderDao()
     @Provides fun provideAllianceDao(db: TBADatabase): AllianceDao = db.allianceDao()
     @Provides fun provideDistrictDao(db: TBADatabase): DistrictDao = db.districtDao()
     @Provides fun provideDistrictRankingDao(db: TBADatabase): DistrictRankingDao = db.districtRankingDao()
