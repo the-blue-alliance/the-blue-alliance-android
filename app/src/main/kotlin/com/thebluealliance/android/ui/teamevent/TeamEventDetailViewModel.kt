@@ -5,6 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.data.repository.TeamRepository
+import com.thebluealliance.android.domain.model.Alliance
+import com.thebluealliance.android.domain.model.Award
+import com.thebluealliance.android.domain.model.EventOPRs
+import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.navigation.Screen
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -20,6 +24,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+private data class TeamEventExtras(
+    val awards: List<Award>,
+    val oprs: EventOPRs?,
+    val alliances: List<Alliance>,
+    val media: List<Media>,
+)
+
 @HiltViewModel(assistedFactory = TeamEventDetailViewModel.Factory::class)
 class TeamEventDetailViewModel @AssistedInject constructor(
     @Assisted val navKey: Screen.TeamEventDetail,
@@ -30,6 +41,7 @@ class TeamEventDetailViewModel @AssistedInject constructor(
 
     val teamKey: String = navKey.teamKey
     val eventKey: String = navKey.eventKey
+    private val year: Int = eventKey.substring(0, 4).toIntOrNull() ?: 0
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
@@ -49,17 +61,18 @@ class TeamEventDetailViewModel @AssistedInject constructor(
             },
             eventRepository.observeEventOPRs(eventKey),
             eventRepository.observeEventAlliances(eventKey),
-        ) { awards, oprs, alliances -> Triple(awards, oprs, alliances) },
+            teamRepository.observeTeamMedia(teamKey, year),
+        ) { awards, oprs, alliances, media -> TeamEventExtras(awards, oprs, alliances, media) },
     ) { team, event, ranking, matches, extras ->
-        val (awards, oprs, alliances) = extras
         TeamEventDetailUiState(
             team = team,
             event = event,
             ranking = ranking,
             matches = matches,
-            awards = awards,
-            oprs = oprs,
-            alliances = alliances,
+            awards = extras.awards,
+            oprs = extras.oprs,
+            alliances = extras.alliances,
+            media = extras.media,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TeamEventDetailUiState())
 
@@ -79,6 +92,7 @@ class TeamEventDetailViewModel @AssistedInject constructor(
                     launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
+                    launch { try { teamRepository.refreshTeamMedia(teamKey, year) } catch (_: Exception) {} }
                 }
             } finally {
                 _isRefreshing.value = false

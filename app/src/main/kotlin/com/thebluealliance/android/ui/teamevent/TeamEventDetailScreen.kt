@@ -53,12 +53,13 @@ import com.thebluealliance.android.ui.events.detail.EventDetailTabs
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.MatchItem
 import com.thebluealliance.android.ui.components.MatchList
+import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
 import kotlinx.coroutines.launch
 
-private val TABS = listOf("Summary", "Matches", "Stats", "Awards")
+private val TABS = listOf("Summary", "Matches", "Media", "Stats", "Awards")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -208,12 +209,16 @@ fun TeamEventDetailScreen(
                             innerPadding = innerPadding,
                         )
                     }
-                    2 -> StatsTab(
+                    2 -> MediaTab(
+                        media = uiState.media,
+                        innerPadding = innerPadding,
+                    )
+                    3 -> StatsTab(
                         teamKey = viewModel.teamKey,
                         oprs = uiState.oprs,
                         innerPadding = innerPadding,
                     )
-                    3 -> {
+                    4 -> {
                         val tm = uiState.team
                         AwardsTab(
                             awards = uiState.awards,
