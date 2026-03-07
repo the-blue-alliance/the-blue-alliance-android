@@ -4,42 +4,54 @@
     android:viewportWidth="24"
     android:viewportHeight="24">
 
+    <!-- TBA lamp paths from tba_lamp.xml (72x112 viewport), scaled to fit
+         22dp tall (1dp padding) with uniform aspect ratio.
+         Transform: scale=0.1964, translateX=4.93, translateY=1.0 -->
     <group
-        android:scaleX="0.5"
-        android:scaleY="0.5"
-        android:translateX="-15"
-        android:translateY="-15">
+        android:scaleX="0.1964"
+        android:scaleY="0.1964"
+        android:translateX="4.93"
+        android:translateY="1.0">
 
+        <!-- Left vertical bar -->
         <path
-            android:pathData="M64.092,40.073L64.092,65.908C64.092,71.482 59.574,76 54,76C48.426,76 43.908,71.482 43.908,65.908L43.908,40.073"
-            android:strokeWidth="2.42201835"
-            android:fillColor="#00000000"
-            android:strokeColor="#FFFFFF"
-            android:fillType="evenOdd"/>
-        <path
-            android:pathData="M54,40.073L54,76"
-            android:strokeWidth="2.42201835"
-            android:fillColor="#00000000"
-            android:strokeColor="#FFFFFF"
-            android:fillType="evenOdd"/>
-        <path
-            android:pathData="M43.908,64.697L64.092,64.697"
-            android:strokeWidth="2.42201835"
-            android:fillColor="#00000000"
-            android:strokeColor="#FFFFFF"
-            android:fillType="evenOdd"/>
-        <path
-            android:pathData="M43.908,53.394L64.092,53.394"
-            android:strokeWidth="2.42201835"
-            android:fillColor="#00000000"
-            android:strokeColor="#FFFFFF"
-            android:fillType="evenOdd"/>
-        <path
-            android:pathData="M41.083,32L66.917,32A1.615,1.615 0,0 1,68.532 33.615L68.532,41.688A1.615,1.615 0,0 1,66.917 43.303L41.083,43.303A1.615,1.615 0,0 1,39.468 41.688L39.468,33.615A1.615,1.615 0,0 1,41.083 32z"
-            android:strokeWidth="1"
             android:fillColor="#FFFFFF"
-            android:fillType="nonZero"
-            android:strokeColor="#00000000"/>
+            android:pathData="M8,20h6v64h-6z"/>
+
+        <!-- Right vertical bar -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M58,20h6v64h-6z"/>
+
+        <!-- Left arc -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M36,112C20.56,112 8,99.44 8,84h6c0,12.13 9.87,22 22,22V112z"/>
+
+        <!-- Right arc -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M36,112v-6c12.13,0 22,-9.87 22,-22h6C64,99.44 51.44,112 36,112z"/>
+
+        <!-- Center vertical bar -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M33,20h6v89h-6z"/>
+
+        <!-- Lower crossbar -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M11,78h50v6h-50z"/>
+
+        <!-- Upper crossbar -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M11,50h50v6h-50z"/>
+
+        <!-- Top cap -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M72,24c0,2.2 -1.8,4 -4,4H4c-2.2,0 -4,-1.8 -4,-4V4c0,-2.2 1.8,-4 4,-4h64c2.2,0 4,1.8 4,4V24z"/>
 
     </group>
 </vector>
