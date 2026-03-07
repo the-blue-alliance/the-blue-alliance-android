@@ -12,6 +12,8 @@ import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.tracking.MatchTrackingManager
+import com.thebluealliance.android.tracking.TrackingResult
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -41,9 +43,10 @@ class TeamDetailViewModel @AssistedInject constructor(
     private val authRepository: AuthRepository,
     private val tbaApi: TbaApi,
     private val shortcutManager: TBAShortcutManager,
+    private val matchTrackingManager: MatchTrackingManager,
 ) : ViewModel() {
 
-    private val teamKey: String = navKey.teamKey.let { key ->
+    val teamKey: String = navKey.teamKey.let { key ->
         // Deep links from thebluealliance.com use /team/177 (number only),
         // but the API/DB key format is "frc177".
         if (key.all { it.isDigit() }) "frc$key" else key
@@ -165,6 +168,22 @@ class TeamDetailViewModel @AssistedInject constructor(
     }
 
     fun isSignedIn(): Boolean = authRepository.isSignedIn()
+
+    fun startTracking() {
+        viewModelScope.launch {
+            when (val result = matchTrackingManager.startTracking(teamKey)) {
+                is TrackingResult.Started -> { /* notification handles the UI */ }
+                is TrackingResult.NotCompeting ->
+                    _userMessage.emit("Team ${result.teamNumber} isn't competing right now")
+                is TrackingResult.Error ->
+                    _userMessage.emit("Couldn't start tracking: ${result.message}")
+            }
+        }
+    }
+
+    fun stopTracking() {
+        matchTrackingManager.stopTracking()
+    }
 
     fun refreshAll() {
         viewModelScope.launch {

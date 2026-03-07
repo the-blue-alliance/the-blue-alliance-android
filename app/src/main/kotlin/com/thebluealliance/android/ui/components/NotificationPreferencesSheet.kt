@@ -8,6 +8,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,6 +30,10 @@ fun NotificationPreferencesSheet(
     currentNotifications: List<String>,
     onSave: (favorite: Boolean, notifications: List<String>) -> Unit,
     onDismiss: () -> Unit,
+    teamKey: String? = null,
+    trackedTeamKey: String? = null,
+    onStartTracking: (() -> Unit)? = null,
+    onStopTracking: (() -> Unit)? = null,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val availableTypes = NotificationType.forModelType(modelType)
@@ -43,7 +48,7 @@ fun NotificationPreferencesSheet(
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
             Text(
-                text = "Notifications for $displayName",
+                text = displayName,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(bottom = 16.dp),
             )
@@ -66,11 +71,53 @@ fun NotificationPreferencesSheet(
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
-                text = "Notification types",
+                text = "Notifications",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(bottom = 8.dp),
             )
+
+            if (onStartTracking != null) {
+                val isTrackingThisTeam = trackedTeamKey != null && trackedTeamKey == teamKey
+                val isTrackingOther = trackedTeamKey != null && trackedTeamKey != teamKey
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Live updates",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        if (isTrackingOther) {
+                            val trackedNumber = trackedTeamKey.removePrefix("frc")
+                            Text(
+                                text = "Currently tracking Team $trackedNumber",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+
+                    when {
+                        isTrackingThisTeam -> {
+                            OutlinedButton(onClick = { onStopTracking?.invoke() }) {
+                                Text("Stop")
+                            }
+                        }
+                        isTrackingOther -> {
+                            OutlinedButton(onClick = onStartTracking) {
+                                Text("Switch")
+                            }
+                        }
+                        else -> {
+                            OutlinedButton(onClick = onStartTracking) {
+                                Text("Track")
+                            }
+                        }
+                    }
+                }
+            }
 
             availableTypes.forEach { type ->
                 Row(

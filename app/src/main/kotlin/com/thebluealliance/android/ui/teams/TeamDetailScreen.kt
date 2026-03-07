@@ -74,6 +74,7 @@ import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
+import com.thebluealliance.android.tracking.MatchTrackingService
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
@@ -105,8 +106,10 @@ fun TeamDetailScreen(
     val pagerState = rememberPagerState(pageCount = { TABS.size })
     val coroutineScope = rememberCoroutineScope()
 
+    val currentTrackedTeamKey by MatchTrackingService.activeTeamKey.collectAsStateWithLifecycle()
     var showSignInDialog by remember { mutableStateOf(false) }
     var showNotificationSheet by remember { mutableStateOf(false) }
+    var showSwitchDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.showSignInPrompt.collect { showSignInDialog = true }
@@ -146,6 +149,39 @@ fun TeamDetailScreen(
                 showNotificationSheet = false
             },
             onDismiss = { showNotificationSheet = false },
+            teamKey = viewModel.teamKey,
+            trackedTeamKey = currentTrackedTeamKey,
+            onStartTracking = {
+                if (currentTrackedTeamKey != null && currentTrackedTeamKey != viewModel.teamKey) {
+                    showNotificationSheet = false
+                    showSwitchDialog = true
+                } else {
+                    viewModel.startTracking()
+                    showNotificationSheet = false
+                }
+            },
+            onStopTracking = {
+                viewModel.stopTracking()
+                showNotificationSheet = false
+            },
+        )
+    }
+
+    if (showSwitchDialog) {
+        val teamNumber = uiState.team?.number?.toString() ?: viewModel.navKey.teamKey
+        AlertDialog(
+            onDismissRequest = { showSwitchDialog = false },
+            title = { Text("Switch tracking?") },
+            text = { Text("Switch tracking to Team $teamNumber?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showSwitchDialog = false
+                    viewModel.startTracking()
+                }) { Text("Switch") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showSwitchDialog = false }) { Text("Cancel") }
+            },
         )
     }
 
@@ -465,4 +501,3 @@ private fun EventsTab(
 
 private val FrcBlue = Color(0xFF0066B3)
 private val FrcRed = Color(0xFFED1C24)
-

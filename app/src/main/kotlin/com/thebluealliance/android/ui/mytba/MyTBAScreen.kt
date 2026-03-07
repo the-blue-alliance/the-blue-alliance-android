@@ -37,6 +37,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
@@ -88,6 +90,15 @@ fun MyTBAScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val trackingMessage by viewModel.trackingMessage.collectAsStateWithLifecycle()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(trackingMessage) {
+        trackingMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearTrackingMessage()
+        }
+    }
 
     val pagerState = rememberPagerState(pageCount = { TABS.size })
     val coroutineScope = rememberCoroutineScope()
@@ -124,6 +135,7 @@ fun MyTBAScreen(
 
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TBATopAppBar(
                 title = { Text("myTBA") },
@@ -268,6 +280,9 @@ fun MyTBAScreen(
                             listState = favoritesListState,
                             canPinShortcuts = uiState.canPinShortcuts,
                             onAddShortcut = viewModel::requestPinShortcut,
+                            trackedTeamKey = uiState.trackedTeamKey,
+                            onStartTracking = viewModel::startTracking,
+                            onStopTracking = viewModel::stopTracking,
                         )
 
                         1 -> NotificationsTab(
@@ -317,6 +332,9 @@ private fun FavoritesTab(
     listState: LazyListState,
     canPinShortcuts: Boolean,
     onAddShortcut: (Favorite) -> Unit,
+    trackedTeamKey: String?,
+    onStartTracking: (String) -> Unit,
+    onStopTracking: () -> Unit,
 ) {
     if (favorites.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -326,6 +344,8 @@ private fun FavoritesTab(
     }
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         items(favorites, key = { "${it.modelType}_${it.modelKey}" }) { favorite ->
+            val isTeam = favorite.modelType == ModelType.TEAM
+            val isTracked = isTeam && favorite.modelKey == trackedTeamKey
             FavoriteItem(
                 favorite = favorite,
                 onClick = {
@@ -334,8 +354,13 @@ private fun FavoritesTab(
                         ModelType.EVENT -> onNavigateToEvent(favorite.modelKey)
                     }
                 },
-                showMenu = canPinShortcuts,
+                showMenu = canPinShortcuts || isTeam,
+                canPinShortcuts = canPinShortcuts,
                 onAddShortcut = { onAddShortcut(favorite) },
+                isTeam = isTeam,
+                isTracked = isTracked,
+                onStartTracking = { onStartTracking(favorite.modelKey) },
+                onStopTracking = onStopTracking,
             )
         }
     }
@@ -346,7 +371,12 @@ private fun FavoriteItem(
     favorite: Favorite,
     onClick: () -> Unit,
     showMenu: Boolean,
+    canPinShortcuts: Boolean,
     onAddShortcut: () -> Unit,
+    isTeam: Boolean,
+    isTracked: Boolean,
+    onStartTracking: () -> Unit,
+    onStopTracking: () -> Unit,
 ) {
     val typeLabel = when (favorite.modelType) {
         ModelType.EVENT -> "Event"
@@ -394,19 +424,40 @@ private fun FavoriteItem(
                     expanded = menuExpanded,
                     onDismissRequest = { menuExpanded = false },
                 ) {
-                    DropdownMenuItem(
-                        text = { Text("Add shortcut to home screen") },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_add_to_home_screen),
-                                contentDescription = null,
+                    if (isTeam) {
+                        if (isTracked) {
+                            DropdownMenuItem(
+                                text = { Text("Stop tracking") },
+                                onClick = {
+                                    menuExpanded = false
+                                    onStopTracking()
+                                },
                             )
-                        },
-                        onClick = {
-                            menuExpanded = false
-                            onAddShortcut()
-                        },
-                    )
+                        } else {
+                            DropdownMenuItem(
+                                text = { Text("Track team") },
+                                onClick = {
+                                    menuExpanded = false
+                                    onStartTracking()
+                                },
+                            )
+                        }
+                    }
+                    if (canPinShortcuts) {
+                        DropdownMenuItem(
+                            text = { Text("Add shortcut to home screen") },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_add_to_home_screen),
+                                    contentDescription = null,
+                                )
+                            },
+                            onClick = {
+                                menuExpanded = false
+                                onAddShortcut()
+                            },
+                        )
+                    }
                 }
             }
         }

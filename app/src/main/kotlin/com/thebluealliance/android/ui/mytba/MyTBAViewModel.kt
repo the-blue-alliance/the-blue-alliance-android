@@ -7,6 +7,9 @@ import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
+import com.thebluealliance.android.tracking.MatchTrackingManager
+import com.thebluealliance.android.tracking.MatchTrackingService
+import com.thebluealliance.android.tracking.TrackingResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,16 +29,21 @@ class MyTBAViewModel @Inject constructor(
     private val myTBARepository: MyTBARepository,
     private val deviceRegistrationManager: DeviceRegistrationManager,
     private val shortcutManager: TBAShortcutManager,
+    private val matchTrackingManager: MatchTrackingManager,
 ) : ViewModel() {
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
+    private val _trackingMessage = MutableStateFlow<String?>(null)
+    val trackingMessage: StateFlow<String?> = _trackingMessage.asStateFlow()
+
     val uiState: StateFlow<MyTBAUiState> = combine(
         authRepository.currentUser,
         myTBARepository.observeFavorites(),
         myTBARepository.observeSubscriptions(),
-    ) { user, favorites, subscriptions ->
+        MatchTrackingService.activeTeamKey,
+    ) { user, favorites, subscriptions, trackedTeamKey ->
         MyTBAUiState(
             isSignedIn = user != null,
             userName = user?.displayName,
@@ -44,6 +52,7 @@ class MyTBAViewModel @Inject constructor(
             favorites = favorites,
             subscriptions = subscriptions,
             canPinShortcuts = shortcutManager.canPinShortcuts(),
+            trackedTeamKey = trackedTeamKey,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MyTBAUiState())
 
@@ -60,6 +69,26 @@ class MyTBAViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    fun startTracking(teamKey: String) {
+        viewModelScope.launch {
+            when (val result = matchTrackingManager.startTracking(teamKey)) {
+                is TrackingResult.Started -> { /* service updates activeTeamKey flow */ }
+                is TrackingResult.NotCompeting ->
+                    _trackingMessage.value = "Team ${result.teamNumber} isn't competing right now"
+                is TrackingResult.Error ->
+                    _trackingMessage.value = "Couldn't start tracking: ${result.message}"
+            }
+        }
+    }
+
+    fun stopTracking() {
+        matchTrackingManager.stopTracking()
+    }
+
+    fun clearTrackingMessage() {
+        _trackingMessage.value = null
     }
 
     fun requestPinShortcut(favorite: Favorite) {

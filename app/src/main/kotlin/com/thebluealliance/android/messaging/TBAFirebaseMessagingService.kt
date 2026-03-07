@@ -4,8 +4,10 @@ import android.app.NotificationManager
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.domain.model.NotificationType
+import com.thebluealliance.android.tracking.MatchTrackingService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +21,7 @@ class TBAFirebaseMessagingService : FirebaseMessagingService() {
     @Inject lateinit var deviceRegistrationManager: DeviceRegistrationManager
     @Inject lateinit var notificationBuilder: NotificationBuilder
     @Inject lateinit var myTBARepository: MyTBARepository
+    @Inject lateinit var matchRepository: MatchRepository
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -48,6 +51,17 @@ class TBAFirebaseMessagingService : FirebaseMessagingService() {
                 return
             }
             else -> {}
+        }
+
+        // If we're tracking a team at an event and this is a match score update for that event,
+        // refresh the match data so the tracker notification updates.
+        val eventKey = message.data["event_key"]
+        if (type == NotificationType.MATCH_SCORE && eventKey != null &&
+            MatchTrackingService.isTracking && MatchTrackingService.activeEventKey == eventKey
+        ) {
+            scope.launch {
+                matchRepository.refreshEventMatches(eventKey)
+            }
         }
 
         // Build and show display notification
