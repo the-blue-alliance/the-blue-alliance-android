@@ -44,7 +44,7 @@ private fun eventSectionKey(event: Event, preseasonOver: Boolean): SectionKey {
 }
 
 private val eventComparator: Comparator<Event> =
-    compareBy<Event> { it.name }
+    compareBy({ it.startDate }, { it.district }, { it.name })
 
 fun buildEventSections(
     events: List<Event>,
