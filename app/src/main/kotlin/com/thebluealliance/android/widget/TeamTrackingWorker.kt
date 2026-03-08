@@ -11,6 +11,8 @@ import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -45,18 +47,32 @@ class TeamTrackingWorker @AssistedInject constructor(
     companion object {
         private const val TAG = "TeamTrackingWorker"
         private const val WORK_NAME = "team_tracking_widget_refresh"
+        private const val FAST_WORK_NAME = "team_tracking_widget_fast_refresh"
 
         fun cancelPeriodicRefresh(context: Context) {
-            WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
+            val wm = WorkManager.getInstance(context)
+            wm.cancelUniqueWork(WORK_NAME)
+            wm.cancelUniqueWork(FAST_WORK_NAME)
         }
 
         fun enqueuePeriodicRefresh(context: Context) {
             val request = PeriodicWorkRequestBuilder<TeamTrackingWorker>(
-                15, TimeUnit.MINUTES,
+                6, TimeUnit.HOURS,
             ).build()
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                 WORK_NAME,
                 ExistingPeriodicWorkPolicy.KEEP,
+                request,
+            )
+        }
+
+        private fun enqueueFastRefresh(context: Context) {
+            val request = OneTimeWorkRequestBuilder<TeamTrackingWorker>()
+                .setInitialDelay(15, TimeUnit.MINUTES)
+                .build()
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                FAST_WORK_NAME,
+                ExistingWorkPolicy.REPLACE,
                 request,
             )
         }
@@ -69,6 +85,7 @@ class TeamTrackingWorker @AssistedInject constructor(
         return try {
             val manager = GlanceAppWidgetManager(applicationContext)
             val glanceIds = manager.getGlanceIds(TeamTrackingWidget::class.java)
+            var anyActiveEvent = false
 
             for (glanceId in glanceIds) {
                 try {
@@ -76,10 +93,17 @@ class TeamTrackingWorker @AssistedInject constructor(
                     val teamKey = state[TeamTrackingWidgetKeys.TEAM_KEY] ?: continue
                     val teamNumber = teamKey.removePrefix("frc")
 
-                    updateWidgetForTeam(teamKey, teamNumber, glanceId)
+                    val hasActiveEvent = updateWidgetForTeam(teamKey, teamNumber, glanceId)
+                    if (hasActiveEvent) anyActiveEvent = true
                 } catch (e: Exception) {
                     Log.e(TAG, "Failed to update widget $glanceId", e)
                 }
+            }
+
+            // When any widget has an active event, schedule a fast follow-up refresh.
+            // Otherwise the 6-hour periodic baseline is sufficient.
+            if (anyActiveEvent) {
+                enqueueFastRefresh(applicationContext)
             }
 
             Result.success()
@@ -89,11 +113,12 @@ class TeamTrackingWorker @AssistedInject constructor(
         }
     }
 
+    /** Returns true if the widget has an active event (needs fast refresh). */
     private suspend fun updateWidgetForTeam(
         teamKey: String,
         teamNumber: String,
         glanceId: androidx.glance.GlanceId,
-    ) {
+    ): Boolean {
         // Fetch team info and avatar
         val year = LocalDate.now().year
         try { teamRepository.refreshTeam(teamKey) } catch (e: Exception) { Log.w(TAG, "Failed to refresh team $teamKey", e) }
@@ -147,7 +172,7 @@ class TeamTrackingWorker @AssistedInject constructor(
             }
             TeamTrackingWidget().update(applicationContext, glanceId)
             Log.d(TAG, "Widget updated for $teamKey — no current event")
-            return
+            return false
         }
 
         val eventKey = currentEvent.key
@@ -220,6 +245,7 @@ class TeamTrackingWorker @AssistedInject constructor(
         }
         TeamTrackingWidget().update(applicationContext, glanceId)
         Log.d(TAG, "Widget updated for $teamKey at $eventKey")
+        return true
     }
 
     /**
