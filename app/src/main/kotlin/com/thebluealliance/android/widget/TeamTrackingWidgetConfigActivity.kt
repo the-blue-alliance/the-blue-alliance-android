@@ -27,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextField
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,7 +40,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.state.getAppWidgetState
 import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.thebluealliance.android.ui.theme.TBATheme
@@ -117,6 +120,23 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 var teamNumber by remember { mutableStateOf("") }
+
+                                LaunchedEffect(Unit) {
+                                    try {
+                                        val manager = GlanceAppWidgetManager(this@TeamTrackingWidgetConfigActivity)
+                                        val glanceId = manager.getGlanceIdBy(appWidgetId)
+                                        val state = getAppWidgetState(
+                                            this@TeamTrackingWidgetConfigActivity,
+                                            PreferencesGlanceStateDefinition,
+                                            glanceId,
+                                        )
+                                        state[TeamTrackingWidgetKeys.TEAM_NUMBER]?.let {
+                                            teamNumber = it
+                                        }
+                                    } catch (_: Exception) {
+                                        // New widget — no existing state
+                                    }
+                                }
 
                                 TextField(
                                     value = teamNumber,

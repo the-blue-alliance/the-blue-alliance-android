@@ -33,16 +33,13 @@ object TeamTrackingWidgetKeys {
     // Upcoming events (when no current event) — tab-separated rows: "name\tcity\tdate"
     val UPCOMING_EVENTS = stringPreferencesKey("upcoming_events")
 
-    private val LAST_MATCH_KEYS = listOf(
+    val ALL_LAST_MATCH_KEYS = listOf(
         LAST_MATCH_LABEL, LAST_MATCH_RED_TEAMS, LAST_MATCH_BLUE_TEAMS,
         LAST_MATCH_RED_SCORE, LAST_MATCH_BLUE_SCORE, LAST_MATCH_WINNING_ALLIANCE,
         LAST_MATCH_RED_RP, LAST_MATCH_BLUE_RP,
     )
-    private val NEXT_MATCH_KEYS = listOf(
+    val ALL_NEXT_MATCH_KEYS = listOf(
         NEXT_MATCH_LABEL, NEXT_MATCH_RED_TEAMS, NEXT_MATCH_BLUE_TEAMS,
         NEXT_MATCH_TIME, NEXT_MATCH_TIME_IS_ESTIMATE,
     )
-
-    fun allLastMatchKeys() = LAST_MATCH_KEYS
-    fun allNextMatchKeys() = NEXT_MATCH_KEYS
 }

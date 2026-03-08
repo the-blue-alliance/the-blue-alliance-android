@@ -142,8 +142,8 @@ class TeamTrackingWorker @AssistedInject constructor(
                 } else {
                     prefs.remove(TeamTrackingWidgetKeys.UPCOMING_EVENTS)
                 }
-                TeamTrackingWidgetKeys.allLastMatchKeys().forEach { prefs.remove(it) }
-                TeamTrackingWidgetKeys.allNextMatchKeys().forEach { prefs.remove(it) }
+                TeamTrackingWidgetKeys.ALL_LAST_MATCH_KEYS.forEach { prefs.remove(it) }
+                TeamTrackingWidgetKeys.ALL_NEXT_MATCH_KEYS.forEach { prefs.remove(it) }
             }
             TeamTrackingWidget().update(applicationContext, glanceId)
             Log.d(TAG, "Widget updated for $teamKey — no current event")
@@ -205,7 +205,7 @@ class TeamTrackingWorker @AssistedInject constructor(
                     prefs.remove(TeamTrackingWidgetKeys.LAST_MATCH_BLUE_RP)
                 }
             } else {
-                TeamTrackingWidgetKeys.allLastMatchKeys().forEach { prefs.remove(it) }
+                TeamTrackingWidgetKeys.ALL_LAST_MATCH_KEYS.forEach { prefs.remove(it) }
             }
 
             if (nextMatch != null) {
@@ -215,7 +215,7 @@ class TeamTrackingWorker @AssistedInject constructor(
                 prefs[TeamTrackingWidgetKeys.NEXT_MATCH_TIME] = formatMatchTime(nextMatch)
                 prefs[TeamTrackingWidgetKeys.NEXT_MATCH_TIME_IS_ESTIMATE] = isUsingPredictedTime(nextMatch).toString()
             } else {
-                TeamTrackingWidgetKeys.allNextMatchKeys().forEach { prefs.remove(it) }
+                TeamTrackingWidgetKeys.ALL_NEXT_MATCH_KEYS.forEach { prefs.remove(it) }
             }
         }
         TeamTrackingWidget().update(applicationContext, glanceId)
