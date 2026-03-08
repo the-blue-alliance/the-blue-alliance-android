@@ -1,6 +1,10 @@
 package com.thebluealliance.android.ui.events.detail.tabs
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,9 +21,11 @@ import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EventAlliancesTab(
     alliances: List<Alliance>?,
+    onTeamClick: (teamKey: String) -> Unit = {},
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     if (alliances == null) {
@@ -50,11 +56,19 @@ fun EventAlliancesTab(
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                 )
-                Text(
-                    text = alliance.picks.joinToString(", ") { it.removePrefix("frc") },
-                    style = MaterialTheme.typography.bodyMedium,
+                FlowRow(
                     modifier = Modifier.padding(top = 2.dp),
-                )
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    alliance.picks.forEachIndexed { index, teamKey ->
+                        Text(
+                            text = teamKey.removePrefix("frc") + if (index < alliance.picks.lastIndex) "," else "",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.clickable { onTeamClick(teamKey) },
+                        )
+                    }
+                }
             }
         }
     }
