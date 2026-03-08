@@ -5,13 +5,18 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-data class EventSection(val label: String, val events: List<Event>)
+data class EventSubSection(val label: String, val events: List<Event>)
+
+data class EventSection(val label: String, val subSections: List<EventSubSection>) {
+    val events: List<Event> get() = subSections.flatMap { it.events }
+}
 
 sealed interface EventsUiState {
     data object Loading : EventsUiState
     data class Success(
         val sections: List<EventSection>,
         val favoriteEventKeys: Set<String> = emptySet(),
+        val districtNames: Map<String, String> = emptyMap(),
     ) : EventsUiState
     data class Error(val message: String) : EventsUiState
 }
@@ -39,11 +44,13 @@ private fun eventSectionKey(event: Event, preseasonOver: Boolean): SectionKey {
 }
 
 private val eventComparator: Comparator<Event> =
-    compareBy<Event> { it.startDate ?: "" }
-        .thenBy { it.district ?: "" }
-        .thenBy { it.name }
+    compareBy<Event> { it.name }
 
-fun buildEventSections(events: List<Event>, today: LocalDate = LocalDate.now()): List<EventSection> {
+fun buildEventSections(
+    events: List<Event>,
+    today: LocalDate = LocalDate.now(),
+    districtNames: Map<String, String> = emptyMap(),
+): List<EventSection> {
     val lastPreseasonEnd = events
         .filter { it.type == 100 }
         .mapNotNull { it.endDate?.let { d -> runCatching { LocalDate.parse(d) }.getOrNull() } }
@@ -55,11 +62,46 @@ fun buildEventSections(events: List<Event>, today: LocalDate = LocalDate.now()):
         .entries
         .sortedBy { it.key.sortOrder }
         .map { (key, sectionEvents) ->
-            EventSection(key.label, sectionEvents.sortedWith(eventComparator))
+            val sortedEvents = sectionEvents.sortedWith(eventComparator)
+            val subSections = buildSubSections(sortedEvents, districtNames)
+            EventSection(key.label, subSections)
         }
 }
 
-data class ThisWeekResult(val label: String, val events: List<Event>)
+private fun buildSubSections(
+    events: List<Event>,
+    districtNames: Map<String, String>,
+): List<EventSubSection> = buildList {
+    val regionals = events.filter { it.district == null }
+    if (regionals.isNotEmpty()) {
+        add(EventSubSection("Regional Events", regionals))
+    }
+
+    val districts = events.filter { it.district != null }
+    if (districts.isNotEmpty()) {
+        districts.groupBy { it.district!! }
+            .map { (districtKey, districtEvents) ->
+                val abbrev = districtKey.replace(Regex("^\\d{4}"), "").lowercase()
+                val name = districtNames[districtKey.lowercase()] ?: districtNames[abbrev]
+
+                var label = name ?: abbrev.uppercase()
+                if (label.isBlank()) label = districtKey
+
+                // Append "District" if we're falling back to a code/abbreviation
+                if (name == null && !label.contains("District", ignoreCase = true)) {
+                    label = "$label District"
+                }
+
+                EventSubSection(label, districtEvents)
+            }
+            .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.label })
+            .let { addAll(it) }
+    }
+}
+
+data class ThisWeekResult(val label: String, val subSections: List<EventSubSection>) {
+    val events: List<Event> get() = subSections.flatMap { it.events }
+}
 
 /**
  * Computes "This Week" events using a hybrid approach:
@@ -72,13 +114,14 @@ fun computeThisWeekEvents(
     allEvents: List<Event>,
     today: LocalDate,
     selectedYear: Int,
+    districtNames: Map<String, String> = emptyMap(),
 ): ThisWeekResult? {
     if (selectedYear != today.year) return null
 
     val currentWeek = findCurrentCompetitionWeek(allEvents, today)
 
     val label: String
-    val events: List<Event>
+    val rawEvents: List<Event>
 
     if (currentWeek != null) {
         val weekEvents = allEvents.filter { it.week == currentWeek }
@@ -96,23 +139,28 @@ fun computeThisWeekEvents(
             emptyList()
         }
 
-        events = (weekEvents + championshipEvents).distinctBy { it.key }
+        rawEvents = (weekEvents + championshipEvents).distinctBy { it.key }
         label = "Upcoming This Week \u2014 Week ${currentWeek + 1}"
     } else {
         // Offseason fallback: calendar week overlap (Monday-Sunday)
         val monday = today.with(DayOfWeek.MONDAY)
         val sunday = monday.plusDays(6)
-        events = allEvents.filter { datesOverlap(it, monday, sunday) }
+        rawEvents = allEvents.filter { datesOverlap(it, monday, sunday) }
         label = "Upcoming This Week"
     }
 
     // Remove events that have already ended
-    val activeEvents = events.filter { event ->
+    val activeEvents = rawEvents.filter { event ->
         val end = parseDate(event.endDate)
         end == null || !end.isBefore(today)
     }
 
-    return if (activeEvents.isEmpty()) null else ThisWeekResult(label, activeEvents)
+    if (activeEvents.isEmpty()) return null
+
+    val sortedActiveEvents = activeEvents.sortedWith(eventComparator)
+    val subSections = buildSubSections(sortedActiveEvents, districtNames)
+
+    return ThisWeekResult(label, subSections)
 }
 
 internal fun findCurrentCompetitionWeek(allEvents: List<Event>, today: LocalDate): Int? {

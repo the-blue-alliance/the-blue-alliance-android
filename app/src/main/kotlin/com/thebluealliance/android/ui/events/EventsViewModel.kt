@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.AuthRepository
+import com.thebluealliance.android.data.repository.DistrictRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.domain.model.ModelType
-import com.thebluealliance.android.domain.model.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,8 +17,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -26,6 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EventsViewModel @Inject constructor(
     private val eventRepository: EventRepository,
+    private val districtRepository: DistrictRepository,
     private val tbaApi: TbaApi,
     private val myTBARepository: MyTBARepository,
     private val authRepository: AuthRepository,
@@ -47,18 +46,25 @@ class EventsViewModel @Inject constructor(
             _hasLoaded.value = false
             combine(
                 eventRepository.observeEventsForYear(year),
+                districtRepository.observeDistrictsForYear(year),
                 _hasLoaded,
                 myTBARepository.observeFavorites(),
-            ) { events, hasLoaded, favorites ->
+            ) { events, districts, hasLoaded, favorites ->
                 if (events.isEmpty() && !hasLoaded) {
                     EventsUiState.Loading
                 } else {
-                    val sections = buildEventSections(events)
+                    val districtNames = buildMap {
+                        districts.forEach {
+                            put(it.key.lowercase(), it.displayName)
+                            put(it.abbreviation.lowercase(), it.displayName)
+                        }
+                    }
+                    val sections = buildEventSections(events, districtNames = districtNames)
                     val favoriteEventKeys = favorites
                         .filter { it.modelType == ModelType.EVENT }
                         .map { it.modelKey }
                         .toSet()
-                    EventsUiState.Success(sections, favoriteEventKeys)
+                    EventsUiState.Success(sections, favoriteEventKeys, districtNames)
                 }
             }
         }
@@ -95,6 +101,15 @@ class EventsViewModel @Inject constructor(
     fun selectYear(year: Int) {
         _selectedYear.value = year
         refreshEvents()
+        refreshDistricts()
+    }
+
+    private fun refreshDistricts() {
+        viewModelScope.launch {
+            try {
+                districtRepository.refreshDistrictsForYear(_selectedYear.value)
+            } catch (_: Exception) {}
+        }
     }
 
     fun refreshEvents() {
@@ -102,6 +117,7 @@ class EventsViewModel @Inject constructor(
             _isRefreshing.value = true
             try {
                 eventRepository.refreshEventsForYear(_selectedYear.value)
+                districtRepository.refreshDistrictsForYear(_selectedYear.value)
             } catch (e: Exception) {
                 // Data will come from Room cache if available
             } finally {
