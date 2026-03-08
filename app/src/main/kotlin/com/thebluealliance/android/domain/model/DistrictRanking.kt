@@ -6,6 +6,13 @@ data class DistrictRanking(
     val rank: Int,
     val pointTotal: Double,
     val rookieBonus: Double,
+    val eventPoints: List<DistrictEventPoints> = emptyList(),
+)
+
+data class DistrictEventPoints(
+    val eventKey: String,
+    val total: Double,
+    val districtCmp: Boolean,
 )
 
 data class RegionalRanking(

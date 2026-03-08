@@ -274,6 +274,17 @@ fun DistrictRankingEntity.toDomain() = DistrictRanking(
     rank = rank,
     pointTotal = pointTotal,
     rookieBonus = rookieBonus,
+    eventPoints = try {
+        json.decodeFromString<List<DistrictEventPointsDto>>(eventPoints).map {
+            DistrictEventPoints(
+                eventKey = it.eventKey,
+                total = it.total,
+                districtCmp = it.districtCmp
+            )
+        }
+    } catch (_: Exception) {
+        emptyList()
+    }
 )
 
 // ── RegionalRanking ──

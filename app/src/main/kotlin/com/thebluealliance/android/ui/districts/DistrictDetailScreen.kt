@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -55,6 +56,7 @@ import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.events.EventSection
 import com.thebluealliance.android.ui.events.computeThisWeekEvents
+import com.thebluealliance.android.ui.theme.TBAIndigo400
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -276,6 +278,7 @@ private fun EventsTab(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun RankingsTab(
     rankings: List<DistrictRanking>?,
@@ -299,40 +302,116 @@ private fun RankingsTab(
         modifier = Modifier.fillMaxSize(),
         contentPadding = innerPadding,
     ) {
+        stickyHeader {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(TBAIndigo400)
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Rank",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(0.12f)
+                )
+                Text(
+                    text = "Team",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(0.15f)
+                )
+                Text(
+                    text = "Event\n1",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(0.15f)
+                )
+                Text(
+                    text = "Event\n2",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(0.15f)
+                )
+                Text(
+                    text = "Rookie\nBonus",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(0.18f)
+                )
+                Text(
+                    text = "Total\nPoints",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(0.25f)
+                )
+            }
+        }
+
         items(rankings, key = { "${it.districtKey}_${it.teamKey}" }) { ranking ->
+            val event1Points = ranking.eventPoints.filter { !it.districtCmp }.getOrNull(0)?.total?.toInt()?.toString() ?: "-"
+            val event2Points = ranking.eventPoints.filter { !it.districtCmp }.getOrNull(1)?.total?.toInt()?.toString() ?: "-"
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onNavigateToTeam(ranking.teamKey) }
-                    .padding(horizontal = 16.dp, vertical = 6.dp),
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = "#${ranking.rank}",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(0.15f),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(0.12f),
                 )
                 Text(
                     text = ranking.teamKey.removePrefix("frc"),
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.weight(0.35f),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(0.15f),
+                )
+                Text(
+                    text = event1Points,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(0.15f),
+                )
+                Text(
+                    text = event2Points,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(0.15f),
+                )
+                Text(
+                    text = if (ranking.rookieBonus > 0) "+${ranking.rookieBonus.toInt()}" else "-",
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(0.18f),
                 )
                 Text(
                     text = "${ranking.pointTotal.toInt()} pts",
                     style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.25f),
                 )
-                if (ranking.rookieBonus > 0) {
-                    Text(
-                        text = "+${ranking.rookieBonus.toInt()} rookie",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.weight(0.25f),
-                    )
-                }
             }
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp)
         }
     }
 }
-
