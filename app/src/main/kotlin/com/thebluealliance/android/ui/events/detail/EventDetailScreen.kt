@@ -88,6 +88,7 @@ fun EventDetailScreen(
     onNavigateToMatch: (String) -> Unit = {},
     onNavigateToMyTBA: () -> Unit = {},
     onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
+    onNavigateToDistrict: (districtKey: String) -> Unit = {},
     initialTab: Int = 0,
     viewModel: EventDetailViewModel,
 ) {
@@ -276,7 +277,9 @@ fun EventDetailScreen(
                 when (page) {
                     0 -> EventInfoTab(
                         event = uiState.event,
+                        districtDisplayName = uiState.districtDisplayName,
                         innerPadding = innerPadding,
+                        onNavigateToDistrict = onNavigateToDistrict,
                     )
                     1 -> EventTeamsTab(
                         teams = uiState.teams,

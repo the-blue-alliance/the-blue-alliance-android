@@ -25,4 +25,5 @@ data class EventDetailUiState(
     val oprs: EventOPRs? = null,
     val coprs: EventCOPRs? = null,
     val insights: EventInsights? = null,
+    val districtDisplayName: String? = null,
 )

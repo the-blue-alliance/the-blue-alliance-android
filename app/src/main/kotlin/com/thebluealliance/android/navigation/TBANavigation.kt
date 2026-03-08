@@ -215,6 +215,9 @@ fun TBANavigation(
                             onNavigateToTeamEvent = { teamKey, eventKey ->
                                 navigator.navigate(Screen.TeamEventDetail(teamKey, eventKey))
                             },
+                            onNavigateToDistrict = { districtKey ->
+                                navigator.navigate(Screen.DistrictDetail(districtKey))
+                            },
                             initialTab = eventDetail.initialTab,
                         )
                     }
