@@ -316,7 +316,7 @@ private fun RankingsTab(
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.12f)
+                    modifier = Modifier.weight(0.10f)
                 )
                 Text(
                     text = "Team",
@@ -343,12 +343,20 @@ private fun RankingsTab(
                     modifier = Modifier.weight(0.15f)
                 )
                 Text(
+                    text = "DCMP",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(0.15f)
+                )
+                Text(
                     text = "Rookie\nBonus",
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.18f)
+                    modifier = Modifier.weight(0.15f)
                 )
                 Text(
                     text = "Total\nPoints",
@@ -356,7 +364,7 @@ private fun RankingsTab(
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.25f)
+                    modifier = Modifier.weight(0.15f)
                 )
             }
         }
@@ -364,6 +372,7 @@ private fun RankingsTab(
         items(rankings, key = { "${it.districtKey}_${it.teamKey}" }) { ranking ->
             val event1Points = ranking.eventPoints.filter { !it.districtCmp }.getOrNull(0)?.total?.toInt()?.toString() ?: "-"
             val event2Points = ranking.eventPoints.filter { !it.districtCmp }.getOrNull(1)?.total?.toInt()?.toString() ?: "-"
+            val dcmpPoints = ranking.eventPoints.find { it.districtCmp }?.total?.toInt()?.toString() ?: "-"
 
             Row(
                 modifier = Modifier
@@ -377,7 +386,7 @@ private fun RankingsTab(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.12f),
+                    modifier = Modifier.weight(0.10f),
                 )
                 Text(
                     text = ranking.teamKey.removePrefix("frc"),
@@ -398,17 +407,23 @@ private fun RankingsTab(
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
+                    text = dcmpPoints,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(0.15f),
+                )
+                Text(
                     text = if (ranking.rookieBonus > 0) "+${ranking.rookieBonus.toInt()}" else "-",
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.18f),
+                    modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "${ranking.pointTotal.toInt()} pts",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.25f),
+                    modifier = Modifier.weight(0.15f),
                 )
             }
             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp)
