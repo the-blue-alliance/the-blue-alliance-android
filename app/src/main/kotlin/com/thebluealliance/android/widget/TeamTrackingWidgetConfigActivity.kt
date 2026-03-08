@@ -18,6 +18,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.ui.res.painterResource
+import com.thebluealliance.android.R
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -85,11 +87,17 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                     .padding(start = 16.dp, end = 4.dp, top = 4.dp, bottom = 4.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.tba_lamp),
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(20.dp),
+                                )
                                 Text(
                                     text = "Team Tracker",
                                     style = MaterialTheme.typography.titleMedium,
                                     color = Color.White,
-                                    modifier = Modifier.weight(1f),
+                                    modifier = Modifier.weight(1f).padding(start = 8.dp),
                                 )
                                 IconButton(
                                     onClick = { finish() },

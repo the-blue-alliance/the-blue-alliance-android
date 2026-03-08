@@ -69,7 +69,7 @@
             android:exported="true"
             android:excludeFromRecents="true"
             android:taskAffinity="com.thebluealliance.android.widget.config"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            android:theme="@style/Theme.TBA.Transparent">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
