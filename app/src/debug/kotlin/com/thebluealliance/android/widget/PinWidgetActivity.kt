@@ -49,6 +49,13 @@ class PinWidgetActivity : ComponentActivity() {
             return
         }
 
+        // Pass team number through extras so the config activity can auto-fill
+        val extras = if (teamNumber != null) {
+            Bundle().apply { putString(EXTRA_TEAM, teamNumber) }
+        } else {
+            null
+        }
+
         if (teamNumber != null) {
             // Create a callback PendingIntent so we get the appWidgetId after pinning
             val callbackIntent = Intent(ACTION_WIDGET_PINNED).setPackage(packageName)
@@ -57,9 +64,9 @@ class PinWidgetActivity : ComponentActivity() {
                 this, REQUEST_PIN, callbackIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
             )
-            awm.requestPinAppWidget(provider, null, callbackPending)
+            awm.requestPinAppWidget(provider, extras, callbackPending)
         } else {
-            awm.requestPinAppWidget(provider, null, null)
+            awm.requestPinAppWidget(provider, extras, null)
         }
 
         finish()

@@ -63,6 +63,13 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
             return
         }
 
+        // If a team number was provided (e.g. from PinWidgetActivity), auto-configure and skip UI
+        val prefilledTeam = intent?.extras?.getString("team")
+        if (prefilledTeam != null) {
+            confirmWidget(appWidgetId, prefilledTeam)
+            return
+        }
+
         setContent {
             TBATheme {
                 Dialog(onDismissRequest = { finish() }) {
