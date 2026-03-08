@@ -2,7 +2,7 @@
 #
 # Play Store Screenshot Playbook
 #
-# Captures 6 phone screenshots for the Google Play Store listing.
+# Captures 7 phone screenshots for the Google Play Store listing.
 # Uses the release build for authentic Play Store screenshots.
 #
 # Prerequisites:
@@ -26,6 +26,7 @@ set -euo pipefail
 
 EMU="$(dirname "$0")/emu"
 PKG="com.thebluealliance.androidclient"
+DEV_PKG="com.thebluealliance.androidclient.development"
 MAIN_ACTIVITY="com.thebluealliance.android.MainActivity"
 RAW_DIR="screenshots/play-store/phone"
 DEST_DIR="app/src/main/play/listings/en-US/graphics/phone-screenshots"
@@ -106,6 +107,30 @@ $EMU tap "New England"
 wait_for_ui
 $EMU screenshot "$RAW_DIR/06-district-detail.png"
 
+# 7. Home screen with Team Tracking widgets (604 at event, 254 upcoming)
+# This step uses the debug build for widget pin/remove automation.
+echo "==> Installing debug build for widget automation..."
+./gradlew :app:installDebug -q
+adb shell appwidget grantbind --package "$DEV_PKG" --user 0
+echo "==> Screenshot 7: Home screen widgets"
+# Clean up any existing TBA widgets
+adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.RemoveWidgetsActivity"
+wait_for_ui 1
+# Pin widget for team currently at event
+adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.PinWidgetActivity" --es team 604
+wait_for_ui 1
+$EMU tap "Add to home screen"
+wait_for_ui 5
+# Pin widget for team with upcoming events
+adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.PinWidgetActivity" --es team 254
+wait_for_ui 1
+$EMU tap "Add to home screen"
+wait_for_ui 5
+# Go to home screen and capture
+adb shell input keyevent KEYCODE_HOME
+wait_for_ui 1
+$EMU screenshot "$RAW_DIR/07-home-widgets.png"
+
 # Copy to Play Store listing directory
 echo "==> Copying to $DEST_DIR"
 cp "$RAW_DIR/01-events-list.png"        "$DEST_DIR/1-events-list.png"
@@ -114,6 +139,12 @@ cp "$RAW_DIR/03-match-detail.png"       "$DEST_DIR/3-match-detail.png"
 cp "$RAW_DIR/04-team-detail.png"        "$DEST_DIR/4-team-detail.png"
 cp "$RAW_DIR/05-notification-prefs.png" "$DEST_DIR/5-notification-prefs.png"
 cp "$RAW_DIR/06-district-detail.png"    "$DEST_DIR/6-district-detail.png"
+cp "$RAW_DIR/07-home-widgets.png"      "$DEST_DIR/7-home-widgets.png"
+
+# Clean up widgets from home screen
+echo "==> Cleaning up widgets..."
+adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.RemoveWidgetsActivity"
+wait_for_ui 1
 
 # Disable demo mode to restore normal status bar
 echo "==> Disabling demo mode..."
