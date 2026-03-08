@@ -348,20 +348,20 @@ private fun BreakdownRow(label: String, redValue: String, blueValue: String) {
     ) {
         Text(
             text = redValue,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.error,
             modifier = Modifier.weight(0.2f),
             textAlign = TextAlign.Center,
         )
         Text(
             text = label,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(0.6f),
             textAlign = TextAlign.Center,
         )
         Text(
             text = blueValue,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.weight(0.2f),
             textAlign = TextAlign.Center,
