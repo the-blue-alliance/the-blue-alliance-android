@@ -9,6 +9,7 @@
 #   - Android emulator running (1080x2400 device)
 #   - emu tool available at scripts/emu (included in repo)
 #   - Release build installed: ./gradlew :app:installRelease
+#   - A Google account signed in on the emulator (for Google Sign-In)
 #   - App has data loaded (events, teams, districts for current year)
 #   - Emulator DNS must work: if Private DNS is enabled, disable it with:
 #       adb shell settings put global private_dns_mode off
@@ -58,11 +59,45 @@ adb shell am broadcast -a com.android.systemui.demo -e command network -e wifi s
 adb shell am broadcast -a com.android.systemui.demo -e command network -e mobile show -e level 4
 adb shell am broadcast -a com.android.systemui.demo -e command notifications -e visible false
 
+# Grant notification permission upfront so the dialog doesn't interrupt sign-in.
+adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS 2>/dev/null || true
+
+echo "==> Signing in..."
+$EMU launch "$PKG/$MAIN_ACTIVITY"
+wait_for_ui 3
+$EMU tap "More"
+wait_for_ui 2
+$EMU tap "myTBA"
+wait_for_ui 2
+
+# If not signed in, tap "Sign in with Google" and complete the Credential Manager flow.
+if $EMU find "Sign in with Google" 2>/dev/null | grep -q "Sign in with Google"; then
+  $EMU tap "Sign in with Google"
+  wait_for_ui 3
+  # Google Credential Manager shows a bottom sheet — tap "Continue" to select the account.
+  $EMU tap "Continue"
+  wait_for_ui 5
+  echo "    Signed in successfully"
+else
+  echo "    Already signed in"
+fi
+
+# Favorite an event so the Events list shows a "Your Events" section.
+deeplink "/event/2025casf"
+wait_for_ui 3
+if $EMU find "Add to favorites" 2>/dev/null | grep -q "Add to favorites"; then
+  $EMU tap "Add to favorites"
+  wait_for_ui 1
+  echo "    Favorited 2025casf"
+else
+  echo "    2025casf already favorited"
+fi
+
 echo "==> Launching app..."
 $EMU launch "$PKG/$MAIN_ACTIVITY"
 wait_for_ui 5
 
-# 1. Events list (home screen)
+# 1. Events list (home screen, showing "Your Events" section)
 echo "==> Screenshot 1: Events list"
 $EMU screenshot "$RAW_DIR/01-events-list.png"
 wait_for_ui
