@@ -38,6 +38,11 @@ private fun eventSectionKey(event: Event, preseasonOver: Boolean): SectionKey {
     }
 }
 
+private val eventComparator: Comparator<Event> =
+    compareBy<Event> { it.startDate ?: "" }
+        .thenBy { it.district ?: "" }
+        .thenBy { it.name }
+
 fun buildEventSections(events: List<Event>, today: LocalDate = LocalDate.now()): List<EventSection> {
     val lastPreseasonEnd = events
         .filter { it.type == 100 }
@@ -49,7 +54,9 @@ fun buildEventSections(events: List<Event>, today: LocalDate = LocalDate.now()):
         .groupBy { eventSectionKey(it, preseasonOver) }
         .entries
         .sortedBy { it.key.sortOrder }
-        .map { (key, sectionEvents) -> EventSection(key.label, sectionEvents) }
+        .map { (key, sectionEvents) ->
+            EventSection(key.label, sectionEvents.sortedWith(eventComparator))
+        }
 }
 
 data class ThisWeekResult(val label: String, val events: List<Event>)

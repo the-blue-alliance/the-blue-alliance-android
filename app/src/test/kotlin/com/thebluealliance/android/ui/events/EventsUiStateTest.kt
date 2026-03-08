@@ -41,6 +41,23 @@ class EventsUiStateTest {
         playoffType = PlayoffType.BRACKET_8_TEAM,
     )
 
+    // --- buildEventSections: sort order within sections ---
+
+    @Test
+    fun `events within a section are sorted by start date then district then name`() {
+        val events = listOf(
+            makeEvent(key = "2026z", name = "Zebra Event", week = 0, startDate = "2026-03-04", endDate = "2026-03-07"),
+            makeEvent(key = "2026a", name = "Alpha Event", week = 0, startDate = "2026-03-06", endDate = "2026-03-08"),
+            makeEvent(key = "2026m", name = "Middle Event", week = 0, startDate = "2026-03-04", endDate = "2026-03-07"),
+        )
+
+        val sections = buildEventSections(events)
+        val week1 = sections.first { it.label == "Week 1" }
+
+        // Same start date → sorted by name (district is null for all)
+        assertEquals(listOf("Middle Event", "Zebra Event", "Alpha Event"), week1.events.map { it.name })
+    }
+
     // --- buildEventSections: preseason ordering ---
 
     @Test
