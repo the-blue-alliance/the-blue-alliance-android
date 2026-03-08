@@ -324,10 +324,20 @@ fun EventDetailScreen(
                         uiState.districtPoints,
                         uiState.event,
                         uiState.teams,
+                        onTeamClick = { teamKey ->
+                            val eventKey = uiState.event?.key
+                            if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
+                            else onNavigateToTeam(teamKey)
+                        },
                         innerPadding = innerPadding,
                     )
                     7 -> EventAwardsTab(
                         awards = uiState.awards,
+                        onTeamClick = { teamKey ->
+                            val eventKey = uiState.event?.key
+                            if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
+                            else onNavigateToTeam(teamKey)
+                        },
                         innerPadding = innerPadding,
                     )
                 }

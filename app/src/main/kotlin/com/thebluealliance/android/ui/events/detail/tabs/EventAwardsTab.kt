@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.events.detail.tabs
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import com.thebluealliance.android.ui.common.LoadingBox
 @Composable
 fun EventAwardsTab(
     awards: List<Award>?,
+    onTeamClick: (String) -> Unit = {},
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     if (awards == null) {
@@ -43,6 +45,10 @@ fun EventAwardsTab(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .then(
+                        if (award.teamKey.isNotEmpty()) Modifier.clickable { onTeamClick(award.teamKey) }
+                        else Modifier
+                    )
                     .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
                 Text(
