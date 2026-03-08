@@ -308,6 +308,10 @@ fun EventDetailScreen(
                     )
                     4 -> EventAlliancesTab(
                         alliances = uiState.alliances,
+                        onTeamClick = { teamKey ->
+                            val eventKey = uiState.event?.key
+                            if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
+                        },
                         innerPadding = innerPadding,
                     )
                     5 -> EventInsightsTab(
