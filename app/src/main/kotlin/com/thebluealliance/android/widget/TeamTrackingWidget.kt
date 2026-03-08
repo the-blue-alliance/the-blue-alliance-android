@@ -218,7 +218,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                     MatchSectionLabel("Upcoming events")
                     Spacer(modifier = GlanceModifier.height(2.dp))
                     upcomingEvents.split("\n").forEach { line ->
-                        val parts = line.split("|")
+                        val parts = line.split("\t")
                         if (parts.size >= 3) {
                             UpcomingEventRow(
                                 name = parts[0],

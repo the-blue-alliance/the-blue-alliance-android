@@ -2,6 +2,7 @@ package com.thebluealliance.android.widget
 
 import android.content.Context
 import android.util.Log
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.getAppWidgetState
@@ -93,15 +94,17 @@ class TeamTrackingWorker @AssistedInject constructor(
     ) {
         // Fetch team info and avatar
         val year = LocalDate.now().year
-        try { teamRepository.refreshTeam(teamKey) } catch (_: Exception) {}
-        try { teamRepository.refreshTeamMedia(teamKey, year) } catch (_: Exception) {}
+        try { teamRepository.refreshTeam(teamKey) } catch (e: Exception) { Log.w(TAG, "Failed to refresh team $teamKey", e) }
+        try { teamRepository.refreshTeamMedia(teamKey, year) } catch (e: Exception) { Log.w(TAG, "Failed to refresh team media $teamKey/$year", e) }
         val team = teamRepository.observeTeam(teamKey).firstOrNull()
         val teamNickname = team?.nickname ?: ""
         val avatar = teamRepository.observeTeamMedia(teamKey, year).firstOrNull()
             ?.firstOrNull { it.isAvatar }
+            ?: teamRepository.observeTeamMedia(teamKey, year - 1).firstOrNull()
+                ?.firstOrNull { it.isAvatar }
 
         // Find the team's current event
-        eventRepository.refreshTeamEvents(teamKey, year)
+        try { eventRepository.refreshTeamEvents(teamKey, year) } catch (e: Exception) { Log.w(TAG, "Failed to refresh team events $teamKey/$year", e) }
         val events = eventRepository.observeTeamEvents(teamKey, year).firstOrNull()
             ?: emptyList()
         val currentEvent = findCurrentEvent(events, teamKey)
@@ -123,23 +126,15 @@ class TeamTrackingWorker @AssistedInject constructor(
                 val date = event.startDate?.let {
                     LocalDate.parse(it).format(DateTimeFormatter.ofPattern("MMM d", Locale.US))
                 } ?: ""
-                "$name|$city|$date"
+                "$name\t$city\t$date"
             }
 
             updateAppWidgetState(applicationContext, glanceId) { prefs ->
-                prefs[TeamTrackingWidgetKeys.TEAM_NUMBER] = teamNumber
-                prefs[TeamTrackingWidgetKeys.TEAM_KEY] = teamKey
-                prefs[TeamTrackingWidgetKeys.TEAM_NICKNAME] = teamNickname
-                if (avatar?.base64Image != null) {
-                    prefs[TeamTrackingWidgetKeys.AVATAR_BASE64] = avatar.base64Image
-                } else {
-                    prefs.remove(TeamTrackingWidgetKeys.AVATAR_BASE64)
-                }
+                prefs.updateTeamInfo(teamNumber, teamKey, teamNickname, avatar, now)
                 prefs.remove(TeamTrackingWidgetKeys.EVENT_KEY)
                 prefs[TeamTrackingWidgetKeys.EVENT_NAME] = ""
                 prefs[TeamTrackingWidgetKeys.RECORD] = ""
                 prefs[TeamTrackingWidgetKeys.NEXT_ALLIANCE] = ""
-                prefs[TeamTrackingWidgetKeys.LAST_UPDATED] = now
                 if (upcomingEventsData.isNotEmpty()) {
                     prefs[TeamTrackingWidgetKeys.UPCOMING_EVENTS] = upcomingEventsData
                 } else {
@@ -180,14 +175,7 @@ class TeamTrackingWorker @AssistedInject constructor(
         val nextMatch = unplayedMatches.firstOrNull()
 
         updateAppWidgetState(applicationContext, glanceId) { prefs ->
-            prefs[TeamTrackingWidgetKeys.TEAM_NUMBER] = teamNumber
-            prefs[TeamTrackingWidgetKeys.TEAM_KEY] = teamKey
-            prefs[TeamTrackingWidgetKeys.TEAM_NICKNAME] = teamNickname
-            if (avatar?.base64Image != null) {
-                prefs[TeamTrackingWidgetKeys.AVATAR_BASE64] = avatar.base64Image
-            } else {
-                prefs.remove(TeamTrackingWidgetKeys.AVATAR_BASE64)
-            }
+            prefs.updateTeamInfo(teamNumber, teamKey, teamNickname, avatar, now)
             prefs[TeamTrackingWidgetKeys.EVENT_KEY] = eventKey
             prefs[TeamTrackingWidgetKeys.EVENT_NAME] = eventName
             prefs[TeamTrackingWidgetKeys.RECORD] = record
@@ -198,7 +186,6 @@ class TeamTrackingWorker @AssistedInject constructor(
             }
             prefs[TeamTrackingWidgetKeys.NEXT_ALLIANCE] = nextAlliance
             prefs.remove(TeamTrackingWidgetKeys.UPCOMING_EVENTS)
-            prefs[TeamTrackingWidgetKeys.LAST_UPDATED] = now
 
             if (lastMatch != null) {
                 prefs[TeamTrackingWidgetKeys.LAST_MATCH_LABEL] = lastMatch.getShortLabel(playoffType)
@@ -224,7 +211,7 @@ class TeamTrackingWorker @AssistedInject constructor(
                 prefs[TeamTrackingWidgetKeys.NEXT_MATCH_RED_TEAMS] = nextMatch.redTeamKeys.joinToString(",") { it.removePrefix("frc") }
                 prefs[TeamTrackingWidgetKeys.NEXT_MATCH_BLUE_TEAMS] = nextMatch.blueTeamKeys.joinToString(",") { it.removePrefix("frc") }
                 prefs[TeamTrackingWidgetKeys.NEXT_MATCH_TIME] = formatMatchTime(nextMatch)
-                prefs[TeamTrackingWidgetKeys.NEXT_MATCH_TIME_IS_ESTIMATE] = isTimeEstimate(nextMatch).toString()
+                prefs[TeamTrackingWidgetKeys.NEXT_MATCH_TIME_IS_ESTIMATE] = isUsingPredictedTime(nextMatch).toString()
             } else {
                 TeamTrackingWidgetKeys.allNextMatchKeys().forEach { prefs.remove(it) }
             }
@@ -262,8 +249,8 @@ class TeamTrackingWorker @AssistedInject constructor(
                 }
                 if (hasUnplayed) return event
             }
-            // All events fully played — return the last one (likely Einstein/finals)
-            return currentEvents.last()
+            // All events fully played — prefer championship finals (type 4) over division (type 3)
+            return currentEvents.sortedByDescending { it.type ?: 0 }.first()
         }
         if (currentEvents.isNotEmpty()) return currentEvents.first()
 
@@ -276,6 +263,24 @@ class TeamTrackingWorker @AssistedInject constructor(
 
         // Don't return upcoming events as "current" — they'll show in the upcoming events section
         return null
+    }
+
+    private fun MutablePreferences.updateTeamInfo(
+        teamNumber: String,
+        teamKey: String,
+        teamNickname: String,
+        avatar: com.thebluealliance.android.domain.model.Media?,
+        now: String,
+    ) {
+        this[TeamTrackingWidgetKeys.TEAM_NUMBER] = teamNumber
+        this[TeamTrackingWidgetKeys.TEAM_KEY] = teamKey
+        this[TeamTrackingWidgetKeys.TEAM_NICKNAME] = teamNickname
+        if (avatar?.base64Image != null) {
+            this[TeamTrackingWidgetKeys.AVATAR_BASE64] = avatar.base64Image
+        } else {
+            remove(TeamTrackingWidgetKeys.AVATAR_BASE64)
+        }
+        this[TeamTrackingWidgetKeys.LAST_UPDATED] = now
     }
 
     private fun computeRecord(matches: List<Match>, teamKey: String): String {
@@ -304,8 +309,7 @@ class TeamTrackingWorker @AssistedInject constructor(
         return format.format(zoned)
     }
 
-    private fun isTimeEstimate(match: Match): Boolean {
-        return match.predictedTime != null && match.time != null &&
-            kotlin.math.abs(match.predictedTime - match.time) > 60
+    private fun isUsingPredictedTime(match: Match): Boolean {
+        return match.predictedTime != null
     }
 }
