@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.events.detail.tabs
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ fun EventDistrictPointsTab(
     districtPoints: List<EventDistrictPoints>?,
     event: Event?,
     teams: List<Team>?,
+    onTeamClick: (String) -> Unit = {},
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     if (districtPoints == null) {
@@ -65,6 +67,7 @@ fun EventDistrictPointsTab(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clickable { onTeamClick(points.teamKey) }
                     .padding(horizontal = 16.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
