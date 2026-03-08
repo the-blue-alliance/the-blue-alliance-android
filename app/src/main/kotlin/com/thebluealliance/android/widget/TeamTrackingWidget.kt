@@ -39,6 +39,11 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.thebluealliance.android.R
 
+/**
+ * Glance Compose widget for team tracking.
+ * Keep in sync with widget_preview.xml — colors from @color/widget_*,
+ * dimensions from @dimen/widget_*.
+ */
 class TeamTrackingWidget : GlanceAppWidget() {
 
     override val stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
@@ -103,9 +108,9 @@ class TeamTrackingWidget : GlanceAppWidget() {
             ) {
                 if (avatarBitmap != null) {
                     val avatarBg = when (nextAlliance) {
-                        "red" -> ColorProvider(androidx.compose.ui.graphics.Color(0xFFC62828))
-                        "blue" -> ColorProvider(androidx.compose.ui.graphics.Color(0xFF1565C0))
-                        else -> ColorProvider(androidx.compose.ui.graphics.Color(0xFF1565C0))
+                        "red" -> ColorProvider(R.color.widget_red)
+                        "blue" -> ColorProvider(R.color.widget_blue)
+                        else -> ColorProvider(R.color.widget_blue)
                     }
                     Box(
                         modifier = GlanceModifier.size(36.dp).cornerRadius(4.dp).background(avatarBg),
@@ -136,8 +141,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                     )
                     // Record + Event name
                     val subtitle = when {
-                        record.isNotEmpty() && eventName.isNotEmpty() && eventName != "No current event" ->
-                            "$record at $eventName"
+                        record.isNotEmpty() && eventName.isNotEmpty() -> "$record at $eventName"
                         eventName.isNotEmpty() -> eventName
                         else -> ""
                     }
@@ -163,7 +167,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                         contentDescription = "Change team",
                         modifier = GlanceModifier.size(18.dp),
                         colorFilter = ColorFilter.tint(
-                            ColorProvider(androidx.compose.ui.graphics.Color(0xFF9E9E9E))
+                            ColorProvider(R.color.widget_settings_icon)
                         ),
                     )
                 }
@@ -302,9 +306,9 @@ class TeamTrackingWidget : GlanceAppWidget() {
         redRp: String?,
         blueRp: String?,
     ) {
-        val redColor = ColorProvider(androidx.compose.ui.graphics.Color(0xFFC62828))
-        val blueColor = ColorProvider(androidx.compose.ui.graphics.Color(0xFF1565C0))
-        val rpInactiveColor = ColorProvider(androidx.compose.ui.graphics.Color(0xFF9CA3AF))
+        val redColor = ColorProvider(R.color.widget_red)
+        val blueColor = ColorProvider(R.color.widget_blue)
+        val rpInactiveColor = ColorProvider(R.color.widget_rp_inactive)
 
         val teamNumber = teamKey.removePrefix("frc")
         val isPlayed = redScore != null && blueScore != null

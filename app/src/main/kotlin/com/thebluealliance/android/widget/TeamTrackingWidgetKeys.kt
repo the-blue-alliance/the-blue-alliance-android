@@ -30,7 +30,7 @@ object TeamTrackingWidgetKeys {
     val NEXT_MATCH_TIME = stringPreferencesKey("next_match_time")
     val NEXT_MATCH_TIME_IS_ESTIMATE = stringPreferencesKey("next_match_time_is_estimate")
 
-    // Upcoming events (when no current event) — JSON-like pipe-separated rows: "name|city|date"
+    // Upcoming events (when no current event) — tab-separated rows: "name\tcity\tdate"
     val UPCOMING_EVENTS = stringPreferencesKey("upcoming_events")
 
     private val LAST_MATCH_KEYS = listOf(

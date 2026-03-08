@@ -19,7 +19,9 @@ import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.getShortLabel
 import com.thebluealliance.android.domain.rpBonuses
+import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Match
+import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.PlayoffType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -151,7 +153,7 @@ class TeamTrackingWorker @AssistedInject constructor(
         val eventKey = currentEvent.key
 
         // Refresh match data from API
-        matchRepository.refreshEventMatches(eventKey)
+        try { matchRepository.refreshEventMatches(eventKey) } catch (e: Exception) { Log.w(TAG, "Failed to refresh event matches $eventKey", e) }
 
         val event = eventRepository.observeEvent(eventKey).firstOrNull()
         val eventName = event?.shortName ?: event?.name ?: eventKey
@@ -226,9 +228,9 @@ class TeamTrackingWorker @AssistedInject constructor(
      * that still has unplayed matches for this team.
      */
     private suspend fun findCurrentEvent(
-        events: List<com.thebluealliance.android.domain.model.Event>,
+        events: List<Event>,
         teamKey: String,
-    ): com.thebluealliance.android.domain.model.Event? {
+    ): Event? {
         if (events.isEmpty()) return null
         val today = LocalDate.now()
         val currentEvents = events.filter { event ->
@@ -240,7 +242,7 @@ class TeamTrackingWorker @AssistedInject constructor(
             // Multiple concurrent events (e.g. champs division + Einstein).
             // Prefer the one with unplayed matches for this team.
             for (event in currentEvents) {
-                try { matchRepository.refreshEventMatches(event.key) } catch (_: Exception) {}
+                try { matchRepository.refreshEventMatches(event.key) } catch (e: Exception) { Log.w(TAG, "Failed to refresh matches for ${event.key}", e) }
                 val matches = matchRepository.observeEventMatches(event.key).firstOrNull()
                     ?: emptyList()
                 val hasUnplayed = matches.any { match ->
@@ -250,7 +252,7 @@ class TeamTrackingWorker @AssistedInject constructor(
                 if (hasUnplayed) return event
             }
             // All events fully played — prefer championship finals (type 4) over division (type 3)
-            return currentEvents.sortedByDescending { it.type ?: 0 }.first()
+            return currentEvents.maxBy { it.type ?: 0 }
         }
         if (currentEvents.isNotEmpty()) return currentEvents.first()
 
@@ -269,7 +271,7 @@ class TeamTrackingWorker @AssistedInject constructor(
         teamNumber: String,
         teamKey: String,
         teamNickname: String,
-        avatar: com.thebluealliance.android.domain.model.Media?,
+        avatar: Media?,
         now: String,
     ) {
         this[TeamTrackingWidgetKeys.TEAM_NUMBER] = teamNumber
