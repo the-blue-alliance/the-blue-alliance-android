@@ -344,13 +344,13 @@ private fun RankingItem(
                         ) {
                             Text(
                                 text = sortOrder.name,
-                                style = MaterialTheme.typography.bodySmall,
+                                style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.weight(1f),
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = formattedValue,
-                                style = MaterialTheme.typography.bodySmall,
+                                style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Medium,
                             )
                         }
@@ -378,13 +378,13 @@ private fun RankingItem(
                         ) {
                             Text(
                                 text = statName,
-                                style = MaterialTheme.typography.bodySmall,
+                                style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.weight(1f),
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = String.format(Locale.US, "%.${precision}f", value),
-                                style = MaterialTheme.typography.bodySmall,
+                                style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Medium,
                             )
                         }

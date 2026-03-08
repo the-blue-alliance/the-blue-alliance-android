@@ -185,13 +185,13 @@ fun MatchItem(
         Column(modifier = Modifier.weight(0.35f)) {
             Text(
                 text = match.redTeamKeys.joinToString(", ") { it.removePrefix("frc") },
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
                 color = MaterialTheme.colorScheme.error,
             )
             Text(
                 text = match.blueTeamKeys.joinToString(", ") { it.removePrefix("frc") },
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -212,13 +212,13 @@ fun MatchItem(
             ) {
                 Text(
                     text = match.redScore.toString(),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
                     color = MaterialTheme.colorScheme.error,
                 )
                 Text(
                     text = match.blueScore.toString(),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
                     color = MaterialTheme.colorScheme.primary,
                 )
@@ -233,7 +233,7 @@ fun MatchItem(
                     kotlin.math.abs(match.predictedTime - match.time) > 60
                 Text(
                     text = formatMatchTime(displayTime),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 if (isEstimate) {
