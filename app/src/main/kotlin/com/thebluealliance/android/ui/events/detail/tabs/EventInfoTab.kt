@@ -35,7 +35,9 @@ import com.thebluealliance.android.ui.components.formatEventDateRange
 @Composable
 fun EventInfoTab(
     event: Event?,
+    districtDisplayName: String? = null,
     innerPadding: PaddingValues = PaddingValues.Zero,
+    onNavigateToDistrict: (String) -> Unit = {},
 ) {
     if (event == null) {
         LoadingBox(
@@ -84,10 +86,14 @@ fun EventInfoTab(
         }
         if (event.district != null) {
             item {
+                val districtLabel = districtDisplayName ?: event.district
                 Text(
-                    text = "District: ${event.district}",
+                    text = "District: $districtLabel",
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp),
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .padding(top = 4.dp)
+                        .clickable { onNavigateToDistrict(event.district) },
                 )
             }
         }

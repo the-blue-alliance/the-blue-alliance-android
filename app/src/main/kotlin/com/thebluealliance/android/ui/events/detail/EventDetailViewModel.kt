@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.data.repository.AuthRepository
+import com.thebluealliance.android.data.repository.DistrictRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
@@ -39,12 +40,14 @@ class EventDetailViewModel @AssistedInject constructor(
     private val eventRepository: EventRepository,
     private val teamRepository: TeamRepository,
     private val matchRepository: MatchRepository,
+    private val districtRepository: DistrictRepository,
     private val myTBARepository: MyTBARepository,
     private val authRepository: AuthRepository,
     private val shortcutManager: TBAShortcutManager,
 ) : ViewModel() {
 
     private val eventKey: String = navKey.eventKey
+    private val eventYear: Int = eventKey.take(4).toIntOrNull() ?: 0
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
@@ -123,8 +126,14 @@ class EventDetailViewModel @AssistedInject constructor(
                 )
             }
         }.flatMapLatest { baseState ->
-            eventRepository.observeEventInsights(eventKey).map { insights ->
-                baseState.copy(insights = insights)
+            combine(
+                eventRepository.observeEventInsights(eventKey),
+                baseState.event?.district?.let { districtRepository.observeDistrict(it) } ?: flowOf(null),
+            ) { insights, district ->
+                baseState.copy(
+                    insights = insights,
+                    districtDisplayName = district?.displayName,
+                )
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventDetailUiState())
 
@@ -198,6 +207,7 @@ class EventDetailViewModel @AssistedInject constructor(
                     launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventCOPRs(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventInsights(eventKey) } catch (_: Exception) {} }
+                    launch { try { districtRepository.refreshDistrictsForYear(eventYear) } catch (_: Exception) {} }
                 }
             } finally {
                 _isRefreshing.value = false
