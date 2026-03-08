@@ -496,25 +496,32 @@ edit_id = edit["id"]
 BOLD = "\033[1m"
 GREEN = "\033[0;32m"
 YELLOW = "\033[1;33m"
+RED = "\033[0;31m"
 DIM = "\033[2m"
 NC = "\033[0m"
 
-tracks = ["production", "beta", "alpha"]
-for track in tracks:
-    url = f"https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{package}/edits/{edit_id}/tracks/{track}"
+# Google Play API track names → Play Console display names
+tracks = [
+    ("production", "Production"),
+    ("beta", "Open testing"),
+    ("alpha", "Closed testing"),
+    ("internal", "Internal testing"),
+]
+for track_id, display_name in tracks:
+    url = f"https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{package}/edits/{edit_id}/tracks/{track_id}"
     req = urllib.request.Request(url, headers={"Authorization": f"Bearer {access_token}"})
     try:
         with urllib.request.urlopen(req) as resp:
             track_data = json.loads(resp.read())
     except urllib.error.HTTPError as e:
         if e.code == 404:
-            print(f"{BOLD}{track}{NC}: (empty)")
+            print(f"{BOLD}{display_name}{NC} {DIM}({track_id}){NC}: (empty)")
             continue
-        print(f"Failed to fetch track {track}: {e.code} {e.read().decode()}", file=sys.stderr)
+        print(f"Failed to fetch track {track_id}: {e.code} {e.read().decode()}", file=sys.stderr)
         continue
 
     releases = track_data.get("releases", [])
-    print(f"{BOLD}{track}{NC}")
+    print(f"{BOLD}{display_name}{NC} {DIM}({track_id}){NC}")
     if not releases:
         print(f"  (no releases)")
     for release in releases:
@@ -523,12 +530,14 @@ for track in tracks:
         name = release.get("name", "")
         fraction = release.get("userFraction")
 
-        if status == "completed":
-            status_str = f"{GREEN}{status}{NC}"
-        elif status in ("inProgress", "draft"):
-            status_str = f"{YELLOW}{status}{NC}"
-        else:
-            status_str = status
+        status_colors = {
+            "completed": GREEN,
+            "inProgress": YELLOW,
+            "draft": YELLOW,
+            "halted": RED,
+        }
+        color = status_colors.get(status, "")
+        status_str = f"{color}{status}{NC}" if color else status
 
         version_str = ", ".join(str(v) for v in version_codes)
         line = f"  {status_str}  {BOLD}{name}{NC}" if name else f"  {status_str}"
@@ -538,6 +547,9 @@ for track in tracks:
             line += f"  {YELLOW}{fraction:.0%} rollout{NC}"
         print(line)
     print()
+
+print(f"{DIM}Note: Google's review status is not available via the API.{NC}")
+print(f"{DIM}Check the Play Console for review progress.{NC}")
 
 # Delete the edit (we only read, don't commit)
 delete_url = f"https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{package}/edits/{edit_id}"
