@@ -156,6 +156,7 @@ fun DistrictDetailScreen(
             isRefreshing = isRefreshing && uiState.eventSections != null && uiState.rankings != null,
             onRefresh = viewModel::refreshAll,
             modifier = Modifier.fillMaxSize()
+                .padding(innerPadding)
                 .background(MaterialTheme.colorScheme.background),
         ) {
             HorizontalPager(
@@ -166,12 +167,12 @@ fun DistrictDetailScreen(
                     0 -> EventsTab(
                         sections = uiState.eventSections,
                         onNavigateToEvent = onNavigateToEvent,
-                        innerPadding = innerPadding,
+                        innerPadding = PaddingValues(0.dp),
                     )
                     1 -> RankingsTab(
                         rankings = uiState.rankings,
                         onNavigateToTeam = onNavigateToTeam,
-                        innerPadding = innerPadding,
+                        innerPadding = PaddingValues(0.dp),
                     )
                 }
             }
