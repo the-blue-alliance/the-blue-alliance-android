@@ -252,7 +252,7 @@ private fun EventsTab(
                 EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
             }
             item(key = "this_week_divider") {
-                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                HorizontalDivider()
             }
         }
         sections.forEach { section ->
