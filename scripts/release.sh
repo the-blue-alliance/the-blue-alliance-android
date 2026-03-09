@@ -270,6 +270,16 @@ preflight() {
     if ! $ok; then
         die "Preflight checks failed. Fix the issues above and retry."
     fi
+
+    # Require a clean working tree (no staged or unstaged changes)
+    if [[ -n "$(git status --porcelain)" ]]; then
+        die "Working directory is not clean. Commit or stash all changes before releasing."
+    fi
+
+    # Fetch from the configured remote so git describe sees up-to-date release tags
+    info "Fetching tags from ${GIT_REMOTE}..."
+    git fetch "$GIT_REMOTE" --tags --quiet
+
     info "Preflight checks passed"
 }
 
@@ -349,14 +359,11 @@ cmd_alpha() {
     info "Publishing to alpha track"
     echo ""
 
-    # Verify branch and working tree
+    # Verify branch
     local branch
     branch=$(git rev-parse --abbrev-ref HEAD)
     if [[ "$branch" != "main" ]]; then
         die "Must be on main branch (currently on ${branch})"
-    fi
-    if [[ -n "$(git diff --stat HEAD)" ]]; then
-        die "Working tree has uncommitted changes. Commit or stash them first."
     fi
 
     get_version_info
