@@ -65,6 +65,7 @@ fun TBANavigation(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
     ) {
         NavDisplay(
             modifier = Modifier
