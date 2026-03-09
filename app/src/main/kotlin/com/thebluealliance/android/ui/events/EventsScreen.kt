@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.only
@@ -50,6 +49,7 @@ import java.time.LocalDate
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.text.font.FontWeight
 import kotlinx.coroutines.flow.Flow
 
@@ -200,14 +200,18 @@ private fun EventsList(
             }
             if (thisWeekResult != null) {
                 add(SectionHeaderInfo("this_week_header", thisWeekResult.label, index))
-                // Each sub-section has a header + events
-                index += 1 + thisWeekResult.subSections.sumOf { 1 + it.events.size }
+                // Each sub-section has a header (if not empty) + events
+                index += 1 + thisWeekResult.subSections.sumOf {
+                    (if (it.label.isNotEmpty()) 1 else 0) + it.events.size
+                }
             }
             sections.forEach { section ->
                 val headerKey = "header_${section.label}"
                 add(SectionHeaderInfo(headerKey, section.label, index))
-                // Each sub-section has a header + events
-                index += 1 + section.subSections.sumOf { 1 + it.events.size }
+                // Each sub-section has a header (if not empty) + events
+                index += 1 + section.subSections.sumOf {
+                    (if (it.label.isNotEmpty()) 1 else 0) + it.events.size
+                }
             }
         }
     }
@@ -261,8 +265,10 @@ private fun EventsList(
                     )
                 }
                 thisWeekResult.subSections.forEach { subSection ->
-                    item(key = "thisweek_sub_${subSection.label}") {
-                        SubSectionHeader(label = subSection.label)
+                    if (subSection.label.isNotEmpty()) {
+                        item(key = "thisweek_sub_${subSection.label}") {
+                            SubSectionHeader(label = subSection.label)
+                        }
                     }
                     items(subSection.events, key = { "thisweek_${it.key}" }) { event ->
                         EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
@@ -284,8 +290,10 @@ private fun EventsList(
                     )
                 }
                 section.subSections.forEach { subSection ->
-                    item(key = "${headerKey}_sub_${subSection.label}") {
-                        SubSectionHeader(label = subSection.label)
+                    if (subSection.label.isNotEmpty()) {
+                        item(key = "${headerKey}_sub_${subSection.label}") {
+                            SubSectionHeader(label = subSection.label)
+                        }
                     }
                     items(subSection.events, key = { it.key }) { event ->
                         EventRow(event = event, onClick = { onNavigateToEvent(event.key) })

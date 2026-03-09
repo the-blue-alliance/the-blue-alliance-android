@@ -18,13 +18,14 @@ class EventsUiStateTest {
         week: Int? = null,
         startDate: String? = null,
         endDate: String? = null,
+        district: String? = null,
     ) = Event(
         key = key,
         name = name,
         eventCode = key.removePrefix("${year}"),
         year = year,
         type = type,
-        district = null,
+        district = district,
         city = null,
         state = null,
         country = null,
@@ -56,6 +57,44 @@ class EventsUiStateTest {
 
         // Same start date → sorted by name (district is null for all)
         assertEquals(listOf("Middle Event", "Zebra Event", "Alpha Event"), week1.events.map { it.name })
+    }
+
+    // --- buildEventSections: sub-section labels ---
+
+    @Test
+    fun `regional events have Regional Events sub-section label`() {
+        val events = listOf(
+            makeEvent(name = "Regional 1", type = 0, week = 0),
+        )
+        val sections = buildEventSections(events)
+        val week1 = sections.first { it.label == "Week 1" }
+
+        assertEquals(1, week1.subSections.size)
+        assertEquals("Regional Events", week1.subSections[0].label)
+    }
+
+    @Test
+    fun `championship events have empty sub-section label`() {
+        val events = listOf(
+            makeEvent(name = "CMP", type = 3, week = null),
+        )
+        val sections = buildEventSections(events)
+        val cmp = sections.first { it.label == "Championship" }
+
+        assertEquals(1, cmp.subSections.size)
+        assertEquals("", cmp.subSections[0].label)
+    }
+
+    @Test
+    fun `district events use district name or fallback`() {
+        val events = listOf(
+            makeEvent(name = "District Event", type = 1, week = 0, district = "2026ne"),
+        )
+        val sections = buildEventSections(events, districtNames = mapOf("2026ne" to "New England"))
+        val week1 = sections.first { it.label == "Week 1" }
+
+        assertEquals(1, week1.subSections.size)
+        assertEquals("New England", week1.subSections[0].label)
     }
 
     // --- buildEventSections: preseason ordering ---

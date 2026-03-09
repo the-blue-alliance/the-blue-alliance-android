@@ -72,9 +72,31 @@ private fun buildSubSections(
     events: List<Event>,
     districtNames: Map<String, String>,
 ): List<EventSubSection> = buildList {
-    val regionals = events.filter { it.district == null }
+    val regionals = events
+        .filter { it.district == null && it.type == 0 }
+        .sortedBy { it.name }
     if (regionals.isNotEmpty()) {
         add(EventSubSection("Regional Events", regionals))
+    }
+
+    val others = events.filter { it.district == null && it.type != 0 }
+    if (others.isNotEmpty()) {
+        val offseasons = others.filter { it.type == 99 }
+        val nonOffseasonOthers = others.filter { it.type != 99 }
+
+        if (offseasons.isNotEmpty()) {
+            offseasons.groupBy {
+                it.startDate?.let { s -> runCatching { LocalDate.parse(s) }.getOrNull() }?.month
+            }.forEach { (month, monthEvents) ->
+                val monthName = month?.name?.lowercase()?.replaceFirstChar { it.uppercase() }
+                val label = if (monthName != null) "$monthName Offseason Events" else "Offseason Events"
+                add(EventSubSection(label, monthEvents))
+            }
+        }
+
+        if (nonOffseasonOthers.isNotEmpty()) {
+            add(EventSubSection("", nonOffseasonOthers))
+        }
     }
 
     val districts = events.filter { it.district != null }
