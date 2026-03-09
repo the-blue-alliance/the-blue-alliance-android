@@ -264,7 +264,6 @@ class TeamTrackingWidget : GlanceAppWidget() {
                         style = TextStyle(
                             color = GlanceTheme.colors.primary,
                             fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
                         ),
                         modifier = GlanceModifier
                             .padding(top = 8.dp)
@@ -306,8 +305,8 @@ class TeamTrackingWidget : GlanceAppWidget() {
         redRp: String?,
         blueRp: String?,
     ) {
-        val redColor = ColorProvider(R.color.widget_red)
-        val blueColor = ColorProvider(R.color.widget_blue)
+        val redColor = ColorProvider(R.color.widget_red_text)
+        val blueColor = ColorProvider(R.color.widget_blue_text)
         val rpInactiveColor = ColorProvider(R.color.widget_rp_inactive)
 
         val teamNumber = teamKey.removePrefix("frc")
