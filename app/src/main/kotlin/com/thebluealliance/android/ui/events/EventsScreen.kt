@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.only
@@ -50,6 +49,8 @@ import java.time.LocalDate
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.ui.text.font.FontWeight
 import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -157,6 +158,7 @@ fun EventsScreen(
                             EventsList(
                                 sections = state.sections,
                                 favoriteEventKeys = state.favoriteEventKeys,
+                                districtNames = state.districtNames,
                                 selectedYear = selectedYear,
                                 onNavigateToEvent = onNavigateToEvent,
                                 listState = listState,
@@ -173,6 +175,7 @@ fun EventsScreen(
 private fun EventsList(
     sections: List<EventSection>,
     favoriteEventKeys: Set<String>,
+    districtNames: Map<String, String>,
     selectedYear: Int,
     onNavigateToEvent: (String) -> Unit,
     listState: LazyListState,
@@ -184,27 +187,12 @@ private fun EventsList(
         emptyList()
     }
     val today = remember { LocalDate.now() }
-    val thisWeekResult = remember(allEvents, today, selectedYear) {
-        computeThisWeekEvents(allEvents, today, selectedYear)
+    val thisWeekResult = remember(allEvents, today, selectedYear, districtNames) {
+        computeThisWeekEvents(allEvents, today, selectedYear, districtNames)
     }
 
     val headerInfos = remember(sections, favoriteEvents, thisWeekResult) {
-        buildList {
-            var index = 0
-            if (favoriteEvents.isNotEmpty()) {
-                add(SectionHeaderInfo("favorites_header", "Favorites", index))
-                index += 1 + favoriteEvents.size // header + items
-            }
-            if (thisWeekResult != null) {
-                add(SectionHeaderInfo("this_week_header", thisWeekResult.label, index))
-                index += 1 + thisWeekResult.events.size // header + items
-            }
-            sections.forEach { section ->
-                val headerKey = "header_${section.label}"
-                add(SectionHeaderInfo(headerKey, section.label, index))
-                index += 1 + section.events.size // header + items
-            }
-        }
+        buildHeaderInfos(sections, favoriteEvents, thisWeekResult)
     }
 
     val headerKeys = remember(headerInfos) { headerInfos.map { it.key }.toSet() }
@@ -255,8 +243,15 @@ private fun EventsList(
                         },
                     )
                 }
-                items(thisWeekResult.events, key = { "thisweek_${it.key}" }) { event ->
-                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                thisWeekResult.subSections.forEach { subSection ->
+                    if (subSection.label.isNotEmpty()) {
+                        item(key = "thisweek_sub_${subSection.label}") {
+                            SubSectionHeader(label = subSection.label)
+                        }
+                    }
+                    items(subSection.events, key = { "thisweek_${it.key}" }) { event ->
+                        EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                    }
                 }
             }
             sections.forEach { section ->
@@ -273,10 +268,34 @@ private fun EventsList(
                         },
                     )
                 }
-                items(section.events, key = { it.key }) { event ->
-                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                section.subSections.forEach { subSection ->
+                    if (subSection.label.isNotEmpty()) {
+                        item(key = "${headerKey}_sub_${subSection.label}") {
+                            SubSectionHeader(label = subSection.label)
+                        }
+                    }
+                    items(subSection.events, key = { it.key }) { event ->
+                        EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SubSectionHeader(label: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }

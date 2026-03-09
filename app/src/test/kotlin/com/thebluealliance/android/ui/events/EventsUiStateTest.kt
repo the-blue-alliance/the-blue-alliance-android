@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.events
 
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.PlayoffType
+import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -18,13 +19,14 @@ class EventsUiStateTest {
         week: Int? = null,
         startDate: String? = null,
         endDate: String? = null,
+        district: String? = null,
     ) = Event(
         key = key,
         name = name,
         eventCode = key.removePrefix("${year}"),
         year = year,
         type = type,
-        district = null,
+        district = district,
         city = null,
         state = null,
         country = null,
@@ -41,10 +43,70 @@ class EventsUiStateTest {
         playoffType = PlayoffType.BRACKET_8_TEAM,
     )
 
+    // --- buildHeaderInfos: index calculation ---
+
+    @Test
+    fun `buildHeaderInfos calculates indices correctly with multiple sub-sections`() {
+        val favorites = listOf(makeEvent(key = "fav1"))
+
+        val thisWeek = ThisWeekResult(
+            label = "This Week",
+            subSections = listOf(
+                EventSubSection("Sub 1", listOf(makeEvent(key = "tw1"))),
+                EventSubSection("", listOf(makeEvent(key = "tw2"))) // Empty label = no header item
+            )
+        )
+
+        val sections = listOf(
+            EventSection(
+                label = "Week 1",
+                subSections = listOf(
+                    EventSubSection("Regional", listOf(makeEvent(key = "w1r1"), makeEvent(key = "w1r2"))),
+                    EventSubSection("District", listOf(makeEvent(key = "w1d1")))
+                )
+            ),
+            EventSection(
+                label = "Week 2",
+                subSections = listOf(
+                    EventSubSection("", listOf(makeEvent(key = "w2o1"))) // Empty label = no header item
+                )
+            )
+        )
+
+        val infos = buildHeaderInfos(sections, favorites, thisWeek)
+
+        assertEquals(4, infos.size)
+
+        // 1. Favorites Header
+        assertEquals("Favorites", infos[0].label)
+        assertEquals(0, infos[0].itemIndex)
+
+        // 2. This Week Header
+        // Index = 0 (prev header) + 1 (prev header) + 1 (fav1) = 2
+        assertEquals("This Week", infos[1].label)
+        assertEquals(2, infos[1].itemIndex)
+
+        // 3. Week 1 Header
+        // Index = 2 (prev header) + 1 (prev header)
+        //         + 1 (Sub 1 header) + 1 (tw1)
+        //         + 0 (Empty label) + 1 (tw2)
+        //       = 2 + 1 + 2 + 1 = 6
+        assertEquals("Week 1", infos[2].label)
+        assertEquals(6, infos[2].itemIndex)
+
+        // 4. Week 2 Header
+        // Index = 6 (prev header) + 1 (prev header)
+        //         + 1 (Regional header) + 2 (w1r1, w1r2)
+        //         + 1 (District header) + 1 (w1d1)
+        //       = 6 + 1 + 3 + 2 = 12
+        assertEquals("Week 2", infos[3].label)
+        assertEquals(12, infos[3].itemIndex)
+    }
+
     // --- buildEventSections: sort order within sections ---
 
     @Test
-    fun `events within a section are sorted by start date then district then name`() {
+    fun `regional events within a section are sorted alphabetically by name`() {
         val events = listOf(
             makeEvent(key = "2026z", name = "Zebra Event", week = 0, startDate = "2026-03-04", endDate = "2026-03-07"),
             makeEvent(key = "2026a", name = "Alpha Event", week = 0, startDate = "2026-03-06", endDate = "2026-03-08"),
@@ -54,8 +116,46 @@ class EventsUiStateTest {
         val sections = buildEventSections(events)
         val week1 = sections.first { it.label == "Week 1" }
 
-        // Same start date → sorted by name (district is null for all)
-        assertEquals(listOf("Middle Event", "Zebra Event", "Alpha Event"), week1.events.map { it.name })
+        // Sorted by name regardless of start date
+        assertEquals(listOf("Alpha Event", "Middle Event", "Zebra Event"), week1.events.map { it.name })
+    }
+
+    // --- buildEventSections: sub-section labels ---
+
+    @Test
+    fun `regional events have Regional Events sub-section label`() {
+        val events = listOf(
+            makeEvent(name = "Regional 1", type = 0, week = 0),
+        )
+        val sections = buildEventSections(events)
+        val week1 = sections.first { it.label == "Week 1" }
+
+        assertEquals(1, week1.subSections.size)
+        assertEquals("Regional Events", week1.subSections[0].label)
+    }
+
+    @Test
+    fun `championship events have empty sub-section label`() {
+        val events = listOf(
+            makeEvent(name = "CMP", type = 3, week = null),
+        )
+        val sections = buildEventSections(events)
+        val cmp = sections.first { it.label == "Championship" }
+
+        assertEquals(1, cmp.subSections.size)
+        assertEquals("", cmp.subSections[0].label)
+    }
+
+    @Test
+    fun `district events use district name or fallback`() {
+        val events = listOf(
+            makeEvent(name = "District Event", type = 1, week = 0, district = "2026ne"),
+        )
+        val sections = buildEventSections(events, districtNames = mapOf("2026ne" to "New England"))
+        val week1 = sections.first { it.label == "Week 1" }
+
+        assertEquals(1, week1.subSections.size)
+        assertEquals("New England", week1.subSections[0].label)
     }
 
     // --- buildEventSections: preseason ordering ---
