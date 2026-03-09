@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.events
 
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.PlayoffType
+import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -105,7 +106,7 @@ class EventsUiStateTest {
     // --- buildEventSections: sort order within sections ---
 
     @Test
-    fun `events within a section are sorted by start date then district then name`() {
+    fun `regional events within a section are sorted alphabetically by name`() {
         val events = listOf(
             makeEvent(key = "2026z", name = "Zebra Event", week = 0, startDate = "2026-03-04", endDate = "2026-03-07"),
             makeEvent(key = "2026a", name = "Alpha Event", week = 0, startDate = "2026-03-06", endDate = "2026-03-08"),
@@ -115,8 +116,8 @@ class EventsUiStateTest {
         val sections = buildEventSections(events)
         val week1 = sections.first { it.label == "Week 1" }
 
-        // Same start date → sorted by name (district is null for all)
-        assertEquals(listOf("Middle Event", "Zebra Event", "Alpha Event"), week1.events.map { it.name })
+        // Sorted by name regardless of start date
+        assertEquals(listOf("Alpha Event", "Middle Event", "Zebra Event"), week1.events.map { it.name })
     }
 
     // --- buildEventSections: sub-section labels ---
