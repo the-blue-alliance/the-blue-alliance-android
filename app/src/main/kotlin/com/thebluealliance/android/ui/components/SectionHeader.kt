@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.ui.theme.TBAIndigo400
 
 data class SectionHeaderInfo(val key: String, val label: String, val itemIndex: Int)
 
@@ -41,7 +42,7 @@ fun SectionHeader(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFF5C6BC0))
+            .background(TBAIndigo400)
             .clickable(enabled = isStuck) { menuExpanded = true },
     ) {
         Row(
@@ -78,7 +79,7 @@ fun SectionHeader(
                             text = info.label,
                             fontWeight = if (info.label == label) FontWeight.Bold else FontWeight.Normal,
                             color = if (info.label == label) {
-                                Color(0xFF5C6BC0)
+                                TBAIndigo400
                             } else {
                                 MaterialTheme.colorScheme.onSurface
                             },
