@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 
 // Indigo tonal scale — TBA brand palette
 val TBABlue = Color(0xFF3F51B5)           // Indigo 500 — canonical TBA brand color
+val TBAIndigo400 = Color(0xFF5C6BC0)      // Indigo 400 — section headers
 private val TBABlueDark = Color(0xFF303F9F)    // Indigo 700 — dark-mode container
 private val TBABlueLight = Color(0xFF9FA8DA)   // Indigo 200 — dark-mode primary
 private val TBAPastelBlue = Color(0xFFC5CAE9)  // Indigo 100 — light-mode primaryContainer
