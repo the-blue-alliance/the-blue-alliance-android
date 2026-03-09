@@ -20,10 +20,18 @@
 #       Auth will fail if the upload key is used on the emulator.
 #
 # Usage:
-#   bash scripts/screenshot-playbook.sh
+#   bash scripts/screenshot-playbook.sh             # screenshots 1–6 only
+#   bash scripts/screenshot-playbook.sh --widgets   # screenshots 1–7 (widgets need live event data)
 #
 
 set -euo pipefail
+
+INCLUDE_WIDGETS=false
+for arg in "$@"; do
+  case "$arg" in
+    --widgets) INCLUDE_WIDGETS=true ;;
+  esac
+done
 
 EMU="$(dirname "$0")/emu"
 PKG="com.thebluealliance.androidclient"
@@ -143,28 +151,32 @@ wait_for_ui
 $EMU screenshot "$RAW_DIR/06-district-detail.png"
 
 # 7. Home screen with Team Tracking widgets (604 at event, 254 upcoming)
-# This step uses the debug build for widget pin/remove automation.
-echo "==> Installing debug build for widget automation..."
-./gradlew :app:installDebug -q
-adb shell appwidget grantbind --package "$DEV_PKG" --user 0
-echo "==> Screenshot 7: Home screen widgets"
-# Clean up any existing TBA widgets
-adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.RemoveWidgetsActivity"
-wait_for_ui 1
-# Pin widget for team currently at event
-adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.PinWidgetActivity" --es team 604
-wait_for_ui 1
-$EMU tap "Add to home screen"
-wait_for_ui 5
-# Pin widget for team with upcoming events
-adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.PinWidgetActivity" --es team 254
-wait_for_ui 1
-$EMU tap "Add to home screen"
-wait_for_ui 5
-# Go to home screen and capture
-adb shell input keyevent KEYCODE_HOME
-wait_for_ui 1
-$EMU screenshot "$RAW_DIR/07-home-widgets.png"
+# Requires live event data — only captured with --widgets flag.
+if [ "$INCLUDE_WIDGETS" = true ]; then
+  echo "==> Installing debug build for widget automation..."
+  ./gradlew :app:installDebug -q
+  adb shell appwidget grantbind --package "$DEV_PKG" --user 0
+  echo "==> Screenshot 7: Home screen widgets"
+  # Clean up any existing TBA widgets
+  adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.RemoveWidgetsActivity"
+  wait_for_ui 1
+  # Pin widget for team currently at event
+  adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.PinWidgetActivity" --es team 604
+  wait_for_ui 1
+  $EMU tap "Add to home screen"
+  wait_for_ui 5
+  # Pin widget for team with upcoming events
+  adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.PinWidgetActivity" --es team 254
+  wait_for_ui 1
+  $EMU tap "Add to home screen"
+  wait_for_ui 5
+  # Go to home screen and capture
+  adb shell input keyevent KEYCODE_HOME
+  wait_for_ui 1
+  $EMU screenshot "$RAW_DIR/07-home-widgets.png"
+else
+  echo "==> Skipping widget screenshot (use --widgets to include)"
+fi
 
 # Copy to Play Store listing directory
 echo "==> Copying to $DEST_DIR"
@@ -174,12 +186,16 @@ cp "$RAW_DIR/03-match-detail.png"       "$DEST_DIR/3-match-detail.png"
 cp "$RAW_DIR/04-team-detail.png"        "$DEST_DIR/4-team-detail.png"
 cp "$RAW_DIR/05-notification-prefs.png" "$DEST_DIR/5-notification-prefs.png"
 cp "$RAW_DIR/06-district-detail.png"    "$DEST_DIR/6-district-detail.png"
-cp "$RAW_DIR/07-home-widgets.png"      "$DEST_DIR/7-home-widgets.png"
+if [ -f "$RAW_DIR/07-home-widgets.png" ]; then
+  cp "$RAW_DIR/07-home-widgets.png"    "$DEST_DIR/7-home-widgets.png"
+fi
 
 # Clean up widgets from home screen
-echo "==> Cleaning up widgets..."
-adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.RemoveWidgetsActivity"
-wait_for_ui 1
+if [ "$INCLUDE_WIDGETS" = true ]; then
+  echo "==> Cleaning up widgets..."
+  adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.RemoveWidgetsActivity"
+  wait_for_ui 1
+fi
 
 # Disable demo mode to restore normal status bar
 echo "==> Disabling demo mode..."
