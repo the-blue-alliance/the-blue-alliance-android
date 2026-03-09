@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Static preview for the widget picker. Shows Team 177 at Hartford 2026.
+     Keep in sync with TeamTrackingWidget.kt — colors from @color/widget_*,
+     dimensions from @dimen/widget_*.
+     Only RemoteViews-supported views allowed: FrameLayout, LinearLayout,
+     RelativeLayout, GridLayout, TextView, ImageView, Button, ProgressBar. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/widget_padding"
+    android:background="@color/widget_background">
+
+    <!-- Header -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="177 — Bobcat Robotics"
+        android:textSize="@dimen/widget_title_text_size"
+        android:textStyle="bold"
+        android:textColor="@color/widget_on_surface"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="5-2-0 at Hartford"
+        android:textSize="@dimen/widget_subtitle_text_size"
+        android:textColor="@color/widget_on_surface_variant"
+        android:maxLines="1"
+        android:paddingBottom="6dp" />
+
+    <!-- Last match -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Last match"
+        android:textSize="@dimen/widget_section_label_text_size"
+        android:textColor="@color/widget_on_surface_variant" />
+
+    <!-- Last match: red row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="2dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="@dimen/widget_match_label_width"
+            android:layout_height="wrap_content"
+            android:text="Q22"
+            android:textSize="@dimen/widget_match_text_size"
+            android:textStyle="bold"
+            android:textColor="@color/widget_on_surface" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="177, 175, 2067"
+            android:textSize="@dimen/widget_match_text_size"
+            android:textColor="@color/widget_red"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="68"
+            android:textSize="@dimen/widget_match_text_size"
+            android:textColor="@color/widget_red"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Last match: blue row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="2dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="@dimen/widget_match_label_width"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="558, 1699, 3146"
+            android:textSize="@dimen/widget_match_text_size"
+            android:textColor="@color/widget_blue" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="45"
+            android:textSize="@dimen/widget_match_text_size"
+            android:textColor="@color/widget_blue" />
+    </LinearLayout>
+
+    <!-- Next match -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next match"
+        android:textSize="@dimen/widget_section_label_text_size"
+        android:textColor="@color/widget_on_surface_variant"
+        android:paddingTop="12dp" />
+
+    <!-- Next match: red row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="2dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="@dimen/widget_match_label_width"
+            android:layout_height="wrap_content"
+            android:text="Q29"
+            android:textSize="@dimen/widget_match_text_size"
+            android:textStyle="bold"
+            android:textColor="@color/widget_on_surface" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="236, 3719, 429"
+            android:textSize="@dimen/widget_match_text_size"
+            android:textColor="@color/widget_red" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2:45 PM"
+            android:textSize="@dimen/widget_match_text_size"
+            android:textColor="@color/widget_on_surface_variant" />
+    </LinearLayout>
+
+    <!-- Next match: blue row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="2dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="@dimen/widget_match_label_width"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="177, 2170, 571"
+            android:textSize="@dimen/widget_match_text_size"
+            android:textColor="@color/widget_blue" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="(est.)"
+            android:textSize="@dimen/widget_estimate_text_size"
+            android:textColor="@color/widget_on_surface_variant" />
+    </LinearLayout>
+
+    <!-- Footer: TBA lamp -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="bottom">
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/tba_lamp"
+            android:tint="@color/widget_on_surface_variant"
+            android:contentDescription="The Blue Alliance" />
+    </LinearLayout>
+</LinearLayout>

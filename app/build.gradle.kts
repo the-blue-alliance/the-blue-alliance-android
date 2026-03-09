@@ -25,7 +25,7 @@ val localProperties = Properties().apply {
 // versionCode formula: MAJOR * 1_000_000 + MINOR * 10_000 + PATCH * 100
 // This matches the legacy app's formula and leaves room for hotfix candidates.
 val gitDescribeResult = providers.exec {
-    commandLine("git", "describe", "--tags", "--long", "--match", "v[0-9]*")
+    commandLine("/usr/bin/git", "describe", "--tags", "--long", "--match", "v[0-9]*")
     isIgnoreExitValue = true
 }
 val gitDescribe = gitDescribeResult.result.get().exitValue.let { exitCode ->
@@ -63,7 +63,7 @@ android {
         buildConfigField("String", "TBA_BASE_URL", "\"https://www.thebluealliance.com/\"")
         buildConfigField("String", "TBA_API_KEY", "\"\"")
         buildConfigField("String", "BUILD_TIME", "\"${Instant.now()}\"")
-        buildConfigField("String", "GIT_HASH", "\"${providers.exec { commandLine("git", "rev-parse", "--short", "HEAD") }.standardOutput.asText.get().trim()}\"")
+        buildConfigField("String", "GIT_HASH", "\"${providers.exec { commandLine("/usr/bin/git", "rev-parse", "--short", "HEAD") }.standardOutput.asText.get().trim()}\"")
 
     }
 
@@ -156,6 +156,10 @@ dependencies {
     implementation(libs.work.runtime)
     implementation(libs.hilt.work)
     ksp(libs.hilt.work.compiler)
+
+    // Glance (App Widgets)
+    implementation(libs.glance.appwidget)
+    implementation(libs.glance.material3)
 
     // Coroutines
     implementation(libs.coroutines.core)

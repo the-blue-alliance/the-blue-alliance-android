@@ -10,6 +10,26 @@
         <meta-data android:name="firebase_crashlytics_auto_collection_enabled" android:value="false" />
         <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
 
+        <activity
+            android:name=".widget.PinWidgetActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity
+            android:name=".widget.RemoveWidgetsActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <receiver
+            android:name=".widget.PinWidgetReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.thebluealliance.android.widget.WIDGET_PINNED" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
