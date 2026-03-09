@@ -1,6 +1,7 @@
 package com.thebluealliance.android.ui.events
 
 import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -118,6 +119,33 @@ private fun buildSubSections(
             }
             .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.label })
             .let { addAll(it) }
+    }
+}
+
+fun buildHeaderInfos(
+    sections: List<EventSection>,
+    favoriteEvents: List<Event>,
+    thisWeekResult: ThisWeekResult?,
+): List<SectionHeaderInfo> = buildList {
+    var index = 0
+    if (favoriteEvents.isNotEmpty()) {
+        add(SectionHeaderInfo("favorites_header", "Favorites", index))
+        index += 1 + favoriteEvents.size // header + items
+    }
+    if (thisWeekResult != null) {
+        add(SectionHeaderInfo("this_week_header", thisWeekResult.label, index))
+        // Each sub-section has a header (if not empty) + events
+        index += 1 + thisWeekResult.subSections.sumOf {
+            (if (it.label.isNotEmpty()) 1 else 0) + it.events.size
+        }
+    }
+    sections.forEach { section ->
+        val headerKey = "header_${section.label}"
+        add(SectionHeaderInfo(headerKey, section.label, index))
+        // Each sub-section has a header (if not empty) + events
+        index += 1 + section.subSections.sumOf {
+            (if (it.label.isNotEmpty()) 1 else 0) + it.events.size
+        }
     }
 }
 

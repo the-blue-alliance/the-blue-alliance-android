@@ -42,6 +42,66 @@ class EventsUiStateTest {
         playoffType = PlayoffType.BRACKET_8_TEAM,
     )
 
+    // --- buildHeaderInfos: index calculation ---
+
+    @Test
+    fun `buildHeaderInfos calculates indices correctly with multiple sub-sections`() {
+        val favorites = listOf(makeEvent(key = "fav1"))
+
+        val thisWeek = ThisWeekResult(
+            label = "This Week",
+            subSections = listOf(
+                EventSubSection("Sub 1", listOf(makeEvent(key = "tw1"))),
+                EventSubSection("", listOf(makeEvent(key = "tw2"))) // Empty label = no header item
+            )
+        )
+
+        val sections = listOf(
+            EventSection(
+                label = "Week 1",
+                subSections = listOf(
+                    EventSubSection("Regional", listOf(makeEvent(key = "w1r1"), makeEvent(key = "w1r2"))),
+                    EventSubSection("District", listOf(makeEvent(key = "w1d1")))
+                )
+            ),
+            EventSection(
+                label = "Week 2",
+                subSections = listOf(
+                    EventSubSection("", listOf(makeEvent(key = "w2o1"))) // Empty label = no header item
+                )
+            )
+        )
+
+        val infos = buildHeaderInfos(sections, favorites, thisWeek)
+
+        assertEquals(4, infos.size)
+
+        // 1. Favorites Header
+        assertEquals("Favorites", infos[0].label)
+        assertEquals(0, infos[0].itemIndex)
+
+        // 2. This Week Header
+        // Index = 0 (prev header) + 1 (prev header) + 1 (fav1) = 2
+        assertEquals("This Week", infos[1].label)
+        assertEquals(2, infos[1].itemIndex)
+
+        // 3. Week 1 Header
+        // Index = 2 (prev header) + 1 (prev header)
+        //         + 1 (Sub 1 header) + 1 (tw1)
+        //         + 0 (Empty label) + 1 (tw2)
+        //       = 2 + 1 + 2 + 1 = 6
+        assertEquals("Week 1", infos[2].label)
+        assertEquals(6, infos[2].itemIndex)
+
+        // 4. Week 2 Header
+        // Index = 6 (prev header) + 1 (prev header)
+        //         + 1 (Regional header) + 2 (w1r1, w1r2)
+        //         + 1 (District header) + 1 (w1d1)
+        //       = 6 + 1 + 3 + 2 = 12
+        assertEquals("Week 2", infos[3].label)
+        assertEquals(12, infos[3].itemIndex)
+    }
+
     // --- buildEventSections: sort order within sections ---
 
     @Test

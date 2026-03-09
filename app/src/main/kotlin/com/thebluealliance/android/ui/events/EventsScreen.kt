@@ -192,28 +192,7 @@ private fun EventsList(
     }
 
     val headerInfos = remember(sections, favoriteEvents, thisWeekResult) {
-        buildList {
-            var index = 0
-            if (favoriteEvents.isNotEmpty()) {
-                add(SectionHeaderInfo("favorites_header", "Favorites", index))
-                index += 1 + favoriteEvents.size // header + items
-            }
-            if (thisWeekResult != null) {
-                add(SectionHeaderInfo("this_week_header", thisWeekResult.label, index))
-                // Each sub-section has a header (if not empty) + events
-                index += 1 + thisWeekResult.subSections.sumOf {
-                    (if (it.label.isNotEmpty()) 1 else 0) + it.events.size
-                }
-            }
-            sections.forEach { section ->
-                val headerKey = "header_${section.label}"
-                add(SectionHeaderInfo(headerKey, section.label, index))
-                // Each sub-section has a header (if not empty) + events
-                index += 1 + section.subSections.sumOf {
-                    (if (it.label.isNotEmpty()) 1 else 0) + it.events.size
-                }
-            }
-        }
+        buildHeaderInfos(sections, favoriteEvents, thisWeekResult)
     }
 
     val headerKeys = remember(headerInfos) { headerInfos.map { it.key }.toSet() }
