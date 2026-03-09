@@ -8,6 +8,9 @@
     <color name="widget_on_surface_variant">#49454F</color>
     <color name="widget_red">#C62828</color>
     <color name="widget_blue">#1565C0</color>
+    <!-- Match text colors — must match the app's MaterialTheme.colorScheme.error / .primary -->
+    <color name="widget_red_text">#B3261E</color>
+    <color name="widget_blue_text">#3F51B5</color>
     <color name="widget_rp_inactive">#9CA3AF</color>
     <color name="widget_settings_icon">#9E9E9E</color>
 </resources>
