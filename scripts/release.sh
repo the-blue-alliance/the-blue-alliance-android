@@ -2,6 +2,7 @@
 # Build and publish releases to Google Play Store.
 #
 # Usage:
+#   ./scripts/release.sh status               Show current releases on each track
 #   ./scripts/release.sh alpha [--dry-run]    Build + publish to alpha track
 #   ./scripts/release.sh beta [--dry-run]     Promote alpha → beta
 #   ./scripts/release.sh production [--dry-run] Promote beta → production
@@ -393,6 +394,173 @@ cmd_beta() {
     announce_release_action "Promoted alpha to beta"
 }
 
+cmd_status() {
+    info "Fetching Google Play track status..."
+    echo ""
+
+    # Resolve service account path
+    local sa_path="play-service-account.json"
+    local configured
+    configured=$(read_local_property "play.service.account.key" || true)
+    if [[ -n "$configured" ]]; then
+        sa_path="$configured"
+    fi
+
+    SA_PATH="$sa_path" python3 - <<'PY'
+import json, os, sys, time, urllib.request, urllib.error
+
+sa_path = os.environ["SA_PATH"]
+with open(sa_path) as f:
+    sa = json.load(f)
+
+# Build JWT for Google OAuth2
+import hashlib, hmac, base64, struct
+
+def b64url(data):
+    return base64.urlsafe_b64encode(data).rstrip(b"=").decode()
+
+header = b64url(json.dumps({"alg": "RS256", "typ": "JWT"}).encode())
+now = int(time.time())
+claims = b64url(json.dumps({
+    "iss": sa["client_email"],
+    "scope": "https://www.googleapis.com/auth/androidpublisher",
+    "aud": "https://oauth2.googleapis.com/token",
+    "iat": now,
+    "exp": now + 3600,
+}).encode())
+signing_input = f"{header}.{claims}".encode()
+
+# RS256 signing using the service account private key
+try:
+    from cryptography.hazmat.primitives import hashes, serialization
+    from cryptography.hazmat.primitives.asymmetric import padding
+
+    private_key = serialization.load_pem_private_key(sa["private_key"].encode(), password=None)
+    signature = private_key.sign(signing_input, padding.PKCS1v15(), hashes.SHA256())
+except ImportError:
+    # Fall back to openssl subprocess
+    import subprocess, tempfile
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".pem", delete=False) as kf:
+        kf.write(sa["private_key"])
+        kf_path = kf.name
+    try:
+        result = subprocess.run(
+            ["openssl", "dgst", "-sha256", "-sign", kf_path],
+            input=signing_input, capture_output=True, check=True,
+        )
+        signature = result.stdout
+    finally:
+        os.unlink(kf_path)
+
+jwt_token = f"{header}.{claims}.{b64url(signature)}"
+
+# Exchange JWT for access token
+token_req = urllib.request.Request(
+    "https://oauth2.googleapis.com/token",
+    data=urllib.parse.urlencode({
+        "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
+        "assertion": jwt_token,
+    }).encode(),
+    headers={"Content-Type": "application/x-www-form-urlencoded"},
+)
+import urllib.parse
+try:
+    with urllib.request.urlopen(token_req) as resp:
+        token_data = json.loads(resp.read())
+except urllib.error.HTTPError as e:
+    print(f"Failed to get access token: {e.code} {e.read().decode()}", file=sys.stderr)
+    sys.exit(1)
+
+access_token = token_data["access_token"]
+package = "com.thebluealliance.androidclient"
+
+# Create an edit to read track info
+edit_req = urllib.request.Request(
+    f"https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{package}/edits",
+    data=b"{}",
+    headers={
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+    },
+    method="POST",
+)
+try:
+    with urllib.request.urlopen(edit_req) as resp:
+        edit = json.loads(resp.read())
+except urllib.error.HTTPError as e:
+    print(f"Failed to create edit: {e.code} {e.read().decode()}", file=sys.stderr)
+    sys.exit(1)
+
+edit_id = edit["id"]
+
+BOLD = "\033[1m"
+GREEN = "\033[0;32m"
+YELLOW = "\033[1;33m"
+RED = "\033[0;31m"
+DIM = "\033[2m"
+NC = "\033[0m"
+
+# Google Play API track names → Play Console display names
+tracks = [
+    ("production", "Production"),
+    ("beta", "Open testing"),
+    ("alpha", "Closed testing"),
+    ("internal", "Internal testing"),
+]
+for track_id, display_name in tracks:
+    url = f"https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{package}/edits/{edit_id}/tracks/{track_id}"
+    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {access_token}"})
+    try:
+        with urllib.request.urlopen(req) as resp:
+            track_data = json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            print(f"{BOLD}{display_name}{NC} {DIM}({track_id}){NC}: (empty)")
+            continue
+        print(f"Failed to fetch track {track_id}: {e.code} {e.read().decode()}", file=sys.stderr)
+        continue
+
+    releases = track_data.get("releases", [])
+    print(f"{BOLD}{display_name}{NC} {DIM}({track_id}){NC}")
+    if not releases:
+        print(f"  (no releases)")
+    for release in releases:
+        status = release.get("status", "unknown")
+        version_codes = release.get("versionCodes", [])
+        name = release.get("name", "")
+        fraction = release.get("userFraction")
+
+        status_colors = {
+            "completed": GREEN,
+            "inProgress": YELLOW,
+            "draft": YELLOW,
+            "halted": RED,
+        }
+        color = status_colors.get(status, "")
+        status_str = f"{color}{status}{NC}" if color else status
+
+        version_str = ", ".join(str(v) for v in version_codes)
+        line = f"  {status_str}  {BOLD}{name}{NC}" if name else f"  {status_str}"
+        if version_str:
+            line += f"  {DIM}(versionCode {version_str}){NC}"
+        if fraction is not None:
+            line += f"  {YELLOW}{fraction:.0%} rollout{NC}"
+        print(line)
+    print()
+
+print(f"{DIM}Note: Google's review status is not available via the API.{NC}")
+print(f"{DIM}Check the Play Console for review progress.{NC}")
+
+# Delete the edit (we only read, don't commit)
+delete_url = f"https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{package}/edits/{edit_id}"
+delete_req = urllib.request.Request(delete_url, headers={"Authorization": f"Bearer {access_token}"}, method="DELETE")
+try:
+    urllib.request.urlopen(delete_req)
+except urllib.error.HTTPError:
+    pass  # Best effort cleanup
+PY
+}
+
 cmd_production() {
     info "Promoting beta → production"
     echo ""
@@ -421,6 +589,7 @@ usage() {
     echo "Usage: $0 <command> [--dry-run]"
     echo ""
     echo "Commands:"
+    echo "  status      Show current releases on each Google Play track"
     echo "  alpha       Build release bundle and publish to alpha track"
     echo "  beta        Promote current alpha to beta"
     echo "  production  Promote current beta to production"
@@ -434,7 +603,7 @@ COMMAND=""
 for arg in "$@"; do
     case "$arg" in
         --dry-run) DRY_RUN=true ;;
-        alpha|beta|production) COMMAND="$arg" ;;
+        status|alpha|beta|production) COMMAND="$arg" ;;
         -h|--help) usage; exit 0 ;;
         *) die "Unknown argument: $arg" ;;
     esac
@@ -453,6 +622,7 @@ fi
 preflight
 
 case "$COMMAND" in
+    status)     cmd_status ;;
     alpha)      cmd_alpha ;;
     beta)       cmd_beta ;;
     production) cmd_production ;;
