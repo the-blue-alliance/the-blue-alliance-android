@@ -32,6 +32,7 @@ credentials = "1.5.0"
 googleid = "1.2.0"
 
 work = "2.11.1"
+glance = "1.1.1"
 
 junit = "6.0.3"
 turbine = "1.2.1"
@@ -108,6 +109,10 @@ googleid = { group = "com.google.android.libraries.identity.googleid", name = "g
 work-runtime = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
 hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hilt-androidx" }
 hilt-work-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hilt-androidx" }
+
+# Glance (App Widgets)
+glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
+glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
 
 # Datastore
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }

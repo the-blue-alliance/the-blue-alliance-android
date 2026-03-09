@@ -2,13 +2,14 @@
 #
 # Play Store Screenshot Playbook
 #
-# Captures 6 phone screenshots for the Google Play Store listing.
+# Captures 7 phone screenshots for the Google Play Store listing.
 # Uses the release build for authentic Play Store screenshots.
 #
 # Prerequisites:
 #   - Android emulator running (1080x2400 device)
 #   - emu tool available at scripts/emu (included in repo)
 #   - Release build installed: ./gradlew :app:installRelease
+#   - A Google account signed in on the emulator (for Google Sign-In)
 #   - App has data loaded (events, teams, districts for current year)
 #   - Emulator DNS must work: if Private DNS is enabled, disable it with:
 #       adb shell settings put global private_dns_mode off
@@ -26,6 +27,7 @@ set -euo pipefail
 
 EMU="$(dirname "$0")/emu"
 PKG="com.thebluealliance.androidclient"
+DEV_PKG="com.thebluealliance.androidclient.development"
 MAIN_ACTIVITY="com.thebluealliance.android.MainActivity"
 RAW_DIR="screenshots/play-store/phone"
 DEST_DIR="app/src/main/play/listings/en-US/graphics/phone-screenshots"
@@ -57,11 +59,45 @@ adb shell am broadcast -a com.android.systemui.demo -e command network -e wifi s
 adb shell am broadcast -a com.android.systemui.demo -e command network -e mobile show -e level 4
 adb shell am broadcast -a com.android.systemui.demo -e command notifications -e visible false
 
+# Grant notification permission upfront so the dialog doesn't interrupt sign-in.
+adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS 2>/dev/null || true
+
+echo "==> Signing in..."
+$EMU launch "$PKG/$MAIN_ACTIVITY"
+wait_for_ui 3
+$EMU tap "More"
+wait_for_ui 2
+$EMU tap "myTBA"
+wait_for_ui 2
+
+# If not signed in, tap "Sign in with Google" and complete the Credential Manager flow.
+if $EMU find "Sign in with Google" 2>/dev/null | grep -q "Sign in with Google"; then
+  $EMU tap "Sign in with Google"
+  wait_for_ui 3
+  # Google Credential Manager shows a bottom sheet — tap "Continue" to select the account.
+  $EMU tap "Continue"
+  wait_for_ui 5
+  echo "    Signed in successfully"
+else
+  echo "    Already signed in"
+fi
+
+# Favorite an event so the Events list shows a "Your Events" section.
+deeplink "/event/2025casf"
+wait_for_ui 3
+if $EMU find "Add to favorites" 2>/dev/null | grep -q "Add to favorites"; then
+  $EMU tap "Add to favorites"
+  wait_for_ui 1
+  echo "    Favorited 2025casf"
+else
+  echo "    2025casf already favorited"
+fi
+
 echo "==> Launching app..."
 $EMU launch "$PKG/$MAIN_ACTIVITY"
 wait_for_ui 5
 
-# 1. Events list (home screen)
+# 1. Events list (home screen, showing "Your Events" section)
 echo "==> Screenshot 1: Events list"
 $EMU screenshot "$RAW_DIR/01-events-list.png"
 wait_for_ui
@@ -106,6 +142,30 @@ $EMU tap "New England"
 wait_for_ui
 $EMU screenshot "$RAW_DIR/06-district-detail.png"
 
+# 7. Home screen with Team Tracking widgets (604 at event, 254 upcoming)
+# This step uses the debug build for widget pin/remove automation.
+echo "==> Installing debug build for widget automation..."
+./gradlew :app:installDebug -q
+adb shell appwidget grantbind --package "$DEV_PKG" --user 0
+echo "==> Screenshot 7: Home screen widgets"
+# Clean up any existing TBA widgets
+adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.RemoveWidgetsActivity"
+wait_for_ui 1
+# Pin widget for team currently at event
+adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.PinWidgetActivity" --es team 604
+wait_for_ui 1
+$EMU tap "Add to home screen"
+wait_for_ui 5
+# Pin widget for team with upcoming events
+adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.PinWidgetActivity" --es team 254
+wait_for_ui 1
+$EMU tap "Add to home screen"
+wait_for_ui 5
+# Go to home screen and capture
+adb shell input keyevent KEYCODE_HOME
+wait_for_ui 1
+$EMU screenshot "$RAW_DIR/07-home-widgets.png"
+
 # Copy to Play Store listing directory
 echo "==> Copying to $DEST_DIR"
 cp "$RAW_DIR/01-events-list.png"        "$DEST_DIR/1-events-list.png"
@@ -114,6 +174,12 @@ cp "$RAW_DIR/03-match-detail.png"       "$DEST_DIR/3-match-detail.png"
 cp "$RAW_DIR/04-team-detail.png"        "$DEST_DIR/4-team-detail.png"
 cp "$RAW_DIR/05-notification-prefs.png" "$DEST_DIR/5-notification-prefs.png"
 cp "$RAW_DIR/06-district-detail.png"    "$DEST_DIR/6-district-detail.png"
+cp "$RAW_DIR/07-home-widgets.png"      "$DEST_DIR/7-home-widgets.png"
+
+# Clean up widgets from home screen
+echo "==> Cleaning up widgets..."
+adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.RemoveWidgetsActivity"
+wait_for_ui 1
 
 # Disable demo mode to restore normal status bar
 echo "==> Disabling demo mode..."

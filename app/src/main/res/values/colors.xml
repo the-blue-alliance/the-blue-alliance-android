@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="launcher_background">#3F51B5</color>
+
+    <!-- Widget colors (shared between TeamTrackingWidget.kt and widget_preview.xml) -->
+    <color name="widget_background">#FFFBFE</color>
+    <color name="widget_on_surface">#1C1B1F</color>
+    <color name="widget_on_surface_variant">#49454F</color>
+    <color name="widget_red">#C62828</color>
+    <color name="widget_blue">#1565C0</color>
+    <color name="widget_rp_inactive">#9CA3AF</color>
+    <color name="widget_settings_icon">#9E9E9E</color>
 </resources>
