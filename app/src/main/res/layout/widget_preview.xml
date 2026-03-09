@@ -61,7 +61,7 @@
             android:layout_weight="1"
             android:text="177, 175, 2067"
             android:textSize="@dimen/widget_match_text_size"
-            android:textColor="@color/widget_red"
+            android:textColor="@color/widget_red_text"
             android:textStyle="bold" />
 
         <TextView
@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:text="68"
             android:textSize="@dimen/widget_match_text_size"
-            android:textColor="@color/widget_red"
+            android:textColor="@color/widget_red_text"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -91,14 +91,14 @@
             android:layout_weight="1"
             android:text="558, 1699, 3146"
             android:textSize="@dimen/widget_match_text_size"
-            android:textColor="@color/widget_blue" />
+            android:textColor="@color/widget_blue_text" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="45"
             android:textSize="@dimen/widget_match_text_size"
-            android:textColor="@color/widget_blue" />
+            android:textColor="@color/widget_blue_text" />
     </LinearLayout>
 
     <!-- Next match -->
@@ -132,7 +132,7 @@
             android:layout_weight="1"
             android:text="236, 3719, 429"
             android:textSize="@dimen/widget_match_text_size"
-            android:textColor="@color/widget_red" />
+            android:textColor="@color/widget_red_text" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -160,7 +160,7 @@
             android:layout_weight="1"
             android:text="177, 2170, 571"
             android:textSize="@dimen/widget_match_text_size"
-            android:textColor="@color/widget_blue" />
+            android:textColor="@color/widget_blue_text" />
 
         <TextView
             android:layout_width="wrap_content"
