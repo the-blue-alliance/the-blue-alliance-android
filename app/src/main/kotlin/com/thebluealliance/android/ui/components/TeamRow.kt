@@ -22,6 +22,7 @@ fun TeamRow(
     team: Team,
     onClick: () -> Unit,
     showChevron: Boolean = false,
+    subtitlePrefix: String? = null,
 ) {
     Row(
         modifier = Modifier
@@ -37,9 +38,10 @@ fun TeamRow(
                 fontWeight = FontWeight.Medium,
             )
             val location = listOfNotNull(team.city, team.state, team.country).joinToString(", ")
-            if (location.isNotEmpty()) {
+            val subtitle = listOfNotNull(subtitlePrefix, location.ifEmpty { null }).joinToString(" \u00B7 ")
+            if (subtitle.isNotEmpty()) {
                 Text(
-                    text = location,
+                    text = subtitle,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

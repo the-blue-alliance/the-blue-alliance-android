@@ -114,4 +114,17 @@ interface TbaApi {
         @Path("team_key") teamKey: String,
         @Path("year") year: Int,
     ): List<MediaDto>
+
+    // Team Event Status
+    @GET("api/v3/team/{team_key}/event/{event_key}/status")
+    suspend fun getTeamEventStatus(
+        @Path("team_key") teamKey: String,
+        @Path("event_key") eventKey: String,
+    ): TeamEventStatusDto?
+
+    // Event Teams Statuses
+    @GET("api/v3/event/{event_key}/teams/statuses")
+    suspend fun getEventTeamsStatuses(
+        @Path("event_key") eventKey: String,
+    ): Map<String, TeamEventStatusDto?>
 }

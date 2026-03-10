@@ -26,4 +26,5 @@ data class EventDetailUiState(
     val coprs: EventCOPRs? = null,
     val insights: EventInsights? = null,
     val districtDisplayName: String? = null,
+    val pitLocations: Map<String, String> = emptyMap(),
 )

@@ -72,4 +72,12 @@ class TeamRepository @Inject constructor(
             mediaDao.insertAll(dtos.map { it.toEntity(teamKey, year) })
         }
     }
+
+    suspend fun fetchTeamEventPitLocation(teamKey: String, eventKey: String): String? {
+        return try {
+            api.getTeamEventStatus(teamKey, eventKey)?.pitLocation
+        } catch (_: Exception) {
+            null
+        }
+    }
 }

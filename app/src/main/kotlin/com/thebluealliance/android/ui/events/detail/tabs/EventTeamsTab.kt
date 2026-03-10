@@ -15,6 +15,7 @@ import com.thebluealliance.android.ui.components.TeamRow
 @Composable
 fun EventTeamsTab(
     teams: List<Team>?,
+    pitLocations: Map<String, String> = emptyMap(),
     onNavigateToTeam: (String) -> Unit,
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
@@ -36,7 +37,12 @@ fun EventTeamsTab(
         contentPadding = innerPadding,
     ) {
         items(teams, key = { it.key }) { team ->
-            TeamRow(team = team, onClick = { onNavigateToTeam(team.key) })
+            val pitLocation = pitLocations[team.key]
+            TeamRow(
+                team = team,
+                onClick = { onNavigateToTeam(team.key) },
+                subtitlePrefix = pitLocation?.let { "Pit $it" },
+            )
         }
     }
 }
