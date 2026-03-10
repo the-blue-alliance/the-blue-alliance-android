@@ -6,6 +6,7 @@
 #   ./scripts/release.sh alpha [--dry-run]    Build + publish to alpha track
 #   ./scripts/release.sh beta [--dry-run]     Promote alpha → beta
 #   ./scripts/release.sh production [--dry-run] Promote beta → production
+#   ./scripts/release.sh listing [--dry-run]  Publish store listing only
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -57,6 +58,39 @@ run() {
     else
         "$@"
     fi
+}
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Query the Play API for the version name + code on a given track.
+# Sets VERSION_NAME and VERSION_CODE globals.
+get_track_version() {
+    local track="$1"
+    local sa_path
+    sa_path=$(resolve_sa_path)
+
+    local result
+    result=$(python3 "$SCRIPT_DIR/play_api.py" --sa-path "$sa_path" track-version "$track")
+
+    VERSION_NAME=$(echo "$result" | cut -f1)
+    VERSION_CODE=$(echo "$result" | cut -f2)
+
+    if [[ -z "$VERSION_NAME" ]]; then
+        warn "Could not determine version from ${track} track"
+    else
+        info "Version on ${track}: ${VERSION_NAME} (${VERSION_CODE})"
+    fi
+}
+
+# Resolve service account path from local.properties or default.
+resolve_sa_path() {
+    local sa_path="play-service-account.json"
+    local configured
+    configured=$(read_local_property "play.service.account.key" || true)
+    if [[ -n "$configured" ]]; then
+        sa_path="$configured"
+    fi
+    echo "$sa_path"
 }
 
 build_commitlog() {
@@ -235,35 +269,34 @@ print(data['upload_url'].split('{')[0])
 # ── Preflight checks ────────────────────────────────────────────────────
 
 preflight() {
+    local mode="${1:-full}"   # "full" for alpha/production, "light" for beta/listing/status
     local ok=true
 
-    if [[ ! -f local.properties ]]; then
-        echo -e "${RED}✗${NC} local.properties missing (need signing config)"
-        ok=false
-    else
-        if ! grep -q 'release.store.file' local.properties; then
-            echo -e "${RED}✗${NC} local.properties missing release.store.file"
+    if [[ "$mode" == "full" ]]; then
+        if [[ ! -f local.properties ]]; then
+            echo -e "${RED}✗${NC} local.properties missing (need signing config)"
+            ok=false
+        else
+            if ! grep -q 'release.store.file' local.properties; then
+                echo -e "${RED}✗${NC} local.properties missing release.store.file"
+                ok=false
+            fi
+        fi
+
+        if [[ ! -f app/src/release/google-services.json ]]; then
+            echo -e "${RED}✗${NC} app/src/release/google-services.json missing"
+            ok=false
+        fi
+        if [[ ! -f app/src/debug/google-services.json ]]; then
+            echo -e "${RED}✗${NC} app/src/debug/google-services.json missing"
             ok=false
         fi
     fi
 
-    # Resolve service account path from local.properties or default
-    local sa_path="play-service-account.json"
-    configured=$(read_local_property "play.service.account.key" || true)
-    if [[ -n "$configured" ]]; then
-        sa_path="$configured"
-    fi
+    local sa_path
+    sa_path=$(resolve_sa_path)
     if [[ ! -f "$sa_path" ]]; then
         echo -e "${RED}✗${NC} Play service account not found at ${sa_path}"
-        ok=false
-    fi
-
-    if [[ ! -f app/src/release/google-services.json ]]; then
-        echo -e "${RED}✗${NC} app/src/release/google-services.json missing"
-        ok=false
-    fi
-    if [[ ! -f app/src/debug/google-services.json ]]; then
-        echo -e "${RED}✗${NC} app/src/debug/google-services.json missing"
         ok=false
     fi
 
@@ -271,14 +304,16 @@ preflight() {
         die "Preflight checks failed. Fix the issues above and retry."
     fi
 
-    # Require a clean working tree (no staged or unstaged changes)
-    if [[ -n "$(git status --porcelain)" ]]; then
-        die "Working directory is not clean. Commit or stash all changes before releasing."
-    fi
+    if [[ "$mode" == "full" ]]; then
+        # Require a clean working tree (no staged or unstaged changes)
+        if [[ -n "$(git status --porcelain)" ]]; then
+            die "Working directory is not clean. Commit or stash all changes before releasing."
+        fi
 
-    # Fetch from the configured remote so git describe sees up-to-date release tags
-    info "Fetching tags from ${GIT_REMOTE}..."
-    git fetch "$GIT_REMOTE" --tags --quiet
+        # Fetch from the configured remote so git describe sees up-to-date release tags
+        info "Fetching tags from ${GIT_REMOTE}..."
+        git fetch "$GIT_REMOTE" --tags --quiet
+    fi
 
     info "Preflight checks passed"
 }
@@ -392,180 +427,60 @@ cmd_beta() {
     info "Promoting alpha → beta"
     echo ""
 
-    get_version_info
+    # Resolve the version currently on the alpha track
+    get_track_version alpha
+
+    if [[ -z "$VERSION_NAME" ]]; then
+        die "Could not determine version on alpha track"
+    fi
+
+    local tag="v${VERSION_NAME}"
+
+    # Capture the current branch (or commit SHA if in detached HEAD state)
+    local original_ref
+    if original_ref=$(git symbolic-ref --quiet --short HEAD 2>/dev/null); then
+        : # on a named branch
+    else
+        original_ref=$(git rev-parse HEAD)
+    fi
+
+    info "Fetching tags from ${GIT_REMOTE}..."
+    run git fetch "$GIT_REMOTE" --tags --quiet
+
+    if ! $DRY_RUN && ! git rev-parse "$tag" >/dev/null 2>&1; then
+        die "Tag ${tag} not found. Ensure the release was properly tagged."
+    fi
+
+    info "Checking out ${tag}..."
+    run git checkout "$tag"
+
     run ./gradlew promoteReleaseArtifact --from-track alpha --promote-track beta
+
+    info "Returning to ${original_ref}..."
+    run git checkout "$original_ref"
 
     echo ""
     echo -e "${GREEN}✓ Promoted alpha → beta${NC}"
 
+    # Get the actual version from the beta track (now that it's been promoted)
+    get_track_version beta
     announce_release_action "Promoted alpha to beta"
 }
 
 cmd_status() {
-    info "Fetching Google Play track status..."
+    local sa_path
+    sa_path=$(resolve_sa_path)
+    python3 "$SCRIPT_DIR/play_api.py" --sa-path "$sa_path" status
+}
+
+cmd_listing() {
+    info "Publishing store listing (screenshots, descriptions, etc.)"
     echo ""
 
-    # Resolve service account path
-    local sa_path="play-service-account.json"
-    local configured
-    configured=$(read_local_property "play.service.account.key" || true)
-    if [[ -n "$configured" ]]; then
-        sa_path="$configured"
-    fi
+    run ./gradlew publishReleaseListing
 
-    SA_PATH="$sa_path" python3 - <<'PY'
-import json, os, sys, time, urllib.request, urllib.error
-
-sa_path = os.environ["SA_PATH"]
-with open(sa_path) as f:
-    sa = json.load(f)
-
-# Build JWT for Google OAuth2
-import hashlib, hmac, base64, struct
-
-def b64url(data):
-    return base64.urlsafe_b64encode(data).rstrip(b"=").decode()
-
-header = b64url(json.dumps({"alg": "RS256", "typ": "JWT"}).encode())
-now = int(time.time())
-claims = b64url(json.dumps({
-    "iss": sa["client_email"],
-    "scope": "https://www.googleapis.com/auth/androidpublisher",
-    "aud": "https://oauth2.googleapis.com/token",
-    "iat": now,
-    "exp": now + 3600,
-}).encode())
-signing_input = f"{header}.{claims}".encode()
-
-# RS256 signing using the service account private key
-try:
-    from cryptography.hazmat.primitives import hashes, serialization
-    from cryptography.hazmat.primitives.asymmetric import padding
-
-    private_key = serialization.load_pem_private_key(sa["private_key"].encode(), password=None)
-    signature = private_key.sign(signing_input, padding.PKCS1v15(), hashes.SHA256())
-except ImportError:
-    # Fall back to openssl subprocess
-    import subprocess, tempfile
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".pem", delete=False) as kf:
-        kf.write(sa["private_key"])
-        kf_path = kf.name
-    try:
-        result = subprocess.run(
-            ["openssl", "dgst", "-sha256", "-sign", kf_path],
-            input=signing_input, capture_output=True, check=True,
-        )
-        signature = result.stdout
-    finally:
-        os.unlink(kf_path)
-
-jwt_token = f"{header}.{claims}.{b64url(signature)}"
-
-# Exchange JWT for access token
-token_req = urllib.request.Request(
-    "https://oauth2.googleapis.com/token",
-    data=urllib.parse.urlencode({
-        "grant_type": "urn:ietf:params:oauth:grant-type:jwt-bearer",
-        "assertion": jwt_token,
-    }).encode(),
-    headers={"Content-Type": "application/x-www-form-urlencoded"},
-)
-import urllib.parse
-try:
-    with urllib.request.urlopen(token_req) as resp:
-        token_data = json.loads(resp.read())
-except urllib.error.HTTPError as e:
-    print(f"Failed to get access token: {e.code} {e.read().decode()}", file=sys.stderr)
-    sys.exit(1)
-
-access_token = token_data["access_token"]
-package = "com.thebluealliance.androidclient"
-
-# Create an edit to read track info
-edit_req = urllib.request.Request(
-    f"https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{package}/edits",
-    data=b"{}",
-    headers={
-        "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json",
-    },
-    method="POST",
-)
-try:
-    with urllib.request.urlopen(edit_req) as resp:
-        edit = json.loads(resp.read())
-except urllib.error.HTTPError as e:
-    print(f"Failed to create edit: {e.code} {e.read().decode()}", file=sys.stderr)
-    sys.exit(1)
-
-edit_id = edit["id"]
-
-BOLD = "\033[1m"
-GREEN = "\033[0;32m"
-YELLOW = "\033[1;33m"
-RED = "\033[0;31m"
-DIM = "\033[2m"
-NC = "\033[0m"
-
-# Google Play API track names → Play Console display names
-tracks = [
-    ("production", "Production"),
-    ("beta", "Open testing"),
-    ("alpha", "Closed testing"),
-    ("internal", "Internal testing"),
-]
-for track_id, display_name in tracks:
-    url = f"https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{package}/edits/{edit_id}/tracks/{track_id}"
-    req = urllib.request.Request(url, headers={"Authorization": f"Bearer {access_token}"})
-    try:
-        with urllib.request.urlopen(req) as resp:
-            track_data = json.loads(resp.read())
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
-            print(f"{BOLD}{display_name}{NC} {DIM}({track_id}){NC}: (empty)")
-            continue
-        print(f"Failed to fetch track {track_id}: {e.code} {e.read().decode()}", file=sys.stderr)
-        continue
-
-    releases = track_data.get("releases", [])
-    print(f"{BOLD}{display_name}{NC} {DIM}({track_id}){NC}")
-    if not releases:
-        print(f"  (no releases)")
-    for release in releases:
-        status = release.get("status", "unknown")
-        version_codes = release.get("versionCodes", [])
-        name = release.get("name", "")
-        fraction = release.get("userFraction")
-
-        status_colors = {
-            "completed": GREEN,
-            "inProgress": YELLOW,
-            "draft": YELLOW,
-            "halted": RED,
-        }
-        color = status_colors.get(status, "")
-        status_str = f"{color}{status}{NC}" if color else status
-
-        version_str = ", ".join(str(v) for v in version_codes)
-        line = f"  {status_str}  {BOLD}{name}{NC}" if name else f"  {status_str}"
-        if version_str:
-            line += f"  {DIM}(versionCode {version_str}){NC}"
-        if fraction is not None:
-            line += f"  {YELLOW}{fraction:.0%} rollout{NC}"
-        print(line)
-    print()
-
-print(f"{DIM}Note: Google's review status is not available via the API.{NC}")
-print(f"{DIM}Check the Play Console for review progress.{NC}")
-
-# Delete the edit (we only read, don't commit)
-delete_url = f"https://androidpublisher.googleapis.com/androidpublisher/v3/applications/{package}/edits/{edit_id}"
-delete_req = urllib.request.Request(delete_url, headers={"Authorization": f"Bearer {access_token}"}, method="DELETE")
-try:
-    urllib.request.urlopen(delete_req)
-except urllib.error.HTTPError:
-    pass  # Best effort cleanup
-PY
+    echo ""
+    echo -e "${GREEN}✓ Store listing updated${NC}"
 }
 
 cmd_production() {
@@ -578,15 +493,43 @@ cmd_production() {
         die "Aborted."
     fi
 
+    # Resolve the version currently on the beta track
+    get_track_version beta
+
+    if [[ -z "$VERSION_NAME" ]]; then
+        die "Could not determine version on beta track"
+    fi
+
+    local tag="v${VERSION_NAME}"
+
+    # Capture the current branch (or commit SHA if in detached HEAD state)
+    local original_ref
+    if original_ref=$(git symbolic-ref --quiet --short HEAD 2>/dev/null); then
+        : # on a named branch
+    else
+        original_ref=$(git rev-parse HEAD)
+    fi
+
+    if ! $DRY_RUN && ! git rev-parse "$tag" >/dev/null 2>&1; then
+        die "Tag ${tag} not found. Ensure the release was properly tagged."
+    fi
+
+    info "Checking out ${tag}..."
+    run git checkout "$tag"
+
     run ./gradlew promoteReleaseArtifact --from-track beta --promote-track production
 
     info "Publishing store listing..."
-    run ./gradlew publishListing
+    run ./gradlew publishReleaseListing
+
+    info "Returning to ${original_ref}..."
+    run git checkout "$original_ref"
 
     echo ""
     echo -e "${GREEN}✓ Promoted beta → production${NC}"
 
-    get_version_info
+    # Get the actual version from the production track (now that it's been promoted)
+    get_track_version production
     announce_release_action "Promoted beta to production"
 }
 
@@ -600,6 +543,7 @@ usage() {
     echo "  alpha       Build release bundle and publish to alpha track"
     echo "  beta        Promote current alpha to beta"
     echo "  production  Promote current beta to production"
+    echo "  listing     Publish store listing (screenshots, descriptions) only"
     echo ""
     echo "Options:"
     echo "  --dry-run   Show what would happen without executing"
@@ -610,7 +554,7 @@ COMMAND=""
 for arg in "$@"; do
     case "$arg" in
         --dry-run) DRY_RUN=true ;;
-        status|alpha|beta|production) COMMAND="$arg" ;;
+        status|alpha|beta|production|listing) COMMAND="$arg" ;;
         -h|--help) usage; exit 0 ;;
         *) die "Unknown argument: $arg" ;;
     esac
@@ -626,11 +570,15 @@ if $DRY_RUN; then
     echo ""
 fi
 
-preflight
+case "$COMMAND" in
+    alpha|production) preflight full ;;
+    *)               preflight light ;;
+esac
 
 case "$COMMAND" in
     status)     cmd_status ;;
     alpha)      cmd_alpha ;;
     beta)       cmd_beta ;;
     production) cmd_production ;;
+    listing)    cmd_listing ;;
 esac
