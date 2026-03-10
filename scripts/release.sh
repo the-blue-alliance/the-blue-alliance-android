@@ -427,7 +427,37 @@ cmd_beta() {
     info "Promoting alpha → beta"
     echo ""
 
+    # Resolve the version currently on the alpha track
+    get_track_version alpha
+
+    if [[ -z "$VERSION_NAME" ]]; then
+        die "Could not determine version on alpha track"
+    fi
+
+    local tag="v${VERSION_NAME}"
+
+    # Capture the current branch (or commit SHA if in detached HEAD state)
+    local original_ref
+    if original_ref=$(git symbolic-ref --quiet --short HEAD 2>/dev/null); then
+        : # on a named branch
+    else
+        original_ref=$(git rev-parse HEAD)
+    fi
+
+    info "Fetching tags from ${GIT_REMOTE}..."
+    run git fetch "$GIT_REMOTE" --tags --quiet
+
+    if ! $DRY_RUN && ! git rev-parse "$tag" >/dev/null 2>&1; then
+        die "Tag ${tag} not found. Ensure the release was properly tagged."
+    fi
+
+    info "Checking out ${tag}..."
+    run git checkout "$tag"
+
     run ./gradlew promoteReleaseArtifact --from-track alpha --promote-track beta
+
+    info "Returning to ${original_ref}..."
+    run git checkout "$original_ref"
 
     echo ""
     echo -e "${GREEN}✓ Promoted alpha → beta${NC}"
@@ -463,10 +493,37 @@ cmd_production() {
         die "Aborted."
     fi
 
+    # Resolve the version currently on the beta track
+    get_track_version beta
+
+    if [[ -z "$VERSION_NAME" ]]; then
+        die "Could not determine version on beta track"
+    fi
+
+    local tag="v${VERSION_NAME}"
+
+    # Capture the current branch (or commit SHA if in detached HEAD state)
+    local original_ref
+    if original_ref=$(git symbolic-ref --quiet --short HEAD 2>/dev/null); then
+        : # on a named branch
+    else
+        original_ref=$(git rev-parse HEAD)
+    fi
+
+    if ! $DRY_RUN && ! git rev-parse "$tag" >/dev/null 2>&1; then
+        die "Tag ${tag} not found. Ensure the release was properly tagged."
+    fi
+
+    info "Checking out ${tag}..."
+    run git checkout "$tag"
+
     run ./gradlew promoteReleaseArtifact --from-track beta --promote-track production
 
     info "Publishing store listing..."
     run ./gradlew publishReleaseListing
+
+    info "Returning to ${original_ref}..."
+    run git checkout "$original_ref"
 
     echo ""
     echo -e "${GREEN}✓ Promoted beta → production${NC}"
