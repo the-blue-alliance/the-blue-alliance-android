@@ -17,6 +17,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -162,12 +163,14 @@ fun TeamEventDetailScreen(
                 when (page) {
                     0 -> SummaryTab(
                         teamKey = viewModel.teamKey,
+                        eventKey = viewModel.eventKey,
                         event = evt,
                         team = uiState.team,
                         ranking = uiState.ranking,
                         alliances = uiState.alliances,
                         awards = uiState.awards,
                         matches = uiState.matches,
+                        pitLocation = uiState.pitLocation,
                         onNavigateToEvent = onNavigateToEvent,
                         onNavigateToTeam = onNavigateToTeam,
                         onNavigateToMatch = onNavigateToMatch,
@@ -238,12 +241,14 @@ fun TeamEventDetailScreen(
 @Composable
 private fun SummaryTab(
     teamKey: String,
+    eventKey: String,
     event: Event?,
     team: Team?,
     ranking: Ranking?,
     alliances: List<Alliance>?,
     awards: List<Award>?,
     matches: List<Match>?,
+    pitLocation: String?,
     onNavigateToEvent: (eventKey: String, initialTab: Int) -> Unit,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToMatch: (String) -> Unit,
@@ -277,12 +282,12 @@ private fun SummaryTab(
             }
         }
 
-        // Ranking header
+        // Info header (ranking, alliance, pit location)
         val teamAlliance = alliances?.firstOrNull { alliance ->
             teamKey in alliance.picks || teamKey == alliance.backupIn
         }
-        if (ranking != null || teamAlliance != null) {
-            item(key = "summary_ranking_header") {
+        if (ranking != null || teamAlliance != null || pitLocation != null) {
+            item(key = "summary_info_header") {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -290,7 +295,7 @@ private fun SummaryTab(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 ) {
                     Text(
-                        text = "Ranking",
+                        text = "Info",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
@@ -300,32 +305,21 @@ private fun SummaryTab(
         }
 
         // Ranking
+        var infoItemCount = 0
         if (ranking != null) {
             item(key = "summary_ranking") {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { event?.let { onNavigateToEvent(it.key, EventDetailTabs.RANKINGS) } }
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        text = "Rank ${ranking.rank}",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Text(
-                        text = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
+                InfoRow(
+                    label = "Rank ${ranking.rank}",
+                    value = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
+                    onClick = { event?.let { onNavigateToEvent(it.key, EventDetailTabs.RANKINGS) } },
+                )
             }
+            infoItemCount++
         }
 
         // Alliance
         if (teamAlliance != null) {
-            if (ranking != null) {
+            if (infoItemCount > 0) {
                 item(key = "summary_alliance_divider") { HorizontalDivider() }
             }
             item(key = "summary_alliance") {
@@ -334,24 +328,31 @@ private fun SummaryTab(
                     teamAlliance.picks.indexOf(teamKey) == 0 -> "Captain"
                     else -> "Pick ${teamAlliance.picks.indexOf(teamKey)}"
                 }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { event?.let { onNavigateToEvent(it.key, EventDetailTabs.ALLIANCES) } }
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        text = "Alliance ${teamAlliance.number}",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Text(
-                        text = role,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
+                InfoRow(
+                    label = "Alliance ${teamAlliance.number}",
+                    value = role,
+                    onClick = { event?.let { onNavigateToEvent(it.key, EventDetailTabs.ALLIANCES) } },
+                )
+            }
+            infoItemCount++
+        }
+
+        // Pit Location
+        if (pitLocation != null) {
+            if (infoItemCount > 0) {
+                item(key = "summary_pit_location_divider") { HorizontalDivider() }
+            }
+            item(key = "summary_pit_location") {
+                val uriHandler = LocalUriHandler.current
+                val teamNumber = teamKey.removePrefix("frc")
+                InfoRow(
+                    label = "Pit Location",
+                    labelSuffix = "(via FRC Nexus)",
+                    value = pitLocation,
+                    onClick = {
+                        uriHandler.openUri("https://frc.nexus/en/event/$eventKey/team/$teamNumber/map")
+                    },
+                )
             }
         }
 
@@ -441,6 +442,46 @@ private fun SummarySection(
             modifier = Modifier.padding(bottom = 4.dp),
         )
         content()
+    }
+}
+
+@Composable
+private fun InfoRow(
+    label: String,
+    labelSuffix: String? = null,
+    value: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(modifier = Modifier.weight(1f)) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            if (labelSuffix != null) {
+                Text(
+                    text = " $labelSuffix",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+        }
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 

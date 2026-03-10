@@ -283,6 +283,7 @@ fun EventDetailScreen(
                     )
                     1 -> EventTeamsTab(
                         teams = uiState.teams,
+                        pitLocations = uiState.pitLocations,
                         innerPadding = innerPadding,
                         onNavigateToTeam = { teamKey ->
                             val eventKey = uiState.event?.key

@@ -52,6 +52,8 @@ class EventDetailViewModel @AssistedInject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
+    private val _pitLocations = MutableStateFlow<Map<String, String>>(emptyMap())
+
     private val teamKeysFlow = teamRepository.observeEventTeamKeys(eventKey)
 
     private val teamsFlow = teamKeysFlow.flatMapLatest { keys ->
@@ -129,10 +131,12 @@ class EventDetailViewModel @AssistedInject constructor(
             combine(
                 eventRepository.observeEventInsights(eventKey),
                 baseState.event?.district?.let { districtRepository.observeDistrict(it) } ?: flowOf(null),
-            ) { insights, district ->
+                _pitLocations,
+            ) { insights, district, pitLocations ->
                 baseState.copy(
                     insights = insights,
                     districtDisplayName = district?.displayName,
+                    pitLocations = pitLocations,
                 )
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventDetailUiState())
@@ -208,6 +212,7 @@ class EventDetailViewModel @AssistedInject constructor(
                     launch { try { eventRepository.refreshEventCOPRs(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventInsights(eventKey) } catch (_: Exception) {} }
                     launch { try { districtRepository.refreshDistrictsForYear(eventYear) } catch (_: Exception) {} }
+                    launch { _pitLocations.value = eventRepository.fetchEventPitLocations(eventKey) }
                 }
             } finally {
                 _isRefreshing.value = false

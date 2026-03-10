@@ -230,4 +230,15 @@ class EventRepository @Inject constructor(
             }
         } catch (_: Exception) { }
     }
+
+    suspend fun fetchEventPitLocations(eventKey: String): Map<String, String> {
+        return try {
+            val statuses = api.getEventTeamsStatuses(eventKey)
+            statuses.mapNotNull { (teamKey, status) ->
+                status?.pitLocation?.let { teamKey to it }
+            }.toMap()
+        } catch (_: Exception) {
+            emptyMap()
+        }
+    }
 }

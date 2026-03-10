@@ -29,6 +29,7 @@ private data class TeamEventExtras(
     val oprs: EventOPRs?,
     val alliances: List<Alliance>,
     val media: List<Media>,
+    val pitLocation: String?,
 )
 
 @HiltViewModel(assistedFactory = TeamEventDetailViewModel.Factory::class)
@@ -46,6 +47,8 @@ class TeamEventDetailViewModel @AssistedInject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
+    private val _pitLocation = MutableStateFlow<String?>(null)
+
     val uiState: StateFlow<TeamEventDetailUiState> = combine(
         teamRepository.observeTeam(teamKey),
         eventRepository.observeEvent(eventKey),
@@ -62,7 +65,8 @@ class TeamEventDetailViewModel @AssistedInject constructor(
             eventRepository.observeEventOPRs(eventKey),
             eventRepository.observeEventAlliances(eventKey),
             teamRepository.observeTeamMedia(teamKey, year),
-        ) { awards, oprs, alliances, media -> TeamEventExtras(awards, oprs, alliances, media) },
+            _pitLocation,
+        ) { awards, oprs, alliances, media, pitLocation -> TeamEventExtras(awards, oprs, alliances, media, pitLocation) },
     ) { team, event, ranking, matches, extras ->
         TeamEventDetailUiState(
             team = team,
@@ -73,6 +77,7 @@ class TeamEventDetailViewModel @AssistedInject constructor(
             oprs = extras.oprs,
             alliances = extras.alliances,
             media = extras.media,
+            pitLocation = extras.pitLocation,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TeamEventDetailUiState())
 
@@ -93,6 +98,7 @@ class TeamEventDetailViewModel @AssistedInject constructor(
                     launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
                     launch { try { teamRepository.refreshTeamMedia(teamKey, year) } catch (_: Exception) {} }
+                    launch { _pitLocation.value = teamRepository.fetchTeamEventPitLocation(teamKey, eventKey) }
                 }
             } finally {
                 _isRefreshing.value = false

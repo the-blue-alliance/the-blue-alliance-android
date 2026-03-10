@@ -18,4 +18,5 @@ data class TeamEventDetailUiState(
     val oprs: EventOPRs? = null,
     val alliances: List<Alliance>? = null,
     val media: List<Media>? = null,
+    val pitLocation: String? = null,
 )
