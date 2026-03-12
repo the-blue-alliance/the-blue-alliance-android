@@ -4,7 +4,7 @@ kotlin = "2.3.10"
 ksp = "2.3.6"
 
 compose-bom = "2026.03.00"
-activity = "1.12.4"
+activity = "1.13.0"
 navigation3-runtime = "1.0.1"
 navigation3-ui = "1.0.1"
 hilt = "2.59.2"
