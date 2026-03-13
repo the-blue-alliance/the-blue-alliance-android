@@ -35,7 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.EventCOPRs
@@ -48,6 +48,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.int
+import com.thebluealliance.android.util.openUrl
 
 sealed class StatType {
     object StandardOPRs : StatType()
@@ -79,7 +80,7 @@ fun EventInsightsTab(
         return
     }
 
-    val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
     var oprSortColumn by remember { mutableStateOf(OprSortColumn.OPR) }
     var oprSortAscending by remember { mutableStateOf(false) }
     var coprSortColumn by remember { mutableStateOf(CoprSortColumn.VALUE) }
@@ -130,7 +131,7 @@ fun EventInsightsTab(
                     },
                     onShowStatSelector = { showStatSelector = true },
                     innerPadding = innerPadding,
-                    uriHandler = uriHandler,
+                    onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
                 )
             }
             is StatType.QualInsights -> {
@@ -139,7 +140,7 @@ fun EventInsightsTab(
                     insightsData = insights?.qual,
                     onShowStatSelector = { showStatSelector = true },
                     innerPadding = innerPadding,
-                    uriHandler = uriHandler,
+                    onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
                 )
             }
             is StatType.PlayoffInsights -> {
@@ -148,7 +149,7 @@ fun EventInsightsTab(
                     insightsData = insights?.playoff,
                     onShowStatSelector = { showStatSelector = true },
                     innerPadding = innerPadding,
-                    uriHandler = uriHandler,
+                    onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
                 )
             }
             is StatType.COPR -> {
@@ -164,7 +165,7 @@ fun EventInsightsTab(
                     },
                     onShowStatSelector = { showStatSelector = true },
                     innerPadding = innerPadding,
-                    uriHandler = uriHandler,
+                    onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
                 )
             }
         }
@@ -286,7 +287,7 @@ private fun InsightsView(
     insightsData: String?,
     onShowStatSelector: () -> Unit,
     innerPadding: PaddingValues,
-    uriHandler: androidx.compose.ui.platform.UriHandler,
+    onOpenOprLink: () -> Unit,
 ) {
     val insightHeader = when (title) {
         "Qual Insights" -> "Qual Insight"
@@ -383,7 +384,7 @@ private fun InsightsView(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .clickable { uriHandler.openUri("https://www.thebluealliance.com/opr") }
+                    .clickable { onOpenOprLink() }
                     .padding(16.dp),
             )
         }
@@ -454,7 +455,7 @@ private fun StandardOPRsView(
     onSortChange: (OprSortColumn, Boolean) -> Unit,
     onShowStatSelector: () -> Unit,
     innerPadding: PaddingValues,
-    uriHandler: androidx.compose.ui.platform.UriHandler,
+    onOpenOprLink: () -> Unit,
 ) {
     val teamKeys = oprs.oprs.keys.union(oprs.dprs.keys).union(oprs.ccwms.keys).toList()
 
@@ -595,7 +596,7 @@ private fun StandardOPRsView(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .clickable { uriHandler.openUri("https://www.thebluealliance.com/opr") }
+                    .clickable { onOpenOprLink() }
                     .padding(16.dp),
             )
         }
@@ -612,7 +613,7 @@ private fun COPRView(
     onSortChange: (CoprSortColumn, Boolean) -> Unit,
     onShowStatSelector: () -> Unit,
     innerPadding: PaddingValues,
-    uriHandler: androidx.compose.ui.platform.UriHandler,
+    onOpenOprLink: () -> Unit,
 ) {
     val teamKeys = coprData.keys.toList()
 
@@ -712,7 +713,7 @@ private fun COPRView(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
-                    .clickable { uriHandler.openUri("https://www.thebluealliance.com/opr") }
+                    .clickable { onOpenOprLink() }
                     .padding(16.dp),
             )
         }

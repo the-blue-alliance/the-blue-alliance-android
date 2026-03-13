@@ -36,7 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,6 +58,7 @@ import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.util.openUrl
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Summary", "Matches", "Media", "Stats", "Awards")
@@ -343,14 +344,14 @@ private fun SummaryTab(
                 item(key = "summary_pit_location_divider") { HorizontalDivider() }
             }
             item(key = "summary_pit_location") {
-                val uriHandler = LocalUriHandler.current
+                val context = LocalContext.current
                 val teamNumber = teamKey.removePrefix("frc")
                 InfoRow(
                     label = "Pit Location",
                     labelSuffix = "(via FRC Nexus)",
                     value = pitLocation,
                     onClick = {
-                        uriHandler.openUri("https://frc.nexus/en/event/$eventKey/team/$teamNumber/map")
+                        context.openUrl("https://frc.nexus/en/event/$eventKey/team/$teamNumber/map")
                     },
                 )
             }
@@ -505,7 +506,7 @@ private fun StatsTab(
         )
         return
     }
-    val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -521,7 +522,7 @@ private fun StatsTab(
             text = "Learn more about OPR",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.clickable { uriHandler.openUri("https://www.thebluealliance.com/opr") },
+            modifier = Modifier.clickable { context.openUrl("https://www.thebluealliance.com/opr") },
         )
     }
 }
