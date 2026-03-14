@@ -17,6 +17,11 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
+            android:name=".widget.WidgetSizeShowcaseActivity"
+            android:exported="true"
+            android:excludeFromRecents="true" />
+
+        <activity
             android:name=".widget.RemoveWidgetsActivity"
             android:exported="true"
             android:excludeFromRecents="true"
