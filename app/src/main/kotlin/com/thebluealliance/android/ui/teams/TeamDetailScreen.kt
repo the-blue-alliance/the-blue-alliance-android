@@ -22,7 +22,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
@@ -73,6 +72,7 @@ import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarYearPicker
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Info", "Events", "Media")
@@ -147,48 +147,18 @@ fun TeamDetailScreen(
                 TBATopAppBar(
                     title = {
                         val team = uiState.team
-                        Column {
-                            Text(
-                                text = if (team != null) "${team.number} - ${team.nickname ?: ""}" else "Team",
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                            if (yearsParticipated.isNotEmpty()) {
-                                var yearDropdownExpanded by remember { mutableStateOf(false) }
-                                Box {
-                                    Row(
-                                        modifier = Modifier.clickable { yearDropdownExpanded = true },
-                                        verticalAlignment = Alignment.CenterVertically,
-                                    ) {
-                                        Text(
-                                            text = selectedYear.toString(),
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = Color.White.copy(alpha = 0.85f),
-                                        )
-                                        Icon(
-                                            imageVector = Icons.Default.ArrowDropDown,
-                                            contentDescription = "Select year",
-                                            modifier = Modifier.size(16.dp),
-                                            tint = Color.White.copy(alpha = 0.85f),
-                                        )
-                                    }
-                                    DropdownMenu(
-                                        expanded = yearDropdownExpanded,
-                                        onDismissRequest = { yearDropdownExpanded = false },
-                                    ) {
-                                        yearsParticipated.forEach { year ->
-                                            DropdownMenuItem(
-                                                text = { Text(year.toString()) },
-                                                onClick = {
-                                                    viewModel.selectYear(year)
-                                                    yearDropdownExpanded = false
-                                                },
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        TopBarYearPicker(
+                            selectedYear = selectedYear,
+                            years = yearsParticipated,
+                            onYearSelected = viewModel::selectYear,
+                            title = {
+                                Text(
+                                    text = if (team != null) "${team.number} - ${team.nickname ?: ""}" else "Team",
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            },
+                        )
                     },
                     navigationIcon = {
                         IconButton(onClick = onNavigateUp) {
