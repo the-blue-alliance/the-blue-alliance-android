@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -12,8 +13,10 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalSize
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
@@ -43,10 +46,29 @@ import com.thebluealliance.android.R
  * Glance Compose widget for team tracking.
  * Keep in sync with widget_preview.xml — colors from @color/widget_*,
  * dimensions from @dimen/widget_*.
+ *
+ * Uses SizeMode.Responsive to adapt layout based on widget size:
+ * - TINY (1x1):     Avatar fills widget, team number + next match overlaid
+ * - MINIMAL (2x1):  "177 — Q29 2:45 PM" single line centered
+ * - SQUARE (2x2):   Avatar + team number header, next match label + time
+ * - COMPACT (4x1):  Team name + subtitle, full next match row (no avatar)
+ * - FULL (4x2):     Full layout with last match + next match + footer
  */
 class TeamTrackingWidget : GlanceAppWidget() {
 
     override val stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
+
+    companion object {
+        private val TINY = DpSize(60.dp, 60.dp)       // 1x1
+        private val MINIMAL = DpSize(110.dp, 60.dp)   // 2x1
+        private val SQUARE = DpSize(110.dp, 110.dp)   // 2x2
+        private val COMPACT = DpSize(250.dp, 60.dp)   // 4x1
+        private val FULL = DpSize(250.dp, 110.dp)     // 4x2
+    }
+
+    override val sizeMode = SizeMode.Responsive(
+        setOf(TINY, MINIMAL, SQUARE, COMPACT, FULL)
+    )
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
@@ -58,42 +80,500 @@ class TeamTrackingWidget : GlanceAppWidget() {
 
     @Composable
     private fun WidgetContent() {
-        val prefs = currentState<androidx.datastore.preferences.core.Preferences>()
+        val size = LocalSize.current
 
-        val teamNumber = prefs[TeamTrackingWidgetKeys.TEAM_NUMBER] ?: ""
-        val teamKey = prefs[TeamTrackingWidgetKeys.TEAM_KEY] ?: ""
-        val teamNickname = prefs[TeamTrackingWidgetKeys.TEAM_NICKNAME] ?: ""
-        val avatarBase64 = prefs[TeamTrackingWidgetKeys.AVATAR_BASE64]
-        val nextAlliance = prefs[TeamTrackingWidgetKeys.NEXT_ALLIANCE] ?: ""
-        val eventName = prefs[TeamTrackingWidgetKeys.EVENT_NAME] ?: "No event"
-        val record = prefs[TeamTrackingWidgetKeys.RECORD] ?: ""
-        val upcomingEvents = prefs[TeamTrackingWidgetKeys.UPCOMING_EVENTS]
-        val lastUpdated = prefs[TeamTrackingWidgetKeys.LAST_UPDATED] ?: ""
-
-        // Last match data
-        val lastMatchLabel = prefs[TeamTrackingWidgetKeys.LAST_MATCH_LABEL]
-        val lastRedTeams = prefs[TeamTrackingWidgetKeys.LAST_MATCH_RED_TEAMS]
-        val lastBlueTeams = prefs[TeamTrackingWidgetKeys.LAST_MATCH_BLUE_TEAMS]
-        val lastRedScore = prefs[TeamTrackingWidgetKeys.LAST_MATCH_RED_SCORE]
-        val lastBlueScore = prefs[TeamTrackingWidgetKeys.LAST_MATCH_BLUE_SCORE]
-        val lastWinningAlliance = prefs[TeamTrackingWidgetKeys.LAST_MATCH_WINNING_ALLIANCE]
-        val lastRedRp = prefs[TeamTrackingWidgetKeys.LAST_MATCH_RED_RP]
-        val lastBlueRp = prefs[TeamTrackingWidgetKeys.LAST_MATCH_BLUE_RP]
-
-        // Next match data
-        val nextMatchLabel = prefs[TeamTrackingWidgetKeys.NEXT_MATCH_LABEL]
-        val nextRedTeams = prefs[TeamTrackingWidgetKeys.NEXT_MATCH_RED_TEAMS]
-        val nextBlueTeams = prefs[TeamTrackingWidgetKeys.NEXT_MATCH_BLUE_TEAMS]
-        val nextMatchTime = prefs[TeamTrackingWidgetKeys.NEXT_MATCH_TIME]
-        val nextTimeIsEstimate = prefs[TeamTrackingWidgetKeys.NEXT_MATCH_TIME_IS_ESTIMATE] == "true"
-
-        // Decode avatar bitmap
-        val avatarBitmap = avatarBase64?.let {
-            try {
-                val bytes = Base64.decode(it, Base64.DEFAULT)
-                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-            } catch (_: Exception) { null }
+        when {
+            size.width >= 250.dp && size.height >= 110.dp -> FullLayout()
+            size.width >= 250.dp -> CompactHorizontalLayout()
+            size.width >= 110.dp && size.height >= 110.dp -> CompactSquareLayout()
+            size.width >= 110.dp -> MinimalLayout()
+            else -> TinyLayout()
         }
+    }
+
+    // ─── Data helper ────────────────────────────────────────────────────────────
+
+    /** Reads all widget state from preferences. */
+    @Composable
+    private fun readWidgetData(): WidgetData {
+        val prefs = currentState<androidx.datastore.preferences.core.Preferences>()
+        return WidgetData(
+            teamNumber = prefs[TeamTrackingWidgetKeys.TEAM_NUMBER] ?: "",
+            teamKey = prefs[TeamTrackingWidgetKeys.TEAM_KEY] ?: "",
+            teamNickname = prefs[TeamTrackingWidgetKeys.TEAM_NICKNAME] ?: "",
+            avatarBase64 = prefs[TeamTrackingWidgetKeys.AVATAR_BASE64],
+            nextAlliance = prefs[TeamTrackingWidgetKeys.NEXT_ALLIANCE] ?: "",
+            eventName = prefs[TeamTrackingWidgetKeys.EVENT_NAME] ?: "No event",
+            record = prefs[TeamTrackingWidgetKeys.RECORD] ?: "",
+            upcomingEvents = prefs[TeamTrackingWidgetKeys.UPCOMING_EVENTS],
+            lastUpdated = prefs[TeamTrackingWidgetKeys.LAST_UPDATED] ?: "",
+            lastMatchLabel = prefs[TeamTrackingWidgetKeys.LAST_MATCH_LABEL],
+            lastRedTeams = prefs[TeamTrackingWidgetKeys.LAST_MATCH_RED_TEAMS],
+            lastBlueTeams = prefs[TeamTrackingWidgetKeys.LAST_MATCH_BLUE_TEAMS],
+            lastRedScore = prefs[TeamTrackingWidgetKeys.LAST_MATCH_RED_SCORE],
+            lastBlueScore = prefs[TeamTrackingWidgetKeys.LAST_MATCH_BLUE_SCORE],
+            lastWinningAlliance = prefs[TeamTrackingWidgetKeys.LAST_MATCH_WINNING_ALLIANCE],
+            lastRedRp = prefs[TeamTrackingWidgetKeys.LAST_MATCH_RED_RP],
+            lastBlueRp = prefs[TeamTrackingWidgetKeys.LAST_MATCH_BLUE_RP],
+            nextMatchLabel = prefs[TeamTrackingWidgetKeys.NEXT_MATCH_LABEL],
+            nextRedTeams = prefs[TeamTrackingWidgetKeys.NEXT_MATCH_RED_TEAMS],
+            nextBlueTeams = prefs[TeamTrackingWidgetKeys.NEXT_MATCH_BLUE_TEAMS],
+            nextMatchTime = prefs[TeamTrackingWidgetKeys.NEXT_MATCH_TIME],
+            nextTimeIsEstimate = prefs[TeamTrackingWidgetKeys.NEXT_MATCH_TIME_IS_ESTIMATE] == "true",
+        )
+    }
+
+    private data class WidgetData(
+        val teamNumber: String,
+        val teamKey: String,
+        val teamNickname: String,
+        val avatarBase64: String?,
+        val nextAlliance: String,
+        val eventName: String,
+        val record: String,
+        val upcomingEvents: String?,
+        val lastUpdated: String,
+        val lastMatchLabel: String?,
+        val lastRedTeams: String?,
+        val lastBlueTeams: String?,
+        val lastRedScore: String?,
+        val lastBlueScore: String?,
+        val lastWinningAlliance: String?,
+        val lastRedRp: String?,
+        val lastBlueRp: String?,
+        val nextMatchLabel: String?,
+        val nextRedTeams: String?,
+        val nextBlueTeams: String?,
+        val nextMatchTime: String?,
+        val nextTimeIsEstimate: Boolean,
+    ) {
+        val avatarBitmap by lazy {
+            avatarBase64?.let {
+                try {
+                    val bytes = Base64.decode(it, Base64.DEFAULT)
+                    BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                } catch (_: Exception) { null }
+            }
+        }
+
+        val teamLabel: String
+            get() = if (teamNumber.isNotEmpty()) {
+                if (teamNickname.isNotEmpty()) "$teamNumber \u2014 $teamNickname" else "Team $teamNumber"
+            } else {
+                "Team Tracker"
+            }
+
+        /** Short summary of next match for compact layouts. */
+        val nextMatchSummary: String?
+            get() {
+                if (nextMatchLabel == null) return null
+                val time = nextMatchTime ?: ""
+                val est = if (nextTimeIsEstimate && time.isNotEmpty()) " ~" else ""
+                return if (time.isNotEmpty()) {
+                    "Next: $nextMatchLabel @ $est$time"
+                } else {
+                    "Next: $nextMatchLabel"
+                }
+            }
+
+        /** Very short summary for minimal layout. */
+        val nextMatchBrief: String?
+            get() {
+                if (nextMatchLabel == null) return null
+                val time = nextMatchTime ?: ""
+                return if (time.isNotEmpty()) "$nextMatchLabel $time" else nextMatchLabel
+            }
+
+        /** Ultra-short summary for 1x1 widget: "Q17 2:34p" */
+        val nextMatchTiny: String?
+            get() {
+                if (nextMatchLabel == null) return null
+                val time = nextMatchTime ?: ""
+                // Abbreviate "AM"/"PM" to "a"/"p" for space
+                val shortTime = time
+                    .replace(" AM", "a").replace(" PM", "p")
+                    .replace(" am", "a").replace(" pm", "p")
+                return if (shortTime.isNotEmpty()) "$nextMatchLabel $shortTime" else nextMatchLabel
+            }
+
+        /** Last match brief summary for when there's no next match. */
+        val lastMatchBrief: String?
+            get() {
+                if (lastMatchLabel == null || lastRedScore == null || lastBlueScore == null) return null
+                return "Last: $lastMatchLabel ${lastRedScore}-${lastBlueScore}"
+            }
+
+        /** Fallback text when no match data. */
+        val fallbackInfo: String
+            get() = when {
+                record.isNotEmpty() -> record
+                eventName.isNotEmpty() && eventName != "No event" -> eventName
+                else -> ""
+            }
+
+        val hasNextMatch: Boolean
+            get() = nextMatchLabel != null && nextRedTeams != null && nextBlueTeams != null
+
+        val hasLastMatch: Boolean
+            get() = lastMatchLabel != null && lastRedTeams != null && lastBlueTeams != null
+    }
+
+    // ─── TINY layout (1x1) ─────────────────────────────────────────────────────
+    // Avatar fills the widget as background; team number and next match time
+    // are overlaid on top with a semi-transparent scrim for legibility.
+
+    @Composable
+    private fun TinyLayout() {
+        val data = readWidgetData()
+
+        val avatarBg = when (data.nextAlliance) {
+            "red" -> ColorProvider(R.color.widget_red)
+            "blue" -> ColorProvider(R.color.widget_blue)
+            else -> ColorProvider(R.color.widget_blue)
+        }
+
+        Box(
+            modifier = GlanceModifier
+                .fillMaxSize()
+                .background(avatarBg)
+                .clickable(actionRunCallback<TeamTrackingWidgetOpenAction>()),
+            contentAlignment = Alignment.Center,
+        ) {
+            // Avatar image fills the box
+            if (data.avatarBitmap != null) {
+                Image(
+                    provider = ImageProvider(data.avatarBitmap!!),
+                    contentDescription = "Team avatar",
+                    modifier = GlanceModifier.fillMaxSize(),
+                )
+            }
+
+            // Semi-transparent scrim + text overlay
+            Box(
+                modifier = GlanceModifier
+                    .fillMaxSize()
+                    .background(ColorProvider(R.color.widget_tiny_scrim)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (data.teamNumber.isNotEmpty()) {
+                        Text(
+                            text = data.teamNumber,
+                            style = TextStyle(
+                                color = ColorProvider(R.color.widget_tiny_text),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                            ),
+                            maxLines = 1,
+                        )
+                        val matchInfo = data.nextMatchTiny
+                        if (matchInfo != null) {
+                            Text(
+                                text = matchInfo,
+                                style = TextStyle(
+                                    color = ColorProvider(R.color.widget_tiny_text),
+                                    fontSize = 10.sp,
+                                ),
+                                maxLines = 1,
+                            )
+                        }
+                    } else {
+                        Image(
+                            provider = ImageProvider(R.drawable.tba_lamp),
+                            contentDescription = "The Blue Alliance",
+                            modifier = GlanceModifier.size(24.dp),
+                            colorFilter = ColorFilter.tint(
+                                ColorProvider(R.color.widget_tiny_text)
+                            ),
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    // ─── MINIMAL layout (2x1) ──────────────────────────────────────────────────
+
+    @Composable
+    private fun MinimalLayout() {
+        val data = readWidgetData()
+
+        Box(
+            modifier = GlanceModifier
+                .fillMaxSize()
+                .background(GlanceTheme.colors.widgetBackground)
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+                .clickable(actionRunCallback<TeamTrackingWidgetOpenAction>()),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (data.teamNumber.isEmpty()) {
+                Text(
+                    text = "Tap to set up",
+                    style = TextStyle(
+                        color = GlanceTheme.colors.onSurfaceVariant,
+                        fontSize = 12.sp,
+                    ),
+                )
+            } else {
+                // "177 — Q29 2:45 PM" or "177 — 5-2-0"
+                val info = data.nextMatchBrief
+                    ?: data.lastMatchBrief
+                    ?: data.fallbackInfo
+                val displayText = if (info.isNotEmpty()) {
+                    "${data.teamNumber} \u2014 $info"
+                } else {
+                    data.teamNumber
+                }
+                Text(
+                    text = displayText,
+                    style = TextStyle(
+                        color = GlanceTheme.colors.onSurface,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                    ),
+                    maxLines = 1,
+                )
+            }
+        }
+    }
+
+    // ─── COMPACT SQUARE layout (2x2) ───────────────────────────────────────────
+
+    @Composable
+    private fun CompactSquareLayout() {
+        val data = readWidgetData()
+
+        Column(
+            modifier = GlanceModifier
+                .fillMaxSize()
+                .background(GlanceTheme.colors.widgetBackground)
+                .padding(8.dp)
+                .clickable(actionRunCallback<TeamTrackingWidgetOpenAction>()),
+        ) {
+            // Header: avatar + team number
+            Row(
+                modifier = GlanceModifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                val avatarBg = when (data.nextAlliance) {
+                    "red" -> ColorProvider(R.color.widget_red)
+                    "blue" -> ColorProvider(R.color.widget_blue)
+                    else -> ColorProvider(R.color.widget_blue)
+                }
+                if (data.avatarBitmap != null) {
+                    Box(
+                        modifier = GlanceModifier.size(28.dp).cornerRadius(4.dp).background(avatarBg),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Image(
+                            provider = ImageProvider(data.avatarBitmap!!),
+                            contentDescription = "Team avatar",
+                            modifier = GlanceModifier.size(24.dp),
+                        )
+                    }
+                    Spacer(modifier = GlanceModifier.width(6.dp))
+                }
+                Text(
+                    text = if (data.teamNumber.isNotEmpty()) data.teamNumber else "TBA",
+                    style = TextStyle(
+                        color = GlanceTheme.colors.onSurface,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                    ),
+                    maxLines = 1,
+                )
+            }
+
+            if (data.teamNumber.isEmpty()) {
+                Spacer(modifier = GlanceModifier.defaultWeight())
+                Text(
+                    text = "Tap to set up",
+                    style = TextStyle(
+                        color = GlanceTheme.colors.onSurfaceVariant,
+                        fontSize = 12.sp,
+                    ),
+                )
+                return@Column
+            }
+
+            Spacer(modifier = GlanceModifier.height(4.dp))
+
+            // Next match compact
+            if (data.hasNextMatch) {
+                Text(
+                    text = "Next match",
+                    style = TextStyle(
+                        color = GlanceTheme.colors.onSurfaceVariant,
+                        fontSize = 11.sp,
+                    ),
+                )
+                Row(
+                    modifier = GlanceModifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = data.nextMatchLabel!!,
+                        style = TextStyle(
+                            color = GlanceTheme.colors.onSurface,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                        ),
+                    )
+                    if (data.nextMatchTime != null) {
+                        Spacer(modifier = GlanceModifier.defaultWeight())
+                        val timePrefix = if (data.nextTimeIsEstimate) "~" else ""
+                        Text(
+                            text = "$timePrefix${data.nextMatchTime}",
+                            style = TextStyle(
+                                color = GlanceTheme.colors.onSurfaceVariant,
+                                fontSize = 13.sp,
+                            ),
+                        )
+                    }
+                }
+            } else if (data.hasLastMatch) {
+                // Show last match result instead
+                Text(
+                    text = "Last match",
+                    style = TextStyle(
+                        color = GlanceTheme.colors.onSurfaceVariant,
+                        fontSize = 11.sp,
+                    ),
+                )
+                Row(
+                    modifier = GlanceModifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val allianceColor = when (data.lastWinningAlliance) {
+                        "red" -> ColorProvider(R.color.widget_red_text)
+                        "blue" -> ColorProvider(R.color.widget_blue_text)
+                        else -> GlanceTheme.colors.onSurface
+                    }
+                    Text(
+                        text = data.lastMatchLabel!!,
+                        style = TextStyle(
+                            color = GlanceTheme.colors.onSurface,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                        ),
+                    )
+                    Spacer(modifier = GlanceModifier.defaultWeight())
+                    Text(
+                        text = "${data.lastRedScore}-${data.lastBlueScore}",
+                        style = TextStyle(
+                            color = allianceColor,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                        ),
+                    )
+                }
+            }
+
+            // Record or event
+            Spacer(modifier = GlanceModifier.defaultWeight())
+            val subtitle = when {
+                data.record.isNotEmpty() -> data.record
+                data.eventName.isNotEmpty() && data.eventName != "No event" -> data.eventName
+                else -> null
+            }
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    style = TextStyle(
+                        color = GlanceTheme.colors.onSurfaceVariant,
+                        fontSize = 11.sp,
+                    ),
+                    maxLines = 1,
+                )
+            }
+        }
+    }
+
+    // ─── COMPACT HORIZONTAL layout (4x1) ───────────────────────────────────────
+    // Two rows: team name + subtitle on top, full next match row below.
+    // No avatar — saves vertical space at this short height.
+
+    @Composable
+    private fun CompactHorizontalLayout() {
+        val data = readWidgetData()
+
+        Column(
+            modifier = GlanceModifier
+                .fillMaxSize()
+                .background(GlanceTheme.colors.widgetBackground)
+                .padding(horizontal = 12.dp, vertical = 4.dp)
+                .clickable(actionRunCallback<TeamTrackingWidgetOpenAction>()),
+        ) {
+            // Row 1: Team name + record/event
+            Row(
+                modifier = GlanceModifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = data.teamLabel,
+                    style = TextStyle(
+                        color = GlanceTheme.colors.onSurface,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                    ),
+                    maxLines = 1,
+                )
+                val subtitle = when {
+                    data.record.isNotEmpty() && data.eventName.isNotEmpty() -> " \u2022 ${data.record} at ${data.eventName}"
+                    data.record.isNotEmpty() -> " \u2022 ${data.record}"
+                    data.eventName.isNotEmpty() && data.eventName != "No event" -> " \u2022 ${data.eventName}"
+                    else -> ""
+                }
+                if (subtitle.isNotEmpty()) {
+                    Text(
+                        text = subtitle,
+                        style = TextStyle(
+                            color = GlanceTheme.colors.onSurfaceVariant,
+                            fontSize = 12.sp,
+                        ),
+                        maxLines = 1,
+                    )
+                }
+            }
+
+            // Row 2: Full next match row (or last match, or fallback)
+            if (data.hasNextMatch) {
+                WidgetMatchRow(
+                    label = data.nextMatchLabel!!,
+                    redTeams = data.nextRedTeams!!,
+                    blueTeams = data.nextBlueTeams!!,
+                    redScore = null,
+                    blueScore = null,
+                    winningAlliance = null,
+                    teamKey = data.teamKey,
+                    time = data.nextMatchTime,
+                    timeIsEstimate = data.nextTimeIsEstimate,
+                    redRp = null,
+                    blueRp = null,
+                )
+            } else if (data.hasLastMatch) {
+                WidgetMatchRow(
+                    label = data.lastMatchLabel!!,
+                    redTeams = data.lastRedTeams!!,
+                    blueTeams = data.lastBlueTeams!!,
+                    redScore = data.lastRedScore,
+                    blueScore = data.lastBlueScore,
+                    winningAlliance = data.lastWinningAlliance,
+                    teamKey = data.teamKey,
+                    time = null,
+                    timeIsEstimate = false,
+                    redRp = data.lastRedRp,
+                    blueRp = data.lastBlueRp,
+                )
+            }
+        }
+    }
+
+    // ─── FULL layout (4x2) ─────────────────────────────────────────────────────
+
+    @Composable
+    private fun FullLayout() {
+        val data = readWidgetData()
 
         Column(
             modifier = GlanceModifier
@@ -106,8 +586,8 @@ class TeamTrackingWidget : GlanceAppWidget() {
                 modifier = GlanceModifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (avatarBitmap != null) {
-                    val avatarBg = when (nextAlliance) {
+                if (data.avatarBitmap != null) {
+                    val avatarBg = when (data.nextAlliance) {
                         "red" -> ColorProvider(R.color.widget_red)
                         "blue" -> ColorProvider(R.color.widget_blue)
                         else -> ColorProvider(R.color.widget_blue)
@@ -117,7 +597,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                         contentAlignment = Alignment.Center,
                     ) {
                         Image(
-                            provider = ImageProvider(avatarBitmap),
+                            provider = ImageProvider(data.avatarBitmap!!),
                             contentDescription = "Team avatar",
                             modifier = GlanceModifier.size(32.dp),
                         )
@@ -125,13 +605,8 @@ class TeamTrackingWidget : GlanceAppWidget() {
                     Spacer(modifier = GlanceModifier.width(8.dp))
                 }
                 Column(modifier = GlanceModifier.defaultWeight().clickable(actionRunCallback<TeamTrackingWidgetOpenAction>())) {
-                    val teamLabel = if (teamNumber.isNotEmpty()) {
-                        if (teamNickname.isNotEmpty()) "$teamNumber — $teamNickname" else "Team $teamNumber"
-                    } else {
-                        "Team Tracker"
-                    }
                     Text(
-                        text = teamLabel,
+                        text = data.teamLabel,
                         style = TextStyle(
                             color = GlanceTheme.colors.onSurface,
                             fontSize = 16.sp,
@@ -141,8 +616,8 @@ class TeamTrackingWidget : GlanceAppWidget() {
                     )
                     // Record + Event name
                     val subtitle = when {
-                        record.isNotEmpty() && eventName.isNotEmpty() -> "$record at $eventName"
-                        eventName.isNotEmpty() -> eventName
+                        data.record.isNotEmpty() && data.eventName.isNotEmpty() -> "${data.record} at ${data.eventName}"
+                        data.eventName.isNotEmpty() -> data.eventName
                         else -> ""
                     }
                     if (subtitle.isNotEmpty()) {
@@ -181,47 +656,47 @@ class TeamTrackingWidget : GlanceAppWidget() {
                     .clickable(actionRunCallback<TeamTrackingWidgetOpenAction>()),
             ) {
                 // Last Match
-                if (lastMatchLabel != null && lastRedTeams != null && lastBlueTeams != null) {
+                if (data.hasLastMatch) {
                     MatchSectionLabel("Last match")
                     WidgetMatchRow(
-                        label = lastMatchLabel,
-                        redTeams = lastRedTeams,
-                        blueTeams = lastBlueTeams,
-                        redScore = lastRedScore,
-                        blueScore = lastBlueScore,
-                        winningAlliance = lastWinningAlliance,
-                        teamKey = teamKey,
+                        label = data.lastMatchLabel!!,
+                        redTeams = data.lastRedTeams!!,
+                        blueTeams = data.lastBlueTeams!!,
+                        redScore = data.lastRedScore,
+                        blueScore = data.lastBlueScore,
+                        winningAlliance = data.lastWinningAlliance,
+                        teamKey = data.teamKey,
                         time = null,
                         timeIsEstimate = false,
-                        redRp = lastRedRp,
-                        blueRp = lastBlueRp,
+                        redRp = data.lastRedRp,
+                        blueRp = data.lastBlueRp,
                     )
                 }
 
                 // Next Match
-                if (nextMatchLabel != null && nextRedTeams != null && nextBlueTeams != null) {
+                if (data.hasNextMatch) {
                     Spacer(modifier = GlanceModifier.height(12.dp))
                     MatchSectionLabel("Next match")
                     WidgetMatchRow(
-                        label = nextMatchLabel,
-                        redTeams = nextRedTeams,
-                        blueTeams = nextBlueTeams,
+                        label = data.nextMatchLabel!!,
+                        redTeams = data.nextRedTeams!!,
+                        blueTeams = data.nextBlueTeams!!,
                         redScore = null,
                         blueScore = null,
                         winningAlliance = null,
-                        teamKey = teamKey,
-                        time = nextMatchTime,
-                        timeIsEstimate = nextTimeIsEstimate,
+                        teamKey = data.teamKey,
+                        time = data.nextMatchTime,
+                        timeIsEstimate = data.nextTimeIsEstimate,
                         redRp = null,
                         blueRp = null,
                     )
                 }
 
                 // Upcoming events (when no current event)
-                if (upcomingEvents != null && lastMatchLabel == null && nextMatchLabel == null) {
+                if (data.upcomingEvents != null && !data.hasLastMatch && !data.hasNextMatch) {
                     MatchSectionLabel("Upcoming events")
                     Spacer(modifier = GlanceModifier.height(2.dp))
-                    upcomingEvents.split("\n").forEach { line ->
+                    data.upcomingEvents.split("\n").forEach { line ->
                         val parts = line.split("\t")
                         if (parts.size >= 3) {
                             UpcomingEventRow(
@@ -234,7 +709,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                 }
 
                 // No data state
-                if (teamNumber.isEmpty()) {
+                if (data.teamNumber.isEmpty()) {
                     Spacer(modifier = GlanceModifier.defaultWeight())
                     Text(
                         text = "Tap to open TBA",
@@ -258,9 +733,9 @@ class TeamTrackingWidget : GlanceAppWidget() {
                     colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurfaceVariant),
                 )
                 Spacer(modifier = GlanceModifier.defaultWeight())
-                if (lastUpdated.isNotEmpty()) {
+                if (data.lastUpdated.isNotEmpty()) {
                     Text(
-                        text = "\u21BB Updated $lastUpdated",
+                        text = "\u21BB Updated ${data.lastUpdated}",
                         style = TextStyle(
                             color = GlanceTheme.colors.primary,
                             fontSize = 11.sp,
@@ -275,6 +750,8 @@ class TeamTrackingWidget : GlanceAppWidget() {
             }
         }
     }
+
+    // ─── Shared composables ─────────────────────────────────────────────────────
 
     @Composable
     private fun MatchSectionLabel(label: String) {
@@ -454,7 +931,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
         }
     }
 
-    /** Renders RP bonuses as unicode dots: ● for achieved, ○ for not. */
+    /** Renders RP bonuses as unicode dots: filled for achieved, empty for not. */
     @Composable
     private fun RpDotsRow(
         rpData: String,
@@ -465,7 +942,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
         Row {
             bonuses.forEach { achieved ->
                 Text(
-                    text = if (achieved) "●" else "○",
+                    text = if (achieved) "\u25CF" else "\u25CB",
                     style = TextStyle(
                         color = if (achieved) achievedColor else inactiveColor,
                         fontSize = 8.sp,
