@@ -2,24 +2,32 @@ package com.thebluealliance.android.ui.events
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +44,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,14 +53,9 @@ import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.ui.text.font.FontWeight
-import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,6 +72,12 @@ fun EventsScreen(
     val listState = rememberLazyListState()
 
     var yearDropdownExpanded by remember { mutableStateOf(false) }
+    var selectedWeekLabel by remember { mutableStateOf<String?>(null) }
+
+    // Reset week filter when year changes
+    LaunchedEffect(selectedYear) {
+        selectedWeekLabel = null
+    }
 
     LaunchedEffect(reselectFlow) {
         reselectFlow.collect {
@@ -162,6 +172,10 @@ fun EventsScreen(
                                 selectedYear = selectedYear,
                                 onNavigateToEvent = onNavigateToEvent,
                                 listState = listState,
+                                selectedWeekLabel = selectedWeekLabel,
+                                onWeekSelected = { label ->
+                                    selectedWeekLabel = label
+                                },
                             )
                         }
                     }
@@ -179,6 +193,8 @@ private fun EventsList(
     selectedYear: Int,
     onNavigateToEvent: (String) -> Unit,
     listState: LazyListState,
+    selectedWeekLabel: String?,
+    onWeekSelected: (String?) -> Unit,
 ) {
     val allEvents = sections.flatMap { it.events }
     val favoriteEvents = if (favoriteEventKeys.isNotEmpty()) {
@@ -193,6 +209,28 @@ private fun EventsList(
 
     val headerInfos = remember(sections, favoriteEvents, thisWeekResult) {
         buildHeaderInfos(sections, favoriteEvents, thisWeekResult)
+    }
+
+    // Build week chip labels from sections (these are the main data sections, not favorites/this-week)
+    val weekChipLabels = remember(sections) {
+        sections.map { it.label }
+    }
+
+    // Auto-detect current week for initial selection
+    val currentWeekLabel = remember(allEvents, today, selectedYear) {
+        if (selectedYear != today.year) return@remember null
+        val week = findCurrentCompetitionWeek(allEvents, today)
+        if (week != null) "Week ${week + 1}" else null
+    }
+
+    // Auto-select current week on first data load for the current year.
+    // Uses a key that resets when selectedYear changes, allowing re-auto-selection.
+    var hasAutoSelected by remember(selectedYear) { mutableStateOf(false) }
+    LaunchedEffect(currentWeekLabel, weekChipLabels) {
+        if (!hasAutoSelected && currentWeekLabel != null && currentWeekLabel in weekChipLabels) {
+            onWeekSelected(currentWeekLabel)
+            hasAutoSelected = true
+        }
     }
 
     val headerKeys = remember(headerInfos) { headerInfos.map { it.key }.toSet() }
@@ -211,7 +249,27 @@ private fun EventsList(
 
     val coroutineScope = rememberCoroutineScope()
 
-    FastScrollbar(listState = listState) {
+    // Scroll to selected week section when chip is tapped (or auto-selected)
+    LaunchedEffect(selectedWeekLabel) {
+        if (selectedWeekLabel == null) {
+            listState.animateScrollToItem(0)
+        } else {
+            val targetKey = "header_$selectedWeekLabel"
+            val target = headerInfos.find { it.key == targetKey }
+            if (target != null) {
+                listState.animateScrollToItem(target.itemIndex)
+            }
+        }
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        WeekFilterChips(
+            weekLabels = weekChipLabels,
+            selectedLabel = selectedWeekLabel,
+            onWeekSelected = onWeekSelected,
+        )
+
+        FastScrollbar(listState = listState, modifier = Modifier.weight(1f)) {
         LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
             if (favoriteEvents.isNotEmpty()) {
                 stickyHeader(key = "favorites_header") {
@@ -279,6 +337,54 @@ private fun EventsList(
                     }
                 }
             }
+        }
+    }
+    }
+}
+
+@Composable
+private fun WeekFilterChips(
+    weekLabels: List<String>,
+    selectedLabel: String?,
+    onWeekSelected: (String?) -> Unit,
+) {
+    if (weekLabels.isEmpty()) return
+
+    val chipRowState = rememberLazyListState()
+
+    // Scroll to the selected chip when it changes
+    LaunchedEffect(selectedLabel, weekLabels) {
+        if (selectedLabel != null) {
+            val index = weekLabels.indexOf(selectedLabel)
+            // +1 because the "All" chip is at index 0
+            if (index >= 0) {
+                chipRowState.animateScrollToItem(index + 1)
+            }
+        }
+    }
+
+    LazyRow(
+        state = chipRowState,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface),
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        item {
+            FilterChip(
+                selected = selectedLabel == null,
+                onClick = { onWeekSelected(null) },
+                label = { Text("All") },
+            )
+        }
+        items(weekLabels.size) { index ->
+            val label = weekLabels[index]
+            FilterChip(
+                selected = selectedLabel == label,
+                onClick = { onWeekSelected(label) },
+                label = { Text(label) },
+            )
         }
     }
 }
