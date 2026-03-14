@@ -25,12 +25,16 @@ import kotlinx.coroutines.launch
  *
  *   # Pin and configure with team 604:
  *   adb shell am start -n com.thebluealliance.androidclient.development/com.thebluealliance.android.widget.PinWidgetActivity --es team 604
+ *
+ *   # Pin with forced size tier (for testing responsive layouts):
+ *   adb shell am start -n ...PinWidgetActivity --es team 604 --es size 2x1
  */
 class PinWidgetActivity : ComponentActivity() {
 
     companion object {
         private const val TAG = "PinWidgetActivity"
         private const val EXTRA_TEAM = "team"
+        private const val EXTRA_SIZE = "size"
         private const val ACTION_WIDGET_PINNED = "com.thebluealliance.android.widget.WIDGET_PINNED"
         private const val REQUEST_PIN = 1001
     }
@@ -39,6 +43,7 @@ class PinWidgetActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val teamNumber = intent?.getStringExtra(EXTRA_TEAM)
+        val forcedSize = intent?.getStringExtra(EXTRA_SIZE)
 
         val awm = AppWidgetManager.getInstance(this)
         val provider = ComponentName(this, TeamTrackingWidgetReceiver::class.java)
@@ -60,8 +65,12 @@ class PinWidgetActivity : ComponentActivity() {
             // Create a callback PendingIntent so we get the appWidgetId after pinning
             val callbackIntent = Intent(ACTION_WIDGET_PINNED).setPackage(packageName)
             callbackIntent.putExtra(EXTRA_TEAM, teamNumber)
+            if (forcedSize != null) {
+                callbackIntent.putExtra(EXTRA_SIZE, forcedSize)
+            }
+            val requestCode = System.currentTimeMillis().toInt()
             val callbackPending = PendingIntent.getBroadcast(
-                this, REQUEST_PIN, callbackIntent,
+                this, requestCode, callbackIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
             )
             awm.requestPinAppWidget(provider, extras, callbackPending)

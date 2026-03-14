@@ -8,6 +8,9 @@
     <color name="widget_blue_text">#9FA8DA</color>
     <color name="widget_rp_inactive">#6B6B6B</color>
     <color name="widget_settings_icon">#9E9E9E</color>
+    <!-- Win/loss indicator colors (lighter for dark mode) -->
+    <color name="widget_win">#81C784</color>
+    <color name="widget_loss">#EF9A9A</color>
 
     <!-- 1x1 widget overlay: semi-transparent dark scrim + white text (same in dark mode) -->
     <color name="widget_tiny_scrim">#80000000</color>

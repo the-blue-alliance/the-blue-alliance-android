@@ -10,9 +10,12 @@
     <color name="widget_blue">#1565C0</color>
     <!-- Match text colors — must match the app's MaterialTheme.colorScheme.error / .primary -->
     <color name="widget_red_text">#B3261E</color>
-    <color name="widget_blue_text">#3F51B5</color>
+    <color name="widget_blue_text">#1565C0</color>
     <color name="widget_rp_inactive">#9CA3AF</color>
     <color name="widget_settings_icon">#9E9E9E</color>
+    <!-- Win/loss indicator colors (subtle but visible) -->
+    <color name="widget_win">#2E7D32</color>
+    <color name="widget_loss">#C62828</color>
 
     <!-- 1x1 widget overlay: semi-transparent dark scrim + white text -->
     <color name="widget_tiny_scrim">#80000000</color>

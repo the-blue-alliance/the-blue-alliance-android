@@ -25,6 +25,7 @@ class PinWidgetReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val teamNumber = intent.getStringExtra("team") ?: return
+        val forcedSize = intent.getStringExtra("size")
         val appWidgetId = intent.getIntExtra(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID,
@@ -46,6 +47,9 @@ class PinWidgetReceiver : BroadcastReceiver() {
                 updateAppWidgetState(context, glanceId) { prefs ->
                     prefs[TeamTrackingWidgetKeys.TEAM_NUMBER] = teamNumber
                     prefs[TeamTrackingWidgetKeys.TEAM_KEY] = "frc$teamNumber"
+                    if (forcedSize != null) {
+                        prefs[TeamTrackingWidgetKeys.DEBUG_FORCED_SIZE] = forcedSize
+                    }
                 }
 
                 TeamTrackingWidget().update(context, glanceId)
