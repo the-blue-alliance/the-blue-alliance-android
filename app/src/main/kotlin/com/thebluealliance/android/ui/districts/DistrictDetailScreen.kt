@@ -152,17 +152,17 @@ fun DistrictDetailScreen(
             }
         },
     ) { innerPadding ->
-        PullToRefreshBox(
-            isRefreshing = isRefreshing && uiState.eventSections != null && uiState.rankings != null,
-            onRefresh = viewModel::refreshAll,
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier.fillMaxSize()
                 .padding(innerPadding)
                 .background(MaterialTheme.colorScheme.background),
-        ) {
-            HorizontalPager(
-                state = pagerState,
+        ) { page ->
+            PullToRefreshBox(
+                isRefreshing = isRefreshing && uiState.eventSections != null && uiState.rankings != null,
+                onRefresh = viewModel::refreshAll,
                 modifier = Modifier.fillMaxSize(),
-            ) { page ->
+            ) {
                 when (page) {
                     0 -> EventsTab(
                         sections = uiState.eventSections,

@@ -149,16 +149,17 @@ fun TeamEventDetailScreen(
             }
         },
     ) { innerPadding ->
-        PullToRefreshBox(
-            isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
-            onRefresh = viewModel::refreshAll,
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier.fillMaxSize()
+                .padding(innerPadding)
                 .background(MaterialTheme.colorScheme.background),
-        ) {
-            HorizontalPager(
-                state = pagerState,
+        ) { page ->
+            PullToRefreshBox(
+                isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
+                onRefresh = viewModel::refreshAll,
                 modifier = Modifier.fillMaxSize(),
-            ) { page ->
+            ) {
                 val evt = uiState.event
                 when (page) {
                     0 -> SummaryTab(
@@ -174,7 +175,6 @@ fun TeamEventDetailScreen(
                         onNavigateToEvent = onNavigateToEvent,
                         onNavigateToTeam = onNavigateToTeam,
                         onNavigateToMatch = onNavigateToMatch,
-                        innerPadding = innerPadding,
                     )
                     1 -> {
                         val tm = uiState.team
@@ -209,17 +209,14 @@ fun TeamEventDetailScreen(
                                     }
                                 }
                             },
-                            innerPadding = innerPadding,
                         )
                     }
                     2 -> MediaTab(
                         media = uiState.media,
-                        innerPadding = innerPadding,
                     )
                     3 -> StatsTab(
                         teamKey = viewModel.teamKey,
                         oprs = uiState.oprs,
-                        innerPadding = innerPadding,
                     )
                     4 -> {
                         val tm = uiState.team
@@ -229,7 +226,6 @@ fun TeamEventDetailScreen(
                             team = tm,
                             onNavigateToEvent = onNavigateToEvent,
                             onNavigateToTeam = onNavigateToTeam,
-                            innerPadding = innerPadding,
                         )
                     }
                 }

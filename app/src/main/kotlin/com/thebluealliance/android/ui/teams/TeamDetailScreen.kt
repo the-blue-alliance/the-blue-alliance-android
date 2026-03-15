@@ -255,20 +255,20 @@ fun TeamDetailScreen(
             }
         },
     ) { innerPadding ->
-        PullToRefreshBox(
-            isRefreshing = isRefreshing && uiState.team != null,
-            onRefresh = viewModel::refreshAll,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            HorizontalPager(
-                state = pagerState,
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+                .padding(innerPadding),
+        ) { page ->
+            PullToRefreshBox(
+                isRefreshing = isRefreshing && uiState.team != null,
+                onRefresh = viewModel::refreshAll,
                 modifier = Modifier.fillMaxSize(),
-            ) { page ->
+            ) {
                 when (page) {
                     0 -> InfoTab(
                         team = uiState.team,
                         media = uiState.media,
-                        innerPadding = innerPadding,
                     )
                     1 -> EventsTab(
                         events = uiState.events,
@@ -280,11 +280,9 @@ fun TeamDetailScreen(
                             if (teamKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                             else onNavigateToEvent(eventKey)
                         },
-                        innerPadding = innerPadding,
                     )
                     2 -> MediaTab(
                         media = uiState.media,
-                        innerPadding = innerPadding,
                     )
                 }
             }
