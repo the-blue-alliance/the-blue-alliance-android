@@ -62,6 +62,11 @@ import java.time.LocalDate
 
 private val TABS = listOf("Events", "Rankings")
 
+object DistrictDetailTabs {
+    const val EVENTS = 0
+    const val RANKINGS = 1
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DistrictDetailScreen(
@@ -164,12 +169,12 @@ fun DistrictDetailScreen(
                 modifier = Modifier.fillMaxSize(),
             ) { page ->
                 when (page) {
-                    0 -> EventsTab(
+                    DistrictDetailTabs.EVENTS -> EventsTab(
                         sections = uiState.eventSections,
                         onNavigateToEvent = onNavigateToEvent,
                         innerPadding = PaddingValues(0.dp),
                     )
-                    1 -> RankingsTab(
+                    DistrictDetailTabs.RANKINGS -> RankingsTab(
                         rankings = uiState.rankings,
                         onNavigateToTeam = onNavigateToTeam,
                         innerPadding = PaddingValues(0.dp),

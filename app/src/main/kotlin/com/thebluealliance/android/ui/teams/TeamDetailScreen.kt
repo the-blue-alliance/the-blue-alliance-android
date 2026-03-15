@@ -87,6 +87,12 @@ import kotlinx.coroutines.launch
 
 private val TABS = listOf("Info", "Events", "Media")
 
+object TeamDetailTabs {
+    const val INFO = 0
+    const val EVENTS = 1
+    const val MEDIA = 2
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamDetailScreen(
@@ -265,12 +271,12 @@ fun TeamDetailScreen(
                 modifier = Modifier.fillMaxSize(),
             ) { page ->
                 when (page) {
-                    0 -> InfoTab(
+                    TeamDetailTabs.INFO -> InfoTab(
                         team = uiState.team,
                         media = uiState.media,
                         innerPadding = innerPadding,
                     )
-                    1 -> EventsTab(
+                    TeamDetailTabs.EVENTS -> EventsTab(
                         events = uiState.events,
                         selectedYear = selectedYear,
                         yearsParticipated = yearsParticipated,
@@ -282,7 +288,7 @@ fun TeamDetailScreen(
                         },
                         innerPadding = innerPadding,
                     )
-                    2 -> MediaTab(
+                    TeamDetailTabs.MEDIA -> MediaTab(
                         media = uiState.media,
                         innerPadding = innerPadding,
                     )

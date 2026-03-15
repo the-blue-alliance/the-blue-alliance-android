@@ -62,6 +62,14 @@ import kotlinx.coroutines.launch
 
 private val TABS = listOf("Summary", "Matches", "Media", "Stats", "Awards")
 
+object TeamEventDetailTabs {
+    const val SUMMARY = 0
+    const val MATCHES = 1
+    const val MEDIA = 2
+    const val STATS = 3
+    const val AWARDS = 4
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamEventDetailScreen(
@@ -105,7 +113,7 @@ fun TeamEventDetailScreen(
                                     text = event.shortName ?: event.name,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.weight(1f).clickable { onNavigateToEvent(event.key, 0) },
+                                    modifier = Modifier.weight(1f).clickable { onNavigateToEvent(event.key, EventDetailTabs.INFO) },
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                             }
@@ -161,7 +169,7 @@ fun TeamEventDetailScreen(
             ) { page ->
                 val evt = uiState.event
                 when (page) {
-                    0 -> SummaryTab(
+                    TeamEventDetailTabs.SUMMARY -> SummaryTab(
                         teamKey = viewModel.teamKey,
                         eventKey = viewModel.eventKey,
                         event = evt,
@@ -176,7 +184,7 @@ fun TeamEventDetailScreen(
                         onNavigateToMatch = onNavigateToMatch,
                         innerPadding = innerPadding,
                     )
-                    1 -> {
+                    TeamEventDetailTabs.MATCHES -> {
                         val tm = uiState.team
                         val hasBoth = evt != null && tm != null
                         val headerCount = (if (evt != null) 1 else 0) + (if (hasBoth) 1 else 0) + (if (tm != null) 1 else 0)
@@ -190,7 +198,7 @@ fun TeamEventDetailScreen(
                                     item(key = "header_event") {
                                         EventRow(
                                             event = evt,
-                                            onClick = { onNavigateToEvent(evt.key, 0) },
+                                            onClick = { onNavigateToEvent(evt.key, EventDetailTabs.INFO) },
                                             showYear = true,
                                             showChevron = true,
                                         )
@@ -212,16 +220,16 @@ fun TeamEventDetailScreen(
                             innerPadding = innerPadding,
                         )
                     }
-                    2 -> MediaTab(
+                    TeamEventDetailTabs.MEDIA -> MediaTab(
                         media = uiState.media,
                         innerPadding = innerPadding,
                     )
-                    3 -> StatsTab(
+                    TeamEventDetailTabs.STATS -> StatsTab(
                         teamKey = viewModel.teamKey,
                         oprs = uiState.oprs,
                         innerPadding = innerPadding,
                     )
-                    4 -> {
+                    TeamEventDetailTabs.AWARDS -> {
                         val tm = uiState.team
                         AwardsTab(
                             awards = uiState.awards,
@@ -263,7 +271,7 @@ private fun SummaryTab(
             item(key = "header_event") {
                 EventRow(
                     event = event,
-                    onClick = { onNavigateToEvent(event.key, 0) },
+                    onClick = { onNavigateToEvent(event.key, EventDetailTabs.INFO) },
                     showYear = true,
                     showChevron = true,
                 )
@@ -567,7 +575,7 @@ private fun AwardsTab(
             item(key = "header_event") {
                 EventRow(
                     event = event,
-                    onClick = { onNavigateToEvent(event.key, 0) },
+                    onClick = { onNavigateToEvent(event.key, EventDetailTabs.INFO) },
                     showYear = true,
                     showChevron = true,
                 )
