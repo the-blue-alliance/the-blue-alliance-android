@@ -124,26 +124,29 @@ private fun buildSubSections(
 
 fun buildHeaderInfos(
     sections: List<EventSection>,
-    favoriteEvents: List<Event>,
-    thisWeekResult: ThisWeekResult?,
+    favoriteEventKeys: Set<String>,
 ): List<SectionHeaderInfo> = buildList {
     var index = 0
-    if (favoriteEvents.isNotEmpty()) {
+    // Top-level Favorites section
+    val totalFavorites = sections.sumOf { section ->
+        section.events.count { it.key in favoriteEventKeys }
+    }
+    if (totalFavorites > 0) {
         add(SectionHeaderInfo("favorites_header", "Favorites", index))
-        index += 1 + favoriteEvents.size // header + items
+        index += 1 + totalFavorites // header + favorite items
     }
-    if (thisWeekResult != null) {
-        add(SectionHeaderInfo("this_week_header", thisWeekResult.label, index))
-        // Each sub-section has a header (if not empty) + events
-        index += 1 + thisWeekResult.subSections.sumOf {
-            (if (it.label.isNotEmpty()) 1 else 0) + it.events.size
-        }
-    }
+    // Week sections
     sections.forEach { section ->
         val headerKey = "header_${section.label}"
         add(SectionHeaderInfo(headerKey, section.label, index))
-        // Each sub-section has a header (if not empty) + events
-        index += 1 + section.subSections.sumOf {
+        index += 1 // header item
+        // Per-week favorites sub-section
+        val favCount = section.events.count { it.key in favoriteEventKeys }
+        if (favCount > 0) {
+            index += 1 + favCount // sub-header + favorite items
+        }
+        // Regular sub-sections
+        index += section.subSections.sumOf {
             (if (it.label.isNotEmpty()) 1 else 0) + it.events.size
         }
     }
@@ -267,3 +270,4 @@ private fun datesOverlap(event: Event, rangeStart: LocalDate, rangeEnd: LocalDat
     val eventEnd = parseDate(event.endDate) ?: return false
     return !eventEnd.isBefore(rangeStart) && !eventStart.isAfter(rangeEnd)
 }
+
