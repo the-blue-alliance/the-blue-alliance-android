@@ -602,9 +602,8 @@ class TeamTrackingWidget : GlanceAppWidget() {
                     blueRp = data.lastBlueRp,
                 )
             } else if (data.upcomingEvents != null) {
-                val firstEvent = data.upcomingEventsList.firstOrNull()
-                if (firstEvent != null) {
-                    UpcomingEventRowCompact(firstEvent.name, firstEvent.date)
+                data.upcomingEventsList.take(2).forEach { event ->
+                    UpcomingEventRowCompact(event.name, event.date)
                 }
             }
             Spacer(modifier = GlanceModifier.defaultWeight())
