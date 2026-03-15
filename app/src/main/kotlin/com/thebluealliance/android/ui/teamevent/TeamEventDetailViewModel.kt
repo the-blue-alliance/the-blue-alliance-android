@@ -106,6 +106,41 @@ class TeamEventDetailViewModel @AssistedInject constructor(
         }
     }
 
+    fun refreshTab(tab: Int) {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            try {
+                coroutineScope {
+                    when (tab) {
+                        0 -> { // Summary — needs most data for the overview
+                            launch { try { teamRepository.refreshTeam(teamKey) } catch (_: Exception) {} }
+                            launch { try { eventRepository.refreshEvent(eventKey) } catch (_: Exception) {} }
+                            launch { try { matchRepository.refreshEventMatches(eventKey) } catch (_: Exception) {} }
+                            launch { try { eventRepository.refreshEventRankings(eventKey) } catch (_: Exception) {} }
+                            launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
+                            launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
+                            launch { _pitLocation.value = teamRepository.fetchTeamEventPitLocation(teamKey, eventKey) }
+                        }
+                        1 -> { // Matches
+                            launch { try { matchRepository.refreshEventMatches(eventKey) } catch (_: Exception) {} }
+                        }
+                        2 -> { // Media
+                            launch { try { teamRepository.refreshTeamMedia(teamKey, year) } catch (_: Exception) {} }
+                        }
+                        3 -> { // Stats
+                            launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
+                        }
+                        4 -> { // Awards
+                            launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
+                        }
+                    }
+                }
+            } finally {
+                _isRefreshing.value = false
+            }
+        }
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(navKey: Screen.TeamEventDetail): TeamEventDetailViewModel
