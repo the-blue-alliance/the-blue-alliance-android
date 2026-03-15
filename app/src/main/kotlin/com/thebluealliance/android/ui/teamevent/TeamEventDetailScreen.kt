@@ -157,7 +157,7 @@ fun TeamEventDetailScreen(
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
-                onRefresh = viewModel::refreshAll,
+                onRefresh = { viewModel.refreshTab(page) },
                 modifier = Modifier.fillMaxSize(),
             ) {
                 val evt = uiState.event

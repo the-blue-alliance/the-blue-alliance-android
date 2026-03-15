@@ -99,6 +99,21 @@ class DistrictDetailViewModel @AssistedInject constructor(
         }
     }
 
+    fun refreshTab(tab: Int) {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            try {
+                val key = "${_selectedYear.value}$districtAbbreviation"
+                when (tab) {
+                    0 -> try { eventRepository.refreshDistrictEvents(key) } catch (_: Exception) {}
+                    1 -> try { districtRepository.refreshDistrictRankings(key) } catch (_: Exception) {}
+                }
+            } finally {
+                _isRefreshing.value = false
+            }
+        }
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(navKey: Screen.DistrictDetail): DistrictDetailViewModel

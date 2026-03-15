@@ -257,7 +257,7 @@ fun MyTBAScreen(
             ) { page ->
                 PullToRefreshBox(
                     isRefreshing = isRefreshing,
-                    onRefresh = viewModel::refresh,
+                    onRefresh = { viewModel.refreshTab(page) },
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     when (page) {
