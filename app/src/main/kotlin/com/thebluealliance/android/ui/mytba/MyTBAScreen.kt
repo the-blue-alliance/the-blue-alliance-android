@@ -251,15 +251,15 @@ fun MyTBAScreen(
                 }
             }
 
-            PullToRefreshBox(
-                isRefreshing = isRefreshing,
-                onRefresh = viewModel::refresh,
+            HorizontalPager(
+                state = pagerState,
                 modifier = Modifier.fillMaxSize(),
-            ) {
-                HorizontalPager(
-                    state = pagerState,
+            ) { page ->
+                PullToRefreshBox(
+                    isRefreshing = isRefreshing,
+                    onRefresh = viewModel::refresh,
                     modifier = Modifier.fillMaxSize(),
-                ) { page ->
+                ) {
                     when (page) {
                         0 -> FavoritesTab(
                             favorites = uiState.favorites,
