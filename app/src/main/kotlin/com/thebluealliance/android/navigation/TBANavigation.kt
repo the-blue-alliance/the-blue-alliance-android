@@ -230,8 +230,8 @@ fun TBANavigation(
                         MatchDetailScreen(
                             viewModel = viewModel,
                             onNavigateUp = { navigator.navigateUp() },
-                            onNavigateToTeam = { teamKey ->
-                                navigator.navigate(Screen.TeamDetail(teamKey))
+                            onNavigateToTeamEvent = { teamKey, eventKey ->
+                                navigator.navigate(Screen.TeamEventDetail(teamKey, eventKey))
                             },
                             onNavigateToEvent = { eventKey ->
                                 navigator.navigate(Screen.EventDetail(eventKey))
