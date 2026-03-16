@@ -158,10 +158,11 @@ fun TeamEventDetailScreen(
             }
         },
     ) { innerPadding ->
+        val bottomPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
-                .padding(innerPadding)
+                .padding(top = innerPadding.calculateTopPadding())
                 .background(MaterialTheme.colorScheme.background),
         ) { page ->
             PullToRefreshBox(
@@ -184,6 +185,7 @@ fun TeamEventDetailScreen(
                         onNavigateToEvent = onNavigateToEvent,
                         onNavigateToTeam = onNavigateToTeam,
                         onNavigateToMatch = onNavigateToMatch,
+                        innerPadding = bottomPadding,
                     )
                     TeamEventDetailTabs.MATCHES -> {
                         val tm = uiState.team
@@ -218,14 +220,17 @@ fun TeamEventDetailScreen(
                                     }
                                 }
                             },
+                            innerPadding = bottomPadding,
                         )
                     }
                     TeamEventDetailTabs.MEDIA -> MediaTab(
                         media = uiState.media,
+                        innerPadding = bottomPadding,
                     )
                     TeamEventDetailTabs.STATS -> StatsTab(
                         teamKey = viewModel.teamKey,
                         oprs = uiState.oprs,
+                        innerPadding = bottomPadding,
                     )
                     TeamEventDetailTabs.AWARDS -> {
                         val tm = uiState.team
@@ -235,6 +240,7 @@ fun TeamEventDetailScreen(
                             team = tm,
                             onNavigateToEvent = onNavigateToEvent,
                             onNavigateToTeam = onNavigateToTeam,
+                            innerPadding = bottomPadding,
                         )
                     }
                 }
