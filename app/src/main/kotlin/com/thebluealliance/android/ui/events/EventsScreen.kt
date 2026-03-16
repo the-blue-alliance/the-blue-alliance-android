@@ -28,8 +28,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -43,10 +41,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -61,6 +57,7 @@ import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.theme.TBABlue
 import com.thebluealliance.android.ui.theme.TBAIndigo400
 import kotlinx.coroutines.flow.Flow
@@ -85,37 +82,23 @@ fun EventsScreen(
     val listState = rememberLazyListState()
 
     var yearDropdownExpanded by remember { mutableStateOf(false) }
+    LaunchedEffect(reselectFlow) {
+        reselectFlow.collect {
+            listState.animateScrollToItem(0)
+        }
+    }
 
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
                 title = {
-                    if (selectedYear > 0) {
-                        Row(
-                            modifier = Modifier.clickable { yearDropdownExpanded = true },
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text("$selectedYear Events")
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Select year")
-                            DropdownMenu(
-                                expanded = yearDropdownExpanded,
-                                onDismissRequest = { yearDropdownExpanded = false },
-                            ) {
-                                (maxYear downTo 1992).forEach { year ->
-                                    DropdownMenuItem(
-                                        text = { Text(year.toString()) },
-                                        onClick = {
-                                            viewModel.selectYear(year)
-                                            yearDropdownExpanded = false
-                                        },
-                                    )
-                                }
-                            }
-                        }
-                    } else {
-                        Text("Events")
-                    }
+                    TopBarYearPicker(
+                        selectedYear = selectedYear,
+                        years = if (selectedYear > 0) (maxYear downTo 1992).toList() else emptyList(),
+                        onYearSelected = viewModel::selectYear,
+                        title = { Text("Events") },
+                    )
                 },
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {

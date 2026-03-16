@@ -36,7 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,9 +58,18 @@ import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.util.openUrl
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Summary", "Matches", "Media", "Stats", "Awards")
+
+object TeamEventDetailTabs {
+    const val SUMMARY = 0
+    const val MATCHES = 1
+    const val MEDIA = 2
+    const val STATS = 3
+    const val AWARDS = 4
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -105,7 +114,7 @@ fun TeamEventDetailScreen(
                                     text = event.shortName ?: event.name,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.weight(1f).clickable { onNavigateToEvent(event.key, 0) },
+                                    modifier = Modifier.weight(1f).clickable { onNavigateToEvent(event.key, EventDetailTabs.INFO) },
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                             }
@@ -149,19 +158,20 @@ fun TeamEventDetailScreen(
             }
         },
     ) { innerPadding ->
-        PullToRefreshBox(
-            isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
-            onRefresh = viewModel::refreshAll,
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier.fillMaxSize()
+                .padding(innerPadding)
                 .background(MaterialTheme.colorScheme.background),
-        ) {
-            HorizontalPager(
-                state = pagerState,
+        ) { page ->
+            PullToRefreshBox(
+                isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
+                onRefresh = viewModel::refreshAll,
                 modifier = Modifier.fillMaxSize(),
-            ) { page ->
+            ) {
                 val evt = uiState.event
                 when (page) {
-                    0 -> SummaryTab(
+                    TeamEventDetailTabs.SUMMARY -> SummaryTab(
                         teamKey = viewModel.teamKey,
                         eventKey = viewModel.eventKey,
                         event = evt,
@@ -174,9 +184,8 @@ fun TeamEventDetailScreen(
                         onNavigateToEvent = onNavigateToEvent,
                         onNavigateToTeam = onNavigateToTeam,
                         onNavigateToMatch = onNavigateToMatch,
-                        innerPadding = innerPadding,
                     )
-                    1 -> {
+                    TeamEventDetailTabs.MATCHES -> {
                         val tm = uiState.team
                         val hasBoth = evt != null && tm != null
                         val headerCount = (if (evt != null) 1 else 0) + (if (hasBoth) 1 else 0) + (if (tm != null) 1 else 0)
@@ -190,7 +199,7 @@ fun TeamEventDetailScreen(
                                     item(key = "header_event") {
                                         EventRow(
                                             event = evt,
-                                            onClick = { onNavigateToEvent(evt.key, 0) },
+                                            onClick = { onNavigateToEvent(evt.key, EventDetailTabs.INFO) },
                                             showYear = true,
                                             showChevron = true,
                                         )
@@ -209,19 +218,16 @@ fun TeamEventDetailScreen(
                                     }
                                 }
                             },
-                            innerPadding = innerPadding,
                         )
                     }
-                    2 -> MediaTab(
+                    TeamEventDetailTabs.MEDIA -> MediaTab(
                         media = uiState.media,
-                        innerPadding = innerPadding,
                     )
-                    3 -> StatsTab(
+                    TeamEventDetailTabs.STATS -> StatsTab(
                         teamKey = viewModel.teamKey,
                         oprs = uiState.oprs,
-                        innerPadding = innerPadding,
                     )
-                    4 -> {
+                    TeamEventDetailTabs.AWARDS -> {
                         val tm = uiState.team
                         AwardsTab(
                             awards = uiState.awards,
@@ -229,7 +235,6 @@ fun TeamEventDetailScreen(
                             team = tm,
                             onNavigateToEvent = onNavigateToEvent,
                             onNavigateToTeam = onNavigateToTeam,
-                            innerPadding = innerPadding,
                         )
                     }
                 }
@@ -263,7 +268,7 @@ private fun SummaryTab(
             item(key = "header_event") {
                 EventRow(
                     event = event,
-                    onClick = { onNavigateToEvent(event.key, 0) },
+                    onClick = { onNavigateToEvent(event.key, EventDetailTabs.INFO) },
                     showYear = true,
                     showChevron = true,
                 )
@@ -343,14 +348,14 @@ private fun SummaryTab(
                 item(key = "summary_pit_location_divider") { HorizontalDivider() }
             }
             item(key = "summary_pit_location") {
-                val uriHandler = LocalUriHandler.current
+                val context = LocalContext.current
                 val teamNumber = teamKey.removePrefix("frc")
                 InfoRow(
                     label = "Pit Location",
                     labelSuffix = "(via FRC Nexus)",
                     value = pitLocation,
                     onClick = {
-                        uriHandler.openUri("https://frc.nexus/en/event/$eventKey/team/$teamNumber/map")
+                        context.openUrl("https://frc.nexus/en/event/$eventKey/team/$teamNumber/map")
                     },
                 )
             }
@@ -505,7 +510,7 @@ private fun StatsTab(
         )
         return
     }
-    val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -521,7 +526,7 @@ private fun StatsTab(
             text = "Learn more about OPR",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.clickable { uriHandler.openUri("https://www.thebluealliance.com/opr") },
+            modifier = Modifier.clickable { context.openUrl("https://www.thebluealliance.com/opr") },
         )
     }
 }
@@ -567,7 +572,7 @@ private fun AwardsTab(
             item(key = "header_event") {
                 EventRow(
                     event = event,
-                    onClick = { onNavigateToEvent(event.key, 0) },
+                    onClick = { onNavigateToEvent(event.key, EventDetailTabs.INFO) },
                     showYear = true,
                     showChevron = true,
                 )
@@ -587,10 +592,12 @@ private fun AwardsTab(
         }
         if (awards.isEmpty()) {
             item {
-                EmptyBox(
-                    message = "No awards",
-                    modifier = Modifier.padding(top = 24.dp),
-                )
+                Box(
+                    Modifier.fillMaxWidth().padding(32.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text("No awards", style = MaterialTheme.typography.bodyLarge)
+                }
             }
         }
         items(awards, key = { "${it.awardType}_${it.awardee.orEmpty()}" }) { award ->

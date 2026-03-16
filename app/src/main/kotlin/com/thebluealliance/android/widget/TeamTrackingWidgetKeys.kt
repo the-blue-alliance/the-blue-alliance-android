@@ -33,6 +33,9 @@ object TeamTrackingWidgetKeys {
     // Upcoming events (when no current event) — tab-separated rows: "name\tcity\tdate"
     val UPCOMING_EVENTS = stringPreferencesKey("upcoming_events")
 
+    // Debug: force a specific size tier (e.g. "1x1", "2x1", "2x2", "4x1", "4x2")
+    val DEBUG_FORCED_SIZE = stringPreferencesKey("debug_forced_size")
+
     val ALL_LAST_MATCH_KEYS = listOf(
         LAST_MATCH_LABEL, LAST_MATCH_RED_TEAMS, LAST_MATCH_BLUE_TEAMS,
         LAST_MATCH_RED_SCORE, LAST_MATCH_BLUE_SCORE, LAST_MATCH_WINNING_ALLIANCE,

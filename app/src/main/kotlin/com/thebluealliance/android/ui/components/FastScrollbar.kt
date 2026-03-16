@@ -102,7 +102,7 @@ fun FastScrollbar(
                     .alpha(alpha.value)
                     .offset {
                         val thumbHeightPx = ThumbHeight.toPx()
-                        val scrollableTrack = trackHeightPx - thumbHeightPx
+                        val scrollableTrack = (trackHeightPx - thumbHeightPx).coerceAtLeast(0f)
                         val offsetY = (thumbFraction * scrollableTrack).coerceIn(0f, scrollableTrack)
                         IntOffset(0, offsetY.roundToInt())
                     }

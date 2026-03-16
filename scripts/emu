@@ -9,6 +9,7 @@ Subcommands:
   logcat [options]           Show recent logcat lines
   back                       Press BACK key
   launch <package/activity>  Force-stop + start activity
+  swipe <left|right>         Swipe home screen page
   list                       Dump UI hierarchy as readable tree
 """
 
@@ -174,6 +175,19 @@ def cmd_launch(args):
     print(f"Launched {args.component}")
 
 
+def cmd_swipe(args):
+    direction = args.direction.lower()
+    if direction == "left":
+        adb_check("shell", "input", "swipe", "270", "800", "10", "800", "150")
+        print("Swiped home page left")
+    elif direction == "right":
+        adb_check("shell", "input", "swipe", "10", "800", "270", "800", "150")
+        print("Swiped home page right")
+    else:
+        print(f"Unknown direction: {direction}. Use 'left' or 'right'.", file=sys.stderr)
+        sys.exit(1)
+
+
 def cmd_list(args):
     root = dump_ui_tree()
     def walk(elem, depth=0):
@@ -231,6 +245,9 @@ def main():
     p = sub.add_parser("launch", help="Force-stop + start activity")
     p.add_argument("component", help="package/activity")
 
+    p = sub.add_parser("swipe", help="Swipe home screen page")
+    p.add_argument("direction", choices=["left", "right"], help="Swipe direction")
+
     p = sub.add_parser("list", help="Dump UI hierarchy tree")
 
     args = parser.parse_args()
@@ -246,6 +263,7 @@ def main():
         "logcat": cmd_logcat,
         "back": cmd_back,
         "launch": cmd_launch,
+        "swipe": cmd_swipe,
         "list": cmd_list,
     }
     handlers[args.command](args)

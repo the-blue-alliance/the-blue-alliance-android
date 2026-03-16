@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.WindowInsets
@@ -16,8 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,7 +25,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -37,11 +33,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.District
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarYearPicker
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,8 +52,6 @@ fun DistrictsScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
 
-    var yearDropdownExpanded by remember { mutableStateOf(false) }
-
     LaunchedEffect(reselectFlow) {
         reselectFlow.collect {
             listState.animateScrollToItem(0)
@@ -71,31 +63,12 @@ fun DistrictsScreen(
         topBar = {
             TBATopAppBar(
                 title = {
-                    if (selectedYear > 0) {
-                        Row(
-                            modifier = Modifier.clickable { yearDropdownExpanded = true },
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text("$selectedYear Districts")
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Select year")
-                            DropdownMenu(
-                                expanded = yearDropdownExpanded,
-                                onDismissRequest = { yearDropdownExpanded = false },
-                            ) {
-                                (maxYear downTo 2009).forEach { year ->
-                                    DropdownMenuItem(
-                                        text = { Text(year.toString()) },
-                                        onClick = {
-                                            viewModel.selectYear(year)
-                                            yearDropdownExpanded = false
-                                        },
-                                    )
-                                }
-                            }
-                        }
-                    } else {
-                        Text("Districts")
-                    }
+                    TopBarYearPicker(
+                        selectedYear = selectedYear,
+                        years = if (selectedYear > 0) (maxYear downTo 2009).toList() else emptyList(),
+                        onYearSelected = viewModel::selectYear,
+                        title = { Text("Districts") },
+                    )
                 },
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {
