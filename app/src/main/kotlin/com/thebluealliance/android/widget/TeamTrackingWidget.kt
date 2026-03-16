@@ -17,6 +17,7 @@ import androidx.glance.ImageProvider
 import androidx.glance.LocalSize
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.PreviewSizeMode
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
@@ -71,18 +72,30 @@ class TeamTrackingWidget : GlanceAppWidget() {
         setOf(TINY, MINIMAL, SQUARE, COMPACT, FULL)
     )
 
+    override val previewSizeMode: PreviewSizeMode = SizeMode.Responsive(
+        setOf(TINY, MINIMAL, SQUARE, COMPACT, FULL)
+    )
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             GlanceTheme {
-                WidgetContent()
+                val prefs = currentState<androidx.datastore.preferences.core.Preferences>()
+                val forcedSize = prefs[TeamTrackingWidgetKeys.DEBUG_FORCED_SIZE]
+                WidgetContent(readWidgetData(), forcedSize)
+            }
+        }
+    }
+
+    override suspend fun providePreview(context: Context, widgetCategory: Int) {
+        provideContent {
+            GlanceTheme {
+                WidgetContent(WidgetData.sampleData())
             }
         }
     }
 
     @Composable
-    private fun WidgetContent() {
-        val prefs = currentState<androidx.datastore.preferences.core.Preferences>()
-        val forcedSize = prefs[TeamTrackingWidgetKeys.DEBUG_FORCED_SIZE]
+    private fun WidgetContent(data: WidgetData, forcedSize: String? = null) {
         val size = LocalSize.current
 
         // Debug override: force a specific size tier regardless of actual widget size
@@ -102,11 +115,11 @@ class TeamTrackingWidget : GlanceAppWidget() {
         }
 
         when (tier) {
-            "full" -> FullLayout()
-            "compact" -> CompactHorizontalLayout()
-            "square" -> CompactSquareLayout()
-            "minimal" -> MinimalLayout()
-            else -> TinyLayout()
+            "full" -> FullLayout(data)
+            "compact" -> CompactHorizontalLayout(data)
+            "square" -> CompactSquareLayout(data)
+            "minimal" -> MinimalLayout(data)
+            else -> TinyLayout(data)
         }
     }
 
@@ -219,6 +232,34 @@ class TeamTrackingWidget : GlanceAppWidget() {
                 val parts = line.split("\t")
                 if (parts.size >= 3) UpcomingEvent(parts[0], parts[1], parts[2]) else null
             } ?: emptyList()
+
+        companion object {
+            /** Sample data for widget picker generated previews (Team 177). */
+            fun sampleData() = WidgetData(
+                teamNumber = "177",
+                teamKey = "frc177",
+                teamNickname = "Bobcat Robotics",
+                avatarBase64 = null,
+                nextAlliance = "blue",
+                eventName = "NE District Event",
+                record = "5-2-0",
+                upcomingEvents = null,
+                lastUpdated = "just now",
+                lastMatchLabel = "Q12",
+                lastRedTeams = "195, 1519, 4909",
+                lastBlueTeams = "177, 1153, 2067",
+                lastRedScore = "52",
+                lastBlueScore = "71",
+                lastWinningAlliance = "blue",
+                lastRedRp = "false, false",
+                lastBlueRp = "true, true",
+                nextMatchLabel = "Q18",
+                nextRedTeams = "177, 3467, 5112",
+                nextBlueTeams = "1073, 2791, 3958",
+                nextMatchTime = "2:30 PM",
+                nextTimeIsEstimate = true,
+            )
+        }
     }
 
     private data class UpcomingEvent(val name: String, val city: String, val date: String)
@@ -228,8 +269,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
     // No avatar — avatars are unrecognizable at 60dp.
 
     @Composable
-    private fun TinyLayout() {
-        val data = readWidgetData()
+    private fun TinyLayout(data: WidgetData) {
 
         Column(
             modifier = GlanceModifier
@@ -314,8 +354,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
     // Two-line layout: team number (14sp bold) on top, match info (11sp) below.
 
     @Composable
-    private fun MinimalLayout() {
-        val data = readWidgetData()
+    private fun MinimalLayout(data: WidgetData) {
         val redColor = ColorProvider(R.color.widget_red_text)
         val blueColor = ColorProvider(R.color.widget_blue_text)
 
@@ -417,8 +456,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
     // ─── COMPACT SQUARE layout (2x2) ───────────────────────────────────────────
 
     @Composable
-    private fun CompactSquareLayout() {
-        val data = readWidgetData()
+    private fun CompactSquareLayout(data: WidgetData) {
         val redColor = ColorProvider(R.color.widget_red_text)
         val blueColor = ColorProvider(R.color.widget_blue_text)
 
@@ -547,8 +585,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
     // No avatar — saves vertical space at this short height.
 
     @Composable
-    private fun CompactHorizontalLayout() {
-        val data = readWidgetData()
+    private fun CompactHorizontalLayout(data: WidgetData) {
 
         Column(
             modifier = GlanceModifier
@@ -613,8 +650,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
     // ─── FULL layout (4x2) ─────────────────────────────────────────────────────
 
     @Composable
-    private fun FullLayout() {
-        val data = readWidgetData()
+    private fun FullLayout(data: WidgetData) {
 
         Column(
             modifier = GlanceModifier
