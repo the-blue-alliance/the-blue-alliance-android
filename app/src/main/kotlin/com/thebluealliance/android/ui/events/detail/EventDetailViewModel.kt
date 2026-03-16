@@ -220,6 +220,48 @@ class EventDetailViewModel @AssistedInject constructor(
         }
     }
 
+    fun refreshTab(tab: Int) {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            try {
+                coroutineScope {
+                    when (tab) {
+                        EventDetailTabs.INFO -> {
+                            launch { try { eventRepository.refreshEvent(eventKey) } catch (_: Exception) {} }
+                            launch { try { districtRepository.refreshDistrictsForYear(eventYear) } catch (_: Exception) {} }
+                        }
+                        EventDetailTabs.TEAMS -> {
+                            launch { try { teamRepository.refreshEventTeams(eventKey) } catch (_: Exception) {} }
+                            launch { _pitLocations.value = eventRepository.fetchEventPitLocations(eventKey) }
+                        }
+                        EventDetailTabs.RANKINGS -> {
+                            launch { try { eventRepository.refreshEventRankings(eventKey) } catch (_: Exception) {} }
+                        }
+                        EventDetailTabs.MATCHES -> {
+                            launch { try { matchRepository.refreshEventMatches(eventKey) } catch (_: Exception) {} }
+                        }
+                        EventDetailTabs.ALLIANCES -> {
+                            launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
+                        }
+                        EventDetailTabs.INSIGHTS -> {
+                            launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
+                            launch { try { eventRepository.refreshEventCOPRs(eventKey) } catch (_: Exception) {} }
+                            launch { try { eventRepository.refreshEventInsights(eventKey) } catch (_: Exception) {} }
+                        }
+                        EventDetailTabs.DISTRICT_POINTS -> {
+                            launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
+                        }
+                        EventDetailTabs.AWARDS -> {
+                            launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
+                        }
+                    }
+                }
+            } finally {
+                _isRefreshing.value = false
+            }
+        }
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(navKey: Screen.EventDetail): EventDetailViewModel

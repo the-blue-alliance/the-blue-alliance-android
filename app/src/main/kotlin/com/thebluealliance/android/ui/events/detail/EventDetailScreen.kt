@@ -264,34 +264,33 @@ fun EventDetailScreen(
             }
         },
     ) { innerPadding ->
-        PullToRefreshBox(
-            isRefreshing = isRefreshing,
-            onRefresh = viewModel::refreshAll,
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier.fillMaxSize()
+                .padding(innerPadding)
                 .background(MaterialTheme.colorScheme.background),
-        ) {
-            HorizontalPager(
-                state = pagerState,
+        ) { page ->
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = { viewModel.refreshTab(page) },
                 modifier = Modifier.fillMaxSize(),
-            ) { page ->
+            ) {
                 when (page) {
-                    0 -> EventInfoTab(
+                    EventDetailTabs.INFO -> EventInfoTab(
                         event = uiState.event,
                         districtDisplayName = uiState.districtDisplayName,
-                        innerPadding = innerPadding,
                         onNavigateToDistrict = onNavigateToDistrict,
                     )
-                    1 -> EventTeamsTab(
+                    EventDetailTabs.TEAMS -> EventTeamsTab(
                         teams = uiState.teams,
                         pitLocations = uiState.pitLocations,
-                        innerPadding = innerPadding,
                         onNavigateToTeam = { teamKey ->
                             val eventKey = uiState.event?.key
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                             else onNavigateToTeam(teamKey)
                         },
                     )
-                    2 -> EventRankingsTab(
+                    EventDetailTabs.RANKINGS -> EventRankingsTab(
                         rankings = uiState.rankings,
                         rankingSortOrders = uiState.rankingSortOrders,
                         rankingExtraStatsInfo = uiState.rankingExtraStatsInfo,
@@ -299,29 +298,25 @@ fun EventDetailScreen(
                             val eventKey = uiState.event?.key
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                         },
-                        innerPadding = innerPadding,
                     )
-                    3 -> EventMatchesTab(
+                    EventDetailTabs.MATCHES -> EventMatchesTab(
                         matches = uiState.matches,
                         playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
                         onNavigateToMatch = onNavigateToMatch,
-                        innerPadding = innerPadding,
                     )
-                    4 -> EventAlliancesTab(
+                    EventDetailTabs.ALLIANCES -> EventAlliancesTab(
                         alliances = uiState.alliances,
                         onTeamClick = { teamKey ->
                             val eventKey = uiState.event?.key
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                         },
-                        innerPadding = innerPadding,
                     )
-                    5 -> EventInsightsTab(
+                    EventDetailTabs.INSIGHTS -> EventInsightsTab(
                         oprs = uiState.oprs,
                         coprs = uiState.coprs,
                         insights = uiState.insights,
-                        innerPadding = innerPadding,
                     )
-                    6 -> EventDistrictPointsTab(
+                    EventDetailTabs.DISTRICT_POINTS -> EventDistrictPointsTab(
                         uiState.districtPoints,
                         uiState.event,
                         uiState.teams,
@@ -330,16 +325,14 @@ fun EventDetailScreen(
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                             else onNavigateToTeam(teamKey)
                         },
-                        innerPadding = innerPadding,
                     )
-                    7 -> EventAwardsTab(
+                    EventDetailTabs.AWARDS -> EventAwardsTab(
                         awards = uiState.awards,
                         onTeamClick = { teamKey ->
                             val eventKey = uiState.event?.key
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                             else onNavigateToTeam(teamKey)
                         },
-                        innerPadding = innerPadding,
                     )
                 }
             }

@@ -83,6 +83,21 @@ class MyTBAViewModel @Inject constructor(
         }
     }
 
+    fun refreshTab(tab: Int) {
+        viewModelScope.launch {
+            if (!authRepository.isSignedIn()) return@launch
+            _isRefreshing.value = true
+            try {
+                when (tab) {
+                    0 -> try { myTBARepository.refreshFavorites() } catch (_: Exception) {}
+                    1 -> try { myTBARepository.refreshSubscriptions() } catch (_: Exception) {}
+                }
+            } finally {
+                _isRefreshing.value = false
+            }
+        }
+    }
+
     fun signOut() {
         viewModelScope.launch {
             try { deviceRegistrationManager.onSignOut() } catch (_: Exception) {}

@@ -1,10 +1,8 @@
 package com.thebluealliance.android.ui.events
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,8 +15,6 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,10 +26,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -44,10 +38,10 @@ import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarYearPicker
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.text.font.FontWeight
@@ -67,8 +61,6 @@ fun EventsScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
 
-    var yearDropdownExpanded by remember { mutableStateOf(false) }
-
     LaunchedEffect(reselectFlow) {
         reselectFlow.collect {
             listState.animateScrollToItem(0)
@@ -80,31 +72,12 @@ fun EventsScreen(
         topBar = {
             TBATopAppBar(
                 title = {
-                    if (selectedYear > 0) {
-                        Row(
-                            modifier = Modifier.clickable { yearDropdownExpanded = true },
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text("$selectedYear Events")
-                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Select year")
-                            DropdownMenu(
-                                expanded = yearDropdownExpanded,
-                                onDismissRequest = { yearDropdownExpanded = false },
-                            ) {
-                                (maxYear downTo 1992).forEach { year ->
-                                    DropdownMenuItem(
-                                        text = { Text(year.toString()) },
-                                        onClick = {
-                                            viewModel.selectYear(year)
-                                            yearDropdownExpanded = false
-                                        },
-                                    )
-                                }
-                            }
-                        }
-                    } else {
-                        Text("Events")
-                    }
+                    TopBarYearPicker(
+                        selectedYear = selectedYear,
+                        years = if (selectedYear > 0) (maxYear downTo 1992).toList() else emptyList(),
+                        onYearSelected = viewModel::selectYear,
+                        title = { Text("Events") },
+                    )
                 },
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {

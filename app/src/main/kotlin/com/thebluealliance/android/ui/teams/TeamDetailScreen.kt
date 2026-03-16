@@ -6,17 +6,12 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,20 +22,16 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.NotificationsNone
-import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -63,12 +54,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Media
@@ -83,9 +72,16 @@ import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarYearPicker
 import kotlinx.coroutines.launch
 
 private val TABS = listOf("Info", "Events", "Media")
+
+object TeamDetailTabs {
+    const val INFO = 0
+    const val EVENTS = 1
+    const val MEDIA = 2
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -157,10 +153,17 @@ fun TeamDetailScreen(
                 TBATopAppBar(
                     title = {
                         val team = uiState.team
-                        Text(
-                            text = if (team != null) "${team.number} - ${team.nickname ?: ""}" else "Team",
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
+                        TopBarYearPicker(
+                            selectedYear = selectedYear,
+                            years = yearsParticipated,
+                            onYearSelected = viewModel::selectYear,
+                            title = {
+                                Text(
+                                    text = if (team != null) "${team.number} - ${team.nickname ?: ""}" else "Team",
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            },
                         )
                     },
                     navigationIcon = {
@@ -255,36 +258,32 @@ fun TeamDetailScreen(
             }
         },
     ) { innerPadding ->
-        PullToRefreshBox(
-            isRefreshing = isRefreshing && uiState.team != null,
-            onRefresh = viewModel::refreshAll,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            HorizontalPager(
-                state = pagerState,
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+                .padding(innerPadding),
+        ) { page ->
+            PullToRefreshBox(
+                isRefreshing = isRefreshing && uiState.team != null,
+                onRefresh = { viewModel.refreshTab(page) },
                 modifier = Modifier.fillMaxSize(),
-            ) { page ->
+            ) {
                 when (page) {
-                    0 -> InfoTab(
+                    TeamDetailTabs.INFO -> InfoTab(
                         team = uiState.team,
                         media = uiState.media,
-                        innerPadding = innerPadding,
                     )
-                    1 -> EventsTab(
+                    TeamDetailTabs.EVENTS -> EventsTab(
                         events = uiState.events,
                         selectedYear = selectedYear,
-                        yearsParticipated = yearsParticipated,
-                        onYearSelected = viewModel::selectYear,
                         onNavigateToEvent = { eventKey ->
                             val teamKey = uiState.team?.key
                             if (teamKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                             else onNavigateToEvent(eventKey)
                         },
-                        innerPadding = innerPadding,
                     )
-                    2 -> MediaTab(
+                    TeamDetailTabs.MEDIA -> MediaTab(
                         media = uiState.media,
-                        innerPadding = innerPadding,
                     )
                 }
             }
@@ -394,65 +393,25 @@ private fun InfoTab(
 private fun EventsTab(
     events: List<Event>?,
     selectedYear: Int,
-    yearsParticipated: List<Int>,
-    onYearSelected: (Int) -> Unit,
     onNavigateToEvent: (String) -> Unit,
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .padding(top = innerPadding.calculateTopPadding())
-    ) {
-        // To allow content to show up above the LazyColumn we need to put the top innerPadding on
-        // the parent column. Take all remaining padding and apply them to the rest of the content
-        val layoutDirection = LocalLayoutDirection.current
-        val remainingContentPadding = PaddingValues(
-            start = innerPadding.calculateStartPadding(layoutDirection),
-            end = innerPadding.calculateEndPadding(layoutDirection),
-            bottom = innerPadding.calculateBottomPadding(),
+    if (events == null) {
+        LoadingBox(
+            modifier = Modifier.padding(innerPadding),
         )
-
-        if (yearsParticipated.isNotEmpty()) {
-            var expanded by remember { mutableStateOf(false) }
-            Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
-                TextButton(onClick = { expanded = true }) {
-                    Text(
-                        text = selectedYear.toString(),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    Icon(Icons.Default.ArrowDropDown, contentDescription = "Select year")
-                }
-                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                    yearsParticipated.forEach { year ->
-                        DropdownMenuItem(
-                            text = { Text(year.toString()) },
-                            onClick = {
-                                onYearSelected(year)
-                                expanded = false
-                            },
-                        )
-                    }
-                }
-            }
-        }
-
-        if (events == null) {
-            LoadingBox(
-                modifier = Modifier.padding(remainingContentPadding)
-            )
-        } else if (events.isEmpty()) {
-            EmptyBox(
-                modifier = Modifier.padding(remainingContentPadding),
-                message = "No events for $selectedYear"
-            )
-        } else {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = remainingContentPadding,
-            ) {
-                items(events, key = { it.key }) { event ->
-                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
-                }
+    } else if (events.isEmpty()) {
+        EmptyBox(
+            modifier = Modifier.padding(innerPadding),
+            message = "No events for $selectedYear"
+        )
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = innerPadding,
+        ) {
+            items(events, key = { it.key }) { event ->
+                EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
             }
         }
     }

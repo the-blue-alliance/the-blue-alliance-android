@@ -180,6 +180,31 @@ class TeamDetailViewModel @AssistedInject constructor(
         }
     }
 
+    fun refreshTab(tab: Int) {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            try {
+                val year = _selectedYear.value
+                coroutineScope {
+                    when (tab) {
+                        0 -> { // Info
+                            launch { try { teamRepository.refreshTeam(teamKey) } catch (_: Exception) {} }
+                            launch { try { teamRepository.refreshTeamMedia(teamKey, year) } catch (_: Exception) {} }
+                        }
+                        1 -> { // Events
+                            launch { try { eventRepository.refreshTeamEvents(teamKey, year) } catch (_: Exception) {} }
+                        }
+                        2 -> { // Media
+                            launch { try { teamRepository.refreshTeamMedia(teamKey, year) } catch (_: Exception) {} }
+                        }
+                    }
+                }
+            } finally {
+                _isRefreshing.value = false
+            }
+        }
+    }
+
     private suspend fun refreshYearData() {
         val year = _selectedYear.value
         coroutineScope {

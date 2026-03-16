@@ -17,11 +17,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,9 +29,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +39,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.RegionalRanking
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarYearPicker
 import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,7 +57,6 @@ fun RegionalAdvancementScreen(
     val maxYear by viewModel.maxYear.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
-    var yearDropdownExpanded by remember { mutableStateOf(false) }
     LaunchedEffect(reselectFlow) {
         reselectFlow.collect { listState.animateScrollToItem(0) }
     }
@@ -71,18 +65,12 @@ fun RegionalAdvancementScreen(
         topBar = {
             TBATopAppBar(
                 title = {
-                    Row(
-                        modifier = Modifier.clickable { yearDropdownExpanded = true },
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text("$selectedYear Regional Advancement")
-                        Icon(Icons.Default.ArrowDropDown, contentDescription = "Select year")
-                        DropdownMenu(expanded = yearDropdownExpanded, onDismissRequest = { yearDropdownExpanded = false }) {
-                            (maxYear downTo 2025).forEach { year ->
-                                DropdownMenuItem(text = { Text(year.toString()) }, onClick = { viewModel.selectYear(year); yearDropdownExpanded = false })
-                            }
-                        }
-                    }
+                    TopBarYearPicker(
+                        selectedYear = selectedYear,
+                        years = if (selectedYear > 0) (maxYear downTo 2025).toList() else emptyList(),
+                        onYearSelected = viewModel::selectYear,
+                        title = { Text("Regional Advancement") },
+                    )
                 },
                 navigationIcon = {
                     if (onNavigateUp != null) {
