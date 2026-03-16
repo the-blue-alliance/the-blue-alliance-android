@@ -55,6 +55,10 @@ scroll_down() {
   adb shell input swipe 540 1600 540 600 300
 }
 
+# Force light mode so screenshots always use the light theme.
+echo "==> Forcing light mode..."
+adb shell cmd uimode night no
+
 # Enable demo mode for a clean status bar.
 # Demo mode is set BEFORE launching the app so that enableEdgeToEdge() in
 # MainActivity properly sets dark status bar icons on top of demo mode.
@@ -162,12 +166,12 @@ if [ "$INCLUDE_WIDGETS" = true ]; then
   wait_for_ui 1
   # Pin widget for team currently at event
   adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.PinWidgetActivity" --es team 604
-  wait_for_ui 1
+  wait_for_ui 3
   $EMU tap "Add to home screen"
   wait_for_ui 5
   # Pin widget for team with upcoming events
   adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.PinWidgetActivity" --es team 254
-  wait_for_ui 1
+  wait_for_ui 3
   $EMU tap "Add to home screen"
   wait_for_ui 5
   # Go to home screen and capture
