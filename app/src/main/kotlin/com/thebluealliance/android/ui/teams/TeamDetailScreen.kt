@@ -265,7 +265,7 @@ fun TeamDetailScreen(
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.team != null,
-                onRefresh = viewModel::refreshAll,
+                onRefresh = { viewModel.refreshTab(page) },
                 modifier = Modifier.fillMaxSize(),
             ) {
                 when (page) {

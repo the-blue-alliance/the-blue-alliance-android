@@ -135,7 +135,7 @@ fun DistrictDetailScreen(
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.eventSections != null && uiState.rankings != null,
-                onRefresh = viewModel::refreshAll,
+                onRefresh = { viewModel.refreshTab(page) },
                 modifier = Modifier.fillMaxSize(),
             ) {
                 when (page) {
