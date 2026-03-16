@@ -417,7 +417,7 @@ private fun parseInsightsData(jsonObject: JsonObject): List<InsightItem> {
 
         when (value) {
             is JsonArray -> {
-                if (key.endsWith("_count") && value.size >= 3) {
+                if ((key.endsWith("_count") || key.endsWith("_conversion")) && value.size >= 3) {
                     // Format as: success / opportunities (percentage%)
                     val success = (value[0] as? JsonPrimitive)?.int ?: 0
                     val opportunities = (value[1] as? JsonPrimitive)?.int ?: 0
@@ -428,6 +428,13 @@ private fun parseInsightsData(jsonObject: JsonObject): List<InsightItem> {
                     val score = (value[0] as? JsonPrimitive)?.int ?: 0
                     val matchName = (value[2] as? JsonPrimitive)?.content ?: ""
                     items.add(InsightItem(formattedName, "$score ($matchName)"))
+                } else if (value.size == 3) {
+                    // Format as: event total / alliance avg / team avg
+                    val total = (value[0] as? JsonPrimitive)?.doubleOrNull ?: 0.0
+                    val allianceAvg = (value[1] as? JsonPrimitive)?.doubleOrNull ?: 0.0
+                    val teamAvg = (value[2] as? JsonPrimitive)?.doubleOrNull ?: 0.0
+                    val totalStr = if (total % 1.0 == 0.0) total.toInt().toString() else "%.2f".format(total)
+                    items.add(InsightItem(formattedName, "$totalStr total / ${"%.2f".format(allianceAvg)} alliance / ${"%.2f".format(teamAvg)} team"))
                 } else {
                     // Generic array formatting
                     items.add(InsightItem(formattedName, value.toString()))
