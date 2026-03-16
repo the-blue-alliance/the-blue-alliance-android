@@ -61,7 +61,7 @@ fun EventAlliancesTab(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
-                        text = "Alliance ${alliance.number}",
+                        text = allianceTitle(alliance),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                     )
@@ -96,4 +96,7 @@ fun EventAlliancesTab(
         }
     }
 }
+
+internal fun allianceTitle(alliance: Alliance): String =
+    alliance.name?.takeIf { it.isNotBlank() } ?: "Alliance ${alliance.number}"
 

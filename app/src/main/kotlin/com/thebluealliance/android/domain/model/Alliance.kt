@@ -1,5 +1,7 @@
 package com.thebluealliance.android.domain.model
 
+private const val WINNER_LABEL = "Winner 🏆"
+
 data class Alliance(
     val eventKey: String,
     val number: Int,
@@ -16,7 +18,7 @@ data class Alliance(
 val Alliance.playoffSummary: String?
     get() {
         val statusLabel = playoffStatus?.toAllianceStatusLabel()
-        if (statusLabel == "Winner") return statusLabel
+        if (statusLabel == WINNER_LABEL) return statusLabel
 
         val roundLabel = playoffDoubleElimRound?.takeIf { it.isNotBlank() }
         val levelLabel = playoffLevel?.toAllianceCompLevelLabel()
@@ -37,7 +39,7 @@ private fun String.toAllianceStatusLabel(): String =
         ?.lowercase()
         ?.replace('_', ' ')
         ?.let { status ->
-            if (status == "won") "Winner"
+            if (status == "won") WINNER_LABEL
             else status.replaceFirstChar { char ->
                 if (char.isLowerCase()) char.titlecase() else char.toString()
             }

@@ -41,7 +41,7 @@ class AllianceTest {
             playoffLevel = "f",
         )
 
-        assertEquals("Winner", alliance.playoffSummary)
+        assertEquals("Winner 🏆", alliance.playoffSummary)
     }
 
     @Test
