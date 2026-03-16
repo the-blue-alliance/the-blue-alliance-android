@@ -75,6 +75,11 @@ import kotlinx.coroutines.flow.Flow
 
 private val TABS = listOf("Favorites", "Notifications")
 
+object MyTBATabs {
+    const val FAVORITES = 0
+    const val NOTIFICATIONS = 1
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTBAScreen(
@@ -96,8 +101,8 @@ fun MyTBAScreen(
     LaunchedEffect(reselectFlow) {
         reselectFlow.collect {
             when (pagerState.currentPage) {
-                0 -> favoritesListState.animateScrollToItem(0)
-                1 -> notificationsListState.animateScrollToItem(0)
+                MyTBATabs.FAVORITES -> favoritesListState.animateScrollToItem(0)
+                MyTBATabs.NOTIFICATIONS -> notificationsListState.animateScrollToItem(0)
             }
         }
     }
@@ -261,7 +266,7 @@ fun MyTBAScreen(
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     when (page) {
-                        0 -> FavoritesTab(
+                        MyTBATabs.FAVORITES -> FavoritesTab(
                             favorites = uiState.favorites,
                             onNavigateToTeam = onNavigateToTeam,
                             onNavigateToEvent = onNavigateToEvent,
@@ -270,7 +275,7 @@ fun MyTBAScreen(
                             onAddShortcut = viewModel::requestPinShortcut,
                         )
 
-                        1 -> NotificationsTab(
+                        MyTBATabs.NOTIFICATIONS -> NotificationsTab(
                             uiState.subscriptions,
                             onNavigateToTeam,
                             onNavigateToEvent,

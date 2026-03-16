@@ -276,12 +276,12 @@ fun EventDetailScreen(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 when (page) {
-                    0 -> EventInfoTab(
+                    EventDetailTabs.INFO -> EventInfoTab(
                         event = uiState.event,
                         districtDisplayName = uiState.districtDisplayName,
                         onNavigateToDistrict = onNavigateToDistrict,
                     )
-                    1 -> EventTeamsTab(
+                    EventDetailTabs.TEAMS -> EventTeamsTab(
                         teams = uiState.teams,
                         pitLocations = uiState.pitLocations,
                         onNavigateToTeam = { teamKey ->
@@ -290,7 +290,7 @@ fun EventDetailScreen(
                             else onNavigateToTeam(teamKey)
                         },
                     )
-                    2 -> EventRankingsTab(
+                    EventDetailTabs.RANKINGS -> EventRankingsTab(
                         rankings = uiState.rankings,
                         rankingSortOrders = uiState.rankingSortOrders,
                         rankingExtraStatsInfo = uiState.rankingExtraStatsInfo,
@@ -299,24 +299,24 @@ fun EventDetailScreen(
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                         },
                     )
-                    3 -> EventMatchesTab(
+                    EventDetailTabs.MATCHES -> EventMatchesTab(
                         matches = uiState.matches,
                         playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
                         onNavigateToMatch = onNavigateToMatch,
                     )
-                    4 -> EventAlliancesTab(
+                    EventDetailTabs.ALLIANCES -> EventAlliancesTab(
                         alliances = uiState.alliances,
                         onTeamClick = { teamKey ->
                             val eventKey = uiState.event?.key
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                         },
                     )
-                    5 -> EventInsightsTab(
+                    EventDetailTabs.INSIGHTS -> EventInsightsTab(
                         oprs = uiState.oprs,
                         coprs = uiState.coprs,
                         insights = uiState.insights,
                     )
-                    6 -> EventDistrictPointsTab(
+                    EventDetailTabs.DISTRICT_POINTS -> EventDistrictPointsTab(
                         uiState.districtPoints,
                         uiState.event,
                         uiState.teams,
@@ -326,7 +326,7 @@ fun EventDetailScreen(
                             else onNavigateToTeam(teamKey)
                         },
                     )
-                    7 -> EventAwardsTab(
+                    EventDetailTabs.AWARDS -> EventAwardsTab(
                         awards = uiState.awards,
                         onTeamClick = { teamKey ->
                             val eventKey = uiState.event?.key
