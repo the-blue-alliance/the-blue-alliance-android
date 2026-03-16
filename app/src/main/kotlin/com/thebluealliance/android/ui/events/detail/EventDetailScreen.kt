@@ -272,7 +272,7 @@ fun EventDetailScreen(
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing,
-                onRefresh = viewModel::refreshAll,
+                onRefresh = { viewModel.refreshTab(page) },
                 modifier = Modifier.fillMaxSize(),
             ) {
                 when (page) {
