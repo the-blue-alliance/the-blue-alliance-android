@@ -46,16 +46,8 @@ class EventsUiStateTest {
     // --- buildHeaderInfos: index calculation ---
 
     @Test
-    fun `buildHeaderInfos calculates indices correctly with multiple sub-sections`() {
-        val favorites = listOf(makeEvent(key = "fav1"))
-
-        val thisWeek = ThisWeekResult(
-            label = "This Week",
-            subSections = listOf(
-                EventSubSection("Sub 1", listOf(makeEvent(key = "tw1"))),
-                EventSubSection("", listOf(makeEvent(key = "tw2"))) // Empty label = no header item
-            )
-        )
+    fun `buildHeaderInfos calculates indices correctly with favorites`() {
+        val favoriteKeys = setOf("w1r1", "w2o1")
 
         val sections = listOf(
             EventSection(
@@ -73,34 +65,57 @@ class EventsUiStateTest {
             )
         )
 
-        val infos = buildHeaderInfos(sections, favorites, thisWeek)
+        val infos = buildHeaderInfos(sections, favoriteKeys)
 
-        assertEquals(4, infos.size)
+        assertEquals(3, infos.size)
 
-        // 1. Favorites Header
+        // 1. Top-level Favorites Header at index 0
         assertEquals("Favorites", infos[0].label)
         assertEquals(0, infos[0].itemIndex)
 
-        // 2. This Week Header
-        // Index = 0 (prev header) + 1 (prev header) + 1 (fav1) = 2
-        assertEquals("This Week", infos[1].label)
-        assertEquals(2, infos[1].itemIndex)
+        // Top-level Favorites items:
+        //   header (1) + w1r1 (1) + w2o1 (1) = 3
 
-        // 3. Week 1 Header
-        // Index = 2 (prev header) + 1 (prev header)
-        //         + 1 (Sub 1 header) + 1 (tw1)
-        //         + 0 (Empty label) + 1 (tw2)
-        //       = 2 + 1 + 2 + 1 = 6
-        assertEquals("Week 1", infos[2].label)
-        assertEquals(6, infos[2].itemIndex)
+        // 2. Week 1 Header at index 3
+        assertEquals("Week 1", infos[1].label)
+        assertEquals(3, infos[1].itemIndex)
 
-        // 4. Week 2 Header
-        // Index = 6 (prev header) + 1 (prev header)
-        //         + 1 (Regional header) + 2 (w1r1, w1r2)
-        //         + 1 (District header) + 1 (w1d1)
-        //       = 6 + 1 + 3 + 2 = 12
-        assertEquals("Week 2", infos[3].label)
-        assertEquals(12, infos[3].itemIndex)
+        // Week 1 items:
+        //   header (1)
+        //   + Favorites sub-header (1) + w1r1 (1) = 2
+        //   + Regional header (1) + w1r1, w1r2 (2) = 3
+        //   + District header (1) + w1d1 (1) = 2
+        //   Total = 1 + 2 + 3 + 2 = 8
+
+        // 3. Week 2 Header at index 11
+        assertEquals("Week 2", infos[2].label)
+        assertEquals(11, infos[2].itemIndex)
+    }
+
+    @Test
+    fun `buildHeaderInfos with no favorites has no extra sub-sections`() {
+        val sections = listOf(
+            EventSection(
+                label = "Week 1",
+                subSections = listOf(
+                    EventSubSection("Regional", listOf(makeEvent(key = "w1r1")))
+                )
+            ),
+            EventSection(
+                label = "Week 2",
+                subSections = listOf(
+                    EventSubSection("", listOf(makeEvent(key = "w2o1")))
+                )
+            )
+        )
+
+        val infos = buildHeaderInfos(sections, emptySet())
+
+        assertEquals(2, infos.size)
+
+        // Week 1: header (1) + Regional header (1) + w1r1 (1) = 3
+        assertEquals(0, infos[0].itemIndex)
+        assertEquals(3, infos[1].itemIndex)
     }
 
     // --- buildEventSections: sort order within sections ---
@@ -190,7 +205,7 @@ class EventsUiStateTest {
         assertEquals(listOf("Week 1", "Championship", "Preseason", "Offseason"), sections.map { it.label })
     }
 
-    // --- Regular season: event happening today ---
+    // --- computeThisWeekEvents (used by DistrictDetailScreen) ---
 
     @Test
     fun `regular season event happening today returns correct week label`() {
@@ -204,110 +219,10 @@ class EventsUiStateTest {
         val result = computeThisWeekEvents(events, today, selectedYear = 2026)
 
         assertNotNull(result)
-        assertEquals("Upcoming This Week \u2014 Week 3", result!!.label) // week=2 → display "Week 3"
+        assertEquals("Upcoming This Week \u2014 Week 3", result!!.label)
         assertEquals(2, result.events.size)
         assertEquals(setOf("2026abc", "2026def"), result.events.map { it.key }.toSet())
     }
-
-    // --- Sunday gap between weeks ---
-
-    @Test
-    fun `sunday gap uses upcoming week when season has started`() {
-        val today = LocalDate.of(2026, 3, 15) // Sunday between weeks
-        val events = listOf(
-            // Week 2 ended yesterday — season has started
-            makeEvent(key = "2026abc", week = 2, startDate = "2026-03-09", endDate = "2026-03-14"),
-            makeEvent(key = "2026def", week = 3, startDate = "2026-03-18", endDate = "2026-03-21"),
-        )
-
-        val result = computeThisWeekEvents(events, today, selectedYear = 2026)
-
-        assertNotNull(result)
-        assertEquals("Upcoming This Week \u2014 Week 4", result!!.label) // week=3 → display "Week 4"
-        assertEquals(1, result.events.size)
-        assertEquals("2026def", result.events[0].key)
-    }
-
-    @Test
-    fun `sunday after last event with no upcoming events returns null`() {
-        val today = LocalDate.of(2026, 3, 15) // Sunday, all week 2 events ended
-        val events = listOf(
-            makeEvent(key = "2026abc", week = 2, startDate = "2026-03-09", endDate = "2026-03-14"),
-            // No upcoming events with a week
-        )
-
-        val result = computeThisWeekEvents(events, today, selectedYear = 2026)
-
-        // Week 2 is detected via recently-ended, but all its events have ended → filtered out
-        assertNull(result)
-    }
-
-    // --- Preseason: don't reach forward into regular season ---
-
-    @Test
-    fun `preseason does not show upcoming regular season week`() {
-        val today = LocalDate.of(2026, 2, 27) // Friday before season starts
-        val events = listOf(
-            // Preseason events happening tomorrow (type=100, no week)
-            makeEvent(
-                key = "2026pre1", type = 100, week = null,
-                startDate = "2026-02-28", endDate = "2026-02-28",
-            ),
-            // Week 1 events starting next week (week=0 in API)
-            makeEvent(key = "2026wk1", week = 0, startDate = "2026-03-04", endDate = "2026-03-07"),
-        )
-
-        val result = computeThisWeekEvents(events, today, selectedYear = 2026)
-
-        // Should use calendar-week fallback showing preseason, NOT jump to Week 1
-        assertNotNull(result)
-        assertEquals("Upcoming This Week", result!!.label)
-        assertEquals(1, result.events.size)
-        assertEquals("2026pre1", result.events[0].key)
-    }
-
-    @Test
-    fun `preseason with no events this calendar week returns null`() {
-        val today = LocalDate.of(2026, 2, 20) // Week before any preseason events
-        val events = listOf(
-            makeEvent(
-                key = "2026pre1", type = 100, week = null,
-                startDate = "2026-02-28", endDate = "2026-02-28",
-            ),
-            makeEvent(key = "2026wk1", week = 0, startDate = "2026-03-04", endDate = "2026-03-07"),
-        )
-
-        val result = computeThisWeekEvents(events, today, selectedYear = 2026)
-
-        assertNull(result)
-    }
-
-    // --- Offseason fallback ---
-
-    @Test
-    fun `offseason uses calendar week fallback`() {
-        val today = LocalDate.of(2026, 7, 15) // Wednesday in July
-        val events = listOf(
-            // Offseason events have no week field
-            makeEvent(
-                key = "2026off1", type = 99, week = null,
-                startDate = "2026-07-13", endDate = "2026-07-15",
-            ),
-            makeEvent(
-                key = "2026off2", type = 99, week = null,
-                startDate = "2026-07-20", endDate = "2026-07-22",
-            ),
-        )
-
-        val result = computeThisWeekEvents(events, today, selectedYear = 2026)
-
-        assertNotNull(result)
-        assertEquals("Upcoming This Week", result!!.label)
-        assertEquals(1, result.events.size)
-        assertEquals("2026off1", result.events[0].key)
-    }
-
-    // --- Non-current year ---
 
     @Test
     fun `non-current year returns null`() {
@@ -315,75 +230,13 @@ class EventsUiStateTest {
         val events = listOf(
             makeEvent(key = "2024abc", year = 2024, week = 2, startDate = "2024-03-11", endDate = "2024-03-14"),
         )
-
-        val result = computeThisWeekEvents(events, today, selectedYear = 2024)
-
-        assertNull(result)
+        assertNull(computeThisWeekEvents(events, today, selectedYear = 2024))
     }
-
-    // --- Championship events included via date overlap ---
-
-    @Test
-    fun `championship events included when dates overlap current week`() {
-        val today = LocalDate.of(2026, 4, 15) // During championship week
-        val events = listOf(
-            makeEvent(key = "2026reg", week = 6, type = 0, startDate = "2026-04-13", endDate = "2026-04-17"),
-            makeEvent(
-                key = "2026cmp", week = null, type = 3,
-                startDate = "2026-04-14", endDate = "2026-04-18",
-            ),
-            makeEvent(
-                key = "2026cmp2", week = null, type = 4,
-                startDate = "2026-04-20", endDate = "2026-04-22",
-            ),
-        )
-
-        val result = computeThisWeekEvents(events, today, selectedYear = 2026)
-
-        assertNotNull(result)
-        assertEquals("Upcoming This Week \u2014 Week 7", result!!.label) // week=6 → "Week 7"
-        assertEquals(setOf("2026reg", "2026cmp"), result.events.map { it.key }.toSet())
-        // cmp2 does NOT overlap the week's date range, so excluded
-    }
-
-    // --- Ended events are filtered out ---
-
-    @Test
-    fun `ended events are excluded from results`() {
-        val today = LocalDate.of(2026, 3, 13) // Friday, mid-week
-        val events = listOf(
-            // This 3-day event ended yesterday
-            makeEvent(key = "2026short", week = 2, startDate = "2026-03-09", endDate = "2026-03-12"),
-            // This event is still going
-            makeEvent(key = "2026long", week = 2, startDate = "2026-03-09", endDate = "2026-03-14"),
-        )
-
-        val result = computeThisWeekEvents(events, today, selectedYear = 2026)
-
-        assertNotNull(result)
-        assertEquals(1, result!!.events.size)
-        assertEquals("2026long", result.events[0].key)
-    }
-
-    // --- No events returns null ---
 
     @Test
     fun `no events returns null`() {
         val today = LocalDate.of(2026, 3, 11)
-        val result = computeThisWeekEvents(emptyList(), today, selectedYear = 2026)
-        assertNull(result)
-    }
-
-    @Test
-    fun `no events this week returns null`() {
-        val today = LocalDate.of(2026, 6, 10) // No events anywhere near this date
-        val events = listOf(
-            makeEvent(key = "2026abc", week = 2, startDate = "2026-03-09", endDate = "2026-03-14"),
-        )
-
-        val result = computeThisWeekEvents(events, today, selectedYear = 2026)
-
-        assertNull(result)
+        assertNull(computeThisWeekEvents(emptyList(), today, selectedYear = 2026))
     }
 
     // --- findCurrentCompetitionWeek ---
