@@ -583,10 +583,12 @@ private fun AwardsTab(
         }
         if (awards.isEmpty()) {
             item {
-                EmptyBox(
-                    message = "No awards",
-                    modifier = Modifier.padding(top = 24.dp),
-                )
+                Box(
+                    Modifier.fillMaxWidth().padding(32.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text("No awards", style = MaterialTheme.typography.bodyLarge)
+                }
             }
         }
         items(awards, key = { "${it.awardType}_${it.awardee.orEmpty()}" }) { award ->
