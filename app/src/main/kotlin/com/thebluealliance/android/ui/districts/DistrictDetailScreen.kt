@@ -127,10 +127,11 @@ fun DistrictDetailScreen(
             }
         },
     ) { innerPadding ->
+        val bottomPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
-                .padding(innerPadding)
+                .padding(top = innerPadding.calculateTopPadding())
                 .background(MaterialTheme.colorScheme.background),
         ) { page ->
             PullToRefreshBox(
@@ -142,12 +143,12 @@ fun DistrictDetailScreen(
                     DistrictDetailTabs.EVENTS -> EventsTab(
                         sections = uiState.eventSections,
                         onNavigateToEvent = onNavigateToEvent,
-                        innerPadding = PaddingValues(0.dp),
+                        innerPadding = bottomPadding,
                     )
                     DistrictDetailTabs.RANKINGS -> RankingsTab(
                         rankings = uiState.rankings,
                         onNavigateToTeam = onNavigateToTeam,
-                        innerPadding = PaddingValues(0.dp),
+                        innerPadding = bottomPadding,
                     )
                 }
             }

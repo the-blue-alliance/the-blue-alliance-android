@@ -258,10 +258,11 @@ fun TeamDetailScreen(
             }
         },
     ) { innerPadding ->
+        val bottomPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
-                .padding(innerPadding),
+                .padding(top = innerPadding.calculateTopPadding()),
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.team != null,
@@ -272,6 +273,7 @@ fun TeamDetailScreen(
                     TeamDetailTabs.INFO -> InfoTab(
                         team = uiState.team,
                         media = uiState.media,
+                        innerPadding = bottomPadding,
                     )
                     TeamDetailTabs.EVENTS -> EventsTab(
                         events = uiState.events,
@@ -281,9 +283,11 @@ fun TeamDetailScreen(
                             if (teamKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                             else onNavigateToEvent(eventKey)
                         },
+                        innerPadding = bottomPadding,
                     )
                     TeamDetailTabs.MEDIA -> MediaTab(
                         media = uiState.media,
+                        innerPadding = bottomPadding,
                     )
                 }
             }

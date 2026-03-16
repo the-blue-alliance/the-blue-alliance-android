@@ -52,7 +52,7 @@ import com.thebluealliance.android.ui.components.mediaUrl
 @Composable
 fun MatchDetailScreen(
     onNavigateUp: () -> Unit,
-    onNavigateToTeam: (String) -> Unit = {},
+    onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
     onNavigateToEvent: (String) -> Unit = {},
     onNavigateToSearch: () -> Unit,
     viewModel: MatchDetailViewModel,
@@ -144,7 +144,10 @@ fun MatchDetailScreen(
                         AllianceTeams(
                             redTeamKeys = match.redTeamKeys,
                             blueTeamKeys = match.blueTeamKeys,
-                            onTeamClick = onNavigateToTeam,
+                            onTeamClick = { teamKey ->
+                                val ek = uiState.eventKey
+                                if (ek != null) onNavigateToTeamEvent(teamKey, ek)
+                            },
                         )
                     }
 
