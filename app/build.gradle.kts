@@ -160,6 +160,8 @@ dependencies {
     // Glance (App Widgets)
     implementation(libs.glance.appwidget)
     implementation(libs.glance.material3)
+    implementation(libs.glance.preview)
+    implementation(libs.glance.appwidget.preview)
 
     // Coroutines
     implementation(libs.coroutines.core)

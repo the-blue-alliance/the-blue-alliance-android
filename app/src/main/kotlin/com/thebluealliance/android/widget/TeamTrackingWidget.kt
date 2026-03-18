@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalGlancePreviewApi::class)
+
 package com.thebluealliance.android.widget
 
 import android.content.Context
@@ -19,6 +21,8 @@ import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.PreviewSizeMode
 import androidx.glance.appwidget.SizeMode
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
@@ -1043,6 +1047,41 @@ class TeamTrackingWidget : GlanceAppWidget() {
             }
         }
     }
+
+    // ─── Android Studio previews ────────────────────────────────────────────────
+    // Typical launcher sizes (Pixel-like: ~80dp/col, ~100dp/row)
+
+    @Preview(widthDp = 80, heightDp = 100) @Composable
+    fun TinyPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+
+    @Preview(widthDp = 170, heightDp = 100) @Composable
+    fun MinimalPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+
+    @Preview(widthDp = 170, heightDp = 210) @Composable
+    fun SquarePreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+
+    @Preview(widthDp = 350, heightDp = 100) @Composable
+    fun CompactPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+
+    @Preview(widthDp = 350, heightDp = 210) @Composable
+    fun FullPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+
+    // Breakpoint minimums — the smallest size each tier will render at
+
+    @Preview(widthDp = 60, heightDp = 60) @Composable
+    fun TinyMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+
+    @Preview(widthDp = 110, heightDp = 60) @Composable
+    fun MinimalMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+
+    @Preview(widthDp = 110, heightDp = 110) @Composable
+    fun SquareMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+
+    @Preview(widthDp = 250, heightDp = 60) @Composable
+    fun CompactMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+
+    @Preview(widthDp = 250, heightDp = 110) @Composable
+    fun FullMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
 }
 
 /** Formats a time string with "~" prefix for estimates. */

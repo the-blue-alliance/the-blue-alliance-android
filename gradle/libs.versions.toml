@@ -113,6 +113,8 @@ hilt-work-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.
 # Glance (App Widgets)
 glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
 glance-material3 = { group = "androidx.glance", name = "glance-material3", version.ref = "glance" }
+glance-preview = { group = "androidx.glance", name = "glance-preview", version.ref = "glance" }
+glance-appwidget-preview = { group = "androidx.glance", name = "glance-appwidget-preview", version.ref = "glance" }
 
 # Datastore
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
