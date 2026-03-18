@@ -322,6 +322,7 @@ fun EventDetailScreen(
                         oprs = uiState.oprs,
                         coprs = uiState.coprs,
                         insights = uiState.insights,
+                        isRefreshing = isRefreshing,
                         innerPadding = bottomPadding,
                     )
                     EventDetailTabs.DISTRICT_POINTS -> EventDistrictPointsTab(

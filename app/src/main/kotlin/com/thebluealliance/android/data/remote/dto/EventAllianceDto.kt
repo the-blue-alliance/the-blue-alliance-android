@@ -1,5 +1,6 @@
 package com.thebluealliance.android.data.remote.dto
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -13,11 +14,13 @@ data class EventAllianceDto(
 
 @Serializable
 data class AllianceBackupDto(
-    @Suppress("PropertyName") val `in`: String? = null,
+    val `in`: String? = null,
     val out: String? = null,
 )
 
 @Serializable
 data class EventAllianceStatusDto(
     val status: String? = null,
+    val level: String? = null,
+    @SerialName("double_elim_round") val doubleElimRound: String? = null,
 )

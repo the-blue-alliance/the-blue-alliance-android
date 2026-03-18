@@ -11,4 +11,7 @@ data class AllianceEntity(
     val declines: String,
     val backupIn: String?,
     val backupOut: String?,
+    val playoffStatus: String?,
+    val playoffLevel: String?,
+    val playoffDoubleElimRound: String?,
 )
