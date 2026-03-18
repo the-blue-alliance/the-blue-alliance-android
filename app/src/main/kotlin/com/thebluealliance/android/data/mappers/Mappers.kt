@@ -3,7 +3,6 @@ package com.thebluealliance.android.data.mappers
 import com.thebluealliance.android.data.local.entity.*
 import com.thebluealliance.android.data.remote.dto.*
 import com.thebluealliance.android.domain.model.*
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 private val json = Json { ignoreUnknownKeys = true }
@@ -229,6 +228,9 @@ fun EventAllianceDto.toEntity(eventKey: String, number: Int) = AllianceEntity(
     declines = json.encodeToString(declines),
     backupIn = backup?.`in`,
     backupOut = backup?.out,
+    playoffStatus = status?.status,
+    playoffLevel = status?.level,
+    playoffDoubleElimRound = status?.doubleElimRound,
 )
 
 fun AllianceEntity.toDomain() = Alliance(
@@ -239,6 +241,9 @@ fun AllianceEntity.toDomain() = Alliance(
     declines = json.decodeFromString(declines),
     backupIn = backupIn,
     backupOut = backupOut,
+    playoffStatus = playoffStatus,
+    playoffLevel = playoffLevel,
+    playoffDoubleElimRound = playoffDoubleElimRound,
 )
 
 // ── District ──

@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.EventCOPRs
 import com.thebluealliance.android.domain.model.EventInsights
 import com.thebluealliance.android.domain.model.EventOPRs
+import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -71,12 +72,20 @@ fun EventInsightsTab(
     oprs: EventOPRs?,
     coprs: EventCOPRs?,
     insights: EventInsights?,
+    isRefreshing: Boolean = false,
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
-    if (oprs == null) {
-        LoadingBox(
-            modifier = Modifier.padding(innerPadding)
-        )
+    val hasOprData = oprs != null && oprs.oprs.isNotEmpty()
+    val hasCoprData = coprs != null && coprs.coprs.isNotEmpty()
+    val hasInsightsData = insights?.qual != null || insights?.playoff != null
+    val hasAnyData = hasOprData || hasCoprData || hasInsightsData
+
+    if (!hasAnyData) {
+        if (isRefreshing) {
+            LoadingBox(modifier = Modifier.padding(innerPadding))
+        } else {
+            EmptyBox("No insights", modifier = Modifier.padding(innerPadding))
+        }
         return
     }
 
@@ -86,7 +95,14 @@ fun EventInsightsTab(
     var coprSortColumn by remember { mutableStateOf(CoprSortColumn.VALUE) }
     var coprSortAscending by remember { mutableStateOf(false) }
     var showStatSelector by remember { mutableStateOf(false) }
-    var selectedStatType by remember { mutableStateOf<StatType>(StatType.StandardOPRs) }
+    val defaultStatType = when {
+        hasOprData -> StatType.StandardOPRs
+        hasInsightsData && insights.qual != null -> StatType.QualInsights
+        hasInsightsData && insights.playoff != null -> StatType.PlayoffInsights
+        hasCoprData -> StatType.COPR(coprs.coprs.keys.first())
+        else -> StatType.StandardOPRs
+    }
+    var selectedStatType by remember { mutableStateOf(defaultStatType) }
 
     // Get available COPR stat names
     val coprStatNames = remember(coprs) {
@@ -122,7 +138,7 @@ fun EventInsightsTab(
         when (val statType = selectedStatType) {
             is StatType.StandardOPRs -> {
                 StandardOPRsView(
-                    oprs = oprs,
+                    oprs = oprs ?: EventOPRs(),
                     sortColumn = oprSortColumn,
                     sortAscending = oprSortAscending,
                     onSortChange = { column, ascending ->
@@ -401,7 +417,7 @@ private fun parseInsightsData(jsonObject: JsonObject): List<InsightItem> {
 
         when (value) {
             is JsonArray -> {
-                if (key.endsWith("_count") && value.size >= 3) {
+                if ((key.endsWith("_count") || key.endsWith("_conversion")) && value.size >= 3) {
                     // Format as: success / opportunities (percentage%)
                     val success = (value[0] as? JsonPrimitive)?.int ?: 0
                     val opportunities = (value[1] as? JsonPrimitive)?.int ?: 0
@@ -412,6 +428,13 @@ private fun parseInsightsData(jsonObject: JsonObject): List<InsightItem> {
                     val score = (value[0] as? JsonPrimitive)?.int ?: 0
                     val matchName = (value[2] as? JsonPrimitive)?.content ?: ""
                     items.add(InsightItem(formattedName, "$score ($matchName)"))
+                } else if (value.size == 3) {
+                    // Format as: event total / alliance avg / team avg
+                    val total = (value[0] as? JsonPrimitive)?.doubleOrNull ?: 0.0
+                    val allianceAvg = (value[1] as? JsonPrimitive)?.doubleOrNull ?: 0.0
+                    val teamAvg = (value[2] as? JsonPrimitive)?.doubleOrNull ?: 0.0
+                    val totalStr = if (total % 1.0 == 0.0) total.toInt().toString() else "%.2f".format(total)
+                    items.add(InsightItem(formattedName, "$totalStr total / ${"%.2f".format(allianceAvg)} alliance / ${"%.2f".format(teamAvg)} team"))
                 } else {
                     // Generic array formatting
                     items.add(InsightItem(formattedName, value.toString()))
