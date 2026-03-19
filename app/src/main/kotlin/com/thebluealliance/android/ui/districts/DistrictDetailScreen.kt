@@ -3,7 +3,6 @@ package com.thebluealliance.android.ui.districts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -18,9 +17,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -29,15 +25,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,6 +47,7 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.events.EventSection
 import com.thebluealliance.android.ui.events.computeThisWeekEvents
 import com.thebluealliance.android.ui.theme.TBAIndigo400
@@ -61,6 +55,11 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 private val TABS = listOf("Events", "Rankings")
+
+object DistrictDetailTabs {
+    const val EVENTS = 0
+    const val RANKINGS = 1
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,10 +82,17 @@ fun DistrictDetailScreen(
             Column {
                 TBATopAppBar(
                     title = {
-                        Text(
-                            text = uiState.district?.displayName ?: "District",
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
+                        TopBarYearPicker(
+                            selectedYear = selectedYear,
+                            years = availableYears,
+                            onYearSelected = viewModel::selectYear,
+                            title = {
+                                Text(
+                                    text = uiState.district?.displayName ?: "District",
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            },
                         )
                     },
                     navigationIcon = {
@@ -98,37 +104,6 @@ fun DistrictDetailScreen(
                         }
                     },
                     actions = {
-                        if (availableYears.isNotEmpty()) {
-                            var yearMenuExpanded by remember { mutableStateOf(false) }
-                            Box {
-                                TextButton(onClick = { yearMenuExpanded = true }) {
-                                    Text(
-                                        text = selectedYear.toString(),
-                                        color = Color.White,
-                                        style = MaterialTheme.typography.titleMedium,
-                                    )
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowDropDown,
-                                        contentDescription = "Select year",
-                                        tint = Color.White,
-                                    )
-                                }
-                                DropdownMenu(
-                                    expanded = yearMenuExpanded,
-                                    onDismissRequest = { yearMenuExpanded = false },
-                                ) {
-                                    availableYears.forEach { year ->
-                                        DropdownMenuItem(
-                                            text = { Text(year.toString()) },
-                                            onClick = {
-                                                viewModel.selectYear(year)
-                                                yearMenuExpanded = false
-                                            },
-                                        )
-                                    }
-                                }
-                            }
-                        }
                         IconButton(onClick = onNavigateToSearch) {
                             Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
                         }
@@ -152,27 +127,28 @@ fun DistrictDetailScreen(
             }
         },
     ) { innerPadding ->
-        PullToRefreshBox(
-            isRefreshing = isRefreshing && uiState.eventSections != null && uiState.rankings != null,
-            onRefresh = viewModel::refreshAll,
+        val bottomPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier.fillMaxSize()
-                .padding(innerPadding)
+                .padding(top = innerPadding.calculateTopPadding())
                 .background(MaterialTheme.colorScheme.background),
-        ) {
-            HorizontalPager(
-                state = pagerState,
+        ) { page ->
+            PullToRefreshBox(
+                isRefreshing = isRefreshing && uiState.eventSections != null && uiState.rankings != null,
+                onRefresh = { viewModel.refreshTab(page) },
                 modifier = Modifier.fillMaxSize(),
-            ) { page ->
+            ) {
                 when (page) {
-                    0 -> EventsTab(
+                    DistrictDetailTabs.EVENTS -> EventsTab(
                         sections = uiState.eventSections,
                         onNavigateToEvent = onNavigateToEvent,
-                        innerPadding = PaddingValues(0.dp),
+                        innerPadding = bottomPadding,
                     )
-                    1 -> RankingsTab(
+                    DistrictDetailTabs.RANKINGS -> RankingsTab(
                         rankings = uiState.rankings,
                         onNavigateToTeam = onNavigateToTeam,
-                        innerPadding = PaddingValues(0.dp),
+                        innerPadding = bottomPadding,
                     )
                 }
             }

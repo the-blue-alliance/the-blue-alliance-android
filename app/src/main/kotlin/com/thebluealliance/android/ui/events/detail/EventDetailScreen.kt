@@ -5,7 +5,10 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -259,33 +262,35 @@ fun EventDetailScreen(
             }
         },
     ) { innerPadding ->
-        PullToRefreshBox(
-            isRefreshing = isRefreshing,
-            onRefresh = viewModel::refreshAll,
+        val bottomPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
+        HorizontalPager(
+            state = pagerState,
             modifier = Modifier
                 .fillMaxSize()
+                .padding(top = innerPadding.calculateTopPadding())
                 .background(MaterialTheme.colorScheme.background),
-        ) {
-            HorizontalPager(
-                state = pagerState,
+        ) { page ->
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = { viewModel.refreshTab(EventDetailTab.entries[page]) },
                 modifier = Modifier.fillMaxSize(),
-            ) { page ->
+            ) {
                 when (EventDetailTab.entries[page]) {
                     EventDetailTab.INFO -> EventInfoTab(
                         event = uiState.event,
                         districtDisplayName = uiState.districtDisplayName,
-                        innerPadding = innerPadding,
                         onNavigateToDistrict = onNavigateToDistrict,
+                        innerPadding = bottomPadding,
                     )
                     EventDetailTab.TEAMS -> EventTeamsTab(
                         teams = uiState.teams,
                         pitLocations = uiState.pitLocations,
-                        innerPadding = innerPadding,
                         onNavigateToTeam = { teamKey ->
                             val eventKey = uiState.event?.key
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                             else onNavigateToTeam(teamKey)
                         },
+                        innerPadding = bottomPadding,
                     )
                     EventDetailTab.RANKINGS -> EventRankingsTab(
                         rankings = uiState.rankings,
@@ -295,13 +300,13 @@ fun EventDetailScreen(
                             val eventKey = uiState.event?.key
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                         },
-                        innerPadding = innerPadding,
+                        innerPadding = bottomPadding,
                     )
                     EventDetailTab.MATCHES -> EventMatchesTab(
                         matches = uiState.matches,
                         playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
                         onNavigateToMatch = onNavigateToMatch,
-                        innerPadding = innerPadding,
+                        innerPadding = bottomPadding,
                     )
                     EventDetailTab.ALLIANCES -> EventAlliancesTab(
                         alliances = uiState.alliances,
@@ -309,13 +314,14 @@ fun EventDetailScreen(
                             val eventKey = uiState.event?.key
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                         },
-                        innerPadding = innerPadding,
+                        innerPadding = bottomPadding,
                     )
                     EventDetailTab.INSIGHTS -> EventInsightsTab(
                         oprs = uiState.oprs,
                         coprs = uiState.coprs,
                         insights = uiState.insights,
-                        innerPadding = innerPadding,
+                        isRefreshing = isRefreshing,
+                        innerPadding = bottomPadding,
                     )
                     EventDetailTab.DISTRICT_POINTS -> EventDistrictPointsTab(
                         uiState.districtPoints,
@@ -326,7 +332,7 @@ fun EventDetailScreen(
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                             else onNavigateToTeam(teamKey)
                         },
-                        innerPadding = innerPadding,
+                        innerPadding = bottomPadding,
                     )
                     EventDetailTab.AWARDS -> EventAwardsTab(
                         awards = uiState.awards,
@@ -335,7 +341,7 @@ fun EventDetailScreen(
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                             else onNavigateToTeam(teamKey)
                         },
-                        innerPadding = innerPadding,
+                        innerPadding = bottomPadding,
                     )
                 }
             }

@@ -57,7 +57,7 @@ fun MatchList(
             headerContent?.invoke(this)
             item {
                 Box(
-                    Modifier.fillMaxSize().padding(32.dp),
+                    Modifier.fillParentMaxSize().padding(32.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     if (matches == null) CircularProgressIndicator()

@@ -55,6 +55,10 @@ scroll_down() {
   adb shell input swipe 540 1600 540 600 300
 }
 
+# Force light mode so screenshots always use the light theme.
+echo "==> Forcing light mode..."
+adb shell cmd uimode night no
+
 # Enable demo mode for a clean status bar.
 # Demo mode is set BEFORE launching the app so that enableEdgeToEdge() in
 # MainActivity properly sets dark status bar icons on top of demo mode.
@@ -150,8 +154,8 @@ $EMU tap "New England"
 wait_for_ui
 $EMU screenshot "$RAW_DIR/06-district-detail.png"
 
-# 7. Home screen with Team Tracking widgets (604 at event, 254 upcoming)
-# Requires live event data — only captured with --widgets flag.
+# 7. Home screen with Team Tracking widgets (177 at event, 254 upcoming)
+# Uses MockWidgetActivity to inject deterministic data — no network needed.
 if [ "$INCLUDE_WIDGETS" = true ]; then
   echo "==> Installing debug build for widget automation..."
   ./gradlew :app:installDebug -q
@@ -160,18 +164,25 @@ if [ "$INCLUDE_WIDGETS" = true ]; then
   # Clean up any existing TBA widgets
   adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.RemoveWidgetsActivity"
   wait_for_ui 1
-  # Pin widget for team currently at event
-  adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.PinWidgetActivity" --es team 604
+  # Pin widget #0 (will be at-event)
+  adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.PinWidgetActivity" --es team 177
   wait_for_ui 1
   $EMU tap "Add to home screen"
-  wait_for_ui 5
-  # Pin widget for team with upcoming events
+  wait_for_ui 3
+  # Pin widget #1 (will be upcoming)
   adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.PinWidgetActivity" --es team 254
-  wait_for_ui 1
+  wait_for_ui 3
   $EMU tap "Add to home screen"
-  wait_for_ui 5
-  # Go to home screen and capture
+  wait_for_ui 3
+  # Inject mock data (no network needed — bypasses TeamTrackingWorker)
+  adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.MockWidgetActivity" --ei index 0 --es mock at-event
+  wait_for_ui 2
+  adb shell am start -n "$DEV_PKG/com.thebluealliance.android.widget.MockWidgetActivity" --ei index 1 --es mock upcoming
+  wait_for_ui 2
+  # Go to home screen — widgets are on the next page from the default
   adb shell input keyevent KEYCODE_HOME
+  wait_for_ui 1
+  adb shell input swipe 900 1200 200 1200 300
   wait_for_ui 1
   $EMU screenshot "$RAW_DIR/07-home-widgets.png"
 else
