@@ -42,7 +42,7 @@ fun EventDistrictPointsTab(
     if (districtPoints.isEmpty()) {
         EmptyBox(
             modifier = Modifier.padding(innerPadding),
-            message = "No district points"
+            message = if (event?.district != null) "No district points" else "No regional points"
         )
         return
     }
@@ -51,16 +51,6 @@ fun EventDistrictPointsTab(
         modifier = Modifier.fillMaxSize(),
         contentPadding = innerPadding,
     ) {
-        if (event?.district == null) {
-            item(key = "district_warning") {
-                Text(
-                    text = "This event is not part of a district \u2014 these points are purely hypothetical.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(16.dp),
-                )
-            }
-        }
         items(districtPoints, key = { it.teamKey }) { points ->
             val rank = districtPoints.indexOf(points) + 1
             val teamName = teamsByKey[points.teamKey]?.nickname

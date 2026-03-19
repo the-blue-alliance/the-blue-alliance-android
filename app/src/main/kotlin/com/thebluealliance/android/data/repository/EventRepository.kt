@@ -178,6 +178,22 @@ class EventRepository @Inject constructor(
         } catch (_: Exception) { }
     }
 
+    fun observeEventRegionalPoints(eventKey: String): Flow<List<EventDistrictPoints>> =
+        eventDistrictPointsDao.observeByEvent(eventKey).map { list -> list.map { it.toDomain() } }
+
+    suspend fun refreshEventRegionalPoints(eventKey: String) {
+        try {
+            val response = api.getEventRegionalPoints(eventKey)
+            val entities = response.points.map { (teamKey, entry) ->
+                entry.toEntity(eventKey, teamKey)
+            }
+            db.withTransaction {
+                eventDistrictPointsDao.deleteByEvent(eventKey)
+                eventDistrictPointsDao.insertAll(entities)
+            }
+        } catch (_: Exception) { }
+    }
+
     suspend fun refreshEventAlliances(eventKey: String) {
         try {
             val dtos = api.getEventAlliances(eventKey)

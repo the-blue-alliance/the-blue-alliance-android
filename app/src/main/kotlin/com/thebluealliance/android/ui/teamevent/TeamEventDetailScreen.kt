@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -50,7 +49,7 @@ import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
-import com.thebluealliance.android.ui.events.detail.EventDetailTabs
+import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.MatchItem
 import com.thebluealliance.android.ui.components.MatchList
@@ -68,7 +67,7 @@ fun TeamEventDetailScreen(
     onNavigateUp: () -> Unit,
     onNavigateToMatch: (String) -> Unit,
     onNavigateToTeam: (String) -> Unit,
-    onNavigateToEvent: (eventKey: String, initialTab: Int) -> Unit,
+    onNavigateToEvent: (eventKey: String, initialTab: EventDetailTab) -> Unit,
     onNavigateToSearch: () -> Unit,
     viewModel: TeamEventDetailViewModel,
 ) {
@@ -105,7 +104,7 @@ fun TeamEventDetailScreen(
                                     text = event.shortName ?: event.name,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.weight(1f).clickable { onNavigateToEvent(event.key, 0) },
+                                    modifier = Modifier.weight(1f).clickable { onNavigateToEvent(event.key, EventDetailTab.INFO) },
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                             }
@@ -190,7 +189,7 @@ fun TeamEventDetailScreen(
                                     item(key = "header_event") {
                                         EventRow(
                                             event = evt,
-                                            onClick = { onNavigateToEvent(evt.key, 0) },
+                                            onClick = { onNavigateToEvent(evt.key, EventDetailTab.INFO) },
                                             showYear = true,
                                             showChevron = true,
                                         )
@@ -249,7 +248,7 @@ private fun SummaryTab(
     awards: List<Award>?,
     matches: List<Match>?,
     pitLocation: String?,
-    onNavigateToEvent: (eventKey: String, initialTab: Int) -> Unit,
+    onNavigateToEvent: (eventKey: String, initialTab: EventDetailTab) -> Unit,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToMatch: (String) -> Unit,
     innerPadding: PaddingValues = PaddingValues.Zero,
@@ -263,7 +262,7 @@ private fun SummaryTab(
             item(key = "header_event") {
                 EventRow(
                     event = event,
-                    onClick = { onNavigateToEvent(event.key, 0) },
+                    onClick = { onNavigateToEvent(event.key, EventDetailTab.INFO) },
                     showYear = true,
                     showChevron = true,
                 )
@@ -311,7 +310,7 @@ private fun SummaryTab(
                 InfoRow(
                     label = "Rank ${ranking.rank}",
                     value = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
-                    onClick = { event?.let { onNavigateToEvent(it.key, EventDetailTabs.RANKINGS) } },
+                    onClick = { event?.let { onNavigateToEvent(it.key, EventDetailTab.RANKINGS) } },
                 )
             }
             infoItemCount++
@@ -331,7 +330,7 @@ private fun SummaryTab(
                 InfoRow(
                     label = "Alliance ${teamAlliance.number}",
                     value = role,
-                    onClick = { event?.let { onNavigateToEvent(it.key, EventDetailTabs.ALLIANCES) } },
+                    onClick = { event?.let { onNavigateToEvent(it.key, EventDetailTab.ALLIANCES) } },
                 )
             }
             infoItemCount++
@@ -549,7 +548,7 @@ private fun AwardsTab(
     awards: List<Award>?,
     event: Event?,
     team: Team?,
-    onNavigateToEvent: (eventKey: String, initialTab: Int) -> Unit,
+    onNavigateToEvent: (eventKey: String, initialTab: EventDetailTab) -> Unit,
     onNavigateToTeam: (String) -> Unit,
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
@@ -567,7 +566,7 @@ private fun AwardsTab(
             item(key = "header_event") {
                 EventRow(
                     event = event,
-                    onClick = { onNavigateToEvent(event.key, 0) },
+                    onClick = { onNavigateToEvent(event.key, EventDetailTab.INFO) },
                     showYear = true,
                     showChevron = true,
                 )

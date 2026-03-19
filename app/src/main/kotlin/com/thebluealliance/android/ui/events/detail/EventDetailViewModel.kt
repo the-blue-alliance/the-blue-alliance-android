@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -94,7 +93,7 @@ class EventDetailViewModel @AssistedInject constructor(
             }
 
             val extrasRightFlow = combine(
-                eventRepository.observeEventDistrictPoints(eventKey),
+                if (event?.district != null) eventRepository.observeEventDistrictPoints(eventKey) else eventRepository.observeEventRegionalPoints(eventKey),
                 eventRepository.observeEventOPRs(eventKey),
                 eventRepository.observeEventCOPRs(eventKey),
             ) { districtPoints, oprs, coprs ->
@@ -208,6 +207,7 @@ class EventDetailViewModel @AssistedInject constructor(
                     launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
+                    launch { try { eventRepository.refreshEventRegionalPoints(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventCOPRs(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventInsights(eventKey) } catch (_: Exception) {} }
