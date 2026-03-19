@@ -282,10 +282,10 @@ class TeamTrackingWorker @AssistedInject constructor(
         }
         if (currentEvents.isNotEmpty()) return currentEvents.first()
 
-        // Most recently ended event (within the last 3 days, scores may still be updating)
+        // Most recently ended event (within the last day, scores may still be updating)
         val recentPast = events.filter { event ->
             val end = event.endDate?.let { LocalDate.parse(it) } ?: return@filter false
-            end.isBefore(today) && end.isAfter(today.minusDays(4))
+            end.isBefore(today) && end.isAfter(today.minusDays(2))
         }.maxByOrNull { it.endDate ?: "" }
         if (recentPast != null) return recentPast
 
