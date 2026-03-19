@@ -1,0 +1,35 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="112"
+    android:viewportHeight="112">
+  <!--
+    Original lamp is 72w x 112h. Placed in a 112x112 SQUARE viewport
+    so the complication system won't distort it. The lamp is centered
+    horizontally with (112-72)/2 = 20px padding on each side.
+  -->
+  <path
+      android:pathData="M28,20h6v64h-6z"
+      android:fillColor="#FFFFFF"/>
+  <path
+      android:pathData="M78,20h6v64h-6z"
+      android:fillColor="#FFFFFF"/>
+  <path
+      android:pathData="M56,112C40.56,112 28,99.44 28,84h6c0,12.13 9.87,22 22,22V112z"
+      android:fillColor="#FFFFFF"/>
+  <path
+      android:pathData="M56,112v-6c12.13,0 22,-9.87 22,-22h6C84,99.44 71.44,112 56,112z"
+      android:fillColor="#FFFFFF"/>
+  <path
+      android:pathData="M53,20h6v89h-6z"
+      android:fillColor="#FFFFFF"/>
+  <path
+      android:pathData="M31,78h50v6h-50z"
+      android:fillColor="#FFFFFF"/>
+  <path
+      android:pathData="M31,50h50v6h-50z"
+      android:fillColor="#FFFFFF"/>
+  <path
+      android:pathData="M92,24c0,2.2 -1.8,4 -4,4H24c-2.2,0 -4,-1.8 -4,-4V4c0,-2.2 1.8,-4 4,-4h64c2.2,0 4,1.8 4,4V24z"
+      android:fillColor="#FFFFFF"/>
+</vector>
