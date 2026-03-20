@@ -135,6 +135,7 @@ class TeamTrackingComplicationWorker @AssistedInject constructor(
             prefs.matchLabel = ""
             prefs.matchTime = ""
             prefs.hasActiveEvent = false
+            prefs.activeEventName = ""
 
             // Find next upcoming event
             val today = LocalDate.now()
@@ -185,6 +186,7 @@ class TeamTrackingComplicationWorker @AssistedInject constructor(
             prefs.matchTime = ""
         }
         prefs.hasActiveEvent = true
+        prefs.activeEventName = currentEvent.shortName ?: currentEvent.name
 
         fetchAndStoreAvatar(prefs, teamKey, year)
 
