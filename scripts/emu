@@ -10,6 +10,8 @@ Subcommands:
   back                       Press BACK key
   launch <package/activity>  Force-stop + start activity
   swipe <left|right>         Swipe home screen page
+  swipe-xy <x1> <y1> <x2> <y2> [ms]  Swipe between coordinates
+  long-press <x> <y> [ms]   Long press at coordinates (default 2000ms)
   list                       Dump UI hierarchy as readable tree
 """
 
@@ -23,10 +25,16 @@ import xml.etree.ElementTree as ET
 
 BOUNDS_RE = re.compile(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]")
 
+# Global serial; set by --serial / -s flag in main().
+_serial = None
+
 
 def adb(*args):
     """Run an adb command and return CompletedProcess."""
-    cmd = ["adb"] + list(args)
+    cmd = ["adb"]
+    if _serial:
+        cmd += ["-s", _serial]
+    cmd += list(args)
     return subprocess.run(cmd, capture_output=True, text=True)
 
 
@@ -151,7 +159,10 @@ def cmd_tap_xy(args):
 
 
 def cmd_logcat(args):
-    cmd = ["adb", "logcat", "-d"]
+    cmd = ["adb"]
+    if _serial:
+        cmd += ["-s", _serial]
+    cmd += ["logcat", "-d"]
     if args.tag:
         cmd += ["-s", args.tag]
     result = subprocess.run(cmd, capture_output=True, text=True)
@@ -188,6 +199,18 @@ def cmd_swipe(args):
         sys.exit(1)
 
 
+def cmd_swipe_xy(args):
+    duration = str(args.ms) if args.ms else "200"
+    adb_check("shell", "input", "swipe", str(args.x1), str(args.y1), str(args.x2), str(args.y2), duration)
+    print(f"Swiped ({args.x1},{args.y1}) → ({args.x2},{args.y2}) in {duration}ms")
+
+
+def cmd_long_press(args):
+    duration = args.ms or 2000
+    adb_check("shell", "input", "touchscreen", "swipe", str(args.x), str(args.y), str(args.x), str(args.y), str(duration))
+    print(f"Long-pressed ({args.x}, {args.y}) for {duration}ms")
+
+
 def cmd_list(args):
     root = dump_ui_tree()
     def walk(elem, depth=0):
@@ -219,7 +242,9 @@ def cmd_list(args):
 
 
 def main():
+    global _serial
     parser = argparse.ArgumentParser(prog="emu", description="Android emulator automation CLI")
+    parser.add_argument("-s", "--serial", help="Target device serial (passed to adb -s)")
     sub = parser.add_subparsers(dest="command")
 
     p = sub.add_parser("screenshot", help="Capture screenshot")
@@ -248,9 +273,22 @@ def main():
     p = sub.add_parser("swipe", help="Swipe home screen page")
     p.add_argument("direction", choices=["left", "right"], help="Swipe direction")
 
+    p = sub.add_parser("swipe-xy", help="Swipe between coordinates")
+    p.add_argument("x1", type=int)
+    p.add_argument("y1", type=int)
+    p.add_argument("x2", type=int)
+    p.add_argument("y2", type=int)
+    p.add_argument("ms", type=int, nargs="?", default=200, help="Duration in ms (default 200)")
+
+    p = sub.add_parser("long-press", help="Long press at coordinates")
+    p.add_argument("x", type=int)
+    p.add_argument("y", type=int)
+    p.add_argument("ms", type=int, nargs="?", default=2000, help="Duration in ms (default 2000)")
+
     p = sub.add_parser("list", help="Dump UI hierarchy tree")
 
     args = parser.parse_args()
+    _serial = args.serial
     if not args.command:
         parser.print_help()
         sys.exit(1)
@@ -264,6 +302,8 @@ def main():
         "back": cmd_back,
         "launch": cmd_launch,
         "swipe": cmd_swipe,
+        "swipe-xy": cmd_swipe_xy,
+        "long-press": cmd_long_press,
         "list": cmd_list,
     }
     handlers[args.command](args)
