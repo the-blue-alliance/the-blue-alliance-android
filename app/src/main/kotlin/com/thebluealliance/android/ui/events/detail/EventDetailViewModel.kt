@@ -96,15 +96,15 @@ class EventDetailViewModel @AssistedInject constructor(
                 if (event?.district != null) eventRepository.observeEventDistrictPoints(eventKey) else eventRepository.observeEventRegionalPoints(eventKey),
                 eventRepository.observeEventOPRs(eventKey),
                 eventRepository.observeEventCOPRs(eventKey),
-            ) { districtPoints, oprs, coprs ->
-                Triple(districtPoints, oprs, coprs)
+            ) { advancementPoints, oprs, coprs ->
+                Triple(advancementPoints, oprs, coprs)
             }
 
             val extrasFlow = combine(extrasLeftFlow, extrasRightFlow) { left, right ->
                 EventExtrasState(
                     alliances = left.first,
                     awards = left.second,
-                    districtPoints = right.first,
+                    advancementPoints = right.first,
                     oprs = right.second,
                     coprs = right.third,
                 )
@@ -120,7 +120,7 @@ class EventDetailViewModel @AssistedInject constructor(
                     rankingExtraStatsInfo = core.rankingExtraStatsInfo,
                     alliances = extras.alliances,
                     awards = extras.awards,
-                    districtPoints = extras.districtPoints,
+                    advancementPoints = extras.advancementPoints,
                     oprs = extras.oprs,
                     coprs = extras.coprs,
                     insights = null,
@@ -248,8 +248,9 @@ class EventDetailViewModel @AssistedInject constructor(
                             launch { try { eventRepository.refreshEventCOPRs(eventKey) } catch (_: Exception) {} }
                             launch { try { eventRepository.refreshEventInsights(eventKey) } catch (_: Exception) {} }
                         }
-                        EventDetailTab.DISTRICT_POINTS -> {
+                        EventDetailTab.ADVANCEMENT_POINTS -> {
                             launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
+                            launch { try { eventRepository.refreshEventRegionalPoints(eventKey) } catch (_: Exception) {} }
                         }
                         EventDetailTab.AWARDS -> {
                             launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
@@ -287,7 +288,7 @@ private data class EventCoreState(
 private data class EventExtrasState(
     val alliances: List<com.thebluealliance.android.domain.model.Alliance>,
     val awards: List<com.thebluealliance.android.domain.model.Award>,
-    val districtPoints: List<com.thebluealliance.android.domain.model.EventDistrictPoints>,
+    val advancementPoints: List<com.thebluealliance.android.domain.model.EventAdvancementPoints>,
     val oprs: com.thebluealliance.android.domain.model.EventOPRs?,
     val coprs: com.thebluealliance.android.domain.model.EventCOPRs?,
 )

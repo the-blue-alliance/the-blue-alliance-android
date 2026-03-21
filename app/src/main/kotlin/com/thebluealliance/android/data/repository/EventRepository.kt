@@ -20,7 +20,7 @@ import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventCOPRs
-import com.thebluealliance.android.domain.model.EventDistrictPoints
+import com.thebluealliance.android.domain.model.EventAdvancementPoints
 import com.thebluealliance.android.domain.model.EventInsights
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.EventRankings
@@ -162,7 +162,7 @@ class EventRepository @Inject constructor(
         } catch (_: Exception) { }
     }
 
-    fun observeEventDistrictPoints(eventKey: String): Flow<List<EventDistrictPoints>> =
+    fun observeEventDistrictPoints(eventKey: String): Flow<List<EventAdvancementPoints>> =
         eventDistrictPointsDao.observeByEvent(eventKey).map { list -> list.map { it.toDomain() } }
 
     suspend fun refreshEventDistrictPoints(eventKey: String) {
@@ -178,7 +178,7 @@ class EventRepository @Inject constructor(
         } catch (_: Exception) { }
     }
 
-    fun observeEventRegionalPoints(eventKey: String): Flow<List<EventDistrictPoints>> =
+    fun observeEventRegionalPoints(eventKey: String): Flow<List<EventAdvancementPoints>> =
         eventDistrictPointsDao.observeByEvent(eventKey).map { list -> list.map { it.toDomain() } }
 
     suspend fun refreshEventRegionalPoints(eventKey: String) {

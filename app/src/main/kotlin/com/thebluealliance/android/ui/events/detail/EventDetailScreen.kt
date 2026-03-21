@@ -1,11 +1,9 @@
 package com.thebluealliance.android.ui.events.detail
 
 import android.widget.Toast
-import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -58,7 +56,7 @@ import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.events.detail.tabs.EventAlliancesTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAwardsTab
-import com.thebluealliance.android.ui.events.detail.tabs.EventDistrictPointsTab
+import com.thebluealliance.android.ui.events.detail.tabs.EventAdvancementTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventInfoTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventInsightsTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventMatchesTab
@@ -74,7 +72,7 @@ enum class EventDetailTab(val readableName: (Event?) -> String) {
     MATCHES({ "Matches" }),
     ALLIANCES({ "Alliances" }),
     INSIGHTS({ "Insights" }),
-    DISTRICT_POINTS({ if (it?.district != null) "District points" else "Regional points" }),
+    ADVANCEMENT_POINTS({ if (it?.district != null) "District points" else "Regional points" }),
     AWARDS({ "Awards" }),
 }
 
@@ -323,8 +321,8 @@ fun EventDetailScreen(
                         isRefreshing = isRefreshing,
                         innerPadding = bottomPadding,
                     )
-                    EventDetailTab.DISTRICT_POINTS -> EventDistrictPointsTab(
-                        uiState.districtPoints,
+                    EventDetailTab.ADVANCEMENT_POINTS -> EventAdvancementTab(
+                        uiState.advancementPoints,
                         uiState.event,
                         uiState.teams,
                         onTeamClick = { teamKey ->
