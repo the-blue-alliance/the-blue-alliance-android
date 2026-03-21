@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
@@ -36,6 +39,14 @@ fun EventTeamsTab(
         modifier = Modifier.fillMaxSize(),
         contentPadding = innerPadding,
     ) {
+        item(key = "num_teams") {
+            Text(
+                text = "There are ${teams.size} teams at this event.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(16.dp),
+            )
+        }
         items(teams, key = { it.key }) { team ->
             val pitLocation = pitLocations[team.key]
             TeamRow(
