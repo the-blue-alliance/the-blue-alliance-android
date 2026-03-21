@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalGlancePreviewApi::class)
+
 package com.thebluealliance.android.widget
 
 import android.content.Context
@@ -19,6 +21,8 @@ import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.PreviewSizeMode
 import androidx.glance.appwidget.SizeMode
+import androidx.glance.preview.ExperimentalGlancePreviewApi
+import androidx.glance.preview.Preview
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
@@ -234,7 +238,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
             } ?: emptyList()
 
         companion object {
-            /** Sample data for widget picker generated previews (Team 177). */
+            /** Sample data for widget previews — at-event state with matches. */
             fun sampleData() = WidgetData(
                 teamNumber = "177",
                 teamKey = "frc177",
@@ -258,6 +262,34 @@ class TeamTrackingWidget : GlanceAppWidget() {
                 nextBlueTeams = "1073, 2791, 3958",
                 nextMatchTime = "2:30 PM",
                 nextTimeIsEstimate = true,
+            )
+
+            /** Sample data for widget previews — off-season with upcoming events. */
+            fun sampleUpcomingData() = WidgetData(
+                teamNumber = "177",
+                teamKey = "frc177",
+                teamNickname = "Bobcat Robotics",
+                avatarBase64 = null,
+                nextAlliance = "",
+                eventName = "No event",
+                record = "",
+                upcomingEvents = "NE District WPI\tWorcester, MA\tMar 7\n" +
+                        "NE District UNH\tDurham, NH\tMar 28\n" +
+                        "NE FIRST Championship\tSpringfield, MA\tApr 16",
+                lastUpdated = "just now",
+                lastMatchLabel = null,
+                lastRedTeams = null,
+                lastBlueTeams = null,
+                lastRedScore = null,
+                lastBlueScore = null,
+                lastWinningAlliance = null,
+                lastRedRp = null,
+                lastBlueRp = null,
+                nextMatchLabel = null,
+                nextRedTeams = null,
+                nextBlueTeams = null,
+                nextMatchTime = null,
+                nextTimeIsEstimate = false,
             )
         }
     }
@@ -1043,6 +1075,59 @@ class TeamTrackingWidget : GlanceAppWidget() {
             }
         }
     }
+
+    // ─── Android Studio previews ────────────────────────────────────────────────
+    // Grouped by size tier. Typical = Pixel-like launcher, Minimum = breakpoint edge.
+
+    // Tiny (1×1)
+    @Preview(widthDp = 80, heightDp = 100) @Composable
+    fun TinyPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+    @Preview(widthDp = 60, heightDp = 60) @Composable
+    fun TinyMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+    @Preview(widthDp = 80, heightDp = 100) @Composable
+    fun TinyUpcomingPreview() { GlanceTheme { WidgetContent(WidgetData.sampleUpcomingData()) } }
+    @Preview(widthDp = 60, heightDp = 60) @Composable
+    fun TinyUpcomingMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleUpcomingData()) } }
+
+    // Minimal (2×1)
+    @Preview(widthDp = 170, heightDp = 100) @Composable
+    fun MinimalPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+    @Preview(widthDp = 110, heightDp = 60) @Composable
+    fun MinimalMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+    @Preview(widthDp = 170, heightDp = 100) @Composable
+    fun MinimalUpcomingPreview() { GlanceTheme { WidgetContent(WidgetData.sampleUpcomingData()) } }
+    @Preview(widthDp = 110, heightDp = 60) @Composable
+    fun MinimalUpcomingMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleUpcomingData()) } }
+
+    // Square (2×2)
+    @Preview(widthDp = 170, heightDp = 210) @Composable
+    fun SquarePreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+    @Preview(widthDp = 110, heightDp = 110) @Composable
+    fun SquareMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+    @Preview(widthDp = 170, heightDp = 210) @Composable
+    fun SquareUpcomingPreview() { GlanceTheme { WidgetContent(WidgetData.sampleUpcomingData()) } }
+    @Preview(widthDp = 110, heightDp = 110) @Composable
+    fun SquareUpcomingMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleUpcomingData()) } }
+
+    // Compact (4×1)
+    @Preview(widthDp = 350, heightDp = 100) @Composable
+    fun CompactPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+    @Preview(widthDp = 250, heightDp = 60) @Composable
+    fun CompactMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+    @Preview(widthDp = 350, heightDp = 100) @Composable
+    fun CompactUpcomingPreview() { GlanceTheme { WidgetContent(WidgetData.sampleUpcomingData()) } }
+    @Preview(widthDp = 250, heightDp = 60) @Composable
+    fun CompactUpcomingMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleUpcomingData()) } }
+
+    // Full (4×2)
+    @Preview(widthDp = 350, heightDp = 210) @Composable
+    fun FullPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+    @Preview(widthDp = 250, heightDp = 110) @Composable
+    fun FullMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleData()) } }
+    @Preview(widthDp = 350, heightDp = 210) @Composable
+    fun FullUpcomingPreview() { GlanceTheme { WidgetContent(WidgetData.sampleUpcomingData()) } }
+    @Preview(widthDp = 250, heightDp = 110) @Composable
+    fun FullUpcomingMinimumPreview() { GlanceTheme { WidgetContent(WidgetData.sampleUpcomingData()) } }
 }
 
 /** Formats a time string with "~" prefix for estimates. */
