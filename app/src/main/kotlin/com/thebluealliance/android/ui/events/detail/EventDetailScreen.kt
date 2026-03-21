@@ -4,10 +4,8 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -30,9 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -51,6 +47,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.R
+import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
@@ -59,7 +56,7 @@ import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.events.detail.tabs.EventAlliancesTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAwardsTab
-import com.thebluealliance.android.ui.events.detail.tabs.EventDistrictPointsTab
+import com.thebluealliance.android.ui.events.detail.tabs.EventAdvancementTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventInfoTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventInsightsTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventMatchesTab
@@ -68,17 +65,15 @@ import com.thebluealliance.android.ui.events.detail.tabs.EventTeamsTab
 import com.thebluealliance.android.ui.theme.TBABlue
 import kotlinx.coroutines.launch
 
-private val TABS = listOf("Info", "Teams", "Rankings", "Matches", "Alliances", "Insights", "District points", "Awards")
-
-object EventDetailTabs {
-    const val INFO = 0
-    const val TEAMS = 1
-    const val RANKINGS = 2
-    const val MATCHES = 3
-    const val ALLIANCES = 4
-    const val INSIGHTS = 5
-    const val DISTRICT_POINTS = 6
-    const val AWARDS = 7
+enum class EventDetailTab(val readableName: (Event?) -> String) {
+    INFO({ "Info" }),
+    TEAMS({ "Teams" }),
+    RANKINGS({ "Rankings" }),
+    MATCHES({ "Matches" }),
+    ALLIANCES({ "Alliances" }),
+    INSIGHTS({ "Insights" }),
+    ADVANCEMENT_POINTS({ if (it?.district != null) "District points" else "Regional points" }),
+    AWARDS({ "Awards" }),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,14 +85,14 @@ fun EventDetailScreen(
     onNavigateToMyTBA: () -> Unit = {},
     onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
     onNavigateToDistrict: (districtKey: String) -> Unit = {},
-    initialTab: Int = 0,
+    initialTab: EventDetailTab = EventDetailTab.INFO,
     viewModel: EventDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()
     val subscription by viewModel.subscription.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState(initialPage = initialTab, pageCount = { TABS.size })
+    val pagerState = rememberPagerState(initialPage = initialTab.ordinal, pageCount = { EventDetailTab.entries.size })
     val coroutineScope = rememberCoroutineScope()
 
     var showSignInDialog by remember { mutableStateOf(false) }
@@ -249,13 +244,13 @@ fun EventDetailScreen(
                         )
                     }
                 ) {
-                    TABS.forEachIndexed { index, title ->
+                    EventDetailTab.entries.forEach { tab ->
                         Tab(
-                            selected = pagerState.currentPage == index,
-                            onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                            selected = pagerState.currentPage == tab.ordinal,
+                            onClick = { coroutineScope.launch { pagerState.animateScrollToPage(tab.ordinal) } },
                             text = {
                                 Text(
-                                    text = title,
+                                    text = tab.readableName(uiState.event),
                                     color = Color.White
                                 )
                             },
@@ -268,23 +263,24 @@ fun EventDetailScreen(
         val bottomPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(top = innerPadding.calculateTopPadding())
                 .background(MaterialTheme.colorScheme.background),
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing,
-                onRefresh = { viewModel.refreshTab(page) },
+                onRefresh = { viewModel.refreshTab(EventDetailTab.entries[page]) },
                 modifier = Modifier.fillMaxSize(),
             ) {
-                when (page) {
-                    EventDetailTabs.INFO -> EventInfoTab(
+                when (EventDetailTab.entries[page]) {
+                    EventDetailTab.INFO -> EventInfoTab(
                         event = uiState.event,
                         districtDisplayName = uiState.districtDisplayName,
                         onNavigateToDistrict = onNavigateToDistrict,
                         innerPadding = bottomPadding,
                     )
-                    EventDetailTabs.TEAMS -> EventTeamsTab(
+                    EventDetailTab.TEAMS -> EventTeamsTab(
                         teams = uiState.teams,
                         pitLocations = uiState.pitLocations,
                         onNavigateToTeam = { teamKey ->
@@ -294,7 +290,7 @@ fun EventDetailScreen(
                         },
                         innerPadding = bottomPadding,
                     )
-                    EventDetailTabs.RANKINGS -> EventRankingsTab(
+                    EventDetailTab.RANKINGS -> EventRankingsTab(
                         rankings = uiState.rankings,
                         rankingSortOrders = uiState.rankingSortOrders,
                         rankingExtraStatsInfo = uiState.rankingExtraStatsInfo,
@@ -304,13 +300,13 @@ fun EventDetailScreen(
                         },
                         innerPadding = bottomPadding,
                     )
-                    EventDetailTabs.MATCHES -> EventMatchesTab(
+                    EventDetailTab.MATCHES -> EventMatchesTab(
                         matches = uiState.matches,
                         playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
                         onNavigateToMatch = onNavigateToMatch,
                         innerPadding = bottomPadding,
                     )
-                    EventDetailTabs.ALLIANCES -> EventAlliancesTab(
+                    EventDetailTab.ALLIANCES -> EventAlliancesTab(
                         alliances = uiState.alliances,
                         onTeamClick = { teamKey ->
                             val eventKey = uiState.event?.key
@@ -318,15 +314,15 @@ fun EventDetailScreen(
                         },
                         innerPadding = bottomPadding,
                     )
-                    EventDetailTabs.INSIGHTS -> EventInsightsTab(
+                    EventDetailTab.INSIGHTS -> EventInsightsTab(
                         oprs = uiState.oprs,
                         coprs = uiState.coprs,
                         insights = uiState.insights,
                         isRefreshing = isRefreshing,
                         innerPadding = bottomPadding,
                     )
-                    EventDetailTabs.DISTRICT_POINTS -> EventDistrictPointsTab(
-                        uiState.districtPoints,
+                    EventDetailTab.ADVANCEMENT_POINTS -> EventAdvancementTab(
+                        uiState.advancementPoints,
                         uiState.event,
                         uiState.teams,
                         onTeamClick = { teamKey ->
@@ -336,7 +332,7 @@ fun EventDetailScreen(
                         },
                         innerPadding = bottomPadding,
                     )
-                    EventDetailTabs.AWARDS -> EventAwardsTab(
+                    EventDetailTab.AWARDS -> EventAwardsTab(
                         awards = uiState.awards,
                         onTeamClick = { teamKey ->
                             val eventKey = uiState.event?.key
