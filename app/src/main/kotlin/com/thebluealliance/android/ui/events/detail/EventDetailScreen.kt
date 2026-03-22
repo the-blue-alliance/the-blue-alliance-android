@@ -2,9 +2,11 @@ package com.thebluealliance.android.ui.events.detail
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -27,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.Text
@@ -39,6 +42,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -249,10 +253,31 @@ fun EventDetailScreen(
                             selected = pagerState.currentPage == tab.ordinal,
                             onClick = { coroutineScope.launch { pagerState.animateScrollToPage(tab.ordinal) } },
                             text = {
-                                Text(
-                                    text = tab.readableName(uiState.event),
-                                    color = Color.White
-                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                ) {
+                                    Text(
+                                        text = tab.readableName(uiState.event),
+                                        color = Color.White
+                                    )
+
+                                    // Show number of teams as a badge
+                                    if (tab == EventDetailTab.TEAMS && uiState.teams != null) {
+                                        Surface(
+                                            shape = MaterialTheme.shapes.small,
+                                            color = MaterialTheme.colorScheme.surfaceVariant,
+                                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        ) {
+                                            Text(
+                                                text = "${uiState.teams?.size}",
+                                                style = MaterialTheme.typography.labelMedium,
+                                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+                                            )
+                                        }
+
+                                    }
+                                }
                             },
                         )
                     }
