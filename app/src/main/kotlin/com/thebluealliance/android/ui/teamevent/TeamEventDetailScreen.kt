@@ -47,7 +47,6 @@ import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.Team
-import com.thebluealliance.android.domain.model.calculatePlayoffAlliances
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.events.detail.EventDetailTabs
@@ -171,7 +170,6 @@ fun TeamEventDetailScreen(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 val evt = uiState.event
-                uiState.matches?.forEach { it.calculatePlayoffAlliances(uiState.alliances) }
                 when (page) {
                     TeamEventDetailTabs.SUMMARY -> SummaryTab(
                         teamKey = viewModel.teamKey,

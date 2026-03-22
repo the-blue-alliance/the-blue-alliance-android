@@ -39,9 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.formatBreakdownValue
 import com.thebluealliance.android.domain.getFullLabel
-import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Match
-import com.thebluealliance.android.domain.model.calculatePlayoffAlliances
 import com.thebluealliance.android.domain.model.displayTitle
 import com.thebluealliance.android.domain.rpBonuses
 import com.thebluealliance.android.ui.common.LoadingBox
@@ -114,7 +112,6 @@ fun MatchDetailScreen(
                 .background(MaterialTheme.colorScheme.background),
         ) {
             val match = uiState.match
-            match?.calculatePlayoffAlliances(uiState.alliances)
             if (match == null) {
                 LoadingBox(
                     modifier = Modifier.padding(innerPadding)
@@ -259,7 +256,7 @@ private fun ScoreSummary(match: Match) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = if (match.redPlayoffAlliance != null) (match.redPlayoffAlliance as Alliance).displayTitle
+                text = if (match.redPlayoffAlliance != null) match.redPlayoffAlliance.displayTitle
                     else "Red",
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.error)
@@ -283,7 +280,7 @@ private fun ScoreSummary(match: Match) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = if (match.bluePlayoffAlliance != null) (match.bluePlayoffAlliance as Alliance).displayTitle
+                text = if (match.bluePlayoffAlliance != null) match.bluePlayoffAlliance.displayTitle
                         else "Blue",
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary)

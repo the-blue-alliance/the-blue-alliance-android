@@ -11,10 +11,10 @@ data class Match(
     val actualTime: Long?,
     val redTeamKeys: List<String>,
     val redScore: Int,
-    var redPlayoffAlliance: Alliance? = null,
+    val redPlayoffAlliance: Alliance? = null,
     val blueTeamKeys: List<String>,
     val blueScore: Int,
-    var bluePlayoffAlliance: Alliance? = null,
+    val bluePlayoffAlliance: Alliance? = null,
     val winningAlliance: String?,
     val scoreBreakdown: String? = null,
     val videos: String? = null,
@@ -39,18 +39,19 @@ private fun calculateAlliance(alliances: List<Alliance>, teamKeys: List<String>)
 }
 
 /**
- * Calculates and caches the Playoff Alliances for Red and Blue of this Match
+ * Calculates and returns a new object with the Playoff Alliances for Red and Blue of this Match
  * @param alliances All Playoff Alliances (1-8) in the given Event
  * @return True if completed successfully
  */
-fun Match.calculatePlayoffAlliances(alliances: List<Alliance>?): Boolean {
+fun Match.calculatePlayoffAlliances(alliances: List<Alliance>?): Match {
     if (!compLevel.isPlayoff || alliances == null) {
         // Only Playoff matches have Alliances
-        return false
+        return this
     }
-    this.redPlayoffAlliance = calculateAlliance(alliances, this.redTeamKeys)
-    this.bluePlayoffAlliance = calculateAlliance(alliances, this.blueTeamKeys)
-    return true
+    return this.copy(
+        redPlayoffAlliance = calculateAlliance(alliances, this.redTeamKeys),
+        bluePlayoffAlliance = calculateAlliance(alliances, this.blueTeamKeys),
+    )
 }
 
 /**

@@ -49,7 +49,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.PlayoffType
-import com.thebluealliance.android.domain.model.calculatePlayoffAlliances
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
@@ -274,7 +273,6 @@ fun EventDetailScreen(
                 onRefresh = { viewModel.refreshTab(page) },
                 modifier = Modifier.fillMaxSize(),
             ) {
-                uiState.matches?.forEach { it.calculatePlayoffAlliances(uiState.alliances) }
                 when (page) {
                     EventDetailTabs.INFO -> EventInfoTab(
                         event = uiState.event,
