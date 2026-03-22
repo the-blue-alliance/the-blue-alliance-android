@@ -1,6 +1,6 @@
 package com.thebluealliance.android.domain.model
 
-data class EventDistrictPoints(
+data class EventAdvancementPoints(
     val teamKey: String,
     val qualPoints: Int,
     val elimPoints: Int,
