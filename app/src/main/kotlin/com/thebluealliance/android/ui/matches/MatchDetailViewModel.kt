@@ -64,7 +64,6 @@ class MatchDetailViewModel @AssistedInject constructor(
         }
         MatchDetailUiState(
             match = match?.calculatePlayoffAlliances(alliances),
-            alliances = alliances,
             scoreBreakdown = breakdown,
             eventName = event?.name,
             eventKey = event?.key,

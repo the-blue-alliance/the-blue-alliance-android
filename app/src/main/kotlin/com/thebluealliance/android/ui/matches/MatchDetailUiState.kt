@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.matches
 
-import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.PlayoffType
 
@@ -11,7 +10,6 @@ data class MatchVideo(
 
 data class MatchDetailUiState(
     val match: Match? = null,
-    val alliances: List<Alliance>? = null,
     val scoreBreakdown: Map<String, Map<String, String>>? = null,
     val eventName: String? = null,
     val eventKey: String? = null,
