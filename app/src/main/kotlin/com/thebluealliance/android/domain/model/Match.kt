@@ -41,12 +41,12 @@ private fun calculateAlliance(alliances: List<Alliance>, teamKeys: List<String>)
 /**
  * Calculates and returns a new object with the Playoff Alliances for Red and Blue of this Match
  * @param alliances All Playoff Alliances (1-8) in the given Event
- * @return True if completed successfully
+ * @return A new Match object with updated Playoff Alliances
  */
 fun Match.calculatePlayoffAlliances(alliances: List<Alliance>?): Match {
     if (!compLevel.isPlayoff || alliances == null) {
         // Only Playoff matches have Alliances
-        return this
+        return this.copy()
     }
     return this.copy(
         redPlayoffAlliance = calculateAlliance(alliances, this.redTeamKeys),
