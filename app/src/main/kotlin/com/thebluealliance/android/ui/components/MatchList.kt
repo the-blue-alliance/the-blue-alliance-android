@@ -37,6 +37,7 @@ import com.thebluealliance.android.domain.getGroup
 import com.thebluealliance.android.domain.getShortLabel
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.PlayoffType
+import com.thebluealliance.android.domain.model.displayTitleShort
 import com.thebluealliance.android.domain.rpBonuses
 import kotlinx.coroutines.launch
 
@@ -197,7 +198,7 @@ fun MatchItem(
                             else MaterialTheme.colorScheme.onErrorContainer,
                     ) {
                         Text(
-                            text = "A${alliance}",
+                            text = alliance.displayTitleShort,
                             style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier.padding(horizontal = 1.dp, vertical = 1.dp),
                         )
@@ -224,7 +225,7 @@ fun MatchItem(
                             else MaterialTheme.colorScheme.onPrimaryContainer,
                     ) {
                         Text(
-                            text = "A${alliance}",
+                            text = alliance.displayTitleShort,
                             style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier.padding(horizontal = 1.dp, vertical = 1.dp),
                         )

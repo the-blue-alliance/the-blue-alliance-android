@@ -11,10 +11,10 @@ data class Match(
     val actualTime: Long?,
     val redTeamKeys: List<String>,
     val redScore: Int,
-    var redPlayoffAlliance: Int? = null,
+    var redPlayoffAlliance: Alliance? = null,
     val blueTeamKeys: List<String>,
     val blueScore: Int,
-    var bluePlayoffAlliance: Int? = null,
+    var bluePlayoffAlliance: Alliance? = null,
     val winningAlliance: String?,
     val scoreBreakdown: String? = null,
     val videos: String? = null,
@@ -26,13 +26,13 @@ data class Match(
  * @param teamKeys Keys for a given Alliance (Red/Blue) in a Match
  * @return The Playoff Alliance number or null if not found
  */
-private fun calculateAlliance(alliances: List<Alliance>, teamKeys: List<String>): Int? {
+private fun calculateAlliance(alliances: List<Alliance>, teamKeys: List<String>): Alliance? {
     // Each team cannot belong to more than one alliance, and there can only be one backup team.
     // That is, at least two teams must be "picks"
 
     for (alliance in alliances) {
         if (teamKeys.any { it in alliance.picks }) {
-            return alliance.number
+            return alliance
         }
     }
     return null

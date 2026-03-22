@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Alliance
+import com.thebluealliance.android.domain.model.displayTitle
 import com.thebluealliance.android.domain.model.playoffSummary
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
@@ -61,7 +62,7 @@ fun EventAlliancesTab(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text(
-                        text = allianceTitle(alliance),
+                        text = alliance.displayTitle,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                     )
@@ -96,7 +97,3 @@ fun EventAlliancesTab(
         }
     }
 }
-
-internal fun allianceTitle(alliance: Alliance): String =
-    alliance.name?.takeIf { it.isNotBlank() } ?: "Alliance ${alliance.number}"
-
