@@ -51,7 +51,8 @@ class MatchDetailViewModel @AssistedInject constructor(
     val uiState: StateFlow<MatchDetailUiState> = combine(
         matchRepository.observeMatch(matchKey),
         eventRepository.observeEvent(eventKey),
-    ) { match, event ->
+        eventRepository.observeEventAlliances(eventKey),
+    ) { match, event, alliances ->
         val breakdown = match?.scoreBreakdown?.let { parseBreakdown(it) }
         val videos = match?.videos?.let { parseVideos(it) } ?: emptyList()
         val timeToDisplay = match?.actualTime ?: match?.predictedTime ?: match?.time
@@ -62,6 +63,7 @@ class MatchDetailViewModel @AssistedInject constructor(
         }
         MatchDetailUiState(
             match = match,
+            alliances = alliances,
             scoreBreakdown = breakdown,
             eventName = event?.name,
             eventKey = event?.key,

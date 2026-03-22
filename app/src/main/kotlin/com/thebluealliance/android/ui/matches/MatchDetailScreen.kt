@@ -40,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.formatBreakdownValue
 import com.thebluealliance.android.domain.getFullLabel
 import com.thebluealliance.android.domain.model.Match
+import com.thebluealliance.android.domain.model.calculatePlayoffAlliances
 import com.thebluealliance.android.domain.rpBonuses
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
@@ -111,6 +112,7 @@ fun MatchDetailScreen(
                 .background(MaterialTheme.colorScheme.background),
         ) {
             val match = uiState.match
+            match?.calculatePlayoffAlliances(uiState.alliances)
             if (match == null) {
                 LoadingBox(
                     modifier = Modifier.padding(innerPadding)
@@ -254,7 +256,10 @@ private fun ScoreSummary(match: Match) {
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text("Red", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.error)
+            Text(
+                text = if (match.redPlayoffAlliance != null) "Alliance ${match.redPlayoffAlliance}" else "Red",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.error)
             Text(
                 text = if (match.redScore < 0) "—" else match.redScore.toString(),
                 style = MaterialTheme.typography.displaySmall,
@@ -274,7 +279,10 @@ private fun ScoreSummary(match: Match) {
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text("Blue", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
+            Text(
+                text = if (match.bluePlayoffAlliance != null) "Alliance ${match.bluePlayoffAlliance}" else "Blue",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.primary)
             Text(
                 text = if (match.blueScore < 0) "—" else match.blueScore.toString(),
                 style = MaterialTheme.typography.displaySmall,

@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -183,18 +184,59 @@ fun MatchItem(
             modifier = Modifier.weight(0.15f),
         )
         Column(modifier = Modifier.weight(0.35f)) {
-            Text(
-                text = match.redTeamKeys.joinToString(", ") { it.removePrefix("frc") },
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
-                color = MaterialTheme.colorScheme.error,
-            )
-            Text(
-                text = match.blueTeamKeys.joinToString(", ") { it.removePrefix("frc") },
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
-                color = MaterialTheme.colorScheme.primary,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                match.redPlayoffAlliance?.let { alliance ->
+                    Surface(
+                        shape = MaterialTheme.shapes.extraSmall,
+                        color = if (match.winningAlliance == "red") MaterialTheme.colorScheme.error
+                            else MaterialTheme.colorScheme.errorContainer,
+                        contentColor = if (match.winningAlliance == "red") MaterialTheme.colorScheme.onError
+                            else MaterialTheme.colorScheme.onErrorContainer,
+                    ) {
+                        Text(
+                            text = "A${alliance}",
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.padding(horizontal = 1.dp, vertical = 1.dp),
+                        )
+                    }
+                }
+                Text(
+                    text = match.redTeamKeys.joinToString(", ") { it.removePrefix("frc") },
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                match.bluePlayoffAlliance?.let { alliance ->
+                    Surface(
+                        shape = MaterialTheme.shapes.extraSmall,
+                        color = if (match.winningAlliance == "blue") MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = if (match.winningAlliance == "blue") MaterialTheme.colorScheme.onPrimary
+                            else MaterialTheme.colorScheme.onPrimaryContainer,
+                    ) {
+                        Text(
+                            text = "A${alliance}",
+                            style = MaterialTheme.typography.labelSmall,
+                            modifier = Modifier.padding(horizontal = 1.dp, vertical = 1.dp),
+                        )
+                    }
+                }
+                Text(
+                    text = match.blueTeamKeys.joinToString(", ") { it.removePrefix("frc") },
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
         }
         if (isPlayed) {
             if (rpBonuses != null) {

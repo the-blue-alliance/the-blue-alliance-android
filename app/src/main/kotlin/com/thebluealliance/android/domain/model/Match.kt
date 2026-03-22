@@ -11,12 +11,47 @@ data class Match(
     val actualTime: Long?,
     val redTeamKeys: List<String>,
     val redScore: Int,
+    var redPlayoffAlliance: Int? = null,
     val blueTeamKeys: List<String>,
     val blueScore: Int,
+    var bluePlayoffAlliance: Int? = null,
     val winningAlliance: String?,
     val scoreBreakdown: String? = null,
     val videos: String? = null,
 )
+
+/**
+ * Helper function to calculates which Playoff Alliance on a side in a Match
+ * @param alliances All Playoff Alliances (1-8) in the given Event
+ * @param teamKeys Keys for a given Alliance (Red/Blue) in a Match
+ * @return The Playoff Alliance number or null if not found
+ */
+private fun calculateAlliance(alliances: List<Alliance>, teamKeys: List<String>): Int? {
+    // Each team cannot belong to more than one alliance, and there can only be one backup team.
+    // That is, at least two teams must be "picks"
+
+    for (alliance in alliances) {
+        if (teamKeys.any { it in alliance.picks }) {
+            return alliance.number
+        }
+    }
+    return null
+}
+
+/**
+ * Calculates and caches the Playoff Alliances for Red and Blue of this Match
+ * @param alliances All Playoff Alliances (1-8) in the given Event
+ * @return True if completed successfully
+ */
+fun Match.calculatePlayoffAlliances(alliances: List<Alliance>?): Boolean {
+    if (!compLevel.isPlayoff || alliances == null) {
+        // Only Playoff matches have Alliances
+        return false
+    }
+    this.redPlayoffAlliance = calculateAlliance(alliances, this.redTeamKeys)
+    this.bluePlayoffAlliance = calculateAlliance(alliances, this.blueTeamKeys)
+    return true
+}
 
 /**
  * Competition level
@@ -25,14 +60,15 @@ data class Match(
  */
 enum class CompLevel(
     val code: String,
+    val isPlayoff: Boolean,
     val order: Int,
 ) {
-    QUAL("qm", 0),
-    OCTOFINAL("ef", 1),
-    QUARTERFINAL("qf", 2),
-    SEMIFINAL("sf", 3),
-    FINAL("f", 4),
-    OTHER("", Int.MAX_VALUE);
+    QUAL("qm", false, 0),
+    OCTOFINAL("ef", true, 1),
+    QUARTERFINAL("qf", true, 2),
+    SEMIFINAL("sf", true, 3),
+    FINAL("f", true, 4),
+    OTHER("", false, Int.MAX_VALUE);
 
     companion object {
         private val codeMap = entries.associateBy(CompLevel::code)
