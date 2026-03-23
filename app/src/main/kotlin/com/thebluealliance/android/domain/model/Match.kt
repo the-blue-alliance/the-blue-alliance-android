@@ -45,7 +45,7 @@ private fun calculateAlliance(alliances: List<Alliance>, teamKeys: List<String>)
  * @param alliances All Playoff Alliances (1-8) in the given Event
  * @return A new Match object with updated Playoff Alliances
  */
-fun Match.calculatePlayoffAlliances(alliances: List<Alliance>?): Match {
+fun Match.withPlayoffAlliances(alliances: List<Alliance>?): Match {
     if (compLevel !in PLAYOFF_COMP_LEVELS || alliances == null) {
         // Only Playoff matches have Alliances || We don't know what alliances exist
         return this.copy()
