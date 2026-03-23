@@ -1,5 +1,7 @@
 package com.thebluealliance.android.domain.model
 
+import com.thebluealliance.android.domain.PLAYOFF_COMP_LEVELS
+
 data class Match(
     val key: String,
     val eventKey: String,
@@ -44,7 +46,7 @@ private fun calculateAlliance(alliances: List<Alliance>, teamKeys: List<String>)
  * @return A new Match object with updated Playoff Alliances
  */
 fun Match.calculatePlayoffAlliances(alliances: List<Alliance>?): Match {
-    if (!compLevel.isPlayoff || alliances == null) {
+    if (compLevel !in PLAYOFF_COMP_LEVELS || alliances == null) {
         // Only Playoff matches have Alliances || We don't know what alliances exist
         return this.copy()
     }
@@ -57,20 +59,18 @@ fun Match.calculatePlayoffAlliances(alliances: List<Alliance>?): Match {
 /**
  * Competition level
  * @param code CompLevel code in the TBA API
- * @param isPlayoff Whether this level is a Playoff Match (i.e. has selected alliances)
  * @param order Order for sorting matches. Lower is earlier in the competition.
  */
 enum class CompLevel(
     val code: String,
-    val isPlayoff: Boolean,
     val order: Int,
 ) {
-    QUAL("qm", false, 0),
-    OCTOFINAL("ef", true, 1),
-    QUARTERFINAL("qf", true, 2),
-    SEMIFINAL("sf", true, 3),
-    FINAL("f", true, 4),
-    OTHER("", false, Int.MAX_VALUE);
+    QUAL("qm", 0),
+    OCTOFINAL("ef", 1),
+    QUARTERFINAL("qf",  2),
+    SEMIFINAL("sf",  3),
+    FINAL("f", 4),
+    OTHER("", Int.MAX_VALUE);
 
     companion object {
         private val codeMap = entries.associateBy(CompLevel::code)
