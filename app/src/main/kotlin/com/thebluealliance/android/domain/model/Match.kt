@@ -24,7 +24,7 @@ data class Match(
  * Helper function to calculates which Playoff Alliance on a side in a Match
  * @param alliances All Playoff Alliances (1-8) in the given Event
  * @param teamKeys Keys for a given Alliance (Red/Blue) in a Match
- * @return The Playoff Alliance number or null if not found
+ * @return The Playoff Alliance or null if not found
  */
 private fun calculateAlliance(alliances: List<Alliance>, teamKeys: List<String>): Alliance? {
     // Each team cannot belong to more than one alliance, and there can only be one backup team.
@@ -45,7 +45,7 @@ private fun calculateAlliance(alliances: List<Alliance>, teamKeys: List<String>)
  */
 fun Match.calculatePlayoffAlliances(alliances: List<Alliance>?): Match {
     if (!compLevel.isPlayoff || alliances == null) {
-        // Only Playoff matches have Alliances
+        // Only Playoff matches have Alliances || We don't know what alliances exist
         return this.copy()
     }
     return this.copy(
@@ -57,6 +57,7 @@ fun Match.calculatePlayoffAlliances(alliances: List<Alliance>?): Match {
 /**
  * Competition level
  * @param code CompLevel code in the TBA API
+ * @param isPlayoff Whether this level is a Playoff Match (i.e. has selected alliances)
  * @param order Order for sorting matches. Lower is earlier in the competition.
  */
 enum class CompLevel(
