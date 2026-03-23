@@ -1,7 +1,6 @@
 package com.thebluealliance.android.domain
 
 import com.thebluealliance.android.domain.model.CompLevel
-import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.MatchGroup
 import com.thebluealliance.android.domain.model.PlayoffType
@@ -16,7 +15,7 @@ import com.thebluealliance.android.domain.model.PlayoffType
  * The logic here was largely lifted from https://github.com/the-blue-alliance/the-blue-alliance/blob/ad984d18edf671c37662d642b77ae20e6cbfeb38/src/backend/common/helpers/playoff_type_helper.py#L176
  */
 
-private val PLAYOFF_COMP_LEVELS = setOf(
+internal val PLAYOFF_COMP_LEVELS = setOf(
     CompLevel.OCTOFINAL,
     CompLevel.QUARTERFINAL,
     CompLevel.SEMIFINAL,
