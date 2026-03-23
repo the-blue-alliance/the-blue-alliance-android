@@ -20,4 +20,3 @@ fun EventMatchesTab(
         innerPadding = innerPadding,
     )
 }
-

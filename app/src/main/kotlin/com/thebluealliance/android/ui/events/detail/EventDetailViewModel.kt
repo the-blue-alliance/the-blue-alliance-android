@@ -12,6 +12,7 @@ import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
+import com.thebluealliance.android.domain.model.withPlayoffAlliances
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -29,7 +30,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -115,7 +115,7 @@ class EventDetailViewModel @AssistedInject constructor(
                 EventDetailUiState(
                     event = core.event,
                     teams = core.teams,
-                    matches = core.matches,
+                    matches = core.matches.map { it.withPlayoffAlliances(extras.alliances) },
                     rankings = core.rankings,
                     rankingSortOrders = core.rankingSortOrders,
                     rankingExtraStatsInfo = core.rankingExtraStatsInfo,

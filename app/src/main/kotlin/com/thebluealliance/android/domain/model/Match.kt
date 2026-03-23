@@ -1,5 +1,7 @@
 package com.thebluealliance.android.domain.model
 
+import com.thebluealliance.android.domain.PLAYOFF_COMP_LEVELS
+
 data class Match(
     val key: String,
     val eventKey: String,
@@ -11,12 +13,48 @@ data class Match(
     val actualTime: Long?,
     val redTeamKeys: List<String>,
     val redScore: Int,
+    val redPlayoffAlliance: Alliance? = null,
     val blueTeamKeys: List<String>,
     val blueScore: Int,
+    val bluePlayoffAlliance: Alliance? = null,
     val winningAlliance: String?,
     val scoreBreakdown: String? = null,
     val videos: String? = null,
 )
+
+/**
+ * Helper function to calculates which Playoff Alliance on a side in a Match
+ * @param alliances All Playoff Alliances (1-8) in the given Event
+ * @param teamKeys Keys for a given Alliance (Red/Blue) in a Match
+ * @return The Playoff Alliance or null if not found
+ */
+private fun calculateAlliance(alliances: List<Alliance>, teamKeys: List<String>): Alliance? {
+    // Each team cannot belong to more than one alliance, and there can only be one backup team.
+    // That is, at least two teams must be "picks"
+
+    for (alliance in alliances) {
+        if (teamKeys.any { it in alliance.picks }) {
+            return alliance
+        }
+    }
+    return null
+}
+
+/**
+ * Calculates and returns a new object with the Playoff Alliances for Red and Blue of this Match
+ * @param alliances All Playoff Alliances (1-8) in the given Event
+ * @return A new Match object with updated Playoff Alliances
+ */
+fun Match.withPlayoffAlliances(alliances: List<Alliance>?): Match {
+    if (compLevel !in PLAYOFF_COMP_LEVELS || alliances == null) {
+        // Only Playoff matches have Alliances || We don't know what alliances exist
+        return this.copy()
+    }
+    return this.copy(
+        redPlayoffAlliance = calculateAlliance(alliances, this.redTeamKeys),
+        bluePlayoffAlliance = calculateAlliance(alliances, this.blueTeamKeys),
+    )
+}
 
 /**
  * Competition level

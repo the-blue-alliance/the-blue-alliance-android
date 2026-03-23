@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.domain.model.PlayoffType
+import com.thebluealliance.android.domain.model.withPlayoffAlliances
 import com.thebluealliance.android.navigation.Screen
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -51,7 +52,8 @@ class MatchDetailViewModel @AssistedInject constructor(
     val uiState: StateFlow<MatchDetailUiState> = combine(
         matchRepository.observeMatch(matchKey),
         eventRepository.observeEvent(eventKey),
-    ) { match, event ->
+        eventRepository.observeEventAlliances(eventKey),
+    ) { match, event, alliances ->
         val breakdown = match?.scoreBreakdown?.let { parseBreakdown(it) }
         val videos = match?.videos?.let { parseVideos(it) } ?: emptyList()
         val timeToDisplay = match?.actualTime ?: match?.predictedTime ?: match?.time
@@ -61,7 +63,7 @@ class MatchDetailViewModel @AssistedInject constructor(
             if (isEstimate) "$it (est.)" else it
         }
         MatchDetailUiState(
-            match = match,
+            match = match?.withPlayoffAlliances(alliances),
             scoreBreakdown = breakdown,
             eventName = event?.name,
             eventKey = event?.key,
