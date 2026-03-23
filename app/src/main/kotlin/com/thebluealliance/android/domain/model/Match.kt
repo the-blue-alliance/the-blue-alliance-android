@@ -67,8 +67,8 @@ enum class CompLevel(
 ) {
     QUAL("qm", 0),
     OCTOFINAL("ef", 1),
-    QUARTERFINAL("qf",  2),
-    SEMIFINAL("sf",  3),
+    QUARTERFINAL("qf", 2),
+    SEMIFINAL("sf", 3),
     FINAL("f", 4),
     OTHER("", Int.MAX_VALUE);
 
