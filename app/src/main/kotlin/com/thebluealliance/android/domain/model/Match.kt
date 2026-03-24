@@ -32,12 +32,7 @@ private fun calculateAlliance(alliances: List<Alliance>, teamKeys: List<String>)
     // Each team cannot belong to more than one alliance, and there can only be one backup team.
     // That is, at least two teams must be "picks"
 
-    for (alliance in alliances) {
-        if (teamKeys.any { it in alliance.picks }) {
-            return alliance
-        }
-    }
-    return null
+    return alliances.firstOrNull { alliance -> teamKeys.any { it in alliance.picks } }
 }
 
 /**
@@ -48,7 +43,7 @@ private fun calculateAlliance(alliances: List<Alliance>, teamKeys: List<String>)
 fun Match.withPlayoffAlliances(alliances: List<Alliance>?): Match {
     if (compLevel !in PLAYOFF_COMP_LEVELS || alliances == null) {
         // Only Playoff matches have Alliances || We don't know what alliances exist
-        return this.copy()
+        return this
     }
     return this.copy(
         redPlayoffAlliance = calculateAlliance(alliances, this.redTeamKeys),
