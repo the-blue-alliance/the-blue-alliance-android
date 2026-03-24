@@ -28,6 +28,7 @@ import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.watchface.complications.datasource.ComplicationDataSourceUpdateRequester
+import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
 
 class TeamTrackingComplicationConfigActivity : ComponentActivity() {
@@ -44,14 +45,12 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
 
         // Support passing team number directly via intent (for ADB configuration)
         val intentTeam = intent?.getStringExtra("team_number")
-        if (intentTeam != null && complicationId >= 0) {
+        if (intentTeam != null) {
             saveAndFinish(intentTeam)
             return
         }
 
-        val existingTeam = if (complicationId >= 0) {
-            TeamTrackingComplicationPreferences(this, complicationId).teamNumber
-        } else ""
+        val existingTeam = TeamTrackerPreferences(this).teamNumber
 
         setContent {
             MaterialTheme {
@@ -65,10 +64,13 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
 
     private fun saveAndFinish(teamNumber: String) {
         Log.d(TAG, "saveAndFinish: team=$teamNumber, complicationId=$complicationId")
-        if (complicationId >= 0 && teamNumber.isNotBlank()) {
-            val prefs = TeamTrackingComplicationPreferences(this, complicationId)
-            prefs.teamNumber = teamNumber
-            TeamTrackingComplicationPreferences.addComplicationId(this, complicationId)
+        if (teamNumber.isNotBlank()) {
+            // Single source of truth for tracked team
+            TeamTrackerPreferences(this).teamNumber = teamNumber
+
+            if (complicationId >= 0) {
+                TeamTrackingComplicationPreferences.addComplicationId(this, complicationId)
+            }
 
             TeamTrackingComplicationWorker.enqueueImmediateRefresh(this)
 

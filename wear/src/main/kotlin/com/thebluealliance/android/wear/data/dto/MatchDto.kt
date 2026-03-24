@@ -2,6 +2,7 @@ package com.thebluealliance.android.wear.data.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
 
 @Serializable
 data class MatchDto(
@@ -13,6 +14,7 @@ data class MatchDto(
     val time: Long? = null,
     @SerialName("predicted_time") val predictedTime: Long? = null,
     @SerialName("winning_alliance") val winningAlliance: String? = null,
+    @SerialName("score_breakdown") val scoreBreakdown: JsonObject? = null,
 )
 
 @Serializable

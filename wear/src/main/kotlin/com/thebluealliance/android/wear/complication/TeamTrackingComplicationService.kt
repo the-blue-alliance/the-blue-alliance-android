@@ -12,6 +12,8 @@ import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
 import com.thebluealliance.android.wear.R
+import com.thebluealliance.android.wear.tracker.TeamTrackerActivity
+import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
 
 class TeamTrackingComplicationService : SuspendingComplicationDataSourceService() {
 
@@ -45,7 +47,7 @@ class TeamTrackingComplicationService : SuspendingComplicationDataSourceService(
         val complicationId = request.complicationInstanceId
         val tapAction = configPendingIntent(complicationId)
         val prefs = TeamTrackingComplicationPreferences(applicationContext, complicationId)
-        val teamNumber = prefs.teamNumber
+        val teamNumber = TeamTrackerPreferences(applicationContext).teamNumber
 
         if (teamNumber.isBlank()) {
             return buildFallback(request.complicationType, tapAction)
@@ -191,9 +193,7 @@ class TeamTrackingComplicationService : SuspendingComplicationDataSourceService(
     }
 
     private fun configPendingIntent(complicationId: Int): PendingIntent {
-        val intent = Intent(applicationContext, TeamTrackingComplicationConfigActivity::class.java).apply {
-            putExtra("android.support.wearable.complications.EXTRA_CONFIG_COMPLICATION_ID", complicationId)
-        }
+        val intent = Intent(applicationContext, TeamTrackerActivity::class.java)
         return PendingIntent.getActivity(
             applicationContext,
             complicationId,

@@ -47,6 +47,17 @@
                 android:value="com.thebluealliance.android.wear.CONFIG_COMPLICATION" />
         </service>
 
+        <!-- Team tracker full-screen activity (app drawer entry) -->
+        <activity
+            android:name=".tracker.TeamTrackerActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <!-- Config activity for complication setup -->
         <activity
             android:name=".complication.TeamTrackingComplicationConfigActivity"
