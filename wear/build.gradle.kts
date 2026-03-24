@@ -8,11 +8,37 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.play.publisher)
 }
 
 val localProperties = Properties().apply {
     val file = rootProject.file("local.properties")
     if (file.exists()) load(FileInputStream(file))
+}
+
+// --- Git tag-based versioning (shared with :app, offset for multi-APK) ---
+// Wear version codes add 100_000_000 to avoid collisions with the phone app.
+val gitDescribeResult = providers.exec {
+    commandLine("git", "describe", "--tags", "--long", "--match", "v[0-9]*")
+    isIgnoreExitValue = true
+}
+val gitDescribe = gitDescribeResult.result.get().exitValue.let { exitCode ->
+    if (exitCode == 0) gitDescribeResult.standardOutput.asText.get().trim() else ""
+}
+
+val versionPattern = Regex("""^v(\d+)\.(\d+)\.(\d+)-(\d+)-g[0-9a-f]+$""")
+val versionMatch = versionPattern.matchEntire(gitDescribe)
+
+val vMajor = versionMatch?.groupValues?.get(1)?.toInt() ?: 0
+val vMinor = versionMatch?.groupValues?.get(2)?.toInt() ?: 0
+val vPatch = versionMatch?.groupValues?.get(3)?.toInt() ?: 0
+val commitDistance = versionMatch?.groupValues?.get(4)?.toInt() ?: 0
+
+val computedVersionCode = 100_000_000 + vMajor * 1_000_000 + vMinor * 10_000 + vPatch * 100 + commitDistance
+val computedVersionName = if (commitDistance == 0) {
+    "$vMajor.$vMinor.$vPatch"
+} else {
+    "$vMajor.$vMinor.$vPatch-dev.$commitDistance"
 }
 
 android {
@@ -23,8 +49,8 @@ android {
         applicationId = "com.thebluealliance.androidclient"
         minSdk = 30
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = computedVersionCode
+        versionName = computedVersionName
 
         buildConfigField("String", "TBA_BASE_URL", "\"https://www.thebluealliance.com/\"")
         buildConfigField("String", "TBA_API_KEY", "\"\"")
@@ -53,6 +79,7 @@ android {
         release {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -69,6 +96,12 @@ android {
         compose = true
         buildConfig = true
     }
+}
+
+play {
+    serviceAccountCredentials.set(rootProject.file(localProperties.getProperty("play.service.account.key", "play-service-account.json")))
+    track.set("alpha")
+    defaultToAppBundles.set(true)
 }
 
 dependencies {

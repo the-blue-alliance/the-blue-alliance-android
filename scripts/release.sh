@@ -162,9 +162,10 @@ announce_release_action() {
         commitlog="(no non-merge commits found)"
     fi
 
+    local wear_version_code=$(( VERSION_CODE + 100000000 ))
     local message_body
     message_body=$(cat <<EOF
-${action} android v${VERSION_NAME} (${VERSION_CODE}).
+${action} android v${VERSION_NAME} (phone: ${VERSION_CODE}, wear: ${wear_version_code}).
 \`\`\`
 ${commitlog}
 \`\`\`
@@ -261,9 +262,32 @@ print(data['upload_url'].split('{')[0])
     if [[ "$upload_status" != "201" ]]; then
         warn "APK upload returned HTTP ${upload_status}: $(cat "$upload_response_file")"
     else
-        info "APK uploaded to GitHub release"
+        info "Phone APK uploaded to GitHub release"
     fi
     rm -f "$upload_response_file"
+
+    # Upload Wear APK if it exists
+    local wear_apk_path="wear/build/outputs/apk/release/wear-release.apk"
+    if [[ -f "$wear_apk_path" ]]; then
+        info "Uploading Wear APK to GitHub release..."
+        local wear_apk_name="the-blue-alliance-wear-v${VERSION_NAME}.apk"
+        local wear_upload_response_file
+        wear_upload_response_file=$(mktemp)
+        local wear_upload_status
+        wear_upload_status=$(curl -sS -o "$wear_upload_response_file" -w "%{http_code}" \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Content-Type: application/vnd.android.package-archive" \
+            -X POST \
+            --data-binary "@${wear_apk_path}" \
+            "${upload_url}?name=${wear_apk_name}")
+
+        if [[ "$wear_upload_status" != "201" ]]; then
+            warn "Wear APK upload returned HTTP ${wear_upload_status}: $(cat "$wear_upload_response_file")"
+        else
+            info "Wear APK uploaded to GitHub release"
+        fi
+        rm -f "$wear_upload_response_file"
+    fi
 }
 
 # ── Preflight checks ────────────────────────────────────────────────────
@@ -289,6 +313,10 @@ preflight() {
         fi
         if [[ ! -f app/src/debug/google-services.json ]]; then
             echo -e "${RED}✗${NC} app/src/debug/google-services.json missing"
+            ok=false
+        fi
+        if [[ ! -f wear/src/release/google-services.json ]]; then
+            echo -e "${RED}✗${NC} wear/src/release/google-services.json missing"
             ok=false
         fi
     fi
@@ -347,10 +375,12 @@ get_version_info() {
 }
 
 print_version() {
+    local wear_version_code=$(( VERSION_CODE + 100000000 ))
     echo ""
-    echo -e "  ${BOLD}Version name:${NC}  $VERSION_NAME"
-    echo -e "  ${BOLD}Version code:${NC}  $VERSION_CODE"
-    echo -e "  ${BOLD}Git describe:${NC}  v${V_MAJOR}.${V_MINOR}.${V_PATCH}-${COMMIT_DISTANCE}-g${COMMIT_HASH}"
+    echo -e "  ${BOLD}Version name:${NC}       $VERSION_NAME"
+    echo -e "  ${BOLD}Phone version code:${NC} $VERSION_CODE"
+    echo -e "  ${BOLD}Wear version code:${NC}  $wear_version_code"
+    echo -e "  ${BOLD}Git describe:${NC}       v${V_MAJOR}.${V_MINOR}.${V_PATCH}-${COMMIT_DISTANCE}-g${COMMIT_HASH}"
     echo ""
 }
 
@@ -408,15 +438,20 @@ cmd_alpha() {
     get_version_info
     print_version
 
-    info "Building release bundle..."
-    run ./gradlew :app:bundleRelease :app:assembleRelease
+    info "Building release bundles..."
+    run ./gradlew :app:bundleRelease :app:assembleRelease :wear:bundleRelease :wear:assembleRelease
 
-    info "Publishing to alpha..."
-    run ./gradlew publishReleaseBundle
+    info "Publishing phone app to alpha..."
+    run ./gradlew :app:publishReleaseBundle
+    info "Publishing wear app to alpha..."
+    run ./gradlew :wear:publishReleaseBundle
 
+    local wear_version_code=$(( VERSION_CODE + 100000000 ))
     echo ""
     echo -e "${GREEN}✓ Published to alpha${NC}"
-    echo -e "  Version: ${VERSION_NAME} (${VERSION_CODE})"
+    echo -e "  Version: ${VERSION_NAME}"
+    echo -e "  Phone:   ${VERSION_CODE}"
+    echo -e "  Wear:    ${wear_version_code}"
     echo -e "  Track:   alpha"
 
     create_github_release
@@ -454,13 +489,16 @@ cmd_beta() {
     info "Checking out ${tag}..."
     run git checkout "$tag"
 
-    run ./gradlew promoteReleaseArtifact --from-track alpha --promote-track beta
+    info "Promoting phone app alpha → beta..."
+    run ./gradlew :app:promoteReleaseArtifact --from-track alpha --promote-track beta
+    info "Promoting wear app alpha → beta..."
+    run ./gradlew :wear:promoteReleaseArtifact --from-track alpha --promote-track beta
 
     info "Returning to ${original_ref}..."
     run git checkout "$original_ref"
 
     echo ""
-    echo -e "${GREEN}✓ Promoted alpha → beta${NC}"
+    echo -e "${GREEN}✓ Promoted alpha → beta (phone + wear)${NC}"
 
     # Get the actual version from the beta track (now that it's been promoted)
     get_track_version beta
@@ -477,7 +515,7 @@ cmd_listing() {
     info "Publishing store listing (screenshots, descriptions, etc.)"
     echo ""
 
-    run ./gradlew publishReleaseListing
+    run ./gradlew :app:publishReleaseListing
 
     echo ""
     echo -e "${GREEN}✓ Store listing updated${NC}"
@@ -517,16 +555,19 @@ cmd_production() {
     info "Checking out ${tag}..."
     run git checkout "$tag"
 
-    run ./gradlew promoteReleaseArtifact --from-track beta --promote-track production
+    info "Promoting phone app beta → production..."
+    run ./gradlew :app:promoteReleaseArtifact --from-track beta --promote-track production
+    info "Promoting wear app beta → production..."
+    run ./gradlew :wear:promoteReleaseArtifact --from-track beta --promote-track production
 
     info "Publishing store listing..."
-    run ./gradlew publishReleaseListing
+    run ./gradlew :app:publishReleaseListing
 
     info "Returning to ${original_ref}..."
     run git checkout "$original_ref"
 
     echo ""
-    echo -e "${GREEN}✓ Promoted beta → production${NC}"
+    echo -e "${GREEN}✓ Promoted beta → production (phone + wear)${NC}"
 
     # Get the actual version from the production track (now that it's been promoted)
     get_track_version production
