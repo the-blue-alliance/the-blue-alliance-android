@@ -48,8 +48,6 @@ class TeamEventDetailViewModel @AssistedInject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
-    private val _pitLocation = MutableStateFlow<String?>(null)
-
     val uiState: StateFlow<TeamEventDetailUiState> = combine(
         teamRepository.observeTeam(teamKey),
         eventRepository.observeEvent(eventKey),
@@ -66,7 +64,7 @@ class TeamEventDetailViewModel @AssistedInject constructor(
             eventRepository.observeEventOPRs(eventKey),
             eventRepository.observeEventAlliances(eventKey),
             teamRepository.observeTeamMedia(teamKey, year),
-            _pitLocation,
+            teamRepository.observeTeamEventPitLocation(teamKey, eventKey),
         ) { awards, oprs, alliances, media, pitLocation -> TeamEventExtras(awards, oprs, alliances, media, pitLocation) },
     ) { team, event, ranking, matches, extras ->
         TeamEventDetailUiState(
@@ -99,7 +97,7 @@ class TeamEventDetailViewModel @AssistedInject constructor(
                     launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
                     launch { try { teamRepository.refreshTeamMedia(teamKey, year) } catch (_: Exception) {} }
-                    launch { _pitLocation.value = teamRepository.fetchTeamEventPitLocation(teamKey, eventKey) }
+                    launch { try { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) } catch (_: Exception) {} }
                 }
             } finally {
                 _isRefreshing.value = false
@@ -120,7 +118,7 @@ class TeamEventDetailViewModel @AssistedInject constructor(
                             launch { try { eventRepository.refreshEventRankings(eventKey) } catch (_: Exception) {} }
                             launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
                             launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
-                            launch { _pitLocation.value = teamRepository.fetchTeamEventPitLocation(teamKey, eventKey) }
+                            launch { try { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) } catch (_: Exception) {} }
                         }
                         1 -> { // Matches
                             launch { try { matchRepository.refreshEventMatches(eventKey) } catch (_: Exception) {} }

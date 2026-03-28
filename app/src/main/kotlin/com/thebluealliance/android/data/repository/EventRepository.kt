@@ -12,7 +12,9 @@ import com.thebluealliance.android.data.local.dao.EventOPRsDao
 import com.thebluealliance.android.data.local.dao.EventRankingSortOrderDao
 import com.thebluealliance.android.data.local.dao.EventTeamDao
 import com.thebluealliance.android.data.local.dao.RankingDao
+import com.thebluealliance.android.data.local.dao.TeamEventStatusDao
 import com.thebluealliance.android.data.local.entity.EventTeamEntity
+import com.thebluealliance.android.data.local.entity.TeamEventStatusEntity
 import com.thebluealliance.android.data.mappers.*
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.remote.dto.EventInsightsDto
@@ -48,6 +50,7 @@ class EventRepository @Inject constructor(
     private val eventCOPRsDao: EventCOPRsDao,
     private val eventInsightsDao: EventInsightsDao,
     private val eventRankingSortOrderDao: EventRankingSortOrderDao,
+    private val teamEventStatusDao: TeamEventStatusDao,
 ) {
     fun searchEvents(query: String): Flow<List<Event>> =
         eventDao.search(query).map { list -> list.map { it.toDomain() } }
@@ -247,14 +250,20 @@ class EventRepository @Inject constructor(
         } catch (_: Exception) { }
     }
 
-    suspend fun fetchEventPitLocations(eventKey: String): Map<String, String> {
-        return try {
-            val statuses = api.getEventTeamsStatuses(eventKey)
-            statuses.mapNotNull { (teamKey, status) ->
-                status?.pitLocation?.let { teamKey to it }
+    fun observeEventPitLocations(eventKey: String): Flow<Map<String, String>> =
+        teamEventStatusDao.observeByEvent(eventKey).map { list ->
+            list.mapNotNull { entity ->
+                entity.pitLocation?.let { entity.teamKey to it }
             }.toMap()
-        } catch (_: Exception) {
-            emptyMap()
         }
+
+    suspend fun refreshEventPitLocations(eventKey: String) {
+        try {
+            val statuses = api.getEventTeamsStatuses(eventKey)
+            val entities = statuses.map { (teamKey, status) ->
+                TeamEventStatusEntity(teamKey, eventKey, status?.pitLocation)
+            }
+            teamEventStatusDao.insertAll(entities)
+        } catch (_: Exception) { }
     }
 }
