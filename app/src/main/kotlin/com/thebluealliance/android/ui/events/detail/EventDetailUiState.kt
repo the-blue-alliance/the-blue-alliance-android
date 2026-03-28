@@ -4,7 +4,7 @@ import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventCOPRs
-import com.thebluealliance.android.domain.model.EventDistrictPoints
+import com.thebluealliance.android.domain.model.EventAdvancementPoints
 import com.thebluealliance.android.domain.model.EventInsights
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.Match
@@ -21,7 +21,7 @@ data class EventDetailUiState(
     val rankingExtraStatsInfo: List<RankingSortOrder>? = null,
     val alliances: List<Alliance>? = null,
     val awards: List<Award>? = null,
-    val districtPoints: List<EventDistrictPoints>? = null,
+    val advancementPoints: List<EventAdvancementPoints>? = null,
     val oprs: EventOPRs? = null,
     val coprs: EventCOPRs? = null,
     val insights: EventInsights? = null,

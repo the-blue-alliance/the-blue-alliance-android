@@ -9,6 +9,7 @@ import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.Media
+import com.thebluealliance.android.domain.model.withPlayoffAlliances
 import com.thebluealliance.android.navigation.Screen
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -72,7 +73,7 @@ class TeamEventDetailViewModel @AssistedInject constructor(
             team = team,
             event = event,
             ranking = ranking,
-            matches = matches,
+            matches = matches.map { it.withPlayoffAlliances(extras.alliances) },
             awards = extras.awards,
             oprs = extras.oprs,
             alliances = extras.alliances,

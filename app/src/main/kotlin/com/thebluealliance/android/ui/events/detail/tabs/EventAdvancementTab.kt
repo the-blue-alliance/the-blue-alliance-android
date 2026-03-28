@@ -20,29 +20,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Event
-import com.thebluealliance.android.domain.model.EventDistrictPoints
+import com.thebluealliance.android.domain.model.EventAdvancementPoints
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 
 @Composable
-fun EventDistrictPointsTab(
-    districtPoints: List<EventDistrictPoints>?,
+fun EventAdvancementTab(
+    advancementPoints: List<EventAdvancementPoints>?,
     event: Event?,
     teams: List<Team>?,
     onTeamClick: (String) -> Unit = {},
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
-    if (districtPoints == null) {
+    if (advancementPoints == null) {
         LoadingBox(
             modifier = Modifier.padding(innerPadding)
         )
         return
     }
-    if (districtPoints.isEmpty()) {
+    if (advancementPoints.isEmpty()) {
         EmptyBox(
             modifier = Modifier.padding(innerPadding),
-            message = "No district points"
+            message = if (event?.district != null) "No district points" else "No regional points"
         )
         return
     }
@@ -51,18 +51,8 @@ fun EventDistrictPointsTab(
         modifier = Modifier.fillMaxSize(),
         contentPadding = innerPadding,
     ) {
-        if (event?.district == null) {
-            item(key = "district_warning") {
-                Text(
-                    text = "This event is not part of a district \u2014 these points are purely hypothetical.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(16.dp),
-                )
-            }
-        }
-        items(districtPoints, key = { it.teamKey }) { points ->
-            val rank = districtPoints.indexOf(points) + 1
+        items(advancementPoints, key = { it.teamKey }) { points ->
+            val rank = advancementPoints.indexOf(points) + 1
             val teamName = teamsByKey[points.teamKey]?.nickname
             Row(
                 modifier = Modifier

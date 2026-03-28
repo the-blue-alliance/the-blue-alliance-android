@@ -1,6 +1,8 @@
 package com.thebluealliance.android.ui.events.detail.tabs
 
 import com.thebluealliance.android.domain.model.Alliance
+import com.thebluealliance.android.domain.model.displayTitle
+import com.thebluealliance.android.domain.model.displayTitleShort
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -17,18 +19,26 @@ class EventAlliancesTabLogicTest {
     )
 
     @Test
-    fun `allianceTitle uses API name when present`() {
-        assertEquals("Curie", allianceTitle(alliance("Curie")))
+    fun `Alliance displayTitle and displayTitleShort uses API name when present`() {
+        assertEquals("Curie", alliance("Curie").displayTitle)
+        assertEquals("Curie", alliance("Curie").displayTitleShort)
     }
 
     @Test
-    fun `allianceTitle falls back when name is null`() {
-        assertEquals("Alliance 6", allianceTitle(alliance(null)))
+    fun `Alliance displayTitle and displayTitleShort falls back when name is null`() {
+        assertEquals("Alliance 6", alliance(null).displayTitle)
+        assertEquals("A6", alliance(null).displayTitleShort)
     }
 
     @Test
-    fun `allianceTitle falls back when name is blank`() {
-        assertEquals("Alliance 6", allianceTitle(alliance("   ")))
+    fun `Alliance displayTitle and displayTitleShort falls back when name is blank`() {
+        assertEquals("Alliance 6", alliance("   ").displayTitle)
+        assertEquals("A6", alliance("   ").displayTitleShort)
+    }
+
+    @Test
+    fun `Alliance displayShortTitle returns 'A#' even when name is 'Alliance #'`() {
+        assertEquals("A6", alliance("Alliance 6").displayTitleShort)
     }
 }
 

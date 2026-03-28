@@ -15,6 +15,21 @@ data class Alliance(
     val playoffDoubleElimRound: String? = null,
 )
 
+val Alliance.displayTitle: String
+    get() {
+        return this.name?.takeIf { it.isNotBlank() } ?: "Alliance ${this.number}"
+    }
+
+val Alliance.displayTitleShort: String
+    get() {
+        if (this.name.isNullOrBlank()
+            // Regular playoff matches also have the property name = "Alliance #".
+            // We want "A#" instead to be concise.
+            || this.name.startsWith("Alliance ")) return "A${this.number}"
+
+        return this.name
+    }
+
 val Alliance.playoffSummary: String?
     get() {
         val statusLabel = playoffStatus?.toAllianceStatusLabel()

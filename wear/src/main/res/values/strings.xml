@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">The Blue Alliance</string>
+    <string name="complication_label">Next match</string>
+    <string name="change_team">Change team</string>
+    <string name="last_match">Last match</string>
+    <string name="next_match">Next match</string>
+    <string name="set_tracked_team">Set team</string>
+</resources>
