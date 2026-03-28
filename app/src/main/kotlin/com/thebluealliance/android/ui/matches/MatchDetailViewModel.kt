@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.domain.model.PlayoffType
-import com.thebluealliance.android.domain.model.withAdvancement
 import com.thebluealliance.android.domain.model.withPlayoffAlliances
 import com.thebluealliance.android.navigation.Screen
 import dagger.assisted.Assisted
@@ -64,8 +63,7 @@ class MatchDetailViewModel @AssistedInject constructor(
             if (isEstimate) "$it (est.)" else it
         }
         MatchDetailUiState(
-            match = match?.withAdvancement(event?.playoffType)
-                ?.withPlayoffAlliances(alliances),
+            match = match?.withPlayoffAlliances(alliances),
             scoreBreakdown = breakdown,
             eventName = event?.name,
             eventKey = event?.key,

@@ -41,8 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.formatBreakdownValue
+import com.thebluealliance.android.domain.getAdvancement
 import com.thebluealliance.android.domain.getFullLabel
 import com.thebluealliance.android.domain.model.Match
+import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.displayTitle
 import com.thebluealliance.android.domain.rpBonuses
 import com.thebluealliance.android.ui.common.LoadingBox
@@ -136,7 +138,7 @@ fun MatchDetailScreen(
 
                     // Score summary
                     item(key = "score_header") {
-                        ScoreSummary(match)
+                        ScoreSummary(match, uiState.playoffType)
                     }
 
                     item(key = "divider_teams") {
@@ -245,8 +247,11 @@ private fun EventInfo(
 }
 
 @Composable
-private fun ScoreSummary(match: Match) {
+private fun ScoreSummary(match: Match, playoffType: PlayoffType) {
     val rpBonuses = remember(match.scoreBreakdown) { match.rpBonuses() }
+    val advancementMsgs = remember(
+        match.winningAlliance, match.compLevel, match.setNumber, playoffType
+    ) { match.getAdvancement(playoffType) }
 
     Row(
         modifier = Modifier
@@ -272,7 +277,7 @@ private fun ScoreSummary(match: Match) {
             if (rpBonuses != null) {
                 RpDots(rpBonuses.red, MaterialTheme.colorScheme.error)
             }
-            match.redAdvancement?.let {
+            advancementMsgs?.let {
                 Box(
                     modifier = Modifier
                         .heightIn(min = 36.dp)  // Reserve consistent space
@@ -280,7 +285,7 @@ private fun ScoreSummary(match: Match) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = it,
+                        text = it.red,
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
                         color = MaterialTheme.colorScheme.secondary,
@@ -317,7 +322,7 @@ private fun ScoreSummary(match: Match) {
             if (rpBonuses != null) {
                 RpDots(rpBonuses.blue, MaterialTheme.colorScheme.primary)
             }
-            match.blueAdvancement?.let {
+            advancementMsgs?.let {
                 Box(
                     modifier = Modifier
                         .heightIn(min = 36.dp)  // Reserve consistent space
@@ -325,7 +330,7 @@ private fun ScoreSummary(match: Match) {
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = it,
+                        text = it.blue,
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
                         color = MaterialTheme.colorScheme.secondary,
