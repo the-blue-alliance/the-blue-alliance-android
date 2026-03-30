@@ -4,10 +4,13 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,10 +39,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.domain.AllianceRpBonuses
+import com.thebluealliance.android.domain.MatchAdvancementMsgs
 import com.thebluealliance.android.domain.formatBreakdownValue
+import com.thebluealliance.android.domain.getAdvancement
 import com.thebluealliance.android.domain.getFullLabel
 import com.thebluealliance.android.domain.model.Match
+import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.displayTitle
 import com.thebluealliance.android.domain.rpBonuses
 import com.thebluealliance.android.ui.common.LoadingBox
@@ -133,7 +141,7 @@ fun MatchDetailScreen(
 
                     // Score summary
                     item(key = "score_header") {
-                        ScoreSummary(match)
+                        ScoreSummary(match, uiState.playoffType)
                     }
 
                     item(key = "divider_teams") {
@@ -242,8 +250,62 @@ private fun EventInfo(
 }
 
 @Composable
-private fun ScoreSummary(match: Match) {
+private fun RowScope.AllianceScoreSummaryCol(match: Match, rpBonuses: AllianceRpBonuses?,
+                                             advancementMsgs: MatchAdvancementMsgs?, alliance: String) {
+    val mainColor = if (alliance == "red") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+    val score = if (alliance == "red") match.redScore else match.blueScore
+    val playoffAlliance = if (alliance == "red") match.redPlayoffAlliance else match.bluePlayoffAlliance
+    val rpBonus = if (alliance == "red") rpBonuses?.red else rpBonuses?.blue
+    val advancementMsg = if (alliance == "red") advancementMsgs?.red else advancementMsgs?.blue
+
+    Column(
+        modifier = Modifier.weight(1f),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = playoffAlliance?.displayTitle ?: alliance.replaceFirstChar { it.titlecase() },
+            style = MaterialTheme.typography.titleSmall,
+            color = mainColor
+        )
+        Text(
+            text = if (score < 0) "—" else score.toString(),
+            style = MaterialTheme.typography.displaySmall,
+            fontWeight = if (match.winningAlliance == alliance) FontWeight.Bold else FontWeight.Normal,
+            color = mainColor,
+        )
+        rpBonus?.let {
+            RpDots(it, mainColor)
+        }
+        advancementMsg?.let {
+            Box(
+                modifier = Modifier
+                    .heightIn(min = 36.dp)  // Reserve consistent space
+                    .padding(horizontal = 4.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = if (match.winningAlliance == alliance) FontWeight.Bold else FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.secondary,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    lineHeight = 14.sp,  // Tighter line spacing
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp)
+                        .padding(top = 4.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ScoreSummary(match: Match, playoffType: PlayoffType) {
     val rpBonuses = remember(match.scoreBreakdown) { match.rpBonuses() }
+    val advancementMsgs = remember(
+        match.winningAlliance, match.compLevel, match.setNumber, playoffType
+    ) { match.getAdvancement(playoffType) }
 
     Row(
         modifier = Modifier
@@ -251,49 +313,13 @@ private fun ScoreSummary(match: Match) {
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = if (match.redPlayoffAlliance != null) match.redPlayoffAlliance.displayTitle
-                    else "Red",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.error)
-            Text(
-                text = if (match.redScore < 0) "—" else match.redScore.toString(),
-                style = MaterialTheme.typography.displaySmall,
-                fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
-                color = MaterialTheme.colorScheme.error,
-            )
-            if (rpBonuses != null) {
-                RpDots(rpBonuses.red, MaterialTheme.colorScheme.error)
-            }
-        }
+        AllianceScoreSummaryCol(match, rpBonuses, advancementMsgs, "red")
         Text(
             text = "-",
             style = MaterialTheme.typography.displaySmall,
             modifier = Modifier.padding(horizontal = 16.dp),
         )
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = if (match.bluePlayoffAlliance != null) match.bluePlayoffAlliance.displayTitle
-                        else "Blue",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.primary)
-            Text(
-                text = if (match.blueScore < 0) "—" else match.blueScore.toString(),
-                style = MaterialTheme.typography.displaySmall,
-                fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            if (rpBonuses != null) {
-                RpDots(rpBonuses.blue, MaterialTheme.colorScheme.primary)
-            }
-        }
+        AllianceScoreSummaryCol(match, rpBonuses, advancementMsgs, "blue")
     }
 }
 
