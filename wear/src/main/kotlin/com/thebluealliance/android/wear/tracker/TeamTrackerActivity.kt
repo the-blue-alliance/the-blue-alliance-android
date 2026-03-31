@@ -44,6 +44,8 @@ import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.PositionIndicator
+import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
 import com.thebluealliance.android.wear.R
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationConfigActivity
@@ -164,63 +166,67 @@ private fun TeamTrackerScreen(
 
     val listState = rememberScalingLazyListState()
 
-    ScalingLazyColumn(
-        state = listState,
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Scaffold(
+        positionIndicator = { PositionIndicator(scalingLazyListState = listState) },
     ) {
-        item { TeamHeader(state) }
-        item { EventSubtitle(state) }
+        ScalingLazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            item { TeamHeader(state) }
+            item { EventSubtitle(state) }
 
-        if (state.lastMatchLabel.isNotBlank()) {
-            item {
-                MatchSection(
-                    title = stringResource(R.string.last_match),
-                    matchLabel = state.lastMatchLabel,
-                    redTeams = state.lastMatchRedTeams,
-                    blueTeams = state.lastMatchBlueTeams,
-                    redScore = state.lastMatchRedScore.takeIf { it >= 0 },
-                    blueScore = state.lastMatchBlueScore.takeIf { it >= 0 },
-                    winningAlliance = state.lastMatchWinningAlliance,
-                    trackedTeam = state.teamNumber,
-                    trackedAlliance = state.lastAlliance,
-                    bonusRp = state.lastMatchBonusRp,
-                )
-            }
-        }
-
-        if (state.nextMatchLabel.isNotBlank()) {
-            item {
-                MatchSection(
-                    title = stringResource(R.string.next_match),
-                    matchLabel = state.nextMatchLabel,
-                    redTeams = state.nextMatchRedTeams,
-                    blueTeams = state.nextMatchBlueTeams,
-                    trackedTeam = state.teamNumber,
-                    timeText = buildString {
-                        if (state.nextMatchTimeIsEstimate) append("~")
-                        append(state.nextMatchTime)
-                    }.takeIf { state.nextMatchTime.isNotBlank() },
-                )
-            }
-        }
-
-        item {
-            Chip(
-                onClick = onChangeTeam,
-                label = { Text(stringResource(R.string.change_team)) },
-                icon = {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_settings),
-                        contentDescription = null,
-                        modifier = Modifier.size(ChipDefaults.IconSize),
+            if (state.lastMatchLabel.isNotBlank()) {
+                item {
+                    MatchSection(
+                        title = stringResource(R.string.last_match),
+                        matchLabel = state.lastMatchLabel,
+                        redTeams = state.lastMatchRedTeams,
+                        blueTeams = state.lastMatchBlueTeams,
+                        redScore = state.lastMatchRedScore.takeIf { it >= 0 },
+                        blueScore = state.lastMatchBlueScore.takeIf { it >= 0 },
+                        winningAlliance = state.lastMatchWinningAlliance,
+                        trackedTeam = state.teamNumber,
+                        trackedAlliance = state.lastAlliance,
+                        bonusRp = state.lastMatchBonusRp,
                     )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                colors = ChipDefaults.secondaryChipColors(),
-            )
+                }
+            }
+
+            if (state.nextMatchLabel.isNotBlank()) {
+                item {
+                    MatchSection(
+                        title = stringResource(R.string.next_match),
+                        matchLabel = state.nextMatchLabel,
+                        redTeams = state.nextMatchRedTeams,
+                        blueTeams = state.nextMatchBlueTeams,
+                        trackedTeam = state.teamNumber,
+                        timeText = buildString {
+                            if (state.nextMatchTimeIsEstimate) append("~")
+                            append(state.nextMatchTime)
+                        }.takeIf { state.nextMatchTime.isNotBlank() },
+                    )
+                }
+            }
+
+            item {
+                Chip(
+                    onClick = onChangeTeam,
+                    label = { Text(stringResource(R.string.change_team)) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_settings),
+                            contentDescription = null,
+                            modifier = Modifier.size(ChipDefaults.IconSize),
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    colors = ChipDefaults.secondaryChipColors(),
+                )
+            }
         }
     }
 }
