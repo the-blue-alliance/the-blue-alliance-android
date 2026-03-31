@@ -5,6 +5,7 @@ Event schedules, match results, team information, and notifications about the FI
 ✅ Match results with score breakdowns and videos
 👥 Team photos, videos, and stats
 🗺️ District rankings and results
+⌚ Wear OS complication showing your team's next match on your watch face
 
 Are you a developer? Check out the source on GitHub and start contributing today!
 https://github.com/the-blue-alliance/the-blue-alliance-android
