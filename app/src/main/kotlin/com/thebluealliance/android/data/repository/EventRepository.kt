@@ -18,6 +18,7 @@ import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.remote.dto.EventInsightsDto
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
+import com.thebluealliance.android.domain.model.CmpAdvancement
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventCOPRs
 import com.thebluealliance.android.domain.model.EventAdvancementPoints
@@ -192,6 +193,38 @@ class EventRepository @Inject constructor(
                 eventDistrictPointsDao.insertAll(entities)
             }
         } catch (_: Exception) { }
+    }
+
+    suspend fun fetchRegionalCmpAdvancementByTeam(year: Int): Map<String, CmpAdvancement> {
+        val advancements = api.getRegionalAdvancement(year).orEmpty()
+
+        // Pre-load event names for any EventQualified entries
+        val eventKeys = advancements.values
+            .filter { it.cmpStatus == "EventQualified" }
+            .mapNotNull { it.qualifyingEvent }
+            .distinct()
+        val eventsByKey = if (eventKeys.isNotEmpty()) {
+            eventDao.getByKeys(eventKeys).associateBy { it.key }
+        } else {
+            emptyMap()
+        }
+
+        return advancements.mapNotNull { (teamKey, advancement) ->
+            if (!advancement.cmp) return@mapNotNull null
+            val cmpAdv: CmpAdvancement = when (advancement.cmpStatus) {
+                "EventQualified" -> {
+                    val eventKey = advancement.qualifyingEvent ?: ""
+                    val entity = eventsByKey[eventKey]
+                    val shortName = entity?.shortName?.takeIf { it.isNotBlank() }
+                        ?: entity?.name
+                        ?: eventKey.ifBlank { null }
+                    CmpAdvancement.EventQualified(eventKey = eventKey, eventShortName = shortName)
+                }
+                "PoolQualified" -> CmpAdvancement.PoolQualified(week = advancement.qualifyingPoolWeek ?: 0)
+                else -> CmpAdvancement.Qualified
+            }
+            teamKey to cmpAdv
+        }.toMap()
     }
 
     suspend fun refreshEventAlliances(eventKey: String) {
