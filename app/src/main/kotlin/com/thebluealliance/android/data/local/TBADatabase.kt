@@ -26,7 +26,7 @@ import com.thebluealliance.android.data.local.entity.*
         EventRankingSortOrderEntity::class,
         TeamEventStatusEntity::class,
     ],
-    version = 13,
+    version = 14,
     exportSchema = false,
 )
 abstract class TBADatabase : RoomDatabase() {
