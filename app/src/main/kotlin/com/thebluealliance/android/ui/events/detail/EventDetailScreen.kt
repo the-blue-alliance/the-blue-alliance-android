@@ -76,7 +76,7 @@ enum class EventDetailTab(val readableName: (Event?) -> String) {
     MATCHES({ "Matches" }),
     ALLIANCES({ "Alliances" }),
     INSIGHTS({ "Insights" }),
-    ADVANCEMENT_POINTS({ if (it?.district != null) "District points" else "Regional points" }),
+    ADVANCEMENT_POINTS({ if (it?.district != null) "District Points" else "Regional Points" }),
     AWARDS({ "Awards" }),
 }
 
