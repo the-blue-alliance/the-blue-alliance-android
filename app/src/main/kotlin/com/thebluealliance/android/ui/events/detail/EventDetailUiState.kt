@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.events.detail
 
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
+import com.thebluealliance.android.domain.model.CmpAdvancement
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventCOPRs
 import com.thebluealliance.android.domain.model.EventAdvancementPoints
@@ -25,6 +26,7 @@ data class EventDetailUiState(
     val oprs: EventOPRs? = null,
     val coprs: EventCOPRs? = null,
     val insights: EventInsights? = null,
+    val regionalCmpAdvancementByTeam: Map<String, CmpAdvancement> = emptyMap(),
     val districtDisplayName: String? = null,
     val pitLocations: Map<String, String> = emptyMap(),
 )

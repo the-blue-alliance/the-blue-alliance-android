@@ -9,6 +9,7 @@ import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.data.repository.TeamRepository
+import com.thebluealliance.android.domain.model.CmpAdvancement
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
@@ -53,6 +54,7 @@ class EventDetailViewModel @AssistedInject constructor(
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
     private val _pitLocations = MutableStateFlow<Map<String, String>>(emptyMap())
+    private val _regionalCmpAdvancementByTeam = MutableStateFlow<Map<String, CmpAdvancement>>(emptyMap())
 
     private val teamKeysFlow = teamRepository.observeEventTeamKeys(eventKey)
 
@@ -97,17 +99,19 @@ class EventDetailViewModel @AssistedInject constructor(
                 if (event?.district != null) eventRepository.observeEventDistrictPoints(eventKey) else eventRepository.observeEventRegionalPoints(eventKey),
                 eventRepository.observeEventOPRs(eventKey),
                 eventRepository.observeEventCOPRs(eventKey),
-            ) { advancementPoints, oprs, coprs ->
-                Triple(advancementPoints, oprs, coprs)
+                _regionalCmpAdvancementByTeam,
+            ) { advancementPoints, oprs, coprs, regionalCmpAdvancementByTeam ->
+                EventExtrasRightState(advancementPoints, oprs, coprs, regionalCmpAdvancementByTeam)
             }
 
             val extrasFlow = combine(extrasLeftFlow, extrasRightFlow) { left, right ->
                 EventExtrasState(
                     alliances = left.first,
                     awards = left.second,
-                    advancementPoints = right.first,
-                    oprs = right.second,
-                    coprs = right.third,
+                    advancementPoints = right.advancementPoints,
+                    oprs = right.oprs,
+                    coprs = right.coprs,
+                    regionalCmpAdvancementByTeam = right.regionalCmpAdvancementByTeam,
                 )
             }
 
@@ -125,6 +129,7 @@ class EventDetailViewModel @AssistedInject constructor(
                     oprs = extras.oprs,
                     coprs = extras.coprs,
                     insights = null,
+                    regionalCmpAdvancementByTeam = extras.regionalCmpAdvancementByTeam,
                 )
             }
         }.flatMapLatest { baseState ->
@@ -209,6 +214,11 @@ class EventDetailViewModel @AssistedInject constructor(
                     launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventRegionalPoints(eventKey) } catch (_: Exception) {} }
+                    launch {
+                        try {
+                            _regionalCmpAdvancementByTeam.value = eventRepository.fetchRegionalCmpAdvancementByTeam(eventYear)
+                        } catch (_: Exception) {}
+                    }
                     launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventCOPRs(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventInsights(eventKey) } catch (_: Exception) {} }
@@ -252,6 +262,11 @@ class EventDetailViewModel @AssistedInject constructor(
                         EventDetailTab.ADVANCEMENT_POINTS -> {
                             launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
                             launch { try { eventRepository.refreshEventRegionalPoints(eventKey) } catch (_: Exception) {} }
+                            launch {
+                                try {
+                                    _regionalCmpAdvancementByTeam.value = eventRepository.fetchRegionalCmpAdvancementByTeam(eventYear)
+                                } catch (_: Exception) {}
+                            }
                         }
                         EventDetailTab.AWARDS -> {
                             launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
@@ -292,4 +307,12 @@ private data class EventExtrasState(
     val advancementPoints: List<com.thebluealliance.android.domain.model.EventAdvancementPoints>,
     val oprs: com.thebluealliance.android.domain.model.EventOPRs?,
     val coprs: com.thebluealliance.android.domain.model.EventCOPRs?,
+    val regionalCmpAdvancementByTeam: Map<String, CmpAdvancement>,
+)
+
+private data class EventExtrasRightState(
+    val advancementPoints: List<com.thebluealliance.android.domain.model.EventAdvancementPoints>,
+    val oprs: com.thebluealliance.android.domain.model.EventOPRs?,
+    val coprs: com.thebluealliance.android.domain.model.EventCOPRs?,
+    val regionalCmpAdvancementByTeam: Map<String, CmpAdvancement>,
 )

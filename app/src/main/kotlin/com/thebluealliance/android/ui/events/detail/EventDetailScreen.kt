@@ -350,6 +350,7 @@ fun EventDetailScreen(
                         uiState.advancementPoints,
                         uiState.event,
                         uiState.teams,
+                        uiState.regionalCmpAdvancementByTeam,
                         onTeamClick = { teamKey ->
                             val eventKey = uiState.event?.key
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)

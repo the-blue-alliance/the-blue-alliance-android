@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.events.detail.tabs
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,8 +29,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.RoundedCornerShape
+import com.thebluealliance.android.domain.model.CmpAdvancement
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventAdvancementPoints
 import com.thebluealliance.android.domain.model.Team
@@ -54,6 +58,7 @@ fun EventAdvancementTab(
     advancementPoints: List<EventAdvancementPoints>?,
     event: Event?,
     teams: List<Team>?,
+    regionalCmpAdvancementByTeam: Map<String, CmpAdvancement> = emptyMap(),
     onTeamClick: (String) -> Unit = {},
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
@@ -84,6 +89,7 @@ fun EventAdvancementTab(
                 points = points,
                 teamName = teamName,
                 isDistrictEvent = isDistrictEvent,
+                cmpAdvancement = if (isDistrictEvent) null else regionalCmpAdvancementByTeam[points.teamKey],
                 onTeamClick = onTeamClick,
             )
         }
@@ -96,6 +102,7 @@ private fun AdvancementPointsItem(
     points: EventAdvancementPoints,
     teamName: String?,
     isDistrictEvent: Boolean,
+    cmpAdvancement: CmpAdvancement?,
     onTeamClick: (String) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -135,11 +142,17 @@ private fun AdvancementPointsItem(
                     )
                 }
             }
+            // Badge to the LEFT of the points total
+            if (cmpAdvancement != null) {
+                CmpAdvancementBadge(cmpAdvancement)
+                Spacer(modifier = Modifier.width(8.dp))
+            }
             Text(
                 text = "${points.total} pts",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
             )
+            Spacer(modifier = Modifier.width(4.dp))
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 contentDescription = if (expanded) "Collapse" else "Expand",
@@ -176,11 +189,58 @@ private fun AdvancementPointsItem(
                         fontWeight = FontWeight.Bold,
                     )
                 }
+                // Qualification detail row
+                if (cmpAdvancement != null) {
+                    val detail = cmpAdvancementDetail(cmpAdvancement)
+                    if (detail != null) {
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = "CMP Qualification",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.weight(1f),
+                            )
+                            Text(
+                                text = detail,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                    }
+                }
             }
         }
 
         HorizontalDivider()
     }
+}
+
+/** Returns a human-readable detail string describing how the team qualified, or null. */
+private fun cmpAdvancementDetail(advancement: CmpAdvancement): String? = when (advancement) {
+    is CmpAdvancement.EventQualified -> {
+        val name = advancement.eventShortName ?: advancement.eventKey.ifBlank { null }
+        name?.let { "via $it" }
+    }
+    is CmpAdvancement.PoolQualified -> "via Week ${advancement.week} Pool"
+    is CmpAdvancement.Qualified -> null
+}
+
+@Composable
+private fun CmpAdvancementBadge(advancement: CmpAdvancement) {
+    Text(
+        text = "CMP",
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(4.dp))
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+    )
 }
 
 @Composable
@@ -203,4 +263,3 @@ private fun AdvancementBreakdownRow(label: String, value: Int) {
         )
     }
 }
-
