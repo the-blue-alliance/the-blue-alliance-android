@@ -5,7 +5,9 @@ import com.thebluealliance.android.data.local.TBADatabase
 import com.thebluealliance.android.data.local.dao.EventTeamDao
 import com.thebluealliance.android.data.local.dao.MediaDao
 import com.thebluealliance.android.data.local.dao.TeamDao
+import com.thebluealliance.android.data.local.dao.TeamEventStatusDao
 import com.thebluealliance.android.data.local.entity.EventTeamEntity
+import com.thebluealliance.android.data.local.entity.TeamEventStatusEntity
 import com.thebluealliance.android.data.mappers.toDomain
 import com.thebluealliance.android.data.mappers.toEntity
 import com.thebluealliance.android.data.remote.TbaApi
@@ -23,6 +25,7 @@ class TeamRepository @Inject constructor(
     private val teamDao: TeamDao,
     private val mediaDao: MediaDao,
     private val eventTeamDao: EventTeamDao,
+    private val teamEventStatusDao: TeamEventStatusDao,
 ) {
     fun searchTeams(query: String): Flow<List<Team>> =
         teamDao.search(query).map { list -> list.map { it.toDomain() } }
@@ -73,11 +76,13 @@ class TeamRepository @Inject constructor(
         }
     }
 
-    suspend fun fetchTeamEventPitLocation(teamKey: String, eventKey: String): String? {
-        return try {
-            api.getTeamEventStatus(teamKey, eventKey)?.pitLocation
-        } catch (_: Exception) {
-            null
-        }
+    fun observeTeamEventPitLocation(teamKey: String, eventKey: String): Flow<String?> =
+        teamEventStatusDao.observe(teamKey, eventKey).map { it?.pitLocation }
+
+    suspend fun refreshTeamEventPitLocation(teamKey: String, eventKey: String) {
+        try {
+            val pitLocation = api.getTeamEventStatus(teamKey, eventKey)?.pitLocation
+            teamEventStatusDao.insert(TeamEventStatusEntity(teamKey, eventKey, pitLocation))
+        } catch (_: Exception) { }
     }
 }

@@ -54,7 +54,6 @@ class TeamEventDetailViewModel @AssistedInject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
-    private val _pitLocation = MutableStateFlow<String?>(null)
     private val _regionalCmpAdvancementByTeam = MutableStateFlow<Map<String, CmpAdvancement>>(emptyMap())
 
     val uiState: StateFlow<TeamEventDetailUiState> = combine(
@@ -74,7 +73,7 @@ class TeamEventDetailViewModel @AssistedInject constructor(
                 eventRepository.observeEventOPRs(eventKey),
                 eventRepository.observeEventAlliances(eventKey),
                 teamRepository.observeTeamMedia(teamKey, year),
-                _pitLocation,
+                teamRepository.observeTeamEventPitLocation(teamKey, eventKey),
             ) { awards, oprs, alliances, media, pitLocation ->
                 TeamEventExtras(
                     awards = awards,
@@ -152,7 +151,7 @@ class TeamEventDetailViewModel @AssistedInject constructor(
                         } catch (_: Exception) {}
                     }
                     launch { try { teamRepository.refreshTeamMedia(teamKey, year) } catch (_: Exception) {} }
-                    launch { _pitLocation.value = teamRepository.fetchTeamEventPitLocation(teamKey, eventKey) }
+                    launch { try { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) } catch (_: Exception) {} }
                 }
             } finally {
                 _isRefreshing.value = false
@@ -180,7 +179,7 @@ class TeamEventDetailViewModel @AssistedInject constructor(
                                     _regionalCmpAdvancementByTeam.value = eventRepository.fetchRegionalCmpAdvancementByTeam(year)
                                 } catch (_: Exception) {}
                             }
-                            launch { _pitLocation.value = teamRepository.fetchTeamEventPitLocation(teamKey, eventKey) }
+                            launch { try { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) } catch (_: Exception) {} }
                         }
                         1 -> { // Matches
                             launch { try { matchRepository.refreshEventMatches(eventKey) } catch (_: Exception) {} }

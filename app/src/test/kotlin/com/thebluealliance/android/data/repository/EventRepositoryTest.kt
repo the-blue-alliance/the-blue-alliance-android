@@ -12,6 +12,7 @@ import com.thebluealliance.android.data.local.dao.EventOPRsDao
 import com.thebluealliance.android.data.local.dao.EventRankingSortOrderDao
 import com.thebluealliance.android.data.local.dao.EventTeamDao
 import com.thebluealliance.android.data.local.dao.RankingDao
+import com.thebluealliance.android.data.local.dao.TeamEventStatusDao
 import com.thebluealliance.android.data.local.entity.EventEntity
 import com.thebluealliance.android.data.local.entity.EventRankingSortOrderEntity
 import com.thebluealliance.android.data.remote.TbaApi
@@ -47,6 +48,7 @@ class EventRepositoryTest {
     private val eventCOPRsDao: EventCOPRsDao = mockk(relaxUnitFun = true)
     private val eventInsightsDao: EventInsightsDao = mockk(relaxUnitFun = true)
     private val eventRankingSortOrderDao: EventRankingSortOrderDao = mockk(relaxUnitFun = true)
+    private val teamEventStatusDao: TeamEventStatusDao = mockk(relaxUnitFun = true)
 
     private val repo = EventRepository(
         api,
@@ -61,6 +63,7 @@ class EventRepositoryTest {
         eventCOPRsDao,
         eventInsightsDao,
         eventRankingSortOrderDao,
+        teamEventStatusDao,
     )
 
     @Test
