@@ -7,6 +7,9 @@ import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
+import com.thebluealliance.android.domain.model.CmpAdvancement
+import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.domain.model.EventAdvancementPoints
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.withPlayoffAlliances
@@ -31,6 +34,9 @@ private data class TeamEventExtras(
     val alliances: List<Alliance>,
     val media: List<Media>,
     val pitLocation: String?,
+    val districtPointsByTeam: Map<String, EventAdvancementPoints>,
+    val regionalPointsByTeam: Map<String, EventAdvancementPoints>,
+    val regionalCmpAdvancementByTeam: Map<String, CmpAdvancement>,
 )
 
 @HiltViewModel(assistedFactory = TeamEventDetailViewModel.Factory::class)
@@ -48,6 +54,8 @@ class TeamEventDetailViewModel @AssistedInject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
+    private val _regionalCmpAdvancementByTeam = MutableStateFlow<Map<String, CmpAdvancement>>(emptyMap())
+
     val uiState: StateFlow<TeamEventDetailUiState> = combine(
         teamRepository.observeTeam(teamKey),
         eventRepository.observeEvent(eventKey),
@@ -58,15 +66,47 @@ class TeamEventDetailViewModel @AssistedInject constructor(
             matches.filter { m -> teamKey in m.redTeamKeys || teamKey in m.blueTeamKeys }
         },
         combine(
-            eventRepository.observeEventAwards(eventKey).map { awards ->
-                awards.filter { it.teamKey == teamKey }
+            combine(
+                eventRepository.observeEventAwards(eventKey).map { awards ->
+                    awards.filter { it.teamKey == teamKey }
+                },
+                eventRepository.observeEventOPRs(eventKey),
+                eventRepository.observeEventAlliances(eventKey),
+                teamRepository.observeTeamMedia(teamKey, year),
+                teamRepository.observeTeamEventPitLocation(teamKey, eventKey),
+            ) { awards, oprs, alliances, media, pitLocation ->
+                TeamEventExtras(
+                    awards = awards,
+                    oprs = oprs,
+                    alliances = alliances,
+                    media = media,
+                    pitLocation = pitLocation,
+                    districtPointsByTeam = emptyMap(),
+                    regionalPointsByTeam = emptyMap(),
+                    regionalCmpAdvancementByTeam = emptyMap(),
+                )
             },
-            eventRepository.observeEventOPRs(eventKey),
-            eventRepository.observeEventAlliances(eventKey),
-            teamRepository.observeTeamMedia(teamKey, year),
-            teamRepository.observeTeamEventPitLocation(teamKey, eventKey),
-        ) { awards, oprs, alliances, media, pitLocation -> TeamEventExtras(awards, oprs, alliances, media, pitLocation) },
+            combine(
+                eventRepository.observeEventDistrictPoints(eventKey).map { it.associateBy { points -> points.teamKey } },
+                eventRepository.observeEventRegionalPoints(eventKey).map { it.associateBy { points -> points.teamKey } },
+                _regionalCmpAdvancementByTeam,
+            ) { districtPoints, regionalPoints, cmpMap ->
+                Triple(districtPoints, regionalPoints, cmpMap)
+            },
+        ) { baseExtras, pointData ->
+            baseExtras.copy(
+                districtPointsByTeam = pointData.first,
+                regionalPointsByTeam = pointData.second,
+                regionalCmpAdvancementByTeam = pointData.third,
+            )
+        },
     ) { team, event, ranking, matches, extras ->
+        val isDistrictEvent = event?.district != null
+        val advancementPoints = if (isDistrictEvent) {
+            extras.districtPointsByTeam[teamKey]
+        } else {
+            extras.regionalPointsByTeam[teamKey]
+        }
         TeamEventDetailUiState(
             team = team,
             event = event,
@@ -77,6 +117,13 @@ class TeamEventDetailViewModel @AssistedInject constructor(
             alliances = extras.alliances,
             media = extras.media,
             pitLocation = extras.pitLocation,
+            advancementPoints = advancementPoints,
+            cmpAdvancement = event?.let {
+                filterRegionalCmpQualificationForEvent(
+                    event = it,
+                    advancement = extras.regionalCmpAdvancementByTeam[teamKey],
+                )
+            },
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TeamEventDetailUiState())
 
@@ -96,6 +143,13 @@ class TeamEventDetailViewModel @AssistedInject constructor(
                     launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
                     launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
+                    launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
+                    launch { try { eventRepository.refreshEventRegionalPoints(eventKey) } catch (_: Exception) {} }
+                    launch {
+                        try {
+                            _regionalCmpAdvancementByTeam.value = eventRepository.fetchRegionalCmpAdvancementByTeam(year)
+                        } catch (_: Exception) {}
+                    }
                     launch { try { teamRepository.refreshTeamMedia(teamKey, year) } catch (_: Exception) {} }
                     launch { try { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) } catch (_: Exception) {} }
                 }
@@ -118,6 +172,13 @@ class TeamEventDetailViewModel @AssistedInject constructor(
                             launch { try { eventRepository.refreshEventRankings(eventKey) } catch (_: Exception) {} }
                             launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
                             launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
+                            launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
+                            launch { try { eventRepository.refreshEventRegionalPoints(eventKey) } catch (_: Exception) {} }
+                            launch {
+                                try {
+                                    _regionalCmpAdvancementByTeam.value = eventRepository.fetchRegionalCmpAdvancementByTeam(year)
+                                } catch (_: Exception) {}
+                            }
                             launch { try { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) } catch (_: Exception) {} }
                         }
                         1 -> { // Matches
@@ -143,5 +204,20 @@ class TeamEventDetailViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(navKey: Screen.TeamEventDetail): TeamEventDetailViewModel
+    }
+}
+
+private fun filterRegionalCmpQualificationForEvent(
+    event: Event,
+    advancement: CmpAdvancement?,
+): CmpAdvancement? {
+    if (event.district != null || advancement == null) return null
+    return when (advancement) {
+        is CmpAdvancement.EventQualified -> advancement.takeIf { it.eventKey == event.key }
+        is CmpAdvancement.PoolQualified -> {
+            val eventWeek = event.week
+            advancement.takeIf { eventWeek != null && it.week == (eventWeek + 1) }
+        }
+        is CmpAdvancement.Qualified -> null
     }
 }
