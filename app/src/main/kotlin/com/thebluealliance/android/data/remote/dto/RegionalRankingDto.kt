@@ -27,6 +27,7 @@ data class RegionalEventPointsDto(
 data class RegionalAdvancementDto(
     val cmp: Boolean = false,
     @SerialName("cmp_status") val cmpStatus: String? = null,
+    @SerialName("qualifying_event") val qualifyingEvent: String? = null,
     @SerialName("qualifying_pool_week") val qualifyingPoolWeek: Int? = null,
 )
 

@@ -10,5 +10,6 @@ data class EventDistrictPointsEntity(
     val elimPoints: Int,
     val alliancePoints: Int,
     val awardPoints: Int,
+    val rookieBonus: Int,
     val total: Int,
 )

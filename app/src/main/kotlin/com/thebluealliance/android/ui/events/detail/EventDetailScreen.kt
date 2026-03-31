@@ -76,7 +76,7 @@ enum class EventDetailTab(val readableName: (Event?) -> String) {
     MATCHES({ "Matches" }),
     ALLIANCES({ "Alliances" }),
     INSIGHTS({ "Insights" }),
-    ADVANCEMENT_POINTS({ if (it?.district != null) "District points" else "Regional points" }),
+    ADVANCEMENT_POINTS({ if (it?.district != null) "District Points" else "Regional Points" }),
     AWARDS({ "Awards" }),
 }
 
@@ -350,6 +350,7 @@ fun EventDetailScreen(
                         uiState.advancementPoints,
                         uiState.event,
                         uiState.teams,
+                        uiState.regionalCmpAdvancementByTeam,
                         onTeamClick = { teamKey ->
                             val eventKey = uiState.event?.key
                             if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)

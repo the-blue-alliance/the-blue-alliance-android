@@ -14,5 +14,6 @@ data class EventDistrictPointsEntryDto(
     @SerialName("elim_points") val elimPoints: Int = 0,
     @SerialName("alliance_points") val alliancePoints: Int = 0,
     @SerialName("award_points") val awardPoints: Int = 0,
+    @SerialName("rookie_bonus") val rookieBonus: Int = 0,
     val total: Int = 0,
 )
