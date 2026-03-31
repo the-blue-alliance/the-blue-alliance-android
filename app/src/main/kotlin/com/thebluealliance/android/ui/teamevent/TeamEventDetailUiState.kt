@@ -2,7 +2,9 @@ package com.thebluealliance.android.ui.teamevent
 
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
+import com.thebluealliance.android.domain.model.CmpAdvancement
 import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.domain.model.EventAdvancementPoints
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.Media
@@ -19,4 +21,6 @@ data class TeamEventDetailUiState(
     val alliances: List<Alliance>? = null,
     val media: List<Media>? = null,
     val pitLocation: String? = null,
+    val advancementPoints: EventAdvancementPoints? = null,
+    val cmpAdvancement: CmpAdvancement? = null,
 )

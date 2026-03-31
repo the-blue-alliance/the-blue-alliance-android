@@ -41,7 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
+import com.thebluealliance.android.domain.model.CmpAdvancement
 import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.domain.model.EventAdvancementPoints
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.PlayoffType
@@ -57,6 +59,7 @@ import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.events.detail.tabs.advancementBreakdownRows
 import com.thebluealliance.android.util.openUrl
 import kotlinx.coroutines.launch
 
@@ -181,6 +184,7 @@ fun TeamEventDetailScreen(
                         awards = uiState.awards,
                         matches = uiState.matches,
                         pitLocation = uiState.pitLocation,
+                        cmpAdvancement = uiState.cmpAdvancement,
                         onNavigateToEvent = onNavigateToEvent,
                         onNavigateToTeam = onNavigateToTeam,
                         onNavigateToMatch = onNavigateToMatch,
@@ -228,7 +232,9 @@ fun TeamEventDetailScreen(
                     )
                     TeamEventDetailTabs.STATS -> StatsTab(
                         teamKey = viewModel.teamKey,
+                        event = evt,
                         oprs = uiState.oprs,
+                        advancementPoints = uiState.advancementPoints,
                         innerPadding = bottomPadding,
                     )
                     TeamEventDetailTabs.AWARDS -> {
@@ -259,6 +265,7 @@ private fun SummaryTab(
     awards: List<Award>?,
     matches: List<Match>?,
     pitLocation: String?,
+    cmpAdvancement: CmpAdvancement?,
     onNavigateToEvent: (eventKey: String, initialTab: EventDetailTab) -> Unit,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToMatch: (String) -> Unit,
@@ -381,6 +388,32 @@ private fun SummaryTab(
             }
         }
 
+        if (cmpAdvancement != null) {
+            item(key = "summary_cmp_header") {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFF5C6BC0))
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                ) {
+                    Text(
+                        text = "Championship Qualification",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                    )
+                }
+            }
+            item(key = "summary_cmp_detail") {
+                SummarySection(label = "Status") {
+                    val detail = cmpAdvancementSummary(cmpAdvancement)
+                    if (detail != null) {
+                        Text(text = detail, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            }
+        }
+
         // Last Match / Next Match
         if (matches != null) {
             val sortedMatches = matches.sortedWith(
@@ -433,6 +466,15 @@ private fun SummaryTab(
             }
         }
     }
+}
+
+private fun cmpAdvancementSummary(advancement: CmpAdvancement): String? = when (advancement) {
+    is CmpAdvancement.EventQualified -> {
+        val eventName = advancement.eventShortName ?: advancement.eventKey.ifBlank { null }
+        eventName?.let { "Qualified via $it" }
+    }
+    is CmpAdvancement.PoolQualified -> "Qualified via Regional Pool (Week ${advancement.week})"
+    is CmpAdvancement.Qualified -> "Qualified"
 }
 
 @Composable
@@ -498,17 +540,22 @@ private fun InfoRow(
 @Composable
 private fun StatsTab(
     teamKey: String,
+    event: Event?,
     oprs: EventOPRs?,
+    advancementPoints: EventAdvancementPoints?,
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
-    if (oprs == null) {
+    val opr = oprs?.oprs?.get(teamKey)
+    val dpr = oprs?.dprs?.get(teamKey)
+    val ccwm = oprs?.ccwms?.get(teamKey)
+    val hasOprData = opr != null || dpr != null || ccwm != null
+    val hasPointsData = event != null && advancementPoints != null
+
+    if (oprs == null && !hasPointsData) {
         LoadingBox(modifier = Modifier.padding(innerPadding))
         return
     }
-    val opr = oprs.oprs[teamKey]
-    val dpr = oprs.dprs[teamKey]
-    val ccwm = oprs.ccwms[teamKey]
-    if (opr == null && dpr == null && ccwm == null) {
+    if (!hasOprData && !hasPointsData) {
         EmptyBox(
             modifier = Modifier.padding(innerPadding),
             message = "No stats available"
@@ -523,16 +570,50 @@ private fun StatsTab(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        if (opr != null) StatRow("OPR", opr)
-        if (dpr != null) StatRow("DPR", dpr)
-        if (ccwm != null) StatRow("CCWM", ccwm)
+        if (hasOprData) {
+            if (opr != null) StatRow("OPR", opr)
+            if (dpr != null) StatRow("DPR", dpr)
+            if (ccwm != null) StatRow("CCWM", ccwm)
+            Text(
+                text = "Learn more about OPR",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable { context.openUrl("https://www.thebluealliance.com/opr") },
+            )
+        }
+
+        if (hasPointsData) {
+            if (hasOprData) HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            val isDistrictEvent = event.district != null
+            val points = advancementPoints
+            Text(
+                text = if (isDistrictEvent) "District Points" else "Regional Points",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = "${points.total} pts",
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
+            )
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                advancementBreakdownRows(points, isDistrictEvent).forEach { (label, value) ->
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.weight(1f),
+                        )
+                        Text(
+                            text = value.toString(),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Medium,
+                        )
+                    }
+                }
+            }
+        }
         Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = "Learn more about OPR",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.clickable { context.openUrl("https://www.thebluealliance.com/opr") },
-        )
     }
 }
 
