@@ -319,6 +319,7 @@ fun EventDistrictPointsEntryDto.toEntity(eventKey: String, teamKey: String) = Ev
     elimPoints = elimPoints,
     alliancePoints = alliancePoints,
     awardPoints = awardPoints,
+    rookieBonus = rookieBonus,
     total = total,
 )
 
@@ -328,6 +329,7 @@ fun EventDistrictPointsEntity.toDomain() = EventAdvancementPoints(
     elimPoints = elimPoints,
     alliancePoints = alliancePoints,
     awardPoints = awardPoints,
+    rookieBonus = rookieBonus,
     total = total,
 )
 
