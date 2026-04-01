@@ -144,4 +144,5 @@ dependencies {
 
     // AndroidX
     implementation(libs.core.ktx)
+    implementation(libs.core.splashscreen)
 }
