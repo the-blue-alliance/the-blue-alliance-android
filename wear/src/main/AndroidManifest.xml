@@ -52,7 +52,8 @@
             android:name=".tracker.TeamTrackerActivity"
             android:launchMode="singleTop"
             android:exported="true"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/Theme.TBA.Wear">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

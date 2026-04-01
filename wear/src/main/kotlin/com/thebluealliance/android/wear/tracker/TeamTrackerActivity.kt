@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.Chip
@@ -47,6 +48,10 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.Text
+import androidx.wear.compose.material.TimeText
+import androidx.wear.compose.material.Vignette
+import androidx.wear.compose.material.VignettePosition
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.thebluealliance.android.wear.R
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationConfigActivity
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
@@ -61,6 +66,7 @@ class TeamTrackerActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         trackerPrefs = TeamTrackerPreferences(this)
 
@@ -167,12 +173,16 @@ private fun TeamTrackerScreen(
     val listState = rememberScalingLazyListState()
 
     Scaffold(
+        timeText = { TimeText() },
+        vignette = { Vignette(vignettePosition = VignettePosition.TopAndBottom) },
         positionIndicator = { PositionIndicator(scalingLazyListState = listState) },
     ) {
         ScalingLazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
+            autoCentering = null,
+            contentPadding = PaddingValues(top = 28.dp, start = 10.dp, end = 10.dp, bottom = 40.dp),
         ) {
             item { TeamHeader(state) }
             item { EventSubtitle(state) }
@@ -233,32 +243,36 @@ private fun TeamTrackerScreen(
 
 @Composable
 private fun EmptyState(onChangeTeam: () -> Unit) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
+    Scaffold(
+        timeText = { TimeText() },
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(16.dp),
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
         ) {
-            Icon(
-                painter = painterResource(R.drawable.tba_lamp),
-                contentDescription = null,
-                modifier = Modifier.size(48.dp).padding(bottom = 16.dp),
-                tint = MaterialTheme.colors.primary,
-            )
-            Chip(
-                onClick = onChangeTeam,
-                label = { Text(stringResource(R.string.set_tracked_team)) },
-                icon = {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_settings),
-                        contentDescription = null,
-                        modifier = Modifier.size(ChipDefaults.IconSize),
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(16.dp),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.tba_lamp),
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp).padding(bottom = 16.dp),
+                    tint = MaterialTheme.colors.primary,
+                )
+                Chip(
+                    onClick = onChangeTeam,
+                    label = { Text(stringResource(R.string.set_tracked_team)) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_settings),
+                            contentDescription = null,
+                            modifier = Modifier.size(ChipDefaults.IconSize),
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
     }
 }
