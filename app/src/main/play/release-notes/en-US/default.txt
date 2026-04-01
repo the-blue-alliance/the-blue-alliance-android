@@ -1,6 +1,7 @@
-Version 11.0.0:
+Version 11.5.0:
  - We have completely REBUILT (ha!) the app for 2026.
  - Notifications work again. Use the bell icon on teams or events to stay on top of the latest.
+ - Homescreen widget & wear app support, so you can track your favorite teams.
  - Dark mode.
 
 View the full changelog on GitHub:
