@@ -35,7 +35,7 @@ work = "2.11.2"
 glance = "1.2.0-rc01"
 wear-compose = "1.6.0"
 wear-complications = "1.3.0"
-core-splashscreen = "1.0.1"
+core-splashscreen = "1.2.0"
 
 junit = "6.0.3"
 turbine = "1.2.1"
