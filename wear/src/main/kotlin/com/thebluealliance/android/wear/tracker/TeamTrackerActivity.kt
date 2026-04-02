@@ -367,7 +367,6 @@ private fun MatchSection(
         Text(
             text = "$title \u2014 $matchLabel",
             style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 2.dp),
         )
         Row(
@@ -434,6 +433,7 @@ private fun AllianceRow(
         Text(
             text = styledTeams,
             style = MaterialTheme.typography.labelSmall,
+            fontWeight = if (isWinner) FontWeight.Bold else FontWeight.Normal,
             color = color,
             modifier = Modifier.weight(1f),
         )
