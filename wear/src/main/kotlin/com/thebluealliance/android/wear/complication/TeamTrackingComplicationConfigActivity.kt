@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,8 +24,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material3.Button
+import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.FilledTonalButton
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import androidx.wear.watchface.complications.datasource.ComplicationDataSourceUpdateRequester
 import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
@@ -55,10 +56,14 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                ConfigScreen(
-                    initialTeam = existingTeam,
-                    onSave = { teamNumber -> saveAndFinish(teamNumber) },
-                )
+                AppScaffold {
+                    ScreenScaffold {
+                        ConfigScreen(
+                            initialTeam = existingTeam,
+                            onSave = { teamNumber -> saveAndFinish(teamNumber) },
+                        )
+                    }
+                }
             }
         }
     }
@@ -119,7 +124,7 @@ private fun ConfigScreen(
                 .fillMaxWidth()
                 .background(
                     color = MaterialTheme.colorScheme.surfaceContainer,
-                    shape = RoundedCornerShape(8.dp),
+                    shape = MaterialTheme.shapes.medium,
                 )
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             textStyle = TextStyle(
@@ -137,7 +142,7 @@ private fun ConfigScreen(
                     Text(
                         text = initialTeam,
                         style = TextStyle(
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 20.sp,
                             textAlign = TextAlign.Center,
                         ),
@@ -147,13 +152,12 @@ private fun ConfigScreen(
                 innerTextField()
             },
         )
-        Button(
+        FilledTonalButton(
             onClick = { save() },
+            label = { Text("Save") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 12.dp),
-        ) {
-            Text("Save")
-        }
+        )
     }
 }
