@@ -39,19 +39,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.ChipDefaults
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.PositionIndicator
-import androidx.wear.compose.material.Scaffold
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
-import androidx.wear.compose.material.Vignette
-import androidx.wear.compose.material.VignettePosition
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.EdgeButton
+import androidx.wear.compose.material3.EdgeButtonSize
+import androidx.wear.compose.material3.FilledTonalButton
+import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.Text
 import com.thebluealliance.android.wear.R
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationConfigActivity
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
@@ -78,11 +76,13 @@ class TeamTrackerActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                val currentState by state
-                TeamTrackerScreen(
-                    state = currentState,
-                    onChangeTeam = { launchConfigActivity() },
-                )
+                AppScaffold {
+                    val currentState by state
+                    TeamTrackerScreen(
+                        state = currentState,
+                        onChangeTeam = { launchConfigActivity() },
+                    )
+                }
             }
         }
     }
@@ -172,17 +172,26 @@ private fun TeamTrackerScreen(
 
     val listState = rememberScalingLazyListState()
 
-    Scaffold(
-        timeText = { TimeText() },
-        vignette = { Vignette(vignettePosition = VignettePosition.TopAndBottom) },
-        positionIndicator = { PositionIndicator(scalingLazyListState = listState) },
+    ScreenScaffold(
+        scrollState = listState,
+        edgeButton = {
+            EdgeButton(
+                onClick = onChangeTeam,
+                buttonSize = EdgeButtonSize.Medium,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_settings),
+                    contentDescription = stringResource(R.string.change_team),
+                )
+            }
+        },
     ) {
         ScalingLazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             autoCentering = null,
-            contentPadding = PaddingValues(top = 28.dp, start = 10.dp, end = 10.dp, bottom = 40.dp),
+            contentPadding = PaddingValues(top = 28.dp, start = 10.dp, end = 10.dp, bottom = 60.dp),
         ) {
             item { TeamHeader(state) }
             item { EventSubtitle(state) }
@@ -219,33 +228,13 @@ private fun TeamTrackerScreen(
                     )
                 }
             }
-
-            item {
-                Chip(
-                    onClick = onChangeTeam,
-                    label = { Text(stringResource(R.string.change_team)) },
-                    icon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_settings),
-                            contentDescription = null,
-                            modifier = Modifier.size(ChipDefaults.IconSize),
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    colors = ChipDefaults.secondaryChipColors(),
-                )
-            }
         }
     }
 }
 
 @Composable
 private fun EmptyState(onChangeTeam: () -> Unit) {
-    Scaffold(
-        timeText = { TimeText() },
-    ) {
+    ScreenScaffold {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
@@ -258,16 +247,15 @@ private fun EmptyState(onChangeTeam: () -> Unit) {
                     painter = painterResource(R.drawable.tba_lamp),
                     contentDescription = null,
                     modifier = Modifier.size(48.dp).padding(bottom = 16.dp),
-                    tint = MaterialTheme.colors.primary,
+                    tint = MaterialTheme.colorScheme.primary,
                 )
-                Chip(
+                FilledTonalButton(
                     onClick = onChangeTeam,
                     label = { Text(stringResource(R.string.set_tracked_team)) },
                     icon = {
                         Icon(
                             painter = painterResource(R.drawable.ic_settings),
                             contentDescription = null,
-                            modifier = Modifier.size(ChipDefaults.IconSize),
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -316,7 +304,7 @@ private fun TeamHeader(state: TeamTrackerState) {
         }
         Text(
             text = state.teamNumber,
-            style = MaterialTheme.typography.title1,
+            style = MaterialTheme.typography.titleLarge,
         )
     }
 }
@@ -331,9 +319,9 @@ private fun EventSubtitle(state: TeamTrackerState) {
         }
         Text(
             text = text,
-            style = MaterialTheme.typography.caption2,
+            style = MaterialTheme.typography.labelSmall,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(vertical = 2.dp),
@@ -346,9 +334,9 @@ private fun EventSubtitle(state: TeamTrackerState) {
             for (event in state.upcomingEvents) {
                 Text(
                     text = event,
-                    style = MaterialTheme.typography.caption2,
+                    style = MaterialTheme.typography.labelSmall,
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -378,7 +366,7 @@ private fun MatchSection(
     ) {
         Text(
             text = "$title \u2014 $matchLabel",
-            style = MaterialTheme.typography.caption1,
+            style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 2.dp),
         )
@@ -407,7 +395,7 @@ private fun MatchSection(
             if (timeText != null) {
                 Text(
                     text = timeText,
-                    style = MaterialTheme.typography.caption2,
+                    style = MaterialTheme.typography.labelSmall,
                 )
             }
         }
@@ -445,21 +433,21 @@ private fun AllianceRow(
     ) {
         Text(
             text = styledTeams,
-            style = MaterialTheme.typography.caption2,
+            style = MaterialTheme.typography.labelSmall,
             color = color,
             modifier = Modifier.weight(1f),
         )
         if (bonusRp > 0) {
             Text(
                 text = "\u25CF".repeat(bonusRp) + " ",
-                style = MaterialTheme.typography.caption2,
+                style = MaterialTheme.typography.labelSmall,
                 color = color,
             )
         }
         if (score != null) {
             Text(
                 text = score.toString(),
-                style = MaterialTheme.typography.caption2,
+                style = MaterialTheme.typography.labelSmall,
                 fontWeight = if (isWinner) FontWeight.Bold else FontWeight.Normal,
                 color = color,
             )

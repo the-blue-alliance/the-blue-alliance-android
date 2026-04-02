@@ -107,7 +107,7 @@ play {
 
 dependencies {
     // Wear OS Compose
-    implementation(libs.wear.compose.material)
+    implementation(libs.wear.compose.material3)
     implementation(libs.wear.compose.foundation)
     implementation(libs.activity.compose)
 
