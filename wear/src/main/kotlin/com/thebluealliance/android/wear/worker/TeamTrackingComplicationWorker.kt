@@ -148,12 +148,9 @@ class TeamTrackingComplicationWorker @AssistedInject constructor(
     private suspend fun fetchTeamEventData(teamKey: String): TeamEventData {
         val year = LocalDate.now().year
 
-        val events = try {
-            api.getTeamEvents(teamKey, year)
-        } catch (e: Exception) {
-            Log.w(TAG, "Failed to fetch events for $teamKey", e)
-            emptyList()
-        }
+        // Let this throw — doWork() catches it and returns Result.retry(),
+        // preserving cached data instead of overwriting with empty values.
+        val events = api.getTeamEvents(teamKey, year)
 
         val currentEvent = findCurrentEvent(events, teamKey)
 
@@ -220,7 +217,7 @@ class TeamTrackingComplicationWorker @AssistedInject constructor(
                 prefs.upcomingEventDate = ""
             }
 
-            prefs.avatarBase64 = data.avatarBase64
+            if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
             return false
         }
 
@@ -234,7 +231,7 @@ class TeamTrackingComplicationWorker @AssistedInject constructor(
         }
         prefs.activeEventName = data.currentEvent.shortName ?: data.currentEvent.name
 
-        prefs.avatarBase64 = data.avatarBase64
+        if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
         return true
     }
 
@@ -246,15 +243,15 @@ class TeamTrackingComplicationWorker @AssistedInject constructor(
     private suspend fun updateAppTracker(prefs: TeamTrackerPreferences, teamNumber: String, data: TeamEventData): Boolean {
         val teamKey = "frc$teamNumber"
 
-        // Fetch team nickname
+        // Fetch team nickname — keep existing on failure
         prefs.teamNickname = try {
-            api.getTeam(teamKey).nickname ?: ""
+            api.getTeam(teamKey).nickname ?: prefs.teamNickname
         } catch (e: Exception) {
             Log.w(TAG, "Failed to fetch team info for $teamKey", e)
-            ""
+            prefs.teamNickname
         }
 
-        prefs.avatarBase64 = data.avatarBase64
+        if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
 
         if (data.currentEvent == null) {
             prefs.hasActiveEvent = false
