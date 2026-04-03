@@ -44,6 +44,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -246,7 +247,7 @@ private fun EventsList(
     }
 
     // Auto-select current week on first load
-    var hasAutoSelected by remember(selectedYear) { mutableStateOf(false) }
+    var hasAutoSelected by rememberSaveable(selectedYear) { mutableStateOf(false) }
     LaunchedEffect(currentWeekLabel, weekChipLabels) {
         if (!hasAutoSelected && currentWeekLabel != null && currentWeekLabel in weekChipLabels) {
             hasAutoSelected = true
