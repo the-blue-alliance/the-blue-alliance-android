@@ -72,11 +72,19 @@ private const val SCROLL_TO_FAVORITES = "\u0000"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventsScreen(
+    initialYear: Int = 0,
     onNavigateToEvent: (String) -> Unit,
     onNavigateToSearch: () -> Unit,
     reselectFlow: Flow<Unit>,
     viewModel: EventsViewModel = hiltViewModel(),
 ) {
+    // Apply deeplink year on first composition (0 = use default/current year)
+    LaunchedEffect(Unit) {
+        if (initialYear > 0) {
+            viewModel.selectYear(initialYear)
+        }
+    }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
     val maxYear by viewModel.maxYear.collectAsStateWithLifecycle()

@@ -81,7 +81,7 @@ class Navigator(
          */
         if (size == 1) {
             // All deeplinks currently use Screen.Events as their parent
-            val deeplinkKey = Screen.Events
+            val deeplinkKey = Screen.Events()
 
             /**
              * create a [androidx.core.app.TaskStackBuilder] that will restart the

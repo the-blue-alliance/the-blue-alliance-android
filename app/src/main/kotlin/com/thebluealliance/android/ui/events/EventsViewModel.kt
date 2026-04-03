@@ -88,10 +88,6 @@ class EventsViewModel @Inject constructor(
             try {
                 val status = tbaApi.getStatus()
                 _maxYear.value = status.maxSeason
-                // If current selection is below max, update to max
-                if (_selectedYear.value < status.maxSeason) {
-                    _selectedYear.value = status.maxSeason
-                }
             } catch (_: Exception) {
                 // Fall back to calendar year (already set)
             }

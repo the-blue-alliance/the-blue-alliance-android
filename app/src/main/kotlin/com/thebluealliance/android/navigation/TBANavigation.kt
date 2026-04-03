@@ -89,13 +89,14 @@ fun TBANavigation(
                 entryProvider = entryProvider {
                 entry<Screen.Events>(
                     metadata = Transitions.topLevelTransitionSpec
-                ) {
+                ) { events ->
                     EventsScreen(
+                        initialYear = events.year,
                         onNavigateToEvent = { eventKey ->
                             navigator.navigate(Screen.EventDetail(eventKey))
                         },
                         onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                        reselectFlow = tabReselectFlows[Screen.Events] ?: emptyFlow(),
+                        reselectFlow = tabReselectFlows[Screen.Events()] ?: emptyFlow(),
                     )
                 }
                     entry<Screen.Teams>(

@@ -5,7 +5,7 @@ import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import kotlinx.serialization.Serializable
 
 sealed interface Screen : NavKey {
-    @Serializable data object Events : Screen
+    @Serializable data class Events(val year: Int = 0) : Screen
     @Serializable data object Teams : Screen
     @Serializable data object Districts : Screen
     @Serializable data object RegionalAdvancement : Screen
