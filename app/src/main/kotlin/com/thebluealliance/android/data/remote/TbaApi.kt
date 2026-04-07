@@ -109,7 +109,7 @@ interface TbaApi {
     @GET("api/v3/regional_advancement/{year}/rankings")
     suspend fun getRegionalAdvancementRankings(@Path("year") year: Int): List<RegionalRankingDto>?
 
-    @GET("api/v3/regional_advancement/{year}/")
+    @GET("api/v3/regional_advancement/{year}")
     suspend fun getRegionalAdvancement(@Path("year") year: Int): Map<String, RegionalAdvancementDto>?
 
     // Media
