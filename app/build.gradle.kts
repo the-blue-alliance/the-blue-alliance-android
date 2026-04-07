@@ -186,6 +186,7 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 
     // AboutLibraries
     implementation(libs.aboutlibraries.compose.m3)
