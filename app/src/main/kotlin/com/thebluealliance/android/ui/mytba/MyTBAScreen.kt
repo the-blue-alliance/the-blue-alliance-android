@@ -59,7 +59,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
