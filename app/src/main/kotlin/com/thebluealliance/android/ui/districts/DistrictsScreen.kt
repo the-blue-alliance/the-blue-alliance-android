@@ -52,6 +52,10 @@ fun DistrictsScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
 
+    LaunchedEffect(selectedYear) {
+        listState.scrollToItem(0)
+    }
+
     LaunchedEffect(reselectFlow) {
         reselectFlow.collect {
             listState.animateScrollToItem(0)
