@@ -245,6 +245,11 @@ private fun EventsList(
         }
     }
 
+    // Reset scroll position when year changes
+    LaunchedEffect(selectedYear) {
+        listState.scrollToItem(0)
+    }
+
     // Auto-select current week on first load
     var hasAutoSelected by remember(selectedYear) { mutableStateOf(false) }
     LaunchedEffect(currentWeekLabel, weekChipLabels) {
