@@ -1,13 +1,20 @@
-name: CI
+name: CI — Wear OS
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+    paths:
+      - 'wear/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle.properties'
+      - 'gradle/**'
+      - '.github/workflows/ci-wear.yaml'
 
 jobs:
-  build:
+  wear-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -21,8 +28,8 @@ jobs:
           cache: gradle
       - name: Create CI google-services.json
         run: |
-          mkdir -p app/src/debug app/src/release
-          for pkg in "com.thebluealliance.androidclient.development:app/src/debug" "com.thebluealliance.androidclient:app/src/release"; do
+          mkdir -p wear/src/debug wear/src/release
+          for pkg in "com.thebluealliance.androidclient.development:wear/src/debug" "com.thebluealliance.androidclient:wear/src/release"; do
             IFS=: read -r package dir <<< "$pkg"
             cat > "$dir/google-services.json" << EOF
           {
@@ -44,11 +51,9 @@ jobs:
           EOF
           done
       - name: Build debug APK
-        run: ./gradlew :app:assembleDebug --stacktrace
-      - name: Run unit tests
-        run: ./gradlew :app:testDebugUnitTest --stacktrace
+        run: ./gradlew :wear:assembleDebug --stacktrace
 
-  release-build:
+  wear-release-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -62,8 +67,8 @@ jobs:
           cache: gradle
       - name: Create CI google-services.json
         run: |
-          mkdir -p app/src/release
-          cat > app/src/release/google-services.json << 'EOF'
+          mkdir -p wear/src/release
+          cat > wear/src/release/google-services.json << 'EOF'
           {
             "project_info": {
               "project_number": "000000000000",
@@ -91,4 +96,4 @@ jobs:
           release.key.password=android
           EOF
       - name: Build release APK
-        run: ./gradlew :app:assembleRelease --stacktrace
+        run: ./gradlew :wear:assembleRelease --stacktrace
