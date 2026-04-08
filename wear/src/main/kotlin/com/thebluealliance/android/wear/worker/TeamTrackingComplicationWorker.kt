@@ -90,8 +90,8 @@ class TeamTrackingComplicationWorker @AssistedInject constructor(
     )
 
     override suspend fun doWork(): Result {
+        val trackerPrefs = TeamTrackerPreferences(applicationContext)
         return try {
-            val trackerPrefs = TeamTrackerPreferences(applicationContext)
             val trackerTeam = trackerPrefs.teamNumber
             var anyActiveEvent = false
 
@@ -131,6 +131,8 @@ class TeamTrackingComplicationWorker @AssistedInject constructor(
         } catch (e: Exception) {
             Log.e(TAG, "Failed to update complications", e)
             Result.retry()
+        } finally {
+            trackerPrefs.isLoading = false
         }
     }
 
