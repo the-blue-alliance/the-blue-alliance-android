@@ -37,8 +37,12 @@ class TBAApplication : Application(), Configuration.Provider {
         // Publish generated widget previews for the widget picker (API 35+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             MainScope().launch {
-                GlanceAppWidgetManager(this@TBAApplication)
-                    .setWidgetPreviews(TeamTrackingWidgetReceiver::class)
+                try {
+                    GlanceAppWidgetManager(this@TBAApplication)
+                        .setWidgetPreviews(TeamTrackingWidgetReceiver::class)
+                } catch (e: IllegalArgumentException) {
+                    android.util.Log.w("TBAApplication", "Failed to set widget previews", e)
+                }
             }
         }
     }
