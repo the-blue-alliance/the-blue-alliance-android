@@ -27,10 +27,9 @@ class TeamTrackingWidgetOpenAction : ActionCallback {
         val teamKey = state[TeamTrackingWidgetKeys.TEAM_KEY]
 
         if (teamKey == null) {
-            // Widget not configured — open config activity instead of silently returning,
-            // which would leave the Glance trampoline without a target activity.
-            val manager = GlanceAppWidgetManager(context)
-            val appWidgetId = manager.getAppWidgetId(glanceId)
+            // No team configured — open config. Must always call startActivity;
+            // returning without one crashes the Glance action trampoline.
+            val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
             val intent = Intent(context, TeamTrackingWidgetConfigActivity::class.java).apply {
                 putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -40,13 +39,11 @@ class TeamTrackingWidgetOpenAction : ActionCallback {
         }
 
         val eventKey = state[TeamTrackingWidgetKeys.EVENT_KEY]
-
         val intent = Intent(context, MainActivity::class.java).apply {
             putExtra(NotificationBuilder.EXTRA_TEAM_KEY, teamKey)
             if (eventKey != null) {
                 putExtra(NotificationBuilder.EXTRA_EVENT_KEY, eventKey)
             } else {
-                // No current event — open the Events tab of TeamDetail
                 putExtra(EXTRA_INITIAL_TAB, Screen.TeamDetail.TAB_EVENTS)
             }
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
