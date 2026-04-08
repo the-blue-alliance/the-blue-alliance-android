@@ -1,8 +1,6 @@
 package com.thebluealliance.android
 
 import android.app.Application
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.os.Build
 import android.util.Log
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -40,24 +38,12 @@ class TBAApplication : Application(), Configuration.Provider {
         // Publish generated widget previews for the widget picker (API 35+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             MainScope().launch {
-                val component = ComponentName(packageName, TeamTrackingWidgetReceiver::class.java.name)
-                val isRegistered = AppWidgetManager.getInstance(this@TBAApplication)
-                    .getInstalledProvidersForPackage(packageName, null)
-                    .any { it.provider == component }
-
-                if (!isRegistered) {
-                    Log.w(
-                        "TBAApplication",
-                        "Widget provider $component not registered with AppWidgetManager; " +
-                            "skipping setWidgetPreviews (API ${Build.VERSION.SDK_INT})"
-                    )
-                    return@launch
-                }
-
                 try {
                     GlanceAppWidgetManager(this@TBAApplication)
                         .setWidgetPreviews(TeamTrackingWidgetReceiver::class)
                 } catch (e: IllegalArgumentException) {
+                    // Some devices (notably Android 16/17 betas) don't have the provider
+                    // registered in AppWidgetServiceImpl during background cold starts.
                     Log.w("TBAApplication", "Failed to set widget previews", e)
                 }
             }
