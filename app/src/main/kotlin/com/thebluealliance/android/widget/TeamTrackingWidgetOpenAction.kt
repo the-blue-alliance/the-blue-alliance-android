@@ -1,9 +1,11 @@
 package com.thebluealliance.android.widget
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import androidx.glance.GlanceId
 import androidx.glance.action.ActionParameters
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.state.getAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
@@ -22,7 +24,21 @@ class TeamTrackingWidgetOpenAction : ActionCallback {
         parameters: ActionParameters,
     ) {
         val state = getAppWidgetState(context, PreferencesGlanceStateDefinition, glanceId)
-        val teamKey = state[TeamTrackingWidgetKeys.TEAM_KEY] ?: return
+        val teamKey = state[TeamTrackingWidgetKeys.TEAM_KEY]
+
+        if (teamKey == null) {
+            // Widget not configured — open config activity instead of silently returning,
+            // which would leave the Glance trampoline without a target activity.
+            val manager = GlanceAppWidgetManager(context)
+            val appWidgetId = manager.getAppWidgetId(glanceId)
+            val intent = Intent(context, TeamTrackingWidgetConfigActivity::class.java).apply {
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+            context.startActivity(intent)
+            return
+        }
+
         val eventKey = state[TeamTrackingWidgetKeys.EVENT_KEY]
 
         val intent = Intent(context, MainActivity::class.java).apply {
