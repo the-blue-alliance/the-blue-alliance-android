@@ -40,12 +40,6 @@ if [[ -n "$configured_slack_webhook" ]]; then
     SLACK_WEBHOOK_URL="$configured_slack_webhook"
 fi
 
-GITHUB_TOKEN=""
-configured_github_token=$(read_local_property "release.github.token" || true)
-if [[ -n "$configured_github_token" ]]; then
-    GITHUB_TOKEN="$configured_github_token"
-fi
-
 # ── Helpers ──────────────────────────────────────────────────────────────
 
 die()  { echo -e "${RED}ERROR:${NC} $*" >&2; exit 1; }
@@ -178,115 +172,47 @@ EOF
 
 create_github_release() {
     local apk_path="app/build/outputs/apk/release/app-release.apk"
+    local wear_apk_path="wear/build/outputs/apk/release/wear-release.apk"
 
-    if [[ -z "$GITHUB_TOKEN" ]]; then
-        warn "GitHub token not configured (set release.github.token in local.properties), skipping GitHub release"
-        return 0
-    fi
-
-    if [[ ! -f "$apk_path" ]]; then
-        warn "Release APK not found at ${apk_path}, skipping GitHub release"
+    if ! command -v gh &>/dev/null; then
+        warn "gh CLI not found, skipping GitHub release"
         return 0
     fi
 
     local tag="v${VERSION_NAME}"
-
     local commitlog
     commitlog=$(build_commitlog)
     if [[ -z "$commitlog" ]]; then
         commitlog="(no non-merge commits found)"
     fi
 
-    local is_prerelease="false"
+    local -a gh_args=(
+        "$tag"
+        --title "Android v${VERSION_NAME}"
+        --notes "$commitlog"
+        --repo "the-blue-alliance/the-blue-alliance-android"
+    )
+
     if [[ "$VERSION_NAME" == *"-dev."* ]]; then
-        is_prerelease="true"
+        gh_args+=(--prerelease)
     fi
 
-    local create_payload
-    create_payload=$(RELEASE_TAG="$tag" RELEASE_NAME="Android v${VERSION_NAME}" RELEASE_BODY="$commitlog" IS_PRERELEASE="$is_prerelease" python3 - <<'PY'
-import json, os
-print(json.dumps({
-    "tag_name": os.environ["RELEASE_TAG"],
-    "name": os.environ["RELEASE_NAME"],
-    "body": os.environ["RELEASE_BODY"],
-    "draft": False,
-    "prerelease": os.environ["IS_PRERELEASE"] == "true",
-}))
-PY
-)
+    # Attach APKs that exist
+    if [[ -f "$apk_path" ]]; then
+        gh_args+=("${apk_path}#the-blue-alliance-android-v${VERSION_NAME}.apk")
+    fi
+    if [[ -f "$wear_apk_path" ]]; then
+        gh_args+=("${wear_apk_path}#the-blue-alliance-wear-v${VERSION_NAME}.apk")
+    fi
 
     if $DRY_RUN; then
-        echo "Would create GitHub release for ${tag} and upload ${apk_path}"
+        echo "Would run: gh release create ${gh_args[*]}"
         return 0
     fi
 
     info "Creating GitHub release for ${tag}..."
-    local response_file
-    response_file=$(mktemp)
-    local status_code
-    status_code=$(curl -sS -o "$response_file" -w "%{http_code}" \
-        -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-        -H "Content-Type: application/json" \
-        -X POST \
-        --data "$create_payload" \
-        "https://api.github.com/repos/the-blue-alliance/the-blue-alliance-android/releases")
-
-    if [[ "$status_code" != "201" ]]; then
-        warn "GitHub release creation returned HTTP ${status_code}: $(cat "$response_file")"
-        rm -f "$response_file"
-        return 0
-    fi
-
-    local upload_url
-    upload_url=$(python3 -c "
-import json, sys
-data = json.load(sys.stdin)
-if 'upload_url' not in data:
-    raise SystemExit('upload_url missing from GitHub API response')
-print(data['upload_url'].split('{')[0])
-" < "$response_file")
-    rm -f "$response_file"
-
-    info "Uploading APK to GitHub release..."
-    local apk_name="the-blue-alliance-android-v${VERSION_NAME}.apk"
-    local upload_response_file
-    upload_response_file=$(mktemp)
-    local upload_status
-    upload_status=$(curl -sS -o "$upload_response_file" -w "%{http_code}" \
-        -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-        -H "Content-Type: application/vnd.android.package-archive" \
-        -X POST \
-        --data-binary "@${apk_path}" \
-        "${upload_url}?name=${apk_name}")
-
-    if [[ "$upload_status" != "201" ]]; then
-        warn "APK upload returned HTTP ${upload_status}: $(cat "$upload_response_file")"
-    else
-        info "Phone APK uploaded to GitHub release"
-    fi
-    rm -f "$upload_response_file"
-
-    # Upload Wear APK if it exists
-    local wear_apk_path="wear/build/outputs/apk/release/wear-release.apk"
-    if [[ -f "$wear_apk_path" ]]; then
-        info "Uploading Wear APK to GitHub release..."
-        local wear_apk_name="the-blue-alliance-wear-v${VERSION_NAME}.apk"
-        local wear_upload_response_file
-        wear_upload_response_file=$(mktemp)
-        local wear_upload_status
-        wear_upload_status=$(curl -sS -o "$wear_upload_response_file" -w "%{http_code}" \
-            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-            -H "Content-Type: application/vnd.android.package-archive" \
-            -X POST \
-            --data-binary "@${wear_apk_path}" \
-            "${upload_url}?name=${wear_apk_name}")
-
-        if [[ "$wear_upload_status" != "201" ]]; then
-            warn "Wear APK upload returned HTTP ${wear_upload_status}: $(cat "$wear_upload_response_file")"
-        else
-            info "Wear APK uploaded to GitHub release"
-        fi
-        rm -f "$wear_upload_response_file"
+    if ! gh release create "${gh_args[@]}"; then
+        warn "GitHub release creation failed"
     fi
 }
 
