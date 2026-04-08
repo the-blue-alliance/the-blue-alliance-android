@@ -246,9 +246,13 @@ private fun EventsList(
         }
     }
 
-    // Reset scroll position when year changes
+    // Reset scroll position when year changes (but not on initial composition/back navigation)
+    var previousYear by rememberSaveable { mutableStateOf(selectedYear) }
     LaunchedEffect(selectedYear) {
-        listState.scrollToItem(0)
+        if (selectedYear != previousYear) {
+            previousYear = selectedYear
+            listState.scrollToItem(0)
+        }
     }
 
     // Auto-select current week on first load

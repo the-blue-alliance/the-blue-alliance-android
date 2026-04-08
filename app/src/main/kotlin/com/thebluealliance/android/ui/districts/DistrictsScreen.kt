@@ -25,6 +25,9 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -52,8 +55,13 @@ fun DistrictsScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
 
+    // Reset scroll position when year changes (but not on initial composition/back navigation)
+    var previousYear by rememberSaveable { mutableStateOf(selectedYear) }
     LaunchedEffect(selectedYear) {
-        listState.scrollToItem(0)
+        if (selectedYear != previousYear) {
+            previousYear = selectedYear
+            listState.scrollToItem(0)
+        }
     }
 
     LaunchedEffect(reselectFlow) {
