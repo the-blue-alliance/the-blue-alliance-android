@@ -71,8 +71,13 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
     private fun saveAndFinish(teamNumber: String) {
         Log.d(TAG, "saveAndFinish: team=$teamNumber, complicationId=$complicationId")
         if (teamNumber.isNotBlank()) {
+            val prefs = TeamTrackerPreferences(this)
+            val teamChanged = prefs.teamNumber != teamNumber
+            if (teamChanged) {
+                prefs.clearCachedData()
+            }
             // Single source of truth for tracked team
-            TeamTrackerPreferences(this).teamNumber = teamNumber
+            prefs.teamNumber = teamNumber
 
             if (complicationId >= 0) {
                 TeamTrackingComplicationPreferences.addComplicationId(this, complicationId)

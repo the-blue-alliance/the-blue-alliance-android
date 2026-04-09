@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -43,6 +44,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.CircularProgressIndicator
 import androidx.wear.compose.material3.EdgeButton
 import androidx.wear.compose.material3.EdgeButtonSize
 import androidx.wear.compose.material3.FilledTonalButton
@@ -105,6 +107,7 @@ class TeamTrackerActivity : ComponentActivity() {
             eventName = trackerPrefs.eventName,
             record = trackerPrefs.record,
             hasActiveEvent = trackerPrefs.hasActiveEvent,
+            isLoading = trackerPrefs.isLoading,
             lastMatchLabel = trackerPrefs.lastMatchLabel,
             lastMatchRedTeams = trackerPrefs.lastMatchRedTeams,
             lastMatchBlueTeams = trackerPrefs.lastMatchBlueTeams,
@@ -138,6 +141,7 @@ data class TeamTrackerState(
     val eventName: String = "",
     val record: String = "",
     val hasActiveEvent: Boolean = false,
+    val isLoading: Boolean = false,
     val lastMatchLabel: String = "",
     val lastMatchRedTeams: String = "",
     val lastMatchBlueTeams: String = "",
@@ -194,7 +198,19 @@ private fun TeamTrackerScreen(
             contentPadding = PaddingValues(top = 28.dp, start = 10.dp, end = 10.dp, bottom = 60.dp),
         ) {
             item { TeamHeader(state) }
-            item { EventSubtitle(state) }
+
+            if (state.isLoading) {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            } else {
+                item { EventSubtitle(state) }
+            }
 
             if (state.lastMatchLabel.isNotBlank()) {
                 item {

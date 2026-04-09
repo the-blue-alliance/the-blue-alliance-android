@@ -17,6 +17,10 @@ class TeamTrackerPreferences(context: Context) {
         get() = prefs.getString(KEY_TEAM_NUMBER, "") ?: ""
         set(value) = prefs.edit().putString(KEY_TEAM_NUMBER, value).apply()
 
+    var isLoading: Boolean
+        get() = prefs.getBoolean(KEY_IS_LOADING, false)
+        set(value) = prefs.edit().putBoolean(KEY_IS_LOADING, value).apply()
+
     var teamNickname: String
         get() = prefs.getString(KEY_TEAM_NICKNAME, "") ?: ""
         set(value) = prefs.edit().putString(KEY_TEAM_NICKNAME, value).apply()
@@ -112,12 +116,22 @@ class TeamTrackerPreferences(context: Context) {
         prefs.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
+    /** Clear all cached data except the team number, and mark as loading. */
+    fun clearCachedData() {
+        val team = teamNumber
+        prefs.edit().clear()
+            .putString(KEY_TEAM_NUMBER, team)
+            .putBoolean(KEY_IS_LOADING, true)
+            .apply()
+    }
+
     fun clear() {
         prefs.edit().clear().apply()
     }
 
     companion object {
         private const val KEY_TEAM_NUMBER = "team_number"
+        private const val KEY_IS_LOADING = "is_loading"
         private const val KEY_TEAM_NICKNAME = "team_nickname"
         private const val KEY_AVATAR_BASE64 = "avatar_base64"
         private const val KEY_EVENT_NAME = "event_name"
