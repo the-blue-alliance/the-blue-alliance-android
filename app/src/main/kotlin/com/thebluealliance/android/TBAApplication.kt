@@ -2,6 +2,7 @@ package com.thebluealliance.android
 
 import android.app.Application
 import android.os.Build
+import android.util.Log
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
@@ -37,8 +38,14 @@ class TBAApplication : Application(), Configuration.Provider {
         // Publish generated widget previews for the widget picker (API 35+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             MainScope().launch {
-                GlanceAppWidgetManager(this@TBAApplication)
-                    .setWidgetPreviews(TeamTrackingWidgetReceiver::class)
+                try {
+                    GlanceAppWidgetManager(this@TBAApplication)
+                        .setWidgetPreviews(TeamTrackingWidgetReceiver::class)
+                } catch (e: IllegalArgumentException) {
+                    // Some devices (notably Android 16/17 betas) don't have the provider
+                    // registered in AppWidgetServiceImpl during background cold starts.
+                    Log.w("TBAApplication", "Failed to set widget previews", e)
+                }
             }
         }
     }
