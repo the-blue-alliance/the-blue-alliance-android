@@ -1,8 +1,5 @@
-Version 11.5.0:
- - We have completely REBUILT (ha!) the app for 2026.
- - Notifications work again. Use the bell icon on teams or events to stay on top of the latest.
- - Homescreen widget & wear app support, so you can track your favorite teams.
- - Dark mode.
+Version 11.6:
+ - Bug fixes.
 
 View the full changelog on GitHub:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
