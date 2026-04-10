@@ -18,34 +18,44 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class, kotlinx.coroutines.FlowPreview::class)
 @HiltViewModel
-class SearchViewModel @Inject constructor(
-    private val teamRepository: TeamRepository,
-    private val eventRepository: EventRepository,
-) : ViewModel() {
+class SearchViewModel
+    @Inject
+    constructor(
+        private val teamRepository: TeamRepository,
+        private val eventRepository: EventRepository,
+    ) : ViewModel() {
+        private val query = MutableStateFlow("")
 
-    private val _query = MutableStateFlow("")
+        private val debouncedQuery = query.debounce(300)
 
-    private val debouncedQuery = _query.debounce(300)
+        private val teamsFlow =
+            debouncedQuery.flatMapLatest { query ->
+                if (query.length == 0) {
+                    flowOf(emptyList())
+                } else {
+                    teamRepository.searchTeams(query)
+                }
+            }
 
-    private val teamsFlow = debouncedQuery.flatMapLatest { query ->
-        if (query.length  == 0) flowOf(emptyList())
-        else teamRepository.searchTeams(query)
+        private val eventsFlow =
+            debouncedQuery.flatMapLatest { query ->
+                if (query.length == 0) {
+                    flowOf(emptyList())
+                } else {
+                    eventRepository.searchEvents(query)
+                }
+            }
+
+        val uiState: StateFlow<SearchUiState> =
+            combine(
+                query,
+                teamsFlow,
+                eventsFlow,
+            ) { query, teams, events ->
+                SearchUiState(query = query, teams = teams, events = events)
+            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SearchUiState())
+
+        fun onQueryChanged(newQuery: String) {
+            query.value = newQuery
+        }
     }
-
-    private val eventsFlow = debouncedQuery.flatMapLatest { query ->
-        if (query.length  == 0) flowOf(emptyList())
-        else eventRepository.searchEvents(query)
-    }
-
-    val uiState: StateFlow<SearchUiState> = combine(
-        _query,
-        teamsFlow,
-        eventsFlow,
-    ) { query, teams, events ->
-        SearchUiState(query = query, teams = teams, events = events)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SearchUiState())
-
-    fun onQueryChanged(query: String) {
-        _query.value = query
-    }
-}
