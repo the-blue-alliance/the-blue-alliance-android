@@ -22,4 +22,3 @@ fun EmptyBox(
         Text(message, style = MaterialTheme.typography.bodyLarge)
     }
 }
-

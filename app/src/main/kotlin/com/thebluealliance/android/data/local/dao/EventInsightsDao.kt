@@ -18,4 +18,3 @@ interface EventInsightsDao {
     @Query("DELETE FROM event_insights WHERE eventKey = :eventKey")
     suspend fun delete(eventKey: String)
 }
-

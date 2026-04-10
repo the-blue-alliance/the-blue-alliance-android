@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class EventRankingsTabLogicTest {
-
     private fun ranking(
         team: String,
         primary: Double,
@@ -27,12 +26,13 @@ class EventRankingsTabLogicTest {
 
     @Test
     fun `header labels use metadata when provided`() {
-        val labels = rankingHeaderLabels(
-            listOf(
-                RankingSortOrder(name = "Ranking Score", precision = 2),
-                RankingSortOrder(name = "Auto Points", precision = 0),
+        val labels =
+            rankingHeaderLabels(
+                listOf(
+                    RankingSortOrder(name = "Ranking Score", precision = 2),
+                    RankingSortOrder(name = "Auto Points", precision = 0),
+                ),
             )
-        )
 
         assertEquals("Ranking Score", labels.first)
         assertEquals("Auto Points", labels.second)
@@ -78,11 +78,12 @@ class EventRankingsTabLogicTest {
 
     @Test
     fun `primary sort descending by default`() {
-        val rankings = listOf(
-            ranking(team = "frc111", primary = 2.3, secondary = 5.0),
-            ranking(team = "frc222", primary = 3.0, secondary = 1.0),
-            ranking(team = "frc333", primary = 1.1, secondary = 9.0),
-        )
+        val rankings =
+            listOf(
+                ranking(team = "frc111", primary = 2.3, secondary = 5.0),
+                ranking(team = "frc222", primary = 3.0, secondary = 1.0),
+                ranking(team = "frc333", primary = 1.1, secondary = 9.0),
+            )
 
         val sorted = sortRankings(rankings, RankingSortState())
 
@@ -91,34 +92,37 @@ class EventRankingsTabLogicTest {
 
     @Test
     fun `team sort ascending orders numerically`() {
-        val rankings = listOf(
-            ranking(team = "frc971", primary = 1.0, secondary = 1.0),
-            ranking(team = "frc8", primary = 1.0, secondary = 1.0),
-            ranking(team = "frc254", primary = 1.0, secondary = 1.0),
-        )
+        val rankings =
+            listOf(
+                ranking(team = "frc971", primary = 1.0, secondary = 1.0),
+                ranking(team = "frc8", primary = 1.0, secondary = 1.0),
+                ranking(team = "frc254", primary = 1.0, secondary = 1.0),
+            )
 
-        val sorted = sortRankings(
-            rankings,
-            RankingSortState(column = RankingSortColumn.TEAM, ascending = true),
-        )
+        val sorted =
+            sortRankings(
+                rankings,
+                RankingSortState(column = RankingSortColumn.TEAM, ascending = true),
+            )
 
         assertEquals(listOf("frc8", "frc254", "frc971"), sorted.map { it.teamKey })
     }
 
     @Test
     fun `secondary sort descending orders by second sort order value`() {
-        val rankings = listOf(
-            ranking(team = "frc1", primary = 4.0, secondary = 0.2),
-            ranking(team = "frc2", primary = 1.0, secondary = 9.4),
-            ranking(team = "frc3", primary = 2.0, secondary = 7.7),
-        )
+        val rankings =
+            listOf(
+                ranking(team = "frc1", primary = 4.0, secondary = 0.2),
+                ranking(team = "frc2", primary = 1.0, secondary = 9.4),
+                ranking(team = "frc3", primary = 2.0, secondary = 7.7),
+            )
 
-        val sorted = sortRankings(
-            rankings,
-            RankingSortState(column = RankingSortColumn.SECONDARY, ascending = false),
-        )
+        val sorted =
+            sortRankings(
+                rankings,
+                RankingSortState(column = RankingSortColumn.SECONDARY, ascending = false),
+            )
 
         assertEquals(listOf("frc2", "frc3", "frc1"), sorted.map { it.teamKey })
     }
 }
-

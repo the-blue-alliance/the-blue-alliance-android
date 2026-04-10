@@ -97,7 +97,8 @@ fun MatchDetailScreen(
                     }
                     uiState.match?.let { match ->
                         IconButton(onClick = {
-                            val eventLabel = uiState.eventName?.let { "${uiState.year} $it - " } ?: ""
+                            val eventLabel =
+                                uiState.eventName?.let { "${uiState.year} $it - " } ?: ""
                             context.shareTbaUrl(
                                 title = "$eventLabel${match.getFullLabel(uiState.playoffType)}",
                                 url = "https://www.thebluealliance.com/match/${match.key}",
@@ -116,13 +117,15 @@ fun MatchDetailScreen(
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = viewModel::refresh,
-            modifier = Modifier.fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
         ) {
             val match = uiState.match
             if (match == null) {
                 LoadingBox(
-                    modifier = Modifier.padding(innerPadding)
+                    modifier = Modifier.padding(innerPadding),
                 )
             } else {
                 LazyColumn(
@@ -161,9 +164,10 @@ fun MatchDetailScreen(
                     }
 
                     // Media
-                    val mediaItems = uiState.videos
-                        .filter { mediaUrl(it.type, it.key) != null }
-                        .map { MediaGridItem(type = it.type, foreignKey = it.key) }
+                    val mediaItems =
+                        uiState.videos
+                            .filter { mediaUrl(it.type, it.key) != null }
+                            .map { MediaGridItem(type = it.type, foreignKey = it.key) }
                     if (mediaItems.isNotEmpty()) {
                         item(key = "media_header") {
                             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
@@ -197,17 +201,26 @@ fun MatchDetailScreen(
 
                         val redBreakdown = breakdown["red"] ?: emptyMap()
                         val blueBreakdown = breakdown["blue"] ?: emptyMap()
-                        val orderedFields = getOrderedBreakdownFields(
-                            year = uiState.year,
-                            redBreakdown = redBreakdown,
-                            blueBreakdown = blueBreakdown,
-                        )
+                        val orderedFields =
+                            getOrderedBreakdownFields(
+                                year = uiState.year,
+                                redBreakdown = redBreakdown,
+                                blueBreakdown = blueBreakdown,
+                            )
 
                         items(orderedFields, key = { "breakdown_${it.first}" }) { (apiKey, label) ->
                             BreakdownRow(
                                 label = label,
-                                redValue = formatBreakdownValue(apiKey, redBreakdown[apiKey] ?: "-"),
-                                blueValue = formatBreakdownValue(apiKey, blueBreakdown[apiKey] ?: "-"),
+                                redValue =
+                                    formatBreakdownValue(
+                                        apiKey,
+                                        redBreakdown[apiKey] ?: "-",
+                                    ),
+                                blueValue =
+                                    formatBreakdownValue(
+                                        apiKey,
+                                        blueBreakdown[apiKey] ?: "-",
+                                    ),
                             )
                         }
                     }
@@ -226,9 +239,10 @@ private fun EventInfo(
 ) {
     if (eventName == null && formattedTime == null) return
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp),
     ) {
         if (eventName != null && eventKey != null) {
             Text(
@@ -250,11 +264,29 @@ private fun EventInfo(
 }
 
 @Composable
-private fun RowScope.AllianceScoreSummaryCol(match: Match, rpBonuses: AllianceRpBonuses?,
-                                             advancementMsgs: MatchAdvancementMsgs?, alliance: String) {
-    val mainColor = if (alliance == "red") MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+private fun RowScope.AllianceScoreSummaryCol(
+    match: Match,
+    rpBonuses: AllianceRpBonuses?,
+    advancementMsgs: MatchAdvancementMsgs?,
+    alliance: String,
+) {
+    val mainColor =
+        if (alliance ==
+            "red"
+        ) {
+            MaterialTheme.colorScheme.error
+        } else {
+            MaterialTheme.colorScheme.primary
+        }
     val score = if (alliance == "red") match.redScore else match.blueScore
-    val playoffAlliance = if (alliance == "red") match.redPlayoffAlliance else match.bluePlayoffAlliance
+    val playoffAlliance =
+        if (alliance ==
+            "red"
+        ) {
+            match.redPlayoffAlliance
+        } else {
+            match.bluePlayoffAlliance
+        }
     val rpBonus = if (alliance == "red") rpBonuses?.red else rpBonuses?.blue
     val advancementMsg = if (alliance == "red") advancementMsgs?.red else advancementMsgs?.blue
 
@@ -265,12 +297,19 @@ private fun RowScope.AllianceScoreSummaryCol(match: Match, rpBonuses: AllianceRp
         Text(
             text = playoffAlliance?.displayTitle ?: alliance.replaceFirstChar { it.titlecase() },
             style = MaterialTheme.typography.titleSmall,
-            color = mainColor
+            color = mainColor,
         )
         Text(
             text = if (score < 0) "—" else score.toString(),
             style = MaterialTheme.typography.displaySmall,
-            fontWeight = if (match.winningAlliance == alliance) FontWeight.Bold else FontWeight.Normal,
+            fontWeight =
+                if (match.winningAlliance ==
+                    alliance
+                ) {
+                    FontWeight.Bold
+                } else {
+                    FontWeight.Normal
+                },
             color = mainColor,
         )
         rpBonus?.let {
@@ -278,22 +317,31 @@ private fun RowScope.AllianceScoreSummaryCol(match: Match, rpBonuses: AllianceRp
         }
         advancementMsg?.let {
             Box(
-                modifier = Modifier
-                    .heightIn(min = 36.dp)  // Reserve consistent space
-                    .padding(horizontal = 4.dp),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .heightIn(min = 36.dp) // Reserve consistent space
+                        .padding(horizontal = 4.dp),
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = it,
                     style = MaterialTheme.typography.labelSmall,
-                    fontWeight = if (match.winningAlliance == alliance) FontWeight.Bold else FontWeight.Normal,
+                    fontWeight =
+                        if (match.winningAlliance ==
+                            alliance
+                        ) {
+                            FontWeight.Bold
+                        } else {
+                            FontWeight.Normal
+                        },
                     color = MaterialTheme.colorScheme.secondary,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
-                    lineHeight = 14.sp,  // Tighter line spacing
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                        .padding(top = 4.dp)
+                    lineHeight = 14.sp, // Tighter line spacing
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 4.dp)
+                            .padding(top = 4.dp),
                 )
             }
         }
@@ -301,16 +349,24 @@ private fun RowScope.AllianceScoreSummaryCol(match: Match, rpBonuses: AllianceRp
 }
 
 @Composable
-private fun ScoreSummary(match: Match, playoffType: PlayoffType) {
+private fun ScoreSummary(
+    match: Match,
+    playoffType: PlayoffType,
+) {
     val rpBonuses = remember(match.scoreBreakdown) { match.rpBonuses() }
-    val advancementMsgs = remember(
-        match.winningAlliance, match.compLevel, match.setNumber, playoffType
-    ) { match.getAdvancement(playoffType) }
+    val advancementMsgs =
+        remember(
+            match.winningAlliance,
+            match.compLevel,
+            match.setNumber,
+            playoffType,
+        ) { match.getAdvancement(playoffType) }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AllianceScoreSummaryCol(match, rpBonuses, advancementMsgs, "red")
@@ -330,9 +386,10 @@ private fun AllianceTeams(
     onTeamClick: (String) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp),
     ) {
         Column(
             modifier = Modifier.weight(1f),
@@ -343,9 +400,10 @@ private fun AllianceTeams(
                     text = key.removePrefix("frc"),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier
-                        .clickable { onTeamClick(key) }
-                        .padding(top = 2.dp),
+                    modifier =
+                        Modifier
+                            .clickable { onTeamClick(key) }
+                            .padding(top = 2.dp),
                 )
             }
         }
@@ -367,9 +425,10 @@ private fun AllianceTeams(
                     text = key.removePrefix("frc"),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .clickable { onTeamClick(key) }
-                        .padding(top = 2.dp),
+                    modifier =
+                        Modifier
+                            .clickable { onTeamClick(key) }
+                            .padding(top = 2.dp),
                 )
             }
         }
@@ -377,11 +436,16 @@ private fun AllianceTeams(
 }
 
 @Composable
-private fun BreakdownRow(label: String, redValue: String, blueValue: String) {
+private fun BreakdownRow(
+    label: String,
+    redValue: String,
+    blueValue: String,
+) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 2.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -408,7 +472,10 @@ private fun BreakdownRow(label: String, redValue: String, blueValue: String) {
 }
 
 @Composable
-private fun RpDots(bonuses: List<Boolean>, achievedColor: Color) {
+private fun RpDots(
+    bonuses: List<Boolean>,
+    achievedColor: Color,
+) {
     Row(
         modifier = Modifier.padding(top = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -433,13 +500,12 @@ private fun RpDots(bonuses: List<Boolean>, achievedColor: Color) {
     }
 }
 
-
-private fun camelCaseToLabel(key: String): String {
-    return key.replace(Regex("([A-Z])"), " $1")
+private fun camelCaseToLabel(key: String): String =
+    key
+        .replace(Regex("([A-Z])"), " $1")
         .replace("_", " ")
         .trim()
         .replaceFirstChar { it.uppercase() }
-}
 
 private fun getOrderedBreakdownFields(
     year: Int,
@@ -449,8 +515,10 @@ private fun getOrderedBreakdownFields(
     val yearFields = breakdownFieldsByYear[year]
     if (yearFields == null) {
         // Fallback: show all keys with camelCase-to-label conversion
-        val allKeys = (redBreakdown.keys + blueBreakdown.keys).distinct()
-            .filter { it != "totalPoints" }
+        val allKeys =
+            (redBreakdown.keys + blueBreakdown.keys)
+                .distinct()
+                .filter { it != "totalPoints" }
         return allKeys.map { it to camelCaseToLabel(it) }
     }
 
@@ -467,121 +535,126 @@ private fun getOrderedBreakdownFields(
     return result
 }
 
-private val breakdownFields2026 = listOf(
-    "autoTowerRobot1" to "Auto tower 1",
-    "autoTowerRobot2" to "Auto tower 2",
-    "autoTowerRobot3" to "Auto tower 3",
-    "autoTowerPoints" to "Auto tower",
-    "totalAutoPoints" to "Total auto",
-    "totalTeleopPoints" to "Total teleop",
-    "endGameTowerRobot1" to "Endgame 1",
-    "endGameTowerRobot2" to "Endgame 2",
-    "endGameTowerRobot3" to "Endgame 3",
-    "endGameTowerPoints" to "Endgame tower",
-    "totalTowerPoints" to "Total tower",
-    "energizedAchieved" to "Energized bonus",
-    "superchargedAchieved" to "Supercharged bonus",
-    "traversalAchieved" to "Traversal bonus",
-    "minorFoulCount" to "Minor fouls",
-    "majorFoulCount" to "Major fouls",
-    "g206Penalty" to "G206 penalty",
-    "foulPoints" to "Foul points",
-    "adjustPoints" to "Adjust",
-    "totalPoints" to "Total",
-    "rp" to "RP",
-)
+private val breakdownFields2026 =
+    listOf(
+        "autoTowerRobot1" to "Auto tower 1",
+        "autoTowerRobot2" to "Auto tower 2",
+        "autoTowerRobot3" to "Auto tower 3",
+        "autoTowerPoints" to "Auto tower",
+        "totalAutoPoints" to "Total auto",
+        "totalTeleopPoints" to "Total teleop",
+        "endGameTowerRobot1" to "Endgame 1",
+        "endGameTowerRobot2" to "Endgame 2",
+        "endGameTowerRobot3" to "Endgame 3",
+        "endGameTowerPoints" to "Endgame tower",
+        "totalTowerPoints" to "Total tower",
+        "energizedAchieved" to "Energized bonus",
+        "superchargedAchieved" to "Supercharged bonus",
+        "traversalAchieved" to "Traversal bonus",
+        "minorFoulCount" to "Minor fouls",
+        "majorFoulCount" to "Major fouls",
+        "g206Penalty" to "G206 penalty",
+        "foulPoints" to "Foul points",
+        "adjustPoints" to "Adjust",
+        "totalPoints" to "Total",
+        "rp" to "RP",
+    )
 
-private val breakdownFields2025 = listOf(
-    "autoLineRobot1" to "Auto leave 1",
-    "autoLineRobot2" to "Auto leave 2",
-    "autoLineRobot3" to "Auto leave 3",
-    "autoMobilityPoints" to "Auto mobility",
-    "autoCoralPoints" to "Auto coral",
-    "autoPoints" to "Total auto",
-    "teleopCoralPoints" to "Teleop coral",
-    "wallAlgaeCount" to "Processor algae",
-    "netAlgaeCount" to "Net algae",
-    "algaePoints" to "Algae points",
-    "endGameRobot1" to "Endgame 1",
-    "endGameRobot2" to "Endgame 2",
-    "endGameRobot3" to "Endgame 3",
-    "endGameBargePoints" to "Barge points",
-    "teleopPoints" to "Total teleop",
-    "coopertitionCriteriaMet" to "Coopertition",
-    "autoBonusAchieved" to "Auto bonus",
-    "coralBonusAchieved" to "Coral bonus",
-    "bargeBonusAchieved" to "Barge bonus",
-    "foulCount" to "Fouls",
-    "techFoulCount" to "Tech fouls",
-    "foulPoints" to "Foul points",
-    "adjustPoints" to "Adjust",
-    "totalPoints" to "Total",
-    "rp" to "RP",
-)
+private val breakdownFields2025 =
+    listOf(
+        "autoLineRobot1" to "Auto leave 1",
+        "autoLineRobot2" to "Auto leave 2",
+        "autoLineRobot3" to "Auto leave 3",
+        "autoMobilityPoints" to "Auto mobility",
+        "autoCoralPoints" to "Auto coral",
+        "autoPoints" to "Total auto",
+        "teleopCoralPoints" to "Teleop coral",
+        "wallAlgaeCount" to "Processor algae",
+        "netAlgaeCount" to "Net algae",
+        "algaePoints" to "Algae points",
+        "endGameRobot1" to "Endgame 1",
+        "endGameRobot2" to "Endgame 2",
+        "endGameRobot3" to "Endgame 3",
+        "endGameBargePoints" to "Barge points",
+        "teleopPoints" to "Total teleop",
+        "coopertitionCriteriaMet" to "Coopertition",
+        "autoBonusAchieved" to "Auto bonus",
+        "coralBonusAchieved" to "Coral bonus",
+        "bargeBonusAchieved" to "Barge bonus",
+        "foulCount" to "Fouls",
+        "techFoulCount" to "Tech fouls",
+        "foulPoints" to "Foul points",
+        "adjustPoints" to "Adjust",
+        "totalPoints" to "Total",
+        "rp" to "RP",
+    )
 
-private val breakdownFields2024 = listOf(
-    "autoLineRobot1" to "Auto leave 1",
-    "autoLineRobot2" to "Auto leave 2",
-    "autoLineRobot3" to "Auto leave 3",
-    "autoLeavePoints" to "Auto leave points",
-    "autoAmpNoteCount" to "Auto amp notes",
-    "autoSpeakerNoteCount" to "Auto speaker notes",
-    "autoTotalNotePoints" to "Auto note points",
-    "autoPoints" to "Total auto",
-    "teleopAmpNoteCount" to "Teleop amp notes",
-    "teleopSpeakerNoteCount" to "Teleop speaker notes",
-    "teleopSpeakerNoteAmplifiedCount" to "Amplified speaker",
-    "teleopTotalNotePoints" to "Teleop note points",
-    "endGameRobot1" to "Endgame 1",
-    "endGameRobot2" to "Endgame 2",
-    "endGameRobot3" to "Endgame 3",
-    "endGameHarmonyPoints" to "Harmony",
-    "endGameNoteInTrapPoints" to "Trap",
-    "endGameOnStagePoints" to "On stage",
-    "endGameParkPoints" to "Park",
-    "teleopPoints" to "Total teleop",
-    "coopertitionBonusAchieved" to "Coopertition",
-    "melodyBonusAchieved" to "Melody bonus",
-    "ensembleBonusAchieved" to "Ensemble bonus",
-    "foulCount" to "Fouls",
-    "techFoulCount" to "Tech fouls",
-    "foulPoints" to "Foul points",
-    "adjustPoints" to "Adjust",
-    "totalPoints" to "Total",
-    "rp" to "RP",
-)
+private val breakdownFields2024 =
+    listOf(
+        "autoLineRobot1" to "Auto leave 1",
+        "autoLineRobot2" to "Auto leave 2",
+        "autoLineRobot3" to "Auto leave 3",
+        "autoLeavePoints" to "Auto leave points",
+        "autoAmpNoteCount" to "Auto amp notes",
+        "autoSpeakerNoteCount" to "Auto speaker notes",
+        "autoTotalNotePoints" to "Auto note points",
+        "autoPoints" to "Total auto",
+        "teleopAmpNoteCount" to "Teleop amp notes",
+        "teleopSpeakerNoteCount" to "Teleop speaker notes",
+        "teleopSpeakerNoteAmplifiedCount" to "Amplified speaker",
+        "teleopTotalNotePoints" to "Teleop note points",
+        "endGameRobot1" to "Endgame 1",
+        "endGameRobot2" to "Endgame 2",
+        "endGameRobot3" to "Endgame 3",
+        "endGameHarmonyPoints" to "Harmony",
+        "endGameNoteInTrapPoints" to "Trap",
+        "endGameOnStagePoints" to "On stage",
+        "endGameParkPoints" to "Park",
+        "teleopPoints" to "Total teleop",
+        "coopertitionBonusAchieved" to "Coopertition",
+        "melodyBonusAchieved" to "Melody bonus",
+        "ensembleBonusAchieved" to "Ensemble bonus",
+        "foulCount" to "Fouls",
+        "techFoulCount" to "Tech fouls",
+        "foulPoints" to "Foul points",
+        "adjustPoints" to "Adjust",
+        "totalPoints" to "Total",
+        "rp" to "RP",
+    )
 
-private val breakdownFields2023 = listOf(
-    "autoLineRobot1" to "Auto line 1",
-    "autoLineRobot2" to "Auto line 2",
-    "autoLineRobot3" to "Auto line 3",
-    "autoMobilityPoints" to "Auto mobility",
-    "autoGamePieceCount" to "Auto game pieces",
-    "autoGamePiecePoints" to "Auto game piece points",
-    "autoChargeStationPoints" to "Auto charge station",
-    "autoPoints" to "Total auto",
-    "teleopGamePieceCount" to "Teleop game pieces",
-    "teleopGamePiecePoints" to "Teleop game piece points",
-    "endGameRobot1" to "Endgame 1",
-    "endGameRobot2" to "Endgame 2",
-    "endGameRobot3" to "Endgame 3",
-    "endGameChargeStationPoints" to "Endgame charge station",
-    "endGameParkPoints" to "Endgame park",
-    "teleopPoints" to "Total teleop",
-    "activationBonusAchieved" to "Activation bonus",
-    "sustainabilityBonusAchieved" to "Sustainability bonus",
-    "coopertitionCriteriaMet" to "Coopertition",
-    "foulCount" to "Fouls",
-    "techFoulCount" to "Tech fouls",
-    "foulPoints" to "Foul points",
-    "adjustPoints" to "Adjust",
-    "totalPoints" to "Total",
-    "rp" to "RP",
-)
+private val breakdownFields2023 =
+    listOf(
+        "autoLineRobot1" to "Auto line 1",
+        "autoLineRobot2" to "Auto line 2",
+        "autoLineRobot3" to "Auto line 3",
+        "autoMobilityPoints" to "Auto mobility",
+        "autoGamePieceCount" to "Auto game pieces",
+        "autoGamePiecePoints" to "Auto game piece points",
+        "autoChargeStationPoints" to "Auto charge station",
+        "autoPoints" to "Total auto",
+        "teleopGamePieceCount" to "Teleop game pieces",
+        "teleopGamePiecePoints" to "Teleop game piece points",
+        "endGameRobot1" to "Endgame 1",
+        "endGameRobot2" to "Endgame 2",
+        "endGameRobot3" to "Endgame 3",
+        "endGameChargeStationPoints" to "Endgame charge station",
+        "endGameParkPoints" to "Endgame park",
+        "teleopPoints" to "Total teleop",
+        "activationBonusAchieved" to "Activation bonus",
+        "sustainabilityBonusAchieved" to "Sustainability bonus",
+        "coopertitionCriteriaMet" to "Coopertition",
+        "foulCount" to "Fouls",
+        "techFoulCount" to "Tech fouls",
+        "foulPoints" to "Foul points",
+        "adjustPoints" to "Adjust",
+        "totalPoints" to "Total",
+        "rp" to "RP",
+    )
 
-private val breakdownFieldsByYear = mapOf(
-    2026 to breakdownFields2026,
-    2025 to breakdownFields2025,
-    2024 to breakdownFields2024,
-    2023 to breakdownFields2023,
-)
+private val breakdownFieldsByYear =
+    mapOf(
+        2026 to breakdownFields2026,
+        2025 to breakdownFields2025,
+        2024 to breakdownFields2024,
+        2023 to breakdownFields2023,
+    )

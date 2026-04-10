@@ -11,19 +11,22 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ThemePreferences @Inject constructor(
-    private val dataStore: DataStore<Preferences>,
-) {
-    private val themeModeKey = stringPreferencesKey("theme_mode")
+class ThemePreferences
+    @Inject
+    constructor(
+        private val dataStore: DataStore<Preferences>,
+    ) {
+        private val themeModeKey = stringPreferencesKey("theme_mode")
 
-    val themeModeFlow: Flow<ThemeMode> = dataStore.data.map { prefs ->
-        val name = prefs[themeModeKey]
-        ThemeMode.entries.firstOrNull { it.name == name } ?: ThemeMode.AUTO
-    }
+        val themeModeFlow: Flow<ThemeMode> =
+            dataStore.data.map { prefs ->
+                val name = prefs[themeModeKey]
+                ThemeMode.entries.firstOrNull { it.name == name } ?: ThemeMode.AUTO
+            }
 
-    suspend fun setThemeMode(mode: ThemeMode) {
-        dataStore.edit { prefs ->
-            prefs[themeModeKey] = mode.name
+        suspend fun setThemeMode(mode: ThemeMode) {
+            dataStore.edit { prefs ->
+                prefs[themeModeKey] = mode.name
+            }
         }
     }
-}

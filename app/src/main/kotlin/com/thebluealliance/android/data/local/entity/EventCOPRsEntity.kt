@@ -8,4 +8,3 @@ data class EventCOPRsEntity(
     @PrimaryKey val eventKey: String,
     val coprs: String, // JSON map of stat name -> team stats
 )
-

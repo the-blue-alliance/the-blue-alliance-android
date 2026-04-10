@@ -4,6 +4,3 @@ data class EventInsights(
     val qual: String? = null,
     val playoff: String? = null,
 )
-
-
-

@@ -8,8 +8,10 @@ import android.content.SharedPreferences
  * Each complication instance gets its own preference file keyed by complication ID.
  * The tracked team number is stored in [TeamTrackerPreferences] (single source of truth).
  */
-class TeamTrackingComplicationPreferences(context: Context, complicationId: Int) {
-
+class TeamTrackingComplicationPreferences(
+    context: Context,
+    complicationId: Int,
+) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences("complication_$complicationId", Context.MODE_PRIVATE)
 
@@ -54,17 +56,25 @@ class TeamTrackingComplicationPreferences(context: Context, complicationId: Int)
             context.getSharedPreferences("complication_global", Context.MODE_PRIVATE)
 
         fun getActiveComplicationIds(context: Context): Set<Int> =
-            globalPrefs(context).getStringSet("active_ids", emptySet())
-                ?.mapNotNull { it.toIntOrNull() }?.toSet() ?: emptySet()
+            globalPrefs(context)
+                .getStringSet("active_ids", emptySet())
+                ?.mapNotNull { it.toIntOrNull() }
+                ?.toSet() ?: emptySet()
 
-        fun addComplicationId(context: Context, id: Int) {
+        fun addComplicationId(
+            context: Context,
+            id: Int,
+        ) {
             val prefs = globalPrefs(context)
             val ids = prefs.getStringSet("active_ids", emptySet())?.toMutableSet() ?: mutableSetOf()
             ids.add(id.toString())
             prefs.edit().putStringSet("active_ids", ids).apply()
         }
 
-        fun removeComplicationId(context: Context, id: Int) {
+        fun removeComplicationId(
+            context: Context,
+            id: Int,
+        ) {
             val prefs = globalPrefs(context)
             val ids = prefs.getStringSet("active_ids", emptySet())?.toMutableSet() ?: mutableSetOf()
             ids.remove(id.toString())

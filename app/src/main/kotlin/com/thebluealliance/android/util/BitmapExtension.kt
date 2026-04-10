@@ -16,9 +16,10 @@ import androidx.core.graphics.createBitmap
 fun Bitmap.addRoundedCorners(radius: Float): Bitmap {
     val output = createBitmap(width, height)
     val canvas = Canvas(output)
-    val paint = Paint().apply {
-        isAntiAlias = true
-    }
+    val paint =
+        Paint().apply {
+            isAntiAlias = true
+        }
     val rect = Rect(0, 0, width, height)
     val rectF = RectF(rect)
 

@@ -19,8 +19,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,8 +34,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,7 +51,6 @@ import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
-import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.MatchItem
 import com.thebluealliance.android.ui.components.MatchList
@@ -59,6 +58,7 @@ import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import com.thebluealliance.android.ui.events.detail.tabs.advancementBreakdownRows
 import com.thebluealliance.android.util.openUrl
 import kotlinx.coroutines.launch
@@ -116,7 +116,16 @@ fun TeamEventDetailScreen(
                                     text = event.shortName ?: event.name,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.weight(1f).clickable { onNavigateToEvent(event.key, EventDetailTab.INFO) },
+                                    modifier =
+                                        Modifier
+                                            .weight(
+                                                1f,
+                                            ).clickable {
+                                                onNavigateToEvent(
+                                                    event.key,
+                                                    EventDetailTab.INFO,
+                                                )
+                                            },
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                             }
@@ -132,7 +141,7 @@ fun TeamEventDetailScreen(
                         IconButton(onClick = onNavigateUp) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back"
+                                contentDescription = "Back",
                             )
                         }
                     },
@@ -147,11 +156,24 @@ fun TeamEventDetailScreen(
                     TABS.forEachIndexed { index, title ->
                         Tab(
                             selected = pagerState.currentPage == index,
-                            onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                            onClick = {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(
+                                        index,
+                                    )
+                                }
+                            },
                             text = {
                                 Text(
                                     text = title,
-                                    color = if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.7f)
+                                    color =
+                                        if (pagerState.currentPage ==
+                                            index
+                                        ) {
+                                            Color.White
+                                        } else {
+                                            Color.White.copy(alpha = 0.7f)
+                                        },
                                 )
                             },
                         )
@@ -163,9 +185,11 @@ fun TeamEventDetailScreen(
         val bottomPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding())
-                .background(MaterialTheme.colorScheme.background),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = innerPadding.calculateTopPadding())
+                    .background(MaterialTheme.colorScheme.background),
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
@@ -174,26 +198,29 @@ fun TeamEventDetailScreen(
             ) {
                 val evt = uiState.event
                 when (page) {
-                    TeamEventDetailTabs.SUMMARY -> SummaryTab(
-                        teamKey = viewModel.teamKey,
-                        eventKey = viewModel.eventKey,
-                        event = evt,
-                        team = uiState.team,
-                        ranking = uiState.ranking,
-                        alliances = uiState.alliances,
-                        awards = uiState.awards,
-                        matches = uiState.matches,
-                        pitLocation = uiState.pitLocation,
-                        cmpAdvancement = uiState.cmpAdvancement,
-                        onNavigateToEvent = onNavigateToEvent,
-                        onNavigateToTeam = onNavigateToTeam,
-                        onNavigateToMatch = onNavigateToMatch,
-                        innerPadding = bottomPadding,
-                    )
+                    TeamEventDetailTabs.SUMMARY ->
+                        SummaryTab(
+                            teamKey = viewModel.teamKey,
+                            eventKey = viewModel.eventKey,
+                            event = evt,
+                            team = uiState.team,
+                            ranking = uiState.ranking,
+                            alliances = uiState.alliances,
+                            awards = uiState.awards,
+                            matches = uiState.matches,
+                            pitLocation = uiState.pitLocation,
+                            cmpAdvancement = uiState.cmpAdvancement,
+                            onNavigateToEvent = onNavigateToEvent,
+                            onNavigateToTeam = onNavigateToTeam,
+                            onNavigateToMatch = onNavigateToMatch,
+                            innerPadding = bottomPadding,
+                        )
                     TeamEventDetailTabs.MATCHES -> {
                         val tm = uiState.team
                         val hasBoth = evt != null && tm != null
-                        val headerCount = (if (evt != null) 1 else 0) + (if (hasBoth) 1 else 0) + (if (tm != null) 1 else 0)
+                        val headerCount =
+                            (if (evt != null) 1 else 0) + (if (hasBoth) 1 else 0) +
+                                (if (tm != null) 1 else 0)
                         MatchList(
                             matches = uiState.matches,
                             playoffType = evt?.playoffType ?: PlayoffType.OTHER,
@@ -204,7 +231,12 @@ fun TeamEventDetailScreen(
                                     item(key = "header_event") {
                                         EventRow(
                                             event = evt,
-                                            onClick = { onNavigateToEvent(evt.key, EventDetailTab.INFO) },
+                                            onClick = {
+                                                onNavigateToEvent(
+                                                    evt.key,
+                                                    EventDetailTab.INFO,
+                                                )
+                                            },
                                             showYear = true,
                                             showChevron = true,
                                         )
@@ -226,17 +258,19 @@ fun TeamEventDetailScreen(
                             innerPadding = bottomPadding,
                         )
                     }
-                    TeamEventDetailTabs.MEDIA -> MediaTab(
-                        media = uiState.media,
-                        innerPadding = bottomPadding,
-                    )
-                    TeamEventDetailTabs.STATS -> StatsTab(
-                        teamKey = viewModel.teamKey,
-                        event = evt,
-                        oprs = uiState.oprs,
-                        advancementPoints = uiState.advancementPoints,
-                        innerPadding = bottomPadding,
-                    )
+                    TeamEventDetailTabs.MEDIA ->
+                        MediaTab(
+                            media = uiState.media,
+                            innerPadding = bottomPadding,
+                        )
+                    TeamEventDetailTabs.STATS ->
+                        StatsTab(
+                            teamKey = viewModel.teamKey,
+                            event = evt,
+                            oprs = uiState.oprs,
+                            advancementPoints = uiState.advancementPoints,
+                            innerPadding = bottomPadding,
+                        )
                     TeamEventDetailTabs.AWARDS -> {
                         val tm = uiState.team
                         AwardsTab(
@@ -300,16 +334,18 @@ private fun SummaryTab(
         }
 
         // Info header (ranking, alliance, pit location)
-        val teamAlliance = alliances?.firstOrNull { alliance ->
-            teamKey in alliance.picks || teamKey == alliance.backupIn
-        }
+        val teamAlliance =
+            alliances?.firstOrNull { alliance ->
+                teamKey in alliance.picks || teamKey == alliance.backupIn
+            }
         if (ranking != null || teamAlliance != null || pitLocation != null) {
             item(key = "summary_info_header") {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color(0xFF5C6BC0))
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFF5C6BC0))
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
                 ) {
                     Text(
                         text = "Info",
@@ -340,15 +376,23 @@ private fun SummaryTab(
                 item(key = "summary_alliance_divider") { HorizontalDivider() }
             }
             item(key = "summary_alliance") {
-                val role = when {
-                    teamKey == teamAlliance.backupIn -> "Backup"
-                    teamAlliance.picks.indexOf(teamKey) == 0 -> "Captain"
-                    else -> "Pick ${teamAlliance.picks.indexOf(teamKey)}"
-                }
+                val role =
+                    when {
+                        teamKey == teamAlliance.backupIn -> "Backup"
+                        teamAlliance.picks.indexOf(teamKey) == 0 -> "Captain"
+                        else -> "Pick ${teamAlliance.picks.indexOf(teamKey)}"
+                    }
                 InfoRow(
                     label = "Alliance ${teamAlliance.number}",
                     value = role,
-                    onClick = { event?.let { onNavigateToEvent(it.key, EventDetailTab.ALLIANCES) } },
+                    onClick = {
+                        event?.let {
+                            onNavigateToEvent(
+                                it.key,
+                                EventDetailTab.ALLIANCES,
+                            )
+                        }
+                    },
                 )
             }
             infoItemCount++
@@ -391,10 +435,11 @@ private fun SummaryTab(
         if (cmpAdvancement != null) {
             item(key = "summary_cmp_header") {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color(0xFF5C6BC0))
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .background(Color(0xFF5C6BC0))
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
                 ) {
                     Text(
                         text = "Championship Qualification",
@@ -416,9 +461,10 @@ private fun SummaryTab(
 
         // Last Match / Next Match
         if (matches != null) {
-            val sortedMatches = matches.sortedWith(
-                compareBy({ it.compLevel.order }, { it.setNumber }, { it.matchNumber })
-            )
+            val sortedMatches =
+                matches.sortedWith(
+                    compareBy({ it.compLevel.order }, { it.setNumber }, { it.matchNumber }),
+                )
             val lastPlayed = sortedMatches.lastOrNull { it.redScore >= 0 }
             val nextUnplayed = sortedMatches.firstOrNull { it.redScore < 0 }
             val playoffType = event?.playoffType ?: PlayoffType.OTHER
@@ -426,10 +472,11 @@ private fun SummaryTab(
             if (lastPlayed != null || nextUnplayed != null) {
                 item(key = "summary_match_header") {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color(0xFF5C6BC0))
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .background(Color(0xFF5C6BC0))
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
                     ) {
                         Text(
                             text = "Recent Matches",
@@ -468,14 +515,15 @@ private fun SummaryTab(
     }
 }
 
-private fun cmpAdvancementSummary(advancement: CmpAdvancement): String? = when (advancement) {
-    is CmpAdvancement.EventQualified -> {
-        val eventName = advancement.eventShortName ?: advancement.eventKey.ifBlank { null }
-        eventName?.let { "Qualified via $it" }
+private fun cmpAdvancementSummary(advancement: CmpAdvancement): String? =
+    when (advancement) {
+        is CmpAdvancement.EventQualified -> {
+            val eventName = advancement.eventShortName ?: advancement.eventKey.ifBlank { null }
+            eventName?.let { "Qualified via $it" }
+        }
+        is CmpAdvancement.PoolQualified -> "Qualified via Regional Pool (Week ${advancement.week})"
+        is CmpAdvancement.Qualified -> "Qualified"
     }
-    is CmpAdvancement.PoolQualified -> "Qualified via Regional Pool (Week ${advancement.week})"
-    is CmpAdvancement.Qualified -> "Qualified"
-}
 
 @Composable
 private fun SummarySection(
@@ -483,9 +531,10 @@ private fun SummarySection(
     content: @Composable () -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
         Text(
             text = label,
@@ -505,10 +554,11 @@ private fun InfoRow(
     onClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(modifier = Modifier.weight(1f)) {
@@ -558,16 +608,17 @@ private fun StatsTab(
     if (!hasOprData && !hasPointsData) {
         EmptyBox(
             modifier = Modifier.padding(innerPadding),
-            message = "No stats available"
+            message = "No stats available",
         )
         return
     }
     val context = LocalContext.current
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         if (hasOprData) {
@@ -578,7 +629,12 @@ private fun StatsTab(
                 text = "Learn more about OPR",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable { context.openUrl("https://www.thebluealliance.com/opr") },
+                modifier =
+                    Modifier.clickable {
+                        context.openUrl(
+                            "https://www.thebluealliance.com/opr",
+                        )
+                    },
             )
         }
 
@@ -618,7 +674,10 @@ private fun StatsTab(
 }
 
 @Composable
-private fun StatRow(label: String, value: Double) {
+private fun StatRow(
+    label: String,
+    value: Double,
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -646,7 +705,7 @@ private fun AwardsTab(
 ) {
     if (awards == null) {
         LoadingBox(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         )
         return
     }
@@ -688,9 +747,10 @@ private fun AwardsTab(
         }
         items(awards, key = { "${it.awardType}_${it.awardee.orEmpty()}" }) { award ->
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
                 Text(
                     text = award.name,

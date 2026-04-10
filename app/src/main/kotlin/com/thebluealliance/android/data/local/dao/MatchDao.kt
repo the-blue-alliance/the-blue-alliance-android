@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MatchDao {
-    @Query("SELECT * FROM matches WHERE eventKey = :eventKey ORDER BY compLevel, setNumber, matchNumber ASC")
+    @Query(
+        "SELECT * FROM matches WHERE eventKey = :eventKey ORDER BY compLevel, setNumber, matchNumber ASC",
+    )
     fun observeByEvent(eventKey: String): Flow<List<MatchEntity>>
 
     @Query("SELECT * FROM matches WHERE key = :key")

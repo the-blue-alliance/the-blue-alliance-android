@@ -7,12 +7,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.glance.appwidget.GlanceAppWidgetManager
-import androidx.glance.appwidget.state.updateAppWidgetState
-import androidx.lifecycle.lifecycleScope
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import kotlinx.coroutines.launch
 
 /**
  * Debug-only activity that programmatically requests pinning the Team Tracking widget,
@@ -30,7 +24,6 @@ import kotlinx.coroutines.launch
  *   adb shell am start -n ...PinWidgetActivity --es team 604 --es size 2x1
  */
 class PinWidgetActivity : ComponentActivity() {
-
     companion object {
         private const val TAG = "PinWidgetActivity"
         private const val EXTRA_TEAM = "team"
@@ -55,11 +48,12 @@ class PinWidgetActivity : ComponentActivity() {
         }
 
         // Pass team number through extras so the config activity can auto-fill
-        val extras = if (teamNumber != null) {
-            Bundle().apply { putString(EXTRA_TEAM, teamNumber) }
-        } else {
-            null
-        }
+        val extras =
+            if (teamNumber != null) {
+                Bundle().apply { putString(EXTRA_TEAM, teamNumber) }
+            } else {
+                null
+            }
 
         if (teamNumber != null) {
             // Create a callback PendingIntent so we get the appWidgetId after pinning
@@ -69,10 +63,13 @@ class PinWidgetActivity : ComponentActivity() {
                 callbackIntent.putExtra(EXTRA_SIZE, forcedSize)
             }
             val requestCode = System.currentTimeMillis().toInt()
-            val callbackPending = PendingIntent.getBroadcast(
-                this, requestCode, callbackIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
-            )
+            val callbackPending =
+                PendingIntent.getBroadcast(
+                    this,
+                    requestCode,
+                    callbackIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
+                )
             awm.requestPinAppWidget(provider, extras, callbackPending)
         } else {
             awm.requestPinAppWidget(provider, extras, null)

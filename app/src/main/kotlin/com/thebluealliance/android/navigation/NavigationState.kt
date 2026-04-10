@@ -1,8 +1,5 @@
 package com.thebluealliance.android.navigation
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -12,8 +9,6 @@ import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
-import androidx.core.app.TaskStackBuilder
-import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
@@ -31,39 +26,43 @@ fun rememberNavigationState(
     topLevelRoutes: List<NavKey>,
     startTopLevelRoute: NavKey,
 ): NavigationState {
-    val topLevelRoute = rememberSerializable(
-        startRoute, topLevelRoutes,
-        serializer = MutableStateSerializer(NavKeySerializer())
-    ) {
-        val startTopLevel = when (startRoute) {
-            in topLevelRoutes -> startRoute
-            else -> startTopLevelRoute
+    val topLevelRoute =
+        rememberSerializable(
+            startRoute,
+            topLevelRoutes,
+            serializer = MutableStateSerializer(NavKeySerializer()),
+        ) {
+            val startTopLevel =
+                when (startRoute) {
+                    in topLevelRoutes -> startRoute
+                    else -> startTopLevelRoute
+                }
+            mutableStateOf(startTopLevel)
         }
-        mutableStateOf(startTopLevel)
-    }
 
-    val backStacks = topLevelRoutes.associateWith { key ->
-        if (key == startTopLevelRoute && startRoute != startTopLevelRoute) {
-            val syntheticStack = buildBackStack(
-                startKey = startRoute,
-                parentRoute = startTopLevelRoute,
-                buildFullPath = isNewTask
-            )
-            rememberNavBackStack(*syntheticStack.toTypedArray())
-        } else {
-            rememberNavBackStack(key)
+    val backStacks =
+        topLevelRoutes.associateWith { key ->
+            if (key == startTopLevelRoute && startRoute != startTopLevelRoute) {
+                val syntheticStack =
+                    buildBackStack(
+                        startKey = startRoute,
+                        parentRoute = startTopLevelRoute,
+                        buildFullPath = isNewTask,
+                    )
+                rememberNavBackStack(*syntheticStack.toTypedArray())
+            } else {
+                rememberNavBackStack(key)
+            }
         }
-    }
 
     return remember(startRoute, topLevelRoutes) {
         NavigationState(
             startRoute = startRoute,
             topLevelRoute = topLevelRoute,
-            backStacks = backStacks
+            backStacks = backStacks,
         )
     }
 }
-
 
 /**
  * A function that build a synthetic backStack.
@@ -89,7 +88,7 @@ fun rememberNavigationState(
 internal fun buildBackStack(
     startKey: NavKey,
     parentRoute: NavKey,
-    buildFullPath: Boolean
+    buildFullPath: Boolean,
 ): List<NavKey> {
     if (!buildFullPath) return listOf(startKey)
     /**
@@ -98,7 +97,7 @@ internal fun buildBackStack(
     return listOf(
         // In the future each NavKey could define its own parent if we need a more complex nav graph
         parentRoute,
-        startKey
+        startKey,
     )
 }
 
@@ -110,11 +109,12 @@ class NavigationState(
     val topLevelRoutes = backStacks.keys
     var topLevelRoute: NavKey by topLevelRoute
     val stacksInUse: List<NavKey>
-        get() = if (topLevelRoute == startRoute) {
-            listOf(startRoute)
-        } else {
-            listOf(startRoute, topLevelRoute)
-        }
+        get() =
+            if (topLevelRoute == startRoute) {
+                listOf(startRoute)
+            } else {
+                listOf(startRoute, topLevelRoute)
+            }
 
     val currentStack: NavBackStack<NavKey>
         get() = backStacks[topLevelRoute] ?: error("Stack for $topLevelRoute not found")
@@ -124,19 +124,21 @@ class NavigationState(
 
 @Composable
 fun NavigationState.toEntries(
-    entryProvider: (NavKey) -> NavEntry<NavKey>
+    entryProvider: (NavKey) -> NavEntry<NavKey>,
 ): SnapshotStateList<NavEntry<NavKey>> {
-    val decoratedEntries = backStacks.mapValues { (_, stack) ->
-        val decorators = listOf(
-            rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
-            rememberViewModelStoreNavEntryDecorator<NavKey>(),
-        )
-        rememberDecoratedNavEntries(
-            backStack = stack,
-            entryDecorators = decorators,
-            entryProvider = entryProvider
-        )
-    }
+    val decoratedEntries =
+        backStacks.mapValues { (_, stack) ->
+            val decorators =
+                listOf(
+                    rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
+                    rememberViewModelStoreNavEntryDecorator<NavKey>(),
+                )
+            rememberDecoratedNavEntries(
+                backStack = stack,
+                entryDecorators = decorators,
+                entryProvider = entryProvider,
+            )
+        }
 
     return stacksInUse
         .flatMap { decoratedEntries[it] ?: emptyList() }

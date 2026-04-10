@@ -13,8 +13,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.NotificationsNone
@@ -58,9 +58,9 @@ import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.events.detail.tabs.EventAdvancementTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAlliancesTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAwardsTab
-import com.thebluealliance.android.ui.events.detail.tabs.EventAdvancementTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventInfoTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventInsightsTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventMatchesTab
@@ -69,7 +69,9 @@ import com.thebluealliance.android.ui.events.detail.tabs.EventTeamsTab
 import com.thebluealliance.android.ui.theme.TBABlue
 import kotlinx.coroutines.launch
 
-enum class EventDetailTab(val readableName: (Event?) -> String) {
+enum class EventDetailTab(
+    val readableName: (Event?) -> String,
+) {
     INFO({ "Info" }),
     TEAMS({ "Teams" }),
     RANKINGS({ "Rankings" }),
@@ -96,7 +98,11 @@ fun EventDetailScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()
     val subscription by viewModel.subscription.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState(initialPage = initialTab.ordinal, pageCount = { EventDetailTab.entries.size })
+    val pagerState =
+        rememberPagerState(
+            initialPage = initialTab.ordinal,
+            pageCount = { EventDetailTab.entries.size },
+        )
     val coroutineScope = rememberCoroutineScope()
 
     var showSignInDialog by remember { mutableStateOf(false) }
@@ -172,14 +178,29 @@ fun EventDetailScreen(
                         }) {
                             val hasSubscription = subscription?.notifications?.isNotEmpty() == true
                             Icon(
-                                imageVector = if (hasSubscription) Icons.Filled.Notifications else Icons.Outlined.NotificationsNone,
+                                imageVector =
+                                    if (hasSubscription) {
+                                        Icons.Filled.Notifications
+                                    } else {
+                                        Icons.Outlined.NotificationsNone
+                                    },
                                 contentDescription = "Notification preferences",
                             )
                         }
                         IconButton(onClick = viewModel::toggleFavorite) {
                             Icon(
-                                imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
-                                contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                                imageVector =
+                                    if (isFavorite) {
+                                        Icons.Filled.Star
+                                    } else {
+                                        Icons.Outlined.StarBorder
+                                    },
+                                contentDescription =
+                                    if (isFavorite) {
+                                        "Remove from favorites"
+                                    } else {
+                                        "Add to favorites"
+                                    },
                             )
                         }
                         var menuExpanded by remember { mutableStateOf(false) }
@@ -200,14 +221,16 @@ fun EventDetailScreen(
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Filled.Share,
-                                                contentDescription = null
+                                                contentDescription = null,
                                             )
                                         },
                                         onClick = {
                                             menuExpanded = false
                                             context.shareTbaUrl(
                                                 title = "${event.year} ${event.name}",
-                                                url = "https://www.thebluealliance.com/event/${event.key}",
+                                                url =
+                                                    "https://www.thebluealliance.com/event/" +
+                                                        event.key,
                                             )
                                         },
                                     )
@@ -217,7 +240,10 @@ fun EventDetailScreen(
                                         text = { Text("Add to home screen") },
                                         leadingIcon = {
                                             Icon(
-                                                painter = painterResource(R.drawable.ic_add_to_home_screen),
+                                                painter =
+                                                    painterResource(
+                                                        R.drawable.ic_add_to_home_screen,
+                                                    ),
                                                 contentDescription = null,
                                             )
                                         },
@@ -244,14 +270,20 @@ fun EventDetailScreen(
                         SecondaryIndicator(
                             modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
                             height = 3.dp,
-                            color = Color.White
+                            color = Color.White,
                         )
-                    }
+                    },
                 ) {
                     EventDetailTab.entries.forEach { tab ->
                         Tab(
                             selected = pagerState.currentPage == tab.ordinal,
-                            onClick = { coroutineScope.launch { pagerState.animateScrollToPage(tab.ordinal) } },
+                            onClick = {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(
+                                        tab.ordinal,
+                                    )
+                                }
+                            },
                             text = {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
@@ -259,7 +291,7 @@ fun EventDetailScreen(
                                 ) {
                                     Text(
                                         text = tab.readableName(uiState.event),
-                                        color = Color.White
+                                        color = Color.White,
                                     )
 
                                     // Show number of teams as a badge
@@ -267,15 +299,19 @@ fun EventDetailScreen(
                                         Surface(
                                             shape = MaterialTheme.shapes.small,
                                             color = MaterialTheme.colorScheme.surfaceVariant,
-                                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            contentColor =
+                                                MaterialTheme.colorScheme.onSurfaceVariant,
                                         ) {
                                             Text(
                                                 text = "${uiState.teams?.size}",
                                                 style = MaterialTheme.typography.labelMedium,
-                                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+                                                modifier =
+                                                    Modifier.padding(
+                                                        horizontal = 4.dp,
+                                                        vertical = 2.dp,
+                                                    ),
                                             )
                                         }
-
                                     }
                                 }
                             },
@@ -288,10 +324,11 @@ fun EventDetailScreen(
         val bottomPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding())
-                .background(MaterialTheme.colorScheme.background),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = innerPadding.calculateTopPadding())
+                    .background(MaterialTheme.colorScheme.background),
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing,
@@ -299,74 +336,91 @@ fun EventDetailScreen(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 when (EventDetailTab.entries[page]) {
-                    EventDetailTab.INFO -> EventInfoTab(
-                        event = uiState.event,
-                        districtDisplayName = uiState.districtDisplayName,
-                        onNavigateToDistrict = onNavigateToDistrict,
-                        innerPadding = bottomPadding,
-                    )
-                    EventDetailTab.TEAMS -> EventTeamsTab(
-                        teams = uiState.teams,
-                        pitLocations = uiState.pitLocations,
-                        onNavigateToTeam = { teamKey ->
-                            val eventKey = uiState.event?.key
-                            if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
-                            else onNavigateToTeam(teamKey)
-                        },
-                        innerPadding = bottomPadding,
-                    )
-                    EventDetailTab.RANKINGS -> EventRankingsTab(
-                        rankings = uiState.rankings,
-                        rankingSortOrders = uiState.rankingSortOrders,
-                        rankingExtraStatsInfo = uiState.rankingExtraStatsInfo,
-                        onTeamClick = { teamKey ->
-                            val eventKey = uiState.event?.key
-                            if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
-                        },
-                        innerPadding = bottomPadding,
-                    )
-                    EventDetailTab.MATCHES -> EventMatchesTab(
-                        matches = uiState.matches,
-                        playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
-                        onNavigateToMatch = onNavigateToMatch,
-                        innerPadding = bottomPadding,
-                    )
-                    EventDetailTab.ALLIANCES -> EventAlliancesTab(
-                        alliances = uiState.alliances,
-                        onTeamClick = { teamKey ->
-                            val eventKey = uiState.event?.key
-                            if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
-                        },
-                        innerPadding = bottomPadding,
-                    )
-                    EventDetailTab.INSIGHTS -> EventInsightsTab(
-                        oprs = uiState.oprs,
-                        coprs = uiState.coprs,
-                        insights = uiState.insights,
-                        isRefreshing = isRefreshing,
-                        innerPadding = bottomPadding,
-                    )
-                    EventDetailTab.ADVANCEMENT_POINTS -> EventAdvancementTab(
-                        uiState.advancementPoints,
-                        uiState.event,
-                        uiState.teams,
-                        uiState.regionalCmpAdvancementByTeam,
-                        onTeamClick = { teamKey ->
-                            val eventKey = uiState.event?.key
-                            if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
-                            else onNavigateToTeam(teamKey)
-                        },
-                        innerPadding = bottomPadding,
-                    )
-                    EventDetailTab.AWARDS -> EventAwardsTab(
-                        awards = uiState.awards,
-                        onTeamClick = { teamKey ->
-                            val eventKey = uiState.event?.key
-                            if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
-                            else onNavigateToTeam(teamKey)
-                        },
-                        innerPadding = bottomPadding,
-                    )
+                    EventDetailTab.INFO ->
+                        EventInfoTab(
+                            event = uiState.event,
+                            districtDisplayName = uiState.districtDisplayName,
+                            onNavigateToDistrict = onNavigateToDistrict,
+                            innerPadding = bottomPadding,
+                        )
+                    EventDetailTab.TEAMS ->
+                        EventTeamsTab(
+                            teams = uiState.teams,
+                            pitLocations = uiState.pitLocations,
+                            onNavigateToTeam = { teamKey ->
+                                val eventKey = uiState.event?.key
+                                if (eventKey != null) {
+                                    onNavigateToTeamEvent(teamKey, eventKey)
+                                } else {
+                                    onNavigateToTeam(teamKey)
+                                }
+                            },
+                            innerPadding = bottomPadding,
+                        )
+                    EventDetailTab.RANKINGS ->
+                        EventRankingsTab(
+                            rankings = uiState.rankings,
+                            rankingSortOrders = uiState.rankingSortOrders,
+                            rankingExtraStatsInfo = uiState.rankingExtraStatsInfo,
+                            onTeamClick = { teamKey ->
+                                val eventKey = uiState.event?.key
+                                if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
+                            },
+                            innerPadding = bottomPadding,
+                        )
+                    EventDetailTab.MATCHES ->
+                        EventMatchesTab(
+                            matches = uiState.matches,
+                            playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
+                            onNavigateToMatch = onNavigateToMatch,
+                            innerPadding = bottomPadding,
+                        )
+                    EventDetailTab.ALLIANCES ->
+                        EventAlliancesTab(
+                            alliances = uiState.alliances,
+                            onTeamClick = { teamKey ->
+                                val eventKey = uiState.event?.key
+                                if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
+                            },
+                            innerPadding = bottomPadding,
+                        )
+                    EventDetailTab.INSIGHTS ->
+                        EventInsightsTab(
+                            oprs = uiState.oprs,
+                            coprs = uiState.coprs,
+                            insights = uiState.insights,
+                            isRefreshing = isRefreshing,
+                            innerPadding = bottomPadding,
+                        )
+                    EventDetailTab.ADVANCEMENT_POINTS ->
+                        EventAdvancementTab(
+                            uiState.advancementPoints,
+                            uiState.event,
+                            uiState.teams,
+                            uiState.regionalCmpAdvancementByTeam,
+                            onTeamClick = { teamKey ->
+                                val eventKey = uiState.event?.key
+                                if (eventKey != null) {
+                                    onNavigateToTeamEvent(teamKey, eventKey)
+                                } else {
+                                    onNavigateToTeam(teamKey)
+                                }
+                            },
+                            innerPadding = bottomPadding,
+                        )
+                    EventDetailTab.AWARDS ->
+                        EventAwardsTab(
+                            awards = uiState.awards,
+                            onTeamClick = { teamKey ->
+                                val eventKey = uiState.event?.key
+                                if (eventKey != null) {
+                                    onNavigateToTeamEvent(teamKey, eventKey)
+                                } else {
+                                    onNavigateToTeam(teamKey)
+                                }
+                            },
+                            innerPadding = bottomPadding,
+                        )
                 }
             }
         }

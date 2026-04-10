@@ -12,16 +12,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(
-    private val themePreferences: ThemePreferences,
-) : ViewModel() {
+class SettingsViewModel
+    @Inject
+    constructor(
+        private val themePreferences: ThemePreferences,
+    ) : ViewModel() {
+        val themeMode: StateFlow<ThemeMode> =
+            themePreferences.themeModeFlow
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ThemeMode.AUTO)
 
-    val themeMode: StateFlow<ThemeMode> = themePreferences.themeModeFlow
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), ThemeMode.AUTO)
-
-    fun setThemeMode(mode: ThemeMode) {
-        viewModelScope.launch {
-            themePreferences.setThemeMode(mode)
+        fun setThemeMode(mode: ThemeMode) {
+            viewModelScope.launch {
+                themePreferences.setThemeMode(mode)
+            }
         }
     }
-}

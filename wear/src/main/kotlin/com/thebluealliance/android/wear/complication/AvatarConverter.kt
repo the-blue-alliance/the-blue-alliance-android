@@ -3,10 +3,10 @@ package com.thebluealliance.android.wear.complication
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.util.Base64
-import androidx.wear.watchface.complications.data.MonochromaticImage
-import androidx.core.graphics.createBitmap
 import android.graphics.drawable.Icon
+import android.util.Base64
+import androidx.core.graphics.createBitmap
+import androidx.wear.watchface.complications.data.MonochromaticImage
 
 /**
  * Converts a color avatar bitmap (base64-encoded PNG) into an alpha mask
@@ -18,21 +18,19 @@ import android.graphics.drawable.Icon
  * RGB is set to white so the tint color applies uniformly.
  */
 object AvatarConverter {
-
     fun toMonochromaticImage(base64: String): MonochromaticImage? {
         val bitmap = decodeBase64(base64) ?: return null
         val mask = toAlphaMask(bitmap)
         return MonochromaticImage.Builder(Icon.createWithBitmap(mask)).build()
     }
 
-    private fun decodeBase64(base64: String): Bitmap? {
-        return try {
+    private fun decodeBase64(base64: String): Bitmap? =
+        try {
             val bytes = Base64.decode(base64, Base64.DEFAULT)
             BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
         } catch (e: Exception) {
             null
         }
-    }
 
     /**
      * Convert a color bitmap to a white-on-transparent alpha mask.
@@ -50,7 +48,11 @@ object AvatarConverter {
         var maxLum = 0
         for (i in pixels.indices) {
             val pixel = pixels[i]
-            val lum = (0.299 * Color.red(pixel) + 0.587 * Color.green(pixel) + 0.114 * Color.blue(pixel)).toInt().coerceIn(0, 255)
+            val lum =
+                (
+                    0.299 * Color.red(pixel) + 0.587 * Color.green(pixel) +
+                        0.114 * Color.blue(pixel)
+                ).toInt().coerceIn(0, 255)
             luminances[i] = lum
             if (lum < minLum) minLum = lum
             if (lum > maxLum) maxLum = lum

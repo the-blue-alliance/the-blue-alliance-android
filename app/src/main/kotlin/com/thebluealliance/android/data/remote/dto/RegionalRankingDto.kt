@@ -30,4 +30,3 @@ data class RegionalAdvancementDto(
     @SerialName("qualifying_event") val qualifyingEvent: String? = null,
     @SerialName("qualifying_pool_week") val qualifyingPoolWeek: Int? = null,
 )
-

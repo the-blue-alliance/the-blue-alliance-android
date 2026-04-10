@@ -57,13 +57,13 @@ import com.thebluealliance.android.wear.complication.TeamTrackingComplicationCon
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
 
 class TeamTrackerActivity : ComponentActivity() {
-
     private lateinit var trackerPrefs: TeamTrackerPreferences
     private val state = mutableStateOf(TeamTrackerState())
 
-    private val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
-        loadState()
-    }
+    private val prefListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+            loadState()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -100,31 +100,34 @@ class TeamTrackerActivity : ComponentActivity() {
     }
 
     private fun loadState() {
-        state.value = TeamTrackerState(
-            teamNumber = trackerPrefs.teamNumber,
-            teamNickname = trackerPrefs.teamNickname,
-            avatarBase64 = trackerPrefs.avatarBase64,
-            eventName = trackerPrefs.eventName,
-            record = trackerPrefs.record,
-            hasActiveEvent = trackerPrefs.hasActiveEvent,
-            isLoading = trackerPrefs.isLoading,
-            lastMatchLabel = trackerPrefs.lastMatchLabel,
-            lastMatchRedTeams = trackerPrefs.lastMatchRedTeams,
-            lastMatchBlueTeams = trackerPrefs.lastMatchBlueTeams,
-            lastMatchRedScore = trackerPrefs.lastMatchRedScore,
-            lastMatchBlueScore = trackerPrefs.lastMatchBlueScore,
-            lastMatchWinningAlliance = trackerPrefs.lastMatchWinningAlliance,
-            lastAlliance = trackerPrefs.lastAlliance,
-            lastMatchBonusRp = trackerPrefs.lastMatchBonusRp,
-            nextMatchLabel = trackerPrefs.nextMatchLabel,
-            nextMatchRedTeams = trackerPrefs.nextMatchRedTeams,
-            nextMatchBlueTeams = trackerPrefs.nextMatchBlueTeams,
-            nextMatchTime = trackerPrefs.nextMatchTime,
-            nextMatchTimeIsEstimate = trackerPrefs.nextMatchTimeIsEstimate,
-            nextAlliance = trackerPrefs.nextAlliance,
-            upcomingEvents = trackerPrefs.upcomingEvents
-                .split("|").filter { it.isNotBlank() },
-        )
+        state.value =
+            TeamTrackerState(
+                teamNumber = trackerPrefs.teamNumber,
+                teamNickname = trackerPrefs.teamNickname,
+                avatarBase64 = trackerPrefs.avatarBase64,
+                eventName = trackerPrefs.eventName,
+                record = trackerPrefs.record,
+                hasActiveEvent = trackerPrefs.hasActiveEvent,
+                isLoading = trackerPrefs.isLoading,
+                lastMatchLabel = trackerPrefs.lastMatchLabel,
+                lastMatchRedTeams = trackerPrefs.lastMatchRedTeams,
+                lastMatchBlueTeams = trackerPrefs.lastMatchBlueTeams,
+                lastMatchRedScore = trackerPrefs.lastMatchRedScore,
+                lastMatchBlueScore = trackerPrefs.lastMatchBlueScore,
+                lastMatchWinningAlliance = trackerPrefs.lastMatchWinningAlliance,
+                lastAlliance = trackerPrefs.lastAlliance,
+                lastMatchBonusRp = trackerPrefs.lastMatchBonusRp,
+                nextMatchLabel = trackerPrefs.nextMatchLabel,
+                nextMatchRedTeams = trackerPrefs.nextMatchRedTeams,
+                nextMatchBlueTeams = trackerPrefs.nextMatchBlueTeams,
+                nextMatchTime = trackerPrefs.nextMatchTime,
+                nextMatchTimeIsEstimate = trackerPrefs.nextMatchTimeIsEstimate,
+                nextAlliance = trackerPrefs.nextAlliance,
+                upcomingEvents =
+                    trackerPrefs.upcomingEvents
+                        .split("|")
+                        .filter { it.isNotBlank() },
+            )
     }
 
     private fun launchConfigActivity() {
@@ -237,10 +240,11 @@ private fun TeamTrackerScreen(
                         redTeams = state.nextMatchRedTeams,
                         blueTeams = state.nextMatchBlueTeams,
                         trackedTeam = state.teamNumber,
-                        timeText = buildString {
-                            if (state.nextMatchTimeIsEstimate) append("~")
-                            append(state.nextMatchTime)
-                        }.takeIf { state.nextMatchTime.isNotBlank() },
+                        timeText =
+                            buildString {
+                                if (state.nextMatchTimeIsEstimate) append("~")
+                                append(state.nextMatchTime)
+                            }.takeIf { state.nextMatchTime.isNotBlank() },
                     )
                 }
             }
@@ -283,31 +287,34 @@ private fun EmptyState(onChangeTeam: () -> Unit) {
 
 @Composable
 private fun TeamHeader(state: TeamTrackerState) {
-    val bitmap = remember(state.avatarBase64) {
-        state.avatarBase64?.let { base64 ->
-            try {
-                val bytes = Base64.decode(base64, Base64.DEFAULT)
-                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-            } catch (_: Exception) {
-                null
+    val bitmap =
+        remember(state.avatarBase64) {
+            state.avatarBase64?.let { base64 ->
+                try {
+                    val bytes = Base64.decode(base64, Base64.DEFAULT)
+                    BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                } catch (_: Exception) {
+                    null
+                }
             }
         }
-    }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (bitmap != null) {
-            val bgColor = when (state.nextAlliance.ifBlank { state.lastAlliance }) {
-                "red" -> AllianceRedBg
-                "blue" -> AllianceBlueBg
-                else -> AllianceBlueBg
-            }
+            val bgColor =
+                when (state.nextAlliance.ifBlank { state.lastAlliance }) {
+                    "red" -> AllianceRedBg
+                    "blue" -> AllianceBlueBg
+                    else -> AllianceBlueBg
+                }
             Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(bgColor),
+                modifier =
+                    Modifier
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(bgColor),
                 contentAlignment = Alignment.Center,
             ) {
                 Image(
@@ -328,11 +335,12 @@ private fun TeamHeader(state: TeamTrackerState) {
 @Composable
 private fun EventSubtitle(state: TeamTrackerState) {
     if (state.hasActiveEvent) {
-        val text = if (state.record.isNotBlank()) {
-            "${state.record} at ${state.eventName}"
-        } else {
-            state.eventName
-        }
+        val text =
+            if (state.record.isNotBlank()) {
+                "${state.record} at ${state.eventName}"
+            } else {
+                state.eventName
+            }
         Text(
             text = text,
             style = MaterialTheme.typography.labelSmall,
@@ -376,9 +384,10 @@ private fun MatchSection(
     timeText: String? = null,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 6.dp),
     ) {
         Text(
             text = "$title \u2014 $matchLabel",
@@ -427,23 +436,25 @@ private fun AllianceRow(
     bonusRp: Int = 0,
 ) {
     val teamList = teams.split(", ")
-    val styledTeams = buildAnnotatedString {
-        teamList.forEachIndexed { index, team ->
-            if (team == trackedTeam) {
-                withStyle(SpanStyle(textDecoration = TextDecoration.Underline)) {
+    val styledTeams =
+        buildAnnotatedString {
+            teamList.forEachIndexed { index, team ->
+                if (team == trackedTeam) {
+                    withStyle(SpanStyle(textDecoration = TextDecoration.Underline)) {
+                        append(team)
+                    }
+                } else {
                     append(team)
                 }
-            } else {
-                append(team)
+                if (index < teamList.lastIndex) append(", ")
             }
-            if (index < teamList.lastIndex) append(", ")
         }
-    }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 1.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 1.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(

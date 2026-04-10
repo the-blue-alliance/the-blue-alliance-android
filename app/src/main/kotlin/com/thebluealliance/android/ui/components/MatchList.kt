@@ -60,36 +60,42 @@ fun MatchList(
             item {
                 Box(
                     Modifier.fillParentMaxSize().padding(32.dp),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
-                    if (matches == null) CircularProgressIndicator()
-                    else Text("No matches", style = MaterialTheme.typography.bodyLarge)
+                    if (matches == null) {
+                        CircularProgressIndicator()
+                    } else {
+                        Text("No matches", style = MaterialTheme.typography.bodyLarge)
+                    }
                 }
             }
         }
         return
     }
 
-    val grouped = remember(matches) {
-        val sorted = matches.sortedWith(
-            compareBy({ it.compLevel.order }, { it.setNumber }, { it.matchNumber })
-        )
-        sorted.groupBy { it.getGroup(playoffType) }
-    }
+    val grouped =
+        remember(matches) {
+            val sorted =
+                matches.sortedWith(
+                    compareBy({ it.compLevel.order }, { it.setNumber }, { it.matchNumber }),
+                )
+            sorted.groupBy { it.getGroup(playoffType) }
+        }
 
     // Calculate index of first unplayed match for auto-scroll
     val headerOffset = headerItemCount
-    val firstUnplayedIndex = run {
-        var index = headerOffset
-        for ((_, levelMatches) in grouped) {
-            index++ // group header
-            for (match in levelMatches) {
-                if (match.redScore < 0) return@run index
-                index++
+    val firstUnplayedIndex =
+        run {
+            var index = headerOffset
+            for ((_, levelMatches) in grouped) {
+                index++ // group header
+                for (match in levelMatches) {
+                    if (match.redScore < 0) return@run index
+                    index++
+                }
             }
+            -1
         }
-        -1
-    }
     // Scroll so the last few played matches are visible above the first unplayed
     val scrollTarget = if (firstUnplayedIndex > 2) firstUnplayedIndex - 2 else 0
     val listState = rememberLazyListState()
@@ -99,26 +105,28 @@ fun MatchList(
         }
     }
 
-    val headerInfos = remember(grouped, headerOffset) {
-        buildList {
-            var index = headerOffset
-            grouped.forEach { (group, levelMatches) ->
-                val headerKey = "match_header_${group.label}"
-                add(SectionHeaderInfo(headerKey, group.label, index))
-                index += 1 + levelMatches.size // header + items
+    val headerInfos =
+        remember(grouped, headerOffset) {
+            buildList {
+                var index = headerOffset
+                grouped.forEach { (group, levelMatches) ->
+                    val headerKey = "match_header_${group.label}"
+                    add(SectionHeaderInfo(headerKey, group.label, index))
+                    index += 1 + levelMatches.size // header + items
+                }
             }
         }
-    }
 
     val headerKeys = remember(headerInfos) { headerInfos.map { it.key }.toSet() }
 
     val stuckHeaderKey by remember {
         derivedStateOf {
-            val stuck = listState.layoutInfo.visibleItemsInfo
-                .firstOrNull { item ->
-                    val key = item.key as? String
-                    key != null && key in headerKeys && item.offset <= 0
-                }?.key as? String
+            val stuck =
+                listState.layoutInfo.visibleItemsInfo
+                    .firstOrNull { item ->
+                        val key = item.key as? String
+                        key != null && key in headerKeys && item.offset <= 0
+                    }?.key as? String
             stuck ?: headerInfos.firstOrNull()?.key
         }
     }
@@ -151,7 +159,7 @@ fun MatchList(
                 MatchItem(
                     match = match,
                     playoffType = playoffType,
-                    onClick = { onNavigateToMatch(match.key) }
+                    onClick = { onNavigateToMatch(match.key) },
                 )
                 HorizontalDivider()
             }
@@ -163,7 +171,7 @@ fun MatchList(
 fun MatchItem(
     match: Match,
     playoffType: PlayoffType,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val label = match.getShortLabel(playoffType)
     val isPlayed = match.redScore >= 0
@@ -171,10 +179,11 @@ fun MatchItem(
     val rpBonuses = remember(match.scoreBreakdown) { match.rpBonuses() }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 6.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -187,15 +196,25 @@ fun MatchItem(
         Column(modifier = Modifier.weight(0.35f)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(3.dp)
+                horizontalArrangement = Arrangement.spacedBy(3.dp),
             ) {
                 match.redPlayoffAlliance?.let { alliance ->
                     Surface(
                         shape = MaterialTheme.shapes.extraSmall,
-                        color = if (match.winningAlliance == "red") MaterialTheme.colorScheme.error
-                            else MaterialTheme.colorScheme.errorContainer,
-                        contentColor = if (match.winningAlliance == "red") MaterialTheme.colorScheme.onError
-                            else MaterialTheme.colorScheme.onErrorContainer,
+                        color =
+                            if (match.winningAlliance == "red") {
+                                MaterialTheme.colorScheme.error
+                            } else {
+                                MaterialTheme.colorScheme.errorContainer
+                            },
+                        contentColor =
+                            if (match.winningAlliance ==
+                                "red"
+                            ) {
+                                MaterialTheme.colorScheme.onError
+                            } else {
+                                MaterialTheme.colorScheme.onErrorContainer
+                            },
                     ) {
                         Text(
                             text = alliance.displayTitleShort,
@@ -207,22 +226,41 @@ fun MatchItem(
                 Text(
                     text = match.redTeamKeys.joinToString(", ") { it.removePrefix("frc") },
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
+                    fontWeight =
+                        if (match.winningAlliance ==
+                            "red"
+                        ) {
+                            FontWeight.Bold
+                        } else {
+                            FontWeight.Normal
+                        },
                     color = MaterialTheme.colorScheme.error,
                 )
             }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(3.dp)
+                horizontalArrangement = Arrangement.spacedBy(3.dp),
             ) {
                 match.bluePlayoffAlliance?.let { alliance ->
                     Surface(
                         shape = MaterialTheme.shapes.extraSmall,
-                        color = if (match.winningAlliance == "blue") MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = if (match.winningAlliance == "blue") MaterialTheme.colorScheme.onPrimary
-                            else MaterialTheme.colorScheme.onPrimaryContainer,
+                        color =
+                            if (match.winningAlliance ==
+                                "blue"
+                            ) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.primaryContainer
+                            },
+                        contentColor =
+                            if (match.winningAlliance ==
+                                "blue"
+                            ) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            },
                     ) {
                         Text(
                             text = alliance.displayTitleShort,
@@ -234,7 +272,14 @@ fun MatchItem(
                 Text(
                     text = match.blueTeamKeys.joinToString(", ") { it.removePrefix("frc") },
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
+                    fontWeight =
+                        if (match.winningAlliance ==
+                            "blue"
+                        ) {
+                            FontWeight.Bold
+                        } else {
+                            FontWeight.Normal
+                        },
                     color = MaterialTheme.colorScheme.primary,
                 )
             }
@@ -256,13 +301,27 @@ fun MatchItem(
                 Text(
                     text = match.redScore.toString(),
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = if (match.winningAlliance == "red") FontWeight.Bold else FontWeight.Normal,
+                    fontWeight =
+                        if (match.winningAlliance ==
+                            "red"
+                        ) {
+                            FontWeight.Bold
+                        } else {
+                            FontWeight.Normal
+                        },
                     color = MaterialTheme.colorScheme.error,
                 )
                 Text(
                     text = match.blueScore.toString(),
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = if (match.winningAlliance == "blue") FontWeight.Bold else FontWeight.Normal,
+                    fontWeight =
+                        if (match.winningAlliance ==
+                            "blue"
+                        ) {
+                            FontWeight.Bold
+                        } else {
+                            FontWeight.Normal
+                        },
                     color = MaterialTheme.colorScheme.primary,
                 )
             }
@@ -272,8 +331,10 @@ fun MatchItem(
                 horizontalAlignment = Alignment.End,
             ) {
                 val displayTime = match.predictedTime ?: match.time
-                val isEstimate = match.predictedTime != null && match.time != null &&
-                    kotlin.math.abs(match.predictedTime - match.time) > 60
+                val isEstimate =
+                    match.predictedTime != null &&
+                        match.time != null &&
+                        kotlin.math.abs(match.predictedTime - match.time) > 60
                 Text(
                     text = formatMatchTime(displayTime),
                     style = MaterialTheme.typography.bodyMedium,
@@ -291,19 +352,26 @@ fun MatchItem(
     }
 }
 
-private val matchTimeFormat = java.time.format.DateTimeFormatter.ofPattern(
-    "EEE h:mma", java.util.Locale.US,
-)
+private val matchTimeFormat =
+    java.time.format.DateTimeFormatter.ofPattern(
+        "EEE h:mma",
+        java.util.Locale.US,
+    )
 
 fun formatMatchTime(epochSeconds: Long?): String {
     if (epochSeconds == null) return "\u2014"
     val instant = java.time.Instant.ofEpochSecond(epochSeconds)
-    return matchTimeFormat.format(instant.atZone(java.time.ZoneId.systemDefault()))
-        .replace("AM", "a").replace("PM", "p")
+    return matchTimeFormat
+        .format(instant.atZone(java.time.ZoneId.systemDefault()))
+        .replace("AM", "a")
+        .replace("PM", "p")
 }
 
 @Composable
-private fun RpDots(bonuses: List<Boolean>, achievedColor: Color) {
+private fun RpDots(
+    bonuses: List<Boolean>,
+    achievedColor: Color,
+) {
     Row(
         modifier = Modifier.padding(end = 3.dp),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
@@ -327,4 +395,3 @@ private fun RpDots(bonuses: List<Boolean>, achievedColor: Color) {
         }
     }
 }
-

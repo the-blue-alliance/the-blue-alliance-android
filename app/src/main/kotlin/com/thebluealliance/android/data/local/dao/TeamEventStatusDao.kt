@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TeamEventStatusDao {
     @Query("SELECT * FROM team_event_status WHERE teamKey = :teamKey AND eventKey = :eventKey")
-    fun observe(teamKey: String, eventKey: String): Flow<TeamEventStatusEntity?>
+    fun observe(
+        teamKey: String,
+        eventKey: String,
+    ): Flow<TeamEventStatusEntity?>
 
     @Query("SELECT * FROM team_event_status WHERE eventKey = :eventKey")
     fun observeByEvent(eventKey: String): Flow<List<TeamEventStatusEntity>>

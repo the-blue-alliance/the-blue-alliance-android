@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
 class AllianceTest {
-
     private fun createAlliance(
         playoffStatus: String? = null,
         playoffLevel: String? = null,
@@ -25,21 +24,23 @@ class AllianceTest {
 
     @Test
     fun `playoff summary prefers double elim round when present`() {
-        val alliance = createAlliance(
-            playoffStatus = "eliminated",
-            playoffLevel = "sf",
-            playoffDoubleElimRound = "Round 5",
-        )
+        val alliance =
+            createAlliance(
+                playoffStatus = "eliminated",
+                playoffLevel = "sf",
+                playoffDoubleElimRound = "Round 5",
+            )
 
         assertEquals("Eliminated in Round 5", alliance.playoffSummary)
     }
 
     @Test
     fun `playoff summary renders won status as winner`() {
-        val alliance = createAlliance(
-            playoffStatus = "won",
-            playoffLevel = "f",
-        )
+        val alliance =
+            createAlliance(
+                playoffStatus = "won",
+                playoffLevel = "f",
+            )
 
         assertEquals("Winner 🏆", alliance.playoffSummary)
     }
@@ -60,10 +61,11 @@ class AllianceTest {
 
     @Test
     fun `playoff summary uses in the for comp level fallback`() {
-        val alliance = createAlliance(
-            playoffStatus = "playing",
-            playoffLevel = "sf",
-        )
+        val alliance =
+            createAlliance(
+                playoffStatus = "playing",
+                playoffLevel = "sf",
+            )
 
         assertEquals("Playing in the Semifinals", alliance.playoffSummary)
     }
@@ -75,5 +77,3 @@ class AllianceTest {
         assertEquals("Eliminated", alliance.playoffSummary)
     }
 }
-
-

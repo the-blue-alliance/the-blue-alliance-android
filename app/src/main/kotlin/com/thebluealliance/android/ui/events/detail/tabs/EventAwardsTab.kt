@@ -26,7 +26,7 @@ fun EventAwardsTab(
 ) {
     if (awards == null) {
         LoadingBox(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         )
         return
     }
@@ -41,28 +41,37 @@ fun EventAwardsTab(
         modifier = Modifier.fillMaxSize(),
         contentPadding = innerPadding,
     ) {
-        items(awards, key = { "${it.eventKey}_${it.awardType}_${it.teamKey}_${it.awardee.orEmpty()}" }) { award ->
+        items(awards, key = {
+            "${it.eventKey}_${it.awardType}_${it.teamKey}_${it.awardee.orEmpty()}"
+        }) { award ->
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .then(
-                        if (award.teamKey.isNotEmpty()) Modifier.clickable { onTeamClick(award.teamKey) }
-                        else Modifier
-                    )
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .then(
+                            if (award.teamKey.isNotEmpty()) {
+                                Modifier.clickable { onTeamClick(award.teamKey) }
+                            } else {
+                                Modifier
+                            },
+                        ).padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
                 Text(
                     text = award.name,
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
                 )
-                val recipient = buildString {
-                    if (award.awardee != null) append(award.awardee)
-                    if (award.teamKey.isNotEmpty()) {
-                        if (isNotEmpty()) append(" (${award.teamKey.removePrefix("frc")})")
-                        else append(award.teamKey.removePrefix("frc"))
+                val recipient =
+                    buildString {
+                        if (award.awardee != null) append(award.awardee)
+                        if (award.teamKey.isNotEmpty()) {
+                            if (isNotEmpty()) {
+                                append(" (${award.teamKey.removePrefix("frc")})")
+                            } else {
+                                append(award.teamKey.removePrefix("frc"))
+                            }
+                        }
                     }
-                }
                 if (recipient.isNotEmpty()) {
                     Text(
                         text = recipient,
@@ -74,4 +83,3 @@ fun EventAwardsTab(
         }
     }
 }
-

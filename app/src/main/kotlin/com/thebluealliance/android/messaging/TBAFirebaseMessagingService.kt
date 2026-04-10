@@ -15,9 +15,10 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class TBAFirebaseMessagingService : FirebaseMessagingService() {
-
     @Inject lateinit var deviceRegistrationManager: DeviceRegistrationManager
+
     @Inject lateinit var notificationBuilder: NotificationBuilder
+
     @Inject lateinit var myTBARepository: MyTBARepository
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -37,13 +38,19 @@ class TBAFirebaseMessagingService : FirebaseMessagingService() {
         when (type) {
             NotificationType.UPDATE_FAVORITES -> {
                 scope.launch {
-                    try { myTBARepository.refreshFavorites() } catch (_: Exception) {}
+                    try {
+                        myTBARepository.refreshFavorites()
+                    } catch (_: Exception) {
+                    }
                 }
                 return
             }
             NotificationType.UPDATE_SUBSCRIPTIONS -> {
                 scope.launch {
-                    try { myTBARepository.refreshSubscriptions() } catch (_: Exception) {}
+                    try {
+                        myTBARepository.refreshSubscriptions()
+                    } catch (_: Exception) {
+                    }
                 }
                 return
             }

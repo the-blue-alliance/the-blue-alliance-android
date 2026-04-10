@@ -30,113 +30,122 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @HiltViewModel(assistedFactory = MatchDetailViewModel.Factory::class)
-class MatchDetailViewModel @AssistedInject constructor(
-    @Assisted val navKey: Screen.MatchDetail,
-    private val matchRepository: MatchRepository,
-    private val eventRepository: EventRepository,
-) : ViewModel() {
+class MatchDetailViewModel
+    @AssistedInject
+    constructor(
+        @Assisted val navKey: Screen.MatchDetail,
+        private val matchRepository: MatchRepository,
+        private val eventRepository: EventRepository,
+    ) : ViewModel() {
+        private val matchKey: String = navKey.matchKey
+        private val eventKey: String = matchKey.substringBeforeLast("_")
+        private val year: Int = matchKey.substring(0, 4).toIntOrNull() ?: 0
 
-    private val matchKey: String = navKey.matchKey
-    private val eventKey: String = matchKey.substringBeforeLast("_")
-    private val year: Int = matchKey.substring(0, 4).toIntOrNull() ?: 0
+        private val _isRefreshing = MutableStateFlow(false)
+        val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+        private val json = Json { ignoreUnknownKeys = true }
 
-    private val json = Json { ignoreUnknownKeys = true }
+        private val timeFormatter =
+            DateTimeFormatter.ofPattern(
+                "EEE, MMM d, yyyy 'at' h:mm a",
+                Locale.US,
+            )
 
-    private val timeFormatter = DateTimeFormatter.ofPattern(
-        "EEE, MMM d, yyyy 'at' h:mm a", Locale.US
-    )
+        val uiState: StateFlow<MatchDetailUiState> =
+            combine(
+                matchRepository.observeMatch(matchKey),
+                eventRepository.observeEvent(eventKey),
+                eventRepository.observeEventAlliances(eventKey),
+            ) { match, event, alliances ->
+                val breakdown = match?.scoreBreakdown?.let { parseBreakdown(it) }
+                val videos = match?.videos?.let { parseVideos(it) } ?: emptyList()
+                val timeToDisplay = match?.actualTime ?: match?.predictedTime ?: match?.time
+                val isEstimate =
+                    match?.actualTime == null &&
+                        match?.predictedTime != null &&
+                        match.time != null &&
+                        kotlin.math.abs(match.predictedTime - match.time) > 60
+                val formattedTime =
+                    formatMatchTime(timeToDisplay)?.let {
+                        if (isEstimate) "$it (est.)" else it
+                    }
+                MatchDetailUiState(
+                    match = match?.withPlayoffAlliances(alliances),
+                    scoreBreakdown = breakdown,
+                    eventName = event?.name,
+                    eventKey = event?.key,
+                    playoffType = event?.playoffType ?: PlayoffType.OTHER,
+                    formattedTime = formattedTime,
+                    videos = videos,
+                    year = year,
+                )
+            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MatchDetailUiState())
 
-    val uiState: StateFlow<MatchDetailUiState> = combine(
-        matchRepository.observeMatch(matchKey),
-        eventRepository.observeEvent(eventKey),
-        eventRepository.observeEventAlliances(eventKey),
-    ) { match, event, alliances ->
-        val breakdown = match?.scoreBreakdown?.let { parseBreakdown(it) }
-        val videos = match?.videos?.let { parseVideos(it) } ?: emptyList()
-        val timeToDisplay = match?.actualTime ?: match?.predictedTime ?: match?.time
-        val isEstimate = match?.actualTime == null && match?.predictedTime != null &&
-            match.time != null && kotlin.math.abs(match.predictedTime - match.time) > 60
-        val formattedTime = formatMatchTime(timeToDisplay)?.let {
-            if (isEstimate) "$it (est.)" else it
+        init {
+            refresh()
+            viewModelScope.launch {
+                // Fetch event only if not already cached (e.g. deep-linked to match)
+                val cached = eventRepository.observeEvent(eventKey).first()
+                if (cached == null) {
+                    try {
+                        eventRepository.refreshEvent(eventKey)
+                    } catch (_: Exception) {
+                    }
+                }
+            }
         }
-        MatchDetailUiState(
-            match = match?.withPlayoffAlliances(alliances),
-            scoreBreakdown = breakdown,
-            eventName = event?.name,
-            eventKey = event?.key,
-            playoffType = event?.playoffType ?: PlayoffType.OTHER,
-            formattedTime = formattedTime,
-            videos = videos,
-            year = year,
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MatchDetailUiState())
 
-    init {
-        refresh()
-        viewModelScope.launch {
-            // Fetch event only if not already cached (e.g. deep-linked to match)
-            val cached = eventRepository.observeEvent(eventKey).first()
-            if (cached == null) {
+        fun refresh() {
+            viewModelScope.launch {
+                _isRefreshing.value = true
                 try {
-                    eventRepository.refreshEvent(eventKey)
-                } catch (_: Exception) {}
+                    matchRepository.refreshMatch(matchKey)
+                } catch (_: Exception) {
+                } finally {
+                    _isRefreshing.value = false
+                }
             }
         }
-    }
 
-    fun refresh() {
-        viewModelScope.launch {
-            _isRefreshing.value = true
-            try {
-                matchRepository.refreshMatch(matchKey)
+        private fun formatMatchTime(epochSeconds: Long?): String? {
+            if (epochSeconds == null) return null
+            val instant = Instant.ofEpochSecond(epochSeconds)
+            return timeFormatter.format(instant.atZone(ZoneId.systemDefault()))
+        }
+
+        private fun parseVideos(jsonString: String): List<MatchVideo> {
+            return try {
+                val array = json.decodeFromString<JsonArray>(jsonString)
+                array.mapNotNull { element ->
+                    val obj = element as? JsonObject ?: return@mapNotNull null
+                    val type = obj["type"]?.jsonPrimitive?.content ?: return@mapNotNull null
+                    val key = obj["key"]?.jsonPrimitive?.content ?: return@mapNotNull null
+                    MatchVideo(type = type, key = key)
+                }
             } catch (_: Exception) {
-            } finally {
-                _isRefreshing.value = false
+                emptyList()
             }
         }
-    }
 
-    private fun formatMatchTime(epochSeconds: Long?): String? {
-        if (epochSeconds == null) return null
-        val instant = Instant.ofEpochSecond(epochSeconds)
-        return timeFormatter.format(instant.atZone(ZoneId.systemDefault()))
-    }
-
-    private fun parseVideos(jsonString: String): List<MatchVideo> {
-        return try {
-            val array = json.decodeFromString<JsonArray>(jsonString)
-            array.mapNotNull { element ->
-                val obj = element as? JsonObject ?: return@mapNotNull null
-                val type = obj["type"]?.jsonPrimitive?.content ?: return@mapNotNull null
-                val key = obj["key"]?.jsonPrimitive?.content ?: return@mapNotNull null
-                MatchVideo(type = type, key = key)
+        private fun parseBreakdown(jsonString: String): Map<String, Map<String, String>>? =
+            try {
+                val obj = json.decodeFromString<JsonObject>(jsonString)
+                val result = mutableMapOf<String, Map<String, String>>()
+                for (alliance in listOf("red", "blue")) {
+                    val allianceObj = obj[alliance] as? JsonObject ?: continue
+                    result[alliance] =
+                        allianceObj.entries
+                            .filter { (_, v) -> v is JsonPrimitive }
+                            .associate { (k, v) -> k to v.jsonPrimitive.content }
+                }
+                result.ifEmpty { null }
+            } catch (_: Exception) {
+                null
             }
-        } catch (_: Exception) {
-            emptyList()
+
+        @AssistedFactory
+        interface Factory {
+            fun create(navKey: Screen.MatchDetail): MatchDetailViewModel
         }
     }
-
-    private fun parseBreakdown(jsonString: String): Map<String, Map<String, String>>? {
-        return try {
-            val obj = json.decodeFromString<JsonObject>(jsonString)
-            val result = mutableMapOf<String, Map<String, String>>()
-            for (alliance in listOf("red", "blue")) {
-                val allianceObj = obj[alliance] as? JsonObject ?: continue
-                result[alliance] = allianceObj.entries
-                    .filter { (_, v) -> v is JsonPrimitive }
-                    .associate { (k, v) -> k to v.jsonPrimitive.content }
-            }
-            result.ifEmpty { null }
-        } catch (_: Exception) {
-            null
-        }
-    }
-
-    @AssistedFactory
-    interface Factory {
-        fun create(navKey: Screen.MatchDetail): MatchDetailViewModel
-    }
-}
