@@ -143,6 +143,9 @@ android {
         warningsAsErrors = true
         abortOnError = true
         checkDependencies = true
+        // Advisory rule that fires whenever a newer (beta) SDK exists. We
+        // bump targetSdk deliberately, not on every API release.
+        disable += "OldTargetApi"
     }
 
     @Suppress("UnstableApiUsage")
