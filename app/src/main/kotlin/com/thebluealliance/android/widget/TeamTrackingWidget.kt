@@ -1,4 +1,5 @@
 @file:OptIn(ExperimentalGlancePreviewApi::class)
+@file:Suppress("RestrictedApi") // Glance ColorProvider(@ColorRes) is public but lint flags impl
 
 package com.thebluealliance.android.widget
 
