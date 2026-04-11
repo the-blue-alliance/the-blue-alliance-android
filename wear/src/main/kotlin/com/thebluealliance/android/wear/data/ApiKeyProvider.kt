@@ -3,6 +3,7 @@ package com.thebluealliance.android.wear.data
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.core.content.edit
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.thebluealliance.android.wear.BuildConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -39,7 +40,7 @@ class ApiKeyProvider
                 if (task.isSuccessful) {
                     val key = remoteConfig.getString(REMOTE_CONFIG_KEY)
                     if (key.isNotEmpty()) {
-                        prefs.edit().putString(PREFS_KEY, key).apply()
+                        prefs.edit { putString(PREFS_KEY, key) }
                         Log.d(TAG, "Updated API key from Remote Config")
                     }
                 } else {

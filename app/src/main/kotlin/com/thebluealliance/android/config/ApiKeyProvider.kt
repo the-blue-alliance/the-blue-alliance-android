@@ -2,6 +2,7 @@ package com.thebluealliance.android.config
 
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.core.content.edit
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.thebluealliance.android.BuildConfig
 import java.util.concurrent.CountDownLatch
@@ -53,7 +54,7 @@ class ApiKeyProvider
                 if (task.isSuccessful) {
                     val key = remoteConfig.getString(REMOTE_CONFIG_KEY)
                     if (key.isNotEmpty()) {
-                        sharedPreferences.edit().putString(PREFS_KEY, key).apply()
+                        sharedPreferences.edit { putString(PREFS_KEY, key) }
                         Log.d(TAG, "Updated API key from Remote Config")
                     }
                 } else {

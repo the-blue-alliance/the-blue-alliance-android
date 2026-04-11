@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import android.util.Log
+import androidx.core.content.edit
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -39,12 +40,12 @@ class DeviceRegistrationWorker
                         deviceUuid = deviceUuid,
                     ),
                 )
-                sharedPreferences
-                    .edit()
-                    .putString(
+                sharedPreferences.edit {
+                    putString(
                         DeviceRegistrationManager.PREF_REGISTERED_TOKEN,
                         token,
-                    ).apply()
+                    )
+                }
                 Log.d(TAG, "Registered device with token ${token.take(10)}...")
                 Result.success()
             } catch (e: Exception) {

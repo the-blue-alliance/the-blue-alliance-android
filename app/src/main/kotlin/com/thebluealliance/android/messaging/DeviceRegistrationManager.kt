@@ -3,6 +3,7 @@ package com.thebluealliance.android.messaging
 import android.content.SharedPreferences
 import android.os.Build
 import android.util.Log
+import androidx.core.content.edit
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
@@ -42,7 +43,7 @@ class DeviceRegistrationManager
                     java.util.UUID
                         .randomUUID()
                         .toString()
-                sharedPreferences.edit().putString(PREF_DEVICE_UUID, uuid).apply()
+                sharedPreferences.edit { putString(PREF_DEVICE_UUID, uuid) }
                 return uuid
             }
 
@@ -87,7 +88,7 @@ class DeviceRegistrationManager
             } catch (e: Exception) {
                 Log.e(TAG, "Unregister failed", e)
             } finally {
-                sharedPreferences.edit().remove(PREF_REGISTERED_TOKEN).apply()
+                sharedPreferences.edit { remove(PREF_REGISTERED_TOKEN) }
             }
         }
 
@@ -100,7 +101,7 @@ class DeviceRegistrationManager
                         deviceUuid = deviceUuid,
                     ),
                 )
-                sharedPreferences.edit().putString(PREF_REGISTERED_TOKEN, token).apply()
+                sharedPreferences.edit { putString(PREF_REGISTERED_TOKEN, token) }
                 Log.d(TAG, "Registered device with token ${token.take(10)}...")
             } catch (e: Exception) {
                 Log.e(TAG, "Registration failed, scheduling retry", e)
