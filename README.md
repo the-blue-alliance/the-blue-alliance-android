@@ -53,30 +53,12 @@ cp local.properties.example local.properties
 
 ### 3. Add a stub `google-services.json`
 
-The Firebase plugin refuses to configure without a `google-services.json`, but you don't need a real Firebase project for the first build — any syntactically-valid stub will do. Create `app/src/debug/google-services.json` with:
+The Firebase plugin refuses to configure without a `google-services.json`, but you don't need a real Firebase project for the first build. Copy the example stubs into place:
 
-```json
-{
-  "project_info": {
-    "project_number": "000000000000",
-    "project_id": "tba-dev-placeholder",
-    "storage_bucket": "tba-dev-placeholder.appspot.com"
-  },
-  "client": [{
-    "client_info": {
-      "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
-      "android_client_info": { "package_name": "com.thebluealliance.androidclient.development" }
-    },
-    "oauth_client": [
-      { "client_id": "000000000000-placeholder.apps.googleusercontent.com", "client_type": 3 }
-    ],
-    "api_key": [{ "current_key": "placeholder-api-key" }]
-  }],
-  "configuration_version": "1"
-}
+```bash
+cp app/src/debug/google-services.json.example  app/src/debug/google-services.json
+cp wear/src/debug/google-services.json.example wear/src/debug/google-services.json
 ```
-
-If you also want to build the Wear OS app, copy the same file to `wear/src/debug/google-services.json`.
 
 Google Sign-In and push notifications will not work with the stub — see [Firebase project (optional)](#firebase-project-optional) below when you need them.
 
@@ -143,7 +125,7 @@ To set up a real project:
 1. Create a project in the [Firebase console](https://console.firebase.google.com/) (e.g. `yourname-tba-dev`).
 2. Add an Android app with package name `com.thebluealliance.androidclient.development`.
 3. Add your debug signing SHA-1 fingerprint ([instructions](https://developers.google.com/android/guides/client-auth)).
-4. Download the real `google-services.json` and replace the stub at `app/src/debug/google-services.json`.
+4. Download the real `google-services.json` and overwrite `app/src/debug/google-services.json` with it.
 
 ## Code quality
 
