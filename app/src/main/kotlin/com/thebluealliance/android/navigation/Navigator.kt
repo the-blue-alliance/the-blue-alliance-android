@@ -52,7 +52,7 @@ class Navigator(
         // If we're at the base of the current route, go back to the start route stack.
         if (state.currentRoute == state.topLevelRoute) {
             state.topLevelRoute = state.startRoute
-        } else if (state.currentStack.size > 1){
+        } else if (state.currentStack.size > 1) {
             state.currentStack.removeLastOrNull()
         }
     }
@@ -71,9 +71,7 @@ class Navigator(
      * restart the app in its own Task so that this app's screens are displayed within
      * this app instead of being displayed within the originating app that triggered the deeplink.
      */
-    private fun NavBackStack<NavKey>.navigateUp(
-        activity: Activity,
-    ) {
+    private fun NavBackStack<NavKey>.navigateUp(activity: Activity) {
         /**
          * The root key (the first key on synthetic backStack) would/should never display the Up button.
          * So if the backStack only contains a non-root key, it means a synthetic backStack had not
@@ -107,7 +105,7 @@ class Navigator(
     private fun createTaskStackBuilder(
         deeplinkKey: NavKey?,
         activity: Activity,
-        context: Context
+        context: Context,
     ): TaskStackBuilder {
         /**
          * The intent to restart the current activity.

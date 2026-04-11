@@ -2,7 +2,6 @@ package com.thebluealliance.android.ui.events.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.DistrictRepository
 import com.thebluealliance.android.data.repository.EventRepository
@@ -14,6 +13,7 @@ import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.domain.model.withPlayoffAlliances
+import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -36,254 +36,484 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel(assistedFactory = EventDetailViewModel.Factory::class)
-class EventDetailViewModel @AssistedInject constructor(
-    @Assisted val navKey: Screen.EventDetail,
-    private val eventRepository: EventRepository,
-    private val teamRepository: TeamRepository,
-    private val matchRepository: MatchRepository,
-    private val districtRepository: DistrictRepository,
-    private val myTBARepository: MyTBARepository,
-    private val authRepository: AuthRepository,
-    private val shortcutManager: TBAShortcutManager,
-) : ViewModel() {
+class EventDetailViewModel
+    @AssistedInject
+    constructor(
+        @Assisted val navKey: Screen.EventDetail,
+        private val eventRepository: EventRepository,
+        private val teamRepository: TeamRepository,
+        private val matchRepository: MatchRepository,
+        private val districtRepository: DistrictRepository,
+        private val myTBARepository: MyTBARepository,
+        private val authRepository: AuthRepository,
+        private val shortcutManager: TBAShortcutManager,
+    ) : ViewModel() {
+        private val eventKey: String = navKey.eventKey
+        private val eventYear: Int = eventKey.take(4).toIntOrNull() ?: 0
 
-    private val eventKey: String = navKey.eventKey
-    private val eventYear: Int = eventKey.take(4).toIntOrNull() ?: 0
+        private val _isRefreshing = MutableStateFlow(false)
+        val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+        private val regionalCmpAdvancementByTeam =
+            MutableStateFlow<Map<String, CmpAdvancement>>(emptyMap())
 
-    private val _regionalCmpAdvancementByTeam = MutableStateFlow<Map<String, CmpAdvancement>>(emptyMap())
+        private val teamKeysFlow = teamRepository.observeEventTeamKeys(eventKey)
 
-
-    private val teamKeysFlow = teamRepository.observeEventTeamKeys(eventKey)
-
-    private val teamsFlow = teamKeysFlow.flatMapLatest { keys ->
-        if (keys.isEmpty()) flowOf(emptyList()) else teamRepository.observeTeams(keys)
-    }
-
-    val uiState: StateFlow<EventDetailUiState> = eventRepository.observeEvent(eventKey)
-        .flatMapLatest { event ->
-            val coreBaseFlow = combine(
-                flowOf(event),
-                teamsFlow,
-                matchRepository.observeEventMatches(eventKey),
-                eventRepository.observeEventRankings(eventKey),
-            ) { currentEvent, teams, matches, rankings ->
-                EventCoreBaseState(currentEvent, teams, matches, rankings)
+        private val teamsFlow =
+            teamKeysFlow.flatMapLatest { keys ->
+                if (keys.isEmpty()) flowOf(emptyList()) else teamRepository.observeTeams(keys)
             }
 
-            val coreFlow = combine(
-                coreBaseFlow,
-                eventRepository.observeEventRankingSortOrders(eventKey),
-                eventRepository.observeEventRankingExtraStatsInfo(eventKey),
-            ) { coreBase, rankingSortOrders, rankingExtraStatsInfo ->
-                EventCoreState(
-                    event = coreBase.event,
-                    teams = coreBase.teams,
-                    matches = coreBase.matches,
-                    rankings = coreBase.rankings,
-                    rankingSortOrders = rankingSortOrders,
-                    rankingExtraStatsInfo = rankingExtraStatsInfo,
-                )
-            }
+        val uiState: StateFlow<EventDetailUiState> =
+            eventRepository
+                .observeEvent(eventKey)
+                .flatMapLatest { event ->
+                    val coreBaseFlow =
+                        combine(
+                            flowOf(event),
+                            teamsFlow,
+                            matchRepository.observeEventMatches(eventKey),
+                            eventRepository.observeEventRankings(eventKey),
+                        ) { currentEvent, teams, matches, rankings ->
+                            EventCoreBaseState(currentEvent, teams, matches, rankings)
+                        }
 
-            val extrasLeftFlow = combine(
-                eventRepository.observeEventAlliances(eventKey),
-                eventRepository.observeEventAwards(eventKey),
-            ) { alliances, awards ->
-                Pair(alliances, awards)
-            }
+                    val coreFlow =
+                        combine(
+                            coreBaseFlow,
+                            eventRepository.observeEventRankingSortOrders(eventKey),
+                            eventRepository.observeEventRankingExtraStatsInfo(eventKey),
+                        ) { coreBase, rankingSortOrders, rankingExtraStatsInfo ->
+                            EventCoreState(
+                                event = coreBase.event,
+                                teams = coreBase.teams,
+                                matches = coreBase.matches,
+                                rankings = coreBase.rankings,
+                                rankingSortOrders = rankingSortOrders,
+                                rankingExtraStatsInfo = rankingExtraStatsInfo,
+                            )
+                        }
 
-            val extrasRightFlow = combine(
-                if (event?.district != null) eventRepository.observeEventDistrictPoints(eventKey) else eventRepository.observeEventRegionalPoints(eventKey),
-                eventRepository.observeEventOPRs(eventKey),
-                eventRepository.observeEventCOPRs(eventKey),
-                _regionalCmpAdvancementByTeam,
-            ) { advancementPoints, oprs, coprs, regionalCmpAdvancementByTeam ->
-                EventExtrasRightState(advancementPoints, oprs, coprs, regionalCmpAdvancementByTeam)
-            }
+                    val extrasLeftFlow =
+                        combine(
+                            eventRepository.observeEventAlliances(eventKey),
+                            eventRepository.observeEventAwards(eventKey),
+                        ) { alliances, awards ->
+                            Pair(alliances, awards)
+                        }
 
-            val extrasFlow = combine(extrasLeftFlow, extrasRightFlow) { left, right ->
-                EventExtrasState(
-                    alliances = left.first,
-                    awards = left.second,
-                    advancementPoints = right.advancementPoints,
-                    oprs = right.oprs,
-                    coprs = right.coprs,
-                    regionalCmpAdvancementByTeam = right.regionalCmpAdvancementByTeam,
-                )
-            }
+                    val extrasRightFlow =
+                        combine(
+                            if (event?.district !=
+                                null
+                            ) {
+                                eventRepository.observeEventDistrictPoints(eventKey)
+                            } else {
+                                eventRepository.observeEventRegionalPoints(eventKey)
+                            },
+                            eventRepository.observeEventOPRs(eventKey),
+                            eventRepository.observeEventCOPRs(eventKey),
+                            regionalCmpAdvancementByTeam,
+                        ) { advancementPoints, oprs, coprs, regionalCmpAdvancementByTeam ->
+                            EventExtrasRightState(
+                                advancementPoints,
+                                oprs,
+                                coprs,
+                                regionalCmpAdvancementByTeam,
+                            )
+                        }
 
-            combine(coreFlow, extrasFlow) { core, extras ->
-                EventDetailUiState(
-                    event = core.event,
-                    teams = core.teams,
-                    matches = core.matches.map { it.withPlayoffAlliances(extras.alliances) },
-                    rankings = core.rankings,
-                    rankingSortOrders = core.rankingSortOrders,
-                    rankingExtraStatsInfo = core.rankingExtraStatsInfo,
-                    alliances = extras.alliances,
-                    awards = extras.awards,
-                    advancementPoints = extras.advancementPoints,
-                    oprs = extras.oprs,
-                    coprs = extras.coprs,
-                    insights = null,
-                    regionalCmpAdvancementByTeam = extras.regionalCmpAdvancementByTeam,
-                )
-            }
-        }.flatMapLatest { baseState ->
-            combine(
-                eventRepository.observeEventInsights(eventKey),
-                baseState.event?.district?.let { districtRepository.observeDistrict(it) } ?: flowOf(null),
-                eventRepository.observeEventPitLocations(eventKey),
-            ) { insights, district, pitLocations ->
-                baseState.copy(
-                    insights = insights,
-                    districtDisplayName = district?.displayName,
-                    pitLocations = pitLocations,
-                )
-            }
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), EventDetailUiState())
+                    val extrasFlow =
+                        combine(extrasLeftFlow, extrasRightFlow) { left, right ->
+                            EventExtrasState(
+                                alliances = left.first,
+                                awards = left.second,
+                                advancementPoints = right.advancementPoints,
+                                oprs = right.oprs,
+                                coprs = right.coprs,
+                                regionalCmpAdvancementByTeam = right.regionalCmpAdvancementByTeam,
+                            )
+                        }
 
-    val isFavorite: StateFlow<Boolean> = myTBARepository.isFavorite(eventKey, ModelType.EVENT)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-
-    val subscription: StateFlow<Subscription?> = myTBARepository
-        .observeSubscription(eventKey, ModelType.EVENT)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
-
-    private val _showSignInPrompt = MutableSharedFlow<Unit>()
-    val showSignInPrompt: SharedFlow<Unit> = _showSignInPrompt.asSharedFlow()
-
-    private val _userMessage = MutableSharedFlow<String>()
-    val userMessage: SharedFlow<String> = _userMessage.asSharedFlow()
-
-    init {
-        refreshAll()
-    }
-
-    fun toggleFavorite() {
-        viewModelScope.launch {
-            if (!authRepository.isSignedIn()) {
-                _showSignInPrompt.emit(Unit)
-                return@launch
-            }
-            try {
-                if (isFavorite.value) {
-                    myTBARepository.removeFavorite(eventKey, ModelType.EVENT)
-                } else {
-                    myTBARepository.addFavorite(eventKey, ModelType.EVENT)
-                }
-            } catch (_: Exception) {}
-        }
-    }
-
-    fun updatePreferences(favorite: Boolean, notifications: List<String>) {
-        viewModelScope.launch {
-            try {
-                myTBARepository.updatePreferences(eventKey, ModelType.EVENT, favorite, notifications)
-            } catch (_: Exception) {
-                _userMessage.emit("Failed to save notification preferences")
-            }
-        }
-    }
-
-    val canPinShortcuts: Boolean = shortcutManager.canPinShortcuts()
-
-    fun requestPinShortcut() {
-        viewModelScope.launch {
-            shortcutManager.requestPinShortcut(
-                Favorite(modelKey = eventKey, modelType = ModelType.EVENT)
-            )
-        }
-    }
-
-    fun isSignedIn(): Boolean = authRepository.isSignedIn()
-
-    fun refreshAll() {
-        viewModelScope.launch {
-            _isRefreshing.value = true
-            try {
-                coroutineScope {
-                    launch { try { eventRepository.refreshEvent(eventKey) } catch (_: Exception) {} }
-                    launch { try { teamRepository.refreshEventTeams(eventKey) } catch (_: Exception) {} }
-                    launch { try { matchRepository.refreshEventMatches(eventKey) } catch (_: Exception) {} }
-                    launch { try { eventRepository.refreshEventRankings(eventKey) } catch (_: Exception) {} }
-                    launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
-                    launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
-                    launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
-                    launch { try { eventRepository.refreshEventRegionalPoints(eventKey) } catch (_: Exception) {} }
-                    launch {
-                        try {
-                            _regionalCmpAdvancementByTeam.value = eventRepository.fetchRegionalCmpAdvancementByTeam(eventYear)
-                        } catch (_: Exception) {}
+                    combine(coreFlow, extrasFlow) { core, extras ->
+                        EventDetailUiState(
+                            event = core.event,
+                            teams = core.teams,
+                            matches =
+                                core.matches.map {
+                                    it.withPlayoffAlliances(
+                                        extras.alliances,
+                                    )
+                                },
+                            rankings = core.rankings,
+                            rankingSortOrders = core.rankingSortOrders,
+                            rankingExtraStatsInfo = core.rankingExtraStatsInfo,
+                            alliances = extras.alliances,
+                            awards = extras.awards,
+                            advancementPoints = extras.advancementPoints,
+                            oprs = extras.oprs,
+                            coprs = extras.coprs,
+                            insights = null,
+                            regionalCmpAdvancementByTeam = extras.regionalCmpAdvancementByTeam,
+                        )
                     }
-                    launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
-                    launch { try { eventRepository.refreshEventCOPRs(eventKey) } catch (_: Exception) {} }
-                    launch { try { eventRepository.refreshEventInsights(eventKey) } catch (_: Exception) {} }
-                    launch { try { districtRepository.refreshDistrictsForYear(eventYear) } catch (_: Exception) {} }
-                    launch { try { eventRepository.refreshEventPitLocations(eventKey) } catch (_: Exception) {} }
+                }.flatMapLatest { baseState ->
+                    combine(
+                        eventRepository.observeEventInsights(eventKey),
+                        baseState.event?.district?.let { districtRepository.observeDistrict(it) }
+                            ?: flowOf(null),
+                        eventRepository.observeEventPitLocations(eventKey),
+                    ) { insights, district, pitLocations ->
+                        baseState.copy(
+                            insights = insights,
+                            districtDisplayName = district?.displayName,
+                            pitLocations = pitLocations,
+                        )
+                    }
+                }.stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(5000),
+                    EventDetailUiState(),
+                )
+
+        val isFavorite: StateFlow<Boolean> =
+            myTBARepository
+                .isFavorite(eventKey, ModelType.EVENT)
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+        val subscription: StateFlow<Subscription?> =
+            myTBARepository
+                .observeSubscription(eventKey, ModelType.EVENT)
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+        private val _showSignInPrompt = MutableSharedFlow<Unit>()
+        val showSignInPrompt: SharedFlow<Unit> = _showSignInPrompt.asSharedFlow()
+
+        private val _userMessage = MutableSharedFlow<String>()
+        val userMessage: SharedFlow<String> = _userMessage.asSharedFlow()
+
+        init {
+            refreshAll()
+        }
+
+        fun toggleFavorite() {
+            viewModelScope.launch {
+                if (!authRepository.isSignedIn()) {
+                    _showSignInPrompt.emit(Unit)
+                    return@launch
                 }
-            } finally {
-                _isRefreshing.value = false
+                try {
+                    if (isFavorite.value) {
+                        myTBARepository.removeFavorite(eventKey, ModelType.EVENT)
+                    } else {
+                        myTBARepository.addFavorite(eventKey, ModelType.EVENT)
+                    }
+                } catch (_: Exception) {
+                }
             }
         }
-    }
 
-    fun refreshTab(tab: EventDetailTab) {
-        viewModelScope.launch {
-            _isRefreshing.value = true
-            try {
-                coroutineScope {
-                    when (tab) {
-                        EventDetailTab.INFO -> {
-                            launch { try { eventRepository.refreshEvent(eventKey) } catch (_: Exception) {} }
-                            launch { try { districtRepository.refreshDistrictsForYear(eventYear) } catch (_: Exception) {} }
-                        }
-                        EventDetailTab.TEAMS -> {
-                            launch { try { teamRepository.refreshEventTeams(eventKey) } catch (_: Exception) {} }
-                            launch { try { eventRepository.refreshEventPitLocations(eventKey) } catch (_: Exception) {} }
-                        }
-                        EventDetailTab.RANKINGS -> {
-                            launch { try { eventRepository.refreshEventRankings(eventKey) } catch (_: Exception) {} }
-                        }
-                        EventDetailTab.MATCHES -> {
-                            launch { try { matchRepository.refreshEventMatches(eventKey) } catch (_: Exception) {} }
-                        }
-                        EventDetailTab.ALLIANCES -> {
-                            launch { try { eventRepository.refreshEventAlliances(eventKey) } catch (_: Exception) {} }
-                        }
-                        EventDetailTab.INSIGHTS -> {
-                            launch { try { eventRepository.refreshEventOPRs(eventKey) } catch (_: Exception) {} }
-                            launch { try { eventRepository.refreshEventCOPRs(eventKey) } catch (_: Exception) {} }
-                            launch { try { eventRepository.refreshEventInsights(eventKey) } catch (_: Exception) {} }
-                        }
-                        EventDetailTab.ADVANCEMENT_POINTS -> {
-                            launch { try { eventRepository.refreshEventDistrictPoints(eventKey) } catch (_: Exception) {} }
-                            launch { try { eventRepository.refreshEventRegionalPoints(eventKey) } catch (_: Exception) {} }
-                            launch {
-                                try {
-                                    _regionalCmpAdvancementByTeam.value = eventRepository.fetchRegionalCmpAdvancementByTeam(eventYear)
-                                } catch (_: Exception) {}
+        fun updatePreferences(
+            favorite: Boolean,
+            notifications: List<String>,
+        ) {
+            viewModelScope.launch {
+                try {
+                    myTBARepository.updatePreferences(
+                        eventKey,
+                        ModelType.EVENT,
+                        favorite,
+                        notifications,
+                    )
+                } catch (_: Exception) {
+                    _userMessage.emit("Failed to save notification preferences")
+                }
+            }
+        }
+
+        val canPinShortcuts: Boolean = shortcutManager.canPinShortcuts()
+
+        fun requestPinShortcut() {
+            viewModelScope.launch {
+                shortcutManager.requestPinShortcut(
+                    Favorite(modelKey = eventKey, modelType = ModelType.EVENT),
+                )
+            }
+        }
+
+        fun isSignedIn(): Boolean = authRepository.isSignedIn()
+
+        fun refreshAll() {
+            viewModelScope.launch {
+                _isRefreshing.value = true
+                try {
+                    coroutineScope {
+                        launch {
+                            try {
+                                eventRepository.refreshEvent(eventKey)
+                            } catch (
+                                _: Exception,
+                            ) {
                             }
                         }
-                        EventDetailTab.AWARDS -> {
-                            launch { try { eventRepository.refreshEventAwards(eventKey) } catch (_: Exception) {} }
+                        launch {
+                            try {
+                                teamRepository.refreshEventTeams(eventKey)
+                            } catch (
+                                _: Exception,
+                            ) {
+                            }
+                        }
+                        launch {
+                            try {
+                                matchRepository.refreshEventMatches(eventKey)
+                            } catch (
+                                _: Exception,
+                            ) {
+                            }
+                        }
+                        launch {
+                            try {
+                                eventRepository.refreshEventRankings(eventKey)
+                            } catch (
+                                _: Exception,
+                            ) {
+                            }
+                        }
+                        launch {
+                            try {
+                                eventRepository.refreshEventAlliances(eventKey)
+                            } catch (
+                                _: Exception,
+                            ) {
+                            }
+                        }
+                        launch {
+                            try {
+                                eventRepository.refreshEventAwards(eventKey)
+                            } catch (
+                                _: Exception,
+                            ) {
+                            }
+                        }
+                        launch {
+                            try {
+                                eventRepository.refreshEventDistrictPoints(eventKey)
+                            } catch (
+                                _: Exception,
+                            ) {
+                            }
+                        }
+                        launch {
+                            try {
+                                eventRepository.refreshEventRegionalPoints(eventKey)
+                            } catch (
+                                _: Exception,
+                            ) {
+                            }
+                        }
+                        launch {
+                            try {
+                                regionalCmpAdvancementByTeam.value =
+                                    eventRepository.fetchRegionalCmpAdvancementByTeam(eventYear)
+                            } catch (_: Exception) {
+                            }
+                        }
+                        launch {
+                            try {
+                                eventRepository.refreshEventOPRs(eventKey)
+                            } catch (
+                                _: Exception,
+                            ) {
+                            }
+                        }
+                        launch {
+                            try {
+                                eventRepository.refreshEventCOPRs(eventKey)
+                            } catch (
+                                _: Exception,
+                            ) {
+                            }
+                        }
+                        launch {
+                            try {
+                                eventRepository.refreshEventInsights(eventKey)
+                            } catch (
+                                _: Exception,
+                            ) {
+                            }
+                        }
+                        launch {
+                            try {
+                                districtRepository.refreshDistrictsForYear(eventYear)
+                            } catch (
+                                _: Exception,
+                            ) {
+                            }
+                        }
+                        launch {
+                            try {
+                                eventRepository.refreshEventPitLocations(eventKey)
+                            } catch (
+                                _: Exception,
+                            ) {
+                            }
                         }
                     }
+                } finally {
+                    _isRefreshing.value = false
                 }
-            } finally {
-                _isRefreshing.value = false
             }
         }
-    }
 
-    @AssistedFactory
-    interface Factory {
-        fun create(navKey: Screen.EventDetail): EventDetailViewModel
+        fun refreshTab(tab: EventDetailTab) {
+            viewModelScope.launch {
+                _isRefreshing.value = true
+                try {
+                    coroutineScope {
+                        when (tab) {
+                            EventDetailTab.INFO -> {
+                                launch {
+                                    try {
+                                        eventRepository.refreshEvent(eventKey)
+                                    } catch (
+                                        _: Exception,
+                                    ) {
+                                    }
+                                }
+                                launch {
+                                    try {
+                                        districtRepository.refreshDistrictsForYear(eventYear)
+                                    } catch (
+                                        _: Exception,
+                                    ) {
+                                    }
+                                }
+                            }
+                            EventDetailTab.TEAMS -> {
+                                launch {
+                                    try {
+                                        teamRepository.refreshEventTeams(eventKey)
+                                    } catch (
+                                        _: Exception,
+                                    ) {
+                                    }
+                                }
+                                launch {
+                                    try {
+                                        eventRepository.refreshEventPitLocations(eventKey)
+                                    } catch (
+                                        _: Exception,
+                                    ) {
+                                    }
+                                }
+                            }
+                            EventDetailTab.RANKINGS -> {
+                                launch {
+                                    try {
+                                        eventRepository.refreshEventRankings(eventKey)
+                                    } catch (
+                                        _: Exception,
+                                    ) {
+                                    }
+                                }
+                            }
+                            EventDetailTab.MATCHES -> {
+                                launch {
+                                    try {
+                                        matchRepository.refreshEventMatches(eventKey)
+                                    } catch (
+                                        _: Exception,
+                                    ) {
+                                    }
+                                }
+                            }
+                            EventDetailTab.ALLIANCES -> {
+                                launch {
+                                    try {
+                                        eventRepository.refreshEventAlliances(eventKey)
+                                    } catch (
+                                        _: Exception,
+                                    ) {
+                                    }
+                                }
+                            }
+                            EventDetailTab.INSIGHTS -> {
+                                launch {
+                                    try {
+                                        eventRepository.refreshEventOPRs(eventKey)
+                                    } catch (
+                                        _: Exception,
+                                    ) {
+                                    }
+                                }
+                                launch {
+                                    try {
+                                        eventRepository.refreshEventCOPRs(eventKey)
+                                    } catch (
+                                        _: Exception,
+                                    ) {
+                                    }
+                                }
+                                launch {
+                                    try {
+                                        eventRepository.refreshEventInsights(eventKey)
+                                    } catch (
+                                        _: Exception,
+                                    ) {
+                                    }
+                                }
+                            }
+                            EventDetailTab.ADVANCEMENT_POINTS -> {
+                                launch {
+                                    try {
+                                        eventRepository.refreshEventDistrictPoints(eventKey)
+                                    } catch (
+                                        _: Exception,
+                                    ) {
+                                    }
+                                }
+                                launch {
+                                    try {
+                                        eventRepository.refreshEventRegionalPoints(eventKey)
+                                    } catch (
+                                        _: Exception,
+                                    ) {
+                                    }
+                                }
+                                launch {
+                                    try {
+                                        regionalCmpAdvancementByTeam.value =
+                                            eventRepository.fetchRegionalCmpAdvancementByTeam(
+                                                eventYear,
+                                            )
+                                    } catch (_: Exception) {
+                                    }
+                                }
+                            }
+                            EventDetailTab.AWARDS -> {
+                                launch {
+                                    try {
+                                        eventRepository.refreshEventAwards(eventKey)
+                                    } catch (
+                                        _: Exception,
+                                    ) {
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } finally {
+                    _isRefreshing.value = false
+                }
+            }
+        }
+
+        @AssistedFactory
+        interface Factory {
+            fun create(navKey: Screen.EventDetail): EventDetailViewModel
+        }
     }
-}
 
 private data class EventCoreBaseState(
     val event: com.thebluealliance.android.domain.model.Event?,

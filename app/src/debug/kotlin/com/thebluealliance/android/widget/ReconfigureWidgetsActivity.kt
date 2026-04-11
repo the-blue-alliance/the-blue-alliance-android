@@ -20,7 +20,6 @@ import kotlinx.coroutines.launch
  *   adb shell am start -n com.thebluealliance.androidclient.development/com.thebluealliance.android.widget.ReconfigureWidgetsActivity --es team 125
  */
 class ReconfigureWidgetsActivity : ComponentActivity() {
-
     companion object {
         private const val TAG = "ReconfigureWidgets"
     }
@@ -73,7 +72,8 @@ class ReconfigureWidgetsActivity : ComponentActivity() {
             }
 
             // Trigger a data refresh
-            WorkManager.getInstance(this@ReconfigureWidgetsActivity)
+            WorkManager
+                .getInstance(this@ReconfigureWidgetsActivity)
                 .enqueue(OneTimeWorkRequestBuilder<TeamTrackingWorker>().build())
 
             Log.d(TAG, "Done. Triggered data refresh.")

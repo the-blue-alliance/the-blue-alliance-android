@@ -20,9 +20,15 @@ data class TopLevelDestination(
     val unselectedIcon: ImageVector,
 )
 
-val TOP_LEVEL_DESTINATIONS = listOf(
-    TopLevelDestination(Screen.Events, "Events", Icons.Filled.CalendarMonth, Icons.Outlined.CalendarMonth),
-    TopLevelDestination(Screen.Teams, "Teams", Icons.Filled.Groups, Icons.Outlined.Groups),
-    TopLevelDestination(Screen.Districts, "Districts", Icons.Filled.Map, Icons.Outlined.Map),
-    TopLevelDestination(Screen.More, "More", Icons.Filled.Menu, Icons.Outlined.Menu),
-)
+val TOP_LEVEL_DESTINATIONS =
+    listOf(
+        TopLevelDestination(
+            Screen.Events,
+            "Events",
+            Icons.Filled.CalendarMonth,
+            Icons.Outlined.CalendarMonth,
+        ),
+        TopLevelDestination(Screen.Teams, "Teams", Icons.Filled.Groups, Icons.Outlined.Groups),
+        TopLevelDestination(Screen.Districts, "Districts", Icons.Filled.Map, Icons.Outlined.Map),
+        TopLevelDestination(Screen.More, "More", Icons.Filled.Menu, Icons.Outlined.Menu),
+    )

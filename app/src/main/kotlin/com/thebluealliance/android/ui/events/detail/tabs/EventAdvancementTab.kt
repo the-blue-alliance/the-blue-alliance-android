@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.HorizontalDivider
@@ -29,10 +30,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.shape.RoundedCornerShape
 import com.thebluealliance.android.domain.model.CmpAdvancement
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventAdvancementPoints
@@ -43,15 +43,16 @@ import com.thebluealliance.android.ui.common.LoadingBox
 internal fun advancementBreakdownRows(
     points: EventAdvancementPoints,
     isDistrictEvent: Boolean,
-): List<Pair<String, Int>> = buildList {
-    add("Qualification" to points.qualPoints)
-    add((if (isDistrictEvent) "Elimination" else "Playoff") to points.elimPoints)
-    add("Alliance" to points.alliancePoints)
-    add("Awards" to points.awardPoints)
-    if (!isDistrictEvent) {
-        add("Team Age" to points.rookieBonus)
+): List<Pair<String, Int>> =
+    buildList {
+        add("Qualification" to points.qualPoints)
+        add((if (isDistrictEvent) "Elimination" else "Playoff") to points.elimPoints)
+        add("Alliance" to points.alliancePoints)
+        add("Awards" to points.awardPoints)
+        if (!isDistrictEvent) {
+            add("Team Age" to points.rookieBonus)
+        }
     }
-}
 
 @Composable
 fun EventAdvancementTab(
@@ -64,14 +65,14 @@ fun EventAdvancementTab(
 ) {
     if (advancementPoints == null) {
         LoadingBox(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         )
         return
     }
     if (advancementPoints.isEmpty()) {
         EmptyBox(
             modifier = Modifier.padding(innerPadding),
-            message = if (event?.district != null) "No district points" else "No regional points"
+            message = if (event?.district != null) "No district points" else "No regional points",
         )
         return
     }
@@ -89,7 +90,12 @@ fun EventAdvancementTab(
                 points = points,
                 teamName = teamName,
                 isDistrictEvent = isDistrictEvent,
-                cmpAdvancement = if (isDistrictEvent) null else regionalCmpAdvancementByTeam[points.teamKey],
+                cmpAdvancement =
+                    if (isDistrictEvent) {
+                        null
+                    } else {
+                        regionalCmpAdvancementByTeam[points.teamKey]
+                    },
                 onTeamClick = onTeamClick,
             )
         }
@@ -113,10 +119,11 @@ private fun AdvancementPointsItem(
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = !expanded }
-                .padding(horizontal = 16.dp, vertical = 10.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded = !expanded }
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -163,10 +170,11 @@ private fun AdvancementPointsItem(
 
         AnimatedVisibility(visible = expanded) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(start = 56.dp, bottom = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(start = 56.dp, bottom = 8.dp),
             ) {
                 advancementBreakdownRows(points, isDistrictEvent).forEach { (label, value) ->
                     AdvancementBreakdownRow(label, value)
@@ -220,14 +228,15 @@ private fun AdvancementPointsItem(
 }
 
 /** Returns a human-readable detail string describing how the team qualified, or null. */
-private fun cmpAdvancementDetail(advancement: CmpAdvancement): String? = when (advancement) {
-    is CmpAdvancement.EventQualified -> {
-        val name = advancement.eventShortName ?: advancement.eventKey.ifBlank { null }
-        name?.let { "via $it" }
+private fun cmpAdvancementDetail(advancement: CmpAdvancement): String? =
+    when (advancement) {
+        is CmpAdvancement.EventQualified -> {
+            val name = advancement.eventShortName ?: advancement.eventKey.ifBlank { null }
+            name?.let { "via $it" }
+        }
+        is CmpAdvancement.PoolQualified -> "via Week ${advancement.week} Pool"
+        is CmpAdvancement.Qualified -> null
     }
-    is CmpAdvancement.PoolQualified -> "via Week ${advancement.week} Pool"
-    is CmpAdvancement.Qualified -> null
-}
 
 @Composable
 private fun CmpAdvancementBadge(advancement: CmpAdvancement) {
@@ -237,18 +246,23 @@ private fun CmpAdvancementBadge(advancement: CmpAdvancement) {
         color = MaterialTheme.colorScheme.onPrimaryContainer,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(4.dp))
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+        modifier =
+            Modifier
+                .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(4.dp))
+                .padding(horizontal = 8.dp, vertical = 4.dp),
     )
 }
 
 @Composable
-private fun AdvancementBreakdownRow(label: String, value: Int) {
+private fun AdvancementBreakdownRow(
+    label: String,
+    value: Int,
+) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 2.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(

@@ -5,18 +5,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,8 +32,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.ui.components.TBATopAppBar
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,16 +58,25 @@ fun MoreScreen(
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
         ) {
             MoreItem(icon = Icons.Filled.Star, label = "myTBA", onClick = onNavigateToMyTBA)
             HorizontalDivider()
-            MoreItem(icon = Icons.Filled.EmojiEvents, label = "Regional Advancement", onClick = onNavigateToRegionalAdvancement)
+            MoreItem(
+                icon = Icons.Filled.EmojiEvents,
+                label = "Regional Advancement",
+                onClick = onNavigateToRegionalAdvancement,
+            )
             HorizontalDivider()
-            MoreItem(icon = Icons.Filled.Settings, label = "Settings", onClick = onNavigateToSettings)
+            MoreItem(
+                icon = Icons.Filled.Settings,
+                label = "Settings",
+                onClick = onNavigateToSettings,
+            )
             HorizontalDivider()
 
             Spacer(modifier = Modifier.weight(1f))
@@ -93,7 +102,9 @@ fun MoreScreen(
             }
 
             Text(
-                text = "v${BuildConfig.VERSION_NAME} (${BuildConfig.GIT_HASH})\nBuilt ${BuildConfig.BUILD_TIME}",
+                text =
+                    "v${BuildConfig.VERSION_NAME} (${BuildConfig.GIT_HASH})\n" +
+                        "Built ${BuildConfig.BUILD_TIME}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 4.dp),
@@ -103,12 +114,17 @@ fun MoreScreen(
 }
 
 @Composable
-private fun MoreItem(icon: ImageVector, label: String, onClick: () -> Unit) {
+private fun MoreItem(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(icon, contentDescription = null)

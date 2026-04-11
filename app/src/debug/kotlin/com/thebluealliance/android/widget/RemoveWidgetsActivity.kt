@@ -15,9 +15,9 @@ import androidx.activity.ComponentActivity
  *   adb shell am start -n com.thebluealliance.androidclient.development/com.thebluealliance.android.widget.RemoveWidgetsActivity
  */
 class RemoveWidgetsActivity : ComponentActivity() {
-
     companion object {
         private const val TAG = "RemoveWidgetsActivity"
+
         // Pixel Launcher's host ID
         private const val LAUNCHER_HOST_ID = 1024
     }

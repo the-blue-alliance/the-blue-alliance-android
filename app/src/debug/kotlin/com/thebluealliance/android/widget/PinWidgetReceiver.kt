@@ -18,18 +18,21 @@ import kotlinx.coroutines.launch
  * Triggered by the PendingIntent callback from [PinWidgetActivity].
  */
 class PinWidgetReceiver : BroadcastReceiver() {
-
     companion object {
         private const val TAG = "PinWidgetReceiver"
     }
 
-    override fun onReceive(context: Context, intent: Intent) {
+    override fun onReceive(
+        context: Context,
+        intent: Intent,
+    ) {
         val teamNumber = intent.getStringExtra("team") ?: return
         val forcedSize = intent.getStringExtra("size")
-        val appWidgetId = intent.getIntExtra(
-            AppWidgetManager.EXTRA_APPWIDGET_ID,
-            AppWidgetManager.INVALID_APPWIDGET_ID,
-        )
+        val appWidgetId =
+            intent.getIntExtra(
+                AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID,
+            )
 
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             Log.e(TAG, "No valid appWidgetId in pin callback")
@@ -55,7 +58,8 @@ class PinWidgetReceiver : BroadcastReceiver() {
                 TeamTrackingWidget().update(context, glanceId)
 
                 TeamTrackingWorker.enqueuePeriodicRefresh(context)
-                WorkManager.getInstance(context)
+                WorkManager
+                    .getInstance(context)
                     .enqueue(OneTimeWorkRequestBuilder<TeamTrackingWorker>().build())
 
                 Log.d(TAG, "Widget $appWidgetId configured for team $teamNumber")

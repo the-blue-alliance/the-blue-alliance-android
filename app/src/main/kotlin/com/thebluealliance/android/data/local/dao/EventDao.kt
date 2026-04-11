@@ -24,7 +24,9 @@ interface EventDao {
     @Query("SELECT * FROM events WHERE district = :districtKey ORDER BY startDate ASC")
     fun observeByDistrict(districtKey: String): Flow<List<EventEntity>>
 
-    @Query("SELECT * FROM events WHERE name LIKE '%' || :query || '%' OR key LIKE '%' || :query || '%' OR shortName LIKE '%' || :query || '%' OR city LIKE '%' || :query || '%' ORDER BY year DESC, startDate ASC LIMIT 50")
+    @Query(
+        "SELECT * FROM events WHERE name LIKE '%' || :query || '%' OR key LIKE '%' || :query || '%' OR shortName LIKE '%' || :query || '%' OR city LIKE '%' || :query || '%' ORDER BY year DESC, startDate ASC LIMIT 50",
+    )
     fun search(query: String): Flow<List<EventEntity>>
 
     @Query("DELETE FROM events WHERE year = :year")

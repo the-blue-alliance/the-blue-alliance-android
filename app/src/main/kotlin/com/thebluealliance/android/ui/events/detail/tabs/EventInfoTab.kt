@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Language
@@ -29,8 +28,8 @@ import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.ui.common.LoadingBox
-import com.thebluealliance.android.util.openUrl
 import com.thebluealliance.android.ui.components.formatEventDateRange
+import com.thebluealliance.android.util.openUrl
 
 @Composable
 fun EventInfoTab(
@@ -41,15 +40,16 @@ fun EventInfoTab(
 ) {
     if (event == null) {
         LoadingBox(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         )
         return
     }
     val context = LocalContext.current
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp),
         contentPadding = innerPadding,
     ) {
         item {
@@ -91,9 +91,10 @@ fun EventInfoTab(
                     text = "District: $districtLabel",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .padding(top = 4.dp)
-                        .clickable { onNavigateToDistrict(event.district) },
+                    modifier =
+                        Modifier
+                            .padding(top = 4.dp)
+                            .clickable { onNavigateToDistrict(event.district) },
                 )
             }
         }
@@ -113,12 +114,13 @@ fun EventInfoTab(
         if (event.address != null) {
             item {
                 Row(
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .clickable {
-                            val url = event.gmapsUrl ?: "geo:0,0?q=${Uri.encode(event.address)}"
-                            context.openUrl(url)
-                        },
+                    modifier =
+                        Modifier
+                            .padding(top = 8.dp)
+                            .clickable {
+                                val url = event.gmapsUrl ?: "geo:0,0?q=${Uri.encode(event.address)}"
+                                context.openUrl(url)
+                            },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
@@ -141,11 +143,12 @@ fun EventInfoTab(
         if (event.website != null) {
             item {
                 Row(
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .clickable {
-                            context.openUrl(event.website)
-                        },
+                    modifier =
+                        Modifier
+                            .padding(top = 8.dp)
+                            .clickable {
+                                context.openUrl(event.website)
+                            },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
@@ -174,16 +177,22 @@ fun EventInfoTab(
                     fontWeight = FontWeight.Bold,
                 )
             }
-            itemsIndexed(event.webcasts, key = { index, it -> "${it.type}_${it.channel}_$index" }) { _, webcast ->
+            itemsIndexed(event.webcasts, key = {
+                index,
+                it,
+                ->
+                "${it.type}_${it.channel}_$index"
+            }) { _, webcast ->
                 val url = webcastUrl(webcast)
                 val label = webcastLabel(webcast)
                 if (url != null) {
                     Row(
-                        modifier = Modifier
-                            .padding(top = 4.dp)
-                            .clickable {
-                                context.openUrl(url)
-                            },
+                        modifier =
+                            Modifier
+                                .padding(top = 4.dp)
+                                .clickable {
+                                    context.openUrl(url)
+                                },
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
@@ -205,31 +214,36 @@ fun EventInfoTab(
     }
 }
 
-private fun webcastUrl(webcast: Webcast): String? = when (webcast.type) {
-    "twitch" -> "https://twitch.tv/${webcast.channel}"
-    "youtube" -> "https://youtube.com/watch?v=${webcast.channel}"
-    "livestream" -> "https://livestream.com/accounts/${webcast.channel}/events/${webcast.file ?: ""}"
-    else -> null
-}
+private fun webcastUrl(webcast: Webcast): String? =
+    when (webcast.type) {
+        "twitch" -> "https://twitch.tv/${webcast.channel}"
+        "youtube" -> "https://youtube.com/watch?v=${webcast.channel}"
+        "livestream" ->
+            "https://livestream.com/accounts/${webcast.channel}/events/${webcast.file ?: ""}"
+        else -> null
+    }
 
 private fun webcastLabel(webcast: Webcast): String {
-    val base = when (webcast.type) {
-        "twitch" -> "Watch on Twitch"
-        "youtube" -> "Watch on YouTube"
-        "livestream" -> "Watch on Livestream"
-        else -> "Watch (${webcast.type})"
-    }
+    val base =
+        when (webcast.type) {
+            "twitch" -> "Watch on Twitch"
+            "youtube" -> "Watch on YouTube"
+            "livestream" -> "Watch on Livestream"
+            else -> "Watch (${webcast.type})"
+        }
     val dateSuffix = webcast.date?.let { formatWebcastDate(it) } ?: ""
     return if (dateSuffix.isNotEmpty()) "$base $dateSuffix" else base
 }
 
-private fun formatWebcastDate(dateStr: String): String {
-    return try {
+private fun formatWebcastDate(dateStr: String): String =
+    try {
         val date = java.time.LocalDate.parse(dateStr)
-        val formatter = java.time.format.DateTimeFormatter.ofPattern("(EEE, MMM d)", java.util.Locale.US)
+        val formatter =
+            java.time.format.DateTimeFormatter.ofPattern(
+                "(EEE, MMM d)",
+                java.util.Locale.US,
+            )
         date.format(formatter)
     } catch (_: Exception) {
         ""
     }
-}
-

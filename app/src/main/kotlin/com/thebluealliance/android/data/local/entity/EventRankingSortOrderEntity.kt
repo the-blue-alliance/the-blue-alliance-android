@@ -10,4 +10,3 @@ data class EventRankingSortOrderEntity(
     val sortOrderInfo: String, // JSON array of RankingSortOrderDto
     val extraStatsInfo: String? = null, // JSON array of RankingSortOrderDto
 )
-

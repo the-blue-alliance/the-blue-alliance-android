@@ -35,7 +35,6 @@ import java.time.LocalDate
  *   "upcoming"  — Team 254 with 3 upcoming events, no current event
  */
 class MockWidgetActivity : ComponentActivity() {
-
     companion object {
         private const val TAG = "MockWidget"
     }
@@ -75,7 +74,10 @@ class MockWidgetActivity : ComponentActivity() {
                         "at-event" -> writeAtEventPreset(prefs)
                         "upcoming" -> writeUpcomingPreset(prefs)
                         else -> {
-                            Log.e(TAG, "Unknown preset: $preset (expected 'at-event' or 'upcoming')")
+                            Log.e(
+                                TAG,
+                                "Unknown preset: $preset (expected 'at-event' or 'upcoming')",
+                            )
                             return@updateAppWidgetState
                         }
                     }
@@ -93,23 +95,32 @@ class MockWidgetActivity : ComponentActivity() {
 
     /** Look up the team's avatar from the local Room DB (current year, falling back to last year). */
     private suspend fun fetchAvatarBase64(teamKey: String): String? {
-        val db = Room.databaseBuilder(applicationContext, TBADatabase::class.java, "tba.db")
-            .fallbackToDestructiveMigration(dropAllTables = true)
-            .build()
+        val db =
+            Room
+                .databaseBuilder(applicationContext, TBADatabase::class.java, "tba.db")
+                .fallbackToDestructiveMigration(dropAllTables = true)
+                .build()
         return try {
             val year = LocalDate.now().year
-            val media = db.mediaDao().observeByTeamYear(teamKey, year).firstOrNull()
-                ?: emptyList()
-            val avatar = media.firstOrNull { it.type == "avatar" && it.base64Image != null }
-                ?: db.mediaDao().observeByTeamYear(teamKey, year - 1).firstOrNull()
-                    ?.firstOrNull { it.type == "avatar" && it.base64Image != null }
+            val media =
+                db.mediaDao().observeByTeamYear(teamKey, year).firstOrNull()
+                    ?: emptyList()
+            val avatar =
+                media.firstOrNull { it.type == "avatar" && it.base64Image != null }
+                    ?: db
+                        .mediaDao()
+                        .observeByTeamYear(teamKey, year - 1)
+                        .firstOrNull()
+                        ?.firstOrNull { it.type == "avatar" && it.base64Image != null }
             avatar?.base64Image
         } finally {
             db.close()
         }
     }
 
-    private suspend fun writeAtEventPreset(prefs: androidx.datastore.preferences.core.MutablePreferences) {
+    private suspend fun writeAtEventPreset(
+        prefs: androidx.datastore.preferences.core.MutablePreferences,
+    ) {
         // Team 177 "Bobcat Robotics" at NE District Event — matches sampleData()
         prefs[TeamTrackingWidgetKeys.TEAM_NUMBER] = "177"
         prefs[TeamTrackingWidgetKeys.TEAM_KEY] = "frc177"
@@ -150,7 +161,9 @@ class MockWidgetActivity : ComponentActivity() {
         prefs.remove(TeamTrackingWidgetKeys.UPCOMING_EVENTS)
     }
 
-    private suspend fun writeUpcomingPreset(prefs: androidx.datastore.preferences.core.MutablePreferences) {
+    private suspend fun writeUpcomingPreset(
+        prefs: androidx.datastore.preferences.core.MutablePreferences,
+    ) {
         // Team 254 "The Cheesy Poofs" — not at an event, 3 upcoming events
         prefs[TeamTrackingWidgetKeys.TEAM_NUMBER] = "254"
         prefs[TeamTrackingWidgetKeys.TEAM_KEY] = "frc254"
@@ -177,10 +190,11 @@ class MockWidgetActivity : ComponentActivity() {
         for (k in TeamTrackingWidgetKeys.ALL_NEXT_MATCH_KEYS) prefs.remove(k)
 
         // Upcoming events (tab-separated: name\tcity\tdate)
-        prefs[TeamTrackingWidgetKeys.UPCOMING_EVENTS] = listOf(
-            "Silicon Valley Regional\tSan Jose, CA\tMar 27–29",
-            "Sacramento Regional\tSacramento, CA\tApr 3–5",
-            "Championship\tHouston, TX\tApr 17–19",
-        ).joinToString("\n")
+        prefs[TeamTrackingWidgetKeys.UPCOMING_EVENTS] =
+            listOf(
+                "Silicon Valley Regional\tSan Jose, CA\tMar 27–29",
+                "Sacramento Regional\tSacramento, CA\tApr 3–5",
+                "Championship\tHouston, TX\tApr 17–19",
+            ).joinToString("\n")
     }
 }

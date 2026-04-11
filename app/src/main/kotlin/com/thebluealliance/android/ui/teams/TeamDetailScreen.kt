@@ -22,8 +22,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.NotificationsNone
@@ -135,7 +135,15 @@ fun TeamDetailScreen(
 
     if (showNotificationSheet) {
         NotificationPreferencesSheet(
-            displayName = uiState.team?.let { "Team ${it.number}" + (it.nickname?.let { n -> " - $n" } ?: "") } ?: "Team",
+            displayName =
+                uiState.team?.let {
+                    "Team ${it.number}" + (
+                        it.nickname?.let { n ->
+                            " - $n"
+                        } ?: ""
+                    )
+                }
+                    ?: "Team",
             modelType = ModelType.TEAM,
             isFavorite = isFavorite,
             currentNotifications = subscription?.notifications ?: emptyList(),
@@ -159,7 +167,14 @@ fun TeamDetailScreen(
                             onYearSelected = viewModel::selectYear,
                             title = {
                                 Text(
-                                    text = if (team != null) "${team.number} - ${team.nickname ?: ""}" else "Team",
+                                    text =
+                                        if (team !=
+                                            null
+                                        ) {
+                                            "${team.number} - ${team.nickname ?: ""}"
+                                        } else {
+                                            "Team"
+                                        },
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                 )
@@ -170,7 +185,7 @@ fun TeamDetailScreen(
                         IconButton(onClick = onNavigateUp) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back"
+                                contentDescription = "Back",
                             )
                         }
                     },
@@ -184,14 +199,29 @@ fun TeamDetailScreen(
                         }) {
                             val hasSubscription = subscription?.notifications?.isNotEmpty() == true
                             Icon(
-                                imageVector = if (hasSubscription) Icons.Filled.Notifications else Icons.Outlined.NotificationsNone,
+                                imageVector =
+                                    if (hasSubscription) {
+                                        Icons.Filled.Notifications
+                                    } else {
+                                        Icons.Outlined.NotificationsNone
+                                    },
                                 contentDescription = "Notification preferences",
                             )
                         }
                         IconButton(onClick = viewModel::toggleFavorite) {
                             Icon(
-                                imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
-                                contentDescription = if (isFavorite) "Remove from favorites" else "Add to favorites",
+                                imageVector =
+                                    if (isFavorite) {
+                                        Icons.Filled.Star
+                                    } else {
+                                        Icons.Outlined.StarBorder
+                                    },
+                                contentDescription =
+                                    if (isFavorite) {
+                                        "Remove from favorites"
+                                    } else {
+                                        "Add to favorites"
+                                    },
                             )
                         }
                         var menuExpanded by remember { mutableStateOf(false) }
@@ -209,14 +239,18 @@ fun TeamDetailScreen(
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Filled.Share,
-                                                contentDescription = null
+                                                contentDescription = null,
                                             )
                                         },
                                         onClick = {
                                             menuExpanded = false
                                             context.shareTbaUrl(
-                                                title = "Team ${team.number} - ${team.nickname ?: ""}",
-                                                url = "https://www.thebluealliance.com/team/${team.number}",
+                                                title =
+                                                    "Team ${team.number} - " +
+                                                        (team.nickname ?: ""),
+                                                url =
+                                                    "https://www.thebluealliance.com/team/" +
+                                                        "${team.number}",
                                             )
                                         },
                                     )
@@ -226,7 +260,10 @@ fun TeamDetailScreen(
                                         text = { Text("Add to home screen") },
                                         leadingIcon = {
                                             Icon(
-                                                painter = painterResource(R.drawable.ic_add_to_home_screen),
+                                                painter =
+                                                    painterResource(
+                                                        R.drawable.ic_add_to_home_screen,
+                                                    ),
                                                 contentDescription = null,
                                             )
                                         },
@@ -245,11 +282,24 @@ fun TeamDetailScreen(
                     TABS.forEachIndexed { index, title ->
                         Tab(
                             selected = pagerState.currentPage == index,
-                            onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                            onClick = {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(
+                                        index,
+                                    )
+                                }
+                            },
                             text = {
                                 Text(
                                     text = title,
-                                    color = if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.7f)
+                                    color =
+                                        if (pagerState.currentPage ==
+                                            index
+                                        ) {
+                                            Color.White
+                                        } else {
+                                            Color.White.copy(alpha = 0.7f)
+                                        },
                                 )
                             },
                         )
@@ -261,8 +311,10 @@ fun TeamDetailScreen(
         val bottomPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding()),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = innerPadding.calculateTopPadding()),
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.team != null,
@@ -270,25 +322,31 @@ fun TeamDetailScreen(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 when (page) {
-                    TeamDetailTabs.INFO -> InfoTab(
-                        team = uiState.team,
-                        media = uiState.media,
-                        innerPadding = bottomPadding,
-                    )
-                    TeamDetailTabs.EVENTS -> EventsTab(
-                        events = uiState.events,
-                        selectedYear = selectedYear,
-                        onNavigateToEvent = { eventKey ->
-                            val teamKey = uiState.team?.key
-                            if (teamKey != null) onNavigateToTeamEvent(teamKey, eventKey)
-                            else onNavigateToEvent(eventKey)
-                        },
-                        innerPadding = bottomPadding,
-                    )
-                    TeamDetailTabs.MEDIA -> MediaTab(
-                        media = uiState.media,
-                        innerPadding = bottomPadding,
-                    )
+                    TeamDetailTabs.INFO ->
+                        InfoTab(
+                            team = uiState.team,
+                            media = uiState.media,
+                            innerPadding = bottomPadding,
+                        )
+                    TeamDetailTabs.EVENTS ->
+                        EventsTab(
+                            events = uiState.events,
+                            selectedYear = selectedYear,
+                            onNavigateToEvent = { eventKey ->
+                                val teamKey = uiState.team?.key
+                                if (teamKey != null) {
+                                    onNavigateToTeamEvent(teamKey, eventKey)
+                                } else {
+                                    onNavigateToEvent(eventKey)
+                                }
+                            },
+                            innerPadding = bottomPadding,
+                        )
+                    TeamDetailTabs.MEDIA ->
+                        MediaTab(
+                            media = uiState.media,
+                            innerPadding = bottomPadding,
+                        )
                 }
             }
         }
@@ -309,31 +367,35 @@ private fun InfoTab(
     }
     val avatar = media?.firstOrNull { it.isAvatar }
     LazyColumn(
-        modifier = Modifier.fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp),
         contentPadding = innerPadding,
     ) {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (avatar != null) {
-                    val bitmap = remember(avatar.base64Image) {
-                        try {
-                            val bytes = Base64.decode(avatar.base64Image, Base64.DEFAULT)
-                            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                        } catch (_: Exception) {
-                            null
+                    val bitmap =
+                        remember(avatar.base64Image) {
+                            try {
+                                val bytes = Base64.decode(avatar.base64Image, Base64.DEFAULT)
+                                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                            } catch (_: Exception) {
+                                null
+                            }
                         }
-                    }
                     if (bitmap != null) {
                         var showRed by remember { mutableStateOf(false) }
                         val bgColor = if (showRed) FrcRed else FrcBlue
                         Box(
-                            modifier = Modifier
-                                .size(64.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(bgColor)
-                                .clickable { showRed = !showRed },
+                            modifier =
+                                Modifier
+                                    .size(64.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(bgColor)
+                                    .clickable { showRed = !showRed },
                             contentAlignment = Alignment.Center,
                         ) {
                             Image(
@@ -407,7 +469,7 @@ private fun EventsTab(
     } else if (events.isEmpty()) {
         EmptyBox(
             modifier = Modifier.padding(innerPadding),
-            message = "No events for $selectedYear"
+            message = "No events for $selectedYear",
         )
     } else {
         LazyColumn(
@@ -423,4 +485,3 @@ private fun EventsTab(
 
 private val FrcBlue = Color(0xFF0066B3)
 private val FrcRed = Color(0xFFED1C24)
-

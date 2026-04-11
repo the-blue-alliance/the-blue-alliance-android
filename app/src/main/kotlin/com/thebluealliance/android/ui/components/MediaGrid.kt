@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -46,26 +45,34 @@ data class MediaGridItem(
 /**
  * Returns a thumbnail URL for a media item, or null if the type isn't supported.
  */
-fun mediaUrl(type: String, foreignKey: String): String? = when (type) {
-    "imgur" -> "https://i.imgur.com/${foreignKey}.png"
-    "cdphotothread" -> "https://www.chiefdelphi.com/media/img/${foreignKey}"
-    "instagram-image" -> "https://www.instagram.com/p/${foreignKey}/media/"
-    "youtube" -> "https://img.youtube.com/vi/${foreignKey}/hqdefault.jpg"
-    "grabcad" -> null
-    "onshape" -> null
-    else -> null
-}
+fun mediaUrl(
+    type: String,
+    foreignKey: String,
+): String? =
+    when (type) {
+        "imgur" -> "https://i.imgur.com/$foreignKey.png"
+        "cdphotothread" -> "https://www.chiefdelphi.com/media/img/$foreignKey"
+        "instagram-image" -> "https://www.instagram.com/p/$foreignKey/media/"
+        "youtube" -> "https://img.youtube.com/vi/$foreignKey/hqdefault.jpg"
+        "grabcad" -> null
+        "onshape" -> null
+        else -> null
+    }
 
 /**
  * Returns the external link URL for a media item, or null if the type isn't supported.
  */
-fun mediaLinkUrl(type: String, foreignKey: String): String? = when (type) {
-    "imgur" -> "https://imgur.com/${foreignKey}"
-    "cdphotothread" -> "https://www.chiefdelphi.com/media/img/${foreignKey}"
-    "instagram-image" -> "https://www.instagram.com/p/${foreignKey}/"
-    "youtube" -> "https://www.youtube.com/watch?v=${foreignKey}"
-    else -> null
-}
+fun mediaLinkUrl(
+    type: String,
+    foreignKey: String,
+): String? =
+    when (type) {
+        "imgur" -> "https://imgur.com/$foreignKey"
+        "cdphotothread" -> "https://www.chiefdelphi.com/media/img/$foreignKey"
+        "instagram-image" -> "https://www.instagram.com/p/$foreignKey/"
+        "youtube" -> "https://www.youtube.com/watch?v=$foreignKey"
+        else -> null
+    }
 
 /**
  * A single media item with thumbnail, optional play overlay for YouTube, and click-to-open.
@@ -81,18 +88,19 @@ fun MediaItem(
     val context = LocalContext.current
 
     Box(
-        modifier = modifier
-            .aspectRatio(1f)
-            .clip(MaterialTheme.shapes.medium)
-            .then(
-                if (linkUrl != null) {
-                    Modifier.clickable {
-                        context.openUrl(linkUrl)
-                    }
-                } else {
-                    Modifier
-                }
-            ),
+        modifier =
+            modifier
+                .aspectRatio(1f)
+                .clip(MaterialTheme.shapes.medium)
+                .then(
+                    if (linkUrl != null) {
+                        Modifier.clickable {
+                            context.openUrl(linkUrl)
+                        }
+                    } else {
+                        Modifier
+                    },
+                ),
     ) {
         AsyncImage(
             model = url,
@@ -102,10 +110,11 @@ fun MediaItem(
         )
         if (type == "youtube") {
             Box(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(48.dp)
-                    .background(Color.Black.copy(alpha = 0.5f), CircleShape),
+                modifier =
+                    Modifier
+                        .align(Alignment.Center)
+                        .size(48.dp)
+                        .background(Color.Black.copy(alpha = 0.5f), CircleShape),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
@@ -164,20 +173,24 @@ fun MediaTab(
     if (filtered.isEmpty()) {
         EmptyBox(
             modifier = Modifier.padding(innerPadding),
-            message = "No media"
+            message = "No media",
         )
         return
     }
-    val gridItems = filtered.mapNotNull { item ->
-        if (mediaUrl(item.type, item.foreignKey) != null) {
-            MediaGridItem(type = item.type, foreignKey = item.foreignKey)
-        } else null
-    }
+    val gridItems =
+        filtered.mapNotNull { item ->
+            if (mediaUrl(item.type, item.foreignKey) != null) {
+                MediaGridItem(type = item.type, foreignKey = item.foreignKey)
+            } else {
+                null
+            }
+        }
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = innerPadding,

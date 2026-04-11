@@ -25,10 +25,11 @@ fun TeamRow(
     subtitlePrefix: String? = null,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -38,7 +39,11 @@ fun TeamRow(
                 fontWeight = FontWeight.Medium,
             )
             val location = listOfNotNull(team.city, team.state, team.country).joinToString(", ")
-            val subtitle = listOfNotNull(subtitlePrefix, location.ifEmpty { null }).joinToString(" \u00B7 ")
+            val subtitle =
+                listOfNotNull(
+                    subtitlePrefix,
+                    location.ifEmpty { null },
+                ).joinToString(" \u00B7 ")
             if (subtitle.isNotEmpty()) {
                 Text(
                     text = subtitle,

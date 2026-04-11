@@ -28,10 +28,11 @@ fun EventRow(
     showChevron: Boolean = false,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -41,8 +42,9 @@ fun EventRow(
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
             )
-            val location = listOfNotNull(event.city, event.state, event.country)
-                .joinToString(", ")
+            val location =
+                listOfNotNull(event.city, event.state, event.country)
+                    .joinToString(", ")
             if (location.isNotEmpty()) {
                 Text(
                     text = location,
@@ -74,7 +76,10 @@ internal val fullFormat: DateTimeFormatter =
 internal val noYearFormat: DateTimeFormatter =
     DateTimeFormatter.ofPattern("EEE, MMM d", Locale.US)
 
-internal fun formatEventDateRange(startDate: String?, endDate: String?): String? {
+internal fun formatEventDateRange(
+    startDate: String?,
+    endDate: String?,
+): String? {
     if (startDate == null) return null
     val start = LocalDate.parse(startDate)
     val end = endDate?.let { LocalDate.parse(it) }

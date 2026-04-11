@@ -1,7 +1,6 @@
 package com.thebluealliance.android.ui.events
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +22,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -98,7 +96,14 @@ fun EventsScreen(
                 title = {
                     TopBarYearPicker(
                         selectedYear = selectedYear,
-                        years = if (selectedYear > 0) (maxYear downTo 1992).toList() else emptyList(),
+                        years =
+                            if (selectedYear >
+                                0
+                            ) {
+                                (maxYear downTo 1992).toList()
+                            } else {
+                                emptyList()
+                            },
                         onYearSelected = viewModel::selectYear,
                         title = { Text("Events") },
                     )
@@ -108,15 +113,16 @@ fun EventsScreen(
                         Icon(Icons.Default.Search, contentDescription = "Search")
                     }
                 },
-                showLamp = true
+                showLamp = true,
             )
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
         ) {
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState !is EventsUiState.Loading,
@@ -180,23 +186,30 @@ private fun EventsList(
     val allEvents = remember(sections) { sections.flatMap { it.events } }
     val today = remember { LocalDate.now() }
 
-    val favoriteEvents = remember(allEvents, favoriteEventKeys) {
-        if (favoriteEventKeys.isEmpty()) emptyList()
-        else allEvents.filter { it.key in favoriteEventKeys }
-    }
+    val favoriteEvents =
+        remember(allEvents, favoriteEventKeys) {
+            if (favoriteEventKeys.isEmpty()) {
+                emptyList()
+            } else {
+                allEvents.filter { it.key in favoriteEventKeys }
+            }
+        }
     val hasFavorites = favoriteEvents.isNotEmpty()
 
-    val weekChipLabels = remember(sections) {
-        sections.map { it.label }
-    }
+    val weekChipLabels =
+        remember(sections) {
+            sections.map { it.label }
+        }
 
-    val currentWeekLabel = remember(allEvents, today, selectedYear) {
-        currentWeekChipLabel(allEvents, today, selectedYear)
-    }
+    val currentWeekLabel =
+        remember(allEvents, today, selectedYear) {
+            currentWeekChipLabel(allEvents, today, selectedYear)
+        }
 
-    val headerInfos = remember(sections, favoriteEventKeys) {
-        buildHeaderInfos(sections, favoriteEventKeys)
-    }
+    val headerInfos =
+        remember(sections, favoriteEventKeys) {
+            buildHeaderInfos(sections, favoriteEventKeys)
+        }
 
     val weekChipLabelSet = remember(weekChipLabels) { weekChipLabels.toSet() }
 
@@ -326,7 +339,10 @@ private fun EventsList(
                         item(key = "${headerKey}_sub_Favorites") {
                             SubSectionHeader(label = "Favorites")
                         }
-                        items(sectionFavorites, key = { "fav_${section.label}_${it.key}" }) { event ->
+                        items(
+                            sectionFavorites,
+                            key = { "fav_${section.label}_${it.key}" },
+                        ) { event ->
                             EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
                         }
                     }
@@ -371,30 +387,33 @@ private fun WeekFilterChips(
         }
     }
 
-    val weekChipColors = FilterChipDefaults.filterChipColors(
-        containerColor = Color.Transparent,
-        labelColor = Color.White.copy(alpha = 0.7f),
-        selectedContainerColor = Color.White,
-        selectedLabelColor = TBABlue,
-    )
-    val weekChipBorder = FilterChipDefaults.filterChipBorder(
-        enabled = true,
-        selected = false,
-        borderColor = Color.White.copy(alpha = 0.5f),
-        selectedBorderColor = Color.Transparent,
-    )
+    val weekChipColors =
+        FilterChipDefaults.filterChipColors(
+            containerColor = Color.Transparent,
+            labelColor = Color.White.copy(alpha = 0.7f),
+            selectedContainerColor = Color.White,
+            selectedLabelColor = TBABlue,
+        )
+    val weekChipBorder =
+        FilterChipDefaults.filterChipBorder(
+            enabled = true,
+            selected = false,
+            borderColor = Color.White.copy(alpha = 0.5f),
+            selectedBorderColor = Color.Transparent,
+        )
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(TBABlue)
-            .layout { measurable, constraints ->
-                val placeable = measurable.measure(constraints)
-                val overlapPx = 4.dp.roundToPx()
-                layout(placeable.width, (placeable.height - overlapPx).coerceAtLeast(0)) {
-                    placeable.placeRelative(0, -overlapPx)
-                }
-            },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(TBABlue)
+                .layout { measurable, constraints ->
+                    val placeable = measurable.measure(constraints)
+                    val overlapPx = 4.dp.roundToPx()
+                    layout(placeable.width, (placeable.height - overlapPx).coerceAtLeast(0)) {
+                        placeable.placeRelative(0, -overlapPx)
+                    }
+                },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (hasFavorites) {
@@ -414,45 +433,52 @@ private fun WeekFilterChips(
             )
             // Vertical divider between pinned star and scrollable chips
             Box(
-                modifier = Modifier
-                    .padding(start = 8.dp, bottom = 4.dp)
-                    .height(24.dp)
-                    .width(1.dp)
-                    .background(Color.White.copy(alpha = 0.3f))
+                modifier =
+                    Modifier
+                        .padding(start = 8.dp, bottom = 4.dp)
+                        .height(24.dp)
+                        .width(1.dp)
+                        .background(Color.White.copy(alpha = 0.3f)),
             )
         }
         val fadeWidth = 24.dp
         LazyRow(
             state = chipRowState,
-            modifier = Modifier
-                .weight(1f)
-                .then(
-                    if (hasFavorites) {
-                        Modifier.drawWithContent {
-                            drawContent()
-                            if (chipRowState.canScrollBackward) {
-                                val solidZone = 4.dp.toPx()
-                                val totalWidth = fadeWidth.toPx()
-                                drawRect(
-                                    brush = Brush.horizontalGradient(
-                                        colorStops = arrayOf(
-                                            0f to TBABlue,
-                                            solidZone / totalWidth to TBABlue,
-                                            1f to Color.Transparent,
-                                        ),
-                                        endX = totalWidth,
-                                    ),
-                                    size = size.copy(width = totalWidth),
-                                )
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .then(
+                        if (hasFavorites) {
+                            Modifier.drawWithContent {
+                                drawContent()
+                                if (chipRowState.canScrollBackward) {
+                                    val solidZone = 4.dp.toPx()
+                                    val totalWidth = fadeWidth.toPx()
+                                    drawRect(
+                                        brush =
+                                            Brush.horizontalGradient(
+                                                colorStops =
+                                                    arrayOf(
+                                                        0f to TBABlue,
+                                                        solidZone / totalWidth to TBABlue,
+                                                        1f to Color.Transparent,
+                                                    ),
+                                                endX = totalWidth,
+                                            ),
+                                        size = size.copy(width = totalWidth),
+                                    )
+                                }
                             }
-                        }
-                    } else Modifier
+                        } else {
+                            Modifier
+                        },
+                    ),
+            contentPadding =
+                PaddingValues(
+                    start = 8.dp,
+                    end = 12.dp,
+                    bottom = 4.dp,
                 ),
-            contentPadding = PaddingValues(
-                start = 8.dp,
-                end = 12.dp,
-                bottom = 4.dp,
-            ),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(weekLabels.size) { index ->
@@ -472,10 +498,11 @@ private fun WeekFilterChips(
 @Composable
 private fun SimpleSectionHeader(label: String) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(TBAIndigo400)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(TBAIndigo400)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
         Text(
             text = label,
@@ -489,16 +516,17 @@ private fun SimpleSectionHeader(label: String) {
 @Composable
 private fun SubSectionHeader(label: String) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
-            .padding(horizontal = 16.dp, vertical = 4.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                .padding(horizontal = 16.dp, vertical = 4.dp),
     ) {
         Text(
             text = label,
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

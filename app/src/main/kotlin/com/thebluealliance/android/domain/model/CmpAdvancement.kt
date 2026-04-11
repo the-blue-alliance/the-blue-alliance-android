@@ -10,9 +10,10 @@ sealed class CmpAdvancement {
     ) : CmpAdvancement()
 
     /** Team qualified via the regional advancement pool for a given week. */
-    data class PoolQualified(val week: Int) : CmpAdvancement()
+    data class PoolQualified(
+        val week: Int,
+    ) : CmpAdvancement()
 
     /** Team has qualified but no further detail is available. */
     object Qualified : CmpAdvancement()
 }
-

@@ -4,4 +4,3 @@ data class RankingSortOrder(
     val name: String,
     val precision: Int,
 )
-

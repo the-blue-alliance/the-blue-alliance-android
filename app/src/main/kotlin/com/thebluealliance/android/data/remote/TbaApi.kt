@@ -1,38 +1,66 @@
 package com.thebluealliance.android.data.remote
 
-import com.thebluealliance.android.data.remote.dto.*
+import com.thebluealliance.android.data.remote.dto.ApiStatusDto
+import com.thebluealliance.android.data.remote.dto.AwardDto
+import com.thebluealliance.android.data.remote.dto.DistrictDto
+import com.thebluealliance.android.data.remote.dto.DistrictRankingDto
+import com.thebluealliance.android.data.remote.dto.EventAllianceDto
+import com.thebluealliance.android.data.remote.dto.EventCOPRsDto
+import com.thebluealliance.android.data.remote.dto.EventDistrictPointsResponseDto
+import com.thebluealliance.android.data.remote.dto.EventDto
+import com.thebluealliance.android.data.remote.dto.EventOPRsDto
+import com.thebluealliance.android.data.remote.dto.MatchDto
+import com.thebluealliance.android.data.remote.dto.MediaDto
+import com.thebluealliance.android.data.remote.dto.RankingResponseDto
+import com.thebluealliance.android.data.remote.dto.RegionalAdvancementDto
+import com.thebluealliance.android.data.remote.dto.RegionalRankingDto
+import com.thebluealliance.android.data.remote.dto.TeamDto
+import com.thebluealliance.android.data.remote.dto.TeamEventStatusDto
+import kotlinx.serialization.json.JsonObject
 import retrofit2.http.GET
 import retrofit2.http.Path
-import kotlinx.serialization.json.JsonObject
 
 interface TbaApi {
-
     // Status
     @GET("api/v3/status")
     suspend fun getStatus(): ApiStatusDto
 
     // Teams
     @GET("api/v3/teams/{page_num}")
-    suspend fun getTeams(@Path("page_num") page: Int): List<TeamDto>
+    suspend fun getTeams(
+        @Path("page_num") page: Int,
+    ): List<TeamDto>
 
     @GET("api/v3/team/{team_key}")
-    suspend fun getTeam(@Path("team_key") teamKey: String): TeamDto
+    suspend fun getTeam(
+        @Path("team_key") teamKey: String,
+    ): TeamDto
 
     @GET("api/v3/team/{team_key}/years_participated")
-    suspend fun getTeamYearsParticipated(@Path("team_key") teamKey: String): List<Int>
+    suspend fun getTeamYearsParticipated(
+        @Path("team_key") teamKey: String,
+    ): List<Int>
 
     @GET("api/v3/event/{event_key}/teams")
-    suspend fun getEventTeams(@Path("event_key") eventKey: String): List<TeamDto>
+    suspend fun getEventTeams(
+        @Path("event_key") eventKey: String,
+    ): List<TeamDto>
 
     @GET("api/v3/district/{district_key}/teams")
-    suspend fun getDistrictTeams(@Path("district_key") districtKey: String): List<TeamDto>
+    suspend fun getDistrictTeams(
+        @Path("district_key") districtKey: String,
+    ): List<TeamDto>
 
     // Events
     @GET("api/v3/events/{year}")
-    suspend fun getEventsForYear(@Path("year") year: Int): List<EventDto>
+    suspend fun getEventsForYear(
+        @Path("year") year: Int,
+    ): List<EventDto>
 
     @GET("api/v3/event/{event_key}")
-    suspend fun getEvent(@Path("event_key") eventKey: String): EventDto
+    suspend fun getEvent(
+        @Path("event_key") eventKey: String,
+    ): EventDto
 
     @GET("api/v3/team/{team_key}/events/{year}")
     suspend fun getTeamEvents(
@@ -41,11 +69,15 @@ interface TbaApi {
     ): List<EventDto>
 
     @GET("api/v3/district/{district_key}/events")
-    suspend fun getDistrictEvents(@Path("district_key") districtKey: String): List<EventDto>
+    suspend fun getDistrictEvents(
+        @Path("district_key") districtKey: String,
+    ): List<EventDto>
 
     // Matches
     @GET("api/v3/event/{event_key}/matches")
-    suspend fun getEventMatches(@Path("event_key") eventKey: String): List<MatchDto>
+    suspend fun getEventMatches(
+        @Path("event_key") eventKey: String,
+    ): List<MatchDto>
 
     @GET("api/v3/team/{team_key}/event/{event_key}/matches")
     suspend fun getTeamEventMatches(
@@ -54,11 +86,15 @@ interface TbaApi {
     ): List<MatchDto>
 
     @GET("api/v3/match/{match_key}")
-    suspend fun getMatch(@Path("match_key") matchKey: String): MatchDto
+    suspend fun getMatch(
+        @Path("match_key") matchKey: String,
+    ): MatchDto
 
     // Awards
     @GET("api/v3/event/{event_key}/awards")
-    suspend fun getEventAwards(@Path("event_key") eventKey: String): List<AwardDto>
+    suspend fun getEventAwards(
+        @Path("event_key") eventKey: String,
+    ): List<AwardDto>
 
     @GET("api/v3/team/{team_key}/event/{event_key}/awards")
     suspend fun getTeamEventAwards(
@@ -68,49 +104,73 @@ interface TbaApi {
 
     // Rankings
     @GET("api/v3/event/{event_key}/rankings")
-    suspend fun getEventRankings(@Path("event_key") eventKey: String): RankingResponseDto
+    suspend fun getEventRankings(
+        @Path("event_key") eventKey: String,
+    ): RankingResponseDto
 
     // Alliances
     @GET("api/v3/event/{event_key}/alliances")
-    suspend fun getEventAlliances(@Path("event_key") eventKey: String): List<EventAllianceDto>
+    suspend fun getEventAlliances(
+        @Path("event_key") eventKey: String,
+    ): List<EventAllianceDto>
 
     // OPRs
     @GET("api/v3/event/{event_key}/oprs")
-    suspend fun getEventOPRs(@Path("event_key") eventKey: String): EventOPRsDto
+    suspend fun getEventOPRs(
+        @Path("event_key") eventKey: String,
+    ): EventOPRsDto
 
     // COPRs
     @GET("api/v3/event/{event_key}/coprs")
-    suspend fun getEventCOPRs(@Path("event_key") eventKey: String): EventCOPRsDto
+    suspend fun getEventCOPRs(
+        @Path("event_key") eventKey: String,
+    ): EventCOPRsDto
 
     // Insights
     @GET("api/v3/event/{event_key}/insights")
-    suspend fun getEventInsights(@Path("event_key") eventKey: String): JsonObject
+    suspend fun getEventInsights(
+        @Path("event_key") eventKey: String,
+    ): JsonObject
 
     // Districts
     @GET("api/v3/districts/{year}")
-    suspend fun getDistrictsForYear(@Path("year") year: Int): List<DistrictDto>
+    suspend fun getDistrictsForYear(
+        @Path("year") year: Int,
+    ): List<DistrictDto>
 
     @GET("api/v3/district/{district_abbreviation}/history")
-    suspend fun getDistrictHistory(@Path("district_abbreviation") districtAbbreviation: String): List<DistrictDto>
+    suspend fun getDistrictHistory(
+        @Path("district_abbreviation") districtAbbreviation: String,
+    ): List<DistrictDto>
 
     // District Rankings
     @GET("api/v3/district/{district_key}/rankings")
-    suspend fun getDistrictRankings(@Path("district_key") districtKey: String): List<DistrictRankingDto>?
+    suspend fun getDistrictRankings(
+        @Path("district_key") districtKey: String,
+    ): List<DistrictRankingDto>?
 
     // Event District Points
     @GET("api/v3/event/{event_key}/district_points")
-    suspend fun getEventDistrictPoints(@Path("event_key") eventKey: String): EventDistrictPointsResponseDto
+    suspend fun getEventDistrictPoints(
+        @Path("event_key") eventKey: String,
+    ): EventDistrictPointsResponseDto
 
     // Event Regional Points (returns the same structure as district points)
     @GET("api/v3/event/{event_key}/regional_champs_pool_points")
-    suspend fun getEventRegionalPoints(@Path("event_key") eventKey: String): EventDistrictPointsResponseDto
+    suspend fun getEventRegionalPoints(
+        @Path("event_key") eventKey: String,
+    ): EventDistrictPointsResponseDto
 
     // Regional Advancement
     @GET("api/v3/regional_advancement/{year}/rankings")
-    suspend fun getRegionalAdvancementRankings(@Path("year") year: Int): List<RegionalRankingDto>?
+    suspend fun getRegionalAdvancementRankings(
+        @Path("year") year: Int,
+    ): List<RegionalRankingDto>?
 
     @GET("api/v3/regional_advancement/{year}")
-    suspend fun getRegionalAdvancement(@Path("year") year: Int): Map<String, RegionalAdvancementDto>?
+    suspend fun getRegionalAdvancement(
+        @Path("year") year: Int,
+    ): Map<String, RegionalAdvancementDto>?
 
     // Media
     @GET("api/v3/team/{team_key}/media/{year}")

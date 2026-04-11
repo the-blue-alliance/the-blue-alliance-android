@@ -21,88 +21,120 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MyTBAViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    private val myTBARepository: MyTBARepository,
-    private val deviceRegistrationManager: DeviceRegistrationManager,
-    private val shortcutManager: TBAShortcutManager,
-) : ViewModel() {
+class MyTBAViewModel
+    @Inject
+    constructor(
+        private val authRepository: AuthRepository,
+        private val myTBARepository: MyTBARepository,
+        private val deviceRegistrationManager: DeviceRegistrationManager,
+        private val shortcutManager: TBAShortcutManager,
+    ) : ViewModel() {
+        private val _isRefreshing = MutableStateFlow(false)
+        val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+        val uiState: StateFlow<MyTBAUiState> =
+            combine(
+                authRepository.currentUser,
+                myTBARepository.observeFavorites(),
+                myTBARepository.observeSubscriptions(),
+            ) { user, favorites, subscriptions ->
+                MyTBAUiState(
+                    isSignedIn = user != null,
+                    userName = user?.displayName,
+                    userEmail = user?.email,
+                    userPhotoUrl = user?.photoUrl?.toString(),
+                    favorites = favorites,
+                    subscriptions = subscriptions,
+                    canPinShortcuts = shortcutManager.canPinShortcuts(),
+                )
+            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MyTBAUiState())
 
-    val uiState: StateFlow<MyTBAUiState> = combine(
-        authRepository.currentUser,
-        myTBARepository.observeFavorites(),
-        myTBARepository.observeSubscriptions(),
-    ) { user, favorites, subscriptions ->
-        MyTBAUiState(
-            isSignedIn = user != null,
-            userName = user?.displayName,
-            userEmail = user?.email,
-            userPhotoUrl = user?.photoUrl?.toString(),
-            favorites = favorites,
-            subscriptions = subscriptions,
-            canPinShortcuts = shortcutManager.canPinShortcuts(),
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MyTBAUiState())
-
-    init {
-        // Auto-refresh when user signs in
-        viewModelScope.launch {
-            authRepository.currentUser
-                .map { it != null }
-                .distinctUntilChanged()
-                .collect { signedIn ->
-                    if (signedIn) {
-                        launch { try { deviceRegistrationManager.onSignIn() } catch (_: Exception) {} }
-                        refresh()
+        init {
+            // Auto-refresh when user signs in
+            viewModelScope.launch {
+                authRepository.currentUser
+                    .map { it != null }
+                    .distinctUntilChanged()
+                    .collect { signedIn ->
+                        if (signedIn) {
+                            launch {
+                                try {
+                                    deviceRegistrationManager.onSignIn()
+                                } catch (
+                                    _: Exception,
+                                ) {
+                                }
+                            }
+                            refresh()
+                        }
                     }
-                }
+            }
         }
-    }
 
-    fun requestPinShortcut(favorite: Favorite) {
-        viewModelScope.launch {
-            shortcutManager.requestPinShortcut(favorite)
+        fun requestPinShortcut(favorite: Favorite) {
+            viewModelScope.launch {
+                shortcutManager.requestPinShortcut(favorite)
+            }
         }
-    }
 
-    fun refresh() {
-        viewModelScope.launch {
-            if (!authRepository.isSignedIn()) return@launch
-            _isRefreshing.value = true
-            try {
-                coroutineScope {
-                    launch { try { myTBARepository.refreshFavorites() } catch (_: Exception) {} }
-                    launch { try { myTBARepository.refreshSubscriptions() } catch (_: Exception) {} }
+        fun refresh() {
+            viewModelScope.launch {
+                if (!authRepository.isSignedIn()) return@launch
+                _isRefreshing.value = true
+                try {
+                    coroutineScope {
+                        launch {
+                            try {
+                                myTBARepository.refreshFavorites()
+                            } catch (_: Exception) {
+                            }
+                        }
+                        launch {
+                            try {
+                                myTBARepository.refreshSubscriptions()
+                            } catch (
+                                _: Exception,
+                            ) {
+                            }
+                        }
+                    }
+                } finally {
+                    _isRefreshing.value = false
                 }
-            } finally {
-                _isRefreshing.value = false
+            }
+        }
+
+        fun refreshTab(tab: Int) {
+            viewModelScope.launch {
+                if (!authRepository.isSignedIn()) return@launch
+                _isRefreshing.value = true
+                try {
+                    when (tab) {
+                        0 ->
+                            try {
+                                myTBARepository.refreshFavorites()
+                            } catch (_: Exception) {
+                            }
+                        1 ->
+                            try {
+                                myTBARepository.refreshSubscriptions()
+                            } catch (_: Exception) {
+                            }
+                    }
+                } finally {
+                    _isRefreshing.value = false
+                }
+            }
+        }
+
+        fun signOut() {
+            viewModelScope.launch {
+                try {
+                    deviceRegistrationManager.onSignOut()
+                } catch (_: Exception) {
+                }
+                authRepository.signOut()
+                myTBARepository.clearLocal()
             }
         }
     }
-
-    fun refreshTab(tab: Int) {
-        viewModelScope.launch {
-            if (!authRepository.isSignedIn()) return@launch
-            _isRefreshing.value = true
-            try {
-                when (tab) {
-                    0 -> try { myTBARepository.refreshFavorites() } catch (_: Exception) {}
-                    1 -> try { myTBARepository.refreshSubscriptions() } catch (_: Exception) {}
-                }
-            } finally {
-                _isRefreshing.value = false
-            }
-        }
-    }
-
-    fun signOut() {
-        viewModelScope.launch {
-            try { deviceRegistrationManager.onSignOut() } catch (_: Exception) {}
-            authRepository.signOut()
-            myTBARepository.clearLocal()
-        }
-    }
-}

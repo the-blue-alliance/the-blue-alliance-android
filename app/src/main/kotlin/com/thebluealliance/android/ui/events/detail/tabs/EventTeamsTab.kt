@@ -21,14 +21,14 @@ fun EventTeamsTab(
 ) {
     if (teams == null) {
         LoadingBox(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         )
         return
     }
     if (teams.isEmpty()) {
         EmptyBox(
             modifier = Modifier.padding(innerPadding),
-            message = "No teams"
+            message = "No teams",
         )
         return
     }
@@ -46,4 +46,3 @@ fun EventTeamsTab(
         }
     }
 }
-

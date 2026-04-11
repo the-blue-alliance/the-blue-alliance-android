@@ -42,7 +42,9 @@ import com.thebluealliance.android.ui.common.LoadingBox
 import java.util.Locale
 
 enum class RankingSortColumn {
-    TEAM, PRIMARY, SECONDARY
+    TEAM,
+    PRIMARY,
+    SECONDARY,
 }
 
 internal data class RankingSortState(
@@ -52,7 +54,8 @@ internal data class RankingSortState(
 
 internal fun rankingHeaderLabels(rankingSortOrders: List<RankingSortOrder>?): Pair<String, String> {
     val primaryLabel = rankingSortOrders?.getOrNull(0)?.name?.takeIf { it.isNotBlank() } ?: "RS"
-    val secondaryLabel = rankingSortOrders?.getOrNull(1)?.name?.takeIf { it.isNotBlank() } ?: "Sort 2"
+    val secondaryLabel =
+        rankingSortOrders?.getOrNull(1)?.name?.takeIf { it.isNotBlank() } ?: "Sort 2"
     return primaryLabel to secondaryLabel
 }
 
@@ -63,36 +66,39 @@ internal fun nextRankingSortState(
     if (current.column == selectedColumn) {
         return current.copy(ascending = !current.ascending)
     }
-    val ascending = when (selectedColumn) {
-        RankingSortColumn.TEAM -> true
-        RankingSortColumn.PRIMARY, RankingSortColumn.SECONDARY -> false
-    }
+    val ascending =
+        when (selectedColumn) {
+            RankingSortColumn.TEAM -> true
+            RankingSortColumn.PRIMARY, RankingSortColumn.SECONDARY -> false
+        }
     return RankingSortState(column = selectedColumn, ascending = ascending)
 }
 
 internal fun sortRankings(
     rankings: List<Ranking>,
     sortState: RankingSortState,
-): List<Ranking> = rankings.sortedWith { a, b ->
-    val result = when (sortState.column) {
-        RankingSortColumn.TEAM -> {
-            val teamA = a.teamKey.removePrefix("frc").toIntOrNull() ?: 0
-            val teamB = b.teamKey.removePrefix("frc").toIntOrNull() ?: 0
-            teamA.compareTo(teamB)
-        }
-        RankingSortColumn.PRIMARY -> {
-            val valA = a.sortOrders.getOrNull(0) ?: 0.0
-            val valB = b.sortOrders.getOrNull(0) ?: 0.0
-            valA.compareTo(valB)
-        }
-        RankingSortColumn.SECONDARY -> {
-            val valA = a.sortOrders.getOrNull(1) ?: 0.0
-            val valB = b.sortOrders.getOrNull(1) ?: 0.0
-            valA.compareTo(valB)
-        }
+): List<Ranking> =
+    rankings.sortedWith { a, b ->
+        val result =
+            when (sortState.column) {
+                RankingSortColumn.TEAM -> {
+                    val teamA = a.teamKey.removePrefix("frc").toIntOrNull() ?: 0
+                    val teamB = b.teamKey.removePrefix("frc").toIntOrNull() ?: 0
+                    teamA.compareTo(teamB)
+                }
+                RankingSortColumn.PRIMARY -> {
+                    val valA = a.sortOrders.getOrNull(0) ?: 0.0
+                    val valB = b.sortOrders.getOrNull(0) ?: 0.0
+                    valA.compareTo(valB)
+                }
+                RankingSortColumn.SECONDARY -> {
+                    val valA = a.sortOrders.getOrNull(1) ?: 0.0
+                    val valB = b.sortOrders.getOrNull(1) ?: 0.0
+                    valA.compareTo(valB)
+                }
+            }
+        if (sortState.ascending) result else -result
     }
-    if (sortState.ascending) result else -result
-}
 
 @Composable
 fun EventRankingsTab(
@@ -104,7 +110,7 @@ fun EventRankingsTab(
 ) {
     if (rankings == null) {
         LoadingBox(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         )
         return
     }
@@ -120,9 +126,10 @@ fun EventRankingsTab(
 
     var sortState by remember { mutableStateOf(RankingSortState()) }
 
-    val sortedRankings = remember(rankings, sortState) {
-        sortRankings(rankings, sortState)
-    }
+    val sortedRankings =
+        remember(rankings, sortState) {
+            sortRankings(rankings, sortState)
+        }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -157,10 +164,11 @@ private fun RankingHeaderRow(
     onSortSelected: (RankingSortColumn) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0xFF5C6BC0))
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(Color(0xFF5C6BC0))
+                .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -213,11 +221,11 @@ private fun RankingHeaderItem(
     sortColumn: RankingSortColumn,
     currentSort: RankingSortColumn,
     ascending: Boolean,
-    onSortClick: () -> Unit
+    onSortClick: () -> Unit,
 ) {
     Row(
         modifier = modifier.clickable { onSortClick() },
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = text,
@@ -229,9 +237,11 @@ private fun RankingHeaderItem(
         )
         if (currentSort == sortColumn) {
             Icon(
-                imageVector = if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
-                contentDescription = if (ascending) "Sorted Ascending" else "Sorted Descending",
-                tint = Color.White
+                imageVector =
+                    if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                contentDescription =
+                    if (ascending) "Sorted Ascending" else "Sorted Descending",
+                tint = Color.White,
             )
         }
     }
@@ -247,17 +257,18 @@ private fun RankingItem(
     var expanded by remember { mutableStateOf(false) }
     val rotationAngle by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
-        label = "chevron_rotation"
+        label = "chevron_rotation",
     )
 
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = !expanded }
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded = !expanded }
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -269,9 +280,10 @@ private fun RankingItem(
             Text(
                 text = ranking.teamKey.removePrefix("frc"),
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier
-                    .weight(0.22f)
-                    .clickable { onTeamClick(ranking.teamKey) },
+                modifier =
+                    Modifier
+                        .weight(0.22f)
+                        .clickable { onTeamClick(ranking.teamKey) },
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -282,10 +294,11 @@ private fun RankingItem(
             )
 
             // Show first two sort order values (without labels, header has them)
-            val primarySortValue = ranking.sortOrders.getOrNull(0)?.let { value ->
-                val precision = sortOrders?.getOrNull(0)?.precision ?: 2
-                String.format(Locale.US, "%.${precision}f", value)
-            } ?: "--"
+            val primarySortValue =
+                ranking.sortOrders.getOrNull(0)?.let { value ->
+                    val precision = sortOrders?.getOrNull(0)?.precision ?: 2
+                    String.format(Locale.US, "%.${precision}f", value)
+                } ?: "--"
 
             Text(
                 text = primarySortValue,
@@ -294,10 +307,11 @@ private fun RankingItem(
                 modifier = Modifier.weight(0.18f),
             )
 
-            val secondarySortValue = ranking.sortOrders.getOrNull(1)?.let { value ->
-                val precision = sortOrders?.getOrNull(1)?.precision ?: 2
-                String.format(Locale.US, "%.${precision}f", value)
-            } ?: "--"
+            val secondarySortValue =
+                ranking.sortOrders.getOrNull(1)?.let { value ->
+                    val precision = sortOrders?.getOrNull(1)?.precision ?: 2
+                    String.format(Locale.US, "%.${precision}f", value)
+                } ?: "--"
 
             Text(
                 text = secondarySortValue,
@@ -309,19 +323,21 @@ private fun RankingItem(
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 contentDescription = if (expanded) "Collapse" else "Expand",
-                modifier = Modifier
-                    .rotate(rotationAngle)
-                    .weight(0.12f),
+                modifier =
+                    Modifier
+                        .rotate(rotationAngle)
+                        .weight(0.12f),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
         AnimatedVisibility(visible = expanded) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .padding(start = 8.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(start = 8.dp),
             ) {
                 // Show all other sort orders (tiebreakers)
                 if (sortOrders != null && ranking.sortOrders.size > 2) {
@@ -335,12 +351,18 @@ private fun RankingItem(
                     for (i in 2 until minOf(ranking.sortOrders.size, sortOrders.size)) {
                         val sortOrder = sortOrders[i]
                         val value = ranking.sortOrders[i]
-                        val formattedValue = String.format(Locale.US, "%.${sortOrder.precision}f", value)
+                        val formattedValue =
+                            String.format(
+                                Locale.US,
+                                "%.${sortOrder.precision}f",
+                                value,
+                            )
 
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 2.dp),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 2.dp),
                         ) {
                             Text(
                                 text = sortOrder.name,
@@ -372,9 +394,10 @@ private fun RankingItem(
                         val statName = info?.name ?: "Stat ${index + 1}"
                         val precision = info?.precision ?: 2
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 2.dp),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 2.dp),
                         ) {
                             Text(
                                 text = statName,

@@ -8,8 +8,9 @@ import android.content.SharedPreferences
  * Single source of truth for team number — complications read from here too.
  * Per-complication prefs ([TeamTrackingComplicationPreferences]) only store display data.
  */
-class TeamTrackerPreferences(context: Context) {
-
+class TeamTrackerPreferences(
+    context: Context,
+) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences("team_tracker_app", Context.MODE_PRIVATE)
 
@@ -119,7 +120,9 @@ class TeamTrackerPreferences(context: Context) {
     /** Clear all cached data except the team number, and mark as loading. */
     fun clearCachedData() {
         val team = teamNumber
-        prefs.edit().clear()
+        prefs
+            .edit()
+            .clear()
             .putString(KEY_TEAM_NUMBER, team)
             .putBoolean(KEY_IS_LOADING, true)
             .apply()

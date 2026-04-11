@@ -14,7 +14,7 @@ import com.thebluealliance.android.ui.theme.TBABlue
 fun TBATabRow(
     selectedTabIndex: Int,
     modifier: Modifier = Modifier,
-    tabs: @Composable () -> Unit
+    tabs: @Composable () -> Unit,
 ) {
     PrimaryScrollableTabRow(
         selectedTabIndex = selectedTabIndex,
@@ -29,9 +29,9 @@ fun TBATabRow(
             SecondaryIndicator(
                 modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
                 height = 3.dp,
-                color = Color.White
+                color = Color.White,
             )
         },
-        tabs = tabs
+        tabs = tabs,
     )
 }

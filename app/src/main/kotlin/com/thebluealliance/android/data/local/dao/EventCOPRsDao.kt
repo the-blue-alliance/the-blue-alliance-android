@@ -18,4 +18,3 @@ interface EventCOPRsDao {
     @Query("DELETE FROM event_coprs WHERE eventKey = :eventKey")
     suspend fun delete(eventKey: String)
 }
-

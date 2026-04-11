@@ -7,13 +7,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,8 +24,10 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -64,14 +66,9 @@ import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
-import kotlinx.coroutines.launch
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.DisposableEffect
 import com.thebluealliance.android.ui.components.TBATopAppBar
-import com.thebluealliance.android.ui.theme.TBABlue
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 private val TABS = listOf("Favorites", "Notifications")
 
@@ -155,10 +152,11 @@ fun MyTBAScreen(
     ) { innerPadding ->
         if (!uiState.isSignedIn) {
             Box(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+                modifier =
+                    Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
             ) {
                 SignInPrompt(onSignIn = onSignIn)
             }
@@ -166,25 +164,28 @@ fun MyTBAScreen(
         }
 
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val personIcon = rememberVectorPainter(Icons.Default.Person)
                 AsyncImage(
                     model = uiState.userPhotoUrl,
                     contentDescription = "Profile photo",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                    modifier =
+                        Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
                     placeholder = personIcon,
                     error = personIcon,
                     fallback = personIcon,
@@ -237,14 +238,20 @@ fun MyTBAScreen(
                     TabRowDefaults.SecondaryIndicator(
                         modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
                         height = 3.dp,
-                        color = Color.White
+                        color = Color.White,
                     )
-                }
+                },
             ) {
                 TABS.forEachIndexed { index, title ->
                     Tab(
                         selected = pagerState.currentPage == index,
-                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(
+                                    index,
+                                )
+                            }
+                        },
                         text = {
                             Text(
                                 text = title,
@@ -266,21 +273,23 @@ fun MyTBAScreen(
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     when (page) {
-                        MyTBATabs.FAVORITES -> FavoritesTab(
-                            favorites = uiState.favorites,
-                            onNavigateToTeam = onNavigateToTeam,
-                            onNavigateToEvent = onNavigateToEvent,
-                            listState = favoritesListState,
-                            canPinShortcuts = uiState.canPinShortcuts,
-                            onAddShortcut = viewModel::requestPinShortcut,
-                        )
+                        MyTBATabs.FAVORITES ->
+                            FavoritesTab(
+                                favorites = uiState.favorites,
+                                onNavigateToTeam = onNavigateToTeam,
+                                onNavigateToEvent = onNavigateToEvent,
+                                listState = favoritesListState,
+                                canPinShortcuts = uiState.canPinShortcuts,
+                                onAddShortcut = viewModel::requestPinShortcut,
+                            )
 
-                        MyTBATabs.NOTIFICATIONS -> NotificationsTab(
-                            uiState.subscriptions,
-                            onNavigateToTeam,
-                            onNavigateToEvent,
-                            notificationsListState
-                        )
+                        MyTBATabs.NOTIFICATIONS ->
+                            NotificationsTab(
+                                uiState.subscriptions,
+                                onNavigateToTeam,
+                                onNavigateToEvent,
+                                notificationsListState,
+                            )
                     }
                 }
             }
@@ -353,24 +362,26 @@ private fun FavoriteItem(
     showMenu: Boolean,
     onAddShortcut: () -> Unit,
 ) {
-    val typeLabel = when (favorite.modelType) {
-        ModelType.EVENT -> "Event"
-        ModelType.TEAM -> "Team"
-        ModelType.MATCH -> "Match"
-        else -> "Other"
-    }
+    val typeLabel =
+        when (favorite.modelType) {
+            ModelType.EVENT -> "Event"
+            ModelType.TEAM -> "Team"
+            ModelType.MATCH -> "Match"
+            else -> "Other"
+        }
     var menuExpanded by remember { mutableStateOf(false) }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(
-                start = 16.dp,
-                top = if (showMenu) 8.dp else 12.dp,
-                bottom = if (showMenu) 8.dp else 12.dp,
-                end = if (showMenu) 4.dp else 16.dp,
-            ),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(
+                    start = 16.dp,
+                    top = if (showMenu) 8.dp else 12.dp,
+                    bottom = if (showMenu) 8.dp else 12.dp,
+                    end = if (showMenu) 4.dp else 16.dp,
+                ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -433,22 +444,23 @@ private fun NotificationsTab(
     }
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         items(subscriptions, key = { "${it.modelType}_${it.modelKey}" }) { subscription ->
-            val typeLabel = when (subscription.modelType) {
-                ModelType.EVENT -> "Event"
-                ModelType.TEAM -> "Team"
-                ModelType.MATCH -> "Match"
-                else -> "Other"
-            }
+            val typeLabel =
+                when (subscription.modelType) {
+                    ModelType.EVENT -> "Event"
+                    ModelType.TEAM -> "Team"
+                    ModelType.MATCH -> "Match"
+                    else -> "Other"
+                }
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        when (subscription.modelType) {
-                            ModelType.TEAM -> onNavigateToTeam(subscription.modelKey)
-                            ModelType.EVENT -> onNavigateToEvent(subscription.modelKey)
-                        }
-                    }
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            when (subscription.modelType) {
+                                ModelType.TEAM -> onNavigateToTeam(subscription.modelKey)
+                                ModelType.EVENT -> onNavigateToEvent(subscription.modelKey)
+                            }
+                        }.padding(horizontal = 16.dp, vertical = 12.dp),
             ) {
                 Text(
                     text = subscription.modelKey,

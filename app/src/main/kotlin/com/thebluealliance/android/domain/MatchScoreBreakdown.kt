@@ -10,18 +10,20 @@ import kotlinx.serialization.json.jsonPrimitive
 /**
  * Year-aware RP bonus field names from the TBA API score breakdown.
  */
-val rpBonusFieldsByYear = mapOf(
-    2026 to listOf("energizedAchieved", "superchargedAchieved", "traversalAchieved"),
-    2025 to listOf("autoBonusAchieved", "coralBonusAchieved", "bargeBonusAchieved"),
-    2024 to listOf("coopertitionBonusAchieved", "melodyBonusAchieved", "ensembleBonusAchieved"),
-    2023 to listOf("activationBonusAchieved", "sustainabilityBonusAchieved"),
-)
+val rpBonusFieldsByYear =
+    mapOf(
+        2026 to listOf("energizedAchieved", "superchargedAchieved", "traversalAchieved"),
+        2025 to listOf("autoBonusAchieved", "coralBonusAchieved", "bargeBonusAchieved"),
+        2024 to listOf("coopertitionBonusAchieved", "melodyBonusAchieved", "ensembleBonusAchieved"),
+        2023 to listOf("activationBonusAchieved", "sustainabilityBonusAchieved"),
+    )
 
 /** All RP bonus field names across all supported years. */
 val rpBonusFields: Set<String> = rpBonusFieldsByYear.values.flatten().toSet()
 
 /** Boolean fields that should display as ✓/✗ (RP bonuses + other booleans). */
-val booleanDisplayFields: Set<String> = rpBonusFields + setOf("coopertitionCriteriaMet", "g206Penalty")
+val booleanDisplayFields: Set<String> =
+    rpBonusFields + setOf("coopertitionCriteriaMet", "g206Penalty")
 
 data class AllianceRpBonuses(
     val red: List<Boolean>,
@@ -41,6 +43,7 @@ fun Match.rpBonuses(): AllianceRpBonuses? {
     val breakdown = scoreBreakdown ?: return null
     return try {
         val obj = breakdownJson.parseToJsonElement(breakdown) as? JsonObject ?: return null
+
         fun allianceBonuses(alliance: String): List<Boolean> {
             val allianceObj = obj[alliance] as? JsonObject ?: return fields.map { false }
             return fields.map { field ->
@@ -60,7 +63,10 @@ fun Match.rpBonuses(): AllianceRpBonuses? {
 /**
  * Formats a score breakdown value for display in the match detail screen.
  */
-fun formatBreakdownValue(apiKey: String, value: String): String {
+fun formatBreakdownValue(
+    apiKey: String,
+    value: String,
+): String {
     if (value == "-") return value
     return when {
         apiKey == "rp" -> "+$value RP"

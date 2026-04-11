@@ -3,7 +3,24 @@ package com.thebluealliance.android.di
 import android.content.Context
 import androidx.room.Room
 import com.thebluealliance.android.data.local.TBADatabase
-import com.thebluealliance.android.data.local.dao.*
+import com.thebluealliance.android.data.local.dao.AllianceDao
+import com.thebluealliance.android.data.local.dao.AwardDao
+import com.thebluealliance.android.data.local.dao.DistrictDao
+import com.thebluealliance.android.data.local.dao.DistrictRankingDao
+import com.thebluealliance.android.data.local.dao.EventCOPRsDao
+import com.thebluealliance.android.data.local.dao.EventDao
+import com.thebluealliance.android.data.local.dao.EventDistrictPointsDao
+import com.thebluealliance.android.data.local.dao.EventInsightsDao
+import com.thebluealliance.android.data.local.dao.EventOPRsDao
+import com.thebluealliance.android.data.local.dao.EventRankingSortOrderDao
+import com.thebluealliance.android.data.local.dao.EventTeamDao
+import com.thebluealliance.android.data.local.dao.FavoriteDao
+import com.thebluealliance.android.data.local.dao.MatchDao
+import com.thebluealliance.android.data.local.dao.MediaDao
+import com.thebluealliance.android.data.local.dao.RankingDao
+import com.thebluealliance.android.data.local.dao.SubscriptionDao
+import com.thebluealliance.android.data.local.dao.TeamDao
+import com.thebluealliance.android.data.local.dao.TeamEventStatusDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,30 +31,55 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
-
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): TBADatabase =
-        Room.databaseBuilder(context, TBADatabase::class.java, "tba.db")
+    fun provideDatabase(
+        @ApplicationContext context: Context,
+    ): TBADatabase =
+        Room
+            .databaseBuilder(context, TBADatabase::class.java, "tba.db")
             .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
 
     @Provides fun provideTeamDao(db: TBADatabase): TeamDao = db.teamDao()
+
     @Provides fun provideEventDao(db: TBADatabase): EventDao = db.eventDao()
+
     @Provides fun provideMatchDao(db: TBADatabase): MatchDao = db.matchDao()
+
     @Provides fun provideAwardDao(db: TBADatabase): AwardDao = db.awardDao()
+
     @Provides fun provideRankingDao(db: TBADatabase): RankingDao = db.rankingDao()
-    @Provides fun provideEventRankingSortOrderDao(db: TBADatabase): EventRankingSortOrderDao = db.eventRankingSortOrderDao()
+
+    @Provides fun provideEventRankingSortOrderDao(db: TBADatabase): EventRankingSortOrderDao =
+        db.eventRankingSortOrderDao()
+
     @Provides fun provideAllianceDao(db: TBADatabase): AllianceDao = db.allianceDao()
+
     @Provides fun provideDistrictDao(db: TBADatabase): DistrictDao = db.districtDao()
-    @Provides fun provideDistrictRankingDao(db: TBADatabase): DistrictRankingDao = db.districtRankingDao()
+
+    @Provides fun provideDistrictRankingDao(db: TBADatabase): DistrictRankingDao =
+        db
+            .districtRankingDao()
+
     @Provides fun provideMediaDao(db: TBADatabase): MediaDao = db.mediaDao()
+
     @Provides fun provideEventTeamDao(db: TBADatabase): EventTeamDao = db.eventTeamDao()
+
     @Provides fun provideFavoriteDao(db: TBADatabase): FavoriteDao = db.favoriteDao()
+
     @Provides fun provideSubscriptionDao(db: TBADatabase): SubscriptionDao = db.subscriptionDao()
-    @Provides fun provideEventDistrictPointsDao(db: TBADatabase): EventDistrictPointsDao = db.eventDistrictPointsDao()
+
+    @Provides fun provideEventDistrictPointsDao(db: TBADatabase): EventDistrictPointsDao =
+        db.eventDistrictPointsDao()
+
     @Provides fun provideEventOPRsDao(db: TBADatabase): EventOPRsDao = db.eventOPRsDao()
+
     @Provides fun provideEventCOPRsDao(db: TBADatabase): EventCOPRsDao = db.eventCOPRsDao()
+
     @Provides fun provideEventInsightsDao(db: TBADatabase): EventInsightsDao = db.eventInsightsDao()
-    @Provides fun provideTeamEventStatusDao(db: TBADatabase): TeamEventStatusDao = db.teamEventStatusDao()
+
+    @Provides fun provideTeamEventStatusDao(db: TBADatabase): TeamEventStatusDao =
+        db
+            .teamEventStatusDao()
 }

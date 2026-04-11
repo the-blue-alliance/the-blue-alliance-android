@@ -21,11 +21,15 @@ data class EventCOPRsDto(
 )
 
 object EventCOPRsDtoSerializer : KSerializer<EventCOPRsDto> {
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("EventCOPRsDto") {
-        element<Map<String, Map<String, Double>>>("coprs")
-    }
+    override val descriptor: SerialDescriptor =
+        buildClassSerialDescriptor("EventCOPRsDto") {
+            element<Map<String, Map<String, Double>>>("coprs")
+        }
 
-    override fun serialize(encoder: Encoder, value: EventCOPRsDto) {
+    override fun serialize(
+        encoder: Encoder,
+        value: EventCOPRsDto,
+    ) {
         error("Serialization not supported")
     }
 

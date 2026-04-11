@@ -7,16 +7,16 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class EventAlliancesTabLogicTest {
-
-    private fun alliance(name: String?) = Alliance(
-        eventKey = "2025cmptx",
-        number = 6,
-        name = name,
-        picks = listOf("frc1", "frc2", "frc3"),
-        declines = emptyList(),
-        backupIn = null,
-        backupOut = null,
-    )
+    private fun alliance(name: String?) =
+        Alliance(
+            eventKey = "2025cmptx",
+            number = 6,
+            name = name,
+            picks = listOf("frc1", "frc2", "frc3"),
+            declines = emptyList(),
+            backupIn = null,
+            backupOut = null,
+        )
 
     @Test
     fun `Alliance displayTitle and displayTitleShort uses API name when present`() {
@@ -41,4 +41,3 @@ class EventAlliancesTabLogicTest {
         assertEquals("A6", alliance("Alliance 6").displayTitleShort)
     }
 }
-

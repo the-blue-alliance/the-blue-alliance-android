@@ -11,29 +11,34 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AuthRepository @Inject constructor(
-    private val firebaseAuth: FirebaseAuth,
-) {
-    val currentUser: Flow<FirebaseUser?> = callbackFlow {
-        val listener = FirebaseAuth.AuthStateListener { auth ->
-            val user = auth.currentUser
-            try {
-                FirebaseCrashlytics.getInstance().setUserId(user?.uid.orEmpty())
-            } catch (_: Exception) { }
-            trySend(user)
+class AuthRepository
+    @Inject
+    constructor(
+        private val firebaseAuth: FirebaseAuth,
+    ) {
+        val currentUser: Flow<FirebaseUser?> =
+            callbackFlow {
+                val listener =
+                    FirebaseAuth.AuthStateListener { auth ->
+                        val user = auth.currentUser
+                        try {
+                            FirebaseCrashlytics.getInstance().setUserId(user?.uid.orEmpty())
+                        } catch (_: Exception) {
+                        }
+                        trySend(user)
+                    }
+                firebaseAuth.addAuthStateListener(listener)
+                awaitClose { firebaseAuth.removeAuthStateListener(listener) }
+            }
+
+        fun isSignedIn(): Boolean = firebaseAuth.currentUser != null
+
+        suspend fun getIdToken(): String? {
+            val user = firebaseAuth.currentUser ?: return null
+            return user.getIdToken(false).await().token
         }
-        firebaseAuth.addAuthStateListener(listener)
-        awaitClose { firebaseAuth.removeAuthStateListener(listener) }
-    }
 
-    fun isSignedIn(): Boolean = firebaseAuth.currentUser != null
-
-    suspend fun getIdToken(): String? {
-        val user = firebaseAuth.currentUser ?: return null
-        return user.getIdToken(false).await().token
+        fun signOut() {
+            firebaseAuth.signOut()
+        }
     }
-
-    fun signOut() {
-        firebaseAuth.signOut()
-    }
-}

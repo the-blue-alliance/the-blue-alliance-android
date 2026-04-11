@@ -18,62 +18,70 @@ import javax.inject.Inject
 
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 @HiltViewModel
-class DistrictsViewModel @Inject constructor(
-    private val districtRepository: DistrictRepository,
-    private val tbaApi: TbaApi,
-) : ViewModel() {
+class DistrictsViewModel
+    @Inject
+    constructor(
+        private val districtRepository: DistrictRepository,
+        private val tbaApi: TbaApi,
+    ) : ViewModel() {
+        private val _maxYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
+        val maxYear: StateFlow<Int> = _maxYear.asStateFlow()
 
-    private val _maxYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
-    val maxYear: StateFlow<Int> = _maxYear.asStateFlow()
+        private val _selectedYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
+        val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
 
-    private val _selectedYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
-    val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
+        private val _isRefreshing = MutableStateFlow(false)
+        val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+        val uiState: StateFlow<DistrictsUiState> =
+            _selectedYear
+                .flatMapLatest { year ->
+                    districtRepository.observeDistrictsForYear(year).map { districts ->
+                        if (districts.isEmpty()) {
+                            DistrictsUiState.Loading
+                        } else {
+                            DistrictsUiState.Success(districts)
+                        }
+                    }
+                }.stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(5000),
+                    DistrictsUiState.Loading,
+                )
 
-    val uiState: StateFlow<DistrictsUiState> = _selectedYear
-        .flatMapLatest { year ->
-            districtRepository.observeDistrictsForYear(year).map { districts ->
-                if (districts.isEmpty()) DistrictsUiState.Loading
-                else DistrictsUiState.Success(districts)
-            }
+        init {
+            fetchMaxYear()
+            refreshDistricts()
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DistrictsUiState.Loading)
 
-    init {
-        fetchMaxYear()
-        refreshDistricts()
-    }
-
-    private fun fetchMaxYear() {
-        viewModelScope.launch {
-            try {
-                val status = tbaApi.getStatus()
-                _maxYear.value = status.maxSeason
-                if (_selectedYear.value < status.maxSeason) {
-                    _selectedYear.value = status.maxSeason
+        private fun fetchMaxYear() {
+            viewModelScope.launch {
+                try {
+                    val status = tbaApi.getStatus()
+                    _maxYear.value = status.maxSeason
+                    if (_selectedYear.value < status.maxSeason) {
+                        _selectedYear.value = status.maxSeason
+                    }
+                } catch (_: Exception) {
+                    // Fall back to calendar year (already set)
                 }
-            } catch (_: Exception) {
-                // Fall back to calendar year (already set)
+            }
+        }
+
+        fun selectYear(year: Int) {
+            _selectedYear.value = year
+            refreshDistricts()
+        }
+
+        fun refreshDistricts() {
+            viewModelScope.launch {
+                _isRefreshing.value = true
+                try {
+                    districtRepository.refreshDistrictsForYear(_selectedYear.value)
+                } catch (_: Exception) {
+                } finally {
+                    _isRefreshing.value = false
+                }
             }
         }
     }
-
-    fun selectYear(year: Int) {
-        _selectedYear.value = year
-        refreshDistricts()
-    }
-
-    fun refreshDistricts() {
-        viewModelScope.launch {
-            _isRefreshing.value = true
-            try {
-                districtRepository.refreshDistrictsForYear(_selectedYear.value)
-            } catch (_: Exception) {
-            } finally {
-                _isRefreshing.value = false
-            }
-        }
-    }
-}

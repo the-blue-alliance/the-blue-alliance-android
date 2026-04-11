@@ -22,10 +22,13 @@ val Alliance.displayTitle: String
 
 val Alliance.displayTitleShort: String
     get() {
-        if (this.name.isNullOrBlank()
+        if (this.name.isNullOrBlank() ||
             // Regular playoff matches also have the property name = "Alliance #".
             // We want "A#" instead to be concise.
-            || this.name.startsWith("Alliance ")) return "A${this.number}"
+            this.name.startsWith("Alliance ")
+        ) {
+            return "A${this.number}"
+        }
 
         return this.name
     }
@@ -54,19 +57,21 @@ private fun String.toAllianceStatusLabel(): String =
         ?.lowercase()
         ?.replace('_', ' ')
         ?.let { status ->
-            if (status == "won") WINNER_LABEL
-            else status.replaceFirstChar { char ->
-                if (char.isLowerCase()) char.titlecase() else char.toString()
+            if (status == "won") {
+                WINNER_LABEL
+            } else {
+                status.replaceFirstChar { char ->
+                    if (char.isLowerCase()) char.titlecase() else char.toString()
+                }
             }
-        }
-        .orEmpty()
+        }.orEmpty()
 
-private fun String.toAllianceCompLevelLabel(): String = when (lowercase()) {
-    CompLevel.QUAL.code -> "Qualifications"
-    CompLevel.OCTOFINAL.code -> "Eighths"
-    CompLevel.QUARTERFINAL.code -> "Quarterfinals"
-    CompLevel.SEMIFINAL.code -> "Semifinals"
-    CompLevel.FINAL.code -> "Finals"
-    else -> trim().takeIf { it.isNotEmpty() }?.uppercase().orEmpty()
-}
-
+private fun String.toAllianceCompLevelLabel(): String =
+    when (lowercase()) {
+        CompLevel.QUAL.code -> "Qualifications"
+        CompLevel.OCTOFINAL.code -> "Eighths"
+        CompLevel.QUARTERFINAL.code -> "Quarterfinals"
+        CompLevel.SEMIFINAL.code -> "Semifinals"
+        CompLevel.FINAL.code -> "Finals"
+        else -> trim().takeIf { it.isNotEmpty() }?.uppercase().orEmpty()
+    }

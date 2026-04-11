@@ -18,4 +18,3 @@ interface EventRankingSortOrderDao {
     @Query("DELETE FROM event_ranking_sort_orders WHERE eventKey = :eventKey")
     suspend fun delete(eventKey: String)
 }
-
