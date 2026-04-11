@@ -32,66 +32,163 @@ The Blue Alliance is built by volunteers. We'd love your help!
 - **Navigation:** Type-safe Compose Navigation
 - **Language:** Kotlin
 
-## Development Setup
+## First-time setup
 
-### Prerequisites
+The steps below get you from a fresh clone to a running app on an emulator. No Firebase project, API key, or local backend is required to see the UI — add those later when you need signed-in features or real data.
 
-1. Install [Android Studio](https://developer.android.com/studio) and a JDK (17+).
-2. Install [Docker](https://www.docker.com/products/docker-desktop/) (includes Docker Compose).
-3. Fork and clone this repository.
+### 1. Prerequisites
 
-### Local backend server
+- **[Android Studio](https://developer.android.com/studio)** (any recent version). On first open of the project, Gradle sync will install the required SDK components for you.
+- **JDK 17**. Android Studio bundles one (`jbr/`); if you build from the CLI without Android Studio, install a JDK 17 separately (`brew install openjdk@17` on macOS).
 
-The app's debug build connects to a local TBA server at `http://10.0.2.2:8080/` (the emulator's alias for `localhost`). Use Docker Compose to run the backend locally:
+### 2. Clone and configure
 
 ```bash
-# Clone the backend repo (if you haven't already)
-git clone https://github.com/the-blue-alliance/the-blue-alliance.git
+git clone https://github.com/the-blue-alliance/the-blue-alliance-android.git
+cd the-blue-alliance-android
+cp local.properties.example local.properties
+```
 
-# Start all services (TBA server, Datastore emulator, Firebase emulator)
+`local.properties` is gitignored and holds your SDK path, API keys, and signing config. The example file has sane defaults for a first build.
+
+### 3. Add a stub `google-services.json`
+
+The Firebase plugin refuses to configure without a `google-services.json`, but you don't need a real Firebase project for the first build — any syntactically-valid stub will do. Create `app/src/debug/google-services.json` with:
+
+```json
+{
+  "project_info": {
+    "project_number": "000000000000",
+    "project_id": "tba-dev-placeholder",
+    "storage_bucket": "tba-dev-placeholder.appspot.com"
+  },
+  "client": [{
+    "client_info": {
+      "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+      "android_client_info": { "package_name": "com.thebluealliance.androidclient.development" }
+    },
+    "oauth_client": [
+      { "client_id": "000000000000-placeholder.apps.googleusercontent.com", "client_type": 3 }
+    ],
+    "api_key": [{ "current_key": "placeholder-api-key" }]
+  }],
+  "configuration_version": "1"
+}
+```
+
+If you also want to build the Wear OS app, copy the same file to `wear/src/debug/google-services.json`.
+
+Google Sign-In and push notifications will not work with the stub — see [Firebase project (optional)](#firebase-project-optional) below when you need them.
+
+### 4. Open in Android Studio and sync
+
+Open the cloned directory in Android Studio. It will download Gradle, the required Android SDK platform, and build tools on first sync. This takes a few minutes.
+
+### 5. Create an emulator
+
+In Android Studio: **Tools → Device Manager → Create Device**. Any Phone definition with a recent Google Play system image (API 34+) works.
+
+### 6. Build and run
+
+Either click the green ▶ button in Android Studio with your emulator selected, or from the CLI:
+
+```bash
+./gradlew :app:installDebug
+adb shell am start -n com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity
+```
+
+You should see the app launch to an empty Events list. The UI works; you just haven't connected it to any data yet.
+
+## Connecting to data
+
+After the first build succeeds, pick one of these to see real content:
+
+### Option A: Point at the production API (simplest)
+
+Add to `local.properties`:
+
+```properties
+tba.url.debug=https://www.thebluealliance.com/
+tba.api.key.debug=YOUR_KEY_HERE
+```
+
+Get an API key from the [TBA Account page](https://www.thebluealliance.com/account). Rebuild and you'll see real events, teams, and matches.
+
+### Option B: Run the local backend (for backend development)
+
+The app's debug build defaults to `http://10.0.2.2:8080/` (the emulator's alias for the host's `localhost`). Use Docker Compose to run the backend locally:
+
+```bash
+# In a separate directory:
+git clone https://github.com/the-blue-alliance/the-blue-alliance.git
 cd the-blue-alliance
 docker compose up
 ```
 
 This starts:
-- **TBA server** at `http://localhost:8080` -- the API the Android app talks to
+- **TBA server** at `http://localhost:8080` — the API the Android app talks to
 - **Datastore emulator** at `http://localhost:8089`
 - **Firebase emulator** at `http://localhost:4000` (admin UI)
 
-To import data into your local server, visit `http://localhost:8080/local/bootstrap` in a browser.
+To import data, visit `http://localhost:8080/local/bootstrap` in a browser.
 
-Running the local backend is the easiest way to test logged-in features like myTBA favorites and notifications, since the Docker Compose setup includes a Firebase Auth emulator that handles sign-in without any additional configuration.
+The Docker Compose setup includes a Firebase Auth emulator, so Google Sign-In works against the local backend without any real Firebase configuration.
 
-> **Tip:** If you'd rather skip running the backend locally, you can point the app at the production API by adding this to `local.properties`:
-> ```
-> tba.url.debug=https://www.thebluealliance.com/
-> tba.api.key.debug=YOUR_KEY_HERE
-> ```
-> Get an API key from the [TBA Account page](https://www.thebluealliance.com/account).
+## Firebase project (optional)
 
-### Firebase project (optional)
+A real Firebase project is **only** needed if you want to test Google Sign-In or push notifications against the production API. For everything else (including signing in via the local Docker backend) the stub `google-services.json` from step 3 is enough.
 
-A Firebase project is **not required** if you're using the local Docker Compose backend -- the Firebase Auth emulator handles authentication automatically.
-
-If you want to test against the production API with real Google Sign-In or push notifications, set up a Firebase project:
+To set up a real project:
 
 1. Create a project in the [Firebase console](https://console.firebase.google.com/) (e.g. `yourname-tba-dev`).
 2. Add an Android app with package name `com.thebluealliance.androidclient.development`.
 3. Add your debug signing SHA-1 fingerprint ([instructions](https://developers.google.com/android/guides/client-auth)).
-4. Download `google-services.json` and place it in `app/src/debug/`.
+4. Download the real `google-services.json` and replace the stub at `app/src/debug/google-services.json`.
 
-### Build and run
+## Code quality
+
+The project enforces formatting and Android Lint in CI. Both run against every PR via [`ci-lint.yaml`](.github/workflows/ci-lint.yaml).
+
+### Formatting (ktlint)
 
 ```bash
-./gradlew :app:installDebug
+./gradlew ktlintCheck    # fail on any violation
+./gradlew ktlintFormat   # auto-fix what it can
 ```
 
-## Alpha Testing
+Install the pre-commit hook once to catch formatting issues before they reach CI:
 
-We publish pre-release builds to a closed alpha track on Google Play. To join, request access to the [thebluealliance-android-alpha](https://groups.google.com/g/thebluealliance-android-alpha) Google Group, then opt in to the alpha on the [Play Store listing](https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient).
+```bash
+./gradlew addKtlintCheckGitPreCommitHook
+```
+
+### Android Lint
+
+```bash
+./gradlew :app:lintDebug
+./gradlew :wear:lintDebug
+```
+
+Both modules use `warningsAsErrors = true`, so any new lint warning fails the build. If you need to suppress a check, prefer targeted `tools:ignore` / `@Suppress` annotations over disabling the rule project-wide.
+
+### git blame
+
+A `.git-blame-ignore-revs` file tracks bulk-formatting commits (e.g. the initial ktlint sweep) so they don't pollute `git blame`. Configure your local git to respect it:
+
+```bash
+git config blame.ignoreRevsFile .git-blame-ignore-revs
+```
+
+GitHub's blame UI respects this file automatically; this command is only needed for CLI `git blame` and IDE integrations.
 
 ## Testing
 
 ```bash
 ./gradlew :app:testDebugUnitTest
 ```
+
+Unit tests use JUnit 5 (Jupiter), MockK, Turbine for Flow testing, and Coroutines Test utilities.
+
+## Alpha Testing
+
+We publish pre-release builds to a closed alpha track on Google Play. To join, request access to the [thebluealliance-android-alpha](https://groups.google.com/g/thebluealliance-android-alpha) Google Group, then opt in to the alpha on the [Play Store listing](https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient).
