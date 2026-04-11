@@ -16,25 +16,9 @@ The Blue Alliance is built by volunteers. We'd love your help!
 - **Report bugs or request features** on the [issue tracker](https://github.com/the-blue-alliance/the-blue-alliance-android/issues)
 - **Contribute code** by forking the repo, making changes on a branch, and opening a pull request
 
-## Features
-
-- **Events** -- Browse competitions by year and week, view event details including teams, match results, rankings, alliances, and awards
-- **Teams** -- Browse teams, view team details with year-by-year event participation and media
-- **Districts** -- Browse district listings and rankings
-- **Search** -- Find teams and events across all of TBA
-- **myTBA** -- Sign in with Google to save favorite teams and events, and set up push notifications for match scores, upcoming matches, schedule changes, and more
-- **Deep linking** -- Open thebluealliance.com links directly in the app
-- **Push notifications** -- Receive alerts for match scores, upcoming matches, event updates, and more via Firebase Cloud Messaging
-
 ## Tech Stack
 
-- **UI:** Jetpack Compose with Material 3
-- **Architecture:** MVVM with Hilt dependency injection
-- **Data:** Room database with Retrofit networking, repository pattern bridging API and local storage
-- **Auth:** Firebase Auth with Google Sign-In
-- **Messaging:** Firebase Cloud Messaging with WorkManager retry
-- **Navigation:** Type-safe Compose Navigation
-- **Language:** Kotlin
+Kotlin, Jetpack Compose (Material 3), Hilt, Room, Retrofit, Firebase.
 
 ## First-time setup
 
@@ -54,23 +38,13 @@ cp  app/src/debug/google-services.json.example  app/src/debug/google-services.js
 cp wear/src/debug/google-services.json.example wear/src/debug/google-services.json
 ```
 
-The Firebase plugin refuses to configure without a `google-services.json`, but you don't need a real Firebase project for the first build — the stubs are enough. You also don't need a `local.properties` file; the Gradle scripts fall back to sane defaults, and Android Studio will create one with your SDK path on first sync.
+You don't need a real Firebase project or a `local.properties` file for the first build — the stubs are enough, and Gradle falls back to sane defaults for everything else.
 
 ### 3. Open in Android Studio and run
 
 Open the cloned directory in Android Studio. It will download Gradle, the Android SDK platform, and build tools on first sync (takes a few minutes). Then **Tools → Device Manager → Create Device** to make an emulator (any recent Phone AVD), select it in the run target dropdown, and hit the green ▶ button.
 
 The app will launch with empty lists because no data source is connected yet — see [Connecting to data](#connecting-to-data) below.
-
-<details>
-<summary>CLI alternative</summary>
-
-```bash
-./gradlew :app:installDebug
-adb shell am start -n com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity
-```
-
-</details>
 
 ## Connecting to data
 
@@ -134,12 +108,8 @@ Install the pre-commit hook once to catch formatting issues before they reach CI
 ./gradlew :wear:lintDebug
 ```
 
-Both modules use `warningsAsErrors = true`, so any new lint warning fails the build. If you need to suppress a check, prefer targeted `tools:ignore` / `@Suppress` annotations over disabling the rule project-wide.
-
 ## Testing
 
 ```bash
 ./gradlew :app:testDebugUnitTest
 ```
-
-Unit tests use JUnit 5 (Jupiter), MockK, Turbine for Flow testing, and Coroutines Test utilities.
