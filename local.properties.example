@@ -1,28 +1,14 @@
-## Copy this file to local.properties and fill in values as needed.
+## Copy this file to local.properties and edit as needed.
 ## local.properties is gitignored — safe to put secrets here.
+## You only need this file if you want to override the defaults;
+## the app builds and runs against the local Docker backend without it.
 
-# Android SDK location (Android Studio fills this in automatically on first
-# Gradle sync; leave commented out unless you're building from the CLI
-# without ever opening Android Studio).
-#sdk.dir=/Users/you/Library/Android/sdk
-
-# ─── Debug build ─────────────────────────────────────────────────────────────
-# URL of the TBA API to use in debug builds. Defaults to the local Docker
-# Compose backend (10.0.2.2 is the emulator's alias for the host's localhost).
-# Uncomment and change to https://www.thebluealliance.com/ to hit production.
-#tba.url.debug=https://www.thebluealliance.com/
-
-# API key for debug builds. "tba-dev-key" works with the local Docker backend.
-# For production, get a key at https://www.thebluealliance.com/account.
+# API key for debug builds. "tba-dev-key" works with the local Docker
+# backend. For production, get a real key at
+# https://www.thebluealliance.com/account.
 tba.api.key.debug=tba-dev-key
 
-# ─── Release build (not needed for development) ─────────────────────────────
-# Only fill these in if you're producing a signed release build. The defaults
-# point at placeholder paths so the Gradle scripts don't crash during sync.
-release.store.file=release.keystore
-release.store.password=
-release.key.alias=
-release.key.password=
-
-# Google Play Publisher plugin — only needed for release uploads.
-play.service.account.key=play-service-account.json
+# By default debug builds hit the local Docker backend at
+# http://10.0.2.2:8080/ (the emulator's alias for the host's localhost).
+# Uncomment to hit production instead.
+#tba.url.debug=https://www.thebluealliance.com/

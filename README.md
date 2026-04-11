@@ -4,6 +4,10 @@ An Android app for accessing information about the [FIRST Robotics Competition](
 
 Available on the [Google Play Store](https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient&hl=en).
 
+## Alpha Testing
+
+We publish pre-release builds to a closed alpha track on Google Play. To join, request access to the [thebluealliance-android-alpha](https://groups.google.com/g/thebluealliance-android-alpha) Google Group, then opt in to the alpha on the [Play Store listing](https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient).
+
 ## Get Involved
 
 The Blue Alliance is built by volunteers. We'd love your help!
@@ -34,60 +38,53 @@ The Blue Alliance is built by volunteers. We'd love your help!
 
 ## First-time setup
 
-The steps below get you from a fresh clone to a running app on an emulator. No Firebase project, API key, or local backend is required to see the UI — add those later when you need signed-in features or real data.
+Fresh clone to running app in three steps.
 
 ### 1. Prerequisites
 
-- **[Android Studio](https://developer.android.com/studio)** (any recent version). On first open of the project, Gradle sync will install the required SDK components for you.
-- **JDK 17**. Android Studio bundles one (`jbr/`); if you build from the CLI without Android Studio, install a JDK 17 separately (`brew install openjdk@17` on macOS).
+- **[Android Studio](https://developer.android.com/studio)** — on first open of the project, Gradle sync installs the required SDK components for you.
+- **JDK 17** — bundled with Android Studio (`jbr/`). If you build from the CLI without Android Studio, install one separately (`brew install openjdk@17` on macOS).
 
-### 2. Clone and configure
+### 2. Clone and stub `google-services.json`
 
 ```bash
 git clone https://github.com/the-blue-alliance/the-blue-alliance-android.git
 cd the-blue-alliance-android
-cp local.properties.example local.properties
-```
-
-`local.properties` is gitignored and holds your SDK path, API keys, and signing config. The example file has sane defaults for a first build.
-
-### 3. Add a stub `google-services.json`
-
-The Firebase plugin refuses to configure without a `google-services.json`, but you don't need a real Firebase project for the first build. Copy the example stubs into place:
-
-```bash
-cp app/src/debug/google-services.json.example  app/src/debug/google-services.json
+cp  app/src/debug/google-services.json.example  app/src/debug/google-services.json
 cp wear/src/debug/google-services.json.example wear/src/debug/google-services.json
 ```
 
-Google Sign-In and push notifications will not work with the stub — see [Firebase project (optional)](#firebase-project-optional) below when you need them.
+The Firebase plugin refuses to configure without a `google-services.json`, but you don't need a real Firebase project for the first build — the stubs are enough. You also don't need a `local.properties` file; the Gradle scripts fall back to sane defaults, and Android Studio will create one with your SDK path on first sync.
 
-### 4. Open in Android Studio and sync
+### 3. Open in Android Studio and run
 
-Open the cloned directory in Android Studio. It will download Gradle, the required Android SDK platform, and build tools on first sync. This takes a few minutes.
+Open the cloned directory in Android Studio. It will download Gradle, the Android SDK platform, and build tools on first sync (takes a few minutes). Then **Tools → Device Manager → Create Device** to make an emulator (any recent Phone AVD), select it in the run target dropdown, and hit the green ▶ button.
 
-### 5. Create an emulator
+The app will launch with empty lists because no data source is connected yet — see [Connecting to data](#connecting-to-data) below.
 
-In Android Studio: **Tools → Device Manager → Create Device**. Any Phone definition with a recent Google Play system image (API 34+) works.
-
-### 6. Build and run
-
-Either click the green ▶ button in Android Studio with your emulator selected, or from the CLI:
+<details>
+<summary>CLI alternative</summary>
 
 ```bash
 ./gradlew :app:installDebug
 adb shell am start -n com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity
 ```
 
-You should see the app launch to an empty Events list. The UI works; you just haven't connected it to any data yet.
+</details>
 
 ## Connecting to data
 
-After the first build succeeds, pick one of these to see real content:
+After the first build succeeds, pick one of these to see real content.
 
 ### Option A: Point at the production API (simplest)
 
-Add to `local.properties`:
+Copy the template and edit:
+
+```bash
+cp local.properties.example local.properties
+```
+
+Then uncomment and fill in:
 
 ```properties
 tba.url.debug=https://www.thebluealliance.com/
@@ -98,38 +95,24 @@ Get an API key from the [TBA Account page](https://www.thebluealliance.com/accou
 
 ### Option B: Run the local backend (for backend development)
 
-The app's debug build defaults to `http://10.0.2.2:8080/` (the emulator's alias for the host's `localhost`). Use Docker Compose to run the backend locally:
+The Android debug build defaults to `http://10.0.2.2:8080/` (the emulator's alias for the host's `localhost`), which is where the TBA server runs inside its Docker Compose stack. Follow the setup instructions in the [TBA backend repository](https://github.com/the-blue-alliance/the-blue-alliance) to start it; once Docker Compose is running, rebuild the Android app and you'll see local data.
 
-```bash
-# In a separate directory:
-git clone https://github.com/the-blue-alliance/the-blue-alliance.git
-cd the-blue-alliance
-docker compose up
-```
-
-This starts:
-- **TBA server** at `http://localhost:8080` — the API the Android app talks to
-- **Datastore emulator** at `http://localhost:8089`
-- **Firebase emulator** at `http://localhost:4000` (admin UI)
-
-To import data, visit `http://localhost:8080/local/bootstrap` in a browser.
-
-The Docker Compose setup includes a Firebase Auth emulator, so Google Sign-In works against the local backend without any real Firebase configuration.
+The Docker Compose stack includes a Firebase Auth emulator, and debug builds of the Android app are wired to it in `AuthModule` — so Google Sign-In works against the local backend with the stub `google-services.json` alone. No real Firebase project needed.
 
 ## Firebase project (optional)
 
-A real Firebase project is **only** needed if you want to test Google Sign-In or push notifications against the production API. For everything else (including signing in via the local Docker backend) the stub `google-services.json` from step 3 is enough.
+Only needed if you want to test Google Sign-In or push notifications **against production**. For local development the stub `google-services.json` is enough.
 
 To set up a real project:
 
-1. Create a project in the [Firebase console](https://console.firebase.google.com/) (e.g. `yourname-tba-dev`).
+1. Create a project in the [Firebase console](https://console.firebase.google.com/).
 2. Add an Android app with package name `com.thebluealliance.androidclient.development`.
 3. Add your debug signing SHA-1 fingerprint ([instructions](https://developers.google.com/android/guides/client-auth)).
-4. Download the real `google-services.json` and overwrite `app/src/debug/google-services.json` with it.
+4. Download the real `google-services.json` and overwrite `app/src/debug/google-services.json`.
 
 ## Code quality
 
-The project enforces formatting and Android Lint in CI. Both run against every PR via [`ci-lint.yaml`](.github/workflows/ci-lint.yaml).
+The project enforces formatting and Android Lint in CI via [`ci-lint.yaml`](.github/workflows/ci-lint.yaml).
 
 ### Formatting (ktlint)
 
@@ -153,16 +136,6 @@ Install the pre-commit hook once to catch formatting issues before they reach CI
 
 Both modules use `warningsAsErrors = true`, so any new lint warning fails the build. If you need to suppress a check, prefer targeted `tools:ignore` / `@Suppress` annotations over disabling the rule project-wide.
 
-### git blame
-
-A `.git-blame-ignore-revs` file tracks bulk-formatting commits (e.g. the initial ktlint sweep) so they don't pollute `git blame`. Configure your local git to respect it:
-
-```bash
-git config blame.ignoreRevsFile .git-blame-ignore-revs
-```
-
-GitHub's blame UI respects this file automatically; this command is only needed for CLI `git blame` and IDE integrations.
-
 ## Testing
 
 ```bash
@@ -170,7 +143,3 @@ GitHub's blame UI respects this file automatically; this command is only needed 
 ```
 
 Unit tests use JUnit 5 (Jupiter), MockK, Turbine for Flow testing, and Coroutines Test utilities.
-
-## Alpha Testing
-
-We publish pre-release builds to a closed alpha track on Google Play. To join, request access to the [thebluealliance-android-alpha](https://groups.google.com/g/thebluealliance-android-alpha) Google Group, then opt in to the alpha on the [Play Store listing](https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient).
