@@ -139,6 +139,12 @@ android {
         buildConfig = true
     }
 
+    lint {
+        warningsAsErrors = true
+        abortOnError = true
+        checkDependencies = true
+    }
+
     @Suppress("UnstableApiUsage")
     testOptions {
         unitTests.all {

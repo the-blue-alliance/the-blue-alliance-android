@@ -119,6 +119,11 @@ android {
         compose = true
         buildConfig = true
     }
+
+    lint {
+        warningsAsErrors = true
+        abortOnError = true
+    }
 }
 
 play {
