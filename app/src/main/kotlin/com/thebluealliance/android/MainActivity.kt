@@ -14,6 +14,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.NoCredentialException
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation3.runtime.NavKey
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
@@ -161,6 +162,8 @@ class MainActivity : ComponentActivity() {
                     )
                 firebaseAuth.signInWithCredential(firebaseCredential).await()
                 requestNotificationPermission()
+            } catch (e: NoCredentialException) {
+                Log.i("MainActivity", "No Google credential available", e)
             } catch (e: Exception) {
                 Log.e("MainActivity", "Sign-in failed", e)
             }

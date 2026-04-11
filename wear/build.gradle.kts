@@ -119,6 +119,14 @@ android {
         compose = true
         buildConfig = true
     }
+
+    lint {
+        warningsAsErrors = true
+        abortOnError = true
+        // Advisory rule that fires whenever a newer (beta) SDK exists. We
+        // bump targetSdk deliberately, not on every API release.
+        disable += "OldTargetApi"
+    }
 }
 
 play {

@@ -2,6 +2,7 @@ package com.thebluealliance.android.widget
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.SizeF
@@ -100,10 +101,12 @@ class ResizeWidgetsActivity : ComponentActivity() {
                     putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, heightDp)
                     putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, heightDp)
                     // Android 12+ uses OPTION_APPWIDGET_SIZES for Glance SizeMode.Responsive
-                    putParcelableArrayList(
-                        AppWidgetManager.OPTION_APPWIDGET_SIZES,
-                        arrayListOf(SizeF(widthDp.toFloat(), heightDp.toFloat())),
-                    )
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        putParcelableArrayList(
+                            AppWidgetManager.OPTION_APPWIDGET_SIZES,
+                            arrayListOf(SizeF(widthDp.toFloat(), heightDp.toFloat())),
+                        )
+                    }
                 }
             awm.updateAppWidgetOptions(appWidgetId, options)
 

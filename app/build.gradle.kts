@@ -139,6 +139,15 @@ android {
         buildConfig = true
     }
 
+    lint {
+        warningsAsErrors = true
+        abortOnError = true
+        checkDependencies = true
+        // Advisory rule that fires whenever a newer (beta) SDK exists. We
+        // bump targetSdk deliberately, not on every API release.
+        disable += "OldTargetApi"
+    }
+
     @Suppress("UnstableApiUsage")
     testOptions {
         unitTests.all {
@@ -242,7 +251,7 @@ dependencies {
     // Testing
     testImplementation(libs.junit.api)
     testRuntimeOnly(libs.junit.engine)
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)

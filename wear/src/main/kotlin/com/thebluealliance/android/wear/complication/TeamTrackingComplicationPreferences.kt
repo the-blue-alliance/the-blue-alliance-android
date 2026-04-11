@@ -2,6 +2,7 @@ package com.thebluealliance.android.wear.complication
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 
 /**
  * Per-complication SharedPreferences storage for complication display data.
@@ -17,30 +18,30 @@ class TeamTrackingComplicationPreferences(
 
     var matchLabel: String
         get() = prefs.getString(KEY_MATCH_LABEL, "") ?: ""
-        set(value) = prefs.edit().putString(KEY_MATCH_LABEL, value).apply()
+        set(value) = prefs.edit { putString(KEY_MATCH_LABEL, value) }
 
     var matchTime: String
         get() = prefs.getString(KEY_MATCH_TIME, "") ?: ""
-        set(value) = prefs.edit().putString(KEY_MATCH_TIME, value).apply()
+        set(value) = prefs.edit { putString(KEY_MATCH_TIME, value) }
 
     var avatarBase64: String?
         get() = prefs.getString(KEY_AVATAR_BASE64, null)
-        set(value) = prefs.edit().putString(KEY_AVATAR_BASE64, value).apply()
+        set(value) = prefs.edit { putString(KEY_AVATAR_BASE64, value) }
 
     var activeEventName: String
         get() = prefs.getString(KEY_ACTIVE_EVENT_NAME, "") ?: ""
-        set(value) = prefs.edit().putString(KEY_ACTIVE_EVENT_NAME, value).apply()
+        set(value) = prefs.edit { putString(KEY_ACTIVE_EVENT_NAME, value) }
 
     var upcomingEventName: String
         get() = prefs.getString(KEY_UPCOMING_EVENT_NAME, "") ?: ""
-        set(value) = prefs.edit().putString(KEY_UPCOMING_EVENT_NAME, value).apply()
+        set(value) = prefs.edit { putString(KEY_UPCOMING_EVENT_NAME, value) }
 
     var upcomingEventDate: String
         get() = prefs.getString(KEY_UPCOMING_EVENT_DATE, "") ?: ""
-        set(value) = prefs.edit().putString(KEY_UPCOMING_EVENT_DATE, value).apply()
+        set(value) = prefs.edit { putString(KEY_UPCOMING_EVENT_DATE, value) }
 
     fun clear() {
-        prefs.edit().clear().apply()
+        prefs.edit { clear() }
     }
 
     companion object {
@@ -68,7 +69,7 @@ class TeamTrackingComplicationPreferences(
             val prefs = globalPrefs(context)
             val ids = prefs.getStringSet("active_ids", emptySet())?.toMutableSet() ?: mutableSetOf()
             ids.add(id.toString())
-            prefs.edit().putStringSet("active_ids", ids).apply()
+            prefs.edit { putStringSet("active_ids", ids) }
         }
 
         fun removeComplicationId(
@@ -78,7 +79,7 @@ class TeamTrackingComplicationPreferences(
             val prefs = globalPrefs(context)
             val ids = prefs.getStringSet("active_ids", emptySet())?.toMutableSet() ?: mutableSetOf()
             ids.remove(id.toString())
-            prefs.edit().putStringSet("active_ids", ids).apply()
+            prefs.edit { putStringSet("active_ids", ids) }
         }
     }
 }
