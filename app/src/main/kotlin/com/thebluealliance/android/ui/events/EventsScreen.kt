@@ -39,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -260,7 +261,7 @@ private fun EventsList(
     }
 
     // Reset scroll position when year changes (but not on initial composition/back navigation)
-    var previousYear by rememberSaveable { mutableStateOf(selectedYear) }
+    var previousYear by rememberSaveable { mutableIntStateOf(selectedYear) }
     LaunchedEffect(selectedYear) {
         if (selectedYear != previousYear) {
             previousYear = selectedYear
