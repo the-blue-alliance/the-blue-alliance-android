@@ -87,12 +87,16 @@ class MyTBAViewModel
             }
         }
 
-        fun removeSubscription(modelKey: String, modelType: Int) {
+        fun removeSubscription(
+            modelKey: String,
+            modelType: Int,
+        ) {
             viewModelScope.launch {
                 try {
-                    val isFavorited = uiState.value.favorites.any {
-                        it.modelKey == modelKey && it.modelType == modelType
-                    }
+                    val isFavorited =
+                        uiState.value.favorites.any {
+                            it.modelKey == modelKey && it.modelType == modelType
+                        }
                     myTBARepository.updatePreferences(
                         modelKey = modelKey,
                         modelType = modelType,
