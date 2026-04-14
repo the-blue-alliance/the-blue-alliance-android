@@ -230,17 +230,15 @@ fun MyTBAScreen(
                 selectedTabIndex = pagerState.currentPage,
                 edgePadding = 0.dp,
                 containerColor = Color(0xFF5C6BC0),
-                contentColor = MaterialTheme.colorScheme.onPrimary,
+                contentColor = Color.White,
                 divider = {
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.12f),
-                    )
+                    HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
                 },
                 indicator = {
                     TabRowDefaults.SecondaryIndicator(
                         modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
                         height = 3.dp,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = Color.White,
                     )
                 },
             ) {
@@ -257,7 +255,7 @@ fun MyTBAScreen(
                         text = {
                             Text(
                                 text = title,
-                                color = MaterialTheme.colorScheme.onPrimary,
+                                color = Color.White,
                                 fontWeight = FontWeight.Bold,
                             )
                         },

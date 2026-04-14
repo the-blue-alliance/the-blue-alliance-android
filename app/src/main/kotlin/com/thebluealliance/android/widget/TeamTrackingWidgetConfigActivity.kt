@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -98,13 +99,13 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                 Icon(
                                     painter = painterResource(R.drawable.tba_lamp),
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    tint = Color.White,
                                     modifier = Modifier.size(20.dp),
                                 )
                                 Text(
                                     text = "Team Tracker",
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    color = Color.White,
                                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                                 )
                                 IconButton(
@@ -114,7 +115,7 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                     Icon(
                                         imageVector = Icons.Default.Close,
                                         contentDescription = "Close",
-                                        tint = MaterialTheme.colorScheme.onPrimary,
+                                        tint = Color.White,
                                     )
                                 }
                             }

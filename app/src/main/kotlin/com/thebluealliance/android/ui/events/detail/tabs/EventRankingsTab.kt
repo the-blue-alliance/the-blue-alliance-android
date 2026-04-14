@@ -175,7 +175,7 @@ private fun RankingHeaderRow(
             text = "Rank",
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = Color.White,
             modifier = Modifier.weight(0.12f),
         )
         RankingHeaderItem(
@@ -190,7 +190,7 @@ private fun RankingHeaderRow(
             text = "Record",
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = Color.White,
             modifier = Modifier.weight(0.22f),
         )
         RankingHeaderItem(
@@ -231,7 +231,7 @@ private fun RankingHeaderItem(
             text = text,
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = Color.White,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
         )
@@ -241,7 +241,7 @@ private fun RankingHeaderItem(
                     if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
                 contentDescription =
                     if (ascending) "Sorted Ascending" else "Sorted Descending",
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = Color.White,
             )
         }
     }

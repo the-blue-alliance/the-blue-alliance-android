@@ -296,9 +296,9 @@ fun TeamDetailScreen(
                                         if (pagerState.currentPage ==
                                             index
                                         ) {
-                                            MaterialTheme.colorScheme.onPrimary
+                                            Color.White
                                         } else {
-                                            MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
+                                            Color.White.copy(alpha = 0.7f)
                                         },
                                 )
                             },
