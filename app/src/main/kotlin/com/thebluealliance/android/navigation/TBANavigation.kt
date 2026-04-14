@@ -1,32 +1,38 @@
 package com.thebluealliance.android.navigation
 
 import androidx.activity.compose.LocalActivity
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.thebluealliance.android.MainActivity
+import com.thebluealliance.android.ui.MORE_SUB_SCREENS
 import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
-import com.thebluealliance.android.ui.components.TBABottomBar
 import com.thebluealliance.android.ui.districts.DistrictDetailScreen
 import com.thebluealliance.android.ui.districts.DistrictDetailViewModel
 import com.thebluealliance.android.ui.districts.DistrictsScreen
 import com.thebluealliance.android.ui.events.EventsScreen
 import com.thebluealliance.android.ui.events.detail.EventDetailScreen
 import com.thebluealliance.android.ui.events.detail.EventDetailViewModel
+import com.thebluealliance.android.ui.isDestinationSelected
 import com.thebluealliance.android.ui.matches.MatchDetailScreen
 import com.thebluealliance.android.ui.matches.MatchDetailViewModel
 import com.thebluealliance.android.ui.more.AboutScreen
@@ -53,16 +59,9 @@ fun TBANavigation(
     val activity = LocalActivity.current as MainActivity
     val navigator = remember { Navigator(navState, activity) }
 
-    val showBottomBar =
+    val showNavigation =
         navState.currentRoute in TOP_LEVEL_DESTINATIONS.map { it.key }.toSet() ||
-            navState.currentRoute in
-            setOf(
-                Screen.MyTBA,
-                Screen.Settings,
-                Screen.About,
-                Screen.Thanks,
-                Screen.RegionalAdvancement,
-            )
+            navState.currentRoute in MORE_SUB_SCREENS
 
     val coroutineScope = rememberCoroutineScope()
     val tabReselectFlows =
@@ -72,282 +71,367 @@ fun TBANavigation(
                 .associateWith { MutableSharedFlow<Unit>() }
         }
 
-    Column(
+    val layoutType =
+        if (showNavigation) {
+            NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(
+                androidx.compose.material3.adaptive
+                    .currentWindowAdaptiveInfo(),
+            )
+        } else {
+            NavigationSuiteType.None
+        }
+
+    NavigationSuiteScaffold(
         modifier =
             modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
+        layoutType = layoutType,
+        navigationSuiteItems = {
+            TOP_LEVEL_DESTINATIONS.forEach { dest ->
+                val selected = isDestinationSelected(dest, navState.currentRoute)
+                item(
+                    selected = selected,
+                    onClick = {
+                        if (navState.currentRoute == dest.key) {
+                            coroutineScope.launch {
+                                tabReselectFlows[navState.currentRoute]?.emit(Unit)
+                            }
+                        } else {
+                            navigator.navigate(dest.key)
+                        }
+                    },
+                    icon = {
+                        Icon(
+                            imageVector =
+                                if (selected) dest.selectedIcon else dest.unselectedIcon,
+                            contentDescription = dest.label,
+                        )
+                    },
+                    label = { Text(dest.label) },
+                )
+            }
+        },
     ) {
-        NavDisplay(
+        Box(
             modifier =
                 Modifier
-                    .weight(1f)
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
-            transitionSpec = {
-                slideInHorizontally(initialOffsetX = { it }) togetherWith
-                    slideOutHorizontally(targetOffsetX = { -it })
-            },
-            popTransitionSpec = {
-                slideInHorizontally(initialOffsetX = { -it }) togetherWith
-                    slideOutHorizontally(targetOffsetX = { it })
-            },
-            predictivePopTransitionSpec = {
-                slideInHorizontally(initialOffsetX = { -it }) togetherWith
-                    slideOutHorizontally(targetOffsetX = { it })
-            },
-            onBack = { navigator.goBack() },
-            entries =
-                navState.toEntries(
-                    entryProvider =
-                        entryProvider {
-                            entry<Screen.Events>(
-                                metadata = Transitions.topLevelTransitionSpec,
-                            ) {
-                                EventsScreen(
-                                    onNavigateToEvent = { eventKey ->
-                                        navigator.navigate(Screen.EventDetail(eventKey))
-                                    },
-                                    onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                    reselectFlow = tabReselectFlows[Screen.Events] ?: emptyFlow(),
-                                )
-                            }
-                            entry<Screen.Teams>(
-                                metadata = Transitions.topLevelTransitionSpec,
-                            ) {
-                                TeamsScreen(
-                                    onNavigateToTeam = { teamKey ->
-                                        navigator.navigate(Screen.TeamDetail(teamKey))
-                                    },
-                                    onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                    reselectFlow = tabReselectFlows[Screen.Teams] ?: emptyFlow(),
-                                )
-                            }
-                            entry<Screen.Districts>(
-                                metadata = Transitions.topLevelTransitionSpec,
-                            ) {
-                                DistrictsScreen(
-                                    onNavigateToDistrict = { districtKey ->
-                                        navigator.navigate(Screen.DistrictDetail(districtKey))
-                                    },
-                                    onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                    reselectFlow =
-                                        tabReselectFlows[Screen.Districts] ?: emptyFlow(),
-                                )
-                            }
-                            entry<Screen.RegionalAdvancement>(
-                                metadata = Transitions.topLevelTransitionSpec,
-                            ) {
-                                RegionalAdvancementScreen(
-                                    onNavigateToTeam = { teamKey ->
-                                        navigator.navigate(Screen.TeamDetail(teamKey))
-                                    },
-                                    onNavigateToEvent = { eventKey ->
-                                        navigator.navigate(Screen.EventDetail(eventKey))
-                                    },
-                                    onNavigateUp = { navigator.navigateUp() },
-                                    onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                    reselectFlow =
-                                        tabReselectFlows[Screen.RegionalAdvancement] ?: emptyFlow(),
-                                )
-                            }
-                            entry<Screen.More>(
-                                metadata = Transitions.topLevelTransitionSpec,
-                            ) {
-                                MoreScreen(
-                                    onNavigateToMyTBA = { navigator.navigate(Screen.MyTBA) },
-                                    onNavigateToRegionalAdvancement = {
-                                        navigator.navigate(
-                                            Screen.RegionalAdvancement,
-                                        )
-                                    },
-                                    onNavigateToSettings = { navigator.navigate(Screen.Settings) },
-                                    onNavigateToAbout = { navigator.navigate(Screen.About) },
-                                    onNavigateToThanks = { navigator.navigate(Screen.Thanks) },
-                                    onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                )
-                            }
-                            entry<Screen.MyTBA>(
-                                metadata = Transitions.topLevelTransitionSpec,
-                            ) {
-                                MyTBAScreen(
-                                    onSignIn = { activity.startGoogleSignIn() },
-                                    onNavigateToTeam = { teamKey ->
-                                        navigator.navigate(Screen.TeamDetail(teamKey))
-                                    },
-                                    onNavigateToEvent = { eventKey ->
-                                        navigator.navigate(Screen.EventDetail(eventKey))
-                                    },
-                                    onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                    onNavigateUp = { navigator.navigateUp() },
-                                    reselectFlow = tabReselectFlows[Screen.MyTBA] ?: emptyFlow(),
-                                )
-                            }
-                            entry<Screen.Settings>(
-                                metadata = Transitions.topLevelTransitionSpec,
-                            ) {
-                                SettingsScreen(
-                                    onNavigateUp = { navigator.navigateUp() },
-                                    onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                )
-                            }
-                            entry<Screen.About>(
-                                metadata = Transitions.topLevelTransitionSpec,
-                            ) {
-                                AboutScreen(
-                                    onNavigateUp = { navigator.navigateUp() },
-                                    onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                )
-                            }
-                            entry<Screen.Thanks>(
-                                metadata = Transitions.topLevelTransitionSpec,
-                            ) {
-                                ThanksScreen(
-                                    onNavigateUp = { navigator.navigateUp() },
-                                    onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                )
-                            }
-                            entry<Screen.Search> {
-                                SearchScreen(
-                                    onNavigateUp = { navigator.navigateUp() },
-                                    onNavigateToTeam = { teamKey ->
-                                        navigator.navigate(Screen.TeamDetail(teamKey))
-                                    },
-                                    onNavigateToEvent = { eventKey ->
-                                        navigator.navigate(Screen.EventDetail(eventKey))
-                                    },
-                                )
-                            }
-                            entry<Screen.EventDetail> { eventDetail ->
-                                val viewModel: EventDetailViewModel =
-                                    hiltViewModel(
-                                        creationCallback = { f: EventDetailViewModel.Factory ->
-                                            f.create(eventDetail)
-                                        },
-                                    )
-                                EventDetailScreen(
-                                    viewModel = viewModel,
-                                    onNavigateUp = { navigator.navigateUp() },
-                                    onNavigateToTeam = { teamKey ->
-                                        navigator.navigate(Screen.TeamDetail(teamKey))
-                                    },
-                                    onNavigateToMatch = { matchKey ->
-                                        navigator.navigate(Screen.MatchDetail(matchKey))
-                                    },
-                                    onNavigateToMyTBA = { navigator.navigate(Screen.MyTBA) },
-                                    onNavigateToTeamEvent = { teamKey, eventKey ->
-                                        navigator.navigate(
-                                            Screen.TeamEventDetail(teamKey, eventKey),
-                                        )
-                                    },
-                                    onNavigateToDistrict = { districtKey ->
-                                        navigator.navigate(Screen.DistrictDetail(districtKey))
-                                    },
-                                    initialTab = eventDetail.initialTab,
-                                )
-                            }
-                            entry<Screen.MatchDetail> { matchDetail ->
-                                val viewModel: MatchDetailViewModel =
-                                    hiltViewModel(
-                                        creationCallback = { f: MatchDetailViewModel.Factory ->
-                                            f.create(matchDetail)
-                                        },
-                                    )
-                                MatchDetailScreen(
-                                    viewModel = viewModel,
-                                    onNavigateUp = { navigator.navigateUp() },
-                                    onNavigateToTeamEvent = { teamKey, eventKey ->
-                                        navigator.navigate(
-                                            Screen.TeamEventDetail(teamKey, eventKey),
-                                        )
-                                    },
-                                    onNavigateToEvent = { eventKey ->
-                                        navigator.navigate(Screen.EventDetail(eventKey))
-                                    },
-                                    onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                )
-                            }
-                            entry<Screen.DistrictDetail> { districtDetail ->
-                                val viewModel: DistrictDetailViewModel =
-                                    hiltViewModel(
-                                        creationCallback = { f: DistrictDetailViewModel.Factory ->
-                                            f.create(districtDetail)
-                                        },
-                                    )
-                                DistrictDetailScreen(
-                                    viewModel = viewModel,
-                                    onNavigateUp = { navigator.navigateUp() },
-                                    onNavigateToEvent = { eventKey ->
-                                        navigator.navigate(Screen.EventDetail(eventKey))
-                                    },
-                                    onNavigateToTeam = { teamKey ->
-                                        navigator.navigate(Screen.TeamDetail(teamKey))
-                                    },
-                                    onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                )
-                            }
-                            entry<Screen.TeamDetail> { teamDetail ->
-                                val viewModel =
-                                    hiltViewModel<TeamDetailViewModel, TeamDetailViewModel.Factory>(
-                                        creationCallback = { factory ->
-                                            factory.create(teamDetail)
-                                        },
-                                    )
-                                TeamDetailScreen(
-                                    viewModel = viewModel,
-                                    onNavigateUp = { navigator.navigateUp() },
-                                    onNavigateToEvent = { eventKey ->
-                                        navigator.navigate(Screen.EventDetail(eventKey))
-                                    },
-                                    onNavigateToMyTBA = { navigator.navigate(Screen.MyTBA) },
-                                    onNavigateToTeamEvent = { teamKey, eventKey ->
-                                        navigator.navigate(
-                                            Screen.TeamEventDetail(teamKey, eventKey),
-                                        )
-                                    },
-                                    onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                    initialTab = teamDetail.initialTab,
-                                )
-                            }
-                            entry<Screen.TeamEventDetail> { teamEventDetail ->
-                                val viewModel: TeamEventDetailViewModel =
-                                    hiltViewModel(
-                                        creationCallback = { f: TeamEventDetailViewModel.Factory ->
-                                            f.create(teamEventDetail)
-                                        },
-                                    )
-                                TeamEventDetailScreen(
-                                    viewModel = viewModel,
-                                    onNavigateUp = { navigator.navigateUp() },
-                                    onNavigateToMatch = { matchKey ->
-                                        navigator.navigate(Screen.MatchDetail(matchKey))
-                                    },
-                                    onNavigateToTeam = { teamKey ->
-                                        navigator.navigate(Screen.TeamDetail(teamKey))
-                                    },
-                                    onNavigateToEvent = { eventKey, initialTab ->
-                                        navigator.navigate(Screen.EventDetail(eventKey, initialTab))
-                                    },
-                                    onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                )
-                            }
-                        },
-                ),
-        )
-
-        AnimatedVisibility(
-            visible = showBottomBar,
-            enter = slideInVertically(initialOffsetY = { it }),
-            exit = slideOutVertically(targetOffsetY = { it }),
+            contentAlignment = Alignment.TopCenter,
         ) {
-            TBABottomBar(
-                currentRoute = navState.currentRoute,
-                onNavigate = { navigator.navigate(it) },
-                onReselect = {
-                    coroutineScope.launch {
-                        tabReselectFlows[navState.currentRoute]?.emit(Unit)
-                    }
+            NavDisplay(
+                modifier =
+                    Modifier
+                        .widthIn(max = 840.dp)
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
+                transitionSpec = {
+                    slideInHorizontally(initialOffsetX = { it }) togetherWith
+                        slideOutHorizontally(targetOffsetX = { -it })
                 },
+                popTransitionSpec = {
+                    slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                        slideOutHorizontally(targetOffsetX = { it })
+                },
+                predictivePopTransitionSpec = {
+                    slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                        slideOutHorizontally(targetOffsetX = { it })
+                },
+                onBack = { navigator.goBack() },
+                entries =
+                    navState.toEntries(
+                        entryProvider =
+                            entryProvider {
+                                entry<Screen.Events>(
+                                    metadata = Transitions.topLevelTransitionSpec,
+                                ) {
+                                    EventsScreen(
+                                        onNavigateToEvent = { eventKey ->
+                                            navigator.navigate(Screen.EventDetail(eventKey))
+                                        },
+                                        onNavigateToSearch = {
+                                            navigator.navigate(Screen.Search)
+                                        },
+                                        reselectFlow =
+                                            tabReselectFlows[Screen.Events] ?: emptyFlow(),
+                                    )
+                                }
+                                entry<Screen.Teams>(
+                                    metadata = Transitions.topLevelTransitionSpec,
+                                ) {
+                                    TeamsScreen(
+                                        onNavigateToTeam = { teamKey ->
+                                            navigator.navigate(Screen.TeamDetail(teamKey))
+                                        },
+                                        onNavigateToSearch = {
+                                            navigator.navigate(Screen.Search)
+                                        },
+                                        reselectFlow =
+                                            tabReselectFlows[Screen.Teams] ?: emptyFlow(),
+                                    )
+                                }
+                                entry<Screen.Districts>(
+                                    metadata = Transitions.topLevelTransitionSpec,
+                                ) {
+                                    DistrictsScreen(
+                                        onNavigateToDistrict = { districtKey ->
+                                            navigator.navigate(
+                                                Screen.DistrictDetail(districtKey),
+                                            )
+                                        },
+                                        onNavigateToSearch = {
+                                            navigator.navigate(Screen.Search)
+                                        },
+                                        reselectFlow =
+                                            tabReselectFlows[Screen.Districts] ?: emptyFlow(),
+                                    )
+                                }
+                                entry<Screen.RegionalAdvancement>(
+                                    metadata = Transitions.topLevelTransitionSpec,
+                                ) {
+                                    RegionalAdvancementScreen(
+                                        onNavigateToTeam = { teamKey ->
+                                            navigator.navigate(Screen.TeamDetail(teamKey))
+                                        },
+                                        onNavigateToEvent = { eventKey ->
+                                            navigator.navigate(Screen.EventDetail(eventKey))
+                                        },
+                                        onNavigateUp = { navigator.navigateUp() },
+                                        onNavigateToSearch = {
+                                            navigator.navigate(Screen.Search)
+                                        },
+                                        reselectFlow =
+                                            tabReselectFlows[Screen.RegionalAdvancement]
+                                                ?: emptyFlow(),
+                                    )
+                                }
+                                entry<Screen.More>(
+                                    metadata = Transitions.topLevelTransitionSpec,
+                                ) {
+                                    MoreScreen(
+                                        onNavigateToMyTBA = {
+                                            navigator.navigate(Screen.MyTBA)
+                                        },
+                                        onNavigateToRegionalAdvancement = {
+                                            navigator.navigate(
+                                                Screen.RegionalAdvancement,
+                                            )
+                                        },
+                                        onNavigateToSettings = {
+                                            navigator.navigate(Screen.Settings)
+                                        },
+                                        onNavigateToAbout = {
+                                            navigator.navigate(Screen.About)
+                                        },
+                                        onNavigateToThanks = {
+                                            navigator.navigate(Screen.Thanks)
+                                        },
+                                        onNavigateToSearch = {
+                                            navigator.navigate(Screen.Search)
+                                        },
+                                    )
+                                }
+                                entry<Screen.MyTBA>(
+                                    metadata = Transitions.topLevelTransitionSpec,
+                                ) {
+                                    MyTBAScreen(
+                                        onSignIn = { activity.startGoogleSignIn() },
+                                        onNavigateToTeam = { teamKey ->
+                                            navigator.navigate(Screen.TeamDetail(teamKey))
+                                        },
+                                        onNavigateToEvent = { eventKey ->
+                                            navigator.navigate(Screen.EventDetail(eventKey))
+                                        },
+                                        onNavigateToSearch = {
+                                            navigator.navigate(Screen.Search)
+                                        },
+                                        onNavigateUp = { navigator.navigateUp() },
+                                        reselectFlow =
+                                            tabReselectFlows[Screen.MyTBA] ?: emptyFlow(),
+                                    )
+                                }
+                                entry<Screen.Settings>(
+                                    metadata = Transitions.topLevelTransitionSpec,
+                                ) {
+                                    SettingsScreen(
+                                        onNavigateUp = { navigator.navigateUp() },
+                                        onNavigateToSearch = {
+                                            navigator.navigate(Screen.Search)
+                                        },
+                                    )
+                                }
+                                entry<Screen.About>(
+                                    metadata = Transitions.topLevelTransitionSpec,
+                                ) {
+                                    AboutScreen(
+                                        onNavigateUp = { navigator.navigateUp() },
+                                        onNavigateToSearch = {
+                                            navigator.navigate(Screen.Search)
+                                        },
+                                    )
+                                }
+                                entry<Screen.Thanks>(
+                                    metadata = Transitions.topLevelTransitionSpec,
+                                ) {
+                                    ThanksScreen(
+                                        onNavigateUp = { navigator.navigateUp() },
+                                        onNavigateToSearch = {
+                                            navigator.navigate(Screen.Search)
+                                        },
+                                    )
+                                }
+                                entry<Screen.Search> {
+                                    SearchScreen(
+                                        onNavigateUp = { navigator.navigateUp() },
+                                        onNavigateToTeam = { teamKey ->
+                                            navigator.navigate(Screen.TeamDetail(teamKey))
+                                        },
+                                        onNavigateToEvent = { eventKey ->
+                                            navigator.navigate(Screen.EventDetail(eventKey))
+                                        },
+                                    )
+                                }
+                                entry<Screen.EventDetail> { eventDetail ->
+                                    val viewModel: EventDetailViewModel =
+                                        hiltViewModel(
+                                            creationCallback = { f: EventDetailViewModel.Factory ->
+                                                f.create(eventDetail)
+                                            },
+                                        )
+                                    EventDetailScreen(
+                                        viewModel = viewModel,
+                                        onNavigateUp = { navigator.navigateUp() },
+                                        onNavigateToTeam = { teamKey ->
+                                            navigator.navigate(Screen.TeamDetail(teamKey))
+                                        },
+                                        onNavigateToMatch = { matchKey ->
+                                            navigator.navigate(Screen.MatchDetail(matchKey))
+                                        },
+                                        onNavigateToMyTBA = {
+                                            navigator.navigate(Screen.MyTBA)
+                                        },
+                                        onNavigateToTeamEvent = { teamKey, eventKey ->
+                                            navigator.navigate(
+                                                Screen.TeamEventDetail(teamKey, eventKey),
+                                            )
+                                        },
+                                        onNavigateToDistrict = { districtKey ->
+                                            navigator.navigate(
+                                                Screen.DistrictDetail(districtKey),
+                                            )
+                                        },
+                                        initialTab = eventDetail.initialTab,
+                                    )
+                                }
+                                entry<Screen.MatchDetail> { matchDetail ->
+                                    val viewModel: MatchDetailViewModel =
+                                        hiltViewModel(
+                                            creationCallback = { f: MatchDetailViewModel.Factory ->
+                                                f.create(matchDetail)
+                                            },
+                                        )
+                                    MatchDetailScreen(
+                                        viewModel = viewModel,
+                                        onNavigateUp = { navigator.navigateUp() },
+                                        onNavigateToTeamEvent = { teamKey, eventKey ->
+                                            navigator.navigate(
+                                                Screen.TeamEventDetail(teamKey, eventKey),
+                                            )
+                                        },
+                                        onNavigateToEvent = { eventKey ->
+                                            navigator.navigate(Screen.EventDetail(eventKey))
+                                        },
+                                        onNavigateToSearch = {
+                                            navigator.navigate(Screen.Search)
+                                        },
+                                    )
+                                }
+                                entry<Screen.DistrictDetail> { districtDetail ->
+                                    val viewModel: DistrictDetailViewModel =
+                                        hiltViewModel<
+                                            DistrictDetailViewModel,
+                                            DistrictDetailViewModel.Factory,
+                                        >(
+                                            creationCallback = { factory ->
+                                                factory.create(districtDetail)
+                                            },
+                                        )
+                                    DistrictDetailScreen(
+                                        viewModel = viewModel,
+                                        onNavigateUp = { navigator.navigateUp() },
+                                        onNavigateToEvent = { eventKey ->
+                                            navigator.navigate(Screen.EventDetail(eventKey))
+                                        },
+                                        onNavigateToTeam = { teamKey ->
+                                            navigator.navigate(Screen.TeamDetail(teamKey))
+                                        },
+                                        onNavigateToSearch = {
+                                            navigator.navigate(Screen.Search)
+                                        },
+                                    )
+                                }
+                                entry<Screen.TeamDetail> { teamDetail ->
+                                    val viewModel =
+                                        hiltViewModel<
+                                            TeamDetailViewModel,
+                                            TeamDetailViewModel.Factory,
+                                        >(
+                                            creationCallback = { factory ->
+                                                factory.create(teamDetail)
+                                            },
+                                        )
+                                    TeamDetailScreen(
+                                        viewModel = viewModel,
+                                        onNavigateUp = { navigator.navigateUp() },
+                                        onNavigateToEvent = { eventKey ->
+                                            navigator.navigate(Screen.EventDetail(eventKey))
+                                        },
+                                        onNavigateToMyTBA = {
+                                            navigator.navigate(Screen.MyTBA)
+                                        },
+                                        onNavigateToTeamEvent = { teamKey, eventKey ->
+                                            navigator.navigate(
+                                                Screen.TeamEventDetail(teamKey, eventKey),
+                                            )
+                                        },
+                                        onNavigateToSearch = {
+                                            navigator.navigate(Screen.Search)
+                                        },
+                                        initialTab = teamDetail.initialTab,
+                                    )
+                                }
+                                entry<Screen.TeamEventDetail> { teamEventDetail ->
+                                    val viewModel: TeamEventDetailViewModel =
+                                        hiltViewModel<
+                                            TeamEventDetailViewModel,
+                                            TeamEventDetailViewModel.Factory,
+                                        >(
+                                            creationCallback = { factory ->
+                                                factory.create(teamEventDetail)
+                                            },
+                                        )
+                                    TeamEventDetailScreen(
+                                        viewModel = viewModel,
+                                        onNavigateUp = { navigator.navigateUp() },
+                                        onNavigateToMatch = { matchKey ->
+                                            navigator.navigate(Screen.MatchDetail(matchKey))
+                                        },
+                                        onNavigateToTeam = { teamKey ->
+                                            navigator.navigate(Screen.TeamDetail(teamKey))
+                                        },
+                                        onNavigateToEvent = { eventKey, initialTab ->
+                                            navigator.navigate(
+                                                Screen.EventDetail(eventKey, initialTab),
+                                            )
+                                        },
+                                        onNavigateToSearch = {
+                                            navigator.navigate(Screen.Search)
+                                        },
+                                    )
+                                }
+                            },
+                    ),
             )
         }
     }

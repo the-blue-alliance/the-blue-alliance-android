@@ -20,6 +20,15 @@ data class TopLevelDestination(
     val unselectedIcon: ImageVector,
 )
 
+val MORE_SUB_SCREENS =
+    setOf(Screen.MyTBA, Screen.Settings, Screen.About, Screen.Thanks, Screen.RegionalAdvancement)
+
+fun isDestinationSelected(
+    dest: TopLevelDestination,
+    currentRoute: NavKey,
+): Boolean =
+    currentRoute == dest.key || (dest.key == Screen.More && currentRoute in MORE_SUB_SCREENS)
+
 val TOP_LEVEL_DESTINATIONS =
     listOf(
         TopLevelDestination(
