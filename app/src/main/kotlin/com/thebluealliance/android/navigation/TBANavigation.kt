@@ -8,6 +8,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -207,6 +208,7 @@ private fun TabletLayout(
             WideNavigationRail(
                 state = railState,
                 windowInsets = WindowInsets(0),
+                arrangement = Arrangement.Top,
                 header = {
                     IconButton(
                         onClick = {
