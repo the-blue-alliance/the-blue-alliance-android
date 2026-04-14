@@ -391,15 +391,15 @@ private fun WeekFilterChips(
     val weekChipColors =
         FilterChipDefaults.filterChipColors(
             containerColor = Color.Transparent,
-            labelColor = Color.White.copy(alpha = 0.7f),
-            selectedContainerColor = Color.White,
+            labelColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f),
+            selectedContainerColor = MaterialTheme.colorScheme.onPrimary,
             selectedLabelColor = TBABlue,
         )
     val weekChipBorder =
         FilterChipDefaults.filterChipBorder(
             enabled = true,
             selected = false,
-            borderColor = Color.White.copy(alpha = 0.5f),
+            borderColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.5f),
             selectedBorderColor = Color.Transparent,
         )
 
@@ -439,7 +439,7 @@ private fun WeekFilterChips(
                         .padding(start = 8.dp, bottom = 4.dp)
                         .height(24.dp)
                         .width(1.dp)
-                        .background(Color.White.copy(alpha = 0.3f)),
+                        .background(MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f)),
             )
         }
         val fadeWidth = 24.dp
@@ -509,7 +509,7 @@ private fun SimpleSectionHeader(label: String) {
             text = label,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onPrimary,
         )
     }
 }

@@ -44,7 +44,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -262,15 +261,17 @@ fun EventDetailScreen(
                     selectedTabIndex = pagerState.currentPage,
                     edgePadding = 0.dp,
                     containerColor = TBABlue,
-                    contentColor = Color.White,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
                     divider = {
-                        HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.12f),
+                        )
                     },
                     indicator = {
                         SecondaryIndicator(
                             modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
                             height = 3.dp,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                         )
                     },
                 ) {
@@ -291,7 +292,7 @@ fun EventDetailScreen(
                                 ) {
                                     Text(
                                         text = tab.readableName(uiState.event),
-                                        color = Color.White,
+                                        color = MaterialTheme.colorScheme.onPrimary,
                                     )
 
                                     // Show number of teams as a badge

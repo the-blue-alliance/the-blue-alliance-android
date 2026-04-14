@@ -368,14 +368,14 @@ private fun InsightsView(
                     text = insightHeader,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.weight(1.5f),
                 )
                 Text(
                     text = "Value",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.weight(1f),
                 )
                 IconButton(
@@ -385,7 +385,7 @@ private fun InsightsView(
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "Select stat type",
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
             }
@@ -628,7 +628,7 @@ private fun StandardOPRsView(
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "Select stat type",
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
             }
@@ -761,7 +761,7 @@ private fun COPRView(
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "Select stat type",
-                        tint = Color.White,
+                        tint = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
             }
@@ -822,7 +822,7 @@ private fun OprHeaderItem(
             text = text,
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onPrimary,
         )
         if (currentSort == sortColumn) {
             Icon(
@@ -830,7 +830,7 @@ private fun OprHeaderItem(
                     if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
                 contentDescription =
                     if (ascending) "Sorted Ascending" else "Sorted Descending",
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onPrimary,
             )
         }
     }
@@ -853,7 +853,7 @@ private fun CoprHeaderItem(
             text = text,
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.Bold,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onPrimary,
         )
         if (currentSort == sortColumn) {
             Icon(
@@ -861,7 +861,7 @@ private fun CoprHeaderItem(
                     if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
                 contentDescription =
                     if (ascending) "Sorted Ascending" else "Sorted Descending",
-                tint = Color.White,
+                tint = MaterialTheme.colorScheme.onPrimary,
             )
         }
     }

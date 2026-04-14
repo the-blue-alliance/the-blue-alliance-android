@@ -170,9 +170,9 @@ fun TeamEventDetailScreen(
                                         if (pagerState.currentPage ==
                                             index
                                         ) {
-                                            Color.White
+                                            MaterialTheme.colorScheme.onPrimary
                                         } else {
-                                            Color.White.copy(alpha = 0.7f)
+                                            MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
                                         },
                                 )
                             },
@@ -351,7 +351,7 @@ private fun SummaryTab(
                         text = "Info",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
             }
@@ -445,7 +445,7 @@ private fun SummaryTab(
                         text = "Championship Qualification",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                     )
                 }
             }
@@ -482,7 +482,7 @@ private fun SummaryTab(
                             text = "Recent Matches",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onPrimary,
                         )
                     }
                 }

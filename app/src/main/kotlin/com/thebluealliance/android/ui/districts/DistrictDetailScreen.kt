@@ -33,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -128,9 +127,9 @@ fun DistrictDetailScreen(
                                         if (pagerState.currentPage ==
                                             index
                                         ) {
-                                            Color.White
+                                            MaterialTheme.colorScheme.onPrimary
                                         } else {
-                                            Color.White.copy(alpha = 0.7f)
+                                            MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
                                         },
                                 )
                             },
@@ -313,7 +312,7 @@ private fun RankingsTab(
                     text = "Rank",
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.10f),
                 )
@@ -321,7 +320,7 @@ private fun RankingsTab(
                     text = "Team",
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
@@ -329,7 +328,7 @@ private fun RankingsTab(
                     text = "Event\n1",
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
@@ -337,7 +336,7 @@ private fun RankingsTab(
                     text = "Event\n2",
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
@@ -345,7 +344,7 @@ private fun RankingsTab(
                     text = "DCMP",
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
@@ -353,7 +352,7 @@ private fun RankingsTab(
                     text = "Rookie\nBonus",
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
@@ -361,7 +360,7 @@ private fun RankingsTab(
                     text = "Total\nPoints",
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
