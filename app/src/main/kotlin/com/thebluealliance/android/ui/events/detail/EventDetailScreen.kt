@@ -221,7 +221,7 @@ fun EventDetailScreen(
                                         leadingIcon = {
                                             Icon(
                                                 Icons.Filled.Share,
-                                                contentDescription = null,
+                                                contentDescription = "Share",
                                             )
                                         },
                                         onClick = {
@@ -244,7 +244,7 @@ fun EventDetailScreen(
                                                     painterResource(
                                                         R.drawable.ic_add_to_home_screen,
                                                     ),
-                                                contentDescription = null,
+                                                contentDescription = "Add to home screen",
                                             )
                                         },
                                         onClick = {

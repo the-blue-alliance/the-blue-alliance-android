@@ -125,7 +125,7 @@ fun EventInfoTab(
                 ) {
                     Icon(
                         Icons.Outlined.LocationOn,
-                        contentDescription = null,
+                        contentDescription = "Location",
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(18.dp),
                     )
@@ -153,7 +153,7 @@ fun EventInfoTab(
                 ) {
                     Icon(
                         Icons.Outlined.Language,
-                        contentDescription = null,
+                        contentDescription = "Website",
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(18.dp),
                     )
@@ -197,7 +197,7 @@ fun EventInfoTab(
                     ) {
                         Icon(
                             Icons.Outlined.PlayCircle,
-                            contentDescription = null,
+                            contentDescription = "Webcast",
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(18.dp),
                         )

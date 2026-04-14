@@ -415,7 +415,7 @@ private fun FavoriteItem(
                         leadingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.ic_add_to_home_screen),
-                                contentDescription = null,
+                                contentDescription = "Add to home screen",
                             )
                         },
                         onClick = {
