@@ -77,6 +77,38 @@ class MyTBAViewModel
             }
         }
 
+        fun removeFavorite(favorite: Favorite) {
+            viewModelScope.launch {
+                try {
+                    myTBARepository.removeFavorite(favorite.modelKey, favorite.modelType)
+                } catch (e: Exception) {
+                    android.util.Log.w("MyTBAViewModel", "Failed to remove favorite", e)
+                }
+            }
+        }
+
+        fun removeSubscription(
+            modelKey: String,
+            modelType: Int,
+        ) {
+            viewModelScope.launch {
+                try {
+                    val isFavorited =
+                        uiState.value.favorites.any {
+                            it.modelKey == modelKey && it.modelType == modelType
+                        }
+                    myTBARepository.updatePreferences(
+                        modelKey = modelKey,
+                        modelType = modelType,
+                        favorite = isFavorited,
+                        notifications = emptyList(),
+                    )
+                } catch (e: Exception) {
+                    android.util.Log.w("MyTBAViewModel", "Failed to remove subscription", e)
+                }
+            }
+        }
+
         fun refresh() {
             viewModelScope.launch {
                 if (!authRepository.isSignedIn()) return@launch

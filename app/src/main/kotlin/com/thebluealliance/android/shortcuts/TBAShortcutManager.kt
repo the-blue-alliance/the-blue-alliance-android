@@ -23,9 +23,11 @@ import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.util.addRoundedCorners
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -55,13 +57,18 @@ class TBAShortcutManager
                 tbaRepository
                     .observeFavorites()
                     .collectLatest { favorites ->
-                        purgeUnfavoritedShortcuts(favorites)
+                        withContext(Dispatchers.IO) {
+                            purgeUnfavoritedShortcuts(favorites)
 
-                        val shortcuts =
-                            favorites
-                                .take(ShortcutManagerCompat.getMaxShortcutCountPerActivity(context))
-                                .mapNotNull { it.getShortcutInfo() }
-                        ShortcutManagerCompat.setDynamicShortcuts(context, shortcuts)
+                            val shortcuts =
+                                favorites
+                                    .take(
+                                        ShortcutManagerCompat.getMaxShortcutCountPerActivity(
+                                            context,
+                                        ),
+                                    ).mapNotNull { it.getShortcutInfo() }
+                            ShortcutManagerCompat.setDynamicShortcuts(context, shortcuts)
+                        }
                     }
             }
         }
@@ -124,7 +131,8 @@ class TBAShortcutManager
                     val density = context.resources.displayMetrics.density
                     val roundedBitmap = bitmap.addRoundedCorners(4f * density)
                     return IconCompat.createWithBitmap(roundedBitmap)
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    Log.w("TBAShortcutManager", "Failed to decode avatar, using default icon", e)
                 }
             }
 
