@@ -67,6 +67,7 @@ import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.theme.TBAIndigo400
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -229,7 +230,7 @@ fun MyTBAScreen(
             PrimaryScrollableTabRow(
                 selectedTabIndex = pagerState.currentPage,
                 edgePadding = 0.dp,
-                containerColor = Color(0xFF5C6BC0),
+                containerColor = TBAIndigo400,
                 contentColor = Color.White,
                 divider = {
                     HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
