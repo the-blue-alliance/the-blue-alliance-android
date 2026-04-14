@@ -48,7 +48,7 @@ val TOP_LEVEL_DESTINATIONS =
         TopLevelDestination(Screen.More, "More", Icons.Filled.Menu, Icons.Outlined.Menu),
     )
 
-val RAIL_DESTINATIONS =
+val RAIL_PRIMARY_DESTINATIONS =
     listOf(
         TopLevelDestination(
             Screen.Events,
@@ -59,11 +59,20 @@ val RAIL_DESTINATIONS =
         TopLevelDestination(Screen.Teams, "Teams", Icons.Filled.Groups, Icons.Outlined.Groups),
         TopLevelDestination(Screen.Districts, "Districts", Icons.Filled.Map, Icons.Outlined.Map),
         TopLevelDestination(Screen.MyTBA, "myTBA", Icons.Filled.Star, Icons.Outlined.StarOutline),
+    )
+
+val RAIL_SECONDARY_DESTINATIONS =
+    listOf(
+        TopLevelDestination(Screen.About, "About", Icons.Filled.Info, Icons.Outlined.Info),
+        TopLevelDestination(Screen.Thanks, "Thanks", Icons.Filled.Info, Icons.Outlined.Info),
+    )
+
+val RAIL_BOTTOM_DESTINATIONS =
+    listOf(
         TopLevelDestination(
             Screen.Settings,
             "Settings",
             Icons.Filled.Settings,
             Icons.Outlined.Settings,
         ),
-        TopLevelDestination(Screen.About, "About", Icons.Filled.Info, Icons.Outlined.Info),
     )

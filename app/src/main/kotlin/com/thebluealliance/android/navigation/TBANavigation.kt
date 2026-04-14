@@ -10,6 +10,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -38,7 +39,9 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.thebluealliance.android.MainActivity
 import com.thebluealliance.android.ui.MORE_SUB_SCREENS
-import com.thebluealliance.android.ui.RAIL_DESTINATIONS
+import com.thebluealliance.android.ui.RAIL_BOTTOM_DESTINATIONS
+import com.thebluealliance.android.ui.RAIL_PRIMARY_DESTINATIONS
+import com.thebluealliance.android.ui.RAIL_SECONDARY_DESTINATIONS
 import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
 import com.thebluealliance.android.ui.districts.DistrictDetailScreen
 import com.thebluealliance.android.ui.districts.DistrictDetailViewModel
@@ -224,36 +227,44 @@ private fun TabletLayout(
                     }
                 },
             ) {
-                RAIL_DESTINATIONS.forEach { dest ->
-                    val selected =
-                        isDestinationSelected(dest, navState.currentRoute)
-                    WideNavigationRailItem(
-                        railExpanded =
-                            railState.targetValue ==
-                                WideNavigationRailValue.Expanded,
-                        selected = selected,
-                        onClick = {
-                            if (navState.currentRoute == dest.key) {
-                                coroutineScope.launch {
-                                    tabReselectFlows[navState.currentRoute]
-                                        ?.emit(Unit)
-                                }
-                            } else {
-                                navigator.navigate(dest.key)
-                            }
-                        },
-                        icon = {
-                            Icon(
-                                imageVector =
-                                    if (selected) {
-                                        dest.selectedIcon
-                                    } else {
-                                        dest.unselectedIcon
-                                    },
-                                contentDescription = dest.label,
-                            )
-                        },
-                        label = { Text(dest.label) },
+                val isExpanded =
+                    railState.targetValue ==
+                        WideNavigationRailValue.Expanded
+
+                RAIL_PRIMARY_DESTINATIONS.forEach { dest ->
+                    RailItem(
+                        dest,
+                        navState,
+                        isExpanded,
+                        coroutineScope,
+                        tabReselectFlows,
+                        navigator,
+                    )
+                }
+
+                Spacer(Modifier.weight(1f))
+
+                if (isExpanded) {
+                    RAIL_SECONDARY_DESTINATIONS.forEach { dest ->
+                        RailItem(
+                            dest,
+                            navState,
+                            isExpanded,
+                            coroutineScope,
+                            tabReselectFlows,
+                            navigator,
+                        )
+                    }
+                }
+
+                RAIL_BOTTOM_DESTINATIONS.forEach { dest ->
+                    RailItem(
+                        dest,
+                        navState,
+                        isExpanded,
+                        coroutineScope,
+                        tabReselectFlows,
+                        navigator,
                     )
                 }
             }
@@ -645,5 +656,39 @@ private fun NavDisplayContent(
                         }
                     },
             ),
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun RailItem(
+    dest: com.thebluealliance.android.ui.TopLevelDestination,
+    navState: NavigationState,
+    railExpanded: Boolean,
+    coroutineScope: kotlinx.coroutines.CoroutineScope,
+    tabReselectFlows: Map<out Any, MutableSharedFlow<Unit>>,
+    navigator: Navigator,
+) {
+    val selected = isDestinationSelected(dest, navState.currentRoute)
+    WideNavigationRailItem(
+        railExpanded = railExpanded,
+        selected = selected,
+        onClick = {
+            if (navState.currentRoute == dest.key) {
+                coroutineScope.launch {
+                    tabReselectFlows[navState.currentRoute]?.emit(Unit)
+                }
+            } else {
+                navigator.navigate(dest.key)
+            }
+        },
+        icon = {
+            Icon(
+                imageVector =
+                    if (selected) dest.selectedIcon else dest.unselectedIcon,
+                contentDescription = dest.label,
+            )
+        },
+        label = { Text(dest.label) },
     )
 }
