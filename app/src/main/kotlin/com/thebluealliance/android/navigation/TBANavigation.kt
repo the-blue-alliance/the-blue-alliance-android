@@ -10,6 +10,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -202,6 +203,7 @@ private fun TabletLayout(
         AnimatedVisibility(visible = showNavigation) {
             WideNavigationRail(
                 state = railState,
+                windowInsets = WindowInsets(0),
                 header = {
                     IconButton(
                         onClick = {
