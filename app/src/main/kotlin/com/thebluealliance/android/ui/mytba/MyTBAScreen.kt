@@ -25,6 +25,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -282,14 +283,18 @@ fun MyTBAScreen(
                                 listState = favoritesListState,
                                 canPinShortcuts = uiState.canPinShortcuts,
                                 onAddShortcut = viewModel::requestPinShortcut,
+                                onRemoveFavorite = viewModel::removeFavorite,
                             )
 
                         MyTBATabs.NOTIFICATIONS ->
                             NotificationsTab(
-                                uiState.subscriptions,
-                                onNavigateToTeam,
-                                onNavigateToEvent,
-                                notificationsListState,
+                                subscriptions = uiState.subscriptions,
+                                onNavigateToTeam = onNavigateToTeam,
+                                onNavigateToEvent = onNavigateToEvent,
+                                listState = notificationsListState,
+                                onRemoveSubscription = { sub ->
+                                    viewModel.removeSubscription(sub.modelKey, sub.modelType)
+                                },
                             )
                     }
                 }
@@ -332,6 +337,7 @@ private fun FavoritesTab(
     listState: LazyListState,
     canPinShortcuts: Boolean,
     onAddShortcut: (Favorite) -> Unit,
+    onRemoveFavorite: (Favorite) -> Unit,
 ) {
     if (favorites.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -349,8 +355,9 @@ private fun FavoritesTab(
                         ModelType.EVENT -> onNavigateToEvent(favorite.modelKey)
                     }
                 },
-                showMenu = canPinShortcuts,
+                canPinShortcuts = canPinShortcuts,
                 onAddShortcut = { onAddShortcut(favorite) },
+                onRemove = { onRemoveFavorite(favorite) },
             )
         }
     }
@@ -360,8 +367,9 @@ private fun FavoritesTab(
 private fun FavoriteItem(
     favorite: Favorite,
     onClick: () -> Unit,
-    showMenu: Boolean,
+    canPinShortcuts: Boolean,
     onAddShortcut: () -> Unit,
+    onRemove: () -> Unit,
 ) {
     val typeLabel =
         when (favorite.modelType) {
@@ -377,12 +385,7 @@ private fun FavoriteItem(
             Modifier
                 .fillMaxWidth()
                 .clickable(onClick = onClick)
-                .padding(
-                    start = 16.dp,
-                    top = if (showMenu) 8.dp else 12.dp,
-                    bottom = if (showMenu) 8.dp else 12.dp,
-                    end = if (showMenu) 4.dp else 16.dp,
-                ),
+                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -399,18 +402,18 @@ private fun FavoriteItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        if (showMenu) {
-            Box {
-                IconButton(onClick = { menuExpanded = true }) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "More options",
-                    )
-                }
-                DropdownMenu(
-                    expanded = menuExpanded,
-                    onDismissRequest = { menuExpanded = false },
-                ) {
+        Box {
+            IconButton(onClick = { menuExpanded = true }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "More options",
+                )
+            }
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false },
+            ) {
+                if (canPinShortcuts) {
                     DropdownMenuItem(
                         text = { Text("Add shortcut to home screen") },
                         leadingIcon = {
@@ -425,6 +428,19 @@ private fun FavoriteItem(
                         },
                     )
                 }
+                DropdownMenuItem(
+                    text = { Text("Remove") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = null,
+                        )
+                    },
+                    onClick = {
+                        menuExpanded = false
+                        onRemove()
+                    },
+                )
             }
         }
     }
@@ -436,6 +452,7 @@ private fun NotificationsTab(
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
     listState: LazyListState,
+    onRemoveSubscription: (Subscription) -> Unit,
 ) {
     if (subscriptions.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -445,33 +462,80 @@ private fun NotificationsTab(
     }
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         items(subscriptions, key = { "${it.modelType}_${it.modelKey}" }) { subscription ->
-            val typeLabel =
-                when (subscription.modelType) {
-                    ModelType.EVENT -> "Event"
-                    ModelType.TEAM -> "Team"
-                    ModelType.MATCH -> "Match"
-                    else -> "Other"
-                }
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            when (subscription.modelType) {
-                                ModelType.TEAM -> onNavigateToTeam(subscription.modelKey)
-                                ModelType.EVENT -> onNavigateToEvent(subscription.modelKey)
-                            }
-                        }.padding(horizontal = 16.dp, vertical = 12.dp),
-            ) {
-                Text(
-                    text = subscription.modelKey,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
+            SubscriptionItem(
+                subscription = subscription,
+                onClick = {
+                    when (subscription.modelType) {
+                        ModelType.TEAM -> onNavigateToTeam(subscription.modelKey)
+                        ModelType.EVENT -> onNavigateToEvent(subscription.modelKey)
+                    }
+                },
+                onRemove = { onRemoveSubscription(subscription) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun SubscriptionItem(
+    subscription: Subscription,
+    onClick: () -> Unit,
+    onRemove: () -> Unit,
+) {
+    val typeLabel =
+        when (subscription.modelType) {
+            ModelType.EVENT -> "Event"
+            ModelType.TEAM -> "Team"
+            ModelType.MATCH -> "Match"
+            else -> "Other"
+        }
+    var menuExpanded by remember { mutableStateOf(false) }
+
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+        ) {
+            Text(
+                text = subscription.modelKey,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+            )
+            Text(
+                text = "$typeLabel · ${subscription.notifications.joinToString(", ")}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Box {
+            IconButton(onClick = { menuExpanded = true }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "More options",
                 )
-                Text(
-                    text = "$typeLabel · ${subscription.notifications.joinToString(", ")}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+            }
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false },
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Remove") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = null,
+                        )
+                    },
+                    onClick = {
+                        menuExpanded = false
+                        onRemove()
+                    },
                 )
             }
         }
