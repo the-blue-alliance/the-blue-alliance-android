@@ -3,9 +3,10 @@ package com.thebluealliance.android.navigation
 import androidx.navigation3.runtime.NavKey
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import kotlinx.serialization.Serializable
+import java.time.Year
 
 sealed interface Screen : NavKey {
-    @Serializable data class Events(val year: Int = 0) : Screen
+    @Serializable data class Events(val year: Int = Year.now().value) : Screen
     @Serializable data object Teams : Screen
     @Serializable data object Districts : Screen
     @Serializable data object RegionalAdvancement : Screen

@@ -25,8 +25,8 @@ class DeeplinkMatcher {
 
         // https://www.thebluealliance.com/events or /events/{year}
         if (segments[0] == "events") {
-            val year = segments.getOrNull(1)?.toIntOrNull() ?: 0
-            return Screen.Events(year)
+            val year = segments.getOrNull(1)?.toIntOrNull()
+            return if (year != null) Screen.Events(year) else Screen.Events()
         }
 
         // https://www.thebluealliance.com/teams or /teams/{page}
