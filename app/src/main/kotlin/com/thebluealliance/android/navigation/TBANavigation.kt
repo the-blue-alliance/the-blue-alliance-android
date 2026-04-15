@@ -41,6 +41,7 @@ import com.thebluealliance.android.ui.teamevent.TeamEventDetailViewModel
 import com.thebluealliance.android.ui.teams.TeamDetailScreen
 import com.thebluealliance.android.ui.teams.TeamDetailViewModel
 import com.thebluealliance.android.ui.teams.TeamsScreen
+import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
@@ -85,16 +86,34 @@ fun TBANavigation(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
             transitionSpec = {
-                slideInHorizontally(initialOffsetX = { it }) togetherWith
-                    slideOutHorizontally(targetOffsetX = { -it })
+                slideInHorizontally(
+                    animationSpec = TBAMotionTokens.defaultSpatialSpec(),
+                    initialOffsetX = { it },
+                ) togetherWith
+                    slideOutHorizontally(
+                        animationSpec = TBAMotionTokens.defaultSpatialSpec(),
+                        targetOffsetX = { -it },
+                    )
             },
             popTransitionSpec = {
-                slideInHorizontally(initialOffsetX = { -it }) togetherWith
-                    slideOutHorizontally(targetOffsetX = { it })
+                slideInHorizontally(
+                    animationSpec = TBAMotionTokens.defaultSpatialSpec(),
+                    initialOffsetX = { -it },
+                ) togetherWith
+                    slideOutHorizontally(
+                        animationSpec = TBAMotionTokens.defaultSpatialSpec(),
+                        targetOffsetX = { it },
+                    )
             },
             predictivePopTransitionSpec = {
-                slideInHorizontally(initialOffsetX = { -it }) togetherWith
-                    slideOutHorizontally(targetOffsetX = { it })
+                slideInHorizontally(
+                    animationSpec = TBAMotionTokens.defaultSpatialSpec(),
+                    initialOffsetX = { -it },
+                ) togetherWith
+                    slideOutHorizontally(
+                        animationSpec = TBAMotionTokens.defaultSpatialSpec(),
+                        targetOffsetX = { it },
+                    )
             },
             onBack = { navigator.goBack() },
             entries =
@@ -337,8 +356,16 @@ fun TBANavigation(
 
         AnimatedVisibility(
             visible = showBottomBar,
-            enter = slideInVertically(initialOffsetY = { it }),
-            exit = slideOutVertically(targetOffsetY = { it }),
+            enter =
+                slideInVertically(
+                    animationSpec = TBAMotionTokens.defaultSpatialSpec(),
+                    initialOffsetY = { it },
+                ),
+            exit =
+                slideOutVertically(
+                    animationSpec = TBAMotionTokens.defaultSpatialSpec(),
+                    targetOffsetY = { it },
+                ),
         ) {
             TBABottomBar(
                 currentRoute = navState.currentRoute,
