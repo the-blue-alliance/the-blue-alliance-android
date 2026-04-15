@@ -36,7 +36,7 @@ import kotlin.math.roundToInt
 
 private val ThumbWidth = 4.dp
 private val ThumbHeight = 48.dp
-private val TouchTargetWidth = 24.dp
+private val TouchTargetWidth = 48.dp
 
 @Composable
 fun FastScrollbar(
