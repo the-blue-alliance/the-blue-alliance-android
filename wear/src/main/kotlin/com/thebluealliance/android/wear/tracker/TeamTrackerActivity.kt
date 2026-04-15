@@ -204,6 +204,7 @@ private fun TeamTrackerScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = contentPadding,
         ) {
+            item { Spacer(modifier = Modifier.height(8.dp)) }
             item { TeamHeader(state) }
 
             if (state.isLoading) {
