@@ -189,7 +189,7 @@ private fun TeamTrackerScreen(
         edgeButton = {
             EdgeButton(
                 onClick = onChangeTeam,
-                buttonSize = EdgeButtonSize.Medium,
+                buttonSize = EdgeButtonSize.Small,
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_settings),
@@ -206,6 +206,13 @@ private fun TeamTrackerScreen(
         ) {
             item { Spacer(modifier = Modifier.height(8.dp)) }
             item { TeamHeader(state) }
+
+            val hasMatchData =
+                state.lastMatchLabel.isNotBlank() || state.nextMatchLabel.isNotBlank()
+            val sparseContent = !hasMatchData && state.upcomingEvents.size <= 1
+            if (!state.isLoading && sparseContent) {
+                item { Spacer(modifier = Modifier.height(4.dp)) }
+            }
 
             if (state.isLoading) {
                 item {
