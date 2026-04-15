@@ -11,7 +11,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,8 +41,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
-import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
+import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.CircularProgressIndicator
 import androidx.wear.compose.material3.EdgeButton
@@ -177,10 +177,15 @@ private fun TeamTrackerScreen(
         return
     }
 
-    val listState = rememberScalingLazyListState()
+    val columnState = rememberTransformingLazyColumnState()
+
+    // Reset scroll position when team changes
+    LaunchedEffect(state.teamNumber) {
+        columnState.scrollToItem(0)
+    }
 
     ScreenScaffold(
-        scrollState = listState,
+        scrollState = columnState,
         edgeButton = {
             EdgeButton(
                 onClick = onChangeTeam,
@@ -192,13 +197,12 @@ private fun TeamTrackerScreen(
                 )
             }
         },
-    ) {
-        ScalingLazyColumn(
-            state = listState,
+    ) { contentPadding ->
+        TransformingLazyColumn(
+            state = columnState,
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            autoCentering = null,
-            contentPadding = PaddingValues(top = 28.dp, start = 10.dp, end = 10.dp, bottom = 60.dp),
+            contentPadding = contentPadding,
         ) {
             item { TeamHeader(state) }
 
@@ -366,6 +370,14 @@ private fun EventSubtitle(state: TeamTrackerState) {
                 )
             }
         }
+    } else {
+        Text(
+            text = stringResource(R.string.no_upcoming_events),
+            style = MaterialTheme.typography.labelSmall,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(vertical = 2.dp),
+        )
     }
 }
 
