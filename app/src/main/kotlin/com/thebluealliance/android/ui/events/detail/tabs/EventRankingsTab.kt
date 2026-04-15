@@ -2,6 +2,10 @@ package com.thebluealliance.android.ui.events.detail.tabs
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -40,6 +44,7 @@ import com.thebluealliance.android.domain.model.RankingSortOrder
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.theme.TBAIndigo400
+import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import java.util.Locale
 
 enum class RankingSortColumn {
@@ -258,6 +263,7 @@ private fun RankingItem(
     var expanded by remember { mutableStateOf(false) }
     val rotationAngle by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
+        animationSpec = TBAMotionTokens.fastSpatialSpec(),
         label = "chevron_rotation",
     )
 
@@ -332,7 +338,17 @@ private fun RankingItem(
             )
         }
 
-        AnimatedVisibility(visible = expanded) {
+        AnimatedVisibility(
+            visible = expanded,
+            enter =
+                expandVertically(
+                    animationSpec = TBAMotionTokens.defaultSpatialSpec(),
+                ) + fadeIn(TBAMotionTokens.defaultEffectsSpec()),
+            exit =
+                shrinkVertically(
+                    animationSpec = TBAMotionTokens.defaultSpatialSpec(),
+                ) + fadeOut(TBAMotionTokens.fastEffectsSpec()),
+        ) {
             Column(
                 modifier =
                     Modifier

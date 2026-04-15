@@ -1,7 +1,6 @@
 package com.thebluealliance.android.ui.components
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -31,6 +30,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
@@ -61,10 +61,10 @@ fun FastScrollbar(
     val alpha = remember { Animatable(0f) }
     LaunchedEffect(isScrolling, isDragging) {
         if (isScrolling || isDragging) {
-            alpha.animateTo(1f, tween(150))
+            alpha.animateTo(1f, TBAMotionTokens.fastEffectsSpec())
         } else {
             delay(1500)
-            alpha.animateTo(0f, tween(300))
+            alpha.animateTo(0f, TBAMotionTokens.defaultEffectsSpec())
         }
     }
 

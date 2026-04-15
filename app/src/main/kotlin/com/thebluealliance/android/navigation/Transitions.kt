@@ -1,15 +1,14 @@
 package com.thebluealliance.android.navigation
 
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.togetherWith
 import androidx.navigation3.ui.NavDisplay
+import com.thebluealliance.android.ui.theme.TBAMotionTokens
 
 object Transitions {
     private val tabTransition =
-        fadeIn(tween(200, easing = LinearOutSlowInEasing)) togetherWith
+        fadeIn(TBAMotionTokens.fastEffectsSpec()) togetherWith
             ExitTransition.None
 
     /**
