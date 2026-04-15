@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.EventCOPRs
 import com.thebluealliance.android.domain.model.EventInsights
@@ -368,14 +367,12 @@ private fun InsightsView(
                 Text(
                     text = insightHeader,
                     style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     modifier = Modifier.weight(1.5f),
                 )
                 Text(
                     text = "Value",
                     style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     modifier = Modifier.weight(1f),
                 )
@@ -822,7 +819,6 @@ private fun OprHeaderItem(
         Text(
             text = text,
             style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold,
             color = Color.White,
         )
         if (currentSort == sortColumn) {
@@ -853,7 +849,6 @@ private fun CoprHeaderItem(
         Text(
             text = text,
             style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold,
             color = Color.White,
         )
         if (currentSort == sortColumn) {

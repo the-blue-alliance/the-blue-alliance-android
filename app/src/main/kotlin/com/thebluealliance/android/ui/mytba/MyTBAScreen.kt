@@ -58,7 +58,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -257,8 +256,8 @@ fun MyTBAScreen(
                         text = {
                             Text(
                                 text = title,
+                                style = MaterialTheme.typography.labelLarge,
                                 color = Color.White,
-                                fontWeight = FontWeight.Bold,
                             )
                         },
                     )
@@ -393,8 +392,7 @@ private fun FavoriteItem(
         ) {
             Text(
                 text = favorite.modelKey,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.titleMedium,
             )
             Text(
                 text = typeLabel,
@@ -504,8 +502,7 @@ private fun SubscriptionItem(
         ) {
             Text(
                 text = subscription.modelKey,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.titleMedium,
             )
             Text(
                 text = "$typeLabel · ${subscription.notifications.joinToString(", ")}",

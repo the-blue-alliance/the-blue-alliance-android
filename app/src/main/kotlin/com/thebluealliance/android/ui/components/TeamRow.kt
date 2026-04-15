@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Team
 
@@ -35,8 +34,7 @@ fun TeamRow(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = "${team.number} - ${team.nickname ?: team.name ?: ""}",
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.titleMedium,
             )
             val location = listOfNotNull(team.city, team.state, team.country).joinToString(", ")
             val subtitle =

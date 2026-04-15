@@ -35,7 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -351,7 +350,6 @@ private fun SummaryTab(
                     Text(
                         text = "Info",
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
                         color = Color.White,
                     )
                 }
@@ -445,7 +443,6 @@ private fun SummaryTab(
                     Text(
                         text = "Championship Qualification",
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
                         color = Color.White,
                     )
                 }
@@ -482,7 +479,6 @@ private fun SummaryTab(
                         Text(
                             text = "Recent Matches",
                             style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
                             color = Color.White,
                         )
                     }
@@ -566,7 +562,6 @@ private fun InfoRow(
             Text(
                 text = label,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
             )
             if (labelSuffix != null) {
                 Text(
@@ -646,12 +641,10 @@ private fun StatsTab(
             Text(
                 text = if (isDistrictEvent) "District Points" else "Regional Points",
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
             )
             Text(
                 text = "${points.total} pts",
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium,
             )
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 advancementBreakdownRows(points, isDistrictEvent).forEach { (label, value) ->
@@ -663,8 +656,7 @@ private fun StatsTab(
                         )
                         Text(
                             text = value.toString(),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Medium,
+                            style = MaterialTheme.typography.labelMedium,
                         )
                     }
                 }
@@ -689,8 +681,7 @@ private fun StatRow(
         )
         Text(
             text = "%.2f".format(value),
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium,
         )
     }
 }
@@ -755,8 +746,7 @@ private fun AwardsTab(
             ) {
                 Text(
                     text = award.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium,
                 )
                 if (award.awardee != null) {
                     Text(

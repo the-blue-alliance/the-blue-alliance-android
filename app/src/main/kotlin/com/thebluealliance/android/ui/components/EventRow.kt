@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Event
 import java.time.LocalDate
@@ -39,8 +38,7 @@ fun EventRow(
             val name = if (showYear) "${event.year} ${event.name}" else event.name
             Text(
                 text = name,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.titleMedium,
             )
             val location =
                 listOfNotNull(event.city, event.state, event.country)
