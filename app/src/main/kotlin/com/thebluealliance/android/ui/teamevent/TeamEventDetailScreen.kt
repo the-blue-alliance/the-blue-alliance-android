@@ -60,6 +60,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import com.thebluealliance.android.ui.events.detail.tabs.advancementBreakdownRows
+import com.thebluealliance.android.ui.theme.TBAIndigo400
 import com.thebluealliance.android.util.openUrl
 import kotlinx.coroutines.launch
 
@@ -344,7 +345,7 @@ private fun SummaryTab(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .background(Color(0xFF5C6BC0))
+                            .background(TBAIndigo400)
                             .padding(horizontal = 16.dp, vertical = 8.dp),
                 ) {
                     Text(
@@ -438,7 +439,7 @@ private fun SummaryTab(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .background(Color(0xFF5C6BC0))
+                            .background(TBAIndigo400)
                             .padding(horizontal = 16.dp, vertical = 8.dp),
                 ) {
                     Text(
@@ -475,7 +476,7 @@ private fun SummaryTab(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .background(Color(0xFF5C6BC0))
+                                .background(TBAIndigo400)
                                 .padding(horizontal = 16.dp, vertical = 8.dp),
                     ) {
                         Text(
