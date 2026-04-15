@@ -34,7 +34,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -173,43 +172,36 @@ private fun RankingsTableHeader() {
             Text(
                 text = "Rank",
                 style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(0.12f),
             )
             Text(
                 text = "Team",
                 style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(0.18f),
             )
             Text(
                 text = "Event 1",
                 style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(0.15f),
             )
             Text(
                 text = "Event 2",
                 style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(0.15f),
             )
             Text(
                 text = "Bonus",
                 style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(0.15f),
             )
             Text(
                 text = "Total Points",
                 style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(0.18f),
             )
             Text(
                 text = "Qualified",
                 style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(0.25f),
             )
         }
@@ -233,14 +225,12 @@ private fun RegionalRankingRow(
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "${ranking.rank}",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.weight(0.12f),
             )
             Text(
                 text = ranking.teamKey.removePrefix("frc"),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(0.18f),
             )
             val sortedEvents = ranking.eventPoints.sortedBy { it.eventKey }
@@ -301,8 +291,7 @@ private fun RegionalRankingRow(
             }
             Text(
                 text = "${ranking.pointTotal.toInt()}",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.weight(0.18f),
             )
             AdvancementBadge(method = ranking.advancementMethod, modifier = Modifier.weight(0.25f))

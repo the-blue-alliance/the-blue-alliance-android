@@ -34,7 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.CmpAdvancement
@@ -134,15 +133,13 @@ private fun AdvancementPointsItem(
         ) {
             Text(
                 text = "#$rank",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.width(48.dp),
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = points.teamKey.removePrefix("frc"),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
+                    style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable { onTeamClick(points.teamKey) },
                 )
@@ -162,8 +159,7 @@ private fun AdvancementPointsItem(
             }
             Text(
                 text = "${points.total} pts",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.labelLarge,
             )
             Spacer(modifier = Modifier.width(4.dp))
             Icon(
@@ -203,14 +199,12 @@ private fun AdvancementPointsItem(
                 ) {
                     Text(
                         text = "Total",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelLarge,
                         modifier = Modifier.weight(1f),
                     )
                     Text(
                         text = points.total.toString(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.labelLarge,
                     )
                 }
                 // Qualification detail row
@@ -229,8 +223,7 @@ private fun AdvancementPointsItem(
                             )
                             Text(
                                 text = detail,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium,
+                                style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.primary,
                             )
                         }
@@ -288,8 +281,7 @@ private fun AdvancementBreakdownRow(
         )
         Text(
             text = value.toString(),
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium,
+            style = MaterialTheme.typography.labelMedium,
         )
     }
 }

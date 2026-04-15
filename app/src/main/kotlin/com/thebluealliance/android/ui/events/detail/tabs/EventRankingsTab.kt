@@ -36,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Ranking
@@ -180,7 +179,6 @@ private fun RankingHeaderRow(
         Text(
             text = "Rank",
             style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.weight(0.12f),
         )
@@ -195,7 +193,6 @@ private fun RankingHeaderRow(
         Text(
             text = "Record",
             style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.weight(0.22f),
         )
@@ -236,7 +233,6 @@ private fun RankingHeaderItem(
         Text(
             text = text,
             style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold,
             color = Color.White,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
@@ -280,18 +276,16 @@ private fun RankingItem(
         ) {
             Text(
                 text = "#${ranking.rank}",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.weight(0.12f),
             )
             Text(
                 text = ranking.teamKey.removePrefix("frc"),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.titleMedium,
                 modifier =
                     Modifier
                         .weight(0.22f)
                         .clickable { onTeamClick(ranking.teamKey) },
-                fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.primary,
             )
             Text(
@@ -309,8 +303,7 @@ private fun RankingItem(
 
             Text(
                 text = primarySortValue,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.weight(0.18f),
             )
 
@@ -322,8 +315,7 @@ private fun RankingItem(
 
             Text(
                 text = secondarySortValue,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.weight(0.14f),
             )
 
@@ -361,7 +353,6 @@ private fun RankingItem(
                     Text(
                         text = "Tiebreakers:",
                         style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 4.dp),
                     )
 
@@ -389,8 +380,7 @@ private fun RankingItem(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = formattedValue,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium,
+                                style = MaterialTheme.typography.labelMedium,
                             )
                         }
                     }
@@ -403,7 +393,6 @@ private fun RankingItem(
                     Text(
                         text = "Additional Stats:",
                         style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 4.dp),
                     )
                     ranking.extraStats.forEachIndexed { index, value ->
@@ -424,8 +413,7 @@ private fun RankingItem(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = String.format(Locale.US, "%.${precision}f", value),
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium,
+                                style = MaterialTheme.typography.labelMedium,
                             )
                         }
                     }

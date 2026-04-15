@@ -34,7 +34,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -312,7 +311,6 @@ private fun RankingsTab(
                 Text(
                     text = "Rank",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.10f),
@@ -320,7 +318,6 @@ private fun RankingsTab(
                 Text(
                     text = "Team",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
@@ -328,7 +325,6 @@ private fun RankingsTab(
                 Text(
                     text = "Event\n1",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
@@ -336,7 +332,6 @@ private fun RankingsTab(
                 Text(
                     text = "Event\n2",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
@@ -344,7 +339,6 @@ private fun RankingsTab(
                 Text(
                     text = "DCMP",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
@@ -352,7 +346,6 @@ private fun RankingsTab(
                 Text(
                     text = "Rookie\nBonus",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
@@ -360,7 +353,6 @@ private fun RankingsTab(
                 Text(
                     text = "Total\nPoints",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
@@ -404,8 +396,7 @@ private fun RankingsTab(
             ) {
                 Text(
                     text = "#${ranking.rank}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.labelLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.10f),
                 )
@@ -441,8 +432,7 @@ private fun RankingsTab(
                 )
                 Text(
                     text = "${ranking.pointTotal.toInt()} pts",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.labelLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
