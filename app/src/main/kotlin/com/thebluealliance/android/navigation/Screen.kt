@@ -57,3 +57,15 @@ sealed interface Screen : NavKey {
 
     @Serializable data object Thanks : Screen
 }
+
+/**
+ * Returns true if [this] and [other] represent the same top-level tab.
+ *
+ * Parameterized top-level screens (e.g. [Screen.Events], which carries a year) need this because
+ * `Events(2029) != Events()` by data class equality, but both belong to the Events tab.
+ */
+fun NavKey.isSameTab(other: NavKey): Boolean =
+    when {
+        this is Screen.Events && other is Screen.Events -> true
+        else -> this == other
+    }

@@ -55,7 +55,7 @@ fun TBANavigation(
     val navigator = remember { Navigator(navState, activity) }
 
     val showBottomBar =
-        navState.currentRoute in TOP_LEVEL_DESTINATIONS.map { it.key }.toSet() ||
+        TOP_LEVEL_DESTINATIONS.any { it.key.isSameTab(navState.currentRoute) } ||
             navState.currentRoute in
             setOf(
                 Screen.MyTBA,
@@ -373,7 +373,13 @@ fun TBANavigation(
                 onNavigate = { navigator.navigate(it) },
                 onReselect = {
                     coroutineScope.launch {
-                        tabReselectFlows[navState.currentRoute]?.emit(Unit)
+                        val tabKey =
+                            tabReselectFlows.keys.firstOrNull {
+                                it.isSameTab(
+                                    navState.currentRoute,
+                                )
+                            }
+                        if (tabKey != null) tabReselectFlows[tabKey]?.emit(Unit)
                     }
                 },
             )
