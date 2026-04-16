@@ -25,6 +25,7 @@ import com.thebluealliance.android.ui.districts.DistrictDetailScreen
 import com.thebluealliance.android.ui.districts.DistrictDetailViewModel
 import com.thebluealliance.android.ui.districts.DistrictsScreen
 import com.thebluealliance.android.ui.events.EventsScreen
+import com.thebluealliance.android.ui.events.EventsViewModel
 import com.thebluealliance.android.ui.events.detail.EventDetailScreen
 import com.thebluealliance.android.ui.events.detail.EventDetailViewModel
 import com.thebluealliance.android.ui.matches.MatchDetailScreen
@@ -123,8 +124,12 @@ fun TBANavigation(
                             entry<Screen.Events>(
                                 metadata = Transitions.topLevelTransitionSpec,
                             ) { events ->
+                                val viewModel =
+                                    hiltViewModel<EventsViewModel, EventsViewModel.Factory>(
+                                        creationCallback = { factory -> factory.create(events) },
+                                    )
                                 EventsScreen(
-                                    initialYear = events.year,
+                                    viewModel = viewModel,
                                     onNavigateToEvent = { eventKey ->
                                         navigator.navigate(Screen.EventDetail(eventKey))
                                     },

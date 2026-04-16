@@ -8,6 +8,10 @@ import com.thebluealliance.android.data.repository.DistrictRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.domain.model.ModelType
+import com.thebluealliance.android.navigation.Screen
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,24 +21,24 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.Calendar
-import javax.inject.Inject
+import java.time.Year
 
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
-@HiltViewModel
+@HiltViewModel(assistedFactory = EventsViewModel.Factory::class)
 class EventsViewModel
-    @Inject
+    @AssistedInject
     constructor(
+        @Assisted navKey: Screen.Events,
         private val eventRepository: EventRepository,
         private val districtRepository: DistrictRepository,
         private val tbaApi: TbaApi,
         private val myTBARepository: MyTBARepository,
         private val authRepository: AuthRepository,
     ) : ViewModel() {
-        private val _maxYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
+        private val _maxYear = MutableStateFlow(Year.now().value)
         val maxYear: StateFlow<Int> = _maxYear.asStateFlow()
 
-        private val _selectedYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
+        private val _selectedYear = MutableStateFlow(navKey.year)
         val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
 
         private val _isRefreshing = MutableStateFlow(false)
@@ -132,5 +136,10 @@ class EventsViewModel
                     _isRefreshing.value = false
                 }
             }
+        }
+
+        @AssistedFactory
+        interface Factory {
+            fun create(navKey: Screen.Events): EventsViewModel
         }
     }

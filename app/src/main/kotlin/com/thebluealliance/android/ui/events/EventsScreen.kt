@@ -52,7 +52,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.ui.components.EventRow
@@ -71,17 +70,11 @@ private const val SCROLL_TO_FAVORITES = "\u0000"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventsScreen(
-    initialYear: Int,
+    viewModel: EventsViewModel,
     onNavigateToEvent: (String) -> Unit,
     onNavigateToSearch: () -> Unit,
     reselectFlow: Flow<Unit>,
-    viewModel: EventsViewModel = hiltViewModel(),
 ) {
-    // Apply deeplink year on first composition
-    LaunchedEffect(Unit) {
-        viewModel.selectYear(initialYear)
-    }
-
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
     val maxYear by viewModel.maxYear.collectAsStateWithLifecycle()
