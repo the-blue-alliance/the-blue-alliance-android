@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.thebluealliance.android.MainActivity
@@ -46,6 +47,10 @@ import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
+
+/** Looks up the reselect flow for the tab [route] belongs to, tolerating parameterized keys. */
+private fun Map<NavKey, MutableSharedFlow<Unit>>.reselectFlowFor(route: NavKey) =
+    entries.firstOrNull { it.key.isSameTab(route) }?.value
 
 @Composable
 fun TBANavigation(
@@ -134,7 +139,8 @@ fun TBANavigation(
                                         navigator.navigate(Screen.EventDetail(eventKey))
                                     },
                                     onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                    reselectFlow = tabReselectFlows[Screen.Events()] ?: emptyFlow(),
+                                    reselectFlow =
+                                        tabReselectFlows.reselectFlowFor(events) ?: emptyFlow(),
                                 )
                             }
                             entry<Screen.Teams>(
@@ -378,13 +384,7 @@ fun TBANavigation(
                 onNavigate = { navigator.navigate(it) },
                 onReselect = {
                     coroutineScope.launch {
-                        val tabKey =
-                            tabReselectFlows.keys.firstOrNull {
-                                it.isSameTab(
-                                    navState.currentRoute,
-                                )
-                            }
-                        if (tabKey != null) tabReselectFlows[tabKey]?.emit(Unit)
+                        tabReselectFlows.reselectFlowFor(navState.currentRoute)?.emit(Unit)
                     }
                 },
             )
